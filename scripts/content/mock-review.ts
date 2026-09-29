@@ -1,5 +1,8 @@
 /**
- * npm run content:mock-review [-- --tests mock-01,mock-02] [--dry-run]
+ * npm run content:mock-review [-- --tests mock-01,mock-02] [--dry-run] [--print-issues]
+ *
+ * --print-issues prints every gate failure of the selected tests (use it with
+ * --dry-run to check a freshly written chunk before independent verification).
  *
  * Applies the deterministic review gates (src/lib/content/review.ts) to mock
  * and practice questions, writes each question's `review` record, and writes
@@ -24,6 +27,7 @@ const only = (() => {
   return i >= 0 ? new Set(args[i + 1].split(",")) : null;
 })();
 const dry = args.includes("--dry-run");
+const printIssues = args.includes("--print-issues");
 const today = new Date().toISOString().slice(0, 10);
 
 const syllabus = Syllabus.parse(JSON.parse(fs.readFileSync(path.join(ROOT, "content/syllabus.json"), "utf8")));
@@ -157,5 +161,9 @@ if (!dry) {
     "",
   ].join("\n");
   fs.writeFileSync(path.join(ROOT, "reports/mock-verification.md"), md);
+}
+if (printIssues) {
+  const lines = per.flatMap((p) => p.issues);
+  console.log(lines.length ? lines.map((l) => `ISSUE ${l}`).join("\n") : "No gate failures in the selected tests.");
 }
 console.log(JSON.stringify(summary, null, 2));
