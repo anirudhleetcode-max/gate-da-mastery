@@ -84,7 +84,7 @@ export function SubmitDialog({
         ) : null}
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button onClick={() => onOpenChange(false)}>Keep working</Button>
-          <Button variant="primary" onClick={onConfirm}>
+          <Button variant="primary" className="text-surface" onClick={onConfirm}>
             Submit test
           </Button>
         </div>

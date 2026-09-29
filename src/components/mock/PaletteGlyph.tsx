@@ -17,8 +17,8 @@ const SHAPE: Record<PaletteState, string> = {
   not_visited: "rounded-[5px] border border-border-strong bg-surface-2 text-fg-2",
   not_answered: "rounded-t-[5px] rounded-b-[45%] border border-danger bg-danger text-surface",
   answered: "rounded-t-[45%] rounded-b-[5px] border border-success bg-success text-surface",
-  marked: "rounded-full border border-accent bg-accent text-surface",
-  answered_marked: "rounded-full border border-accent bg-accent text-surface",
+  marked: "rounded-full border border-violet bg-violet text-surface",
+  answered_marked: "rounded-full border border-violet bg-violet text-surface",
 };
 
 const SIZE = {

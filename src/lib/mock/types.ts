@@ -5,6 +5,7 @@
  *  - `/api/mocks/[id]/paper` → {@link PaperResponse} (NO answers or solutions)
  *  - `/api/mocks/[id]/key`   → {@link KeyResponse}   (fetched only after submission)
  */
+import type { SubjectId } from "@/lib/content/schema";
 import type { ContentBundle } from "@/lib/content/types";
 import type { PaperQuestion, QuestionPayload } from "@/lib/server/payload";
 
@@ -46,4 +47,6 @@ export interface MockSummary {
   durationMinutes: number;
   negativeMarking: boolean;
   available: boolean;
+  /** Subjects covered by the published questions, in the platform's subject order (empty when none are published). */
+  subjects: SubjectId[];
 }

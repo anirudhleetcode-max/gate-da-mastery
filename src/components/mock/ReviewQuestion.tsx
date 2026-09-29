@@ -80,7 +80,7 @@ export function ReviewQuestion({ q, item, state }: { q: QuestionPayload; item: S
         </div>
       </dl>
 
-      <div className="rounded-[var(--radius)] border border-border bg-surface p-4 sm:p-5">
+      <div className="border-t border-border pt-4 sm:rounded-[var(--radius)] sm:border sm:bg-surface sm:p-5">
         <SolutionPanel html={q.html} correctAnswerText={formatAnswer(q.answer)} />
       </div>
 

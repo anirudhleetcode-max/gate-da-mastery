@@ -31,7 +31,6 @@ export default async function MockIntroPage({ params }: Params) {
   const questions = getMockQuestions(id);
   const pattern = getPattern();
   const total = displayTotalMarks(test);
-  const loaded = questions.length;
   const planned = test.questionIds.length;
   const sections = test.available ? sectionStructure(questions) : test.tier === "FULL_GATE" ? FULL_GATE_SECTIONS : [];
   const types = typeCounts(questions);
@@ -52,7 +51,7 @@ export default async function MockIntroPage({ params }: Params) {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         {/* ------------------------------------------------ start (first on mobile, right column on desktop) */}
         <aside aria-label="Start this mock" className="space-y-4 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start">
-          <MockStartPanel testId={test.id} number={test.number} available={test.available} durationMinutes={test.durationMinutes} loaded={loaded} planned={planned} />
+          <MockStartPanel testId={test.id} number={test.number} available={test.available} durationMinutes={test.durationMinutes} />
           <p className="px-1 text-xs leading-relaxed text-fg-3">
             {TIER_LABEL[test.tier]} ({TIER_RANGE[test.tier]}): {TIER_EXPLANATION[test.tier]}
           </p>
@@ -61,7 +60,7 @@ export default async function MockIntroPage({ params }: Params) {
         <div className="min-w-0 space-y-6 lg:col-start-1 lg:row-start-1">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Questions" value={planned} />
-            <Stat label="Total marks" value={total ?? "—"} hint={total === null ? "Known when the paper is complete" : undefined} />
+            <Stat label="Total marks" value={total ?? "—"} hint={total === null ? "Set when published" : undefined} />
             <Stat label="Duration" value={formatMinutes(test.durationMinutes)} />
             <Stat label="Penalty" value={test.negativeMarking ? "MCQ only" : "None"} hint={test.negativeMarking ? "on wrong MCQs" : undefined} />
           </div>
@@ -70,7 +69,7 @@ export default async function MockIntroPage({ params }: Params) {
 
           {/* ------------------------------------------------ structure */}
           <Card>
-            <CardHeader title="Paper structure" description={test.available ? undefined : `${loaded} of ${planned} questions are published so far; the full breakdown appears when the paper is complete.`} />
+            <CardHeader title="Paper structure" />
             <CardBody className="space-y-6">
               {sections.length ? (
                 <div className="overflow-x-auto">
@@ -81,13 +80,10 @@ export default async function MockIntroPage({ params }: Params) {
                         <th scope="col" className="py-1.5 pr-3 font-medium">
                           Section
                         </th>
-                        <th scope="col" className="px-2 py-1.5 font-medium">
-                          Questions
-                        </th>
-                        <th scope="col" className="px-2 py-1.5 text-right font-medium">
+                        <th scope="col" className="whitespace-nowrap px-2 py-1.5 text-right font-medium">
                           1-mark
                         </th>
-                        <th scope="col" className="px-2 py-1.5 text-right font-medium">
+                        <th scope="col" className="whitespace-nowrap px-2 py-1.5 text-right font-medium">
                           2-mark
                         </th>
                         <th scope="col" className="py-1.5 pl-2 text-right font-medium">
@@ -98,12 +94,14 @@ export default async function MockIntroPage({ params }: Params) {
                     <tbody>
                       {sections.map((s) => (
                         <tr key={s.section} className="border-b border-border last:border-0">
-                          <th scope="row" className="py-2 pr-3 text-left font-medium text-fg">
-                            {s.label} ({s.section})
+                          <th scope="row" className="py-2 pr-3 text-left font-normal">
+                            <span className="block font-medium text-fg">
+                              {s.label} ({s.section})
+                            </span>
+                            <span className="tnum block text-xs text-fg-3">
+                              Q{s.firstQ}–{s.lastQ} · {s.count} {s.count === 1 ? "question" : "questions"}
+                            </span>
                           </th>
-                          <td className="tnum whitespace-nowrap px-2 py-2 text-fg-2">
-                            Q{s.firstQ}–{s.lastQ} ({s.count})
-                          </td>
                           <td className="tnum px-2 py-2 text-right text-fg-2">{s.oneMark}</td>
                           <td className="tnum px-2 py-2 text-right text-fg-2">{s.twoMark}</td>
                           <td className="tnum py-2 pl-2 text-right font-semibold text-fg">{s.marks}</td>
@@ -113,6 +111,12 @@ export default async function MockIntroPage({ params }: Params) {
                   </table>
                   {!test.available && test.tier === "FULL_GATE" ? <p className="mt-2 text-xs text-fg-3">Planned structure, identical to the official DA paper pattern.</p> : null}
                 </div>
+              ) : null}
+
+              {!test.available && !sections.length ? (
+                <p className="text-sm text-fg-2">
+                  {planned} questions in {formatMinutes(test.durationMinutes)}. The question-type and subject breakdown appears here once this mock is available.
+                </p>
               ) : null}
 
               {test.available ? (

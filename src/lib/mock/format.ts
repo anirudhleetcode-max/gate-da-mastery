@@ -48,13 +48,16 @@ export function signedMarks(x: number): string {
  */
 export function stemSnippetHtml(stemHtml: string, maxChars = 240): string {
   const BLOCK = /<p>([\s\S]*?)<\/p>|<div class="math-tex" data-display="true">([\s\S]*?)<\/div>|<(table|pre|ul|ol|div)\b[\s\S]*?<\/\3>/g;
+  // Inline matrices / aligned environments would make a collapsed row several lines tall.
+  const BULKY_INLINE = /<span class="math-tex" data-display="false">(?:(?!<\/span>)[\s\S])*?\\begin(?:(?!<\/span>)[\s\S])*?<\/span>/g;
   const parts: string[] = [];
   let length = 0;
   for (const m of stemHtml.matchAll(BLOCK)) {
     if (length >= maxChars) break;
     if (m[1] !== undefined) {
-      parts.push(m[1]);
-      length += m[1].replace(/<[^>]+>/g, "").length;
+      const p = m[1].replace(BULKY_INLINE, "…");
+      parts.push(p);
+      length += p.replace(/<[^>]+>/g, "").length;
     } else if (m[2] !== undefined && m[2].length <= 60 && !/\\begin|\\\\/.test(m[2])) {
       parts.push(`<span class="math-tex" data-display="false">${m[2]}</span>`);
       length += m[2].length;

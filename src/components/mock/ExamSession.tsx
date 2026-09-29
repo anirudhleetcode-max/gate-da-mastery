@@ -311,17 +311,17 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
         <div className="mt-5 flex flex-wrap gap-2">
           {failure.kind === "score" ? (
             <>
-              <Button variant="primary" onClick={() => void scoreAndOpenResults(attempt.id)}>
+              <Button variant="primary" className="text-surface" onClick={() => void scoreAndOpenResults(attempt.id)}>
                 Retry scoring
               </Button>
               <Button onClick={() => router.push(`/mocks/${encodeURIComponent(test.id)}`)}>Back to the mock</Button>
             </>
           ) : failure.kind === "save" ? (
-            <Button variant="primary" onClick={() => void submit(endedBy ?? "manual")}>
+            <Button variant="primary" className="text-surface" onClick={() => void submit(endedBy ?? "manual")}>
               Try submitting again
             </Button>
           ) : (
-            <Button variant="primary" onClick={() => router.push(`/mocks/${encodeURIComponent(test.id)}`)}>
+            <Button variant="primary" className="text-surface" onClick={() => router.push(`/mocks/${encodeURIComponent(test.id)}`)}>
               Back to the mock
             </Button>
           )}
@@ -359,7 +359,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
             ) : null}
           </div>
           <ExamTimer remainingMs={attempt.remainingMs} durationMs={attempt.durationMs} />
-          <Button variant="primary" className="h-10 shrink-0 px-3 sm:px-4" onClick={() => setConfirmOpen(true)}>
+          <Button variant="primary" className="h-10 shrink-0 px-3 sm:px-4 text-surface" onClick={() => setConfirmOpen(true)}>
             Submit
           </Button>
         </div>
@@ -480,7 +480,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
                 <ChevronLeft aria-hidden className="h-4 w-4 shrink-0" />
                 Previous
               </Button>
-              <Button variant="primary" className="h-11 px-2 sm:px-5" onClick={() => act({ type: "saveAndNext" })}>
+              <Button variant="primary" className="h-11 px-2 sm:px-5 text-surface" onClick={() => act({ type: "saveAndNext" })}>
                 Save &amp; next
                 <ChevronRight aria-hidden className="h-4 w-4 shrink-0" />
               </Button>
@@ -501,8 +501,8 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
         <Sheet.Portal>
           <Sheet.Overlay className="fixed inset-0 z-50 bg-black/40 lg:hidden" />
           <Sheet.Content className="fixed inset-y-0 right-0 z-50 flex w-[min(22rem,92vw)] flex-col border-l border-border bg-surface shadow-xl lg:hidden">
-            <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
-              <Sheet.Title className="text-base font-semibold text-fg">{paletteTitle}</Sheet.Title>
+            <div className="flex min-h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4 py-2">
+              <Sheet.Title className="text-base font-semibold leading-snug text-fg">{paletteTitle}</Sheet.Title>
               <Sheet.Close className="grid h-10 w-10 place-items-center rounded-md text-fg-3 hover:bg-surface-2 hover:text-fg" aria-label="Close palette">
                 <X aria-hidden className="h-5 w-5" />
               </Sheet.Close>
@@ -512,7 +512,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
               {multiSection ? (
                 <nav aria-label="Sections" className="mb-4 flex gap-2">
                   {sections.map((s) => (
-                    <Button key={s.section} size="sm" variant={s === currentSection ? "primary" : "secondary"} aria-current={s === currentSection ? "true" : undefined} onClick={() => act({ type: "goto", index: s.start })}>
+                    <Button key={s.section} size="sm" variant={s === currentSection ? "primary" : "secondary"} className={s === currentSection ? "text-surface" : undefined} aria-current={s === currentSection ? "true" : undefined} onClick={() => act({ type: "goto", index: s.start })}>
                       {s.section} · Q{s.start + 1}–{s.end + 1}
                     </Button>
                   ))}
@@ -523,7 +523,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
             <div className="shrink-0 border-t border-border p-4">
               <Button
                 variant="primary"
-                className="h-11 w-full"
+                className="h-11 w-full text-surface"
                 onClick={() => {
                   setPaletteOpen(false);
                   setConfirmOpen(true);
@@ -554,7 +554,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
       >
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button onClick={() => setExitOpen(false)}>Continue the test</Button>
-          <Button variant="primary" onClick={() => void saveAndExit()}>
+          <Button variant="primary" className="text-surface" onClick={() => void saveAndExit()}>
             Save and exit
           </Button>
         </div>
@@ -566,7 +566,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
 function ConfidencePicker({ value, onChange }: { value: Confidence | undefined; onChange: (v: Confidence | undefined) => void }) {
   return (
     <div role="group" aria-labelledby="exam-confidence-label" className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4 text-sm">
-      <span id="exam-confidence-label" className="text-fg-3">
+      <span id="exam-confidence-label" className="w-full text-fg-3 sm:w-auto">
         Confidence (optional):
       </span>
       {(["high", "medium", "low"] as const).map((c) => (

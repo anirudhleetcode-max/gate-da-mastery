@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { PlayCircle, RotateCcw, Trash2 } from "lucide-react";
+import { Lock, PlayCircle, RotateCcw, Trash2 } from "lucide-react";
 import { useMockAttempts, useUserData } from "@/lib/userdata/hooks";
 import { discardInProgress } from "@/lib/mock/persist";
-import { formatDateTime } from "@/lib/mock/format";
+import { formatDateTime, formatMinutes } from "@/lib/mock/format";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { formatClock, formatDuration, formatMarks, pct } from "@/lib/utils";
 
 /** Start / Resume panel for a mock's intro page. */
-export function MockStartPanel({ testId, number, available, durationMinutes, loaded, planned }: { testId: string; number: number; available: boolean; durationMinutes: number; loaded: number; planned: number }) {
+export function MockStartPanel({ testId, number, available, durationMinutes }: { testId: string; number: number; available: boolean; durationMinutes: number }) {
   const { db, ready, available: storageOk } = useUserData();
   const attempts = useMockAttempts(testId);
   const [confirm, setConfirm] = useState(false);
@@ -25,10 +25,10 @@ export function MockStartPanel({ testId, number, available, durationMinutes, loa
     return (
       <Card>
         <CardBody>
-          <p className="font-semibold text-fg">Not yet available</p>
-          <p className="mt-1 text-sm text-fg-2">
-            {loaded} of {planned} questions of this mock are published so far. It can be taken once the full paper is available.
+          <p className="flex items-center gap-2 font-semibold text-fg">
+            <Lock aria-hidden className="h-4 w-4 text-fg-3" /> Not yet available
           </p>
+          <p className="mt-1 text-sm text-fg-2">This mock opens once its full paper is published. Meanwhile, take one of the available mocks.</p>
           <ButtonLink href="/mocks" className="mt-4 w-full">
             Choose another mock
           </ButtonLink>
@@ -50,7 +50,7 @@ export function MockStartPanel({ testId, number, available, durationMinutes, loa
             <p className="text-sm text-fg-2">
               You have an attempt in progress with <span className="tnum font-semibold text-fg">{formatClock(inProgress.remainingMs)}</span> remaining (started {formatDateTime(inProgress.startedAt)}).
             </p>
-            <ButtonLink href={examHref} variant="primary" size="lg" className="w-full">
+            <ButtonLink href={examHref} variant="primary" size="lg" className="w-full text-surface">
               <PlayCircle aria-hidden className="h-5 w-5" /> Resume Mock {number}
             </ButtonLink>
             <Button variant="ghost" className="w-full text-danger hover:text-danger" onClick={() => setConfirm(true)} disabled={!db}>
@@ -60,15 +60,15 @@ export function MockStartPanel({ testId, number, available, durationMinutes, loa
         ) : (
           <>
             <p className="text-sm text-fg-2">
-              The {durationMinutes}-minute timer starts as soon as the exam screen opens.
+              The {formatMinutes(durationMinutes)} timer starts as soon as the exam screen opens. If you close the page, your answers are saved and the timer pauses until you resume.
               {taken ? ` You have taken this mock ${taken === 1 ? "once" : `${taken} times`}; a retake is scored as a new attempt.` : ""}
             </p>
             {ready && !storageOk ? (
-              <Button variant="primary" size="lg" className="w-full" disabled>
+              <Button variant="primary" size="lg" className="w-full text-surface" disabled>
                 {taken ? `Retake Mock ${number}` : `Start Mock ${number}`}
               </Button>
             ) : (
-              <ButtonLink href={examHref} variant="primary" size="lg" className="w-full">
+              <ButtonLink href={examHref} variant="primary" size="lg" className="w-full text-surface">
                 {taken ? <RotateCcw aria-hidden className="h-5 w-5" /> : <PlayCircle aria-hidden className="h-5 w-5" />}
                 {taken ? `Retake Mock ${number}` : `Start Mock ${number}`}
               </ButtonLink>
@@ -91,6 +91,7 @@ export function MockStartPanel({ testId, number, available, durationMinutes, loa
           <Button onClick={() => setConfirm(false)}>Keep it</Button>
           <Button
             variant="danger"
+            className="text-surface"
             onClick={async () => {
               if (!db || !inProgress) return;
               try {

@@ -141,7 +141,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
         <Panel title="Mock test not found">
           <p>There is no mock test with this address.</p>
           <div className="mt-5">
-            <ButtonLink href="/mocks" variant="primary">
+            <ButtonLink href="/mocks" variant="primary" className="text-surface">
               All mock tests
             </ButtonLink>
           </div>
@@ -154,7 +154,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
             {load.loaded} of {load.planned} questions of this mock are published so far. It can be taken once the full paper is available.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <ButtonLink href="/mocks" variant="primary">
+            <ButtonLink href="/mocks" variant="primary" className="text-surface">
               Choose another mock
             </ButtonLink>
           </div>
@@ -166,7 +166,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
           <p role="alert">{load.message}</p>
           <p className="mt-2">Any in-progress attempt is saved on this device and will resume when the paper loads.</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button variant="primary" onClick={retry}>
+            <Button variant="primary" className="text-surface" onClick={retry}>
               Try again
             </Button>
             {back}
@@ -178,7 +178,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
         <Panel title="This mock is already open">
           <p>This mock test is open in another tab or window. Continue there, or close it and try again here, so the two copies do not overwrite each other.</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button variant="primary" onClick={retry}>
+            <Button variant="primary" className="text-surface" onClick={retry}>
               Try again
             </Button>
             {back}
@@ -190,7 +190,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
         <Panel title="The attempt could not be started">
           <p role="alert">{load.message} Free up storage or check the browser&apos;s site-data settings, then try again.</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button variant="primary" onClick={retry}>
+            <Button variant="primary" className="text-surface" onClick={retry}>
               Try again
             </Button>
             {back}

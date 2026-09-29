@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getMocks } from "@/lib/server/repo";
+import { getMockQuestions, getMocks } from "@/lib/server/repo";
 import { TIER_LABEL, TIER_RANGE } from "@/lib/labels";
 import { TIER_EXPLANATION, TIER_ORDER, toSummary } from "@/lib/mock/structure";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -24,7 +24,7 @@ export default function MocksPage() {
     mocks: mocks
       .filter((m) => m.tier === tier)
       .sort((a, b) => a.number - b.number)
-      .map(toSummary),
+      .map((m) => toSummary(m, getMockQuestions(m.id))),
   })).filter((t) => t.mocks.length);
 
   return (
@@ -57,7 +57,7 @@ export default function MocksPage() {
         <EmptyState
           title="No mock tests are published yet"
           action={
-            <ButtonLink href="/pyqs" variant="primary">
+            <ButtonLink href="/pyqs" variant="primary" className="text-surface">
               Practise official PYQs
             </ButtonLink>
           }

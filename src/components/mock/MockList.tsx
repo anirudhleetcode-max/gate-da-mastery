@@ -10,6 +10,7 @@ import { formatMinutes, formatDateTime } from "@/lib/mock/format";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
+import { SUBJECT_ABBR, SUBJECT_SHORT } from "@/lib/labels";
 import { formatClock, formatMarks, pct, cn } from "@/lib/utils";
 
 export interface TierGroup {
@@ -176,12 +177,20 @@ function PendingTile({ m }: { m: MockSummary }) {
   );
 }
 
+/** "Mixed: P&S, LA, ML" for mixed-subject mocks; nothing when the title already names the subject. */
+function coverage(m: MockSummary): string | null {
+  if (m.shortTitle.includes(" — ") || m.subjects.length === 0) return null;
+  if (m.subjects.length <= 2) return `Covers ${m.subjects.map((s) => SUBJECT_SHORT[s]).join(" and ")}`;
+  return `Mixed: ${m.subjects.map((s) => SUBJECT_ABBR[s]).join(", ")}`;
+}
+
 function MockCard({ m, user }: { m: MockSummary; user?: MockUserSummary }) {
   const titleId = `mock-card-${m.id}`;
   const inProgress = user?.inProgress;
   const taken = user?.submitted.length ?? 0;
   const best = user?.best?.result;
   const last = user?.last;
+  const covers = coverage(m);
   return (
     <article aria-labelledby={titleId} className={cn("flex h-full flex-col rounded-[var(--radius)] border bg-surface px-4 py-3 shadow-[var(--shadow)]", inProgress ? "border-warning/50" : "border-border")}>
       <div className="flex items-start justify-between gap-2">
@@ -192,6 +201,11 @@ function MockCard({ m, user }: { m: MockSummary; user?: MockUserSummary }) {
               {m.shortTitle}
             </Link>
           </h3>
+          {covers ? (
+            <p className="mt-0.5 text-xs text-fg-3" title={m.subjects.map((s) => SUBJECT_SHORT[s]).join(", ")}>
+              {covers}
+            </p>
+          ) : null}
         </div>
         {inProgress ? (
           <Badge tone="warning" className="shrink-0">
@@ -220,43 +234,44 @@ function MockCard({ m, user }: { m: MockSummary; user?: MockUserSummary }) {
       </dl>
       <p className="mt-2 text-xs text-fg-3">{m.negativeMarking ? "Negative marking: −1/3 or −2/3 for a wrong MCQ" : "No negative marking"}</p>
 
-      <div className="mt-3 border-t border-border pt-2.5 text-sm">
-        {inProgress ? (
-          <p className="text-fg-2">
-            <span className="tnum font-medium text-fg">{formatClock(inProgress.remainingMs)}</span> left · started {formatDateTime(inProgress.startedAt)}
-          </p>
-        ) : last ? (
-          <p className="text-fg-2">
-            Best{" "}
-            <span className="tnum font-medium text-fg">
-              {best ? `${formatMarks(best.score)} / ${formatMarks(best.maxScore)}` : "—"}
-            </span>
-            {best?.accuracy !== undefined && best.accuracy !== null ? <span className="text-fg-3"> ({pct(best.accuracy, 0)} accuracy)</span> : null}
-            <span className="block text-xs text-fg-3">
-              Last attempt {formatDateTime(last.submittedAt ?? last.startedAt)}
-              {last.result ? ` · ${formatMarks(last.result.score)} / ${formatMarks(last.result.maxScore)}` : " · scoring pending"}
-            </span>
-          </p>
-        ) : (
-          <p className="text-fg-3">Not attempted yet</p>
-        )}
-      </div>
-
-      <div className="mt-auto flex flex-wrap gap-2 pt-3">
-        {inProgress ? (
-          <ButtonLink href={`/mocks/${m.id}/exam`} variant="primary" size="sm" className="h-10">
-            <PlayCircle aria-hidden className="h-4 w-4" /> Resume
-          </ButtonLink>
-        ) : (
-          <ButtonLink href={`/mocks/${m.id}`} variant={taken ? "secondary" : "primary"} size="sm" className="h-10" aria-label={`${taken ? "Retake" : "Start"} Mock ${m.number}`}>
-            {taken ? "Retake" : "Start"}
-          </ButtonLink>
-        )}
-        {last ? (
-          <ButtonLink href={`/mocks/${m.id}/results/${last.id}`} variant="ghost" size="sm" className="h-10" aria-label={`Latest results of Mock ${m.number}`}>
-            Latest results
-          </ButtonLink>
-        ) : null}
+      <div className="mt-auto pt-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-border pt-3 text-sm">
+          <div className="min-w-0">
+            {inProgress ? (
+              <p className="text-fg-2">
+                <span className="tnum font-medium text-fg">{formatClock(inProgress.remainingMs)}</span> left
+                <span className="block text-xs text-fg-3">Started {formatDateTime(inProgress.startedAt)}</span>
+              </p>
+            ) : last ? (
+              <p className="text-fg-2">
+                Best <span className="tnum font-medium text-fg">{best ? `${formatMarks(best.score)} / ${formatMarks(best.maxScore)}` : "—"}</span>
+                {best?.accuracy !== undefined && best.accuracy !== null ? <span className="text-fg-3"> · {pct(best.accuracy, 0)} accuracy</span> : null}
+                <span className="block text-xs text-fg-3">
+                  Last {formatDateTime(last.submittedAt ?? last.startedAt)}
+                  {last.result ? ` · ${formatMarks(last.result.score)} / ${formatMarks(last.result.maxScore)}` : " · scoring pending"}
+                </span>
+              </p>
+            ) : (
+              <p className="text-fg-3">Not attempted yet</p>
+            )}
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {last && !inProgress ? (
+              <ButtonLink href={`/mocks/${m.id}/results/${last.id}`} variant="ghost" size="sm" className="h-10" aria-label={`Latest results of Mock ${m.number}`}>
+                Results
+              </ButtonLink>
+            ) : null}
+            {inProgress ? (
+              <ButtonLink href={`/mocks/${m.id}/exam`} variant="primary" size="sm" className="h-10 text-surface" aria-label={`Resume Mock ${m.number}`}>
+                <PlayCircle aria-hidden className="h-4 w-4" /> Resume
+              </ButtonLink>
+            ) : (
+              <ButtonLink href={`/mocks/${m.id}`} variant={taken ? "secondary" : "primary"} size="sm" className={cn("h-10", !taken && "text-surface")} aria-label={`${taken ? "Retake" : "Start"} Mock ${m.number}`}>
+                {taken ? "Retake" : "Start"}
+              </ButtonLink>
+            )}
+          </div>
+        </div>
       </div>
     </article>
   );

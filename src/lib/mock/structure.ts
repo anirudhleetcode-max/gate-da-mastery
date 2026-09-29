@@ -45,7 +45,11 @@ export function displayTotalMarks(test: Pick<MockTestDef, "available" | "totalMa
   return test.tier === "FULL_GATE" ? 100 : null;
 }
 
-export function toSummary(test: MockTestDef): MockSummary {
+/**
+ * List/intro summary of a mock. Pass the mock's published questions (server
+ * side) to fill in the subjects it covers; only subject ids reach the client.
+ */
+export function toSummary(test: MockTestDef, questions: readonly { subjectId: SubjectId; marks: number }[] = []): MockSummary {
   return {
     id: test.id,
     number: test.number,
@@ -58,6 +62,7 @@ export function toSummary(test: MockTestDef): MockSummary {
     durationMinutes: test.durationMinutes,
     negativeMarking: test.negativeMarking,
     available: test.available,
+    subjects: subjectDistribution(questions).map((s) => s.subjectId),
   };
 }
 

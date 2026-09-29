@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loader2, RotateCcw } from "lucide-react";
 import type { MockAttemptRow } from "@/lib/userdata/db";
-import { useAttempts, useDbQuery, useSetting, useUserData } from "@/lib/userdata/hooks";
+import { useAttempts, useDbQuery, useErrorLogs, useUserData } from "@/lib/userdata/hooks";
 import { finalizeAttempt } from "@/lib/mock/persist";
 import { avgTimePerAttempted, computeDiagnostics, historicalWeakTopics, scoreAttempt, weakTopicsInMock, type ReviewFilter } from "@/lib/mock/analysis";
 import { timeUsedMs } from "@/lib/mock/session";
@@ -36,7 +36,7 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
   const { db, ready, available } = useUserData();
   const attempt = useDbQuery<MockAttemptRow | null | undefined>(async (d) => (await d.mockAttempts.get(attemptId)) ?? null, [attemptId], undefined);
   const history = useAttempts();
-  const [autoErrorLog] = useSetting("autoErrorLog", true);
+  const errorLogs = useErrorLogs();
 
   const submitted = attempt?.status === "submitted" && attempt.testId === test.id;
   const [key, setKey] = useState<KeyResponse | null>(null);
@@ -115,6 +115,13 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
     };
   }, [key, attempt, submitted, history]);
 
+  // Wrong answers of this attempt that are in the error log (added automatically when that setting is on).
+  const loggedWrong = useMemo(() => {
+    if (!analysis) return 0;
+    const logged = new Set(errorLogs.map((e) => e.questionId));
+    return analysis.items.filter((i) => i.status === "incorrect" && logged.has(i.id)).length;
+  }, [analysis, errorLogs]);
+
   const crumbs = [
     { label: "Mock tests", href: "/mocks" },
     { label: `Mock ${test.number}`, href: `/mocks/${test.id}` },
@@ -122,7 +129,7 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
   ];
   const actions = (
     <>
-      <ButtonLink href={`/mocks/${test.id}`} variant="primary">
+      <ButtonLink href={`/mocks/${test.id}`} variant="primary" className="text-surface">
         <RotateCcw aria-hidden className="h-4 w-4" /> Retake mock
       </ButtonLink>
       <ButtonLink href="/mocks">Back to mocks</ButtonLink>
@@ -154,7 +161,7 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
     return (
       <>
         <PageHeader crumbs={crumbs} title={`Mock ${test.number} results`} />
-        <EmptyState title="This attempt is not on this device" action={<ButtonLink href={`/mocks/${test.id}`} variant="primary">Go to Mock {test.number}</ButtonLink>}>
+        <EmptyState title="This attempt is not on this device" action={<ButtonLink href={`/mocks/${test.id}`} variant="primary" className="text-surface">Go to Mock {test.number}</ButtonLink>}>
           Results are stored in this browser only. The attempt may have been taken in another browser or device, or the local data was cleared or replaced by a backup import.
         </EmptyState>
       </>
@@ -164,7 +171,7 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
     return (
       <>
         <PageHeader crumbs={crumbs} title={`Mock ${test.number} results`} />
-        <EmptyState title="This attempt has not been submitted yet" action={<ButtonLink href={`/mocks/${test.id}/exam`} variant="primary">Resume Mock {test.number}</ButtonLink>}>
+        <EmptyState title="This attempt has not been submitted yet" action={<ButtonLink href={`/mocks/${test.id}/exam`} variant="primary" className="text-surface">Resume Mock {test.number}</ButtonLink>}>
           {formatClock(attempt.remainingMs)} remain on the timer. Results and solutions appear after you submit.
         </EmptyState>
       </>
@@ -229,7 +236,7 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
               <Stat label="Correct" value={<span className="text-success">{res?.correct ?? stored!.correct}</span>} />
               <Stat label="Incorrect" value={<span className="text-danger">{res?.incorrect ?? stored!.incorrect}</span>} />
               <Stat label="Skipped" value={res?.unanswered ?? stored!.unanswered} />
-              <Stat label="Average time" value={analysis ? formatDuration(analysis.avgTime) : "—"} hint="per attempted question" />
+              <Stat label="Average time" value={analysis ? formatDuration(analysis.avgTime) : "—"} hint="per attempted Q" />
             </div>
             {res ? (
               <p className="mt-3 text-sm text-fg-2">
@@ -244,7 +251,7 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
                 <Link href="/revision" className="underline">
                   revision queue
                 </Link>
-                {autoErrorLog ? (
+                {loggedWrong ? (
                   <>
                     {" "}and{" "}
                     <Link href="/errors" className="underline">
