@@ -82,11 +82,35 @@ A student must be able to understand the problem from the solution alone.
      - If they agree: `agreesWithKey=true`, `status="VERIFIED"`.
      - If they disagree: re-derive carefully. If the disagreement persists, keep the official answer, set `status="NEEDS_REVIEW"` and explain.
      - MTA questions: `agreesWithKey=true`, `status="VERIFIED"`. Notes must state that the key awarded marks to all, and must not speculate beyond what the question shows.
+  4. **Disputes.** A `NEEDS_REVIEW` official question is resolved only by an **independent adjudicator** (a third party that did not author or verify it). The adjudicator re-derives the answer, runs its own computational evidence, and decides.
+     - If the official key is the intended answer but the printed premise is flawed, the question gets a `dispute` record (`decision: "OFFICIAL_KEY_RETAINED_PREMISE_DEFECT_DOCUMENTED"`, a `studentNote` shown on the question page, the evidence, and `evidencePath` pointing to `reports/verification/<id>/`).
+     - `answerVerification.method` must name the adjudication stage.
+     - The official stem, options, answer and key cell are **never** changed.
+     - The PYQ freeze is then re-opened deliberately (below).
+- **PYQ freeze.** `content/exam/pyq-freeze.json` records, for every PYQ file, its SHA-256 and the fields that must never drift silently: id, paper, year, number, section, type, marks, answer, official key cell and source ids. `tests/pyq-dataset.test.ts` fails on any change, gap, duplicate, key mismatch or missing source hash.
+  - To correct a PYQ, edit it, then run `npm run content:freeze-pyqs -- --reason "<why>"`. The script refuses to re-freeze changed files without a reason and appends the reason and the changed files to the freeze log.
 - **Original questions (mock/practice):**
   1. The author writes the question and a computational check.
   2. A **separate** reviewer solves it blind; the answers must agree.
   3. If the two disagree, or the question has more than one defensible answer, rewrite the question until it is unambiguous.
   - NAT ranges must be tight enough to be meaningful, wide enough to allow for stated rounding, and must state the rounding in the stem.
+  4. `npm run content:mock-review` applies the deterministic gates (`src/lib/content/review.ts`) and writes each question's `review` record.
+     - **Statuses:** `DRAFT` (no author check) → `SELF_CHECKED` (author check only) → `VERIFIED` (blind independent re-solve agrees **and** every gate passes) or `NEEDS_REVIEW`.
+     - **Gates:**
+       - metadata and taxonomy;
+       - blueprint slot (subject, topic, type, marks, section, number, difficulty ±1);
+       - plausible estimated time;
+       - complete solution (≥ 2 steps, quick answer, final answer, analysis of all four options);
+       - KaTeX renders and `$` delimiters pair;
+       - no placeholder text;
+       - no answer leaked in the stem or options, and distinct options;
+       - no near-duplicate of another original (word-shingle or character-5-gram similarity ≥ 0.8);
+       - not too close to an official PYQ (≥ 0.6);
+       - not edited after verification.
+     - **Edits after verification:** when a question reaches `VERIFIED`, hashes of its content and of its verification record are stored in `review.verifiedHash`. If the content later changes while the verification record does not, the question drops to `NEEDS_REVIEW` until an independent verifier re-verifies it (writing a new verification record).
+     - **Fixes:** a verifier that changes a question must say `(corrected during verification)`. That phrase is how fixes are counted.
+     - **Self-check before verification:** `npx tsx scripts/content/mock-review.ts --tests mock-13 --dry-run --print-issues` lists gate failures for a freshly written chunk.
+- **Availability gate.** A mock test is shown as available, and its questions are served anywhere (question API, practice, Today, search, similar questions), only when **every** one of its questions is `VERIFIED` (`src/lib/content/availability.ts`, enforced in `src/lib/server/repo.ts` and the API routes). Unverified practice questions are never served.
 
 ## 7. Difficulty rubric (platform-estimated)
 

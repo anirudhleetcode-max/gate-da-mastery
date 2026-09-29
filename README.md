@@ -38,7 +38,11 @@ npm start              # next start (PORT env var supported)
 | `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
 | `npm test` | Unit + integration tests (Vitest) |
 | `npm run test:e2e` | End-to-end tests (Playwright, desktop + mobile; needs `npm run build` first) |
+| `npm run content:mock-review` | Apply the deterministic review gates to mock/practice questions; write review records and `reports/mock-verification.{md,json}` |
+| `npm run content:freeze-pyqs -- --reason "…"` | Re-freeze the official PYQ set after a deliberate correction (logged) |
+| `npm run content:stats` | Print the repo-derived counts used in status reports |
 | `npx tsx scripts/content/validate-file.ts <file>` | Validate one content file |
+| `node scripts/dev/a11y-audit.mjs <base-url>` | axe-core WCAG 2.1 AA + multi-width overflow audit (writes `reports/a11y-audit.*`) |
 
 ## Deployment
 
@@ -58,8 +62,8 @@ Optional environment variable:
 
 - `content/` is the source of truth. It is reviewed through git and validated by Zod schemas and semantic checks. The checks cover: key/answer agreement, taxonomy consistency, marks structure, duplicate detection, figure existence, source references and exam-date sanity.
 - Official PYQs are transcribed from the official master question papers. Answers come from the official answer keys, and the parsed key tables are committed in `content/exam/official-keys.json` so every PYQ is cross-checked against them.
-- Each solution is written by one agent and independently re-solved **blind** (before looking at the key) by another. Any disagreement with the official key is kept visible as `NEEDS_REVIEW`; the official answer is never silently changed.
-- Mock and practice questions are original. Each is checked computationally by its author and blind re-solved by an independent verifier.
+- Each solution is written by one agent and independently re-solved **blind** (before looking at the key) by another. A disagreement with the official key stays visible as `NEEDS_REVIEW` until an independent adjudicator resolves it. The resolution is recorded as a `dispute` with its evidence, and the official answer is never changed. The PYQ set is frozen (`content/exam/pyq-freeze.json`), and any re-freeze needs a logged reason.
+- Mock and practice questions are original. Each is checked computationally by its author, blind re-solved by an independent verifier, and then passed through deterministic gates: metadata, blueprint, solution completeness, math rendering, answer leaks, duplicates, similarity to official PYQs, and edits after verification. A mock test opens only when **every** one of its questions is `VERIFIED`; until then, none of its questions is served anywhere.
 - `npm run content:audit` reports verified and needs-review counts, missing solutions, duplicates, syllabus coverage and source status.
 
 The file bytes of official papers and keys were obtained from public mirrors whose SHA-256 hashes agree across two independent repositories, because the official GATE hosts were unreachable from the build environment. Run `npm run sources:verify` from an unrestricted network to confirm byte-identity with the official hosts.

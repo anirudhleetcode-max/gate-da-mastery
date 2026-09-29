@@ -58,14 +58,14 @@ src/components/charts/    SVG chart kit (BarList, GroupedColumns, LineChart, Cha
 
 | Need | Use |
 | --- | --- |
-| Content lookups | `getSubjects, getSubject, getTopic, getPyqs, getPyqMetas, getQuestion, getMock, getMockQuestions, getMocks, getConcepts, getConcept, getFormulas, getStrategy, getRoadmap, getWeightage, getPapers, getSources, getPattern, getCatalog, topicStats, searchContent, toMeta` in `@/lib/server/repo` |
+| Content lookups | `getSubjects, getSubject, getTopic, getPyqs, getPyqMetas, getQuestion, getMock, getMockQuestions, getMocks, getConcepts, getConcept, getFormulas, getStrategy, getRoadmap, getWeightage, getPapers, getSources, getPattern, getCatalog, topicStats, searchContent, toMeta` in `@/lib/server/repo`. Question getters apply the **availability gate** (`@/lib/content/availability`): questions of a mock that is not fully verified, and unverified practice questions, are invisible. Only admin tooling may use `getQuestionUnchecked`. |
 | Full question for the client | `buildPayload(q)` in `@/lib/server/payload` → `QuestionPayload` |
 | Interactive question | `<QuestionView q={payload} context=…/>`: attempt → submit → solution (quick/detailed/teaching) → concept → formulas → similar → revision / error log |
 | Sequence of questions | `<QuestionSession ids=[…] context=… timeLimitSec?/>` |
 | Scoring | `scoreQuestion, scoreTest, groupScores, formatAnswer, formatResponse, mcqPenalty` in `@/lib/scoring/score` |
 | User data | hooks: `useAttempts, useQuestionStatuses, useBookmarks, useBookmarkKeys, useRevisionItems, useErrorLogs, useMockAttempts, useRoadmap, useSetting, useViews, useDbQuery, useUserData`; ops: `recordAttemptWithFollowUps, toggleBookmark, addToRevision, gradeRevision, dueRevision, addErrorLog, updateErrorLog, setRoadmapStage, exportAll, importAll, clearAll` |
 | Progress numbers | `useProgressModel(catalog)` in `@/lib/analytics/useProgress` (overall, subjects, topics, mastery, weak topics, streak). Get `catalog` from `getCatalog()` on the server. |
-| Stats helpers | `accuracyStat, weakTopics, topicMastery, studyStreak, accuracyTrend, wilsonLower` in `@/lib/analytics/stats` |
+| Stats helpers | `accuracyStat, weakTopics, topicMastery, studyStreak, accuracyTrend, wilsonLower` in `@/lib/analytics/stats`; explain them with `WEAK_TOPIC_DEFAULTS` and `MASTERY_EXPLANATION` (never copy the numbers by hand) |
 | Revision scheduling | `review, isDue, isFrequentlyForgotten, initialState` in `@/lib/revision/schedule` |
 | Labels & colours | `@/lib/labels` (`SUBJECT_SHORT`, `SUBJECT_ABBR`, `SUBJECT_COLOR`, `ORIGIN_LABEL`, `DIFFICULTY_LABEL`, `TIER_LABEL`, `VERIFICATION_LABEL`, …) |
 | Formatting | `cn, pct, formatMarks, formatDuration, formatClock, formatDate, plural` in `@/lib/utils` |
@@ -93,7 +93,9 @@ UI primitives live in `src/components/ui`: `Button`, `ButtonLink`, `Card`, `Card
 
 ## Working conventions (for contributors and agents)
 
-- Verify with `npx tsc --noEmit` and `npx eslint <your files>`. Do **not** run `npm run build`, `npm run dev` or `content:build` in parallel sessions. To view a page, start `npx next dev -p <your port>` and use `node scripts/dev/screenshot.mjs <url> <out.png> <width> <height>`.
+- Verify with `npx tsc --noEmit` and `npx eslint <your files>`. Do **not** run `npm run build`, `npm run dev` or `content:build` in parallel sessions.
+- Next 16 allows only **one** `next dev` per checkout, so parallel sessions share one dev server; never kill it. View pages with `node scripts/dev/screenshot.mjs <url> <out.png> <width> <height>`.
+- Audit accessibility and responsiveness with `node scripts/dev/a11y-audit.mjs <base-url> [routes…]`. It runs axe-core against WCAG 2.1 A/AA in light and dark themes, and checks horizontal overflow at widths from 320 to 1920 px.
 - Do not change shared modules (`src/lib/**`, `src/components/ui/**`, `layout/**`, `question/**`, `charts/**`) unless your task explicitly owns them. Put new components under `src/components/<area>/` and page code under your routes.
 - React lint rules are strict (`react-hooks/set-state-in-effect`, `react-hooks/refs`):
   - Derive values during render.
