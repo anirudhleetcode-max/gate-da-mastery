@@ -95,6 +95,30 @@
       "agreesWithKey": true,
       "checkCode": "import random\nfrom fractions import Fraction as F\npA = F(1, 4)\npM = {1: F(9, 10), 0: F(1, 5)}   # P(M=1 | A)\npH = {1: F(7, 10), 0: F(1, 10)}  # P(H=1 | A)\nw = lambda a: pM[a] * pH[a]      # weight = product of evidence likelihoods given the sampled parent\n# exact posterior by enumeration, to check the weights really reproduce it\njoint = {a: (pA if a else 1 - pA) * w(a) for a in (0, 1)}\npost = joint[1] / (joint[0] + joint[1])\n# likelihood-weighting simulation: sample A ~ P(A); M and H are clamped to 1\nrandom.seed(7)\nnum = den = 0.0\nfor _ in range(400000):\n    a = 1 if random.random() < float(pA) else 0\n    ww = float(w(a))\n    den += ww\n    num += ww * a\nopts = {\"A\": F(1575, 10000), \"B\": F(1, 4), \"C\": F(63, 100), \"D\": F(1)}\nprint(float(w(1)), float(w(0)), float(post), round(num / den, 3))  # 0.63 0.02 0.913 ~0.913\nassert w(1) == F(63, 100) and abs(num / den - float(post)) < 0.005\nassert [k for k, v in opts.items() if v == w(1)] == [\"C\"]",
       "notes": "Blind solve: evidence M=1, H=1 is clamped and only A is sampled, so the weight of a sample with A=1 is 0.9 x 0.7 = 0.63 (option C); a sample with A=0 would weigh 0.2 x 0.1 = 0.02. Own Python (exact Fractions, plus a 400,000-sample likelihood-weighting simulation whose weighted estimate matches the exact posterior 0.913) agrees. Distractors: 0.1575 is the joint P(A=1,M=1,H=1), 0.25 is the prior, 1 is the rejection-sampling weight; none is defensible. The stem states the evidence-clamping rule, so there is no convention ambiguity. Solution steps (0.1725 normaliser and 0.913 limit re-computed), optionAnalysis verdicts, trap and EASY label (one product, about 1 min) re-checked. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "4e929f3d3d58e5ae",
+        "verification": "1bd0965d7354552f"
+      }
     }
   },
   {
@@ -198,6 +222,30 @@
       "agreesWithKey": true,
       "checkCode": "import heapq\nE = {\"S\": {\"A\": 5, \"B\": 1}, \"B\": {\"C\": 1, \"G\": 10}, \"C\": {\"A\": 2, \"D\": 1},\n     \"A\": {\"G\": 4}, \"D\": {\"G\": 7}, \"G\": {}}\n# graph-search UCS: goal test at selection, frontier entry replaced when a cheaper path is found\nfrontier = {\"S\": (0, [\"S\"])}; explored = set(); order = []\nwhile frontier:\n    n = min(frontier, key=lambda k: (frontier[k][0], k))\n    g, path = frontier.pop(n); order.append((n, g))\n    if n == \"G\":\n        break\n    explored.add(n)\n    for m, c in E[n].items():\n        if m not in explored and (m not in frontier or g + c < frontier[m][0]):\n            frontier[m] = (g + c, path + [m])\nprint(order, path, g)  # [S0,B1,C2,D3,A4,G8] ['S','B','C','A','G'] 8\n# independent ground truth: enumerate every simple S->G path\ndef all_paths(n, p):\n    if n == \"G\": yield p; return\n    for m in E[n]: yield from all_paths(m, p + [m])\ncost = lambda p: sum(E[a][b] for a, b in zip(p, p[1:]))\nps = sorted(((cost(p), p) for p in all_paths(\"S\", [\"S\"])))\nprint(ps)\nopts = {\"A\": ([\"S\",\"B\",\"C\",\"A\",\"G\"], 8), \"B\": ([\"S\",\"A\",\"G\"], 9),\n        \"C\": ([\"S\",\"B\",\"C\",\"D\",\"G\"], 10), \"D\": ([\"S\",\"B\",\"G\"], 11)}\nassert (g, path) == (ps[0][0], ps[0][1]) == (8, [\"S\",\"B\",\"C\",\"A\",\"G\"])\nassert all(cost(p) == c for p, c in opts.values())          # each option's stated cost is its true cost\nassert [k for k, (p, c) in opts.items() if (p, c) == (path, g)] == [\"A\"]\nassert [n for n, _ in order] == [\"S\", \"B\", \"C\", \"D\", \"A\", \"G\"]",
       "notes": "Blind solve: S(0) generates A=5, B=1; B(1) gives C=2, G=11; C(2) gives A=4 (replaces 5) and D=3; D(3) gives G=10 (replaces 11); A(4) gives G=8 (replaces 10); G is selected at 8 and returned via S-B-C-A-G. Own Python (graph-search UCS with frontier replacement and goal test at selection, plus enumeration of all four simple S-to-G paths costing 8, 9, 10, 11) agrees, and every option's stated cost equals its true path cost. The stem fixes the goal-test timing and replacement rule, no ties occur in the trace, and only one option is the cheapest path, so there is exactly one defensible answer. Trace, frontier sets, option explanations, shortcut and trap re-checked. MODERATE (five expansions, about 2 min) is an honest label. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "22e98ac415480e18",
+        "verification": "346c2c533fa9ea97"
+      }
     }
   },
   {
@@ -296,6 +344,30 @@
       "agreesWithKey": true,
       "checkCode": "import itertools\n# Semantic ground truth via set inclusion: some sensor x such that {non-grounded drones} is a subset of {y : Mon(y,x)}\ndef truth(n, S, Dr, G, M):\n    N = {y for y in range(n) if Dr[y] and not G[y]}\n    return any(S[x] and N <= {y for y in range(n) if M[y][x]} for x in range(n))\ndef A(n, S, Dr, G, M):\n    return all((not (Dr[y] and not G[y])) or any(S[x] and M[y][x] for x in range(n)) for y in range(n))\ndef B(n, S, Dr, G, M):\n    return any((not S[x]) or all((not (Dr[y] and not G[y])) or M[y][x] for y in range(n)) for x in range(n))\ndef C(n, S, Dr, G, M):\n    return any(S[x] and all(Dr[y] and (not G[y]) and M[y][x] for y in range(n)) for x in range(n))\ndef D(n, S, Dr, G, M):\n    return any(S[x] and all((not (Dr[y] and not G[y])) or M[y][x] for y in range(n)) for x in range(n))\nbits = lambda k: itertools.product([0, 1], repeat=k)\ndiffer = {\"A\": 0, \"B\": 0, \"C\": 0, \"D\": 0}; total = 0\nfor n in (1, 2, 3):\n    mats = [tuple(tuple(r[i*n:(i+1)*n]) for i in range(n)) for r in bits(n*n)]\n    for S, Dr, G in itertools.product(list(bits(n)), repeat=3):\n        for M in mats:\n            t = truth(n, S, Dr, G, M); total += 1\n            for k, f in ((\"A\", A), (\"B\", B), (\"C\", C), (\"D\", D)):\n                if f(n, S, Dr, G, M) != t: differ[k] += 1\nprint(total, differ)  # D never differs; A, B, C each differ on some interpretations\nassert differ[\"D\"] == 0 and all(differ[k] > 0 for k in \"ABC\")",
       "notes": "Blind solve: 'there is a sensor ... monitored by every non-grounded drone' needs one sensor chosen first (outer exists with and) and then a universal restricted by an implication, which is option D. A gives forall-exists (each drone may use a different sensor), B pairs exists with an implication (true for any non-sensor), C puts and under forall. Own Python compares each option with a set-inclusion reading (some sensor whose monitor set contains all non-grounded drones) over all 263,184 interpretations on domains of size 1 to 3: D never differs, while A, B and C differ on 17,030, 84,920 and 173,478 interpretations. Fix made: the option-C explanation claimed (C) is false in any domain containing a sensor, which is not strictly true because the predicates are not declared disjoint (one object could be both a sensor and a non-grounded drone); it now says (C) fails whenever some object is not a non-grounded drone, and the (C) counter-model states that s is not a drone. The key, stem and options are unchanged and unambiguous. EASY at 2 marks (about 1.5 min) is acceptable."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "c1d4aa8a7f30a9e5",
+        "verification": "e16e717ff6bf518d"
+      }
     }
   },
   {
@@ -356,6 +428,30 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\ncard = {\"T\": 3, \"H\": 2, \"F\": 2, \"M\": 3, \"A\": 2}\nedges = [(\"T\", \"F\"), (\"H\", \"F\"), (\"H\", \"M\"), (\"F\", \"M\"), (\"M\", \"A\")]\nparents = {v: [a for a, b in edges if b == v] for v in card}\nfree = 0; entries = 0\nfor v, ps in parents.items():\n    cpt = np.zeros([card[p] for p in ps] + [card[v]])      # one CPT array, last axis = child value\n    entries += cpt.size\n    free += cpt.size - int(np.prod([card[p] for p in ps]))  # each row sums to 1 -> lose one entry per row\nprint(free, entries, int(np.prod(list(card.values()))) - 1)  # 20 35 71\nassert free == 20 and entries == 35",
       "notes": "Blind solve: free parameters per node = (k-1) x product of parent cardinalities: T 2x1 = 2, H 1, F 1x(3x2) = 6, M 2x(2x2) = 8, A 1x3 = 3, total 20. Own Python (numpy CPT arrays, subtracting one entry per parent row) gives 20, with 35 total CPT entries and 71 for the full joint, matching the numbers quoted in the solution and trap. The answer is an exact integer, so no rounding is needed and the NAT range 20 to 20 is appropriate; the stem gives every cardinality and the edge list, so there is no ambiguity. Topic ai-uncertainty / ai-conditional-independence fits. EASY (one formula, five small products, about 1.5 min) is honest. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "a2a7848db2216289",
+        "verification": "c3233e1eee265ae7"
+      }
     }
   },
   {
@@ -454,6 +550,30 @@
       "agreesWithKey": true,
       "checkCode": "import itertools\nnodes = [\"S\", \"A\", \"B\", \"G\"]\nc = {(\"S\",\"A\"): 2, (\"S\",\"B\"): 4, (\"A\",\"B\"): 1, (\"A\",\"G\"): 7, (\"B\",\"G\"): 3}\nh = {\"S\": 5, \"A\": 4, \"B\": 1, \"G\": 0}\nINF = float(\"inf\")\nd = {(u, v): (0 if u == v else c.get((u, v), INF)) for u in nodes for v in nodes}\nfor k, i, j in itertools.product(nodes, repeat=3):          # Floyd-Warshall all-pairs cheapest costs\n    d[i, j] = min(d[i, j], d[i, k] + d[k, j])\nhstar = {n: d[n, \"G\"] for n in nodes}\nadmissible = all(h[n] <= hstar[n] for n in nodes)\nviol = [(u, v) for (u, v), w in c.items() if h[u] > w + h[v]]\nconsistent = not viol and h[\"G\"] == 0\nprint(hstar, admissible, consistent, viol)  # {S:6,A:4,B:3,G:0} True False [('A','B')]\nverdict = {\"A\": admissible and consistent, \"B\": admissible and not consistent,\n           \"C\": consistent and not admissible, \"D\": not admissible and not consistent}\nassert [k for k, v in verdict.items() if v] == [\"B\"]",
       "notes": "Blind solve: true costs-to-go are S 6, A 4, B 3, G 0, so h (5, 4, 1, 0) never exceeds them and is admissible; edge A->B gives h(A) = 4 > 1 + h(B) = 2, so h is not consistent, which is option B. Own Python (Floyd-Warshall costs-to-go, edge-by-edge consistency test, all four options evaluated as booleans) agrees and only B is true. Fix made: the teaching text described h(B) = 1 as 'too pessimistic', but a value that is too low is optimistic; it now says h(B) is so low relative to h(A) that the estimate drops by 3 across a cost-1 edge. Key, stem, options, steps and option analysis are unchanged and correct; the five-edge check table and the f-value drop (6 to 4) were re-verified. EASY is acceptable (definitions checked on four nodes, about 1.5 to 2 min)."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "e838cb55ae699b28",
+        "verification": "61843b09777b9676"
+      }
     }
   },
   {
@@ -511,6 +631,30 @@
       "agreesWithKey": true,
       "checkCode": "import itertools\nfrom sympy import symbols, Or, And, Not, Implies, Equivalent\nfrom sympy.logic.inference import satisfiable\nP, Q, R, S = symbols(\"P Q R S\")\nF = And(Or(P, Q, R), Implies(P, R), Equivalent(S, And(Q, Not(R))))\nmodels = list(satisfiable(F, all_models=True))                # sympy SAT enumeration over P, Q, R, S\nn_sat = sum(1 for m in models if m)                           # (an unsatisfiable formula yields [False])\n# truth-table count with the formula written out by hand\nn_tt = sum(1 for p, q, r, s in itertools.product([False, True], repeat=4)\n           if (p or q or r) and ((not p) or r) and (s == (q and not r)))\n# free-S check: without the biconditional there are exactly 5 (P,Q,R) triples, and S is forced for each\ntriples = [t for t in itertools.product([False, True], repeat=3) if (t[0] or t[1] or t[2]) and ((not t[0]) or t[2])]\nprint(n_sat, n_tt, len(triples))  # 5 5 5\nassert n_sat == n_tt == len(triples) == 5",
       "notes": "Blind solve: S is forced to Q and not R by the biconditional, so count (P,Q,R) triples satisfying (P or Q or R) and (P -> R): 8 minus (000) minus (100, 110) leaves 5 (001, 010, 011, 101, 111), each with exactly one S. Own Python (sympy SAT model enumeration, a hand-written 16-row truth table, and the 5-triple list) all give 5. The answer is an exact integer, so the NAT range 5 to 5 is appropriate and the formula is unambiguous. The table in the solution, shortcut and doubling-to-10 trap were re-checked. EASY (8-row table after seeing S is fixed, about 1.5 min) is honest. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "a6245051166d69e5",
+        "verification": "086855631f6ed65e"
+      }
     }
   },
   {
@@ -613,6 +757,30 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np, itertools\n# factors as arrays indexed by variable values (0/1); axes named via einsum letters\nPU = np.array([0.8, 0.2])                       # P(U)\nPR = np.array([[0.9, 0.1], [0.3, 0.7]])         # PR[u, r] = P(R=r | U=u)\nPO = np.array([[0.8, 0.2], [0.1, 0.9]])         # PO[r, o] = P(O=o | R=r)\nPK = np.array([[0.95, 0.05], [0.4, 0.6]])       # PK[u, k] = P(K=k | U=u)\n# variable elimination: evidence O=1 -> slice PO; eliminate K, then R; multiply prior; normalise\nfO = PO[:, 1]                                   # factor over R\nfK = PK.sum(axis=1)                             # sum_k P(k|U): all ones (barren leaf)\nfR = np.einsum(\"ur,r->u\", PR, fO)               # sum_r P(r|U) P(O=1|r)\nunnorm = PU * fK * fR\npost = unnorm / unnorm.sum()\n# cross-check with the full joint (brute force)\nJ = np.einsum(\"u,ur,ro,uk->urok\", PU, PR, PO, PK)\npost_bf = J[:, :, 1, :].sum(axis=(1, 2)); post_bf = post_bf / post_bf.sum()\nprint(fK, fR, unnorm, post[1], post_bf[1])       # [1 1] [0.27 0.69] [0.216 0.138] 0.3898 0.3898\nopts = {\"A\": 0.14, \"B\": 0.39, \"C\": 0.64, \"D\": 0.69}\nassert np.allclose(fK, 1) and abs(post[1] - post_bf[1]) < 1e-12\nassert [k for k, v in opts.items() if round(post[1], 2) == v] == [\"B\"]",
       "notes": "Blind solve: K is an unobserved leaf and sums to 1; summing out R gives P(O=1|U=1) = 0.7x0.9 + 0.3x0.2 = 0.69 and P(O=1|U=0) = 0.1x0.9 + 0.9x0.2 = 0.27; multiplying by the prior gives 0.138 and 0.216, so the posterior is 0.138/0.354 = 0.3898, which rounds to 0.39 (option B). Own Python (numpy factor-based variable elimination and a full-joint brute-force cross-check) agrees, and only option B matches at two decimals. Distractors re-derived: 0.14 is the unnormalised 0.138, 0.64 is 0.126/0.198 from keeping only the R=1 term, 0.69 is P(O=1|U=1); all four are well separated, so the two-decimal rounding stated in the stem gives one answer. Solution steps, teaching numbers and the MODERATE label (three linked steps, about 2.5 min) re-checked. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "dec1a76336a34e4d",
+        "verification": "293429a277b53750"
+      }
     }
   }
 ]

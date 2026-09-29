@@ -89,18 +89,18 @@
       "commonTrap": "Treating the function as an exact-match binary search (return the index when `a[mid] == x`, otherwise -1). The loop has no equality test: it keeps shrinking `hi` past matches to reach the leftmost one, and it returns a position even when `x` is not present."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(C) 3 9 -1",
       "agreesWithKey": true,
-      "checkCode": "def h(a, x):\n    lo, hi = 0, len(a) - 1\n    r = -1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            r = mid\n            hi = mid - 1\n    return r\na = [2, 4, 4, 7, 7, 7, 9, 12, 12, 15, 18, 21]\nprint(h(a, 7), h(a, 13), h(a, 30))",
-      "notes": ""
+      "checkCode": "from bisect import bisect_left\ndef h(a, x):\n    lo, hi, r = 0, len(a) - 1, -1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            r, hi = mid, mid - 1\n    return r\na = [2, 4, 4, 7, 7, 7, 9, 12, 12, 15, 18, 21]\n# h must equal \"leftmost index with a[i] >= x, else -1\" for every query value\nref = lambda x: next((i for i, v in enumerate(a) if v >= x), -1)\nassert all(h(a, x) == ref(x) == (bisect_left(a, x) if bisect_left(a, x) < len(a) else -1) for x in range(0, 30))\nprint(h(a, 7), h(a, 13), h(a, 30))",
+      "notes": "Blind solve: the loop is a lower-bound search (leftmost index with a[i] >= x, else -1); h(a,7)=3, h(a,13)=9 (value 15), h(a,30)=-1, i.e. (C). Own Python re-implemented h and asserted it equals a linear-scan and bisect_left reference for every x in 0..29 before printing 3 9 -1. Audited the three traces (every lo/hi/mid value recomputed), the four option explanations (A = last index with a[i] <= x gives 5 8 11, B = len(a) sentinel, D = exact-match search gives 5 -1 -1), the MODERATE label and the pdsa-searching / pdsa-binary-search mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -114,7 +114,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "b37a1c6753a108cb",
+        "verification": "757cbdd3e279201c"
+      }
     }
   },
   {
@@ -203,18 +207,18 @@
       "commonTrap": "Checking only one requirement (for example, that the set is closed under addition) or assuming a set is a subspace because it is described by a single 'nice' condition. The zero vector and scalar multiples by negative numbers are the usual failure points."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(D)",
       "agreesWithKey": true,
-      "checkCode": "import itertools, random\nev = lambda c, t: sum(ci * t**i for i, ci in enumerate(c))\nS = {'A': lambda c: c[3] != 0, 'B': lambda c: ev(c, 0) == 1,\n     'C': lambda c: ev(c, 1) >= 0, 'D': lambda c: ev(c, 1) == ev(c, 2)}\ngrid = list(itertools.product(range(-3, 4), repeat=4))\ndef is_subspace(f):\n    if not f((0, 0, 0, 0)): return False\n    M = [c for c in grid if f(c)]\n    for _ in range(3000):\n        p, q = random.choice(M), random.choice(M)\n        a, b = random.randint(-4, 4), random.randint(-4, 4)\n        if not f(tuple(a * u + b * v for u, v in zip(p, q))): return False\n    return True\nprint([k for k, f in S.items() if is_subspace(f)])",
-      "notes": ""
+      "checkCode": "import itertools\n# P3 element = coefficient tuple (c0,c1,c2,c3); exhaustive closure test on a small integer grid\nev = lambda c, t: sum(ci * t**i for i, ci in enumerate(c))\nsubsets = {'A': lambda c: c[3] != 0,            # degree exactly 3\n           'B': lambda c: ev(c, 0) == 1,        # p(0) = 1\n           'C': lambda c: ev(c, 1) >= 0,        # p(1) >= 0\n           'D': lambda c: ev(c, 1) == ev(c, 2)} # p(1) = p(2)\ngrid = list(itertools.product(range(-2, 3), repeat=4))\ndef is_subspace(f):\n    if not f((0, 0, 0, 0)): return False\n    S = [c for c in grid if f(c)]\n    add = lambda p, q: tuple(u + v for u, v in zip(p, q))\n    if any(not f(add(p, q)) for p in S for q in S): return False\n    return all(f(tuple(k * u for u in p)) for p in S for k in (-3, -1, 2))\nprint([k for k, f in subsets.items() if is_subspace(f)])",
+      "notes": "Blind solve: only p(1) = p(2) is a homogeneous linear condition (c1 + 3c2 + 7c3 = 0, dimension 3); (A) fails closure (x^3 + (-x^3 + x) = x), (B) lacks the zero polynomial, (C) fails under the scalar -1. Own Python tested zero-membership, closure under addition and closure under scalar multiples exhaustively on the coefficient grid {-2..2}^4 and returned only D. Audited the steps, option verdicts, EASY label and the la-vector-spaces / la-subspaces mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -228,7 +232,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "44afe660eb46a4a1",
+        "verification": "76ac369bdefbf31c"
+      }
     }
   },
   {
@@ -283,18 +291,18 @@
       "commonTrap": "Stopping after the first centroid update. The SSE for the first partition $\\{H1,H5\\}$, $\\{H2,H3,H4,H6\\}$ about its own centroids is $65$, a very different number. Convergence is only detected by an assignment step that changes nothing, and here the second assignment moves two hubs."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "13.25",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nP = [(5, 10), (7, 2), (3, 9), (2, 9), (5, 8), (4, 2)]\nC = [P[0], P[2]]\nd2 = lambda p, c: (p[0] - c[0])**2 + (p[1] - c[1])**2\nprev = None\nwhile True:\n    lab = [0 if d2(p, C[0]) < d2(p, C[1]) else 1 for p in P]\n    assert all(d2(p, C[0]) != d2(p, C[1]) for p in P)\n    if lab == prev: break\n    prev = lab\n    C = [(F(sum(p[0] for p, l in zip(P, lab) if l == j), lab.count(j)),\n          F(sum(p[1] for p, l in zip(P, lab) if l == j), lab.count(j))) for j in (0, 1)]\nsse = sum(d2(p, C[l]) for p, l in zip(P, lab))\nprint(lab, [(str(a), str(b)) for a, b in C], float(sse))",
-      "notes": ""
+      "checkCode": "import numpy as np\nP = np.array([[5, 10], [7, 2], [3, 9], [2, 9], [5, 8], [4, 2]], float)   # H1..H6\nC = P[[0, 2]].copy()                                                       # initial centroids H1, H3\nprev = None\nwhile True:\n    D = ((P[:, None, :] - C[None, :, :]) ** 2).sum(axis=2)\n    assert all(abs(D[i, 0] - D[i, 1]) > 1e-12 for i in range(6))           # no ties\n    lab = D.argmin(axis=1)\n    if prev is not None and (lab == prev).all():\n        break                                                              # assignment unchanged -> stop\n    prev = lab\n    C = np.array([P[lab == k].mean(axis=0) for k in range(2)])\nsse = sum(((P[lab == k] - P[lab == k].mean(axis=0)) ** 2).sum() for k in range(2))\nprint(lab + 1, C.tolist(), round(float(sse), 4))",
+      "notes": "Blind solve of Lloyd's algorithm by hand: {H1,H5} / {H2,H3,H4,H6} gives centroids (5,9) and (4,5.5); then {H1,H3,H4,H5} / {H2,H6} gives (3.75,9) and (5.5,2); the third assignment is unchanged, SSE = 8.75 + 4.5 = 13.25. Own numpy implementation (with a no-tie assertion at every assignment) agrees. Audited every squared distance in the three assignment tables, the shortcut (6.75 + 2 + 4.5) and the 65 quoted in commonTrap, the stem's stopping rule and rounding sentence (13.25 is exact; range 13.24 to 13.26 is sensible), the MODERATE label and the ml-clustering / ml-kmeans mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -308,7 +316,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "a15f66b6a41baa75",
+        "verification": "4e90b64a06a09877"
+      }
     }
   },
   {
@@ -403,18 +415,18 @@
       "commonTrap": "Looking only at the tables directly referencing `Dept`. The cascade to `Proj` is itself subject to the constraint from `Task`, and a violation anywhere rolls back the entire statement, including the SET NULL on `Emp`."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(B), (D)",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nDDL = '''\nCREATE TABLE Dept (DId INT PRIMARY KEY, DName TEXT);\nCREATE TABLE Emp (EId INT PRIMARY KEY, EName TEXT, DId INT REFERENCES Dept(DId) ON DELETE SET NULL);\nCREATE TABLE Proj (PId TEXT PRIMARY KEY, PName TEXT, DId INT REFERENCES Dept(DId) ON DELETE CASCADE);\nCREATE TABLE Task (TId TEXT PRIMARY KEY, PId TEXT REFERENCES Proj(PId) ON DELETE NO ACTION, Hours INT);\nINSERT INTO Dept VALUES (10,'Sales'),(20,'Research'),(30,'Legal');\nINSERT INTO Emp VALUES (1,'Ravi',10),(2,'Sita',20),(3,'Tara',20),(4,'Uma',30),(5,'Vik',NULL);\nINSERT INTO Proj VALUES ('P1','Alpha',10),('P2','Beta',20),('P3','Gamma',30),('P4','Delta',30);\nINSERT INTO Task VALUES ('T1','P1',5),('T2','P2',8),('T3','P2',3);\n'''\ndef run(sql):\n    c = sqlite3.connect(':memory:'); c.executescript(DDL); c.execute('PRAGMA foreign_keys=ON')\n    try: c.execute(sql); ok = True\n    except sqlite3.IntegrityError: ok = False\n    return c, ok\nq = lambda c, s: c.execute(s).fetchall()\nc, ok = run('DELETE FROM Dept WHERE DId=30')\nA = ok and q(c, 'SELECT COUNT(*) FROM Proj')[0][0] == 4 and q(c, 'SELECT COUNT(*) FROM Proj WHERE DId IS NULL')[0][0] == 2\nB = ok and q(c, 'SELECT COUNT(*) FROM Emp WHERE DId IS NULL')[0][0] == 2\nc, ok = run('UPDATE Dept SET DId=40 WHERE DId=10')\nC = ok and q(c, \"SELECT DId FROM Emp WHERE EName='Ravi'\")[0][0] == 40\nc, ok = run('DELETE FROM Dept WHERE DId=20')\nD = not ok and q(c, 'SELECT COUNT(*) FROM Dept')[0][0] == 3 and q(c, 'SELECT COUNT(*) FROM Proj')[0][0] == 4\nprint([k for k, v in zip('ABCD', (A, B, C, D)) if v])",
-      "notes": ""
+      "checkCode": "import sqlite3\nSCHEMA = \"\"\"\nPRAGMA foreign_keys = ON;\nCREATE TABLE Dept (DId INT PRIMARY KEY, DName VARCHAR(20));\nCREATE TABLE Emp  (EId INT PRIMARY KEY, EName VARCHAR(20), DId INT REFERENCES Dept(DId) ON DELETE SET NULL);\nCREATE TABLE Proj (PId VARCHAR(4) PRIMARY KEY, PName VARCHAR(20), DId INT REFERENCES Dept(DId) ON DELETE CASCADE);\nCREATE TABLE Task (TId VARCHAR(4) PRIMARY KEY, PId VARCHAR(4) REFERENCES Proj(PId) ON DELETE NO ACTION, Hours INT);\nINSERT INTO Dept VALUES (10,'Sales'),(20,'Research'),(30,'Legal');\nINSERT INTO Emp VALUES (1,'Ravi',10),(2,'Sita',20),(3,'Tara',20),(4,'Uma',30),(5,'Vik',NULL);\nINSERT INTO Proj VALUES ('P1','Alpha',10),('P2','Beta',20),('P3','Gamma',30),('P4','Delta',30);\nINSERT INTO Task VALUES ('T1','P1',5),('T2','P2',8),('T3','P2',3);\n\"\"\"\ndef run(stmt):                       # fresh instance per statement; a rejected statement is rolled back\n    con = sqlite3.connect(':memory:', isolation_level=None)\n    con.executescript(SCHEMA)\n    try: con.execute(stmt); ok = True\n    except sqlite3.IntegrityError: ok = False\n    return con, ok\nq = lambda con, s: con.execute(s).fetchall()\ncon, ok = run(\"DELETE FROM Dept WHERE DId = 30\")\nA = ok and len(q(con, \"SELECT * FROM Proj\")) == 4 and len(q(con, \"SELECT * FROM Proj WHERE DId IS NULL\")) == 2\nB = ok and len(q(con, \"SELECT * FROM Emp WHERE DId IS NULL\")) == 2\ncon, ok = run(\"UPDATE Dept SET DId = 40 WHERE DId = 10\")\nC = ok and q(con, \"SELECT DId FROM Emp WHERE EName = 'Ravi'\") == [(40,)]\ncon, ok = run(\"DELETE FROM Dept WHERE DId = 20\")\nD = (not ok)\nunchanged = (len(q(con, \"SELECT * FROM Dept\")), len(q(con, \"SELECT * FROM Emp WHERE DId IS NULL\")), len(q(con, \"SELECT * FROM Proj\"))) == (3, 1, 4)\nprint([k for k, v in zip('ABCD', (A, B, C, D)) if v], 'rejected delete left db unchanged:', unchanged)",
+      "notes": "Blind solve: DELETE on Dept 30 sets Uma's DId to NULL (Emp then has 2 NULLs, so B is true) and cascades to P3 and P4, which no task references (Proj drops to 2 rows, none NULL, so A is false); UPDATE of Dept.DId 10 to 40 is rejected by the default action because Ravi and P1 reference it (C false); DELETE on Dept 20 cascades to P2, which T2 and T3 reference under NO ACTION, so the whole statement is rejected (D true). Own SQLite script (foreign_keys ON, fresh instance per statement) gives B, D and confirms the rejected delete leaves the database unchanged. Audited the stem (default ON UPDATE action and roll-back of rejected statements are stated), the steps, option verdicts, MODERATE label and the dbw-relational-model mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -428,7 +440,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "bfd2a7a6cd29b103",
+        "verification": "86d7b90eb0056766"
+      }
     }
   },
   {
@@ -516,18 +532,18 @@
       "commonTrap": "Forgetting the factor $4!$ (choosing the coefficient $-25/12$), or truncating the product so that only some of the pairs with total degree 4 are counted. Every term $c_k x^k$ of the logarithm pairs with $(-1)^{4-k}x^{4-k}$ from $1/(1+x)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(A) -50",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.log(1 + x) / (1 + x)\na4 = sp.series(f, x, 0, 6).removeO().coeff(x, 4)\nprint(sp.diff(f, x, 4).subs(x, 0), a4, sp.factorial(4) * a4)",
-      "notes": ""
+      "checkCode": "import sympy as sp\nfrom mpmath import mp, mpf, diff, log\nx = sp.symbols('x')\nf = sp.log(1 + x) / (1 + x)\nexact = sp.diff(f, x, 4).subs(x, 0)                       # symbolic 4th derivative at 0\nmp.dps = 30\nnumeric = diff(lambda t: log(1 + t) / (1 + t), mpf(0), 4)  # independent numerical differentiation\ncauchy = sp.factorial(4) * sp.series(f, x, 0, 5).removeO().coeff(x, 4)   # 4! * Maclaurin coefficient\nprint(exact, sp.N(numeric, 10), cauchy, [-50, 50, sp.Rational(-25, 12), -14].index(exact))",
+      "notes": "Blind solve: with u = 1 + x, f = ln u / u has f^(n) = (-1)^n n! (ln u - H_n) / u^(n+1), so f^(4)(0) = 24 * (-25/12) = -50, option (A). Own Python (sympy fourth derivative, mpmath numerical fourth derivative, and 4! times the Maclaurin coefficient) all give -50. Audited the x^4 coefficient pairing (-1 - 1/2 - 1/3 - 1/4), the harmonic-number cross-check, the distractors (B wrong sign, C = a_4, D = 24 * (-7/12)), the MODERATE label and the co-taylor / co-taylor-series mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -541,7 +557,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "027f50138e365f1d",
+        "verification": "ca64050cfa86dc4f"
+      }
     }
   },
   {
@@ -596,18 +616,18 @@
       "commonTrap": "Inverting each block entry-by-entry, using $1/\\operatorname{tr}(A) + 1/\\operatorname{tr}(D)$, or trying to invert the full $4\\times4$ matrix and getting lost in the off-diagonal block. The off-diagonal block never affects the trace of the inverse."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2.45",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2.45 (49/20)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA = np.array([[2, 1], [3, 4]], float); B = np.array([[1, 2], [0, 5]], float); D = np.array([[3, 1], [2, 2]], float)\nM = np.block([[A, B], [np.zeros((2, 2)), D]])\nprint(round(np.trace(np.linalg.inv(M)), 6), round(np.trace(np.linalg.inv(A)) + np.trace(np.linalg.inv(D)), 6))",
-      "notes": ""
+      "checkCode": "import numpy as np, sympy as sp\nA = sp.Matrix([[2, 1], [3, 4]]); B = sp.Matrix([[1, 2], [0, 5]]); D = sp.Matrix([[3, 1], [2, 2]])\nM = sp.Matrix(sp.BlockMatrix([[A, B], [sp.zeros(2, 2), D]]))\nt_exact = M.inv().trace()                                   # exact full 4x4 inverse\nMn = np.array(M.tolist(), float)\nprint(t_exact, round(float(np.trace(np.linalg.inv(Mn))), 6),\n      A.trace() / A.det() + D.trace() / D.det())            # tr(X^-1) = tr X / det X for 2x2 blocks",
+      "notes": "Blind solve: M is block upper-triangular, so the diagonal blocks of M^-1 are A^-1 and D^-1 and B is irrelevant to the trace; tr = 6/5 + 5/4 = 2.45. Own Python inverts the full 4x4 matrix exactly (sympy, 49/20) and numerically (numpy) and cross-checks tr(X)/det(X) on each 2x2 block. Audited the determinants (5, 4, det M = 20), both 2x2 inverses, the NAT rounding (2.45 is exact; range 2.44 to 2.46 is sensible), the MODERATE label and the la-matrices / la-partition-matrix mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -621,7 +641,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "117976d13f805ed7",
+        "verification": "d08b54bd3c4fc761"
+      }
     }
   },
   {
@@ -672,18 +696,18 @@
       "commonTrap": "Multiplying by $n = 21$ instead of $n - 1 = 20$ (giving 189), or reporting the discarded eigenvalue $9$, or the sum of the retained eigenvalues, without scaling. The covariance matrix is already divided by $n - 1$, so the un-normalised sum of squares is $(n-1)$ times the eigenvalue."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "180",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nS = np.array([[15, 6, 0], [6, 18, 6], [0, 6, 21]], float); n = 21\nw, V = np.linalg.eigh(S)\nrng = np.random.default_rng(0)\nZ = rng.normal(size=(n, 3)); Z -= Z.mean(0)\nZ = Z @ np.linalg.inv(np.linalg.cholesky(Z.T @ Z / (n - 1))).T\nX = Z @ np.linalg.cholesky(S).T\nassert np.allclose(X.T @ X / (n - 1), S)\nU = V[:, ::-1][:, :2]\nprint(np.round(w, 6), round(((X - X @ U @ U.T) ** 2).sum(), 6), (n - 1) * w[0])",
-      "notes": ""
+      "checkCode": "import numpy as np\nS = np.array([[15, 6, 0], [6, 18, 6], [0, 6, 21]], float); n = 21\nw, V = np.linalg.eigh(S); w, V = w[::-1], V[:, ::-1]            # descending eigenpairs\n# Build an explicit centred data set with sample covariance exactly S (n-1 divisor), then reconstruct\nrng = np.random.default_rng(1)\nZ = rng.standard_normal((n, 3)); Z -= Z.mean(axis=0)\nZ = Z @ np.linalg.inv(np.linalg.cholesky(np.cov(Z.T))).T          # identity sample covariance\nX = Z @ np.linalg.cholesky(S).T                                    # sample covariance S\nassert np.allclose(X.mean(axis=0), 0) and np.allclose(np.cov(X.T), S)\nU = V[:, :2]                                                       # top-2 principal components\nerr = ((X - X @ U @ U.T) ** 2).sum()\nprint(np.round(w, 6), round(float(err), 6), (n - 1) * w[2], (n - 1) * (np.trace(S) - w[0] - w[1]))",
+      "notes": "Blind solve: S = 3 * [[5,2,0],[2,6,2],[0,2,7]] has eigenvalues 27, 18, 9, and the rank-2 reconstruction error of centred data is (n-1) * lambda_3 = 20 * 9 = 180. Own Python builds an explicit centred 21-point data set whose sample covariance is exactly S, projects onto the top two eigenvectors and sums the squared residuals: 180.0, which also equals (n-1)(tr S - l1 - l2). Audited the characteristic polynomial (54, 891, 4374; root 9; factor (l-18)(l-27)), the 1080 - 900 cross-check, the trap value 189, the range 180 to 180 for an exact integer, the HARD label (cubic eigenvalues plus the n-1 scaling trap, about 4 minutes) and the ml-pca mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -697,7 +721,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "4e9ce6f8ac5eedfc",
+        "verification": "dc8937083b6df599"
+      }
     }
   },
   {
@@ -789,18 +817,18 @@
       "commonTrap": "Believing that a system with more unknowns than equations always has a solution. That is true for the homogeneous system $A\\mathbf{x}=\\mathbf{0}$, but for $A\\mathbf{x}=\\mathbf{b}$ consistency depends on whether $\\mathbf{b}$ lies in the column space, which is only 2-dimensional here."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(A), (B), (D)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA = sp.Matrix([[1, 2, -1, 3], [2, 4, 1, 3], [3, 6, 0, 6]])\ncons = lambda b: A.rank() == A.row_join(sp.Matrix(b)).rank()\nAok = A.rank() == 2 and len(A.nullspace()) == 2\nBok = cons([5, 7, 12]) and A.rank() < 4\nCok = all(cons(b) for b in ([1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 2, 4]))\nDok = not cons([1, 2, 4])\nprint([k for k, v in zip('ABCD', (Aok, Bok, Cok, Dok)) if v])",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[1, 2, -1, 3], [2, 4, 1, 3], [3, 6, 0, 6]])\nr = A.rank()\nconsistent = lambda b: A.rank() == A.row_join(sp.Matrix(b)).rank()\nstmtA = (r == 2) and (A.shape[1] - r == 2) and len(A.nullspace()) == 2\nstmtB = consistent([5, 7, 12]) and len(A.nullspace()) > 0        # consistent + nontrivial null space -> infinitely many\nstmtC = all(consistent(b) for b in ([1, 0, 0], [0, 1, 0], [0, 0, 1]))   # consistent for EVERY b iff each unit vector is\nstmtD = not consistent([1, 2, 4])\nprint([k for k, v in zip('ABCD', (stmtA, stmtB, stmtC, stmtD)) if v], r, sp.linsolve((A, sp.Matrix([5, 7, 12]))))",
+      "notes": "Blind solve: row 3 = row 1 + row 2, so rank 2 and nullity 2 (A true); Ax = b is consistent iff b3 = b1 + b2, so (5,7,12) is consistent with two free variables (B true), (1,2,4) is inconsistent (D true), and (C) is false. Own sympy check of the rank, the nullity, rank([A|b]) for both vectors, and consistency for the unit vectors (which fails) gives A, B, D; linsolve for (5,7,12) returns a two-parameter family. Audited the row reduction, the consistency condition, the option verdicts, the MODERATE label and the la-linear-systems / la-systems mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -814,7 +842,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "2200db317d81d229",
+        "verification": "d265464d8b9f0adf"
+      }
     }
   },
   {
@@ -864,18 +896,18 @@
       "commonTrap": "Two opposite slips: dropping sensor 5 (West) because it has no reading above 20, which ignores vacuous truth and gives 2; or counting qualifying sensors instead of distinct sites, which double-counts North and gives 4."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nc = sqlite3.connect(':memory:')\nc.executescript('''\nCREATE TABLE Sensor(SId INT, Site TEXT);\nCREATE TABLE Reading(SId INT, Day TEXT, Val INT);\nINSERT INTO Sensor VALUES (1,'North'),(2,'South'),(3,'North'),(4,'East'),(5,'West'),(6,'South');\nINSERT INTO Reading VALUES (1,'Mon',25),(1,'Tue',30),(2,'Mon',18),(2,'Tue',40),(3,'Mon',22),(4,'Tue',21),(4,'Wed',35),(6,'Wed',19);\n''')\nrows = c.execute('SELECT DISTINCT t.Site FROM Sensor t WHERE NOT EXISTS (SELECT 1 FROM Reading r WHERE r.SId = t.SId AND NOT (r.Val > 20))').fetchall()\nprint(len(rows), sorted(r[0] for r in rows))",
-      "notes": ""
+      "checkCode": "Sensor = [(1, 'North'), (2, 'South'), (3, 'North'), (4, 'East'), (5, 'West'), (6, 'South')]\nReading = [(1, 'Mon', 25), (1, 'Tue', 30), (2, 'Mon', 18), (2, 'Tue', 40), (3, 'Mon', 22), (4, 'Tue', 21), (4, 'Wed', 35), (6, 'Wed', 19)]\n# direct evaluation of {t.Site | Sensor(t) and forall r ((Reading(r) and r.SId = t.SId) => r.Val > 20)}\nimplies = lambda p, q: (not p) or q\nresult = {t[1] for t in Sensor if all(implies(r[0] == t[0], r[2] > 20) for r in Reading)}   # a set: no duplicates\nqualifying = [t[0] for t in Sensor if all(implies(r[0] == t[0], r[2] > 20) for r in Reading)]\nprint(len(result), sorted(result), 'qualifying sensors', qualifying)",
+      "notes": "Blind solve: sensors 1 (25, 30), 3 (22) and 4 (21, 35) have every reading above 20, and sensor 5 has no readings so it qualifies vacuously; sensors 2 (18) and 6 (19) fail. The sites of 1, 3, 4, 5 are North, North, East, West, and a tuple-calculus result is a set, so there are 3 distinct tuples. Own Python evaluates the formula literally (forall with implication over Reading) and returns {East, North, West}, so 3 (a bag count would give 4, ignoring vacuous truth would give 2). Audited that the stem leaves one defensible answer (relational-calculus results are sets and the projected attribute is Site), the steps, the commonTrap, the MODERATE label and the dbw-tuple-calculus mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -889,7 +921,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "05f18c0983153370",
+        "verification": "f2fe2e9db3332ff9"
+      }
     }
   },
   {
@@ -984,18 +1020,18 @@
       "commonTrap": "Believing that a better pivot heuristic such as median-of-three changes the worst-case bound. It only makes the bad case less likely on common inputs; the worst case stays $\\Theta(n^2)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(C)",
       "agreesWithKey": true,
-      "checkCode": "import math\nfrom functools import cmp_to_key\ndef qs(a, pivot):  # Lomuto-style partition scanning left to right; pivot moved to the front first\n    def rec(lo, hi):\n        if lo >= hi: return\n        m = pivot(a, lo, hi)\n        a[lo], a[m] = a[m], a[lo]\n        p, i = a[lo], lo\n        for j in range(lo + 1, hi + 1):\n            if a[j] < p:\n                i += 1; a[i], a[j] = a[j], a[i]\n        a[lo], a[i] = a[i], a[lo]\n        rec(lo, i - 1); rec(i + 1, hi)\n    rec(0, len(a) - 1)\nclass V:  # counting item\n    n = 0\n    def __init__(s, v): s.v = v\n    def __lt__(s, o): V.n += 1; return s.v < o.v\nfirst = lambda a, lo, hi: lo\nmed3 = lambda a, lo, hi: sorted([lo, (lo + hi) // 2, hi], key=cmp_to_key(lambda p, q: -1 if a[p] < a[q] else 1))[1]\ndef count(perm, pivot):\n    V.n = 0; qs([V(x) for x in perm], pivot); return V.n\nC = all(count(range(n), first) == n * (n - 1) // 2 for n in range(1, 60))\nclass Adv:  # McIlroy adversary: lazily fixes values so the pivot is always near the minimum\n    def __init__(s, n): s.g = n; s.v = [n] * n; s.k = 0; s.c = 0\n    def cmp(s, x, y):\n        if s.v[x] == s.g and s.v[y] == s.g:\n            z = x if x == s.c else y; s.v[z] = s.k; s.k += 1\n        if s.v[x] == s.g: s.c = x\n        elif s.v[y] == s.g: s.c = y\n        return s.v[x] - s.v[y]\nclass It:\n    def __init__(s, i, adv): s.i, s.adv = i, adv\n    def __lt__(s, o): return s.adv.cmp(s.i, o.i) < 0\nn = 1024; adv = Adv(n); qs([It(i, adv) for i in range(n)], med3)\nvals, nxt = list(adv.v), adv.k\nfor i in range(n):\n    if vals[i] == adv.g: vals[i] = nxt; nxt += 1\nB_quadratic = count(vals, med3) > 5 * n * math.log2(n)   # median-of-3 still forced to ~n^2/4 comparisons\ndef ms(a):\n    if len(a) <= 1: return a, 0\n    m = len(a) // 2; L, cl = ms(a[:m]); R, cr = ms(a[m:]); o, i, j, c = [], 0, 0, 0\n    while i < len(L) and j < len(R):\n        c += 1\n        if L[i] <= R[j]: o.append(L[i]); i += 1\n        else: o.append(R[j]); j += 1\n    return o + L[i:] + R[j:], cl + cr + c\nr = [ms(list(range(2 ** k)))[1] / 2 ** k for k in (6, 8, 10, 12)]   # comparisons per element grows like log n, not constant\nD_linear = r[-1] < 1.5 * r[0]\nprint(['C'] if C and B_quadratic and not D_linear else 'mismatch', r)",
-      "notes": ""
+      "checkCode": "import sys, math\nsys.setrecursionlimit(20000)\n# --- Lomuto quicksort with a counting comparison; pivot rule pluggable ---\nclass Item:\n    cmps = 0\n    def __init__(s, v): s.v = v\n    def __lt__(s, o): Item.cmps += 1; return s.v < o.v\ndef quicksort(a, choose):\n    def rec(lo, hi):\n        if lo >= hi: return\n        m = choose(a, lo, hi); a[lo], a[m] = a[m], a[lo]\n        p, i = a[lo], lo\n        for j in range(lo + 1, hi + 1):\n            if a[j] < p: i += 1; a[i], a[j] = a[j], a[i]\n        a[lo], a[i] = a[i], a[lo]; rec(lo, i - 1); rec(i + 1, hi)\n    rec(0, len(a) - 1)\nfirst = lambda a, lo, hi: lo\ndef med3(a, lo, hi):\n    idx = [lo, (lo + hi) // 2, hi]\n    idx.sort(key=lambda k: a[k].v)            # ordering the three candidates uses raw keys, not counted\n    return idx[1]\ndef count(perm, choose):\n    Item.cmps = 0; quicksort([Item(x) for x in perm], choose); return Item.cmps\n# (C) first-element pivot on sorted input: exactly n(n-1)/2 pivot comparisons\nC = all(count(range(n), first) == n * (n - 1) // 2 for n in range(1, 80))\n# (B) median-of-3 worst case: build an adversarial permutation lazily (comparison-driven adversary), then replay it\nclass Adv:\n    def __init__(s, n): s.n, s.val, s.solid, s.cand = n, [n] * n, 0, 0     # value n = \"still gas\"\n    def lt(s, x, y):\n        if s.val[x] == s.n and s.val[y] == s.n:\n            z = x if x == s.cand else y; s.val[z] = s.solid; s.solid += 1\n        if s.val[x] == s.n: s.cand = x\n        elif s.val[y] == s.n: s.cand = y\n        return s.val[x] < s.val[y]\nclass AItem:\n    def __init__(s, i, adv): s.i, s.adv, s.v = i, adv, None\n    def __lt__(s, o): return s.adv.lt(s.i, o.i)\ndef med3_adv(a, lo, hi):                       # same rule, but every key comparison goes through the adversary\n    idx = [lo, (lo + hi) // 2, hi]\n    for x in range(3):\n        for y in range(2 - x):\n            if a[idx[y + 1]] < a[idx[y]]: idx[y], idx[y + 1] = idx[y + 1], idx[y]\n    return idx[1]\ndef killer(n):\n    adv = Adv(n); quicksort([AItem(i, adv) for i in range(n)], med3_adv)\n    v, nxt = list(adv.val), adv.solid\n    for i in range(n):\n        if v[i] == n: v[i] = nxt; nxt += 1\n    return v\nc = {n: count(killer(n), med3) for n in (256, 512, 1024)}\nratios = [c[512] / c[256], c[1024] / c[512]]                 # ~4 => quadratic; n log n would give ~2.1\nB_quadratic = all(r > 3.5 for r in ratios) and c[1024] > 0.2 * 1024**2 / 2\n# (A) top-down array mergesort: measure the auxiliary buffer it needs; (D) merge cost is linear\ndef msort(a, st):\n    if len(a) <= 1: return a\n    m = len(a) // 2; L = msort(a[:m], st); R = msort(a[m:], st)\n    out, i, j = [], 0, 0; st['buf'] = max(st['buf'], len(L) + len(R))\n    while i < len(L) and j < len(R):\n        st['cmp'] += 1\n        if L[i] <= R[j]: out.append(L[i]); i += 1\n        else: out.append(R[j]); j += 1\n    return out + L[i:] + R[j:]\nrows = []\nfor k in (6, 8, 10, 12):\n    n = 2**k; st = {'buf': 0, 'cmp': 0}; msort(list(range(n))[::-1], st); rows.append((n, st['buf'], st['cmp'] / n))\nA_aux_linear = all(b == n for n, b, _ in rows)                  # buffer grows as n, not O(1)\nD_merge_not_constant = rows[-1][2] > rows[0][2] + 2                # comparisons per element grow ~ log2 n (a constant-time merge would give a flat 1)\nprint(['C'] if (C and B_quadratic and A_aux_linear and D_merge_not_constant) else 'mismatch', [round(r, 2) for r in ratios], rows)",
+      "notes": "Blind solve: A false (array mergesort needs a Theta(n) buffer), B false (median-of-three still has Theta(n^2) inputs), C true (sorted input with a first-element pivot gives (n-1) + ... + 1 = n(n-1)/2), D false (merging is Theta(n), so T(n) = 2T(n/2) + Theta(n)). Own Python: (C) exact count n(n-1)/2 for n = 1..79 with a Lomuto partition; (B) a comparison-driven adversary builds median-of-3 killer inputs whose comparison counts quadruple when n doubles (256, 512, 1024); (A) the merge buffer measured equals n; (D) comparisons per element grow like log2 n (3, 4, 5, 6). Audited the option analysis, the EASY label (three recall statements and one direct count, about 1.5 minutes) and the pdsa-sorting / pdsa-divide-conquer mapping. No edits required."
     },
     "review": {
-      "status": "SELF_CHECKED",
+      "status": "VERIFIED",
       "checks": {
         "selfCheck": true,
-        "independentSolve": false,
+        "independentSolve": true,
         "metadata": true,
         "blueprint": true,
         "estimatedTime": true,
@@ -1009,7 +1045,11 @@
       },
       "fixed": false,
       "notes": "",
-      "reviewedAt": "2026-09-29"
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "06c603da4184f6f2",
+        "verification": "3fa94bf31302ba79"
+      }
     }
   }
 ]

@@ -1,6 +1,7 @@
 /**
  * npm run content:mock-review [-- --tests mock-01,mock-02] [--dry-run] [--print-issues]
  *
+ * --ignore-busy skips the "recently modified" guard (only when no agent is writing mock files).
  * --print-issues prints every gate failure of the selected tests (use it with
  * --dry-run to check a freshly written chunk before independent verification).
  *
@@ -28,6 +29,8 @@ const only = (() => {
 })();
 const dry = args.includes("--dry-run");
 const printIssues = args.includes("--print-issues");
+/** Use only when no agent is editing mock files (skips the 10-minute "busy" guard). */
+const ignoreBusy = args.includes("--ignore-busy");
 const today = new Date().toISOString().slice(0, 10);
 
 const syllabus = Syllabus.parse(JSON.parse(fs.readFileSync(path.join(ROOT, "content/syllabus.json"), "utf8")));
@@ -66,7 +69,7 @@ for (const { file, qs } of loaded) {
   if (only && testId && !only.has(testId)) continue;
   const mtime = fs.statSync(file).mtimeMs;
   const rel = path.relative(ROOT, file);
-  const busy = Date.now() - mtime < recentMs && ownWrites[rel] !== mtime;
+  const busy = !ignoreBusy && Date.now() - mtime < recentMs && ownWrites[rel] !== mtime;
   let changed = false;
   for (const q of qs) {
     const slot = q.testId ? blueprint[q.testId]?.slots.find((s) => s.q === q.questionNumber) : undefined;
