@@ -338,7 +338,13 @@ function QueuePanel({
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-xs text-fg-3">Historical estimate from the official papers; see Weightage for the full breakdown.</p>
+          <p className="mt-2 text-xs text-fg-3">
+            Historical estimate from the official papers; see{" "}
+            <Link href="/weightage" className="underline">
+              Weightage
+            </Link>{" "}
+            for the full breakdown.
+          </p>
         </details>
         {groups.length ? (
           groups.map((h) => (
