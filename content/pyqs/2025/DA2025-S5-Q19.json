@@ -86,7 +86,7 @@
       }
     ],
     "shortcut": "The CDF is linear from $0$ to $1$ on $[t, 4]$, so $X \\sim U(t, 4)$ and its median is the midpoint $\\tfrac{t + 4}{2}$. Setting $\\tfrac{t + 4}{2} = 3$ gives $t = 2$.",
-    "commonTrap": "Cross-multiplying the wrong way, e.g. writing $3 - t = 2(4 - t)$, which gives $t = 5$. That is not an option, and it would also make $4 - t < 0$, which is impossible for a valid CDF. The correct equation is $2(3 - t) = 4 - t$. Another slip is to set $F_X(3) = 3$, or to take the median as the value where the PDF is largest, instead of using $F_X(m) = \\tfrac12$."
+    "commonTrap": "Cross-multiplying the wrong way, e.g. writing $3 - t = 2(4 - t)$, which gives $t = 5$. That is not an option, and it would also make $4 - t < 0$, which is impossible for a valid CDF. The correct equation is $2(3 - t) = 4 - t$. Another slip is to confuse the median with the mode (the point where the PDF is largest): the PDF of $U(t, 4)$ is flat, so that idea cannot pin down $t$. The median is defined by $F_X(m) = \\tfrac12$."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -98,16 +98,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The piecewise CDF is set with a cases environment (\\dfrac for the middle branch). The branch conditions are kept exactly as printed (x ≤ t, t ≤ x ≤ 4, x ≥ 4), including their overlap at the endpoints x = t and x = 4, where the branch values agree."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Checked against the official crop: the stem wording, the three-branch piecewise CDF (0 for x ≤ t; (x − t)/(4 − t) for t ≤ x ≤ 4; 1 for x ≥ 4), the question \"If the median of X is 3, then what is the value of t?\", and options (A) 2, (B) 1, (C) −1, (D) 0 in paper order. The branch conditions are kept exactly as printed, including their overlap at x = t and x = 4, where the branch values agree."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (t = 2)",
     "agreesWithKey": true,
     "checkCode": "from sympy import symbols, Rational, solve, Eq, integrate, diff, Piecewise\nt, x = symbols('t x')\nF = (x - t) / (4 - t)                       # CDF on [t, 4]\nsol = solve(Eq(F.subs(x, 3), Rational(1, 2)), t)\nprint('t from F(3)=1/2:', sol)\nfor opt, tv in zip('ABCD', [2, 1, -1, 0]):\n    print(opt, 't =', tv, ' median =', (tv + 4) / 2, ' F(3) =', F.subs({t: tv, x: 3}))\nf = diff(F, x).subs(t, 2)                   # pdf = 1/(4-t) = 1/2 on [2,4]\nprint('pdf for t=2:', f, ' total mass:', integrate(f, (x, 2, 4)), ' P(X<=3):', integrate(f, (x, 2, 3)))",
-    "notes": "Independent solve: the median m satisfies F_X(m) = 1/2. Since F_X(3) = 0 if t >= 3, we need t < 3, and then (3 - t)/(4 - t) = 1/2 gives t = 2. Equivalently, X ~ Uniform(t, 4) with median (t + 4)/2 = 3. This is option (A), matching the official key A. The sympy check solves F(3) = 1/2 for t, evaluates F(3) and the median for each option's t, and confirms that the t = 2 PDF (1/2 on [2, 4]) integrates to 1 with P(X <= 3) = 1/2."
+    "notes": "Blind re-solve (done before reading the key or the stored solution): the median m of a continuous X satisfies F_X(m) = 1/2. If t >= 3 then F_X(3) = 0, so t < 3 and x = 3 lies on the middle branch: (3 - t)/(4 - t) = 1/2 gives 6 - 2t = 4 - t, so t = 2. Equivalently X ~ Uniform(t, 4) with median (t + 4)/2 = 3. This is option (A), matching official key A. The sympy check solves F(3) = 1/2 for t and evaluates F(3) for each option (A: 1/2, B: 2/3, C: 4/5, D: 3/4)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

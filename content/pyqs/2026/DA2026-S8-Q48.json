@@ -105,16 +105,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word NOT is printed in bold in the paper and is kept in bold. The logical symbols are transcribed as \\forall, \\exists, \\Rightarrow (⇒), \\Leftrightarrow (⇔) and \\neg (¬), with a thin space between each quantified variable and P(x). The second official crop (Q48-2) shows only the next page's header and a table border. No figure is needed and the page region has no embedded images."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and all four options match the official crop and the PDF text layer symbol for symbol: the quantifiers, the implication/biconditional arrows (printed as double arrows ⇒ and ⇔, transcribed as \\Rightarrow and \\Leftrightarrow), the negation ¬ in (D) and the option order. The word NOT is bold in the paper and is kept bold. The second official crop (Q48-2) shows only the next page's header and a table border. No figure is needed; the page region has no embedded images."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;C;D",
     "agreesWithKey": true,
     "checkCode": "from itertools import product\n# Every interpretation of a unary predicate P over a non-empty domain of size n is a tuple of truth values.\nimp = lambda a, b: (not a) or b\nF = {\n 'A': lambda P: imp(all(P), any(P)),                          # forall P => exists P\n 'B': lambda P: imp(any(P), all(P)),                          # exists P => forall P\n 'C': lambda P: any(P) == all(P),                             # exists P <=> forall P\n 'D': lambda P: imp(all(P), any(not p for p in P)),           # forall P => exists not P\n}\nvalid, cex = {}, {}\nfor k, f in F.items():\n    bad = [P for n in range(1, 6) for P in product([False, True], repeat=n) if not f(P)]\n    valid[k] = not bad\n    cex[k] = bad[0] if bad else None\nprint(valid, cex)\nnot_valid = sorted(k for k in F if not valid[k])\nprint(not_valid); assert not_valid == ['B', 'C', 'D']",
-    "notes": "(A) is valid in every non-empty domain: if all elements satisfy P, any element of the domain witnesses the existential. (B) and (C) are falsified by D = {a, b} with P(a) true and P(b) false; (D) is falsified by D = {a} with P(a) true, since it reduces to 'there exists x with not P(x)'. A brute-force check over every interpretation of P on domains of size 1-5 finds no countermodel for (A) and countermodels for (B), (C), (D). The NOT-valid set is B, C, D, which matches official key B;C;D. The analysis uses the standard reading in which each quantifier scopes only over the P(x) written right after it."
+    "notes": "Blind re-solve before viewing the key, using standard first-order semantics (non-empty domain). (A) is valid: if every element satisfies P, any element of the non-empty domain witnesses the existential. (B) and (C) are falsified by D = {a, b} with P(a) true and P(b) false (the existential is true, the universal false). (D) is falsified by D = {a} with P(a) true, since it is equivalent to 'there exists x with not P(x)'. The verifier's brute-force enumeration of all interpretations on domains of size 1-4, and the stored check on sizes 1-5, find no countermodel for (A) and countermodels for (B), (C) and (D). The NOT-valid set B, C, D agrees with the official key B;C;D. Each quantifier is read as scoping only over the P(x) written right after it, which is the standard reading."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

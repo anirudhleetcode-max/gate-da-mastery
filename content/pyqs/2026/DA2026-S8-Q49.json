@@ -23,7 +23,7 @@
     },
     {
       "label": "B",
-      "text": "`N1` > `N2`"
+      "text": "`N1 > N2`"
     },
     {
       "label": "C",
@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array P = [1, 2, 3, 5, 4] is printed in a monospace font on its own indented line and is rendered as a code block; the names N1, N2 and P are set in monospace in the paper and are rendered as inline code. In option (A) only N1 and N2 are monospace (\"= 10,\" and \"= 4\" are in the serif text font); this is reproduced. The only embedded image in the page region is the background watermark; no figure is needed. The second official crop (Q49-2) shows only the next page's header and a table border."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and options match the official crop and the PDF text layer word for word. The array P = [1, 2, 3, 5, 4] is printed in a monospace font on its own indented line and is rendered as a code block; N1, N2 and P are set in monospace in the paper and are rendered as inline code. In option (A) only N1 and N2 are monospace ('= 10,' and '= 4' are in the serif text font). In option (B) the whole expression 'N1 > N2', including the '>' sign, is monospace, so the verifier changed it to a single code span. The only embedded image in the page region is the background watermark, so no figure is needed. The second official crop (Q49-2) shows only the next page's header and a table border."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;C;D",
     "agreesWithKey": true,
     "checkCode": "P = [1, 2, 3, 5, 4]\ndef bubble(a, early_exit):\n    a = a[:]; comps = swaps = 0; log = []; n = len(a)\n    for i in range(n - 1):\n        swapped = False\n        for j in range(n - 1 - i):\n            comps += 1; log.append((a[j], a[j+1]))\n            if a[j] > a[j+1]:\n                a[j], a[j+1] = a[j+1], a[j]; swaps += 1; swapped = True\n        if early_exit and not swapped: break\n    return a, comps, swaps, log\ndef insertion(a):\n    a = a[:]; comps = swaps = 0; log = []\n    for i in range(1, len(a)):\n        j = i\n        while j > 0:\n            comps += 1; log.append((a[j-1], a[j]))      # element comparison only\n            if a[j-1] > a[j]:\n                a[j-1], a[j] = a[j], a[j-1]; swaps += 1; j -= 1\n            else: break\n    return a, comps, swaps, log\nfor ee in (False, True):\n    s, c, w, log = bubble(P, ee); print('BS early_exit=%s' % ee, s, 'comparisons', c, 'swaps', w, log)\ns, N2, w_is, log_is = insertion(P); print('IS', s, 'comparisons', N2, 'swaps', w_is, log_is)\nN1 = bubble(P, False)[1]; N1_opt = bubble(P, True)[1]\nunnec = lambda log: sum(x < y for x, y in log)       # pairs already in correct order\nres = dict(A=(N1 == 10 and N2 == 4), B=(N1 > N2 and N1_opt > N2), C=(w_is == 1),\n           D=(unnec(bubble(P, False)[3]) >= 1 and unnec(bubble(P, True)[3]) >= 1 and unnec(log_is) >= 1))\nprint(N1, N1_opt, N2, res); assert res == dict(A=False, B=True, C=True, D=True)   # -> B;C;D",
-    "notes": "Traced in Python counting only element-to-element comparisons. Plain bubble sort: 10 comparisons, 1 swap (early-exit variant: 7 comparisons, 1 swap). Insertion sort: 5 comparisons (1+1+1+2), 1 swap. (A) is false because N2 = 5, not 4; (B) is true for either bubble-sort variant (10 > 5 and 7 > 5); (C) is true (one swap for the single inversion (5, 4)); (D) is true because both algorithms first compare 1 and 2, which are already in order. Result B;C;D matches official key B;C;D. The question does not specify which bubble-sort variant is meant, but no option's verdict depends on it."
+    "notes": "Blind re-solve before viewing the key, counting only element-to-element comparisons. Plain bubble sort makes 4+3+2+1 = 10 comparisons and 1 swap; the early-exit variant makes 4+3 = 7 comparisons and 1 swap. Insertion sort makes 1+1+1+2 = 5 comparisons, i.e. (n-1) + inversions = 4 + 1, and 1 swap/shift. (A) is false because N2 = 5, not 4. (B) is true for either bubble-sort variant (10 > 5 and 7 > 5). (C) is true because the single inversion (5, 4) needs exactly one swap. (D) is true because both algorithms first compare 1 and 2, which are already in order. The verifier's independent Python simulation gives the same counts. The result B;C;D agrees with the official key B;C;D. The question does not say which bubble-sort variant is meant, but no option's verdict depends on it."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

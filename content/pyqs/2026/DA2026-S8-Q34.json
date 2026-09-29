@@ -59,16 +59,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the parameter as \"mean λ(> 0)\" (λ is the mean, not the rate) and the conditional probability with a vertical bar, rendered here as $P(X > 10 \\mid X > 5)$. 'two' is bold in the rounding instruction and is kept bold."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper prints the parameter as \"mean λ(> 0)\" (λ is the mean, not the rate) and the conditional probability with a vertical bar, rendered here as $P(X > 10 \\mid X > 5)$. 'two' is bold in the rounding instruction and is kept bold. No figures."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.35",
     "agreesWithKey": true,
     "checkCode": "import math, random\nlam = -5 / math.log(0.35)                  # mean lambda from P(X>5) = exp(-5/lam) = 0.35\nsf = lambda x: math.exp(-x / lam)          # survival function P(X > x)\nans = sf(10) / sf(5)                       # P(X>10 | X>5) = P(X>10)/P(X>5)\nprint(round(lam, 4), round(sf(10), 4), round(ans, 4))   # 4.7627 0.1225 0.35\nrandom.seed(1); xs = [random.expovariate(1/lam) for _ in range(10**6)]\na = sum(x > 5 for x in xs); b = sum(x > 10 for x in xs)\nprint(round(b / a, 3))                     # Monte Carlo ~0.35\nassert abs(ans - 0.35) < 1e-12 and 0.34 <= round(ans, 2) <= 0.36",
-    "notes": "By the memoryless property, P(X > 10 | X > 5) = P(X > 10)/P(X > 5) = e^{-10/λ}/e^{-5/λ} = e^{-5/λ} = P(X > 5) = 0.35, confirmed exactly and by Monte Carlo simulation in the Python check. Lies inside the official key range 0.34 to 0.36."
+    "notes": "Blind re-solve (before viewing key or stored solution): by the memoryless property, P(X > 10 | X > 5) = P(X > 10)/P(X > 5) = e^{-10/λ}/e^{-5/λ} = e^{-5/λ} = P(X > 5) = 0.35; λ = -5/ln 0.35 ≈ 4.763 is not needed. Confirmed exactly and by Monte Carlo simulation in the Python check. 0.35 lies inside the official key range 0.34 to 0.36."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

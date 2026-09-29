@@ -97,7 +97,7 @@
       }
     ],
     "shortcut": "Recognise $\\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top = \\frac{\\mathbf{1}\\mathbf{1}^\\top}{\\mathbf{1}^\\top\\mathbf{1}}$ as the orthogonal projection onto $\\mathbf{1}$, so $M = I - P$ is the complementary orthogonal projection. Projections are symmetric and idempotent (A and D true, B false), and their trace equals their rank, $n - 1$ (C false). No matrix multiplication is needed.",
-    "commonTrap": "Mixing up $\\mathbf{1}\\mathbf{1}^\\top$ (the $n \\times n$ all-ones matrix) with $\\mathbf{1}^\\top\\mathbf{1}$ (the scalar $n$). Writing $\\mathbf{1}^\\top\\mathbf{1} = 1$ when expanding $M^2$ leaves an extra $-\\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top$ term, so $M^2 \\ne M$ and it becomes hard to see that $M$ is a projection. Treating $\\mathbf{1}\\mathbf{1}^\\top$ as the scalar $n$ collapses $M$ to $I_n - I_n = 0$. Separately, \"idempotent\" ($M^2 = M$) is often misremembered as $M^2 = I$, which leads to (B). Using only $\\operatorname{tr}(I_n) = n$ and forgetting the $-1$ from the subtracted term leads to (C)."
+    "commonTrap": "Mixing up $\\mathbf{1}\\mathbf{1}^\\top$ (the $n \\times n$ all-ones matrix) with $\\mathbf{1}^\\top\\mathbf{1}$ (the scalar $n$). Writing $\\mathbf{1}^\\top\\mathbf{1} = 1$ when expanding $M^2$ leaves an extra $-\\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top$ term, so $M^2 \\ne M$ and it becomes hard to see that $M$ is a projection. Treating $\\mathbf{1}\\mathbf{1}^\\top$ as if it were $n I_n$ (confusing it with the scalar $\\mathbf{1}^\\top\\mathbf{1} = n$) wrongly collapses $M$ to $I_n - I_n = 0$. Separately, \"idempotent\" ($M^2 = M$) is often misremembered as $M^2 = I$, which leads to (B). Using only $\\operatorname{tr}(I_n) = n$ and forgetting the $-1$ from the subtracted term leads to (C)."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -109,16 +109,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes transposes with a superscript italic T (in the stem's 1 1^T and (1,1,1, ...,1)^T, and in option (A) M^T); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The all-ones vector 1 is bold in the paper and is kept bold. 'Trace' in option (C) is set in italic math as in the paper. The paper's parentheses around I_n - (1/n) 1 1^T are kept. The only embedded image in this region is the background watermark, so no figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper writes transposes with a superscript italic T (in the stem's 1 1^T and (1,1,1, ...,1)^T, and in option (A) M^T); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The all-ones vector 1 is bold in the paper and is kept bold. 'Trace' in option (C) is set in italic math as in the paper. The paper's parentheses around I_n - (1/n) 1 1^T are kept. The only embedded image in this region is the background watermark, so no figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;D",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nfor n in range(1, 8):\n    one = np.ones((n, 1))\n    I = np.eye(n)\n    M = I - (one @ one.T) / n\n    res = dict(A=np.allclose(M.T, M),\n               B=np.allclose(M @ M, I),\n               C=bool(np.isclose(np.trace(M), n)),\n               D=np.allclose(M @ M, M) and np.allclose(M.T, M))  # symmetric idempotent => orthogonal projection\n    print(n, 'trace', round(np.trace(M), 10), 'eig', np.round(np.linalg.eigvalsh(M), 10), res)\n    assert res == dict(A=True, B=False, C=False, D=True)   # -> A;D for every n",
-    "notes": "Algebra: M^T = M; M^2 = I - (2/n) 1 1^T + (1/n^2) 1 (1^T 1) 1^T = M (idempotent, not I_n, since M 1 = 0 makes M singular); Trace(M) = n - 1; symmetric plus idempotent means M is the orthogonal projection onto the complement of span{1}. The numpy check for n = 1..7 confirms M^T = M, M^2 = M != I_n and trace n - 1, with eigenvalues one 0 and (n-1) ones. The independent answer A;D matches official key A;D."
+    "notes": "Verifier solved blind before reading the key. M is the centering matrix: M^T = I_n - (1/n)(1 1^T)^T = M, so (A) holds. Using 1^T 1 = n, M^2 = I_n - (2/n) 1 1^T + (1/n) 1 1^T = M, so M is idempotent; M 1 = 0 makes M singular, so M^2 = M != I_n for every n (for n = 1, M = [0]), and (B) fails. Trace(M) = n - (1/n) tr(1 1^T) = n - 1 != n, so (C) fails. Symmetric and idempotent means M is the orthogonal projection onto {x : 1^T x = 0}, so (D) holds. The numpy check (checkCode) for n = 1..7 confirms M^T = M, M^2 = M != I_n, trace n - 1 and eigenvalues {0, 1 (x n-1)}. Independent answer A;D matches the official key A;D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

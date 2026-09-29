@@ -188,7 +188,8 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
       formulaIds: q.formulaIds,
       similarIds: [],
       officialKeyRaw: q.officialKeyRaw,
-      officialImages: q.officialImages,
+      // Drop crops that were removed as blank (table edges/headers only).
+      officialImages: q.officialImages.filter((src) => !opts.figureExists || opts.figureExists(src)),
       sourceIds: q.sourceIds,
       transcription: q.transcription,
       answerVerification: q.answerVerification,

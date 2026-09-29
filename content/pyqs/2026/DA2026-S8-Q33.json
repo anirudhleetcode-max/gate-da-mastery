@@ -62,16 +62,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the function as $f(\\cdot)$ and the set as $S = \\{1, 2, 3, 4\\}$; both are kept. 'integer' is bold in the answer instruction and is kept bold."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper writes the function as $f(\\cdot)$ and the set as $S = \\{1, 2, 3, 4\\}$; both are kept. 'integer' is bold in the answer instruction and is kept bold. No figures."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "10",
     "agreesWithKey": true,
     "checkCode": "from itertools import permutations\nS = [1, 2, 3, 4]\ninv = [p for p in permutations(S) if all(dict(zip(S, p))[dict(zip(S, p))[n]] == n for n in S)]\nprint(len(inv), inv)          # 10 involutions\nI = [1, 1]\nfor n in range(2, 5): I.append(I[n-1] + (n-1)*I[n-2])   # I(n) = I(n-1) + (n-1) I(n-2)\nassert len(inv) == I[4] == 1 + 6 + 3 == 10",
-    "notes": "f(f(n)) = n forces a permutation made only of fixed points and 2-cycles. Counting by number of swaps gives 1 + 6 + 3 = 10, confirmed by brute force over all 24 permutations and by the recurrence I(n) = I(n-1) + (n-1) I(n-2). Matches official key '10 to 10'."
+    "notes": "Blind re-solve (before viewing key or stored solution): f(f(n)) = n means f is an involution, i.e. only fixed points and 2-cycles. Count on 4 elements: identity 1 + one swap C(4,2) = 6 + two disjoint swaps 3 = 10. Python brute force over all 24 permutations finds exactly 10, and the recurrence I(n) = I(n-1) + (n-1) I(n-2) gives I(4) = 10. Agrees with official key '10 to 10'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

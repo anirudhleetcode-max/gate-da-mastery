@@ -100,16 +100,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed from the monospace block in the paper. The paper indents the body with tab stops (one level for x = [], def inner(val): and return inner; two levels for x.append(val) and return x, about 5.5 character widths per level); it is rendered with 4 spaces per level, which keeps the nesting and does not change the program. The gap before each '# Line' comment (about four character widths in the paper) is rendered as four spaces. In the options, f1, f2, x, 'Line Q/R/S' and the list outputs are set in monospace and are rendered as inline code. The only embedded image in the page region is the background watermark; no figure is needed. The second official crop (Q50-2) shows only the next page's header and a table border."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The code, the comments '# Line P/Q/R/S', the stem sentence and all four options match the official crop and the PDF text layer character for character. Caveat: the paper indents the code with tab stops, confirmed by the text layer, where each indent is a separate blank run. There is one level for x = [], def inner(val): and return inner, and two levels for x.append(val) and return x. These are rendered with 4 spaces per level, which keeps the nesting and the program's meaning. The gap before each '# Line' comment (about four character widths) is rendered as four spaces. In the options, f1, f2, x, 'Line Q/R/S' and the list outputs are set in monospace and are rendered as inline code. The only embedded image in the page region is the background watermark, so no figure is needed. The second official crop (Q50-2) shows only the next page's header and a table border."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;D",
     "agreesWithKey": true,
     "checkCode": "import io, contextlib\nsrc = '''\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10))    # Line P\nprint(f1(20))    # Line Q\nprint(f2(30))    # Line R\nprint(f1(40))    # Line S\n'''\nbuf = io.StringIO(); g = {}\nwith contextlib.redirect_stdout(buf): exec(src, g)\nP, Q, R, S = buf.getvalue().splitlines(); print(P, Q, R, S, sep=' | ')\nf1, f2 = g['f1'], g['f2']\nshared = f1.__closure__[0].cell_contents is f2.__closure__[0].cell_contents\nres = dict(A=shared, B=Q == '[10, 20]', C=R == '[10, 20, 30]', D=S == '[10, 20, 40]')\nprint(res); assert res == dict(A=False, B=True, C=False, D=True)   # -> B;D",
-    "notes": "Executing the program prints [10], [10, 20], [30], [10, 20, 40] for Lines P, Q, R, S, and the closure cells of f1 and f2 hold different list objects. So (A) and (C) are false and (B) and (D) are true, which matches official key B;D."
+    "notes": "Blind re-solve before viewing the key: every call to outer() executes x = [] again, so f1 and f2 are closures over two different lists. f1's list goes [10] -> [10, 20] -> [10, 20, 40]; f2's list is [30]. Lines P, Q, R, S therefore print [10], [10, 20], [30], [10, 20, 40]. Running the program confirms this output, and the closure cells of f1 and f2 hold different list objects. So (A) and (C) are false and (B) and (D) are true, which agrees with the official key B;D. The verifier also confirmed that the teaching note's claim holds: writing x += [val] or x = x + [val] inside inner raises UnboundLocalError."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

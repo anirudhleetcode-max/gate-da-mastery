@@ -62,16 +62,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Wording, capitalisation (\"Node Pointer\", \"Data Record Pointer\", \"Search Key Field size\") and the comma in \"Let, Node size\" are kept exactly as printed. 'integer' is bold in the answer instruction and is kept bold."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Wording, capitalisation (\"Node Pointer\", \"Data Record Pointer\", \"Search Key Field size\") and the comma in \"Let, Node size\" are kept exactly as printed; 'integer' is bold in the answer instruction and is kept bold. No figures."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "195",
     "agreesWithKey": true,
     "checkCode": "B, P, K, R = 4096, 10, 11, 12            # node, node-pointer, key, record-pointer sizes (bytes)\np = max(p for p in range(1, 2000) if p*P + (p-1)*K <= B)   # B+ internal node: p pointers, p-1 keys\nprint(p, p*P + (p-1)*K, (p+1)*P + p*K)   # 195 4084 4105\nassert p == 195 == (B + K) // (P + K)\nbtree = max(p for p in range(1, 2000) if p*P + (p-1)*(K+R) <= B)   # trap: B-tree layout\nleaf = max(k for k in range(1, 2000) if k*(K+R) + P <= B)          # leaf capacity (not asked)\nprint(btree, leaf)                        # 124 177",
-    "notes": "A B+ tree non-leaf node holds p Node Pointers and p - 1 keys only, so 10p + 11(p - 1) <= 4096 gives p <= 195.57, i.e. 195 (195 pointers use 4084 bytes, 196 would need 4105). The Python check confirms this and that the B-tree layout would instead give 124. Matches official key '195 to 195'."
+    "notes": "Blind re-solve (before viewing key or stored solution): a B+ tree non-leaf node holds p Node Pointers and p - 1 search keys only (no Data Record Pointers), so 10p + 11(p - 1) <= 4096 gives 21p <= 4107, p <= 195.57, i.e. p = 195 (195 pointers use 4084 bytes; 196 would need 4105). Python brute force confirms 195. The 12-byte Data Record Pointer is a distractor (relevant only to leaf capacity, 177 keys; the B-tree layout would give 124). Agrees with official key '195 to 195'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
