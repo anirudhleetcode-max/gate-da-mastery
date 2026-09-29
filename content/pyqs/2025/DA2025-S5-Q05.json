@@ -41,7 +41,7 @@
     "correct": "C"
   },
   "solution": {
-    "quick": "Area $= L \\times W$ is a product, so multiplying $W$ by $1.1$ multiplies the area by exactly $1.1$, a 10% increase for every $L$ and $W$. The perimeter and diagonal increase by less than 5.2%, and the shape becomes a square only if $L = 1.1W$. Answer: **(C)**.",
+    "quick": "Area $= L \\times W$ is a product, so multiplying $W$ by $1.1$ multiplies the area by exactly $1.1$, a 10% increase for every $L$ and $W$. Because $L > W$, the perimeter rises by less than 5% and the diagonal by less than about 5.12%, and the shape becomes a square only if $L = 1.1W$. Answer: **(C)**.",
     "steps": [
       {
         "title": "Set up the new dimensions",
@@ -102,16 +102,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. L and W are printed upright (not italic) in the stem and are kept as plain text there. The second official image contains only the following section header ('Q.6 – Q.10 Carry TWO marks Each'), not question content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. L and W are printed upright (not italic) in the stem and are kept as plain text there. The second official image contains only the following section header ('Q.6 – Q.10 Carry TWO marks Each'), not question content."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C",
     "agreesWithKey": true,
-    "checkCode": "import math\nfor L,W in [(2,1),(10,1),(1.05,1),(1.1,1),(3,2.9)]:\n    p=100*((L+1.1*W)/(L+W)-1); d=100*(math.hypot(L,1.1*W)/math.hypot(L,W)-1); a=100*(L*1.1*W/(L*W)-1)\n    print(L,W,round(p,3),round(d,3),round(a,3),abs(L-1.1*W)<1e-12)  # area always 10.0; perimeter, diagonal < 10; square only at L=1.1W",
-    "notes": "Algebra plus numeric spot checks: the area changes by exactly 10% for all L > W, the perimeter and diagonal by less than about 5.12%, and the shape is a square only when L = 1.1W. This matches the official key (C)."
+    "checkCode": "import random,math\nok={'A':True,'B':True,'C':True,'D':True};mp=md=0\nfor _ in range(100000):\n    W=random.uniform(.01,10);L=W+random.uniform(1e-3,20);W2=1.1*W\n    p=(L+W2)/(L+W);d=math.hypot(L,W2)/math.hypot(L,W);a=L*W2/(L*W)\n    ok['A']&=abs(p-1.1)<1e-9;ok['B']&=abs(d-1.1)<1e-9;ok['C']&=abs(a-1.1)<1e-9;ok['D']&=abs(L-W2)<1e-9\n    mp=max(mp,p);md=max(md,d)\nprint(ok,round(mp,4),round(md,4))  # only C always true; perimeter ratio < 1.05, diagonal ratio < 1.0512\nL,W=2,1;print(round(100*((L+1.1*W)/(L+W)-1),3),round(100*(math.hypot(L,1.1*W)/math.hypot(L,W)-1),3))  # 3.333 2.078",
+    "notes": "Solved blind before the key was opened: A' = L(1.1W) = 1.1A for every L, W, while the perimeter rises by 10W/(L+W)% < 5% and the diagonal by less than about 5.12% when L > W, and the shape is a square only when L = 1.1W. A randomized Python check over 100000 rectangles with L > W confirms only (C) holds for all values. This matches the official key (C)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
