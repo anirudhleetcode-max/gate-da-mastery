@@ -24,7 +24,7 @@ export function ChartFrame({ title, description, legend, table, children, classN
   const [showTable, setShowTable] = useState(false);
   const id = useId();
   return (
-    <figure className={cn("rounded-[var(--radius)] border border-border bg-surface p-4", className)} aria-labelledby={`${id}-t`}>
+    <figure className={cn("min-w-0 rounded-[var(--radius)] border border-border bg-surface p-4", className)} aria-labelledby={`${id}-t`}>
       <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <figcaption id={`${id}-t`} className="font-semibold text-fg">
@@ -87,12 +87,13 @@ export function DataTable({ columns, rows, caption }: { columns: string[]; rows:
 
 // ------------------------------------------------------------------ tooltip
 
-function Tooltip({ x, y, children }: { x: number; y: number; children: ReactNode }) {
+/** Positioned in percent of the chart box so it tracks marks when the SVG scales. */
+function Tooltip({ x, y, children }: { x: string; y: string; children: ReactNode }) {
   return (
     <div
       role="status"
       className="pointer-events-none absolute z-10 min-w-28 -translate-x-1/2 -translate-y-full rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs shadow-lg"
-      style={{ left: x, top: y - 8 }}
+      style={{ left: x, top: `calc(${y} - 8px)` }}
     >
       {children}
     </div>
@@ -140,7 +141,7 @@ export function BarList({ data, max, formatValue = (v) => String(v), height = 22
                   style={{ width: `${w * 100}%`, background: d.color ?? "var(--series-ps)", maxHeight: 24, opacity: hover && hover !== d.key ? 0.55 : 1 }}
                 />
               </span>
-              <span className="tnum w-16 shrink-0 text-right text-fg">{d.display ?? formatValue(d.value)}</span>
+              <span className="tnum w-20 shrink-0 whitespace-nowrap text-right text-fg">{d.display ?? formatValue(d.value)}</span>
               {hover === d.key && d.detail ? (
                 <span role="status" className="pointer-events-none absolute -top-8 left-0 z-10 whitespace-nowrap rounded-md border border-border bg-surface px-2 py-1 text-xs text-fg-2 shadow">
                   {d.detail}
@@ -176,8 +177,9 @@ export function GroupedColumns({ categories, series, height = 240, formatValue =
   const barW = Math.min(24, (bandW - 12) / series.length - 2);
   const y = (v: number) => padT + (height - padT - padB) * (1 - v / niceMax);
   return (
-    <div className="relative overflow-x-auto">
-      <svg role="img" aria-label={ariaLabel} width={width} height={height} className="min-w-full">
+    <div className="relative">
+      {/* Scales to the container width (viewBox) so every category stays visible. */}
+      <svg role="img" aria-label={ariaLabel} viewBox={`0 0 ${width} ${height}`} className="h-auto w-full" preserveAspectRatio="xMidYMid meet">
         {ticks.map((t) => (
           <g key={t}>
             <line x1={padL} x2={width} y1={y(t)} y2={y(t)} stroke="var(--grid)" strokeWidth={1} />
@@ -224,7 +226,7 @@ export function GroupedColumns({ categories, series, height = 240, formatValue =
         <line x1={padL} x2={width} y1={y(0)} y2={y(0)} stroke="var(--border-strong)" strokeWidth={1} />
       </svg>
       {tip ? (
-        <Tooltip x={tip.x} y={tip.y}>
+        <Tooltip x={`${(tip.x / width) * 100}%`} y={`${(tip.y / height) * 100}%`}>
           <div className="tnum text-sm font-semibold text-fg">{formatValue(series[tip.s].values[tip.c] ?? 0)}</div>
           <div className="text-fg-3">
             {categories[tip.c]} · {series[tip.s].label}

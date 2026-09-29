@@ -1,0 +1,13 @@
+import { chromium } from "@playwright/test";
+const [url, out] = process.argv.slice(2);
+const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
+await p.goto(url, { waitUntil: "load", timeout: 60000 });
+await p.getByRole("button", { name: "Submit answer" }).waitFor({ timeout: 60000 });
+await p.waitForTimeout(1500);
+await p.locator('input[type="radio"][value="B"]').check({ force: true });
+await p.getByRole("button", { name: "Submit answer" }).click();
+await p.getByText("Why your answer is wrong").waitFor({ timeout: 15000 });
+const el = p.getByRole("region", { name: "Learn from this mistake" });
+await el.screenshot({ path: out });
+console.log("ok");
+await b.close();

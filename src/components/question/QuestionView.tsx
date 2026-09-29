@@ -194,6 +194,9 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
             {result.status === "not_scored" && "The official key awarded marks to all candidates for this question, so it is not scored here."}
           </div>
         ) : null}
+        {phase === "submitted" && result?.status === "incorrect" ? (
+          <WrongAnswerLearning q={q} response={response} />
+        ) : null}
         {phase === "revealed" ? (
           <p role="status" className="mt-5 rounded-lg bg-surface-2 px-4 py-3 text-sm text-fg-2">
             Answer revealed without an attempt. Nothing was recorded.
@@ -427,5 +430,68 @@ function Meta({ label, value }: { label: string; value: string }) {
       <dt className="text-xs text-fg-3">{label}</dt>
       <dd className="truncate font-medium text-fg">{value}</dd>
     </div>
+  );
+}
+
+/** Shown after an incorrect answer: why the chosen answer is wrong and where to practise. */
+function WrongAnswerLearning({ q, response }: { q: QuestionPayload; response: UserResponse | null }) {
+  const chosen = response?.kind === "MCQ" ? [response.choice] : response?.kind === "MSQ" ? response.choices : [];
+  const correct = q.answer.kind === "MCQ" ? [q.answer.correct] : q.answer.kind === "MSQ" ? q.answer.correct : [];
+  const wrongPicks = (q.html.optionAnalysis ?? []).filter((o) => chosen.includes(o.label) && o.verdict === "incorrect");
+  const missed = (q.html.optionAnalysis ?? []).filter((o) => !chosen.includes(o.label) && correct.includes(o.label));
+  return (
+    <section aria-label="Learn from this mistake" className="mt-4 space-y-3 rounded-lg border border-danger/30 bg-surface p-4">
+      <dl className="grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <dt className="text-xs text-fg-3">Your answer</dt>
+          <dd className="font-semibold text-danger">{formatResponse(response)}</dd>
+        </div>
+        <div>
+          <dt className="text-xs text-fg-3">Correct answer</dt>
+          <dd className="font-semibold text-success">{formatAnswer(q.answer)}</dd>
+        </div>
+      </dl>
+      {wrongPicks.length || missed.length ? (
+        <div>
+          <p className="mb-1 text-sm font-semibold text-fg">Why your answer is wrong</p>
+          <ul className="space-y-2">
+            {wrongPicks.map((o) => (
+              <li key={o.label} className="flex gap-2 text-sm">
+                <span className="w-24 shrink-0 font-semibold text-danger">({o.label}) chosen</span>
+                <RichHtml html={o.html} className="min-w-0 flex-1 text-sm" />
+              </li>
+            ))}
+            {missed.map((o) => (
+              <li key={o.label} className="flex gap-2 text-sm">
+                <span className="w-24 shrink-0 font-semibold text-success">({o.label}) missed</span>
+                <RichHtml html={o.html} className="min-w-0 flex-1 text-sm" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : q.html.commonTrap ? (
+        <div>
+          <p className="mb-1 text-sm font-semibold text-fg">Likely reason</p>
+          <RichHtml html={q.html.commonTrap} className="text-sm" />
+        </div>
+      ) : null}
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="text-fg-3">Concept tested:</span>
+        {q.concepts.length ? (
+          q.concepts.slice(0, 2).map((c) => (
+            <Link key={c.id} href={`/concepts/${c.id}`} className="font-medium text-accent-text underline">
+              {c.title}
+            </Link>
+          ))
+        ) : (
+          <Link href={`/subjects/${q.subjectId}/topics/${q.topicId}`} className="font-medium text-accent-text underline">
+            {q.concept ?? q.topicName}
+          </Link>
+        )}
+        <Link href={`/practice?subject=${q.subjectId}&topic=${q.topicId}&count=5`} className="ml-auto inline-flex h-8 items-center rounded-lg bg-accent px-3 text-sm font-medium text-white dark:text-[#0e1117]">
+          Practice this concept
+        </Link>
+      </div>
+    </section>
   );
 }
