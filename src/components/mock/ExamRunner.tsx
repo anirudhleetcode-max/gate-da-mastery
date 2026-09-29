@@ -18,7 +18,7 @@ import { ExamSession } from "./ExamSession";
 type Load =
   | { kind: "loading" }
   | { kind: "not_found" }
-  | { kind: "unavailable"; loaded: number; planned: number }
+  | { kind: "unavailable" }
   | { kind: "network"; message: string }
   | { kind: "locked" }
   | { kind: "storage"; message: string }
@@ -71,7 +71,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
       }
       if (cancelled) return;
       if (!paper.test.available || paper.questions.length === 0) {
-        setLoad({ kind: "unavailable", loaded: paper.questions.length, planned: paper.test.questionIds.length });
+        setLoad({ kind: "unavailable" });
         return;
       }
       try {
@@ -150,9 +150,7 @@ export function ExamRunner({ testId, testTitle, pattern }: { testId: string; tes
     case "unavailable":
       return (
         <Panel title="This mock is not yet available">
-          <p>
-            {load.loaded} of {load.planned} questions of this mock are published so far. It can be taken once the full paper is available.
-          </p>
+          <p>This mock opens once its full paper is published. Meanwhile, take one of the available mocks.</p>
           <div className="mt-5 flex flex-wrap gap-2">
             <ButtonLink href="/mocks" variant="primary" className="text-surface">
               Choose another mock
