@@ -30,9 +30,9 @@ for (const route of routes) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: scheme });
     const page = await ctx.newPage();
     page.on("console", (m) => { if (m.type() === "error" && scheme === "light") entry.consoleErrors.push(m.text().slice(0, 200)); });
-    const res = await page.goto(base + route, { waitUntil: "networkidle", timeout: 60_000 }).catch((e) => ({ status: () => `ERR ${e.message.slice(0, 80)}` }));
+    const res = await page.goto(base + route, { waitUntil: "load", timeout: 60_000 }).catch((e) => ({ status: () => `ERR ${e.message.slice(0, 80)}` }));
     entry.status = res?.status?.() ?? 0;
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(1500); // hydration + client data (networkidle never settles with link prefetching)
     await page.addScriptTag({ content: axeSrc });
     const v = await page.evaluate(async () => {
       // eslint-disable-next-line no-undef
@@ -45,8 +45,8 @@ for (const route of routes) {
   for (const w of WIDTHS) {
     const ctx = await browser.newContext({ viewport: { width: w, height: 900 } });
     const page = await ctx.newPage();
-    await page.goto(base + route, { waitUntil: "networkidle", timeout: 60_000 }).catch(() => {});
-    await page.waitForTimeout(400);
+    await page.goto(base + route, { waitUntil: "load", timeout: 60_000 }).catch(() => {});
+    await page.waitForTimeout(900);
     const o = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }));
     if (o.sw > o.iw + 1) entry.overflow.push(`${w}px: scrollWidth ${o.sw}`);
     await ctx.close();
