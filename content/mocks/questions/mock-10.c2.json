@@ -90,12 +90,12 @@
       "commonTrap": "Applying the scale factors to the correlation itself (giving $-2.16$), or forgetting that the negative coefficient of $Y$ flips the sign (giving $0.6$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "rho(U,V) = -0.6 -> option C [python: -0.6]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) -0.6",
       "agreesWithKey": true,
-      "checkCode": "import math\nvx,vy,cxy=4,100,12; a,c=1.8,-2\ncov_uv=a*c*cxy; su=abs(a)*math.sqrt(vx); sv=abs(c)*math.sqrt(vy)\nprint(round(cov_uv/(su*sv),4))  # -0.6 -> option C",
-      "notes": ""
+      "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\n# Build (X, Y) with the stated moments by exact linear algebra, then transform and measure the correlation directly.\nS = np.array([[4.0, 12.0], [12.0, 100.0]])\nZ = rng.standard_normal((200000, 2))\nZ = (Z - Z.mean(0)) @ np.linalg.inv(np.linalg.cholesky(np.cov(Z.T))).T   # exactly identity covariance\nXY = Z @ np.linalg.cholesky(S).T                                          # covariance exactly S\nX, Y = XY[:, 0], XY[:, 1]\nU, V = 1.8 * X + 32, 500 - 2 * Y\nr = np.corrcoef(U, V)[0, 1]\nprint(round(r, 4), round(np.corrcoef(X, Y)[0, 1], 4))   # -0.6 0.6 -> option C\nopts = {'A': 0.6, 'B': -2.16, 'C': -0.6, 'D': -0.03}\nprint([k for k, v in opts.items() if abs(v - r) < 1e-6])  # ['C']\nprint(12 / (4 * 100), 0.6 * 1.8 * -2)                     # 0.03 (option D magnitude), -2.16 (option B)",
+      "notes": "Blind solve: Cov(U,V) = (1.8)(-2)(12) = -43.2, sigma_U = 3.6, sigma_V = 20, so rho = -43.2/72 = -0.6 (option C), matching the key. Independent Python builds (X, Y) with exactly the stated covariance matrix, applies U = 1.8X + 32 and V = 500 - 2Y, and measures the correlation directly (-0.6; 0.6 before the transform); only option C matches, and the distractors reproduce as -2.16 (0.6 x 1.8 x -2, option B) and 12/(4 x 100) = 0.03 (option D magnitude). Stem is unambiguous (correlation is unaffected by sample vs population conventions). Audited steps, option verdicts, EASY label and ps-correlation-covariance mapping; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -217,12 +217,12 @@
       "commonTrap": "Treating selection sort as if it shifts elements the way insertion sort does. That produces $[1, 3, 4, 7, 8]$ and makes the false statement B look true."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, C, D [python: ['A', 'C', 'D']]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A), (C), (D)",
       "agreesWithKey": true,
-      "checkCode": "a0=[4,7,1,8,3]\na=a0[:]\nfor j in range(4):\n    if a[j]>a[j+1]: a[j],a[j+1]=a[j+1],a[j]\nA=a==[4,1,7,3,8]\na=a0[:]\nfor i in range(2):\n    m=min(range(i,5),key=lambda k:a[k]); a[i],a[m]=a[m],a[i]\nB=a==[1,3,4,7,8]\ndef ins(a,iters):\n    a=a[:]; s=0\n    for i in range(1,iters+1):\n        key=a[i]; j=i-1\n        while j>=0 and a[j]>key: a[j+1]=a[j]; j-=1; s+=1\n        a[j+1]=key\n    return a,s\nC=ins(a0,4)[1]==5\nD=ins(a0,2)[0]==[1,4,7,8,3]\nprint([k for k,v in zip('ABCD',[A,B,C,D]) if v])  # ['A','C','D']",
-      "notes": ""
+      "checkCode": "a0 = [4, 7, 1, 8, 3]\ndef bubble_pass(a):\n    a = a[:]\n    for j in range(len(a) - 1):\n        if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]\n    return a\ndef selection(a, iters):\n    a = a[:]\n    for i in range(iters):\n        m = min(range(i, len(a)), key=lambda k: a[k]); a[i], a[m] = a[m], a[i]\n    return a\ndef insertion(a, iters):\n    a = a[:]; shifts = 0\n    for i in range(1, iters + 1):\n        key = a[i]; j = i - 1\n        while j >= 0 and a[j] > key:\n            a[j + 1] = a[j]; j -= 1; shifts += 1\n        a[j + 1] = key\n    return a, shifts\ninversions = sum(a0[i] > a0[j] for i in range(5) for j in range(i + 1, 5))\ntruth = {\n    'A': bubble_pass(a0) == [4, 1, 7, 3, 8],\n    'B': selection(a0, 2) == [1, 3, 4, 7, 8],\n    'C': insertion(a0, 4)[1] == 5,\n    'D': insertion(a0, 2)[0] == [1, 4, 7, 8, 3],\n}\nprint(truth, inversions)                 # {'A': True, 'B': False, 'C': True, 'D': True} 5\nprint([k for k, v in truth.items() if v])  # ['A', 'C', 'D']\nprint(selection(a0, 2), insertion(a0, 4)[0])  # [1, 3, 4, 8, 7] [1, 3, 4, 7, 8]",
+      "notes": "Blind traces: bubble pass 1 gives [4,1,7,3,8] (A true); selection sort gives [1,7,4,8,3] then [1,3,4,8,7], not [1,3,4,7,8] (B false); insertion sort makes 0+2+0+3 = 5 shifts = 5 inversions (C true) and reaches [1,4,7,8,3] after iterations i = 1, 2 (D true). Matches key A, C, D. Independent Python (simulations of all three sorts plus a direct inversion count) agrees, and shows [1,3,4,7,8] is what a shifting-insertion of the minimum would give, which is the option B trap. Stem defines every iteration and pass, so each statement has one truth value. Audited steps, option verdicts, EASY label (five-element traces, matches the blueprint slot) and topic mapping; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -336,12 +336,12 @@
       "commonTrap": "Stopping after the first update (option A). Convergence requires one more assignment pass that changes nothing, and here $P_3$ changes clusters in the second pass."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "final centroids (2, 2) and (8, 5) -> option B [python: [[2.0, 2.0], [8.0, 5.0]]]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B) final centroids (2, 2) and (8, 5)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX=np.array([(1,1),(3,1),(2,4),(7,4),(8,7),(9,4)],float); C=X[[0,2]].copy(); lab=None\nwhile True:\n    d=((X[:,None]-C[None])**2).sum(-1); new=d.argmin(1)\n    if lab is not None and (new==lab).all(): break\n    lab=new; C=np.array([X[lab==k].mean(0) for k in range(2)])\nprint(C.tolist())  # [[2,2],[8,5]] -> option B",
-      "notes": ""
+      "checkCode": "import numpy as np\nX = np.array([(1, 1), (3, 1), (2, 4), (7, 4), (8, 7), (9, 4)], float)\ndef lloyd(init):\n    C = X[init].copy(); prev = None; history = []\n    while True:\n        d = np.linalg.norm(X[:, None] - C[None], axis=2)\n        s = np.sort(d, axis=1); assert (s[:, 1] - s[:, 0] > 1e-9).all()   # confirms \"no ties\"\n        lab = d.argmin(1); history.append((lab.tolist(), C.tolist()))\n        if prev is not None and (lab == prev).all(): return C, history\n        prev = lab; C = np.array([X[lab == k].mean(0) for k in range(2)])\nC, h = lloyd([0, 2])\nfor lab, c in h: print(lab, c)\nprint(C.tolist())   # [[2.0, 2.0], [8.0, 5.0]] -> option B\nopts = {'A': [(2, 1), (6.5, 4.75)], 'B': [(2, 2), (8, 5)], 'C': [(2, 1), (8, 4)], 'D': [(2, 2), (6.5, 4.75)]}\nprint([k for k, v in opts.items() if np.allclose(v, C)])   # ['B']",
+      "notes": "Blind Lloyd run: iteration 1 gives {P1,P2} and {P3..P6} with centroids (2,1) and (6.5,4.75); iteration 2 moves P3 to cluster 1 (squared distances 9 vs 20.8125) giving (2,2) and (8,5); iteration 3 changes nothing. Matches key B. Independent Python (vectorised Lloyd with an assert that no distance ties occur in any pass) reproduces the same history and only option B matches; the distractors are the iteration-1 centroids (A), the coordinate-wise medians (2,1),(8,4) (C) and c2 recomputed including P3 (D). All squared distances in the solution tables were rechecked. Stem states the stopping rule and no-ties condition, so the answer is unique. Audited steps, option verdicts, MODERATE label and topic mapping; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -455,12 +455,12 @@
       "commonTrap": "Writing the coefficient as $2^{10} = 1024$ by forgetting that the $k = 0$ term of the expansion is $I$, not a multiple of $P$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "(I+P)^10 = I + 1023P -> option D [python: [1023]]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(D) I + 1023P",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nP=np.array([[4,-6],[2,-3]]); I=np.eye(2,dtype=int)\nassert (P@P==P).all()\nM=np.linalg.matrix_power(I+P,10)\nprint([c for c in (1,10,1024,1023) if (M==I+c*P).all()])  # [1023] -> option D",
-      "notes": ""
+      "checkCode": "import sympy as sp\nP = sp.Matrix([[4, -6], [2, -3]]); I = sp.eye(2)\nprint(P * P == P, P.eigenvals())                    # True {1: 1, 0: 1}\nM = (I + P) ** 10\nprint(M.tolist())                                   # [[4093, -6138], [2046, -3068]]\nprint([n for n, c in {'A': None, 'B': 10, 'C': 1024, 'D': 1023}.items()\n       if (M == (I + P if c is None else I + c * P))])   # ['D']\nprint(all((I + P) ** n == I + (2 ** n - 1) * P for n in range(1, 12)))   # True",
+      "notes": "Blind solve: P^2 = [[4,-6],[2,-3]] = P, so P is idempotent and (I+P)^10 = I + (2^10 - 1)P = I + 1023P (option D), matching the key. Independent sympy check computes (I+P)^10 exactly ([[4093,-6138],[2046,-3068]]), confirms only c = 1023 works, and that (I+P)^n = I + (2^n - 1)P for n = 1..11; eigenvalues of P are 1 and 0. The printed matrix and the eigenvalue cross-check in the solution are correct. Audited steps, option verdicts, EASY label and topic mapping; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -574,12 +574,12 @@
       "commonTrap": "Concluding \"infinitely many\" as soon as the coefficient part of a row becomes zero. The right-hand side of that row must also be zero, otherwise the system is inconsistent."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "k = 2, m = 4 -> option C [python: [2]; ['C']]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) k = 2 and m = 4",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nk,m=sp.symbols('k m')\nA=sp.Matrix([[1,2,-1],[3,7,-1],[2,6,k]]); b=sp.Matrix([1,4,m])\nprint(sp.solve(A.det(),k))  # [2]\ndef ninf(kv,mv):\n    Ab=A.row_join(b).subs({k:kv,m:mv}); return Ab.rank()==A.subs(k,kv).rank()<3\nprint([o for o,(kv,mv) in zip('ABCD',[(-2,2),(2,3),(2,4),(2,7)]) if ninf(kv,mv)])  # ['C']",
-      "notes": ""
+      "checkCode": "import sympy as sp\nk, m = sp.symbols('k m')\nA = sp.Matrix([[1, 2, -1], [3, 7, -1], [2, 6, k]]); b = sp.Matrix([1, 4, m])\nE = A.row_join(b)\nE[1, :] = E[1, :] - 3 * E[0, :]; E[2, :] = E[2, :] - 2 * E[0, :]; E[2, :] = E[2, :] - 2 * E[1, :]\nprint(E[2, :].applyfunc(sp.expand).tolist())                 # [[0, 0, k - 2, m - 4]]\ndef classify(kv, mv):\n    rA = A.subs(k, kv).rank(); rAb = A.row_join(b).subs({k: kv, m: mv}).rank()\n    return 'none' if rA < rAb else ('unique' if rA == 3 else 'infinite')\nopts = {'A': (-2, 2), 'B': (2, 3), 'C': (2, 4)}\nprint({o: classify(*v) for o, v in opts.items()})            # {'A': 'unique', 'B': 'none', 'C': 'infinite'}\nprint({mv: classify(2, mv) for mv in (-1, 0, 3, 4, 5, 10)})  # only m = 4 is 'infinite', so option D (any m) fails\nprint(sp.solve(A.det(), k))                                  # [2]  (k != 2 gives a unique solution)",
+      "notes": "Blind solve: R2 - 3R1 = [0 1 2 | 1], R3 - 2R1 = [0 2 k+2 | m-2], R3 - 2R2 = [0 0 k-2 | m-4], so infinitely many solutions iff k = 2 and m = 4 (option C), matching the key. Independent sympy check reproduces the reduced last row [0 0 k-2 | m-4] and classifies each option by rank: A (k=-2, m=2) unique, B (k=2, m=3) none, C infinite; for k = 2 only m = 4 is infinite, so D fails. Audited steps, option verdicts, EASY label and topic mapping; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -693,12 +693,12 @@
       "commonTrap": "Choosing the original axis with the largest variance, $(1, 0)$, and ignoring the off-diagonal covariance, which rotates the best direction."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "eigenvalues 7, 2; PC1 = (2,1)/sqrt(5); ratio 7/9 = 0.7778 -> option A [python: [2.0, 7.0] [2.0, 1.0] 0.7778]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A) (2, 1)/sqrt(5) and 7/9",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nS=np.array([[6,2],[2,3]],float); w,V=np.linalg.eigh(S)\nv=V[:,-1]*np.sign(V[0,-1])\nprint(w.round(6).tolist(), (v*np.sqrt(5)).round(6).tolist(), round(w[-1]/w.sum(),4))  # [2,7] [2,1] 0.7778 -> option A",
-      "notes": ""
+      "checkCode": "import numpy as np\nS = np.array([[6, 2], [2, 3]], float)\nw, V = np.linalg.eigh(S); v = V[:, -1] * np.sign(V[0, -1])\nprint(w.round(6).tolist(), (v * np.sqrt(5)).round(6).tolist(), round(w[-1] / w.sum(), 4))  # [2.0, 7.0] [2.0, 1.0] 0.7778\n# brute force: direction maximising projected variance u^T S u on the unit circle\nt = np.linspace(0, np.pi, 200001); u = np.stack([np.cos(t), np.sin(t)])\nvar = np.einsum('it,ij,jt->t', u, S, u); best = u[:, var.argmax()]\nprint(best * np.sqrt(5) / np.abs(best * np.sqrt(5)).max() * 2, var.max())  # ~[2, 1] direction, max variance 7\nopts = {'A': ((2, 1), 7 / 9), 'B': ((1, 2), 7 / 9), 'C': ((1, -2), 2 / 9), 'D': ((1, 0), 2 / 3)}\ndef ok(d, f):\n    d = np.array(d, float); d /= np.linalg.norm(d)\n    return abs(abs(d @ v) - 1) < 1e-9 and abs(f - w[-1] / w.sum()) < 1e-9\nprint([o for o, (d, f) in opts.items() if ok(d, f)])   # ['A']",
+      "notes": "Blind solve: tr = 9, det = 14, eigenvalues 7 and 2; (Sigma - 7I)v = 0 gives v = (2, 1)/sqrt(5) and the explained fraction is 7/9 (option A), matching the key. Independent Python (numpy eigh plus a brute-force search over unit directions for the maximum of u^T Sigma u, which peaks at 7 along (2,1)) agrees, and only option A satisfies both parts: (1,2) is not an eigenvector, (1,-2) is PC2 with 2/9, and (1,0) gives 6/9. Covariance-matrix PCA is the standard reading for mean-centred data with a stated covariance, and the correlation-matrix variant (direction (1,1)) matches no option. Audited steps, option verdicts, EASY label and topic mapping; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -757,7 +757,7 @@
         },
         {
           "title": "Find the candidate keys",
-          "body": "$A$ appears on no right-hand side, so every key contains $A$. Its closure is $A^+ = \\{A, D, E\\}$ (via $A \\to D$ and $D \\to E$), which is not all of $R$.\n\n- $(AB)^+$: $AB \\to C$ adds $C$; $A \\to D$ and $D \\to E$ add $D, E$; $AC \\to F$ adds $F$. This is all of $R$, so $AB$ is a key.\n- $(AC)^+$: $C \\to B$ adds $B$, $AC \\to F$ adds $F$, and $A \\to D \\to E$ adds $D, E$. This is all of $R$, so $AC$ is a key.\n- $(AD)^+ = \\{A, D, E\\}$, $(AE)^+ = \\{A, D, E\\}$ and $(AF)^+ = \\{A, D, E, F\\}$, so none of these is a key. Every other superkey contains $AB$ or $AC$.\n\nThe candidate keys are $AB$ and $AC$, and the prime attributes are $\\{A, B, C\\}$."
+          "body": "$A$ appears on no right-hand side, so every key contains $A$. Its closure is $A^+ = \\{A, D, E\\}$ (via $A \\to D$ and $D \\to E$), which is not all of $R$.\n\n- $(AB)^+$: $AB \\to C$ adds $C$; $A \\to D$ and $D \\to E$ add $D, E$; $AC \\to F$ adds $F$. This is all of $R$, so $AB$ is a key.\n- $(AC)^+$: $C \\to B$ adds $B$, $AC \\to F$ adds $F$, and $A \\to D \\to E$ adds $D, E$. This is all of $R$, so $AC$ is a key.\n- $(AD)^+ = \\{A, D, E\\}$, $(AE)^+ = \\{A, D, E\\}$ and $(AF)^+ = \\{A, D, E, F\\}$, so none of these is a key. In fact $(ADEF)^+ = \\{A, D, E, F\\}$: $B$ and $C$ can only be derived through $AB \\to C$ and $C \\to B$, each of which needs the other attribute already, so every key must contain $B$ or $C$ as well as $A$. Hence $AB$ and $AC$ are the only minimal keys.\n\nThe candidate keys are $AB$ and $AC$, and the prime attributes are $\\{A, B, C\\}$."
         },
         {
           "title": "Test each FD",
@@ -770,15 +770,15 @@
       ],
       "finalAnswer": "**3**",
       "teaching": "Normal forms restrict which functional dependencies may hold, so that facts are not stored redundantly. BCNF is the strict version: in every non-trivial FD $X \\to Y$, the left side $X$ must be a superkey, meaning it determines the whole tuple. 3NF relaxes this by also allowing $X \\to Y$ when $Y$ is **prime**, that is, part of some candidate key. This relaxation is what guarantees that a dependency-preserving 3NF decomposition always exists.\n\nTesting an FD for 3NF therefore needs all the candidate keys first. The quick route is to put every attribute that never appears on a right-hand side into the key, take its closure, and then extend it minimally. Here that gives the keys $AB$ and $AC$. The FD $C \\to B$ breaks BCNF but is allowed in 3NF because $B$ is prime. The FDs that make $D$ and $E$ depend on part of a key, or on other non-key attributes, are the genuine 3NF violations.",
-      "commonTrap": "Counting $C \\to B$ as a violation (answering 4, the BCNF count) because $C$ is not a superkey, while overlooking that $B$ is prime. Missing the second key $AC$ leads to the same error, since $C$ then looks non-prime."
+      "commonTrap": "Counting $C \\to B$ as a violation (answering 4, the BCNF count) because $C$ is not a superkey, while overlooking that $B$ is prime. Missing the second key $AC$ also gives 4: $AC \\to F$ then looks like a violation, because $AC$ is not recognised as a superkey and $F$ is non-prime."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "3 (keys AB, AC) [python: ['AB', 'AC'] 3]",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nR=set('ABCDEF'); F=[('AB','C'),('C','B'),('A','D'),('D','E'),('AC','F'),('EF','D')]\ndef cl(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nkeys=[]\nfor n in range(1,7):\n    for c in combinations(sorted(R),n):\n        if cl(c)==R and not any(set(k)<=set(c) for k in keys): keys.append(c)\nprime=set().union(*map(set,keys))\nprint([''.join(k) for k in keys], sum(1 for l,r in F if not set(r)<=set(l) and cl(l)!=R and not set(r)<=prime))  # ['AB','AC'] 3",
-      "notes": ""
+      "checkCode": "from itertools import combinations\nR = set('ABCDEF')\nF = [('AB', 'C'), ('C', 'B'), ('A', 'D'), ('D', 'E'), ('AC', 'F'), ('EF', 'D')]\ndef cl(X):\n    X = set(X)\n    while True:\n        new = {c for l, r in F if set(l) <= X for c in r} - X\n        if not new: return X\n        X |= new\nsupers = [set(c) for n in range(1, 7) for c in combinations(sorted(R), n) if cl(c) == R]\nkeys = [s for s in supers if not any(t < s for t in supers)]     # minimal superkeys = candidate keys\nprime = set().union(*keys)\nprint(sorted(''.join(sorted(k)) for k in keys), sorted(prime))     # ['AB', 'AC'] ['A', 'B', 'C']\ndef status(l, r):\n    if set(r) <= set(l): return 'trivial'\n    if cl(l) == R: return 'ok: LHS superkey'\n    if set(r) - set(l) <= prime: return 'ok: RHS prime'\n    return 'VIOLATES 3NF'\nfor l, r in F: print(l, '->', r, status(l, r))\nprint(sum(status(l, r) == 'VIOLATES 3NF' for l, r in F))          # 3\nprint(sum(not set(r) <= set(l) and cl(l) != R for l, r in F))     # 4 (BCNF violations, for contrast)\n# any key must contain B or C: without them the closure never grows past {A, D, E, F}\nprint(sorted(cl('ADEF')))                                         # ['A', 'D', 'E', 'F']",
+      "notes": "Blind solve: A is on no right-hand side, keys are AB and AC (prime = A, B, C); AB->C and AC->F have superkey left sides, C->B has a prime right side, and A->D, D->E, EF->D fail both tests, so 3, matching the key. Independent Python (exhaustive closure search for minimal superkeys, then a per-FD 3NF test) agrees; the BCNF count is 4. Stem is unambiguous (counts FDs in F, all right-hand sides are single attributes); integer NAT, no rounding needed, range 3 to 3. FIXED in the solution only: (1) the commonTrap said that missing key AC makes C 'look non-prime', which changes nothing (C is only on the right of AB->C, whose left side is a superkey); the real effect is that AC->F then looks like a 3NF violation, giving 4 (checked by running the test with the incomplete key list), and the text now says so; (2) step 2 asserted 'every other superkey contains AB or AC' without support, and now shows (ADEF)+ = {A,D,E,F} so every key must contain B or C. Answer, stem, difficulty and steps' conclusions unchanged."
     },
     "review": {
       "status": "SELF_CHECKED",

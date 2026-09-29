@@ -52,8 +52,8 @@ export function WeakAreasPanel({ data, model, status }: PanelProps) {
     <div className="space-y-5">
       <p className="text-sm text-fg-3">
         Topics you have answered, weakest first. Topics with {WEAK_MIN_ATTEMPTS} or more answers are ranked by the lower bound of the 95% Wilson interval for your accuracy, which is cautious with small
-        samples: 2 correct out of 3 ranks below 7 out of 10 although both are close to 70%. A topic is marked weak when its accuracy is below {pct(WEAK_THRESHOLD, 0)}; topics with fewer answers are listed
-        last.
+        samples: 2 correct out of 3 ranks as weaker than 7 out of 10, although both are close to 70%, because 3 answers are weaker evidence. A topic is marked weak when its accuracy is below{" "}
+        {pct(WEAK_THRESHOLD, 0)}; topics with fewer answers are listed last.
       </p>
       <ol className="overflow-hidden rounded-[var(--radius)] border border-border bg-surface">
         {answered.map((r, i) => {

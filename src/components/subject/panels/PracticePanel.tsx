@@ -24,6 +24,7 @@ export function PracticePanel({ data, model, status }: PanelProps) {
     <div className="space-y-5">
       <Card>
         <CardHeader
+          as="h3"
           title="Quick start"
           description={
             practiceTotal
@@ -52,7 +53,7 @@ export function PracticePanel({ data, model, status }: PanelProps) {
             const n = t.pyqCount + t.practiceCount;
             const p = progress.get(t.id);
             return (
-              <li key={t.id} className="flex flex-col gap-2 border-b border-border px-4 py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+              <li key={t.id} className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 last:border-0">
                 <div className="min-w-0">
                   <Link href={topicHref(s.id, t.id)} className="font-medium text-fg hover:underline">
                     {t.name}
@@ -63,11 +64,11 @@ export function PracticePanel({ data, model, status }: PanelProps) {
                   </p>
                 </div>
                 {n ? (
-                  <ButtonLink href={`/practice?subject=${s.id}&topic=${t.id}`} size="sm" className="h-10 self-start sm:self-auto">
+                  <ButtonLink href={`/practice?subject=${s.id}&topic=${t.id}`} size="sm" className="h-10 shrink-0">
                     Practice<span className="sr-only"> {t.name}</span>
                   </ButtonLink>
                 ) : (
-                  <span className="text-xs text-fg-3">No questions for this topic yet</span>
+                  <span className="shrink-0 text-right text-xs text-fg-3">No questions yet</span>
                 )}
               </li>
             );

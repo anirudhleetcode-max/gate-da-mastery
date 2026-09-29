@@ -8,14 +8,16 @@ import { MASTERY_HALF_LIFE_DAYS, MASTERY_MIN_ATTEMPTS, accuracyTrend, weakTopics
 import { useMockAttempts, useRevisionItems } from "@/lib/userdata/hooks";
 import { SUBJECT_COLOR, SUBJECT_SHORT, TIER_LABEL } from "@/lib/labels";
 import { formatDuration, pct, plural } from "@/lib/utils";
-import { BarList, ChartFrame, LineChart } from "@/components/charts/Charts";
+import { ChartFrame } from "@/components/charts/Charts";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Stat } from "@/components/ui/Stat";
 import { Segmented } from "@/components/ui/Segmented";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ButtonLink } from "@/components/ui/Button";
 import { mockProgress, type MockInfo } from "@/components/dashboard/mocks";
-import { MockScoreChart, PageSkeleton, PyqCompletion, StorageUnavailable, pct0, spacedLabels } from "@/components/dashboard/parts";
+import { MockScoreChart, PageSkeleton, PyqCompletion, StorageUnavailable, pct0 } from "@/components/dashboard/parts";
+import { MetricBars } from "@/components/dashboard/MetricBars";
+import { TrendLine } from "@/components/dashboard/TrendLine";
 import { PairedBars } from "@/components/dashboard/PairedBars";
 import { TopicTable } from "@/components/dashboard/TopicTable";
 import { dueLabel, shiftDay, shortDate, useLoadStatus, useToday } from "@/components/dashboard/useStudentData";
@@ -120,7 +122,7 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
       </section>
 
       <Section id="trends" title="Trends">
-        <MockScoreChart series={mp.series} title="Score trend (mock tests)" />
+        <MockScoreChart series={mp.series} title="Score trend (mock tests)" availableCount={mp.availableCount} next={mp.next} />
         {trend.points.length ? (
           <ChartFrame
             title={`Accuracy trend (${bucket === "day" ? "daily" : "weekly"})`}
@@ -143,13 +145,16 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
                 { value: "day", label: "Daily" },
                 { value: "week", label: "Weekly" },
               ]}
-              className="mb-3"
+              className="mb-3 max-sm:[&>button]:min-h-10 max-sm:[&>button]:px-4"
             />
-            <LineChart
-              ariaLabel={`Accuracy trend by ${bucket}`}
-              xLabels={spacedLabels(trend.points.map((p) => shortDate(p.period)))}
-              series={[{ key: "acc", label: "Accuracy", color: "var(--accent)", values: trend.points.map((p) => p.accuracy * 100) }]}
-              yMax={100}
+            <TrendLine
+              ariaLabel={`Accuracy trend by ${bucket === "day" ? "day" : "week"}`}
+              points={trend.points.map((p) => ({
+                key: p.period,
+                label: shortDate(p.period),
+                value: p.accuracy * 100,
+                detail: `${bucket === "week" ? "Week of " + shortDate(p.period) + " · " : ""}${plural(p.attempted, "answer")}`,
+              }))}
               formatValue={(v) => `${Math.round(v)}%`}
             />
           </ChartFrame>
@@ -162,18 +167,18 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
         {answeredSubjects.length ? (
           <ChartFrame
             title="Subject performance"
-            description={`Accuracy per subject; the number in brackets is how many answers it is based on.${answeredSubjects.length < model.subjects.length ? ` ${plural(model.subjects.length - answeredSubjects.length, "subject")} without answers ${model.subjects.length - answeredSubjects.length === 1 ? "is" : "are"} not shown.` : ""}`}
+            description={`Accuracy per subject, with the number of answers it is based on.${answeredSubjects.length < model.subjects.length ? ` ${plural(model.subjects.length - answeredSubjects.length, "subject")} without answers ${model.subjects.length - answeredSubjects.length === 1 ? "is" : "are"} not shown.` : ""}`}
             table={{ columns: ["Subject", "Answers", "Correct", "Accuracy"], rows: answeredSubjects.map((s) => [s.name, s.attempted, s.correct, pct(s.accuracy)]) }}
           >
-            <BarList
+            <MetricBars
               ariaLabel="Accuracy by subject"
               max={1}
               data={answeredSubjects.map((s) => ({
                 key: s.subjectId,
-                label: `${SUBJECT_SHORT[s.subjectId as SubjectId] ?? s.name} (${s.attempted})`,
+                label: SUBJECT_SHORT[s.subjectId as SubjectId] ?? s.name,
                 value: s.accuracy ?? 0,
                 display: pct0(s.accuracy ?? 0),
-                detail: `${s.correct} of ${s.attempted} correct`,
+                detail: `of ${s.attempted}`,
                 color: SUBJECT_COLOR[s.subjectId as SubjectId],
               }))}
             />
@@ -187,14 +192,13 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
             description={`Average time from opening a question to submitting your answer, per subject. Overall: ${formatDuration(o.avgTimeMs)}. The GATE paper allows about 2 min 46 s per question on average (180 minutes for 65 questions).`}
             table={{ columns: ["Subject", "Answers", "Average time"], rows: timedSubjects.map((s) => [s.name, s.attempted, formatDuration(s.avgTimeMs)]) }}
           >
-            <BarList
+            <MetricBars
               ariaLabel="Average time per question by subject"
               data={timedSubjects.map((s) => ({
                 key: s.subjectId,
                 label: SUBJECT_SHORT[s.subjectId as SubjectId] ?? s.name,
                 value: (s.avgTimeMs ?? 0) / 1000,
                 display: formatDuration(s.avgTimeMs),
-                detail: `${plural(s.attempted, "answer")}`,
                 color: SUBJECT_COLOR[s.subjectId as SubjectId],
               }))}
             />
@@ -214,7 +218,7 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
             rows: mp.perTier.map((t) => [TIER_LABEL[t.tier], t.taken, mocks.filter((m) => m.tier === t.tier && m.available).length, t.total]),
           }}
         >
-          <BarList
+          <MetricBars
             ariaLabel="Mock completion by tier"
             max={1}
             data={mp.perTier.map((t) => ({
@@ -222,18 +226,18 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
               label: TIER_LABEL[t.tier],
               value: t.total ? t.taken / t.total : 0,
               display: `${t.taken}/${t.total}`,
-              detail: `${mocks.filter((m) => m.tier === t.tier && m.available).length} available now`,
               color: "var(--accent)",
             }))}
           />
         </ChartFrame>
         <Card className="lg:col-span-2">
           <CardHeader
+            as="h3"
             title="Revision completion"
-            description="Your spaced-revision queue: items come back after 1, 3, 7 or more days depending on how well you recalled them."
+            description="Your spaced-revision queue. “Forgot” brings an item back tomorrow, “almost” in 2 or more days, and “got it” in 3, then 7, then longer intervals of up to 60 days."
             action={
               revision.length ? (
-                <ButtonLink href="/revision" size="sm" variant={dueToday + overdue.length ? "primary" : "secondary"}>
+                <ButtonLink href="/revision" size="sm" className="max-sm:h-10" variant={dueToday + overdue.length ? "primary" : "secondary"}>
                   {dueToday + overdue.length ? "Revise now" : "Open revision"}
                 </ButtonLink>
               ) : undefined
@@ -246,7 +250,7 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
                   <Stat label="Reviews done" value={reviewsDone} />
                   <Stat label="In queue" value={revision.length} />
                   <Stat label="Due today" value={dueToday} />
-                  <Stat label="Overdue" value={overdue.length} hint={oldestOverdue ? dueLabel(oldestOverdue.nextReview, today).text.toLowerCase() + " (oldest)" : "none"} />
+                  <Stat label="Overdue" value={overdue.length} hint={oldestOverdue ? `oldest: ${dueLabel(oldestOverdue.nextReview, today).text.replace(/^Overdue /, "")}` : "none"} />
                 </div>
                 <ChartFrame
                   className="border-0 p-0"
@@ -254,7 +258,7 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
                   description="How you graded each item the last time you reviewed it."
                   table={{ columns: ["Status", "Items"], rows: byGrade.map((g) => [g.label, g.n]) }}
                 >
-                  <BarList ariaLabel="Revision items by last recall grade" data={byGrade.map((g) => ({ key: g.key, label: g.label, value: g.n, display: String(g.n), color: g.color }))} />
+                  <MetricBars ariaLabel="Revision items by last recall grade" data={byGrade.map((g) => ({ key: g.key, label: g.label, value: g.n, display: String(g.n), color: g.color }))} />
                 </ChartFrame>
               </div>
             ) : (
@@ -357,12 +361,12 @@ function MetricsExplainer() {
           </div>
           <div>
             <dt className="font-medium text-fg">Accuracy</dt>
-              <dd className="mt-1 text-fg-2">Correct answers ÷ (correct + incorrect). Skipped mock questions and questions the official key awarded marks-to-all are left out.</dd>
+            <dd className="mt-1 text-fg-2">Correct answers ÷ (correct + incorrect). Skipped mock questions and questions the official key awarded marks-to-all are left out.</dd>
           </div>
           <div>
             <dt className="font-medium text-fg">Weak topic</dt>
             <dd className="mt-1 text-fg-2">
-              At least 3 answers and under 70% accuracy, ranked by the lower bound of the 95% Wilson interval, so 1 of 5 correct ranks weaker than 0 of 1.
+              At least 3 answers and under 70% accuracy. Ranked by the lower bound of the 95% Wilson interval, which allows for how many answers the accuracy is based on.
             </dd>
           </div>
           <div>

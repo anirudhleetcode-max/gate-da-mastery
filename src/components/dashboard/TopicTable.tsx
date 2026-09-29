@@ -122,6 +122,7 @@ export function TopicTable({ topics, subjects }: { topics: TopicProgress[]; subj
       </div>
 
       {/* Phones: one stacked row per topic. */}
+      <p className="-mb-1 text-xs text-fg-3 sm:hidden">The number and badge on each row are your topic mastery (0–100).</p>
       <ul className="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface sm:hidden" aria-label="Topic performance">
         {rows.map((t) => (
           <li key={t.topicId} className="px-3 py-2.5">
@@ -131,6 +132,7 @@ export function TopicTable({ topics, subjects }: { topics: TopicProgress[]; subj
                 {t.name}
               </Link>
               <span className="inline-flex shrink-0 items-center gap-1.5">
+                <span className="sr-only">Your topic mastery:</span>
                 {t.mastery.score !== null ? <span className="tnum text-sm font-semibold text-fg">{t.mastery.score}</span> : null}
                 <Badge tone={LEVEL_TONE[t.mastery.level]}>{t.mastery.level}</Badge>
               </span>
@@ -144,7 +146,7 @@ export function TopicTable({ topics, subjects }: { topics: TopicProgress[]; subj
         ))}
       </ul>
 
-      <div className="hidden overflow-x-auto rounded-[var(--radius)] border border-border sm:block">
+      <div className="hidden overflow-x-auto rounded-[var(--radius)] border border-border bg-surface sm:block">
         <table className="w-full min-w-[44rem] text-sm">
           <caption className="sr-only">Topic performance: answers, accuracy, average time, PYQs attempted and your topic mastery for each topic</caption>
           <thead className="bg-surface-2">

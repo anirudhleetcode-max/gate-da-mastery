@@ -4,7 +4,7 @@
  */
 import "server-only";
 import type { Subject, SubjectId } from "@/lib/content/schema";
-import type { CompiledQuestion, QuestionMeta } from "@/lib/content/types";
+import type { CompiledFormula, CompiledQuestion, QuestionMeta } from "@/lib/content/types";
 import {
   getBundle,
   getCatalog,
@@ -17,12 +17,13 @@ import {
   getSubject,
   getSubjects,
   getSyllabus,
+  getTopic,
   getWeightage,
   toMeta,
   topicStats,
 } from "@/lib/server/repo";
 import { SUBJECT_ORDER } from "@/lib/labels";
-import { cleanPreview } from "@/components/pyq/preview";
+import { stemPreview } from "@/components/pyq/preview";
 import type { MockRef, SourceRef, SubjectCardData, SubjectPageData, SyllabusData, WeightageSummary } from "./types";
 
 /** The 7 DA subjects in syllabus order, then General Aptitude. */
@@ -41,10 +42,18 @@ export function sourceRefs(ids: string[]): SourceRef[] {
     .map((s) => ({ id: s.id, name: s.name, url: s.url, status: s.verificationStatus }));
 }
 
-const displayMeta = (q: CompiledQuestion): QuestionMeta => {
-  const m = toMeta(q);
-  return { ...m, preview: cleanPreview(m.preview) };
-};
+/** List-row metadata with the same stem preview as the PYQ browser (formulas as readable text). */
+export const displayMeta = (q: CompiledQuestion): QuestionMeta => ({ ...toMeta(q), preview: stemPreview(q.html.stem) });
+
+/**
+ * Official PYQs tagged with each syllabus phrase, under ANY topic. This is the
+ * catalog's definition, used everywhere a phrase count is shown so the Topics
+ * tab, the topic page and the syllabus agree. (A question is filed under one
+ * topic but may also test phrases of other topics.)
+ */
+export function subtopicPyqCounts(): Map<string, number> {
+  return new Map(getCatalog().topics.flatMap((t) => t.subtopics.map((st) => [st.id, st.pyqCount] as const)));
+}
 
 /** Historical per-paper figures for one subject, with question-bank completeness per paper. */
 export function subjectWeightage(subjectId: string): WeightageSummary | null {
@@ -102,7 +111,7 @@ export function subjectCards(): SubjectCardData[] {
 }
 
 export function mockRefs(): MockRef[] {
-  return getMocks().map((m) => ({ id: m.id, number: m.number, title: m.title }));
+  return getMocks().map((m) => ({ id: m.id, number: m.number, title: m.title, available: m.available }));
 }
 
 export function subjectPageData(subjectId: string): SubjectPageData | null {
@@ -110,7 +119,7 @@ export function subjectPageData(subjectId: string): SubjectPageData | null {
   if (!s) return null;
   const stats = topicStats(s.id);
   const pyqs = getPyqs().filter((q) => q.subjectId === s.id);
-  const subtopicPyqs = (id: string) => pyqs.filter((q) => q.subtopicIds.includes(id)).length;
+  const phraseCounts = subtopicPyqCounts();
   const topicIds = new Set(s.topics.map((t) => t.id));
   const topicOrder = (id: string) => s.topics.findIndex((t) => t.id === id);
   const mockQuestions = getBundle()
@@ -132,7 +141,7 @@ export function subjectPageData(subjectId: string): SubjectPageData | null {
       id: st.topic.id,
       name: st.topic.name,
       summary: st.topic.summary,
-      subtopics: st.topic.subtopics.map((x) => ({ id: x.id, name: x.name, officialPhrase: x.officialPhrase, pyqCount: subtopicPyqs(x.id) })),
+      subtopics: st.topic.subtopics.map((x) => ({ id: x.id, name: x.name, officialPhrase: x.officialPhrase, pyqCount: phraseCounts.get(x.id) ?? 0 })),
       pyqCount: st.pyqCount,
       practiceCount: st.practiceCount,
       mockCount: st.mockCount,
@@ -203,5 +212,50 @@ export function syllabusData(): SyllabusData {
         };
       }),
     })),
+  };
+}
+
+// ------------------------------------------------------------------ topic page
+
+export interface TopicPhrase {
+  id: string;
+  name: string;
+  officialPhrase: string;
+  /** Official PYQs tagged with the phrase under any topic. */
+  pyqCount: number;
+  /** Of those, the ones filed under this topic (listed first on the topic page). */
+  ownCount: number;
+}
+
+/** Everything the topic learning page shows, or null for an unknown or mismatched subject/topic pair. */
+export function topicPageData(subjectId: string, topicId: string) {
+  const subject = getSubject(subjectId);
+  const topic = getTopic(topicId);
+  if (!subject || !topic || topic.subjectId !== subject.id) return null;
+  const phraseIds = new Set(topic.subtopics.map((st) => st.id));
+  const pyqs = getPyqs();
+  const own = pyqs.filter((q) => q.topicId === topic.id);
+  // Questions filed under another topic that also test one of this topic's syllabus phrases.
+  const related = pyqs.filter((q) => q.topicId !== topic.id && q.subtopicIds.some((id) => phraseIds.has(id)));
+  const counts = subtopicPyqCounts();
+  const phrases: TopicPhrase[] = topic.subtopics.map((st) => ({
+    id: st.id,
+    name: st.name,
+    officialPhrase: st.officialPhrase,
+    pyqCount: counts.get(st.id) ?? 0,
+    ownCount: own.filter((q) => q.subtopicIds.includes(st.id)).length,
+  }));
+  const formulas: CompiledFormula[] = getFormulas().filter((f) => f.topicId === topic.id);
+  return {
+    subject,
+    topic,
+    phrases,
+    pyqs: own.map((q) => ({ ...displayMeta(q), topicName: topic.name })),
+    related: related.map((q) => ({ ...displayMeta(q), topicName: getTopic(q.topicId)?.name ?? q.topicId })),
+    practiceCount: topicStats(subject.id).find((x) => x.topic.id === topic.id)?.practiceCount ?? 0,
+    formulas,
+    concepts: getConcepts()
+      .filter((c) => c.topicId === topic.id)
+      .map((c) => ({ id: c.id, title: c.title, inOfficialSyllabus: c.inOfficialSyllabus })),
   };
 }

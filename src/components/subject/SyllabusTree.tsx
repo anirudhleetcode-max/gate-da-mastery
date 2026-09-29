@@ -22,20 +22,27 @@ interface RowProgress {
   revisionItems: number;
 }
 
-/** Row grid: toggle · name · PYQs · practice · completion · accuracy · mastery · revision. */
-const ROW_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-x-2 md:grid-cols-[2.5rem_minmax(0,1fr)_3.5rem_4.25rem_5.25rem_5rem_8.5rem_5.5rem]";
-const METRICS = "col-start-2 mt-1.5 grid grid-cols-4 gap-x-2 gap-y-1.5 md:contents";
+/**
+ * Row grid: toggle · name · PYQs · practice · completion · accuracy · mastery · revision.
+ * Laid out by the width of the subject card (container queries), not the viewport, so the
+ * name column never gets squeezed next to the sidebar: a table from 56rem, a labelled
+ * metrics row from 42rem, and a compact 4-column block below that.
+ */
+const ROW_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-x-2 @4xl:grid-cols-[2.5rem_minmax(0,1fr)_3.5rem_4.25rem_5.25rem_5rem_8.5rem_5.5rem]";
+const METRICS = "col-start-2 mt-1.5 grid grid-cols-4 gap-x-2 gap-y-1.5 @2xl:grid-cols-[repeat(4,minmax(0,1fr))_8.5rem_minmax(0,1fr)] @4xl:contents";
 
 function Cell({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (
     <div className={cn("min-w-0 text-sm", className)}>
-      <span className="block truncate text-[0.7rem] font-medium text-fg-3 md:sr-only">{label}</span>
+      <span className="block truncate text-[0.7rem] font-medium text-fg-3 @4xl:sr-only">{label}</span>
       <span className="block">{children}</span>
     </div>
   );
 }
 
 function Metrics({ pyqs, pyqHref, practice, p, status }: { pyqs: number; pyqHref?: string; practice: number; p?: RowProgress; status: DataStatus }) {
+  // pyqHref only for topics: the PYQ browser filters by the question's topic, so a syllabus-phrase
+  // count (which includes questions filed under other topics) would not match the list it opened.
   const ready = status === "ready" && p;
   const dash = <span className="text-fg-3">—</span>;
   return (
@@ -74,19 +81,11 @@ function Metrics({ pyqs, pyqHref, practice, p, status }: { pyqs: number; pyqHref
           dash
         )}
       </Cell>
-      <Cell label="Your topic mastery" className="col-span-3 md:col-span-1">
+      <Cell label="Your topic mastery" className="col-span-3 @2xl:col-span-1">
         {ready ? <MasteryBadge mastery={p.mastery} /> : dash}
       </Cell>
       <Cell label="Revision">
-        {ready && p.revisionItems ? (
-          p.revisionDue ? (
-            <Badge tone="warning">{p.revisionDue} due</Badge>
-          ) : (
-            <span className="text-xs text-fg-2">{p.revisionItems} later</span>
-          )
-        ) : (
-          dash
-        )}
+        {ready && p.revisionItems ? p.revisionDue ? <Badge tone="warning">{p.revisionDue} due</Badge> : <span className="text-xs text-fg-2">{p.revisionItems} later</span> : dash}
       </Cell>
     </div>
   );
@@ -118,7 +117,19 @@ export function SyllabusTree({ data, catalog }: { data: SyllabusData; catalog: C
   const [openTopics, setOpenTopics] = useState<Set<string>>(() => new Set());
 
   const topicProgress = useMemo<Map<string, RowProgress>>(
-    () => new Map(model.topics.map((t) => [t.topicId, { acc: t, pyqDone: t.pyqDone, mastery: t.mastery, revisionDue: t.revisionDue, revisionItems: t.revisionItems }])),
+    () =>
+      new Map(
+        model.topics.map((t) => [
+          t.topicId,
+          {
+            acc: t,
+            pyqDone: t.pyqDone,
+            mastery: t.mastery,
+            revisionDue: t.revisionDue,
+            revisionItems: t.revisionItems,
+          },
+        ]),
+      ),
     [model.topics],
   );
 
@@ -131,10 +142,12 @@ export function SyllabusTree({ data, catalog }: { data: SyllabusData; catalog: C
     const attempts = new Map<number, AttemptRow[]>();
     const done = new Map<number, Set<string>>();
     for (const a of model.attempts) {
-      if (a.status === "not_scored") continue;
+      // Same rules as the topic rows (useProgressModel): "done" = an answer was submitted, including
+      // marks-to-all questions; accuracy and mastery count only scored answers.
+      const submitted = a.status === "correct" || a.status === "incorrect" || a.status === "not_scored";
       for (const i of data.questionSubtopics[a.questionId] ?? []) {
-        (attempts.get(i) ?? attempts.set(i, []).get(i)!).push(a);
-        if (a.origin === "OFFICIAL_PYQ" && (a.status === "correct" || a.status === "incorrect")) (done.get(i) ?? done.set(i, new Set()).get(i)!).add(a.questionId);
+        if (a.status !== "not_scored") (attempts.get(i) ?? attempts.set(i, []).get(i)!).push(a);
+        if (a.origin === "OFFICIAL_PYQ" && submitted) (done.get(i) ?? done.set(i, new Set()).get(i)!).add(a.questionId);
       }
     }
     const rev = new Map<number, RevisionItemRow[]>();
@@ -148,7 +161,12 @@ export function SyllabusTree({ data, catalog }: { data: SyllabusData; catalog: C
       out.set(id, {
         acc: accuracyStat(rows),
         pyqDone: done.get(i)?.size ?? 0,
-        mastery: topicMastery({ attempts: rows, pyqTotal: pyqTotal.get(id) ?? 0, revisionItems: items, now }),
+        mastery: topicMastery({
+          attempts: rows,
+          pyqTotal: pyqTotal.get(id) ?? 0,
+          revisionItems: items,
+          now,
+        }),
         revisionDue: items.filter((r) => r.nextReview <= today).length,
         revisionItems: items.length,
       });
@@ -208,7 +226,10 @@ export function SyllabusTree({ data, catalog }: { data: SyllabusData; catalog: C
         <dl className="mt-2 grid gap-x-6 gap-y-2 pb-2 text-fg-2 sm:grid-cols-2">
           <div>
             <dt className="font-medium text-fg">PYQs</dt>
-            <dd>Official GATE DA questions tagged with the topic or syllabus phrase. Open the number to see them in the PYQ browser.</dd>
+            <dd>
+              Official GATE DA questions filed under the topic (open the number to see them in the PYQ browser). For a syllabus phrase: every official question tagged with it, including questions
+              filed under another topic.
+            </dd>
           </div>
           <div>
             <dt className="font-medium text-fg">Practice</dt>
@@ -224,7 +245,9 @@ export function SyllabusTree({ data, catalog }: { data: SyllabusData; catalog: C
           </div>
           <div>
             <dt className="font-medium text-fg">Your topic mastery</dt>
-            <dd>A platform score (not an official GATE metric) from recent accuracy, PYQ coverage and revision health; it needs at least 3 answers. The same formula is applied to each syllabus phrase.</dd>
+            <dd>
+              A platform score (not an official GATE metric) from recent accuracy, PYQ coverage and revision health; it needs at least 3 answers. The same formula is applied to each syllabus phrase.
+            </dd>
           </div>
           <div>
             <dt className="font-medium text-fg">Revision</dt>
@@ -307,57 +330,53 @@ function SubjectSection({
           </Link>
         </p>
       </div>
-      {open ? (
-        <div id={bodyId} className="border-t border-border">
-          <OfficialSyllabusText heading={s.officialName} text={s.officialText} status={s.syllabusStatus} sources={s.sources} className="bg-surface-2/60 px-4 py-4 sm:px-5" />
-          <div aria-hidden className={cn(ROW_GRID, "hidden border-y border-border bg-surface-2 px-2 py-1.5 text-[0.7rem] font-medium uppercase tracking-wide text-fg-3 md:grid sm:px-3")}>
-            <span />
-            <span>Topic · syllabus phrase</span>
-            <span>PYQs</span>
-            <span>Practice</span>
-            <span>Completion</span>
-            <span>Accuracy</span>
-            <span>Your topic mastery</span>
-            <span>Revision</span>
-          </div>
-          <ul aria-label={`${s.name} topics`}>
-            {s.topics.map((t) => {
-              const topicOpen = openTopics.has(t.id);
-              const subId = `syl-sub-${t.id}`;
-              return (
-                <li key={t.id} className="border-t border-border first:border-t-0 md:first:border-t-0">
-                  <div className={cn(ROW_GRID, "px-2 py-2 sm:px-3")}>
-                    <Toggle open={topicOpen} onClick={() => onToggleTopic(t.id)} controls={subId} label={`${topicOpen ? "Hide" : "Show"} the ${t.subtopics.length} syllabus phrases of ${t.name}`} />
-                    <div className="min-w-0">
-                      <Link href={`/subjects/${s.id}/topics/${t.id}`} className="font-medium text-fg hover:text-accent-text hover:underline">
-                        {t.name}
-                      </Link>
-                      <span className="ml-1.5 text-xs text-fg-3">{plural(t.subtopics.length, "phrase")}</span>
-                    </div>
-                    <Metrics pyqs={t.pyqCount} pyqHref={`/pyqs/browse?subject=${s.id}&topic=${t.id}`} practice={t.practiceCount} p={topicProgress.get(t.id)} status={status} />
-                  </div>
-                  {topicOpen ? (
-                    <ul id={subId} aria-label={`Syllabus phrases of ${t.name}`} className="border-t border-dashed border-border bg-surface-2/40">
-                      {t.subtopics.map((st) => (
-                        <li key={st.id} className={cn(ROW_GRID, "border-b border-border/60 px-2 py-2 last:border-b-0 sm:px-3")}>
-                          <span aria-hidden className="justify-self-center text-fg-3">
-                            ·
-                          </span>
-                          <div className="min-w-0 pl-2 md:pl-3">
-                            <p className="text-sm text-fg">{st.name}</p>
-                            <p className="text-xs text-fg-3">&ldquo;{st.officialPhrase}&rdquo;</p>
-                          </div>
-                          <Metrics pyqs={st.pyqCount} pyqHref={`/pyqs/browse?subject=${s.id}&topic=${t.id}&subtopic=${st.id}`} practice={st.practiceCount} p={subtopicProgress.get(st.id)} status={status} />
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
+      <div id={bodyId} hidden={!open} className="@container border-t border-border">
+        <OfficialSyllabusText heading={s.officialName} text={s.officialText} status={s.syllabusStatus} sources={s.sources} className="bg-surface-2/60 px-4 py-4 sm:px-5" />
+        <div aria-hidden className={cn(ROW_GRID, "hidden border-y border-border bg-surface-2 px-2 py-1.5 text-[0.7rem] font-medium uppercase tracking-wide text-fg-3 @4xl:grid sm:px-3")}>
+          <span />
+          <span>Topic · syllabus phrase</span>
+          <span>PYQs</span>
+          <span>Practice</span>
+          <span>Completion</span>
+          <span>Accuracy</span>
+          <span>Your topic mastery</span>
+          <span>Revision</span>
         </div>
-      ) : null}
+        <ul aria-label={`${s.name} topics`}>
+          {s.topics.map((t) => {
+            const topicOpen = openTopics.has(t.id);
+            const subId = `syl-sub-${t.id}`;
+            return (
+              <li key={t.id} className="border-t border-border first:border-t-0">
+                <div className={cn(ROW_GRID, "px-2 py-2 sm:px-3")}>
+                  <Toggle open={topicOpen} onClick={() => onToggleTopic(t.id)} controls={subId} label={`${topicOpen ? "Hide" : "Show"} the ${t.subtopics.length} syllabus phrases of ${t.name}`} />
+                  <div className="min-w-0">
+                    <Link href={`/subjects/${s.id}/topics/${t.id}`} className="font-medium text-fg hover:text-accent-text hover:underline">
+                      {t.name}
+                    </Link>
+                    <span className="ml-1.5 text-xs text-fg-3">{plural(t.subtopics.length, "phrase")}</span>
+                  </div>
+                  <Metrics pyqs={t.pyqCount} pyqHref={`/pyqs/browse?subject=${s.id}&topic=${t.id}`} practice={t.practiceCount} p={topicProgress.get(t.id)} status={status} />
+                </div>
+                <ul id={subId} hidden={!topicOpen} aria-label={`Syllabus phrases of ${t.name}`} className="border-t border-dashed border-border bg-surface-2/40">
+                  {t.subtopics.map((st) => (
+                    <li key={st.id} className={cn(ROW_GRID, "border-b border-border/60 px-2 py-2 last:border-b-0 sm:px-3")}>
+                      <span aria-hidden className="justify-self-center text-fg-3">
+                        ·
+                      </span>
+                      <div className="min-w-0 pl-2 md:pl-3">
+                        <p className="text-sm text-fg">{st.name}</p>
+                        <p className="text-xs text-fg-3">&ldquo;{st.officialPhrase}&rdquo;</p>
+                      </div>
+                      <Metrics pyqs={st.pyqCount} practice={st.practiceCount} p={subtopicProgress.get(st.id)} status={status} />
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </section>
   );
 }

@@ -41,7 +41,7 @@ export function SubjectGrid({ subjects, catalog }: { subjects: SubjectCardData[]
                 <SubjectDot id={s.id} className="mt-1.5" />
                 <Link
                   href={`/subjects/${s.id}`}
-                  className="after:absolute after:inset-0 after:rounded-[var(--radius)] hover:underline focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-[color:var(--focus)]"
+                  className="after:absolute after:inset-0 after:rounded-[var(--radius)] hover:underline focus-visible:outline-none! focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-[color:var(--focus)]"
                 >
                   {s.name}
                 </Link>

@@ -243,6 +243,11 @@ export function WeightageTable({ w, subjectName }: { w: WeightageSummary; subjec
   );
 }
 
+/** Visible integrity note for question lists: difficulty badges are the platform's estimate. */
+export function DifficultyNote({ className }: { className?: string }) {
+  return <p className={cn("text-xs text-fg-3", className)}>Difficulty labels are platform estimates; GATE does not publish difficulty levels.</p>;
+}
+
 // ------------------------------------------------------------------ accuracy text
 
 /** "67% (8 of 12)" / "—" with an honest sr-only explanation. */

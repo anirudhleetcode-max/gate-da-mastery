@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import type { Catalog } from "@/lib/server/repo";
 import { useProgressModel } from "@/lib/analytics/useProgress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
@@ -13,8 +13,19 @@ import { PracticePanel } from "./panels/PracticePanel";
 import { MockQuestionsPanel } from "./panels/MockQuestionsPanel";
 import { WeakAreasPanel } from "./panels/WeakAreasPanel";
 import { RevisionPanel } from "./panels/RevisionPanel";
+import type { PanelProps } from "./panels/common";
 
 const TAB_IDS = SUBJECT_TABS.map((t) => t.id);
+
+const PANELS: Record<SubjectTab, (p: PanelProps) => ReactNode> = {
+  overview: OverviewPanel,
+  topics: TopicsPanel,
+  pyqs: PyqsPanel,
+  practice: PracticePanel,
+  "mock-questions": MockQuestionsPanel,
+  "weak-areas": WeakAreasPanel,
+  revision: RevisionPanel,
+};
 
 export function SubjectTabs({ data, catalog }: { data: SubjectPageData; catalog: Catalog }) {
   const model = useProgressModel(catalog);
@@ -53,27 +64,16 @@ export function SubjectTabs({ data, catalog }: { data: SubjectPageData; catalog:
             ))}
           </TabsList>
         </div>
-        <TabsContent value="overview" className="pt-5 focus-visible:outline-offset-4">
-          <OverviewPanel {...common} />
-        </TabsContent>
-        <TabsContent value="topics" className="pt-5 focus-visible:outline-offset-4">
-          <TopicsPanel {...common} />
-        </TabsContent>
-        <TabsContent value="pyqs" className="pt-5 focus-visible:outline-offset-4">
-          <PyqsPanel {...common} />
-        </TabsContent>
-        <TabsContent value="practice" className="pt-5 focus-visible:outline-offset-4">
-          <PracticePanel {...common} />
-        </TabsContent>
-        <TabsContent value="mock-questions" className="pt-5 focus-visible:outline-offset-4">
-          <MockQuestionsPanel {...common} />
-        </TabsContent>
-        <TabsContent value="weak-areas" className="pt-5 focus-visible:outline-offset-4">
-          <WeakAreasPanel {...common} />
-        </TabsContent>
-        <TabsContent value="revision" className="pt-5 focus-visible:outline-offset-4">
-          <RevisionPanel {...common} />
-        </TabsContent>
+        {SUBJECT_TABS.map((t) => {
+          const Panel = PANELS[t.id];
+          return (
+            <TabsContent key={t.id} value={t.id} className="pt-5 focus-visible:outline-offset-4">
+              {/* Overview cards carry their own h2s; the other panels get a section heading for their h3s. */}
+              {t.id === "overview" ? null : <h2 className="sr-only">{`${data.subject.name}: ${t.label}`}</h2>}
+              <Panel {...common} />
+            </TabsContent>
+          );
+        })}
       </Tabs>
     </GoToTab.Provider>
   );

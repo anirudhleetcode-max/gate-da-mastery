@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import type { QuestionMeta } from "@/lib/content/types";
 import { useQuestionStatuses } from "@/lib/userdata/hooks";
-import { ButtonLink } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BookmarkButton } from "@/components/userdata/BookmarkButton";
 import { PyqRow } from "@/components/pyq/PyqRow";
@@ -13,7 +13,11 @@ import { useStoreNavList } from "@/components/pyq/useNavList";
 import { pyqTitle, slotName } from "@/components/pyq/data";
 import { SUBJECT_SHORT } from "@/lib/labels";
 import { formatDate, formatMarks, plural } from "@/lib/utils";
+import { DifficultyNote } from "../bits";
 import type { PanelProps } from "./common";
+
+/** Rows rendered before "Show earlier papers" (whole years are shown, so the page stays light as papers are added). */
+const ROW_BUDGET = 100;
 
 interface YearGroup {
   year: number;
@@ -49,6 +53,19 @@ export function PyqsPanel({ data }: PanelProps) {
   const topicName = useMemo(() => new Map(data.topics.map((t) => [t.id, t.name])), [data.topics]);
   const attempted = ids.filter((id) => isAttempted(pyqState(statuses.get(id)))).length;
   const browseHref = `/pyqs/browse?subject=${s.id}`;
+  const [budget, setBudget] = useState(ROW_BUDGET);
+  const visible = useMemo(() => {
+    const out: YearGroup[] = [];
+    let rows = 0;
+    for (const y of groups) {
+      if (out.length && rows >= budget) break;
+      out.push(y);
+      rows += y.sessions.reduce((a, x) => a + x.rows.length, 0);
+    }
+    return out;
+  }, [groups, budget]);
+  const hidden = groups.slice(visible.length);
+  const hiddenRows = hidden.reduce((a, y) => a + y.sessions.reduce((b, x) => b + x.rows.length, 0), 0);
 
   if (!data.pyqs.length)
     return (
@@ -76,7 +93,9 @@ export function PyqsPanel({ data }: PanelProps) {
         </ButtonLink>
       </div>
 
-      {groups.map((y) => (
+      <DifficultyNote className="-mt-3" />
+
+      {visible.map((y) => (
         <section key={y.year} aria-labelledby={`pyq-y-${y.year}`} className="space-y-3">
           <h3 id={`pyq-y-${y.year}`} className="text-base font-semibold text-fg">
             GATE {y.year || "(year unknown)"}
@@ -123,6 +142,12 @@ export function PyqsPanel({ data }: PanelProps) {
           })}
         </section>
       ))}
+
+      {hidden.length ? (
+        <Button onClick={() => setBudget((b) => b + ROW_BUDGET)} className="w-full sm:w-auto">
+          Show earlier papers ({plural(hiddenRows, "question")} from {hidden.length === 1 ? `GATE ${hidden[0].year}` : `GATE ${hidden[hidden.length - 1].year}–${hidden[0].year}`})
+        </Button>
+      ) : null}
 
       <p className="text-sm text-fg-3">
         Need a narrower list? <Link href={browseHref} className="font-medium text-accent-text hover:underline">Filter {s.name} PYQs</Link> by topic, year, difficulty, type, marks or your status.

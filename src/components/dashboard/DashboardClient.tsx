@@ -15,7 +15,7 @@ import { ProgressBar } from "@/components/ui/Progress";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { mockProgress, type MockInfo, type MockProgress } from "./mocks";
-import { MockScoreChart, PageSkeleton, PyqCompletion, StorageUnavailable, pct0 } from "./parts";
+import { MockScoreChart, PageSkeleton, PyqCompletion, StorageUnavailable, pct0, revisionHref } from "./parts";
 import { dayToDate, dueLabel, useLoadStatus, useToday } from "./useStudentData";
 
 export interface ExamContext {
@@ -68,7 +68,7 @@ export function DashboardClient({ catalog, mocks, exam, library }: { catalog: Ca
             <h2 id="dash-charts" className="sr-only">
               Mock performance and PYQ completion
             </h2>
-            <MockScoreChart series={mp.series} title="Mock performance" />
+            <MockScoreChart series={mp.series} title="Mock performance" availableCount={mp.availableCount} next={mp.next} />
             <PyqCompletion model={model} />
           </section>
           <p className="text-xs text-fg-3">
@@ -133,7 +133,9 @@ function FirstRun({ catalog, mocks, mp, library }: { catalog: Catalog; mocks: Mo
       title: "Take mock tests",
       body: first
         ? `${available} of ${mocks.length} mocks are available. Begin with Mock ${first.number} (${first.shortTitle}, ${first.durationMinutes} min) in the GATE-style exam interface.`
-        : "Timed tests in a GATE-style exam interface, from short foundations to full 3-hour simulations.",
+        : available === 0
+          ? `Timed tests in a GATE-style exam interface, from short foundations to full 3-hour simulations. None of the ${mocks.length} is open yet: each mock opens once every question in it has been verified.`
+          : "Timed tests in a GATE-style exam interface, from short foundations to full 3-hour simulations.",
       cta: first ? `Start Mock ${first.number}` : "See the mock tests",
     },
   ];
@@ -178,7 +180,7 @@ function FirstRun({ catalog, mocks, mp, library }: { catalog: Catalog; mocks: Mo
             <ButtonLink href="/practice" className="w-full justify-start">
               <Dumbbell aria-hidden className="h-4 w-4" /> Practice now
             </ButtonLink>
-            <p className="pt-1 text-xs text-fg-3">Today&apos;s set picks 10 questions, a concept and 5 formulas for you; Practice now lets you build your own set.</p>
+            <p className="pt-1 text-xs text-fg-3">Today&apos;s set picks questions, a concept and five formulas for you each day; Practice now lets you build your own set.</p>
           </CardBody>
         </Card>
         <Card>
@@ -224,8 +226,14 @@ function QuickActions({ mp, dueToday }: { mp: MockProgress; dueToday: number }) 
   items.push({ href: "/today", icon: CalendarCheck, title: "Today's set", body: "Questions, a concept and formulas chosen for today" });
   items.push({ href: "/practice", icon: Dumbbell, title: "Practice now", body: "Build a set by subject, topic and difficulty" });
   if (mp.next) items.push({ href: `/mocks/${mp.next.id}`, icon: Timer, title: `Next: Mock ${mp.next.number}`, body: `${mp.next.shortTitle} · ${mp.next.durationMinutes} min` });
-  else items.push({ href: "/mocks", icon: Timer, title: "Mock tests", body: mp.taken ? "You have taken every available mock" : "See all mock tests" });
-  if (!mp.inProgress) items.push({ href: "/revision", icon: RotateCcw, title: "Revision", body: dueToday ? `${plural(dueToday, "item")} due today` : "Nothing due today" });
+  else
+    items.push({
+      href: "/mocks",
+      icon: Timer,
+      title: "Mock tests",
+      body: mp.availableCount === 0 ? "No mock test is open to take right now" : mp.inProgress ? "Finish the mock in progress first" : "You have taken every available mock",
+    });
+  if (!mp.inProgress) items.push({ href: "/revision", icon: RotateCcw, title: "Revision", body: dueToday ? `${plural(dueToday, "item")} due now` : "Nothing due today" });
 
   return (
     <nav aria-label="Quick actions">
@@ -334,14 +342,14 @@ function WeakAreas({ model }: { model: ProgressModel }) {
             {model.weak.map((w) => (
               <li key={w.topicId} className="flex items-center gap-3 px-4 py-2.5 sm:px-5">
                 <div className="min-w-0 flex-1">
-                  <Link href={`/subjects/${w.subjectId}/topics/${w.topicId}`} title={w.name} className="block truncate text-sm font-medium text-fg hover:underline">
+                  <Link href={`/subjects/${w.subjectId}/topics/${w.topicId}`} title={w.name} className="line-clamp-2 text-sm font-medium text-fg hover:underline">
                     {w.name}
                   </Link>
                   <p className="tnum text-xs text-fg-3">
                     {SUBJECT_ABBR[w.subjectId as SubjectId] ?? w.subjectId} · {w.correct} of {w.attempted} correct ({pct0(w.accuracy)})
                   </p>
                 </div>
-                <ButtonLink href={`/practice?topic=${encodeURIComponent(w.topicId)}&count=10`} size="sm" aria-label={`Practise ${w.name}`}>
+                <ButtonLink href={`/practice?topic=${encodeURIComponent(w.topicId)}&count=10`} size="sm" className="max-sm:h-10" aria-label={`Practise ${w.name}`}>
                   Practise
                 </ButtonLink>
               </li>
@@ -368,7 +376,7 @@ function UpcomingRevision({ items, today }: { items: RevisionItemRow[]; today: s
         title="Upcoming revision"
         action={
           items.length ? (
-            <ButtonLink href="/revision" size="sm" variant={due ? "primary" : "secondary"}>
+            <ButtonLink href="/revision" size="sm" className="max-sm:h-10" variant={due ? "primary" : "secondary"}>
               {due ? "Start revision" : "Open"}
             </ButtonLink>
           ) : undefined
@@ -378,7 +386,7 @@ function UpcomingRevision({ items, today }: { items: RevisionItemRow[]; today: s
         {items.length ? (
           <>
             <p className="text-sm text-fg-2">
-              <span className="tnum text-2xl font-semibold text-fg">{due}</span> {due === 1 ? "item" : "items"} due today
+              <span className="tnum text-2xl font-semibold text-fg">{due}</span> {due === 1 ? "item" : "items"} due now
               <span className="text-fg-3"> · {items.length} in your queue</span>
             </p>
             <ul className="space-y-1.5">
@@ -386,7 +394,9 @@ function UpcomingRevision({ items, today }: { items: RevisionItemRow[]; today: s
                 const d = dueLabel(r.nextReview, today);
                 return (
                   <li key={r.key} className="flex items-center gap-2 text-sm">
-                    <span className="min-w-0 flex-1 truncate text-fg-2">{r.title}</span>
+                    <Link href={revisionHref(r)} title={r.title} className="min-w-0 flex-1 truncate text-fg-2 hover:text-fg hover:underline">
+                      {r.title}
+                    </Link>
                     <Badge tone={d.tone}>{d.text}</Badge>
                   </li>
                 );

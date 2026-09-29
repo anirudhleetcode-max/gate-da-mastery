@@ -31,6 +31,8 @@ export interface MockProgress {
   /** Distinct mocks with at least one submitted attempt. */
   taken: number;
   totalMocks: number;
+  /** Mocks whose paper is complete and open to take now. */
+  availableCount: number;
   submittedAttempts: number;
   /** Mean of score / max over submitted attempts, or null. */
   avgRatio: number | null;
@@ -69,6 +71,7 @@ export function mockProgress(mocks: readonly MockInfo[], rows: readonly MockAtte
   return {
     taken: takenIds.size,
     totalMocks: mocks.length,
+    availableCount: mocks.filter((m) => m.available).length,
     submittedAttempts: series.length,
     avgRatio: series.length ? series.reduce((a, p) => a + p.ratio, 0) / series.length : null,
     series,
@@ -80,4 +83,17 @@ export function mockProgress(mocks: readonly MockInfo[], rows: readonly MockAtte
     }).filter((t) => t.total > 0),
     takenIds,
   };
+}
+
+const ORDINAL = ["", "", "2nd", "3rd"];
+const ordinal = (k: number) => ORDINAL[k] ?? `${k}th`;
+
+/** Chart labels for mock attempts: "M4", and "M4 (2nd)" for a retake of the same mock. */
+export function mockAttemptLabels(series: readonly Pick<MockScorePoint, "testId" | "number">[]): { short: string; long: string }[] {
+  const seen = new Map<string, number>();
+  return series.map((p) => {
+    const k = (seen.get(p.testId) ?? 0) + 1;
+    seen.set(p.testId, k);
+    return k === 1 ? { short: `M${p.number}`, long: `Mock ${p.number}` } : { short: `M${p.number} (${ordinal(k)})`, long: `Mock ${p.number}, ${ordinal(k)} attempt` };
+  });
 }

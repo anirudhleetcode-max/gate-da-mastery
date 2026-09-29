@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CheckCircle2, Circle, Lightbulb, RotateCcw, Settings2, Sigma, Target, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, Lightbulb, Play, RotateCcw, Settings2, Sigma, Target, XCircle } from "lucide-react";
 import type { SubjectId } from "@/lib/content/schema";
 import { QuestionSession } from "@/components/question/QuestionSession";
 import { DifficultyBadge, OriginBadge, TypeBadge } from "@/components/question/badges";
@@ -16,11 +16,11 @@ import { useAttempts, useRevisionItems, useSetting, useDbQuery, useUserData } fr
 import { localDay } from "@/lib/userdata/db";
 import { useStorageValue } from "@/lib/useStorage";
 import { DAILY_CONFIG_KEY, normalizeDailyConfig, type DailyConfig } from "@/lib/daily/config";
-import { buildDailyPlan, dueAtStartOfDay, planSignature, stateAtStartOfDay, QUESTION_REASON_LABEL, DAILY_REVISION_MAX, type DailyPlan } from "@/lib/daily/plan";
+import { buildDailyPlan, dueAtStartOfDay, planSignature, stateAtStartOfDay, QUESTION_REASON_LABEL, DAILY_FORMULAS, DAILY_REVISION_MAX, type DailyPlan } from "@/lib/daily/plan";
 import { poolQuestionLabel, type PoolQuestion } from "@/lib/practice/pool";
 import { SUBJECT_COLOR, SUBJECT_SHORT } from "@/lib/labels";
 import { cn, formatDate, pct, plural } from "@/lib/utils";
-import { PageSkeleton, StorageUnavailable } from "@/components/dashboard/parts";
+import { PageSkeleton, StorageUnavailable, revisionHref } from "@/components/dashboard/parts";
 import { dueLabel, useLoadStatus, useToday } from "@/components/dashboard/useStudentData";
 import { CustomizeDialog } from "./CustomizeDialog";
 
@@ -54,10 +54,12 @@ type PinnedPlan = Omit<DailyPlan, "revisionKeys"> & { signature: string };
 
 /** Today's settings from the local user database (useSetting), plus whether they have loaded. */
 function useDailyConfig(): { config: DailyConfig; loaded: boolean; save: (c: DailyConfig) => void } {
+  const { ready, available } = useUserData();
   const [raw, save] = useSetting<unknown>(DAILY_CONFIG_KEY, null);
   const exists = useDbQuery<boolean | null>(async (db) => (await db.settings.get(DAILY_CONFIG_KEY)) !== undefined, [], null);
   const config = useMemo(() => normalizeDailyConfig(raw), [raw]);
-  return { config, loaded: exists === false || (exists === true && raw !== null), save };
+  // With storage blocked there is nothing to load: the defaults apply.
+  return { config, loaded: (ready && !available) || exists === false || (exists === true && raw !== null), save };
 }
 
 export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: PoolQuestion[]; concepts: TodayConcept[]; formulas: TodayFormula[]; taxonomy: TodayTaxonomy }) {
@@ -142,7 +144,15 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
   if (session) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => setSession(null)} className="-ml-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setSession(null);
+            window.scrollTo({ top: 0 });
+          }}
+          className="-ml-2"
+        >
           <ArrowLeft aria-hidden className="h-4 w-4" /> Back to today&apos;s plan
         </Button>
         <QuestionSession key={session.key} ids={session.ids} context="daily" title={session.title} />
@@ -161,7 +171,10 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
   const concept = plan.conceptId ? concepts.find((c) => c.id === plan.conceptId) : undefined;
   const planFormulas = plan.formulaIds.map((id) => formulas.find((f) => f.id === id)).filter((f): f is TodayFormula => Boolean(f));
   const weakSet = new Set(start!.weakTopicIds);
-  const startSession = (ids: string[], title: string) => setSession({ ids, title, key: Date.now() });
+  const startSession = (ids: string[], title: string) => {
+    setSession({ ids, title, key: Date.now() });
+    window.scrollTo({ top: 0 });
+  };
   const subjectsLabel =
     config.subjects === null ? `all subjects${config.includeGA ? "" : " except General Aptitude"}` : `${plural(config.subjects.length + (config.includeGA ? 1 : 0), "subject")}`;
 
@@ -198,7 +211,7 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
               "No answers yet today"
             )}
           </p>
-          <Button size="sm" onClick={() => setCustomizing(true)}>
+          <Button size="sm" className="max-sm:h-10" onClick={() => setCustomizing(true)}>
             <Settings2 aria-hidden className="h-4 w-4" /> Customize
           </Button>
         </div>
@@ -211,6 +224,19 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
             <CardHeader
               title="Today's questions"
               description="Official PYQs and original practice questions, mostly ones you have not attempted yet. Questions from mock tests are never used, so no mock is spoiled."
+              action={
+                !nothingSelected && plan.questionIds.length && remaining.length ? (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="max-sm:h-10"
+                    aria-label={done.length ? `Continue today's questions, ${remaining.length} left` : "Start today's questions"}
+                    onClick={() => startSession(done.length ? remaining : plan.questionIds, "Today's questions")}
+                  >
+                    <Play aria-hidden className="h-3.5 w-3.5" /> {done.length ? `Continue (${remaining.length} left)` : "Start"}
+                  </Button>
+                ) : undefined
+              }
             />
             {nothingSelected ? (
               <CardBody>
@@ -352,7 +378,7 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
               }
               action={
                 dueNow ? (
-                  <ButtonLink href="/revision" size="sm" variant="primary">
+                  <ButtonLink href="/revision" size="sm" variant="primary" className="max-sm:h-10">
                     Start revision
                   </ButtonLink>
                 ) : undefined
@@ -379,7 +405,9 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
                       return (
                         <li key={r.key} className="flex items-center gap-2 text-sm">
                           {reviewed ? <CheckCircle2 role="img" aria-label="Reviewed today" className="h-4 w-4 shrink-0 text-success" /> : <Circle aria-hidden className="h-4 w-4 shrink-0 text-fg-3" />}
-                          <span className={cn("min-w-0 flex-1 truncate", reviewed ? "text-fg-3" : "text-fg-2")}>{r.title}</span>
+                          <Link href={revisionHref(r)} title={r.title} className={cn("min-w-0 flex-1 truncate hover:text-fg hover:underline", reviewed ? "text-fg-3" : "text-fg-2")}>
+                            {r.title}
+                          </Link>
                           {reviewed ? <Badge tone="success">Reviewed</Badge> : <Badge tone={d.tone}>{d.text}</Badge>}
                         </li>
                       );
@@ -388,7 +416,7 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
                 </>
               ) : (
                 <p className="text-sm text-fg-3">
-                  Nothing is due for revision today. Questions you answer incorrectly are queued automatically and come back after a day.
+                  Nothing is due for revision today. Questions you answer incorrectly are added to your revision queue automatically and are due the same day.
                 </p>
               )}
             </CardBody>
@@ -434,9 +462,14 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
         <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
           <div>
             <h2 id="today-formulas" className="flex items-center gap-2 text-base font-semibold text-fg">
-              <Sigma aria-hidden className="h-4 w-4 text-fg-3" /> Five formulas
+              <Sigma aria-hidden className="h-4 w-4 text-fg-3" /> Formulas of the day
             </h2>
-            {planFormulas.length ? <p className="text-sm text-fg-3">Read each one, then say aloud when you would use it before opening its card.</p> : null}
+            {planFormulas.length ? (
+              <p className="text-sm text-fg-3">
+                Read each one, then say aloud when you would use it before opening its card.
+                {planFormulas.length < DAILY_FORMULAS ? ` Only ${plural(planFormulas.length, "formula card")} ${planFormulas.length === 1 ? "matches" : "match"} your selected subjects in this build.` : ""}
+              </p>
+            ) : null}
           </div>
           {planFormulas.length ? (
             <Link href="/formulas" className="text-sm font-medium text-accent-text hover:underline">
@@ -454,7 +487,8 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
                   </Link>
                   <span className="text-xs text-fg-3">{topicById.get(f.topicId)?.name ?? SUBJECT_SHORT[f.subjectId as SubjectId]}</span>
                 </div>
-                <div className="mt-2 overflow-x-auto rounded-md bg-surface-2 px-3 py-1">
+                {/* Long formulas scroll sideways inside this box; it is focusable so the keyboard can scroll it too. */}
+                <div tabIndex={0} role="group" aria-label={`Formula: ${f.name}`} className="mt-2 overflow-x-auto rounded-md bg-surface-2 px-3 py-1 [&_.math-display]:overflow-visible!">
                   <RichHtml html={f.html} className="text-sm" />
                 </div>
               </li>

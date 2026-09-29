@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Dumbbell } from "lucide-react";
-import { getCatalog, getConcepts, getFormulas, getPyqs, getSubject, getSubjects, getTopic, getWeightage, toMeta, topicStats } from "@/lib/server/repo";
+import { getCatalog, getSubject, getSubjects, getTopic, getWeightage } from "@/lib/server/repo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
@@ -10,11 +10,10 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ServerRichHtml } from "@/components/ui/ServerRichHtml";
 import { VerificationBadge } from "@/components/question/badges";
-import { cleanPreview } from "@/components/pyq/preview";
-import { SourceLinks, SubjectDot } from "@/components/subject/bits";
+import { DifficultyNote, SourceLinks, SubjectDot } from "@/components/subject/bits";
 import { TopicMastery } from "@/components/subject/TopicMastery";
 import { TopicPyqList } from "@/components/subject/TopicPyqList";
-import { sourceRefs } from "@/components/subject/server";
+import { sourceRefs, topicPageData } from "@/components/subject/server";
 import { formatMarks, plural } from "@/lib/utils";
 
 type Params = { params: Promise<{ subjectId: string; topicId: string }> };
@@ -23,46 +22,31 @@ export function generateStaticParams() {
   return getSubjects().flatMap((s) => s.topics.map((t) => ({ subjectId: s.id, topicId: t.id })));
 }
 
-function resolve(subjectId: string, topicId: string) {
-  const subject = getSubject(subjectId);
-  const topic = getTopic(topicId);
-  if (!subject || !topic || topic.subjectId !== subject.id) return null;
-  return { subject, topic };
-}
-
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { subjectId, topicId } = await params;
-  const r = resolve(subjectId, topicId);
-  if (!r) return { title: "Topic not found" };
-  return { title: `${r.topic.name} · ${r.subject.name}`, description: r.topic.summary };
+  const subject = getSubject(subjectId);
+  const topic = getTopic(topicId);
+  if (!subject || !topic || topic.subjectId !== subject.id) return { title: "Topic not found" };
+  return { title: `${topic.name} · ${subject.name}`, description: topic.summary };
 }
 
 export default async function TopicPage({ params }: Params) {
   const { subjectId, topicId } = await params;
-  const r = resolve(subjectId, topicId);
-  if (!r) notFound();
-  const { subject, topic } = r;
+  const data = topicPageData(subjectId, topicId);
+  if (!data) notFound();
+  const { subject, topic, phrases, pyqs, related, practiceCount, formulas, concepts } = data;
 
-  const stats = topicStats(subject.id).find((x) => x.topic.id === topic.id);
-  const pyqs = getPyqs()
-    .filter((q) => q.topicId === topic.id)
-    .map((q) => {
-      const m = toMeta(q);
-      return { ...m, preview: cleanPreview(m.preview) };
-    });
   const pyqMarks = pyqs.reduce((a, q) => a + q.marks, 0);
-  const practiceCount = stats?.practiceCount ?? 0;
-  const formulas = getFormulas().filter((f) => f.topicId === topic.id);
-  const concepts = getConcepts().filter((c) => c.topicId === topic.id);
   const weightage = getWeightage()?.all;
   const freq = weightage?.topics.find((t) => t.topicId === topic.id);
   const paperCount = weightage?.papers.length ?? 0;
-  const subtopicPyqs = (id: string) => pyqs.filter((q) => q.subtopicIds.includes(id)).length;
   const idx = subject.topics.findIndex((t) => t.id === topic.id);
   const prev = idx > 0 ? subject.topics[idx - 1] : null;
   const next = idx < subject.topics.length - 1 ? subject.topics[idx + 1] : null;
   const subjectHref = `/subjects/${subject.id}`;
   const topicHref = (id: string) => `/subjects/${subject.id}/topics/${id}`;
+  const practiceHref = `/practice?topic=${topic.id}`;
+  const canPractise = pyqs.length + practiceCount > 0;
 
   return (
     <>
@@ -78,8 +62,8 @@ export default async function TopicPage({ params }: Params) {
           </>
         }
         actions={
-          pyqs.length + practiceCount > 0 ? (
-            <ButtonLink href={`/practice?topic=${topic.id}`} variant="primary">
+          canPractise ? (
+            <ButtonLink href={practiceHref} variant="primary">
               <Dumbbell aria-hidden className="h-4 w-4" /> Practice this topic
             </ButtonLink>
           ) : null
@@ -87,11 +71,11 @@ export default async function TopicPage({ params }: Params) {
       />
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem] lg:grid-rows-[auto_1fr]">
-        {/* Your status and quick facts first on small screens; right column on large screens. */}
-        <div className="min-w-0 space-y-5 lg:col-start-2 lg:row-start-1">
+        {/* Your status and quick facts first on small screens (side by side on tablets); right column on large screens. */}
+        <div className="grid min-w-0 gap-5 md:grid-cols-2 md:items-start lg:col-start-2 lg:row-start-1 lg:grid-cols-1">
           <TopicMastery catalog={getCatalog()} topicId={topic.id} />
           <Card>
-            <CardHeader title="At a glance" as="h2" />
+            <CardHeader title="At a glance" />
             <CardBody>
               <dl className="space-y-3 text-sm">
                 <div className="flex items-baseline justify-between gap-3">
@@ -101,12 +85,18 @@ export default async function TopicPage({ params }: Params) {
                     {pyqs.length ? <span className="font-normal text-fg-3"> · {formatMarks(pyqMarks)} marks</span> : null}
                   </dd>
                 </div>
+                {related.length ? (
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-fg-3">Related PYQs (other topics)</dt>
+                    <dd className="tnum font-semibold text-fg">{related.length}</dd>
+                  </div>
+                ) : null}
                 <div className="flex items-baseline justify-between gap-3">
                   <dt className="text-fg-3">Practice questions</dt>
                   <dd className="tnum font-semibold text-fg">{practiceCount}</dd>
                 </div>
                 <div>
-                  <dt className="text-fg-3">Historical frequency (estimate)</dt>
+                  <dt className="text-fg-3">Past-paper frequency (historical estimate)</dt>
                   <dd className="mt-0.5 text-fg-2">
                     {freq && paperCount ? (
                       <>
@@ -114,20 +104,14 @@ export default async function TopicPage({ params }: Params) {
                         {formatMarks(freq.marks)} marks in total. Past papers only; not a prediction.
                       </>
                     ) : paperCount ? (
-                      <>No classified official question from the {plural(paperCount, "paper")} is tagged with this topic.</>
+                      <>No classified official question from the {plural(paperCount, "paper")} is filed under this topic.</>
                     ) : (
                       <>No official papers are classified yet.</>
                     )}
                   </dd>
                 </div>
               </dl>
-              {pyqs.length + practiceCount > 0 ? (
-                <ButtonLink href={`/practice?topic=${topic.id}`} className="mt-4 w-full">
-                  <Dumbbell aria-hidden className="h-4 w-4" /> Practice {topic.name}
-                </ButtonLink>
-              ) : (
-                <p className="mt-4 text-sm text-fg-3">No questions for this topic are in the practice pool yet.</p>
-              )}
+              {!canPractise ? <p className="mt-4 text-sm text-fg-3">No questions for this topic are in the practice pool yet.</p> : null}
             </CardBody>
           </Card>
         </div>
@@ -141,15 +125,18 @@ export default async function TopicPage({ params }: Params) {
             />
             <CardBody>
               <ul className="divide-y divide-border">
-                {topic.subtopics.map((st) => {
-                  const n = subtopicPyqs(st.id);
+                {phrases.map((st) => {
+                  const other = st.pyqCount - st.ownCount;
                   return (
                     <li key={st.id} className="flex flex-col gap-1 py-2.5 first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-fg">{st.name}</p>
                         <p className="text-sm text-fg-2">&ldquo;{st.officialPhrase}&rdquo;</p>
                       </div>
-                      <span className="tnum shrink-0 text-xs text-fg-3">{n ? plural(n, "PYQ") : "no PYQs yet"}</span>
+                      <p className="tnum shrink-0 text-xs text-fg-3 sm:text-right">
+                        {st.pyqCount ? plural(st.pyqCount, "PYQ") : "no PYQs yet"}
+                        {other > 0 ? <span className="sm:block"> ({other} under other topics)</span> : null}
+                      </p>
                     </li>
                   );
                 })}
@@ -158,33 +145,48 @@ export default async function TopicPage({ params }: Params) {
                 <span>Section &ldquo;{subject.officialName}&rdquo; · verbatim from:</span>
                 <SourceLinks sources={sourceRefs(subject.sourceIds)} />
                 <Link href="/sources" className="font-medium text-accent-text hover:underline">
-                  Verification
+                  How the syllabus was verified
                 </Link>
               </div>
             </CardBody>
           </Card>
 
-          <section aria-labelledby="topic-pyqs-h">
-            <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+          <section aria-labelledby="topic-pyqs-h" className="space-y-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 id="topic-pyqs-h" className="text-lg font-semibold text-fg">
                 Official PYQs <span className="tnum text-base font-normal text-fg-3">({pyqs.length})</span>
               </h2>
               {pyqs.length ? (
-                <Link href={`/pyqs/browse?subject=${subject.id}&topic=${topic.id}`} className="text-sm font-medium text-accent-text hover:underline">
+                <Link href={`/pyqs/browse?subject=${subject.id}&topic=${topic.id}`} className="inline-flex min-h-8 items-center text-sm font-medium text-accent-text hover:underline">
                   Filter in PYQ browser
                 </Link>
               ) : null}
             </div>
             {pyqs.length ? (
-              <TopicPyqList rows={pyqs} topicName={topic.name} />
+              <>
+                <TopicPyqList rows={pyqs} />
+                <DifficultyNote />
+              </>
             ) : (
-              <EmptyState title="No official PYQs are tagged with this topic yet">
+              <EmptyState title="No official PYQs are filed under this topic yet">
                 {paperCount
-                  ? `None of the classified questions from the ${plural(paperCount, "official paper")} fall under this topic. Its syllabus phrases above are still examinable; use practice questions and the formula book to prepare.`
+                  ? `None of the classified questions from the ${plural(paperCount, "official paper")} is filed under this topic${related.length ? "; the related questions below test its syllabus phrases" : ""}. The phrases above are still examinable.`
                   : "Official questions appear here once papers are added to the question bank."}
               </EmptyState>
             )}
           </section>
+
+          {related.length ? (
+            <section aria-labelledby="topic-related-h" className="space-y-2">
+              <div>
+                <h2 id="topic-related-h" className="text-lg font-semibold text-fg">
+                  Related PYQs from other topics <span className="tnum text-base font-normal text-fg-3">({related.length})</span>
+                </h2>
+                <p className="mt-0.5 text-sm text-fg-3">Filed under another topic, but they also test one of this topic&apos;s syllabus phrases.</p>
+              </div>
+              <TopicPyqList rows={related} kind="related" />
+            </section>
+          ) : null}
 
           <Card>
             <CardHeader
@@ -208,7 +210,10 @@ export default async function TopicPage({ params }: Params) {
                           {f.name}
                         </Link>
                       </h3>
-                      <ServerRichHtml html={f.html.formula} className="mt-1 overflow-x-auto" />
+                      {/* Wide formulas scroll inside this box (not the inner math block), and it is focusable so the keyboard can scroll it too. */}
+                      <div role="group" aria-label={`Formula: ${f.name}`} tabIndex={0} className="mt-1 overflow-x-auto overflow-y-hidden rounded-md [&_.math-display]:overflow-visible!">
+                        <ServerRichHtml html={f.html.formula} />
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -239,7 +244,9 @@ export default async function TopicPage({ params }: Params) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-fg-3">The concept library has no notes for this topic yet. Each PYQ solution above explains the concept it tests.</p>
+                <p className="text-sm text-fg-3">
+                  The concept library has no notes for this topic yet. {pyqs.length ? "Each PYQ solution above explains the concept it tests." : "The formula book and the subject's PYQs cover it for now."}
+                </p>
               )}
             </CardBody>
           </Card>
@@ -247,7 +254,7 @@ export default async function TopicPage({ params }: Params) {
 
         <nav aria-label={`Topics in ${subject.name}`} className="min-w-0 lg:col-start-2 lg:row-start-2">
           <Card>
-            <CardHeader title={`Topics in ${subject.name}`} as="h2" />
+            <CardHeader title={`Topics in ${subject.name}`} />
             <ol className="py-1">
               {subject.topics.map((t, i) => (
                 <li key={t.id}>

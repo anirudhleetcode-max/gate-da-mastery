@@ -60,6 +60,7 @@ export interface SubtopicInfo {
   id: string;
   name: string;
   officialPhrase: string;
+  /** Official PYQs tagged with this syllabus phrase, under any topic (the catalog definition). */
   pyqCount: number;
 }
 
@@ -87,6 +88,8 @@ export interface MockRef {
   id: string;
   number: number;
   title: string;
+  /** False while the mock is still in review: it cannot be taken yet. */
+  available: boolean;
 }
 
 export interface SubjectPageData {
@@ -118,6 +121,7 @@ export interface SyllabusSubtopic {
   id: string;
   name: string;
   officialPhrase: string;
+  /** Official PYQs tagged with this syllabus phrase, under any topic (the catalog definition). */
   pyqCount: number;
   practiceCount: number;
 }

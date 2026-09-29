@@ -8,13 +8,14 @@ import { pct, plural } from "@/lib/utils";
 import { AccuracyValue, MasteryBadge, MasteryMethod } from "./bits";
 import { useDataStatus } from "./hooks";
 import { DataStatusNote } from "./panels/common";
+import type { ReactNode } from "react";
 
 function Component({ label, weight, value, detail, fallback }: { label: string; weight: number; value: number | null; detail?: string; fallback: string }) {
   return (
     <li>
       <div className="flex items-baseline justify-between gap-2 text-sm">
         <span className="text-fg-2">
-          {label} <span className="tnum text-xs text-fg-3">· {Math.round(weight * 100)}% weight</span>
+          {label} <span className="tnum text-xs text-fg-3">· {weight > 0 ? `${Math.round(weight * 100)}% weight` : "no weight"}</span>
         </span>
         <span className="tnum font-semibold text-fg">{value === null ? "—" : pct(value, 0)}</span>
       </div>
@@ -36,7 +37,7 @@ export function TopicMastery({ catalog, topicId }: { catalog: Catalog; topicId: 
   const status = useDataStatus();
   const tp = model.topics.find((t) => t.topicId === topicId);
 
-  let body: React.ReactNode;
+  let body: ReactNode;
   if (status !== "ready" || !tp) body = <DataStatusNote status={status === "ready" ? "loading" : status} />;
   else {
     const m = tp.mastery;

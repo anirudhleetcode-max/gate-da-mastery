@@ -39,16 +39,17 @@ export function CustomizeDialog({
             value={String(config.count) as `${DailyCount}`}
             onChange={(v) => onChange({ ...config, count: Number(v) as DailyCount })}
             options={DAILY_COUNTS.map((n) => ({ value: String(n) as `${DailyCount}`, label: String(n) }))}
+            className="max-sm:flex max-sm:w-full max-sm:[&>button]:min-h-10 max-sm:[&>button]:flex-1"
           />
         </div>
 
         <fieldset>
           <legend className="mb-1.5 text-sm font-medium text-fg">Subjects</legend>
-          <div className="mb-2 flex gap-3 text-xs">
-            <button type="button" className="font-medium text-accent-text hover:underline" onClick={() => onChange({ ...config, subjects: null })}>
+          <div className="-ml-2 mb-1 flex gap-1 text-xs">
+            <button type="button" className="min-h-8 rounded-md px-2 font-medium text-accent-text hover:bg-surface-2 hover:underline" onClick={() => onChange({ ...config, subjects: null })}>
               Select all
             </button>
-            <button type="button" className="font-medium text-accent-text hover:underline" onClick={() => onChange({ ...config, subjects: [] })}>
+            <button type="button" className="min-h-8 rounded-md px-2 font-medium text-accent-text hover:bg-surface-2 hover:underline" onClick={() => onChange({ ...config, subjects: [] })}>
               Clear
             </button>
           </div>

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { subjectId } = await params;
   const s = getSubject(subjectId);
   if (!s) return { title: "Subject not found" };
-  return { title: `${s.name} · GATE DA`, description: s.description };
+  return { title: s.name, description: s.description };
 }
 
 export default async function SubjectPage({ params }: Params) {
