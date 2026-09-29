@@ -14,7 +14,7 @@
   "type": "NAT",
   "marks": 2,
   "difficulty": "MODERATE",
-  "difficultyRationale": "Platform-estimated: MODERATE because it combines two directly linked ideas (splitting the logarithm of a product and the standard limits for $\\ln(1+t)/t$ and $(1-\\cos x)/x^2$, or equivalently Maclaurin series) in 2–3 routine steps, taking about 1.5 minutes.",
+  "difficultyRationale": "Platform-estimated: MODERATE because it combines two directly linked ideas (splitting the logarithm of a product, then the standard limits for $\\ln(1+t)/t$ and $(1-\\cos x)/x^2$, or equivalently Maclaurin series) in 2–3 routine steps, taking about 1.5 minutes.",
   "estimatedTimeSec": 90,
   "stem": "Evaluate the following limit:\n\n$$\n\\lim_{x \\to 0} \\frac{\\ln\\left((x^2+1)\\cos x\\right)}{x^2} = \\underline{\\hspace{3em}}\\,.\n$$",
   "options": [],
@@ -28,8 +28,8 @@
     "quick": "Split the logarithm: $\\ln\\left((x^2+1)\\cos x\\right) = \\ln(1+x^2) + \\ln(\\cos x)$. Near $0$, $\\ln(1+x^2) \\approx x^2$ and $\\ln(\\cos x) \\approx -\\tfrac{x^2}{2}$, so the numerator is $\\approx \\tfrac{x^2}{2}$ and the limit is $1 - \\tfrac12 = \\tfrac12$, i.e. **0.5**.",
     "steps": [
       {
-        "title": "Identify the form",
-        "body": "At $x = 0$ the numerator is $\\ln\\left((0+1)\\cos 0\\right) = \\ln 1 = 0$ and the denominator is $0$, so the limit has the indeterminate form $\\dfrac{0}{0}$. We must find how fast the numerator goes to $0$ compared with $x^2$.\n\nNear $x = 0$ both factors are positive ($x^2 + 1 \\ge 1$ and $\\cos x > 0$ for $|x| < \\pi/2$), so the logarithm is defined and we may split it:\n\n$$\n\\frac{\\ln\\left((x^2+1)\\cos x\\right)}{x^2} = \\frac{\\ln(1+x^2)}{x^2} + \\frac{\\ln(\\cos x)}{x^2}.\n$$"
+        "title": "Identify the form and split the logarithm",
+        "body": "At $x = 0$ the numerator is $\\ln\\left((0+1)\\cos 0\\right) = \\ln 1 = 0$ and the denominator is $0$, so the limit has the indeterminate form $\\dfrac{0}{0}$. We must find how fast the numerator goes to $0$ compared with $x^2$.\n\nNear $x = 0$ both factors are positive ($x^2 + 1 \\ge 1$ and $\\cos x > 0$ for $|x| < \\pi/2$), so the logarithm is defined and $\\ln(ab) = \\ln a + \\ln b$ applies:\n\n$$\n\\frac{\\ln\\left((x^2+1)\\cos x\\right)}{x^2} = \\frac{\\ln(1+x^2)}{x^2} + \\frac{\\ln(\\cos x)}{x^2}.\n$$"
       },
       {
         "title": "First term: substitute t = x²",
@@ -37,11 +37,11 @@
       },
       {
         "title": "Second term: write cos x = 1 + (cos x − 1)",
-        "body": "Let $h = \\cos x - 1 \\to 0$ as $x \\to 0$. Then\n\n$$\n\\frac{\\ln(\\cos x)}{x^2} = \\frac{\\ln(1+h)}{h} \\cdot \\frac{\\cos x - 1}{x^2}.\n$$\n\nThe first factor tends to $1$. For the second, use the standard limit $\\displaystyle\\lim_{x\\to 0}\\frac{1-\\cos x}{x^2} = \\frac12$ (from $1 - \\cos x = 2\\sin^2\\frac{x}{2}$), so $\\dfrac{\\cos x - 1}{x^2} \\to -\\dfrac12$. Hence\n\n$$\n\\lim_{x \\to 0} \\frac{\\ln(\\cos x)}{x^2} = 1 \\cdot \\left(-\\frac12\\right) = -\\frac12.\n$$"
+        "body": "Let $h = \\cos x - 1$, so $h \\to 0$ as $x \\to 0$ (and $h \\ne 0$ for small $x \\ne 0$). Then\n\n$$\n\\frac{\\ln(\\cos x)}{x^2} = \\frac{\\ln(1+h)}{h} \\cdot \\frac{\\cos x - 1}{x^2}.\n$$\n\nThe first factor tends to $1$. For the second, use $1 - \\cos x = 2\\sin^2\\dfrac{x}{2}$:\n\n$$\n\\frac{1-\\cos x}{x^2} = \\frac{2\\sin^2(x/2)}{x^2} = \\frac12\\left(\\frac{\\sin(x/2)}{x/2}\\right)^2 \\to \\frac12,\n$$\n\nso $\\dfrac{\\cos x - 1}{x^2} \\to -\\dfrac12$. Hence\n\n$$\n\\lim_{x \\to 0} \\frac{\\ln(\\cos x)}{x^2} = 1 \\cdot \\left(-\\frac12\\right) = -\\frac12.\n$$"
       },
       {
         "title": "Cross-check with Maclaurin series",
-        "body": "$$\n\\ln(1+x^2) = x^2 - \\frac{x^4}{2} + \\cdots, \\qquad \\cos x = 1 - \\frac{x^2}{2} + \\frac{x^4}{24} - \\cdots\n$$\n\n$$\n\\ln(\\cos x) = \\left(-\\frac{x^2}{2} + \\frac{x^4}{24}\\right) - \\frac12\\left(-\\frac{x^2}{2}\\right)^2 + \\cdots = -\\frac{x^2}{2} - \\frac{x^4}{12} + \\cdots\n$$\n\nAdding, the numerator is $\\dfrac{x^2}{2} - \\dfrac{7x^4}{12} + \\cdots$. Dividing by $x^2$ gives $\\dfrac12 - \\dfrac{7x^2}{12} + \\cdots \\to \\dfrac12$."
+        "body": "$$\n\\ln(1+x^2) = x^2 - \\frac{x^4}{2} + \\cdots, \\qquad \\cos x = 1 - \\frac{x^2}{2} + \\frac{x^4}{24} - \\cdots\n$$\n\nUsing $\\ln(1+h) = h - \\dfrac{h^2}{2} + \\cdots$ with $h = -\\dfrac{x^2}{2} + \\dfrac{x^4}{24} - \\cdots$:\n\n$$\n\\ln(\\cos x) = \\left(-\\frac{x^2}{2} + \\frac{x^4}{24}\\right) - \\frac12\\left(-\\frac{x^2}{2}\\right)^2 + \\cdots = -\\frac{x^2}{2} - \\frac{x^4}{12} + \\cdots\n$$\n\nAdding, the numerator is $\\dfrac{x^2}{2} - \\dfrac{7x^4}{12} + \\cdots$. Dividing by $x^2$ gives $\\dfrac12 - \\dfrac{7x^2}{12} + \\cdots \\to \\dfrac12$."
       },
       {
         "title": "Combine",
@@ -49,15 +49,14 @@
       }
     ],
     "finalAnswer": "**0.5**",
-    "teaching": "**What a $0/0$ limit is really asking.** When both numerator and denominator vanish at the point, the limit compares *how fast* they vanish. Here the denominator is exactly $x^2$, so the question is: what is the coefficient of $x^2$ in the numerator when $x$ is small? Any piece of the numerator that behaves like $c\\,x^2$ contributes $c$ to the answer; pieces of order $x^4$ or smaller contribute nothing.\n\n**Tool 1: logarithm of a product.** $\\ln(ab) = \\ln a + \\ln b$ for $a, b > 0$. This turns one awkward limit into two standard ones.\n\n**Tool 2: standard small-$t$ behaviour.**\n\n- $\\ln(1+t) \\approx t$ for small $t$, i.e. $\\dfrac{\\ln(1+t)}{t} \\to 1$.\n- $\\cos x \\approx 1 - \\dfrac{x^2}{2}$, i.e. $\\dfrac{1-\\cos x}{x^2} \\to \\dfrac12$.\n\nChaining them: $\\ln(\\cos x) = \\ln\\left(1 + (\\cos x - 1)\\right) \\approx \\cos x - 1 \\approx -\\dfrac{x^2}{2}$.\n\n**Tool 3: Maclaurin series.** Writing each function as a power series around $0$ and keeping terms up to the order of the denominator ($x^2$ here) settles such limits mechanically. Terms of higher order divide out to something that goes to $0$.\n\n**Back to this question.** The numerator has two pieces of the *same* order: $\\ln(1+x^2) \\approx +x^2$ and $\\ln(\\cos x) \\approx -\\tfrac12 x^2$. Their coefficients add to $1 - \\tfrac12 = \\tfrac12$. The important lesson is that although $\\cos 0 = 1$, the factor $\\cos x$ cannot be replaced by $1$: its deviation from $1$ is of order $x^2$, exactly the order the denominator measures.",
+    "teaching": "**What a $0/0$ limit is really asking.** When both numerator and denominator vanish at the point, the limit compares *how fast* they vanish. Here the denominator is exactly $x^2$, so the question is: what is the coefficient of $x^2$ in the numerator when $x$ is small? Any piece of the numerator that behaves like $c\\,x^2$ contributes $c$ to the answer; pieces of order $x^4$ or smaller contribute nothing.\n\n**Tool 1: logarithm of a product.** $\\ln(ab) = \\ln a + \\ln b$ for $a, b > 0$. This turns one awkward limit into two standard ones.\n\n**Tool 2: standard small-$t$ behaviour.**\n\n- $\\ln(1+t) \\approx t$ for small $t$, i.e. $\\dfrac{\\ln(1+t)}{t} \\to 1$.\n- $\\cos x \\approx 1 - \\dfrac{x^2}{2}$, i.e. $\\dfrac{1-\\cos x}{x^2} \\to \\dfrac12$.\n\nChaining them: $\\ln(\\cos x) = \\ln\\left(1 + (\\cos x - 1)\\right) \\approx \\cos x - 1 \\approx -\\dfrac{x^2}{2}$.\n\n**Tool 3: Maclaurin series.** Writing each function as a power series around $0$ and keeping terms up to the order of the denominator ($x^2$ here) settles such limits mechanically. Higher-order terms, once divided by $x^2$, still go to $0$.\n\n**Back to this question.** The numerator has two pieces of the *same* order: $\\ln(1+x^2) \\approx +x^2$ and $\\ln(\\cos x) \\approx -\\tfrac12 x^2$. Their coefficients add to $1 - \\tfrac12 = \\tfrac12$. The important lesson is that although $\\cos 0 = 1$, the factor $\\cos x$ cannot be replaced by $1$: its deviation from $1$ is of order $x^2$, exactly the order the denominator measures.",
     "shortcut": "One application of L'Hôpital's rule after splitting the log: the derivative of the numerator is $\\dfrac{2x}{1+x^2} - \\tan x$ and that of the denominator is $2x$, so the ratio is $\\dfrac{1}{1+x^2} - \\dfrac{\\tan x}{2x} \\to 1 - \\dfrac12 = \\dfrac12$.",
     "commonTrap": "Replacing $\\cos x$ by $\\cos 0 = 1$ inside the logarithm, which gives $\\lim \\ln(1+x^2)/x^2 = 1$. The factor $\\cos x$ differs from $1$ by about $-x^2/2$, the same order as the denominator, so it changes the answer to $0.5$. A sign slip in $\\ln(\\cos x) \\approx -x^2/2$ (using $+x^2/2$) gives the equally wrong $1.5$."
   },
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q60-1.webp",
-    "/pyq/2024/official/Q60-2.webp"
+    "/pyq/2024/official/Q60-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
@@ -65,14 +64,14 @@
   ],
   "transcription": {
     "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The answer blank that the paper prints inside the displayed equation ('= ______.') is rendered as an underlined space in the display math. The second official crop (Q60-2) contains only the empty top border of the question frame continuing onto the next page; it carries no question content."
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The answer blank that the paper prints inside the displayed equation ('= ______.') is rendered as an underlined space in the display math. The paper's spacing 'ln ((x^2+1) cos x)' is typeset as $\\ln\\left((x^2+1)\\cos x\\right)$ without changing its meaning."
   },
   "answerVerification": {
     "status": "PARTIALLY_VERIFIED",
     "method": "Author solve (not blind) compared with official key",
     "independentAnswer": "0.5",
     "agreesWithKey": true,
-    "checkCode": "import sympy as sp, math\nx = sp.symbols('x')\nnum = sp.log((x**2 + 1)*sp.cos(x))\nprint('limit =', sp.limit(num/x**2, x, 0))            # 1/2\nprint('series of numerator:', sp.series(num, x, 0, 6))  # x**2/2 - 7*x**4/12 + O(x**6)\nprint('ln(1+x^2)/x^2 ->', sp.limit(sp.log(1 + x**2)/x**2, x, 0),\n      ' ln(cos x)/x^2 ->', sp.limit(sp.log(sp.cos(x))/x**2, x, 0))  # 1 and -1/2\nfor h in [0.1, 0.01, 0.001]:                            # numerical approach to 0.5\n    print(h, math.log((h*h + 1)*math.cos(h))/h**2)\n",
+    "checkCode": "import sympy as sp, math\nx = sp.symbols('x')\nnum = sp.log((x**2 + 1)*sp.cos(x))\nprint('limit =', sp.limit(num/x**2, x, 0))\nprint('series of numerator:', sp.series(num, x, 0, 6))\nprint('ln(1+x^2)/x^2 ->', sp.limit(sp.log(1 + x**2)/x**2, x, 0), ' ln(cos x)/x^2 ->', sp.limit(sp.log(sp.cos(x))/x**2, x, 0))\nfor h in [0.1, 0.01, 0.001]:\n    print(h, math.log((h*h + 1)*math.cos(h))/h**2)\n",
     "notes": "Independent solve: split the log into ln(1+x^2) + ln(cos x); the two pieces contribute limits 1 and -1/2, so the limit is 1/2 = 0.5. SymPy's limit gives 1/2, the Maclaurin expansion of the numerator is x^2/2 - 7x^4/12 + ..., and direct evaluation gives 0.4942 at x = 0.1 and 0.49994 at x = 0.01. This agrees with the official key '0.5 to 0.5'."
   },
   "solutionStatus": "PARTIALLY_VERIFIED"

@@ -1,0 +1,79 @@
+{
+  "id": "DA2024-S1-Q61",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 61,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-projections-decompositions",
+  "subtopicIds": [
+    "la-svd",
+    "la-rank",
+    "la-eigen"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it rests on one concept (the rank-one matrix $\\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}$ has a single nonzero singular value, equal to $\\|\\boldsymbol{u}\\|^2$) followed by a single-step computation $1+4+9+16+25$, well under 1.5 minutes for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $\\boldsymbol{u} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\\\ 4 \\\\ 5 \\end{bmatrix}$, and let $\\sigma_1, \\sigma_2, \\sigma_3, \\sigma_4, \\sigma_5$ be the singular values of the matrix $\\boldsymbol{M} = \\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}$ (where $\\boldsymbol{u}^{\\boldsymbol{T}}$ is the transpose of $\\boldsymbol{u}$). The value of $\\sum_{i=1}^{5} \\sigma_i$ is ______.",
+  "options": [],
+  "officialKeyRaw": "55 to 55",
+  "answer": {
+    "kind": "NAT",
+    "min": 55,
+    "max": 55
+  },
+  "solution": {
+    "quick": "$\\boldsymbol{M} = \\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}$ has rank $1$, so it has exactly one nonzero singular value, and that value is $\\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{u} = \\|\\boldsymbol{u}\\|^2 = 1+4+9+16+25 = 55$. The other four singular values are $0$, so $\\sum_{i=1}^{5}\\sigma_i = $ **55**.",
+    "steps": [
+      {
+        "title": "Write out M",
+        "body": "The $(i,j)$ entry of the outer product is $M_{ij} = u_i u_j = i \\cdot j$:\n\n$$\n\\boldsymbol{M} = \\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}} = \\begin{bmatrix} 1 & 2 & 3 & 4 & 5 \\\\ 2 & 4 & 6 & 8 & 10 \\\\ 3 & 6 & 9 & 12 & 15 \\\\ 4 & 8 & 12 & 16 & 20 \\\\ 5 & 10 & 15 & 20 & 25 \\end{bmatrix}.\n$$\n\nColumn $j$ is $j \\cdot \\boldsymbol{u}$, so every column is a multiple of $\\boldsymbol{u}$ and $\\operatorname{rank}\\boldsymbol{M} = 1$."
+      },
+      {
+        "title": "Rank tells us how many singular values are nonzero",
+        "body": "The number of nonzero singular values of a matrix equals its rank. Since $\\operatorname{rank}\\boldsymbol{M} = 1$, exactly one singular value is nonzero; order them so that\n\n$$\n\\sigma_1 > 0, \\qquad \\sigma_2 = \\sigma_3 = \\sigma_4 = \\sigma_5 = 0 .\n$$"
+      },
+      {
+        "title": "Find the nonzero singular value",
+        "body": "Singular values are the square roots of the eigenvalues of $\\boldsymbol{M}^{\\boldsymbol{T}}\\boldsymbol{M}$. Using $\\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{u} = 1^2+2^2+3^2+4^2+5^2 = 55$:\n\n$$\n\\boldsymbol{M}^{\\boldsymbol{T}}\\boldsymbol{M} = (\\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}})^{\\boldsymbol{T}}(\\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}) = \\boldsymbol{u}(\\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{u})\\boldsymbol{u}^{\\boldsymbol{T}} = 55\\,\\boldsymbol{M}.\n$$\n\nNow $\\boldsymbol{M}\\boldsymbol{u} = \\boldsymbol{u}(\\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{u}) = 55\\,\\boldsymbol{u}$, so\n\n$$\n\\boldsymbol{M}^{\\boldsymbol{T}}\\boldsymbol{M}\\,\\boldsymbol{u} = 55 \\cdot 55\\,\\boldsymbol{u} = 3025\\,\\boldsymbol{u} \\quad\\Rightarrow\\quad \\sigma_1 = \\sqrt{3025} = 55 .\n$$\n\nAny $\\boldsymbol{v}$ orthogonal to $\\boldsymbol{u}$ gives $\\boldsymbol{M}\\boldsymbol{v} = \\boldsymbol{u}(\\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{v}) = \\boldsymbol{0}$, which accounts for the four zero singular values.\n\nEquivalently, with the unit vector $\\hat{\\boldsymbol{u}} = \\boldsymbol{u}/\\sqrt{55}$, $\\boldsymbol{M} = 55\\,\\hat{\\boldsymbol{u}}\\hat{\\boldsymbol{u}}^{\\boldsymbol{T}}$ is already a (rank-one) SVD with left and right singular vector $\\hat{\\boldsymbol{u}}$ and singular value $55$."
+      },
+      {
+        "title": "Add them up",
+        "body": "$$\n\\sum_{i=1}^{5}\\sigma_i = 55 + 0 + 0 + 0 + 0 = 55 .\n$$"
+      },
+      {
+        "title": "Cross-check with the trace",
+        "body": "$\\boldsymbol{M}$ is symmetric and positive semidefinite, because $\\boldsymbol{x}^{\\boldsymbol{T}}\\boldsymbol{M}\\boldsymbol{x} = (\\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{x})^2 \\ge 0$. For such a matrix the singular values equal the eigenvalues, and the eigenvalues sum to the trace:\n\n$$\n\\sum_{i=1}^{5}\\sigma_i = \\operatorname{trace}(\\boldsymbol{M}) = 1 + 4 + 9 + 16 + 25 = 55 .\n$$\n\nA NumPy SVD of $\\boldsymbol{M}$ returns $[55, 0, 0, 0, 0]$."
+      }
+    ],
+    "finalAnswer": "**55**",
+    "teaching": "**Singular values in one sentence.** Every real $m \\times n$ matrix $A$ can be written as $A = U\\Sigma V^{\\top}$ with orthogonal $U$, $V$ and a diagonal $\\Sigma$ whose non-negative entries $\\sigma_1 \\ge \\sigma_2 \\ge \\cdots \\ge 0$ are the **singular values**. They are the square roots of the eigenvalues of $A^{\\top}A$, and they measure how much $A$ stretches space along its principal directions.\n\n**Three facts worth memorising.**\n\n1. The number of nonzero singular values equals $\\operatorname{rank} A$.\n2. For a rank-one outer product $\\boldsymbol{a}\\boldsymbol{b}^{\\top}$, the only nonzero singular value is $\\|\\boldsymbol{a}\\|\\,\\|\\boldsymbol{b}\\|$, because $\\boldsymbol{a}\\boldsymbol{b}^{\\top} = \\|\\boldsymbol{a}\\|\\|\\boldsymbol{b}\\| \\cdot \\hat{\\boldsymbol{a}}\\hat{\\boldsymbol{b}}^{\\top}$ with unit vectors $\\hat{\\boldsymbol{a}}, \\hat{\\boldsymbol{b}}$.\n3. For a symmetric matrix the singular values are $|\\lambda_i|$; if it is also positive semidefinite they are exactly the eigenvalues, so their sum is the trace.\n\n**Why an outer product has rank one.** $\\boldsymbol{u}\\boldsymbol{u}^{\\top}\\boldsymbol{x} = (\\boldsymbol{u}^{\\top}\\boldsymbol{x})\\,\\boldsymbol{u}$: whatever you feed in, the output is a multiple of $\\boldsymbol{u}$. The column space is the single line through $\\boldsymbol{u}$. Along that line the matrix stretches by $\\boldsymbol{u}^{\\top}\\boldsymbol{u}$ (since $\\boldsymbol{u}\\boldsymbol{u}^{\\top}\\boldsymbol{u} = \\|\\boldsymbol{u}\\|^2\\boldsymbol{u}$); every direction perpendicular to $\\boldsymbol{u}$ is sent to zero.\n\n**Back to this question.** With $\\boldsymbol{a} = \\boldsymbol{b} = \\boldsymbol{u}$, fact 2 gives the single nonzero singular value $\\|\\boldsymbol{u}\\|^2 = 55$, and fact 1 says the remaining four are $0$. The sum of singular values (also called the nuclear norm) is therefore $55$. Fact 3 gives the same number from the diagonal $1, 4, 9, 16, 25$ without any eigen-computation.",
+    "shortcut": "$\\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}$ is symmetric positive semidefinite, so $\\sum \\sigma_i = \\operatorname{trace}(\\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}) = \\boldsymbol{u}^{\\boldsymbol{T}}\\boldsymbol{u} = 1+4+9+16+25 = 55$.",
+    "commonTrap": "Answering $\\|\\boldsymbol{u}\\| = \\sqrt{55} \\approx 7.42$: that is the singular value of the $5 \\times 1$ matrix $\\boldsymbol{u}$ itself, not of $\\boldsymbol{u}\\boldsymbol{u}^{\\boldsymbol{T}}$, whose singular value is $\\|\\boldsymbol{u}\\|^2$. Summing all entries of $\\boldsymbol{M}$ (which gives $(1+2+3+4+5)^2 = 225$) or assuming five nonzero singular values are the other usual slips."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q61-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper typesets $\\boldsymbol{u}$, $\\boldsymbol{M}$ and the transpose superscript $\\boldsymbol{T}$ in bold italic; this is kept with \\boldsymbol and the paper's 'T' notation for transpose. The column vector is printed as an inline 5 x 1 bracketed column and is transcribed as an inline bmatrix. The sum is printed inline as $\\sum_{i=1}^{5}\\sigma_i$."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "55",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nu = np.arange(1, 6, dtype=float).reshape(5, 1)\nM = u @ u.T\ns = np.linalg.svd(M, compute_uv=False)\nprint('M =\\n', M.astype(int))\nprint('singular values:', np.round(s, 10))\nprint('sum =', round(s.sum(), 10), ' ||u||^2 =', float((u.T @ u)[0, 0]), ' trace(M) =', np.trace(M), ' rank =', np.linalg.matrix_rank(M))\nprint('eigenvalues of M:', np.round(np.linalg.eigvalsh(M), 10))\n",
+    "notes": "Independent solve: M = uu^T has rank 1, so it has one nonzero singular value, equal to u^T u = 1+4+9+16+25 = 55; the other four are 0, so the sum is 55. Cross-check: M is symmetric PSD, so the sum of singular values equals trace(M) = 55. NumPy's SVD returns [55, 0, 0, 0, 0]. This agrees with the official key '55 to 55'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

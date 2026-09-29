@@ -59,16 +59,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The PDF text layer gives the matrix entries as a flat sequence 1, 2, 3, 3, 1, 3, 4, 3, 6; the rendering confirms the rows are [1 2 3], [3 1 3], [4 3 6]. The paper typesets M in bold italic (rendered here with \\boldsymbol{M}), and the superscript 2 in M^2 was read from the image. The answer blank is rendered as underscores. No figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The PDF text layer gives the matrix entries as a flat sequence 1, 2, 3, 3, 1, 3, 4, 3, 6; the rendering confirms the rows are [1 2 3], [3 1 3], [4 3 6]. The paper typesets M in bold italic (rendered here with \\boldsymbol{M}); the superscript 2 in M^2 and the coefficient 12 were confirmed from the image. The answer blank is rendered as underscores. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nM = sp.Matrix([[1,2,3],[3,1,3],[4,3,6]])\nprint(M.det())                       # 0  (row3 = row1 + row2)\nassert M.row(2) == M.row(0) + M.row(1)\nN = M**2 + 12*M\nprint(N)                             # [[31,37,63],[54,28,66],[85,65,129]]\nprint(N.det())                       # 0\nA = M + 12*sp.eye(3)\nprint(A.det())                       # 2712 (non-zero, irrelevant: 0*2712 = 0)\nassert N == M*A and N.det() == M.det()*A.det() == 0\nprint(M.charpoly().as_expr(), M.eigenvals())   # l^3-8l^2-14l ; {0, 4+-sqrt(30)}\nprint([sp.simplify(l**2 + 12*l) for l in M.eigenvals()])  # eigenvalues of N; one is 0\n",
-    "notes": "M^2 + 12M = M(M + 12I), so det(M^2 + 12M) = det(M) det(M + 12I). Row 3 of M equals row 1 + row 2, so det(M) = 0 (cofactor expansion: -3 - 12 + 15 = 0) and the product is 0, although det(M + 12I) = 2712. Direct computation in sympy gives M^2 + 12M = [[31,37,63],[54,28,66],[85,65,129]] with determinant 0. This agrees with the official key 0 to 0."
+    "notes": "Independent verifier solved blind from the official crop before seeing the key: row 3 of M = row 1 + row 2, so det(M) = 0, and since M^2 + 12M = M(M + 12I), det(M^2 + 12M) = det(M) det(M + 12I) = 0 * 2712 = 0. Python (sympy) confirms: M^2 + 12M = [[31,37,63],[54,28,66],[85,65,129]] with determinant 0; det(M + 12I) = 2712; characteristic polynomial l^3 - 8l^2 - 14l with eigenvalues 0 and 4 +/- sqrt(30). Agrees with the official key \"0 to 0\"."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

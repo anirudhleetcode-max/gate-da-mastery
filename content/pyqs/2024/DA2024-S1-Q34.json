@@ -44,7 +44,7 @@
       }
     ],
     "finalAnswer": "**42**",
-    "teaching": "**The sample mean and the total.** The sample mean of $n$ values is $\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i$. Rearranged, the **total** is $\\sum x_i = n\\bar{x}$. This is the key move in every question where a value is added, removed or corrected: you cannot combine averages directly, but you can add and subtract totals.\n\n**Updating a mean.** When a new value $x_{n+1}$ arrives,\n\n$$\\bar{x}_{n+1} = \\frac{n\\bar{x}_n + x_{n+1}}{n+1} = \\bar{x}_n + \\frac{x_{n+1} - \\bar{x}_n}{n+1}.$$\n\nThe second form says that the mean moves toward the new value by that value's deviation from the old mean, shared equally among all $n + 1$ points. Streaming algorithms use this running (online) update to maintain an average without storing the data, and online k-means updates each centroid with the same form.\n\n**Sensitivity to outliers.** A single new value shifts the mean by $\\frac{x_{n+1} - \\bar{x}_n}{n+1}$. Here a point 102 above the old mean moves the average of 51 points by 2. The median, by contrast, can move by at most one position in the sorted order, so a single extreme value cannot drag it far. That is why the median is called *robust* and the mean is not.\n\n**Back to this question.** The original total is $50 \\times 40 = 2000$. Adding $142$ gives $2142$, and dividing by the new count $51$ gives $\\bar{x} = 42$. Equivalently, $40 + 102/51 = 42$.",
+    "teaching": "**The sample mean and the total.** The sample mean of $n$ values is $\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i$. Rearranged, the **total** is $\\sum x_i = n\\bar{x}$. This is the key move in every question where a value is added, removed or corrected: you cannot combine averages directly, but you can add and subtract totals.\n\n**Updating a mean.** When a new value $x_{n+1}$ arrives,\n\n$$\\bar{x}_{n+1} = \\frac{n\\bar{x}_n + x_{n+1}}{n+1} = \\bar{x}_n + \\frac{x_{n+1} - \\bar{x}_n}{n+1}.$$\n\nThe second form says that the mean moves toward the new value by that value's deviation from the old mean, shared equally among all $n + 1$ points. Streaming algorithms use this running (online) update to maintain an average without storing the data, and online k-means updates each centroid with the same form.\n\n**Sensitivity to outliers.** A single new value shifts the mean by $\\frac{x_{n+1} - \\bar{x}_n}{n+1}$. Here a point 102 above the old mean moves the average of 51 points by 2. The median, by contrast, barely moves: with 50 old values, the median of the 51 values must lie between the old 25th and 26th smallest values, however extreme the new point is. That is why the median is called *robust* and the mean is not.\n\n**Back to this question.** The original total is $50 \\times 40 = 2000$. Adding $142$ gives $2142$, and dividing by the new count $51$ gives $\\bar{x} = 42$. Equivalently, $40 + 102/51 = 42$.",
     "shortcut": "The new point exceeds the old mean by $142 - 40 = 102$. Sharing that excess over the $51$ points raises the mean by $102/51 = 2$, so the new mean is $40 + 2 = 42$.",
     "commonTrap": "Dividing by the old count: $2142/50 = 42.84$, or $40 + 102/50 = 42.04$. The new point increases the count to 51. Averaging the two numbers directly, $(40 + 142)/2 = 91$, is also wrong, because it gives the single new point the same weight as all 50 old points."
   },
@@ -58,16 +58,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain text with no special notation; transcribed verbatim, with the answer blank rendered as underscores. No figure is needed; the crop contains only the question text."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Plain text with no special notation; transcribed verbatim, with the answer blank rendered as underscores. No figure is needed; the crop contains only the question text."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
     "independentAnswer": "42",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction\nn, mean, new = 50, 40, 142\ntotal = n*mean                                   # 2000\nnew_mean = Fraction(total + new, n + 1)          # 2142/51\nprint(total, total + new, new_mean, float(new_mean))   # 2000 2142 42 42.0\ninc = mean + Fraction(new - mean, n + 1)         # incremental form: m + (x - m)/(n+1)\nassert new_mean == inc == 42\nprint('traps:', float(Fraction(total + new, n)), (mean + new)/2)   # 42.84, 91.0\n",
-    "notes": "The original total is 50 × 40 = 2000; adding 142 gives 2142 over 51 points, and 2142/51 = 42 exactly. The incremental-mean formula 40 + (142 − 40)/51 = 42 gives the same value, confirmed in Python with exact fractions. This agrees with the official key 42 to 42."
+    "notes": "Verifier re-solved from the official crop: total of the 50 points = 50 × 40 = 2000; with the new point the total is 2142 over 51 points, and 2142/51 = 42 exactly (51 × 42 = 2142). The incremental form 40 + (142 − 40)/51 = 40 + 2 = 42 agrees; the stored exact-fraction Python check was re-run and confirms 42. Agrees with the official key 42 to 42."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

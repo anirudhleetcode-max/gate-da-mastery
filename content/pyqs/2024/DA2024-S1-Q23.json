@@ -100,16 +100,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints no space between \"h₁\" and \"and\" (\"Let h₁and h₂\"); this is kept as printed. A* is typeset as $A^*$ and the side condition of option (C) as \"h₁/h₂, (h₂ ≠ 0)\", as printed. The page has no figure other than the GATE 2024 background watermark."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, all four options and their order match the official crop character by character. The paper prints no space between \"h₁\" and \"and\" (\"Let h₁and h₂\"); this is kept as printed. A* is typeset as $A^*$ and the side condition of option (C) as \"h₁/h₂, (h₂ ≠ 0)\", as printed. The page has no figure other than the GATE 2024 background watermark."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(D) |h₁ − h₂|",
     "agreesWithKey": true,
     "checkCode": "import random, heapq\nrandom.seed(0)\n# admissible: 0 <= h(n) <= h*(n). Test each option on random admissible pairs.\nops = {'A': lambda a, b: a + b, 'B': lambda a, b: a * b,\n       'C': lambda a, b: a / b, 'D': lambda a, b: abs(a - b)}\nviol = {k: None for k in ops}\nfor _ in range(100000):\n    hs = random.uniform(0, 10)                              # true cost-to-goal h*(n)\n    h1, h2 = random.uniform(0, hs), random.uniform(1e-9, hs)\n    for k, f in ops.items():\n        if f(h1, h2) > hs + 1e-12 and viol[k] is None:\n            viol[k] = tuple(round(v, 3) for v in (hs, h1, h2, f(h1, h2)))\nprint(viol)                                                 # only D has no counterexample\nassert viol['D'] is None and all(viol[k] for k in 'ABC')\n# A* on a tiny graph: S->G costs 4.5 directly; S->A->G costs 1+2 = 3 (optimal). h*(A) = 2.\nE = {'S': [('A', 1), ('G', 4.5)], 'A': [('G', 2)], 'G': []}\ndef astar(hA):                                              # h(S)=0, h(G)=0 (trivially admissible)\n    h = {'S': 0, 'A': hA, 'G': 0}; pq = [(0, 0, 'S')]\n    while pq:\n        f, g, n = heapq.heappop(pq)\n        if n == 'G': return g\n        for m, c in E[n]: heapq.heappush(pq, (g + c + h[m], g + c, m))\nfor h1A, h2A in [(2, 2), (2, 0.5)]:                         # both admissible at A (<= 2)\n    print((h1A, h2A), {k: (f(h1A, h2A), astar(f(h1A, h2A))) for k, f in ops.items()})",
-    "notes": "Since 0 ≤ h₁(n), h₂(n) ≤ h*(n), |h₁ − h₂| ≤ max(h₁, h₂) ≤ h*(n) at every node, so (D) is always admissible. Counterexamples rule out the rest: h₁ = h₂ = h* = 4 gives 8 for (A) and 16 for (B); h* = 4, h₁ = 4, h₂ = 0.5 gives 8 for (C). A Python random search over 100 000 admissible pairs found overestimates for A, B and C and none for D, and a three-node A* run returns the suboptimal cost 4.5 (instead of 3) under A, B and C but the optimal 3 under D. This agrees with official key D."
+    "notes": "Verifier solved blind before seeing the key: admissibility means 0 ≤ h(n) ≤ h*(n), and for two numbers in [0, h*] the absolute difference satisfies 0 ≤ |h₁ − h₂| ≤ max(h₁, h₂) ≤ h*, so (D) is always admissible; the sum, product and ratio each have counterexamples (h₁ = h₂ = h* = 4 gives 8 and 16; h* = 4, h₁ = 4, h₂ = 0.5 gives 8). The verifier's own random search (100 000 admissible pairs) found violations for A, B, C and none for D. The stored check code (kept, as it also runs A* on a three-node graph) was re-run: only D has no counterexample, and A* returns the suboptimal cost 4.5 instead of 3 under A, B and C but the optimal 3 under D, matching the table in the solution. Agrees with official key D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -59,16 +59,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The function is typeset in the paper as a stacked fraction f(x) = 1 over 1+e^{−x} (the PDF text layer flattens it to '1 / 1+𝑒−𝑥'); it is transcribed as \\frac{1}{1+e^{-x}}, and the period after the formula is kept. The ℝ symbols are set as \\mathbb{R}. The rounding instruction '(rounded off to two decimal places)' starts a new line in the paper and is joined to the sentence here; 'two' and 'Note' are bold in the paper and kept bold. The answer blank is rendered as underscores. No figure is needed; the crop contains only text and part of the GATE 2024 background watermark."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The function is typeset in the paper as a stacked fraction 1 over 1+e^{−x} (the PDF text layer flattens it); it is transcribed as \\frac{1}{1+e^{-x}}, and the period after the formula is kept. The ℝ symbols are set as \\mathbb{R}. The rounding instruction '(rounded off to two decimal places)' starts a new line in the paper and is joined to the sentence here; 'two' and 'Note' are bold in the paper and kept bold. The answer blank is rendered as underscores. No figure is needed; the crop contains only text and part of the GATE 2024 background watermark."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.24",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp, math\nx = sp.symbols('x', real=True)\nf = 1/(1 + sp.exp(-x))\nfp = sp.diff(f, x)                                          # e^{-x}/(1+e^{-x})^2\nassert sp.simplify((fp - f*(1 - f)).rewrite(sp.exp)) == 0   # f' = f(1-f)\nx0 = sp.log(sp.Rational(2, 3))                              # f(x0)=0.4 <=> e^{-x0}=3/2\nassert sp.simplify(f.subs(x, x0) - sp.Rational(2, 5)) == 0\nval = sp.nsimplify(sp.simplify(fp.subs(x, x0)))\nprint('x0 =', x0, '=', float(x0), \" f'(x0) =\", val, '=', float(val))   # 6/25 = 0.24\ns = lambda t: 1/(1 + math.exp(-t)); h = 1e-6; t0 = float(x0)\nprint('central difference ~', round((s(t0+h) - s(t0-h))/(2*h), 6))    # 0.24\nprint('trap check: derivative at x=0.4 ~', round(s(0.4)*(1 - s(0.4)), 4))  # 0.2403 (different point)\n",
-    "notes": "Differentiating gives f'(x) = e^{−x}/(1+e^{−x})^2 = f(x)(1 − f(x)), so at f(x) = 0.4 the derivative is 0.4 × 0.6 = 0.24. Solving f(x) = 0.4 gives x = ln(2/3) ≈ −0.4055, and sympy evaluates f'(ln(2/3)) = 6/25 = 0.24 exactly; a central-difference estimate agrees. This agrees with the official key 0.24 to 0.24."
+    "notes": "Verifier re-solved from the official crop: f is the logistic sigmoid, f'(x) = e^{−x}/(1+e^{−x})^2 = f(x)(1 − f(x)), so where f(x) = 0.4 the derivative is 0.4 × 0.6 = 0.24. Solving f(x) = 0.4 gives e^{−x} = 1.5, x = ln(2/3) ≈ −0.4055, and 1.5/2.5^2 = 0.24; sympy returns exactly 6/25 and a central-difference estimate at x = ln(2/3) gives 0.24000. The stored checkCode was re-run and reproduces these values. Agrees with the official key 0.24 to 0.24."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

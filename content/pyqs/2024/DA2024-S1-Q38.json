@@ -49,7 +49,7 @@
       },
       {
         "title": "Algorithm: what count computes",
-        "body": "- **Base case:** if `i` is not a key of `child_dict`, return `1`. A leaf is a subtree with one node.\n- **Recursive case:** `ans = 1` counts node `i` itself, and the loop adds `count(child_dict, j)` for every child `j`.\n\nSo\n\n$$\n\\text{count}(i) = 1 + \\sum_{j \\in \\text{children}(i)} \\text{count}(j),\n$$\n\nwhich is the size of the subtree rooted at $i$.\n\nThe line `return 1` is indented with 9 spaces as printed (the other nested lines use 8). Python only requires a block to be indented more deeply than its header (and consistently within itself), so this is valid code and runs normally."
+        "body": "- **Base case:** if `i` is not a key of `child_dict`, return `1`. A leaf is a subtree with one node.\n- **Recursive case:** `ans = 1` counts node `i` itself, and the loop adds `count(child_dict, j)` for every child `j`.\n\nSo\n\n$$\n\\text{count}(i) = 1 + \\sum_{j \\in \\text{children}(i)} \\text{count}(j),\n$$\n\nwhich is the size of the subtree rooted at $i$.\n\nThe line `return 1` is indented with 9 spaces as printed, whereas the only other doubly nested line (`ans += count(child_dict, j)`) uses 8. Python only requires a block to be indented more deeply than its header (and consistently within itself), so this is valid code and runs normally."
       },
       {
         "title": "Execution trace",
@@ -90,24 +90,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q38-1.webp",
-    "/pyq/2024/official/Q38-2.webp"
+    "/pyq/2024/official/Q38-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed character for character. In the paper the line `return 1` is indented 9 spaces, one more than the 8 used for the other doubly nested line; both the PDF text layer and the rendering show this, and it is kept as printed (it is valid Python). The second official crop (Q38-2) shows only the top border of the next table on page 24 and appears to contain no content of this question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The code matches the official crop and the PDF text layer character for character, including the 9-space indentation of `return 1` (one more than the 8 spaces of the other doubly nested line); this is kept as printed and is valid Python. The question sentence and all four options (6, 1, 8, 9, in order A–D) match. The question fits on page 23; the extra rendered crop of page 24 held only the top border of the next question's table, so only Q38-1 is listed in officialImages."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(D) 9",
     "agreesWithKey": true,
     "checkCode": "# Exact code from the paper (note the 9-space indent before 'return 1'); prints 9\ndef count(child_dict, i):\n    if i not in child_dict.keys():\n         return 1\n    ans = 1\n    for j in child_dict[i]:\n        ans += count(child_dict, j)\n    return ans\n\nchild_dict = dict()\nchild_dict[0] = [1,2]\nchild_dict[1] = [3,4,5]\nchild_dict[2] = [6,7,8]\nprint(count(child_dict,0))\n",
-    "notes": "Hand trace gives count(1) = count(2) = 4 and count(0) = 9. Running the exact code (including the 9-space indentation) in Python 3 prints 9. This agrees with the official key D."
+    "notes": "Independent reviewer traced the recursion blind before opening the key: count returns the subtree size, count(1) = 1 + 3 = 4, count(2) = 1 + 3 = 4, count(0) = 1 + 4 + 4 = 9. Running the exact code (with the 9-space indentation as printed) in Python 3 prints 9. This agrees with the official key (D)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -65,7 +65,7 @@
       {
         "label": "A",
         "verdict": "incorrect",
-        "explanation": "$0.217$ is not $(v - \\mu)/\\sigma$; it is what you get from $\\dfrac{106000 - 96000}{46000} = 0.2174$, i.e. dividing the deviation from the mean by the **minimum** instead of the standard deviation. The $z$-score divides by $\\sigma = 21000$, giving $0.476$."
+        "explanation": "$0.217$ is not $(v - \\mu)/\\sigma$; it matches $\\dfrac{106000 - 96000}{46000} = 0.2174$, i.e. dividing the deviation from the mean by the **minimum** instead of the standard deviation. The $z$-score divides by $\\sigma = 21000$, giving $0.476$."
       },
       {
         "label": "B",
@@ -96,16 +96,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The rupee amounts are written with the ₹ symbol and without thousands separators, exactly as printed (₹46000, ₹170000, ₹96000, ₹21000, ₹106000). The attribute name income is italic in the paper (both occurrences), and the italic z of \"z-score\" is written as $z$. The options are plain decimals, as printed. No figure is needed; the page has nothing but text and the GATE 2024 background watermark."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The rupee amounts are written with the ₹ symbol and without thousands separators, exactly as printed (₹46000, ₹170000, ₹96000, ₹21000, ₹106000). The attribute name income is italic in the paper (both occurrences), and the italic z of \"z-score\" is written as $z$. The options are plain decimals, as printed. No figure is needed; the region contains only text and the GATE 2024 background watermark."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B (z = (106000 − 96000)/21000 = 10/21 ≈ 0.47619)",
     "agreesWithKey": true,
     "checkCode": "mn, mx, mean, sd, x = 46000, 170000, 96000, 21000, 106000\nz = (x - mean) / sd\nopts = {'A': 0.217, 'B': 0.476, 'C': 0.623, 'D': 2.304}\nbest = min(opts, key=lambda k: abs(opts[k] - z))\nprint('z-score =', round(z, 5), '-> closest', best); assert best == 'B'\nprint('min-max =', round((x - mn) / (mx - mn), 5))\nprint('(x-mean)/min =', round((x - mean) / mn, 4), ' x/max =', round(x / mx, 4), ' x/min =', round(x / mn, 4))",
-    "notes": "z = (106000 − 96000)/21000 = 10/21 ≈ 0.47619, closest to option B (0.476); the minimum and maximum are not used by z-score normalization. A Python check computes the z-score and the nearest option, and also shows that the other option values lie near (106000 − 96000)/46000 ≈ 0.2174 (A), 106000/170000 ≈ 0.6235 (C) and 106000/46000 ≈ 2.3043 (D); min–max normalization would give ≈ 0.4839, which is not an option. This agrees with official key B."
+    "notes": "Independent verifier solved blind before consulting the key: z = (106000 − 96000)/21000 = 10/21 ≈ 0.47619, closest to option B (0.476, distance ≈ 0.0002; next closest C at ≈ 0.147). Minimum and maximum are not used by z-score normalization. The Python check (re-run by the verifier) also shows the other option values lie near (106000 − 96000)/46000 ≈ 0.2174 (A), 106000/170000 ≈ 0.6235 (C) and 106000/46000 ≈ 2.3043 (D); these are only presented as plausible slips, not as the paper's construction. Min–max normalization would give ≈ 0.4839, not an option. Agrees with official key B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

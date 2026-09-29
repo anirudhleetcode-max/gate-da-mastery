@@ -102,16 +102,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word \"two\" is bold in the paper and is kept bold here."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The stem (including the parenthetical face list and the bold word \"two\") and all four options (2, 4, 6, 8, in order A–D) match the official crop and the PDF text layer word for word."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(C) 6",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\nimport random\np = F(1, 2)  # P(even) = |{2,4,6}|/6\n# First-step analysis: E0 = 1 + p*E1 + (1-p)*E0 ; E1 = 1 + p*0 + (1-p)*E0\nE0 = (1 + p) / (1 - (1 - p) - p * (1 - p))   # substitute E1 into E0 and solve\nE1 = 1 + (1 - p) * E0\nprint(\"E0 =\", E0, \"E1 =\", E1, \"closed form 1/p+1/p^2 =\", 1/p + 1/p**2)   # 6, 4, 6\nrandom.seed(1)\ndef trial():\n    n = run = 0\n    while run < 2:\n        n += 1\n        run = run + 1 if random.randint(1, 6) % 2 == 0 else 0\n    return n\nN = 200000\nprint(\"simulated:\", sum(trial() for _ in range(N)) / N)   # ~6.00",
-    "notes": "First-step analysis gives E0 = 6 (E1 = 4), computed exactly with fractions and confirmed by a Monte Carlo simulation (mean ≈ 6.00 over 200000 trials). This agrees with the official key C."
+    "notes": "Independent reviewer solved blind before opening the key: parity makes each throw a fair Bernoulli trial (p = 1/2); first-step analysis E0 = 1 + (1/2)E1 + (1/2)E0, E1 = 1 + (1/2)E0 gives E1 = 4, E0 = 6 = 1/p + 1/p^2. Exact Fraction computation gives 6 and a 200000-trial Monte Carlo simulation gives a mean of about 6.00. This agrees with the official key (C). Every step of the stored solution, the option analysis and the teaching section were checked and are correct."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

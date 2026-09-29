@@ -16,7 +16,7 @@
   "difficulty": "MODERATE",
   "difficultyRationale": "Platform-estimated: two directly linked concepts (continuity and differentiability at the two break points) lead to a small linear system; routine computation in about 1.5–2 minutes, with option B as a continuity-only trap.",
   "estimatedTimeSec": 100,
-  "stem": "Let $f:\\mathbb{R} \\to \\mathbb{R}$ be a function. **Note**: $\\mathbb{R}$ denotes the set of real numbers.\n\n$$\nf(x) = \\begin{cases} -x, & \\text{if } x < -2 \\\\ ax^2 + bx + c, & \\text{if } x \\in [-2, 2] \\\\ x, & \\text{if } x > 2 \\end{cases}\n$$\n\nWhich **ONE** of the following choices gives the values of $a, b, c$ that make the function $f$ continuous and differentiable?",
+  "stem": "Let $f:\\mathbb{R} \\to \\mathbb{R}$ be a function. **Note**: $\\mathbb{R}$ denotes the set of real numbers.\n\n$$\nf(x) = \\begin{cases} -x, & \\text{if } x < -2 \\\\ ax^2 + bx + c, & \\text{if } x \\in [-2,2] \\\\ x, & \\text{if } x > 2 \\end{cases}\n$$\n\nWhich **ONE** of the following choices gives the values of $a, b, c$ that make the function $f$ continuous and differentiable?",
   "options": [
     {
       "label": "A",
@@ -89,7 +89,7 @@
       }
     ],
     "shortcut": "Test just one slope condition: $f'(2^-) = 4a + b$ must equal $1$. This gives (A) $1$, (B) $2$, (C) $0$ and (D) $5$, so only (A) survives. A quick check that $f(\\pm2) = 1 + 1 = 2$ confirms it.",
-    "commonTrap": "Checking only continuity. Option (B) also gives $f(\\pm2) = 2$, so it looks right if you forget to match the slopes. The resulting function is continuous but has corners at $x = \\pm 2$ (slope $2$ on one side, $1$ on the other)."
+    "commonTrap": "Checking only continuity. Option (B) also gives $f(\\pm2) = 2$, so it looks right if you forget to match the slopes. The resulting function $\\tfrac{x^2}{2}$ is continuous but has corners at $x = \\pm 2$: at $x = 2$ the slope is $2$ from the left but $1$ from the right, and at $x = -2$ it is $-1$ from the left but $-2$ from the right."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -101,16 +101,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The piecewise definition is rendered with a LaTeX cases environment; the interval is printed as [−2,2] in the paper."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The note line, the three-piece definition (−x for x < −2; ax² + bx + c for x ∈ [−2,2]; x for x > 2), the question sentence and all four options (in order A–D) match the official crop; the piecewise layout is rendered with a LaTeX cases environment, and the interval is written [-2,2] as printed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(A) a = 1/4, b = 0, c = 1",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\na, b, c, x = sp.symbols('a b c x')\ng = a*x**2 + b*x + c\neqs = [sp.Eq(g.subs(x, -2), 2), sp.Eq(g.subs(x, 2), 2),                          # continuity: -(-2) = 2 and 2 = 2\n       sp.Eq(sp.diff(g, x).subs(x, -2), -1), sp.Eq(sp.diff(g, x).subs(x, 2), 1)]  # slopes of -x and x\nprint(sp.solve(eqs, [a, b, c]))   # {a: 1/4, b: 0, c: 1}\nopts = {'A': (sp.Rational(1, 4), 0, 1), 'B': (sp.Rational(1, 2), 0, 0), 'C': (0, 0, 0), 'D': (1, 1, -4)}\nfor k, (A, B, C) in opts.items():\n    h = A*x**2 + B*x + C; dh = sp.diff(h, x)\n    print(k, \"f(-2)=\", h.subs(x, -2), \"f(2)=\", h.subs(x, 2), \"f'(-2)=\", dh.subs(x, -2), \"f'(2)=\", dh.subs(x, 2))\n# need f(+-2) = 2, f'(-2) = -1, f'(2) = 1: only A satisfies all four",
-    "notes": "Solving the two continuity and two slope-matching equations with sympy gives the unique solution a = 1/4, b = 0, c = 1. Checking every option confirms that only A satisfies all four conditions (B fails the slopes, C and D fail continuity). This agrees with the official key A."
+    "notes": "Independent reviewer solved blind before opening the key: continuity at x = ±2 gives 4a ± 2b + c = 2, slope matching gives 4a + b = 1 (x = 2) and −4a + b = −1 (x = −2), so b = 0, a = 1/4, c = 1. A sympy solve of the four equations returns this unique solution, and checking every option confirms only (A) satisfies all four conditions (B is continuous but has the wrong slopes; C and D are discontinuous). This agrees with the official key (A)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

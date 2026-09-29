@@ -45,7 +45,7 @@
     ],
     "finalAnswer": "**17**",
     "teaching": "**What a deque is.** A double-ended queue (deque, pronounced \"deck\") is a linear container that allows insertion and removal at **both** ends. Think of a line of people who may join or leave at either the front or the back. The first element is the *front* (head) and the last element is the *back* (tail).\n\n**How it relates to stacks and queues.** A deque generalises both:\n\n- If you use only `insertLast` and `removeLast` (or only the two *First* operations), it behaves as a **stack**: last in, first out.\n- If you use `insertLast` together with `removeFirst`, it behaves as a **queue**: first in, first out.\n\nA deque trace is therefore just a stack or queue trace in which you must watch which end each operation touches.\n\n**Implementation and cost.** A deque is usually built as a doubly linked list with head and tail pointers, or as a circular array with front and back indices. Either way, all four operations run in $O(1)$ time. Python's `collections.deque` provides them as `appendleft`, `append`, `popleft` and `pop`.\n\n**How to trace reliably.** After **every** operation, write the contents from first to last, and record the value each remove returns. A remove both returns an element and deletes it; an insert returns nothing. If the same variable receives several results, each assignment overwrites the previous one, so only the last survives.\n\n**Back to this question.** The deque grows to [10, 32], loses 10 at the front, grows to [32, 28, 17], loses 32 at the front, and finally loses 17 at the back. The variable **a** is assigned 10, then 32, then 17, so its final value is **17**.",
-    "shortcut": "Only the last assignment matters, and `removeLast()` returns the current back element. Nothing was removed from the back before that point, and the deque was never emptied, so the back element is simply the last value inserted with `insertLast`, which is **17**.",
+    "shortcut": "Only the last assignment matters, and `removeLast()` returns the current back element. Once `insertLast(17)` puts 17 at the back, nothing is removed from the back until the final operation, and the one intervening `removeFirst()` takes 32 from the front of [32, 28, 17]. So 17 is still the back element when `removeLast()` runs, and **a = 17**.",
     "commonTrap": "Reporting a value from an earlier assignment (10 or 32) instead of the final one, or answering 28, the element still left in D. **a** holds only the value returned by the last operation, `removeLast()`, which is 17."
   },
   "conceptIds": [],
@@ -58,16 +58,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The operation names and the element e are set in a monospace (Courier) font in the paper and are transcribed as inline code; the variable a is bold throughout and is kept bold. The four operation definitions appear on consecutive lines and the seven operations on separate, spaced lines in the paper; each is transcribed as its own paragraph. The en dashes after the operation names and the ← arrows are kept. The paper's spacing around the arrow varies ('a ←removeFirst()' versus 'a ← removeLast()'); this is normalised to a single space, which does not change the meaning. The answer blank is rendered as underscores. No figure is needed; the crop contains only text and the GATE 2024 background watermark."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The operation names and the element e are set in a monospace (Courier) font in the paper and are transcribed as inline code; the variable a is bold throughout and is kept bold. The four operation definitions are on consecutive lines in the paper and the seven operations on separate, spaced lines; each is transcribed as its own paragraph. The en dashes after the operation names and the ← arrows are kept. The paper's spacing around the arrow varies ('a ←removeFirst()' versus 'a ← removeLast()'); this is normalised to a single space, which does not change the meaning. The answer blank is rendered as underscores. No figure is needed; the crop contains only text and the GATE 2024 background watermark."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
     "independentAnswer": "17",
     "agreesWithKey": true,
     "checkCode": "from collections import deque\nD = deque()\nD.appendleft(10)                               # insertFirst(10)\nD.append(32)                                   # insertLast(32)\na = D.popleft(); print('a =', a, list(D))      # removeFirst() -> 10, D=[32]\nD.append(28)                                   # insertLast(28)\nD.append(17)                                   # insertLast(17)\na = D.popleft(); print('a =', a, list(D))      # removeFirst() -> 32, D=[28, 17]\na = D.pop();     print('a =', a, list(D))      # removeLast()  -> 17, D=[28]\nassert a == 17\nprint('final a =', a)\n",
-    "notes": "Tracing the seven operations gives D = [10], [10, 32], then a = 10 with D = [32], then [32, 28], [32, 28, 17], then a = 32 with D = [28, 17], then a = 17 with D = [28]. A Python simulation with collections.deque (appendleft, append, popleft, pop) reproduces a = 10, 32, 17 in turn, so the final value is 17. This agrees with the official key 17 to 17."
+    "notes": "Verifier re-traced the seven operations from the official crop before comparing with the stored solution: [10] -> [10, 32] -> removeFirst gives a = 10, D = [32] -> [32, 28] -> [32, 28, 17] -> removeFirst gives a = 32, D = [28, 17] -> removeLast gives a = 17, D = [28]. Each assignment overwrites a, so the final value is 17. A collections.deque simulation (appendleft, append, popleft, pop) reproduces a = 10, 32, 17 in turn. Agrees with the official key 17 to 17."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

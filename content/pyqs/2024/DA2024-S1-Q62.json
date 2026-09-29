@@ -1,0 +1,77 @@
+{
+  "id": "DA2024-S1-Q62",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 62,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-decision-trees"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (entropy-based information gain) through 2–3 routine steps (count the classes, compute three binary entropies, take the weighted difference), taking about 2.5 minutes with careful logarithm arithmetic.",
+  "estimatedTimeSec": 150,
+  "stem": "Details of ten international cricket games between two teams “Green” and “Blue” are given in Table C. This table consists of matches played on different pitches, across formats along with their winners. The attribute *Pitch* can take one of two values: spin-friendly (represented as $S$) or pace-friendly (represented as $F$). The attribute *Format* can take one of two values: one-day match (represented as $O$) or test match (represented as $T$).\n\nA cricket organization would like to use the information given in Table C to develop a decision-tree model to predict outcomes of future games between these two teams.\n\nTo develop such a model, the computed InformationGain(C, *Pitch*) with respect to the Target is ______ (rounded off to **two** decimal places).\n\n**Table C**\n\n| Match Number | Pitch | Format | Winner (Target) |\n| :---: | :---: | :---: | :---: |\n| 1 | $S$ | $T$ | Green |\n| 2 | $S$ | $T$ | Blue |\n| 3 | $F$ | $O$ | Blue |\n| 4 | $S$ | $O$ | Blue |\n| 5 | $F$ | $T$ | Green |\n| 6 | $F$ | $O$ | Blue |\n| 7 | $S$ | $O$ | Green |\n| 8 | $F$ | $T$ | Blue |\n| 9 | $F$ | $O$ | Blue |\n| 10 | $S$ | $O$ | Green |",
+  "options": [],
+  "officialKeyRaw": "0.12 to 0.13",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.12,
+    "max": 0.13
+  },
+  "solution": {
+    "quick": "Target: 4 Green, 6 Blue, so $H(C) = H(0.4, 0.6) = 0.971$ bits. Splitting on *Pitch*: $S$ has 3 Green / 2 Blue ($H = 0.971$) and $F$ has 1 Green / 4 Blue ($H = 0.722$), each with weight $5/10$. Weighted entropy $= 0.846$, so the information gain is $0.971 - 0.846 = 0.1245 \\approx$ **0.12**.",
+    "steps": [
+      {
+        "title": "Formula",
+        "body": "For a data set $C$ and attribute $A$, with entropy measured in bits (base-2 logarithm),\n\n$$\n\\text{InformationGain}(C, A) = H(C) - \\sum_{v \\in \\text{values}(A)} \\frac{|C_v|}{|C|}\\, H(C_v), \\qquad H = -\\sum_k p_k \\log_2 p_k ,\n$$\n\nwhere $C_v$ is the subset of rows with $A = v$ and the $p_k$ are the class proportions of the Target (Winner) in that subset."
+      },
+      {
+        "title": "Entropy of the Target before splitting",
+        "body": "Green wins matches $1, 5, 7, 10$ (4 matches) and Blue wins matches $2, 3, 4, 6, 8, 9$ (6 matches). So $p_{\\text{Green}} = 0.4$, $p_{\\text{Blue}} = 0.6$:\n\n$$\nH(C) = -0.4\\log_2 0.4 - 0.6\\log_2 0.6 = 0.4(1.32193) + 0.6(0.73697) = 0.52877 + 0.44218 = 0.97095 .\n$$"
+      },
+      {
+        "title": "Partition by Pitch and compute each branch's entropy",
+        "body": "| Pitch | Matches | Green | Blue | Entropy |\n| :---: | :---: | :---: | :---: | :---: |\n| $S$ | 1, 2, 4, 7, 10 | 3 (1, 7, 10) | 2 (2, 4) | $0.97095$ |\n| $F$ | 3, 5, 6, 8, 9 | 1 (5) | 4 (3, 6, 8, 9) | $0.72193$ |\n\n- $H(C_S) = -0.6\\log_2 0.6 - 0.4\\log_2 0.4 = 0.97095$ (the same $3{:}2$ split as the whole table, just with the classes swapped).\n- $H(C_F) = -0.2\\log_2 0.2 - 0.8\\log_2 0.8 = 0.2(2.32193) + 0.8(0.32193) = 0.46439 + 0.25754 = 0.72193$."
+      },
+      {
+        "title": "Weighted entropy after the split",
+        "body": "Each branch holds $5$ of the $10$ matches:\n\n$$\n\\frac{5}{10}(0.97095) + \\frac{5}{10}(0.72193) = 0.48548 + 0.36096 = 0.84644 .\n$$"
+      },
+      {
+        "title": "Information gain",
+        "body": "$$\n\\text{InformationGain}(C, \\textit{Pitch}) = 0.97095 - 0.84644 = 0.12451 \\approx 0.12 .\n$$\n\nThis lies in the official range $0.12$ to $0.13$. For comparison, the same computation for *Format* gives only $0.0200$ ($O$: 2 Green / 4 Blue, $T$: 2 Green / 2 Blue), so a decision tree built with information gain would split on *Pitch* first."
+      }
+    ],
+    "finalAnswer": "**0.12**",
+    "teaching": "**Entropy as uncertainty.** For a node whose examples fall into classes with proportions $p_1, p_2, \\ldots$, the entropy $H = -\\sum_k p_k \\log_2 p_k$ measures how mixed the node is, in bits. A pure node (all one class) has $H = 0$; a 50/50 binary node has the maximum $H = 1$. For two classes it is handy to remember a few values: $H(0.5) = 1$, $H(0.4) = H(0.6) \\approx 0.971$, $H(0.2) = H(0.8) \\approx 0.722$, $H(0.25) \\approx 0.811$.\n\n**Information gain.** Splitting a node on an attribute $A$ sends each example to a child according to its value of $A$. The uncertainty left after the split is the *weighted average* of the children's entropies, where each child is weighted by the fraction of examples it receives. Information gain is the drop in entropy:\n\n$$\n\\text{IG}(C, A) = H(C) - \\sum_v \\frac{|C_v|}{|C|} H(C_v).\n$$\n\nIt is always $\\ge 0$, and it is $0$ exactly when every child has the same class mix as the parent. ID3-style decision-tree learners compute the gain for each attribute and split on the one with the largest gain, then recurse.\n\n**Back to this question.** The parent has a $4{:}6$ Green/Blue mix. The $S$ branch has a $3{:}2$ mix, which is just as uncertain as the parent ($0.971$ bits), so it contributes no improvement. All of the gain comes from the $F$ branch, whose $1{:}4$ mix is much purer ($0.722$ bits). Because each branch holds half the data, the gain is $\\tfrac12(0.971 - 0.722) \\approx 0.125$ bits, which rounds to $0.12$.",
+    "shortcut": "Because $H(C_S) = H(C) = H(0.4)$ and both branches have weight $\\tfrac12$, the gain collapses to $\\tfrac12\\left[H(0.4) - H(0.2)\\right] = \\tfrac12(0.971 - 0.722) = 0.1245 \\approx 0.12$.",
+    "commonTrap": "Using the natural logarithm instead of $\\log_2$: that gives $0.673 - 0.587 = 0.086 \\approx 0.09$, outside the key range. Other slips are forgetting the $\\tfrac{5}{10}$ weights (subtracting the plain sum $0.971 + 0.722$ gives a negative number) and computing the entropy of the *Pitch* column itself ($5{:}5$, i.e. $1$ bit) instead of the entropy of the Target within each Pitch value."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q62-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper's curly quotes around “Green” and “Blue”, the italic attribute names Pitch and Format, and the italic value symbols S, F, O, T are kept. Table C is transcribed as a GFM table with the same row order; the header 'Match Number' is printed on two lines in the paper. The paper does not state the logarithm base for entropy; the key range (0.12 to 0.13) corresponds to the standard base-2 entropy. A diagonal 'GATE 2024' watermark in the paper rendering is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.1245 (rounds to 0.12)",
+    "agreesWithKey": true,
+    "checkCode": "from math import log2, log\nfrom collections import Counter\nrows = [('S','T','Green'),('S','T','Blue'),('F','O','Blue'),('S','O','Blue'),('F','T','Green'),\n        ('F','O','Blue'),('S','O','Green'),('F','T','Blue'),('F','O','Blue'),('S','O','Green')]\ndef H(labels, lg=log2):\n    n = len(labels); return -sum(c/n*lg(c/n) for c in Counter(labels).values())\ndef IG(attr, lg=log2):\n    y = [r[2] for r in rows]; rem = 0\n    for v in sorted(set(r[attr] for r in rows)):\n        sub = [r[2] for r in rows if r[attr] == v]\n        print(f'  attr={attr} value={v}: {Counter(sub)}  H={H(sub, lg):.5f}')\n        rem += len(sub)/len(rows)*H(sub, lg)\n    return H(y, lg), rem, H(y, lg) - rem\nHy, rem, ig = IG(0)\nprint(f'H(Target)={Hy:.5f}  weighted H after Pitch split={rem:.5f}  IG(Pitch)={ig:.5f} -> {ig:.2f}')\nprint('IG(Format) for comparison =', round(IG(1)[2], 5))\nprint('natural-log IG(Pitch) (wrong base) =', round(IG(0, log)[2], 5))\n",
+    "notes": "Independent solve: Target has 4 Green / 6 Blue, H = 0.97095 bits. Pitch=S (matches 1,2,4,7,10) has 3 Green / 2 Blue, H = 0.97095; Pitch=F (matches 3,5,6,8,9) has 1 Green / 4 Blue, H = 0.72193. Weighted entropy = 0.5(0.97095) + 0.5(0.72193) = 0.84644, so IG = 0.12451, which rounds to 0.12 and lies within the official key range '0.12 to 0.13'. The question does not state a log base; base 2 is the standard choice for decision-tree information gain and is what matches the key (natural log would give 0.0863)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

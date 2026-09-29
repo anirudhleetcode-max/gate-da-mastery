@@ -1,0 +1,72 @@
+{
+  "id": "DA2024-S1-Q64",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 64,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-uncertainty",
+  "subtopicIds": [
+    "ai-conditional-independence"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (the Bayesian-network factorisation of a complete assignment) and needs only four table look-ups and a single product, in about a minute.",
+  "estimatedTimeSec": 75,
+  "stem": "Given the following Bayesian Network consisting of four Bernoulli random variables and the associated conditional probability tables:\n\n![Figure: Bayesian network with four nodes. U has directed edges to V and to W; V and W each have a directed edge to Z.](/pyq/2024/fig/Q64-1.png)\n\n|  | $P(\\cdot)$ |\n|---|---|\n| $U = 0$ | 0.5 |\n| $U = 1$ | 0.5 |\n\n|  | $P(V = 0 \\mid \\cdot)$ | $P(V = 1 \\mid \\cdot)$ |\n|---|---|---|\n| $U = 0$ | 0.5 | 0.5 |\n| $U = 1$ | 0.5 | 0.5 |\n\n|  | $P(W = 0 \\mid \\cdot)$ | $P(W = 1 \\mid \\cdot)$ |\n|---|---|---|\n| $U = 0$ | 1 | 0 |\n| $U = 1$ | 0 | 1 |\n\n|  |  | $P(Z = 0 \\mid \\cdot)$ | $P(Z = 1 \\mid \\cdot)$ |\n|---|---|---|---|\n| $V = 0$ | $W = 0$ | 0.5 | 0.5 |\n| $V = 0$ | $W = 1$ | 1 | 0 |\n| $V = 1$ | $W = 0$ | 1 | 0 |\n| $V = 1$ | $W = 1$ | 0.5 | 0.5 |\n\nThe value of $P(U = 1, V = 1, W = 1, Z = 1) =$ ______ (rounded off to **three** decimal places).",
+  "options": [],
+  "officialKeyRaw": "0.125 to 0.125",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.125,
+    "max": 0.125
+  },
+  "solution": {
+    "quick": "A Bayesian network's joint distribution factorises as each node given its parents: $P(U, V, W, Z) = P(U)\\,P(V \\mid U)\\,P(W \\mid U)\\,P(Z \\mid V, W)$. Reading one entry from each table gives $0.5 \\times 0.5 \\times 1 \\times 0.5 = 0.125$. Answer: **0.125**.",
+    "steps": [
+      {
+        "title": "Read the parents of each node",
+        "body": "From the graph:\n\n| Node | Parents | CPT used |\n| --- | --- | --- |\n| $U$ | none (root) | $P(U)$ |\n| $V$ | $U$ | $P(V \\mid U)$ |\n| $W$ | $U$ | $P(W \\mid U)$ |\n| $Z$ | $V, W$ | $P(Z \\mid V, W)$ |"
+      },
+      {
+        "title": "Factorise the joint distribution",
+        "body": "The chain rule, in the order $U, V, W, Z$, holds for any distribution:\n\n$$P(u, v, w, z) = P(u)\\,P(v \\mid u)\\,P(w \\mid u, v)\\,P(z \\mid u, v, w).$$\n\nThe network states that each node is conditionally independent of its non-descendants given its parents. So $W \\perp V \\mid U$, which gives $P(w \\mid u, v) = P(w \\mid u)$, and $Z \\perp U \\mid (V, W)$, which gives $P(z \\mid u, v, w) = P(z \\mid v, w)$. Hence\n\n$$P(u, v, w, z) = P(u)\\,P(v \\mid u)\\,P(w \\mid u)\\,P(z \\mid v, w).$$"
+      },
+      {
+        "title": "Look up the four CPT entries for U = 1, V = 1, W = 1, Z = 1",
+        "body": "| Factor | Table row | Table column | Value |\n| --- | --- | --- | --- |\n| $P(U = 1)$ | $U = 1$ | $P(\\cdot)$ | $0.5$ |\n| $P(V = 1 \\mid U = 1)$ | $U = 1$ | $P(V = 1 \\mid \\cdot)$ | $0.5$ |\n| $P(W = 1 \\mid U = 1)$ | $U = 1$ | $P(W = 1 \\mid \\cdot)$ | $1$ |\n| $P(Z = 1 \\mid V = 1, W = 1)$ | $V = 1,\\ W = 1$ | $P(Z = 1 \\mid \\cdot)$ | $0.5$ |"
+      },
+      {
+        "title": "Multiply",
+        "body": "$$P(U = 1, V = 1, W = 1, Z = 1) = 0.5 \\times 0.5 \\times 1 \\times 0.5 = 0.125.$$\n\nThis is already exact to three decimal places. As a sanity check on the tables, the product formula summed over all $2^4 = 16$ assignments equals $1$."
+      }
+    ],
+    "finalAnswer": "**0.125**",
+    "teaching": "**What a Bayesian network encodes.** A Bayesian network is a directed acyclic graph (DAG) whose nodes are random variables. Each node $X_i$ comes with a conditional probability table (CPT) giving $P(X_i \\mid \\text{Parents}(X_i))$: one row per combination of parent values, and each row sums to 1. The graph also asserts a set of *conditional independences*: every variable is conditionally independent of its non-descendants given its parents.\n\n**From the chain rule to the factorisation.** For an ordering of the variables that respects the arrows, the chain rule gives\n\n$$P(X_1, \\dots, X_n) = \\prod_{i} P(X_i \\mid X_1, \\dots, X_{i-1}).$$\n\nEach $X_i$ is independent of its earlier non-parent variables given its parents, so every factor collapses to its CPT:\n\n$$P(X_1, \\dots, X_n) = \\prod_{i} P(X_i \\mid \\text{Parents}(X_i)).$$\n\nSo the probability of one **complete** assignment of all the variables is a product of one entry from each CPT, and no summation is needed. Summation (marginalisation, for example by variable elimination) is only needed when some variables are left unassigned, as in $P(Z = 1)$.\n\n**Why this is efficient.** Four binary variables have a full joint table with $2^4 - 1 = 15$ free parameters. This network needs only $1 + 2 + 2 + 4 = 9$, one free number per CPT row.\n\n**Back to this question.** The graph $U \\to V$, $U \\to W$, $V \\to Z$, $W \\to Z$ gives $P(U, V, W, Z) = P(U)\\,P(V \\mid U)\\,P(W \\mid U)\\,P(Z \\mid V, W)$. The query fixes all four variables, so we pick the entries $0.5$, $0.5$, $1$ and $0.5$ and multiply to get $0.125$. Notice also that $W$ is a deterministic copy of $U$ (its CPT is the identity), and $V$ does not actually depend on $U$ (both rows of its CPT are equal).",
+    "commonTrap": "Forgetting the root prior $P(U = 1) = 0.5$ and multiplying only the three conditional entries, which gives $0.25$. Other slips are reading the $P(W = 0 \\mid \\cdot)$ column instead of $P(W = 1 \\mid \\cdot)$, which gives $0$, and trying to sum over variables. When every variable is fixed, no marginalisation is needed."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q64-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The network diagram is a raster image embedded in the official PDF (page 41) and is copied unchanged as Q64-1.png. The four conditional probability tables are transcribed as Markdown tables in the order printed: P(·) for U, then P(V|·), P(W|·) and P(Z|·). In the paper the P(V|·) and P(W|·) tables are drawn directly one above the other. The P(Z|·) table has separate row-label columns for V and W, reproduced here as two columns with empty headers. The PDF text layer places the table contents after the final sentence; the order used here follows the rendered page, where all tables come before the question sentence."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.125",
+    "agreesWithKey": true,
+    "checkCode": "import itertools\nPU={0:0.5,1:0.5}\nPV={0:{0:0.5,1:0.5},1:{0:0.5,1:0.5}}          # PV[u][v]\nPW={0:{0:1.0,1:0.0},1:{0:0.0,1:1.0}}          # PW[u][w]\nPZ={(0,0):{0:0.5,1:0.5},(0,1):{0:1.0,1:0.0},(1,0):{0:1.0,1:0.0},(1,1):{0:0.5,1:0.5}}  # PZ[(v,w)][z]\nJ=lambda u,v,w,z: PU[u]*PV[u][v]*PW[u][w]*PZ[(v,w)][z]\nprint('P(U=1,V=1,W=1,Z=1) =',J(1,1,1,1))\nprint('sum of joint over all 16 assignments =',sum(J(*a) for a in itertools.product((0,1),repeat=4)))\n",
+    "notes": "Python evaluates the factorised joint P(U)P(V|U)P(W|U)P(Z|V,W) from the transcribed CPTs: P(U=1, V=1, W=1, Z=1) = 0.5 × 0.5 × 1 × 0.5 = 0.125. As a consistency check on the transcribed tables, the 16 joint entries sum to 1. This matches the official key 0.125 to 0.125."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

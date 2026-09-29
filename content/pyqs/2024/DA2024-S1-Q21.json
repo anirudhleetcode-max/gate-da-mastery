@@ -96,16 +96,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The fractions n/m and 1/(1−α) are printed as stacked fractions in the paper and are typeset with \\dfrac. The paper prints a space before the full stop after 1/(1−α) (\"1/(1−α) .\"); it is kept as printed. The answer blank is written as six escaped underscores. The page has no figure other than the GATE 2024 background watermark."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The fractions n/m and 1/(1−α) are printed as stacked fractions in the paper and are typeset with \\dfrac. The paper prints a space before the full stop after 1/(1−α) (\"1/(1−α) .\"), and it is kept as printed. The answer blank is written as six escaped underscores. Options (A) ln(1/(1−α)), (B) 1/(1−α), (C) 1 + α/2 and (D) 1/(1+α) were checked against the crop. The page has no figure other than the GATE 2024 background watermark."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(B) 1/(1 − α)",
     "agreesWithKey": true,
     "checkCode": "import math, random\nfrom fractions import Fraction as F\nrandom.seed(1)\ndef exact_insert(m, n):\n    # E[probes] = sum_{i>=1} P(first i-1 probes all hit occupied slots) under uniform hashing\n    e, p = F(0), F(1)\n    for i in range(1, n + 2):\n        e += p\n        p *= F(n - (i - 1), m - (i - 1))\n    return e\ndef sim_insert(m, n, trials=100000):\n    # uniform hashing: the new key's probe sequence is a random permutation of the m slots\n    tot = 0\n    for _ in range(trials):\n        occ = set(random.sample(range(m), n))    # by symmetry the occupied set is a uniform n-subset\n        for p, s in enumerate(random.sample(range(m), m), 1):\n            if s not in occ: tot += p; break\n    return tot / trials\nm = 20\nfor n in (5, 10, 15, 18):\n    a = n / m; ex = exact_insert(m, n)\n    assert ex == F(m + 1, m - n + 1) and ex <= 1 / (1 - F(n, m))\n    print(f'alpha={a:.2f} exact={float(ex):.3f} sim={sim_insert(m, n, 20000):.3f} | '\n          f'A={math.log(1/(1-a)):.3f} B={1/(1-a):.3f} C={1+a/2:.3f} D={1/(1+a):.3f}')",
-    "notes": "Under open addressing an insertion follows the same probe sequence as an unsuccessful search and stops at the same first empty slot, so its expected cost has the same bound 1/(1−α). A Python check computes the exact mean (m+1)/(m−n+1) from the tail-probability sum, confirms it is at most 1/(1−α), and matches it by simulating uniform hashing for m = 20 and α = 0.25, 0.5, 0.75, 0.9; options A, C and D fall below the true mean at every tested α, so they cannot be upper bounds. This agrees with official key B."
+    "notes": "Reviewer solved blind before seeing the key: under open addressing an insertion follows the same probe sequence as an unsuccessful search and stops at the same first empty slot, so its expected cost has the same bound 1/(1−α) (CLRS Corollary 11.7) = option B. The Python check computes the exact mean (m+1)/(m−n+1) from the tail-probability sum, confirms it is at most 1/(1−α), and matches it by simulating uniform hashing for m = 20 and α = 0.25, 0.5, 0.75, 0.9 (simulated 1.307, 1.906, 3.486, 6.975 vs exact 1.312, 1.909, 3.500, 7.000). The reviewer's separate simulation with m = 100 agreed. Options A, C and D fall below the true mean at every tested α, so none of them can be an upper bound. Agrees with official key B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

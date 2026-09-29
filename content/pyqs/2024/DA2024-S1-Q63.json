@@ -1,0 +1,77 @@
+{
+  "id": "DA2024-S1-Q63",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 63,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-knn"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (k-NN majority voting) over 2–3 routine steps: five Euclidean distances, a ranking that contains a distance tie at √2 to reason about, and votes for k = 1, 3, 5, in about 1.5–2 minutes.",
+  "estimatedTimeSec": 105,
+  "stem": "Given the two-dimensional dataset consisting of 5 data points from two classes (circles and squares) and assume that the Euclidean distance is used to measure the distance between two points. The minimum odd value of $k$ in $k$-nearest neighbor algorithm for which the diamond ($\\diamond$) shaped data point is assigned the label square is ______.\n\n![Figure: Two-dimensional dataset on a grid with both axes marked 1 to 3. Filled circles at (1,1) and (1,2); filled squares at (2,3), (3,3) and (3,2); a hollow diamond, the point to be classified, at (2,1). Each point is labelled with its coordinates.](/pyq/2024/fig/Q63-1.png)",
+  "options": [],
+  "officialKeyRaw": "5 to 5",
+  "answer": {
+    "kind": "NAT",
+    "min": 5,
+    "max": 5
+  },
+  "solution": {
+    "quick": "The diamond is at $(2,1)$. Its distances are: circle $(1,1)$: $1$; circle $(1,2)$ and square $(3,2)$: $\\sqrt2$; square $(2,3)$: $2$; square $(3,3)$: $\\sqrt5$. $k=1$ gives circle; $k=3$ gives 2 circles vs 1 square, so circle; $k=5$ gives 2 circles vs 3 squares, so **square**. The minimum odd $k$ is **5**.",
+    "steps": [
+      {
+        "title": "Read the data from the figure",
+        "body": "The figure labels every point with its coordinates. The point to classify is the diamond $\\mathbf{q} = (2, 1)$.\n\n| Point | Class |\n| --- | --- |\n| $(1, 1)$ | circle |\n| $(1, 2)$ | circle |\n| $(2, 3)$ | square |\n| $(3, 3)$ | square |\n| $(3, 2)$ | square |\n\nSo the training set has **2 circles** and **3 squares**."
+      },
+      {
+        "title": "Euclidean distance from the diamond to each point",
+        "body": "$$d\\big((x, y), (2, 1)\\big) = \\sqrt{(x - 2)^2 + (y - 1)^2}$$\n\n| Point | Class | $(x-2)^2 + (y-1)^2$ | Distance |\n| --- | --- | --- | --- |\n| $(1, 1)$ | circle | $1 + 0 = 1$ | $1$ |\n| $(1, 2)$ | circle | $1 + 1 = 2$ | $\\sqrt2 \\approx 1.414$ |\n| $(3, 2)$ | square | $1 + 1 = 2$ | $\\sqrt2 \\approx 1.414$ |\n| $(2, 3)$ | square | $0 + 4 = 4$ | $2$ |\n| $(3, 3)$ | square | $1 + 4 = 5$ | $\\sqrt5 \\approx 2.236$ |"
+      },
+      {
+        "title": "Rank the neighbours (and check the tie)",
+        "body": "Sorted by distance:\n\n1. $(1, 1)$ circle, $d = 1$\n2. $(1, 2)$ circle, $d = \\sqrt2$\n3. $(3, 2)$ square, $d = \\sqrt2$ (tied with rank 2)\n4. $(2, 3)$ square, $d = 2$\n5. $(3, 3)$ square, $d = \\sqrt5$\n\nThe only distance tie is between ranks 2 and 3. For $k = 3$ both tied points are inside the neighbourhood, and for $k = 1$ and $k = 5$ the tie is not at the cut-off, so the neighbour sets for all odd $k$ are unambiguous and no tie-breaking rule is needed."
+      },
+      {
+        "title": "Majority vote for each odd k",
+        "body": "| $k$ | Neighbours | Circles | Squares | Predicted label |\n| --- | --- | --- | --- | --- |\n| 1 | $(1,1)$ | 1 | 0 | circle |\n| 3 | $(1,1), (1,2), (3,2)$ | 2 | 1 | circle |\n| 5 | all five points | 2 | 3 | **square** |\n\nWith $k = 1$ and $k = 3$ the circles win. Only at $k = 5$ do the squares hold the majority ($3 > 2$)."
+      },
+      {
+        "title": "Answer",
+        "body": "The smallest odd $k$ for which the diamond is labelled square is $k = 5$. (There are only 5 points, so no larger $k$ exists.)"
+      }
+    ],
+    "finalAnswer": "**5**",
+    "teaching": "**How $k$-NN classifies.** $k$-nearest neighbour is a *lazy*, instance-based classifier: training just stores the labelled points. To label a new point $\\mathbf{q}$ it:\n\n1. computes the distance from $\\mathbf{q}$ to every stored point (here Euclidean, $d(\\mathbf{p}, \\mathbf{q}) = \\sqrt{\\sum_i (p_i - q_i)^2}$);\n2. keeps the $k$ closest points;\n3. predicts the class that holds the majority among those $k$ labels.\n\n**Why odd $k$?** With two classes, an odd $k$ can never produce a tied *vote*, so the prediction is always defined. Ties in *distance* are a separate issue: if several points share the $k$-th smallest distance, the neighbour set itself is ambiguous. Always check whether a distance tie straddles position $k$.\n\n**How $k$ changes the prediction.** Small $k$ makes the classifier very local. With $k = 1$ the label is simply that of the closest point, which is sensitive to noise (high variance). Increasing $k$ averages over a wider neighbourhood and smooths the decision boundary (more bias). In the extreme case $k = n$, every query receives the overall majority class of the training set, wherever it lies.\n\n**Back to this question.** The diamond at $(2, 1)$ sits next to the two circles on the left. The circle $(1, 1)$ is the unique nearest point, and the circle $(1, 2)$ ties with the square $(3, 2)$ for second place. So the local neighbourhoods ($k = 1$, $k = 3$) vote circle. Only when the neighbourhood grows to the whole dataset ($k = 5$) does the global majority of 3 squares against 2 circles take over. The minimum odd $k$ is therefore $5$.",
+    "shortcut": "With 3 squares and 2 circles, $k = 5 = n$ always returns the overall majority, square. So the answer is 5 unless $k = 1$ or $k = 3$ already gives square. The nearest point $(1, 1)$ is a circle, and both circles lie within $\\sqrt2$ while the squares $(2, 3)$ and $(3, 3)$ are at $2$ and $\\sqrt5$, so the three nearest always contain two circles. Neither $k = 1$ nor $k = 3$ works, and the answer is 5.",
+    "commonTrap": "Counting the square $(2, 3)$, which sits directly above the diamond on the same grid line, among the three nearest neighbours. It is at distance $2$, farther than $(1, 2)$ and $(3, 2)$ at $\\sqrt2 \\approx 1.414$. Including it gives two squares out of three and the wrong answer $3$. Another slip is answering $4$: $k = 4$ is even, and it only produces a 2–2 tie, not a square majority."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q63-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The dataset plot is a raster image embedded in the official PDF (page 40). It is copied unchanged as Q63-1.png and carries faint traces of the 'GATE 2024' watermark. The diamond symbol printed in parentheses in the stem (U+22C4 in the PDF text layer) is written with KaTeX \\diamond. The coordinates in the alt text are the labels printed next to each point in the figure. The wording ('Given the two-dimensional dataset … and assume that …', 'neighbor') is kept as printed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "5",
+    "agreesWithKey": true,
+    "checkCode": "import math\nfrom collections import Counter\n# points read from the official figure: (x, y, label)\npts=[(1,1,'circle'),(1,2,'circle'),(2,3,'square'),(3,3,'square'),(3,2,'square')]\nq=(2,1)  # diamond\nd=sorted((math.dist(q,p[:2]),p) for p in pts)\nfor dist,p in d: print(round(dist,4),p)\nres=None\nfor k in (1,3,5):\n    kth=d[k-1][0]; nxt=d[k][0] if k<len(d) else None\n    tie_at_boundary = nxt is not None and abs(nxt-kth)<1e-12\n    votes=Counter(p[2] for _,p in d[:k])\n    lab=votes.most_common(1)[0][0]\n    print('k=%d votes=%s -> %s  (tie at k-th boundary: %s)'%(k,dict(votes),lab,tie_at_boundary))\n    if lab=='square' and res is None: res=k\nprint('minimum odd k giving square =',res)\n",
+    "notes": "Python computes the Euclidean distances from the diamond (2,1): 1 to circle (1,1), √2 to circle (1,2), √2 to square (3,2), 2 to square (2,3) and √5 to square (3,3). The majority votes are circle for k = 1, circle for k = 3 (2–1) and square for k = 5 (3–2). The √2 distance tie occupies ranks 2 and 3, so it never straddles the cut-off for k = 1, 3 or 5, and the result does not depend on tie-breaking. The minimum odd k is 5, matching the official key 5 to 5."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}
