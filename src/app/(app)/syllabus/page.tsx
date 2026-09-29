@@ -39,15 +39,19 @@ export default function SyllabusPage() {
 
       <Card className="mb-6">
         <CardBody className="space-y-3 text-sm">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-            <ShieldCheck aria-hidden className="h-4 w-4 text-success" />
-            <span className="font-medium text-fg">Verification:</span>
-            <VerificationBadge status={weakest} />
-            <span className="text-fg-3">Official text from</span>
-            <SourceLinks sources={sources} className="text-sm" />
-            <Link href="/sources" className="font-medium text-accent-text hover:underline">
-              Sources &amp; methodology
-            </Link>
+          <div className="space-y-1.5">
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <ShieldCheck aria-hidden className="h-4 w-4 text-success" />
+              <span className="font-medium text-fg">Verification:</span>
+              <VerificationBadge status={weakest} />
+              <Link href="/sources" className="font-medium text-accent-text hover:underline">
+                Sources &amp; methodology
+              </Link>
+            </p>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="text-fg-3">Official text from:</span>
+              <SourceLinks sources={sources} className="text-sm" />
+            </div>
           </div>
           {data.notes.length ? (
             <div>

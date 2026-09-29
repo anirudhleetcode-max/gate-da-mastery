@@ -298,6 +298,8 @@ export function attemptsBefore<T extends Pick<AttemptRow, "day">>(attempts: read
 export function stateAtStartOfDay(attempts: readonly Pick<AttemptRow, "questionId" | "status" | "createdAt" | "day" | "topicId">[], day: string) {
   const before = attemptsBefore(attempts, day);
   return {
+    /** Number of attempts before `day`: changes only if data is imported or cleared. */
+    count: before.length,
     history: questionHistory(before),
     weakTopicIds: weakTopics(before, { limit: 10 }).map((w) => w.topicId),
   };
