@@ -18,6 +18,7 @@ import {
   Syllabus,
   type VerificationStatus,
 } from "./schema";
+import { mockAvailability, servableIds } from "./availability";
 import { buildTaxonomyIndex, findDuplicates, fingerprint, validateQuestionSemantics, type Issue } from "./validate";
 import { markdownToPlain, renderDisplayMath, renderMarkdown } from "./markdown";
 import type {
@@ -195,6 +196,7 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
       transcription: q.transcription,
       answerVerification: q.answerVerification,
       solutionStatus: q.solutionStatus,
+      dispute: q.dispute,
       fingerprint: fingerprint(q.stem),
     });
   }
@@ -245,11 +247,10 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
   const qById = new Map(questions.map((q) => [q.id, q]));
   const mocks = mockTests.map((t) => {
     const qs = t.questionIds.map((id) => qById.get(id));
-    const missing = t.questionIds.filter((id, i) => !qs[i]);
+    const { missing, verifiedCount, available } = mockAvailability(t.questionIds, (id) => qById.get(id));
     if (missing.length) err(t.id, `${missing.length} question(s) missing (e.g. ${missing.slice(0, 3).join(", ")})`);
     for (const q of qs) if (q && q.testId !== t.id) err(t.id, `question ${q.id} has testId ${q.testId}`);
     const totalMarks = qs.reduce((s, q) => s + (q?.marks ?? 0), 0);
-    const verifiedCount = qs.filter((q) => q?.reviewStatus === "VERIFIED").length;
     if (t.tier === "FULL_GATE" && !missing.length) {
       if (t.questionIds.length !== 65) err(t.id, "full GATE simulation must have 65 questions");
       if (totalMarks !== 100) err(t.id, `full GATE simulation must total 100 marks (got ${totalMarks})`);
@@ -257,8 +258,10 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
       if (ga.length !== 10 || ga.reduce((s, q) => s + (q?.marks ?? 0), 0) !== 15) err(t.id, "GA section must be 10 questions / 15 marks");
     }
     // A mock is available to students only when every question is present AND verified.
-    return { ...t, totalMarks, verifiedCount, available: missing.length === 0 && verifiedCount === t.questionIds.length };
+    return { ...t, totalMarks, verifiedCount, available };
   });
+  // What students may see: PYQs, verified practice, and questions of fully verified mocks.
+  const servable = servableIds(questions, mocks);
   if (mocks.length && mocks.length !== 50) warn("mocks/tests.json", `expected 50 mock tests, found ${mocks.length}`);
   const numbers = new Set(mocks.map((m) => m.number));
   if (numbers.size !== mocks.length) err("mocks/tests.json", "duplicate mock numbers");
@@ -374,7 +377,7 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
   const originRank = { OFFICIAL_PYQ: 0, ORIGINAL_PRACTICE: 1, MOCK_TEST: 2 } as const;
   for (const q of questions) {
     const scored = questions
-      .filter((o) => o.id !== q.id && o.topicId === q.topicId && !(o.testId && o.testId === q.testId))
+      .filter((o) => o.id !== q.id && servable.has(o.id) && o.topicId === q.topicId && !(o.testId && o.testId === q.testId))
       .map((o) => ({ o, s: (overlap(o.subtopicIds, q.subtopicIds) ? 0 : 10) + originRank[o.origin] }))
       .sort((a, b) => a.s - b.s || a.o.id.localeCompare(b.o.id));
     q.similarIds = scored.slice(0, 8).map((x) => x.o.id);
@@ -382,7 +385,7 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
   for (const c of concepts) {
     const rel = questions.filter((q) => q.conceptIds.includes(c.id));
     c.pyqIds = rel.filter((q) => q.origin === "OFFICIAL_PYQ").map((q) => q.id);
-    c.practiceIds = rel.filter((q) => q.origin === "ORIGINAL_PRACTICE").map((q) => q.id).slice(0, 12);
+    c.practiceIds = rel.filter((q) => q.origin === "ORIGINAL_PRACTICE" && servable.has(q.id)).map((q) => q.id).slice(0, 12);
   }
 
   // ------------------------------------------------------------- weightage
@@ -420,6 +423,7 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
   }
   for (const q of questions) {
     if (q.origin === "MOCK_TEST") continue; // mock questions are searchable only after the mock is taken (client-side)
+    if (!servable.has(q.id)) continue; // unverified practice never reaches search
     const title =
       q.origin === "OFFICIAL_PYQ"
         ? `GATE DA ${q.year} · Q.${q.questionNumber} · ${topicName.get(q.topicId) ?? q.topicId}`

@@ -3,7 +3,6 @@
  * chronological organisation, filtering, and the freeze guard.
  */
 import { beforeAll, describe, expect, it } from "vitest";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { compileContent } from "@/lib/content/compile";
@@ -11,6 +10,7 @@ import type { ContentBundle, CompiledQuestion, QuestionMeta } from "@/lib/conten
 import { buildGroupLookups, buildResults, DEFAULT_FILTERS, parseSearch, rowMatches, type BrowseFilters, type RowFacts } from "@/components/pyq/filters";
 import { toPaperInfo, toTaxonomy } from "@/components/pyq/data";
 import { loadRawContent } from "../scripts/content/build";
+import { snapshot, type FreezeFile } from "../scripts/content/freeze-pyqs";
 
 const ROOT = path.resolve(__dirname, "..");
 let bundle: ContentBundle;
@@ -55,12 +55,25 @@ describe("PYQ dataset completeness & integrity", () => {
       }
     }
   });
-  it("disputed questions keep the official key and are flagged NEEDS_REVIEW with an explanation", () => {
+  it("unresolved disagreements are NEEDS_REVIEW; resolved disputes keep the official key and cite adjudication evidence", () => {
     for (const q of pyqs.filter((x) => !x.answerVerification.agreesWithKey)) {
       expect(q.answerVerification.status, q.id).toBe("NEEDS_REVIEW");
       expect(q.verification, q.id).toBe("NEEDS_REVIEW");
       expect(q.answerVerification.notes.length, q.id).toBeGreaterThan(50);
     }
+    for (const q of pyqs.filter((x) => x.dispute)) {
+      const d = q.dispute!;
+      expect(d.status, q.id).toBe("RESOLVED");
+      expect(q.answerVerification.method, q.id).toMatch(/adjudicat/i);
+      expect(fs.existsSync(path.join(ROOT, d.evidencePath)), d.evidencePath).toBe(true);
+      const evidence = JSON.parse(fs.readFileSync(path.join(ROOT, d.evidencePath), "utf8")) as { decision: string };
+      expect(evidence.decision, q.id).toBe(d.decision);
+      // The platform never changes the official key when resolving a dispute.
+      expect(q.officialKeyRaw).toBeTruthy();
+    }
+  });
+  it("no official PYQ is left open in NEEDS_REVIEW", () => {
+    expect(pyqs.filter((q) => q.verification === "NEEDS_REVIEW").map((q) => q.id)).toEqual([]);
   });
 });
 
@@ -101,14 +114,55 @@ describe("PYQ organisation & filtering (the same pure functions the browser uses
 
 const freezePath = path.join(ROOT, "content/exam/pyq-freeze.json");
 describe.runIf(fs.existsSync(freezePath))("PYQ freeze guard", () => {
-  it("no frozen PYQ file has changed (re-run npm run content:freeze-pyqs only for intended corrections)", () => {
-    const freeze = JSON.parse(fs.readFileSync(freezePath, "utf8")) as { files: Record<string, string> };
-    const changed: string[] = [];
-    for (const [rel, hash] of Object.entries(freeze.files)) {
-      const f = path.join(ROOT, "content/pyqs", rel);
-      const now = fs.existsSync(f) ? crypto.createHash("sha256").update(fs.readFileSync(f)).digest("hex") : "missing";
-      if (now !== hash) changed.push(rel);
+  const freeze = JSON.parse(fs.readFileSync(freezePath, "utf8")) as FreezeFile;
+  const live = snapshot();
+  const frozen = Object.entries(freeze.files);
+
+  it("the frozen set is complete: same count, same files, 65 per paper, no gaps", () => {
+    expect(Object.keys(live).length).toBe(freeze.count);
+    expect(Object.keys(live).sort()).toEqual(Object.keys(freeze.files).sort());
+    for (const [paperId, n] of Object.entries(freeze.papers)) {
+      const nums = Object.values(live).filter((e) => e.paperId === paperId).map((e) => e.questionNumber).sort((a, b) => a - b);
+      expect(nums, paperId).toEqual(Array.from({ length: n }, (_, i) => i + 1));
     }
+  });
+  it("ids are unique and match their file names", () => {
+    const ids = Object.values(live).map((e) => e.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const [rel, e] of Object.entries(live)) expect(rel, e.id).toBe(`${e.year}/${e.id}.json`);
+  });
+  it("no frozen identity field drifted (id, paper, year, number, section, type, marks)", () => {
+    const drift: string[] = [];
+    for (const [rel, f] of frozen) {
+      const l = live[rel];
+      for (const k of ["id", "paperId", "year", "questionNumber", "section", "type", "marks"] as const) if (l?.[k] !== f[k]) drift.push(`${rel}.${k}`);
+    }
+    expect(drift).toEqual([]);
+  });
+  it("no frozen answer or official key cell changed, and answers still match the official key tables", () => {
+    const drift = frozen.filter(([rel, f]) => live[rel]?.answer !== f.answer || live[rel]?.officialKeyRaw !== f.officialKeyRaw).map(([rel]) => rel);
+    expect(drift).toEqual([]);
+    const keys = JSON.parse(fs.readFileSync(path.join(ROOT, "content/exam/official-keys.json"), "utf8")) as { paperId: string; rows: { q: number; key: string }[] }[];
+    for (const e of Object.values(live)) {
+      const row = keys.find((k) => k.paperId === e.paperId)?.rows.find((r) => r.q === e.questionNumber);
+      const norm = (s: string) => s.replace(/\s+/g, " ").trim();
+      if (row) expect(norm(e.officialKeyRaw), e.id).toBe(norm(row.key));
+    }
+  });
+  it("source metadata is unchanged and every cited source exists with a recorded hash", () => {
+    const sources = JSON.parse(fs.readFileSync(path.join(ROOT, "content/sources.json"), "utf8")) as { id: string; sha256?: string }[];
+    const byId = new Map(sources.map((s) => [s.id, s]));
+    for (const [rel, f] of frozen) {
+      expect(live[rel]?.sourceIds, rel).toEqual(f.sourceIds);
+      for (const id of f.sourceIds) expect(byId.get(id)?.sha256, `${rel} → ${id}`).toBeTruthy();
+    }
+  });
+  it("no frozen PYQ file changed byte-for-byte (re-freeze only with npm run content:freeze-pyqs -- --reason …)", () => {
+    const changed = frozen.filter(([rel, f]) => live[rel]?.sha256 !== f.sha256).map(([rel]) => rel);
     expect(changed).toEqual([]);
+  });
+  it("every re-freeze is logged with a reason", () => {
+    expect(freeze.log.length).toBeGreaterThan(0);
+    for (const entry of freeze.log) expect(entry.reason.trim().length, entry.at).toBeGreaterThan(10);
   });
 });

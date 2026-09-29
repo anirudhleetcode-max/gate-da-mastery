@@ -15,7 +15,7 @@ import path from "node:path";
 import { z } from "zod";
 import { OriginalQuestion, Pyq, Syllabus } from "../../src/lib/content/schema";
 import { buildTaxonomyIndex } from "../../src/lib/content/validate";
-import { reviewQuestion, type BlueprintSlot } from "../../src/lib/content/review";
+import { reviewQuestion, reviewText, type BlueprintSlot } from "../../src/lib/content/review";
 
 const ROOT = path.resolve(__dirname, "../..");
 const args = process.argv.slice(2);
@@ -42,10 +42,10 @@ const pyqs: { id: string; text: string; official: boolean }[] = [];
 for (const y of fs.readdirSync(path.join(ROOT, "content/pyqs"))) {
   for (const f of fs.readdirSync(path.join(ROOT, "content/pyqs", y))) {
     const p = Pyq.parse(JSON.parse(fs.readFileSync(path.join(ROOT, "content/pyqs", y, f), "utf8")));
-    pyqs.push({ id: p.id, text: p.stem, official: true });
+    pyqs.push({ id: p.id, text: reviewText(p), official: true });
   }
 }
-const corpus = [...pyqs, ...loaded.flatMap((l) => l.qs.map((q) => ({ id: q.id, text: q.stem, official: false })))];
+const corpus = [...pyqs, ...loaded.flatMap((l) => l.qs.map((q) => ({ id: q.id, text: reviewText(q), official: false })))];
 
 type Row = { id: string; testId?: string; status: string; fixed: boolean; failures: string[] };
 const rows: Row[] = [];
@@ -60,12 +60,17 @@ for (const { file, qs } of loaded) {
   let changed = false;
   for (const q of qs) {
     const slot = q.testId ? blueprint[q.testId]?.slots.find((s) => s.q === q.questionNumber) : undefined;
-    const r = reviewQuestion(q, { tax, slot, corpus, today });
+    const r = reviewQuestion(q, { tax, slot, corpus, today, previous: q.review });
     rows.push({ id: q.id, testId: q.testId, status: r.status, fixed: r.fixed, failures: r.failures });
     const { failures: _f, ...record } = r;
     void _f;
     const prev = q.review;
-    const same = prev && prev.status === record.status && JSON.stringify(prev.checks) === JSON.stringify(record.checks) && prev.notes === record.notes;
+    const same =
+      prev &&
+      prev.status === record.status &&
+      JSON.stringify(prev.checks) === JSON.stringify(record.checks) &&
+      prev.notes === record.notes &&
+      JSON.stringify(prev.verifiedHash) === JSON.stringify(record.verifiedHash);
     if (!same) {
       (q as { review?: typeof record }).review = { ...record, reviewedAt: prev && prev.status === record.status ? prev.reviewedAt : today };
       changed = true;

@@ -68,7 +68,7 @@ export const TIER_LABEL: Record<MockTier, string> = {
   BEGINNER_INTERMEDIATE: "Beginner → Intermediate",
   INTERMEDIATE: "Intermediate",
   ADVANCED: "Advanced",
-  FULL_GATE: "Full GATE simulation",
+  FULL_GATE: "Full GATE-style simulation",
 };
 
 export const TIER_RANGE: Record<MockTier, string> = {

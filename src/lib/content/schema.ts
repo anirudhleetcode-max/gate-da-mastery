@@ -258,6 +258,27 @@ const QuestionBase = z.object({
 // Official PYQs
 // ---------------------------------------------------------------------------
 
+/**
+ * A formally resolved dispute about an official question (e.g. a flawed
+ * premise). The official key is never changed by the platform; the record
+ * documents the independent evidence and what students are told.
+ */
+export const DisputeRecord = z.object({
+  status: z.literal("RESOLVED"),
+  decision: z.enum(["OFFICIAL_KEY_RETAINED_PREMISE_DEFECT_DOCUMENTED"]),
+  /** Shown on the question page after an attempt (plain English, ≤ ~80 words). */
+  studentNote: z.string().min(40),
+  intendedReading: z.string().min(1),
+  literalPremiseFinding: z.string().min(1),
+  evidence: z.array(z.string().min(1)).min(2),
+  /** Stages the dispute went through (author solve, blind verifier, adjudicator, …). */
+  process: z.array(z.string().min(1)).min(3),
+  /** Repository path of the adjudication evidence. */
+  evidencePath: z.string().min(1),
+  resolvedAt: IsoDate,
+});
+export type DisputeRecord = z.infer<typeof DisputeRecord>;
+
 export const Pyq = QuestionBase.extend({
   id: z.string().regex(/^DA\d{4}-S\d+-Q\d{2}$/),
   origin: z.literal("OFFICIAL_PYQ"),
@@ -276,6 +297,7 @@ export const Pyq = QuestionBase.extend({
   }),
   answerVerification: AnswerVerification,
   solutionStatus: VerificationStatus,
+  dispute: DisputeRecord.optional(),
 });
 export type Pyq = z.infer<typeof Pyq>;
 
@@ -301,6 +323,14 @@ export const ReviewRecord = z.object({
   fixed: z.boolean(),
   notes: z.string().default(""),
   reviewedAt: IsoDate,
+  /**
+   * Hashes taken the last time the question reached VERIFIED: its content
+   * (everything except `review` and `answerVerification`) and its
+   * verification record. If the content later changes while the verification
+   * record does not, the question was edited after verification and drops
+   * to NEEDS_REVIEW until it is independently re-verified.
+   */
+  verifiedHash: z.object({ content: z.string(), verification: z.string() }).optional(),
 });
 export type ReviewRecord = z.infer<typeof ReviewRecord>;
 

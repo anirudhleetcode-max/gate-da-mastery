@@ -153,6 +153,9 @@ export function validateQuestionSemantics(
     if (p.answerVerification.status === "VERIFIED" && !p.answerVerification.agreesWithKey) {
       err("answer marked VERIFIED but independent solve disagrees with the official key");
     }
+    if (p.dispute && !/adjudicat/i.test(p.answerVerification.method)) {
+      err("a resolved dispute requires an independent adjudication stage in answerVerification.method");
+    }
     if (p.difficultyRationale && !/platform/i.test(p.difficultyRationale)) {
       warn("difficultyRationale should state that the difficulty is platform-estimated");
     }
@@ -209,6 +212,32 @@ export function shingleSimilarity(a: string, b: string, k = 3): number {
   let inter = 0;
   for (const x of A) if (B.has(x)) inter++;
   return inter / (A.size + B.size - inter);
+}
+
+/** Character 5-gram Jaccard similarity of normalised text (robust to one-word edits). */
+export function charGramSimilarity(a: string, b: string, k = 5): number {
+  const sh = (s: string) => {
+    const t = normalizeText(s);
+    const set = new Set<string>();
+    for (let i = 0; i + k <= t.length; i++) set.add(t.slice(i, i + k));
+    if (!set.size && t) set.add(t);
+    return set;
+  };
+  const A = sh(a);
+  const B = sh(b);
+  if (!A.size && !B.size) return 1;
+  let inter = 0;
+  for (const x of A) if (B.has(x)) inter++;
+  return inter / (A.size + B.size - inter);
+}
+
+/**
+ * Near-duplicate score in [0, 1]: the larger of word-3-shingle and
+ * character-5-gram Jaccard. Word shingles catch reordered sentences;
+ * character grams catch single-word and number-only edits.
+ */
+export function textSimilarity(a: string, b: string): number {
+  return Math.max(shingleSimilarity(a, b), charGramSimilarity(a, b));
 }
 
 export interface DuplicateFinding {

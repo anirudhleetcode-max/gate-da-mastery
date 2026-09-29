@@ -41,7 +41,7 @@
     "correct": "A"
   },
   "solution": {
-    "quick": "In DFS of an **undirected** graph every edge is either a **tree** edge or a **back** edge, and *gray* is a vertex colour, not an edge type, so (B) and (D) are out. When $u$ scans $(u,v)$ while $v$ is still undiscovered (white), $(u,v)$ becomes a tree edge. That is the official key's answer, **(A)**.\n\nCaveat: with $d[\\cdot]$ defined as shortest-path length, $v$ can also be a gray ancestor of $u$, which makes $(u,v)$ a back edge (see the 5-vertex counterexample in Step 4). This item is therefore flagged for review.",
+    "quick": "In DFS of an **undirected** graph every edge is either a **tree** edge or a **back** edge, and *gray* is a vertex colour, not an edge type, so (B) and (D) are out. When $u$ scans $(u,v)$ while $v$ is still undiscovered (white), $(u,v)$ becomes a tree edge. That is the official key's answer, **(A)**.\n\nCaveat: with $d[\\cdot]$ defined as shortest-path length, $v$ can also be a gray ancestor of $u$, which makes $(u,v)$ a back edge (see the 5-vertex counterexample in Step 4). The platform keeps the official key; the premise defect is documented on this page.",
     "steps": [
       {
         "title": "How DFS classifies an edge the first time it is scanned",
@@ -61,7 +61,7 @@
       },
       {
         "title": "Conclusion",
-        "body": "Cross and gray are impossible. The official key gives **(A) tree**, which is the outcome whenever $v$ is still undiscovered when $u$ scans the edge.\n\nUnder the literal shortest-path definition of $d[\\cdot]$, (C) back can also occur (Step 4), so the premise does not force a unique answer. The platform keeps the official answer (A) and flags the item for review."
+        "body": "Cross and gray are impossible. The official key gives **(A) tree**, which is the outcome whenever $v$ is still undiscovered when $u$ scans the edge.\n\nUnder the literal shortest-path definition of $d[\\cdot]$, (C) back can also occur (Step 4), so the premise does not force a unique answer. The stem restates the textbook proof (CLRS Theorem 22.10) in which $d[u]$ is the DFS **discovery time**; with that meaning (A) is forced, so (A) is the intended answer. The platform keeps the official answer (A) and documents the premise defect."
       }
     ],
     "finalAnswer": "**(A)** tree (official key; see the caveat in Step 4)",
@@ -80,7 +80,7 @@
       {
         "label": "C",
         "verdict": "incorrect",
-        "explanation": "Not the official answer. A back edge needs $v$ to be a gray ancestor of $u$ when $u$ scans the edge. Note that under the literal shortest-path definition of $d[\\cdot]$ this can actually happen (the 5-vertex counterexample in Step 4). That is why this item is flagged NEEDS_REVIEW."
+        "explanation": "Not the official answer. A back edge needs $v$ to be a gray ancestor of $u$ when $u$ scans the edge. Note that under the literal shortest-path definition of $d[\\cdot]$ this can actually happen (the 5-vertex counterexample in Step 4). That is why the platform documents this premise defect next to the official answer."
       },
       {
         "label": "D",
@@ -105,12 +105,33 @@
     "notes": "Transcribed from the official paper rendering and independently checked against it. The answer blank is written as six escaped underscores; the italic graph name G is typeset as $G$. No typos in the official text; the flaw noted in answerVerification is in the premise (definition of d[·]), not in the transcription."
   },
   "answerVerification": {
-    "status": "NEEDS_REVIEW",
-    "method": "Blind independent re-solve + Python check (explicit counterexample, 20000-graph random search, exhaustive 4-vertex search): does not confirm the official key as the unique answer",
-    "independentAnswer": "Not uniquely determined by the stated premise: (A) tree and (C) back can both occur; (B) cross and (D) gray are impossible. (A) is forced only if d[·] is read as DFS discovery time.",
-    "agreesWithKey": false,
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check (explicit counterexample, 20000-graph random search, exhaustive 4-vertex search), then independent adjudication (exhaustive search of all 772 connected graphs on ≤5 vertices × 15,188,512 adjacency orders, plus a random 6–8-vertex sample): official key confirmed as the intended answer; premise defect documented",
+    "independentAnswer": "(A) tree under the intended reading (d[·] = DFS discovery time, as in the textbook proof the stem restates, CLRS Thm 22.10). (B) cross and (D) gray are impossible. Under the literal shortest-path wording (C) back is also attainable (5-vertex minimum); see dispute.",
+    "agreesWithKey": true,
     "checkCode": "from collections import deque\nfrom itertools import combinations, permutations\nimport random\n\ndef bfs(adj, s):\n    d = {s: 0}; q = deque([s])\n    while q:\n        x = q.popleft()\n        for y in adj[x]:\n            if y not in d: d[y] = d[x] + 1; q.append(y)\n    return d\n\ndef dfs_classify(adj, s):\n    # CLRS-style DFS; an undirected edge is classified when first scanned\n    color = {v: 'W' for v in adj}; t = [0]; disc = {}; first = {}; kind = {}\n    def visit(x):\n        color[x] = 'G'; t[0] += 1; disc[x] = t[0]\n        for y in adj[x]:\n            e = frozenset((x, y))\n            if e not in kind:\n                first[e] = (x, y)\n                kind[e] = {'W': 'tree', 'G': 'back', 'B': 'forward/cross'}[color[y]]\n                if color[y] == 'W': visit(y)\n        color[x] = 'B'\n    visit(s)\n    return first, kind, disc\n\n# 1) The explicit counterexample\nadj = {'s': ['a', 'u'], 'a': ['s', 'v'], 'v': ['a', 'w', 'u'], 'w': ['v', 'u'], 'u': ['s', 'w', 'v']}\nd = bfs(adj, 's'); first, kind, disc = dfs_classify(adj, 's')\ne = frozenset(('u', 'v'))\nprint('d =', d)\nprint('edge (u,v): first explored', first[e], '->', kind[e])   # ('u','v') -> back, with d[u]=1 < d[v]=2\n\n# 2) Random search: which classes occur for edges with d[x]<d[y] first explored x->y?\nrandom.seed(0)\nseen_bfs, seen_disc = set(), set()\nfor _ in range(20000):\n    n = random.randint(2, 7); V = list(range(n))\n    E = [p for p in combinations(V, 2) if random.random() < 0.5]\n    adj = {v: [] for v in V}\n    for a, b in E: adj[a].append(b); adj[b].append(a)\n    for v in V: random.shuffle(adj[v])\n    d = bfs(adj, 0); first, kind, disc = dfs_classify(adj, 0)\n    for e, (x, y) in first.items():\n        if d[x] < d[y]: seen_bfs.add(kind[e])\n        if disc[x] < disc[y]: seen_disc.add(kind[e])\nprint('d = shortest-path length :', sorted(seen_bfs))   # ['back', 'tree'] -> not forced\nprint('d = DFS discovery time   :', sorted(seen_disc))  # ['tree'] only\n\n# 3) Exhaustive check that 4 vertices cannot give a counterexample (all graphs, all adjacency orders)\nfrom itertools import product\ndef exhaustive(n):\n    V = range(n); E = list(combinations(V, 2))\n    for m in range(1, 1 << len(E)):\n        adj = {v: [] for v in V}\n        for i, (a, b) in enumerate(E):\n            if m >> i & 1: adj[a].append(b); adj[b].append(a)\n        d = bfs(adj, 0)\n        for orders in product(*[list(permutations(adj[v])) for v in V]):\n            first, kind, _ = dfs_classify({v: list(orders[v]) for v in V}, 0)\n            if any(d[x] < d[y] and kind[e] == 'back' for e, (x, y) in first.items()): return True\n    return False\nprint('back edge possible with 4 vertices:', exhaustive(4))   # False -> 5 vertices is the minimum",
-    "notes": "The official key is A (tree), and the answer field keeps it. Independent verifier (blind re-solve) reached the same finding as the author: in undirected DFS an edge first scanned from u to v is a tree edge if v is white and a back edge if v is gray (an ancestor of u); a black v is impossible. The stem defines d[·] as shortest-path length from s, and DFS trees need not follow shortest paths. Verifier's independently found counterexample (it turns out to be the same 5-vertex graph as Step 4, with a different scan order at u): edges s–x, s–u, x–v, v–w, v–u, w–u with adjacency order s:[x,u], x:[s,v], v:[x,w,u], w:[v,u], u:[s,v,w]; then d[u]=1 < d[v]=2, DFS goes s→x→v→w→u, and u scans (u,v) while v is gray and has not yet scanned (v,u), so (u,v) is first explored from u to v and becomes a back edge. The Step 4 trace (edges s–a, a–v, v–w, w–u, u–s, u–v; u scans s, w, v) was also re-traced by hand and in Python and is correct. A random search over 20000 small graphs finds both tree and back outcomes under the shortest-path definition, and only tree outcomes if d[·] is DFS discovery time; an exhaustive search shows no 4-vertex counterexample exists (5 vertices is the minimum). Option C is therefore also attainable and the premise does not force A. The official key (A) was not changed. A human reviewer should confirm how this item is presented."
+    "notes": "Dispute resolved 2026-09-29 (official key retained, premise defect documented). History: author and blind verifier both found that the literal shortest-path definition of d[·] admits a back edge (5-vertex counterexample); the item was NEEDS_REVIEW with the official key kept. An independent adjudicator re-derived the edge rules, reproduced the counterexample, enumerated every connected graph on ≤5 vertices over all adjacency orders (18,953,037 tree vs 901,152 back outcomes; none below 5 vertices) and showed that with d[·] read as discovery time every qualifying edge is a tree edge (60,751,445/60,751,445). The stem restates the proof of CLRS Theorem 22.10, where d[u] is the discovery time, so (A) is the intended answer; the official final key keeps A and does not mark Q14 MTA (it does mark Q59 of this paper MTA). Previous verifier notes: The official key is A (tree), and the answer field keeps it. Independent verifier (blind re-solve) reached the same finding as the author: in undirected DFS an edge first scanned from u to v is a tree edge if v is white and a back edge if v is gray (an ancestor of u); a black v is impossible. The stem defines d[·] as shortest-path length from s, and DFS trees need not follow shortest paths. Verifier's independently found counterexample (it turns out to be the same 5-vertex graph as Step 4, with a different scan order at u): edges s–x, s–u, x–v, v–w, v–u, w–u with adjacency order s:[x,u], x:[s,v], v:[x,w,u], w:[v,u], u:[s,v,w]; then d[u]=1 < d[v]=2, DFS goes s→x→v→w→u, and u scans (u,v) while v is gray and has not yet scanned (v,u), so (u,v) is first explored from u to v and becomes a back edge. The Step 4 trace (edges s–a, a–v, v–w, w–u, u–s, u–v; u scans s, w, v) was also re-traced by hand and in Python and is correct. A random search over 20000 small graphs finds both tree and back outcomes under the shortest-path definition, and only tree outcomes if d[·] is DFS discovery time; an exhaustive search shows no 4-vertex counterexample exists (5 vertices is the minimum). Option C is therefore also attainable and the premise does not force A. The official key (A) was not changed. A human reviewer should confirm how this item is presented."
   },
-  "solutionStatus": "VERIFIED"
+  "solutionStatus": "VERIFIED",
+  "dispute": {
+    "status": "RESOLVED",
+    "decision": "OFFICIAL_KEY_RETAINED_PREMISE_DEFECT_DOCUMENTED",
+    "studentNote": "GATE's official key is (A) tree. The question restates the textbook (CLRS) proof in which d[u] means DFS discovery time; with that meaning (A) is forced. As literally worded (d = shortest-path distance), a back edge is also possible in some 5-vertex graphs, so the premise is flawed. Cross and gray are never correct.",
+    "intendedReading": "The stem follows the proof of CLRS Theorem 22.10 (undirected DFS yields only tree and back edges), where d[u] is the DFS discovery time. Under that reading (A) tree is forced: a gray v would be an ancestor of u with an earlier discovery time.",
+    "literalPremiseFinding": "With d[·] as the literal shortest-path length, (u,v) is a tree edge if v is white and a back edge if v is a gray ancestor of u. The back case occurs in 88 of the 728 connected 5-vertex graphs for some adjacency order, and never with 4 or fewer vertices.",
+    "evidence": [
+      "Author and blind independent verifier (separately) found the same 5-vertex counterexample under the literal wording.",
+      "Adjudicator reproduced it exactly and enumerated all 772 connected graphs on ≤5 vertices × 15,188,512 adjacency orders: 18,953,037 tree and 901,152 back outcomes, 0 cross.",
+      "With d[·] as discovery time: 60,751,445 of 60,751,445 qualifying edges are tree edges (and a one-line proof).",
+      "The official final key keeps Q14 = A and does not mark it MTA, while Q59 of the same paper is MTA."
+    ],
+    "process": [
+      "Author solve with Python check",
+      "Blind independent re-solve (NEEDS_REVIEW: premise does not force a unique answer)",
+      "Independent adjudication with exhaustive search",
+      "Deliberate re-freeze of the PYQ dataset with a logged reason"
+    ],
+    "evidencePath": "reports/verification/DA2024-S1-Q14/adjudication.json",
+    "resolvedAt": "2026-09-29"
+  }
 }

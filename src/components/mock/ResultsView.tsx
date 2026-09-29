@@ -52,7 +52,14 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
     (async () => {
       try {
         const res = await fetch(`/api/mocks/${encodeURIComponent(test.id)}/key`, { signal: ctrl.signal });
-        if (!res.ok) throw new Error(res.status === 404 ? "The answer key for this mock was not found on the server." : `The server answered with status ${res.status}.`);
+        if (!res.ok)
+          throw new Error(
+            res.status === 404
+              ? "The answer key for this mock was not found on the server."
+              : res.status === 403
+                ? "This mock has been withdrawn for re-verification, so its answer key is not shown right now. Your saved responses are kept."
+                : `The server answered with status ${res.status}.`,
+          );
         const data = (await res.json()) as KeyResponse;
         if (!cancelled) {
           setKey(data);

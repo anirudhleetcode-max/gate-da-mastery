@@ -13,9 +13,9 @@ export const TIER_ORDER: MockTier[] = ["FOUNDATION", "BEGINNER_INTERMEDIATE", "I
 export const TIER_EXPLANATION: Record<MockTier, string> = {
   FOUNDATION: "Short subject-wise tests on definitions, core formulas, basic calculations and standard algorithms. Take them while you study each subject.",
   BEGINNER_INTERMEDIATE: "Mixed-subject tests with more calculation, combined concepts and multi-step reasoning under moderate time pressure.",
-  INTERMEDIATE: "GATE-level conceptual problems with calculation traps and multi-topic reasoning, plus a few General Aptitude questions.",
+  INTERMEDIATE: "Exam-style conceptual problems with calculation traps and multi-topic reasoning, plus a few General Aptitude questions.",
   ADVANCED: "Deeper multi-concept reasoning, heavier numerical work and closely argued options. Includes General Aptitude.",
-  FULL_GATE: "Full simulations of the DA paper: 65 questions, 100 marks, 180 minutes, GA and DA sections, GATE negative marking.",
+  FULL_GATE: "Full GATE-style simulations of the DA paper structure (original questions, not official GATE papers): 65 questions, 100 marks, 180 minutes, GA and DA sections, GATE negative marking.",
 };
 
 /** The fixed section plan of a full GATE DA simulation (from the verified exam pattern). */

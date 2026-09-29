@@ -6,6 +6,7 @@ import type {
   Answer,
   AnswerVerification,
   Difficulty,
+  DisputeRecord,
   ExamPaper,
   ExamPattern,
   MockTest,
@@ -75,6 +76,8 @@ export interface CompiledQuestion extends QuestionMeta {
   transcription?: { status: VerificationStatus; notes: string };
   answerVerification: AnswerVerification;
   solutionStatus?: VerificationStatus;
+  /** Official questions only: a formally resolved dispute (the official key is kept). */
+  dispute?: DisputeRecord;
   fingerprint: string;
 }
 

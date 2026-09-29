@@ -8,10 +8,14 @@ import path from "node:path";
 import MiniSearch from "minisearch";
 import type { CompiledConcept, CompiledFormula, CompiledQuestion, CompiledStrategy, ContentBundle, QuestionMeta, SearchDoc } from "@/lib/content/types";
 import type { Subject, Topic } from "@/lib/content/schema";
+import { servableIds } from "@/lib/content/availability";
 
 interface Repo {
   bundle: ContentBundle;
+  /** Only questions students may see (see src/lib/content/availability.ts). */
   questionById: Map<string, CompiledQuestion>;
+  /** Every compiled question, including unverified ones (admin/review tooling only). */
+  allQuestionById: Map<string, CompiledQuestion>;
   conceptById: Map<string, CompiledConcept>;
   formulaById: Map<string, CompiledFormula>;
   strategyById: Map<string, CompiledStrategy>;
@@ -43,9 +47,11 @@ function load(): Repo {
     searchOptions: { boost: { title: 3 }, prefix: true, fuzzy: 0.15, combineWith: "AND" },
   });
   search.addAll(bundle.searchDocs);
+  const servable = servableIds(bundle.questions, bundle.mocks);
   return {
     bundle,
-    questionById: new Map(bundle.questions.map((q) => [q.id, q])),
+    questionById: new Map(bundle.questions.filter((q) => servable.has(q.id)).map((q) => [q.id, q])),
+    allQuestionById: new Map(bundle.questions.map((q) => [q.id, q])),
     conceptById: new Map(bundle.concepts.map((c) => [c.id, c])),
     formulaById: new Map(bundle.formulas.map((f) => [f.id, f])),
     strategyById: new Map(bundle.strategy.map((s) => [s.id, s])),
@@ -69,7 +75,10 @@ export const getSubjects = () => getRepo().bundle.syllabus.subjects;
 export const getSubject = (id: string) => getRepo().subjectById.get(id);
 export const getTopic = (id: string) => getRepo().topicById.get(id);
 export const getSubtopicName = (id: string) => getRepo().subtopicName.get(id) ?? id;
+/** A question students may see, or undefined (unverified mock/practice questions are gated). */
 export const getQuestion = (id: string) => getRepo().questionById.get(id);
+/** Any compiled question regardless of review status – admin/review tooling only. */
+export const getQuestionUnchecked = (id: string) => getRepo().allQuestionById.get(id);
 export const getConcept = (id: string) => getRepo().conceptById.get(id);
 export const getFormula = (id: string) => getRepo().formulaById.get(id);
 export const getStrategyArticle = (id: string) => getRepo().strategyById.get(id);
@@ -119,25 +128,28 @@ export function getPyqs(): CompiledQuestion[] {
 
 export const getPyqMetas = (): QuestionMeta[] => getPyqs().map(toMeta);
 
+const servableQuestions = () => [...getRepo().questionById.values()];
+
 export function getPracticeQuestions(): CompiledQuestion[] {
-  return getRepo().bundle.questions.filter((q) => q.origin === "ORIGINAL_PRACTICE");
+  return servableQuestions().filter((q) => q.origin === "ORIGINAL_PRACTICE");
 }
 
+/** Questions of a mock, in paper order – empty unless the whole mock is available (fully verified). */
 export function getMockQuestions(testId: string): CompiledQuestion[] {
   const m = getMock(testId);
-  if (!m) return [];
+  if (!m || !m.available) return [];
   const byId = getRepo().questionById;
   return m.questionIds.map((id) => byId.get(id)).filter((q): q is CompiledQuestion => Boolean(q));
 }
 
-/** Question metadata for every non-mock question (PYQ + practice) – used by Practice Now and Today. */
+/** Question metadata for every servable non-mock question (PYQ + verified practice) – used by Practice Now and Today. */
 export function getPracticePoolMetas(): QuestionMeta[] {
-  return getRepo().bundle.questions.filter((q) => q.origin !== "MOCK_TEST").map(toMeta);
+  return servableQuestions().filter((q) => q.origin !== "MOCK_TEST").map(toMeta);
 }
 
-/** Question metadata for every question (including mocks) – used by the client to label attempts. */
+/** Question metadata for every servable question (including questions of available mocks). */
 export function getAllMetas(): QuestionMeta[] {
-  return getRepo().bundle.questions.map(toMeta);
+  return servableQuestions().map(toMeta);
 }
 
 export function searchContent(query: string, limit = 60) {
@@ -161,7 +173,7 @@ export function searchContent(query: string, limit = 60) {
 export function topicStats(subjectId: string) {
   const s = getSubject(subjectId);
   if (!s) return [];
-  const qs = getRepo().bundle.questions;
+  const qs = servableQuestions();
   return s.topics.map((t) => ({
     topic: t,
     pyqCount: qs.filter((q) => q.origin === "OFFICIAL_PYQ" && q.topicId === t.id).length,
@@ -175,7 +187,8 @@ export function topicStats(subjectId: string) {
 export interface Catalog {
   subjects: { id: string; name: string; shortName: string; order: number; pyqCount: number; practiceCount: number; topicIds: string[] }[];
   topics: { id: string; subjectId: string; name: string; pyqCount: number; practiceCount: number; pyqMarks: number; subtopics: { id: string; name: string; pyqCount: number }[] }[];
-  totals: { pyqs: number; practice: number; mocks: number; mockQuestions: number; papers: number };
+  /** mocks = planned tests; availableMocks = fully verified tests; counts cover servable questions only. */
+  totals: { pyqs: number; practice: number; mocks: number; availableMocks: number; mockQuestions: number; papers: number };
   /** PYQ ids per topic (used for PYQ completion and mastery coverage). */
   pyqIdsByTopic: Record<string, string[]>;
 }
@@ -183,7 +196,7 @@ export interface Catalog {
 /** Compact, serialisable taxonomy + counts for client-side analytics. */
 export function getCatalog(): Catalog {
   const b = getRepo().bundle;
-  const qs = b.questions;
+  const qs = servableQuestions();
   const pyqIdsByTopic: Record<string, string[]> = {};
   for (const q of qs) if (q.origin === "OFFICIAL_PYQ") (pyqIdsByTopic[q.topicId] ??= []).push(q.id);
   return {
@@ -211,6 +224,7 @@ export function getCatalog(): Catalog {
       pyqs: qs.filter((q) => q.origin === "OFFICIAL_PYQ").length,
       practice: qs.filter((q) => q.origin === "ORIGINAL_PRACTICE").length,
       mocks: b.mocks.length,
+      availableMocks: b.mocks.filter((m) => m.available).length,
       mockQuestions: qs.filter((q) => q.origin === "MOCK_TEST").length,
       papers: b.papers.length,
     },

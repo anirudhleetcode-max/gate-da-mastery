@@ -1,0 +1,62 @@
+{
+  "decision": "OFFICIAL_KEY_RETAINED_PREMISE_DEFECT_DOCUMENTED",
+  "intendedReading": "The stem closely follows the proof of the textbook theorem that undirected DFS yields only tree and back edges (CLRS Thm 22.10: 'suppose u.d < v.d ... if the search first explores (u,v) in the direction from u to v ... (u,v) becomes a tree edge'). There, d[u] is the DFS discovery time; under that reading (A) tree is forced. The setter appears to have glossed d[u] with CLRS's BFS meaning (distance from s).",
+  "literalPremiseFinding": "With d[.] as literal shortest-path length, (u,v) is a tree edge if v is white and a back edge if v is a gray ancestor of u. The back case occurs: the file's 5-vertex counterexample is correct, and it occurs in 88 of 728 connected 5-vertex graphs (5.9% of adjacency orders). So the literal premise does not force a unique answer, although (A) is always attainable and is the more common outcome.",
+  "counterexampleVerified": true,
+  "exhaustiveSearch": {
+    "scope": "Exhaustive: every labeled connected graph on n=1..5 vertices with s = vertex 0, crossed with every combination of adjacency-list permutations (all prod deg(v)! orders). Counted every edge first scanned x->y with d[x] < d[y] (BFS distance).",
+    "graphs": 772,
+    "orders": 15188512,
+    "perN": {
+      "n<=4": {
+        "graphs": 44,
+        "orders": 2584,
+        "treeOutcomes": 3501,
+        "backOutcomes": 0
+      },
+      "n=5": {
+        "graphs": 728,
+        "orders": 15185928,
+        "treeOutcomes": 18949536,
+        "backOutcomes": 901152,
+        "ordersWithBack": 901152,
+        "graphsWithSomeBackOrder": 88
+      }
+    },
+    "treeOutcomes": 18953037,
+    "backOutcomes": 901152,
+    "blackFarEndOnFirstScan": 0,
+    "smallestVertexCountWithBackOutcome": 5,
+    "supplementaryRandomSample": "n=6..8, 87,874 random connected graphs with random adjacency orders: 274,316 tree, 35,912 back, 0 black (n>=6 is too large to enumerate exhaustively; e.g. K6 alone has 120^6 orders)."
+  },
+  "discoveryTimeReadingAlwaysTree": {
+    "value": true,
+    "exhaustiveN1to5": {
+      "orders": 15188512,
+      "qualifyingEdges": 60751445,
+      "tree": 60751445,
+      "back": 0
+    },
+    "randomN6to8": {
+      "runs": 87874,
+      "tree": 531004,
+      "back": 0
+    },
+    "proof": "If v were gray when u scans (u,v), v would be an ancestor of u, so disc[v] < disc[u], which contradicts the premise. A black v is impossible. So v is white and the edge is a tree edge."
+  },
+  "eliminatedOptions": {
+    "B": "Cross is impossible in undirected DFS: on a first scan the far end is white (becomes a descendant) or gray (an ancestor on the stack); a black far end would already have scanned the edge. Checked: 0 black first scans in all 15.19M exhaustive runs; 511,589 gray far ends in 148,267 random runs were all proper ancestors.",
+    "D": "Gray is a vertex colour (discovered, not finished) in the white/gray/black bookkeeping, not an edge class.",
+    "C": "Not the intended answer. It is impossible under the textbook discovery-time reading, but attainable under the literal shortest-path wording (the premise defect)."
+  },
+  "studentNote": "GATE's official key is (A) tree. The question restates the textbook (CLRS) proof in which d[u] means DFS discovery time; with that meaning (A) is forced. As literally worded (d = shortest-path distance), a back edge is also possible in some 5-vertex graphs, so the premise is flawed. Cross and gray are never correct.",
+  "evidenceSummary": [
+    "Re-derived: undirected DFS first scan u->v gives tree if v is white and back if v is gray (a proper, non-parent ancestor). Black is impossible, so cross/forward never occur and (B) and (D) are eliminated.",
+    "The file's counterexample (s:[a,u], a:[s,v], u:[s,w,v], v:[a,w,u], w:[v,u]) reproduces exactly: d[u]=1 < d[v]=2, DFS s->a->v->w->u, (u,v) is first scanned u->v with v gray, giving a back edge. The verifier's variant u:[s,v,w] also gives back.",
+    "Exhaustive n<=5 (772 graphs, 15,188,512 adjacency orders): the shortest-path reading gives 18,953,037 tree and 901,152 back outcomes. There are no back outcomes for n<=4, so 5 vertices is the minimum; 88 of 728 five-vertex graphs admit a back outcome.",
+    "Discovery-time reading: 60,751,445 qualifying edges, all tree (0 back). It is also provably forced, and a random n=6..8 sample agrees.",
+    "The stem's wording matches the proof of CLRS Theorem 22.10 (u.d / d[u] = discovery time), which identifies (A) as the intended answer.",
+    "The official final key keeps Q14 = A (MCQ, 1 mark) and does not mark it MTA, while Q59 of the same paper (DA-2024-S1) is marked MTA. So GATE applied MTA in this key but not to Q14."
+  ],
+  "method": "python3 adjudicate.py (CLRS-style recursive DFS with first-scan edge classification + BFS distances; exhaustive over all connected labeled graphs n<=5 x all adjacency permutations using 4 processes, plus a random n=6..8 sample) and ancestor.py (gray-far-end is a proper ancestor check); the scripts and run log are stored next to this file."
+}

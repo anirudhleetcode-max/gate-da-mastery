@@ -202,7 +202,23 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
             Answer revealed without an attempt. Nothing was recorded.
           </p>
         ) : null}
-        {done && q.origin === "OFFICIAL_PYQ" && !q.answerVerification.agreesWithKey ? (
+        {done && q.origin === "OFFICIAL_PYQ" && q.dispute ? (
+          <Callout tone="warning" className="mt-4" title="Flawed premise: official key retained (dispute resolved)">
+            <p>{q.dispute.studentNote}</p>
+            <details className="mt-2">
+              <summary className="cursor-pointer text-sm font-medium">How this was checked</summary>
+              <ul className="mt-1 list-disc space-y-1 pl-5 text-sm">
+                {q.dispute.evidence.map((e) => (
+                  <li key={e}>{e}</li>
+                ))}
+              </ul>
+              <p className="mt-1 text-sm">
+                Review stages: {q.dispute.process.join(" → ")}. Resolved {q.dispute.resolvedAt}.
+              </p>
+            </details>
+          </Callout>
+        ) : null}
+        {done && q.origin === "OFFICIAL_PYQ" && !q.dispute && !q.answerVerification.agreesWithKey ? (
           <Callout tone="warning" className="mt-4" title="Disputed question: official key retained, under review">
             <p>
               The platform keeps the official answer <strong>({q.officialKeyRaw})</strong> from the official answer key. Its independent re-solve found a possible ambiguity:
