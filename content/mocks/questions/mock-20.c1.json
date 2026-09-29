@@ -1,0 +1,865 @@
+[
+  {
+    "id": "M20-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-pmf"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (normalising and using a PMF) with four short single-step checks (tail, mean, conditional probability, CDF value); about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "PMF normalisation $\\sum_k p(k)=1$, then tail probability, expectation, conditional probability and CDF value from a tabulated PMF.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The number $X$ of open tickets in a support agent's queue at the start of a shift has the probability mass function\n\n$$P(X = k) = c\\,k^{2}, \\qquad k \\in \\{1, 2, 3, 4\\},$$\n\nand $P(X = k) = 0$ for all other $k$, where $c$ is a constant. Let $F(x) = P(X \\le x)$ denote the cumulative distribution function of $X$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$P(X \\ge 3) = \\dfrac{5}{6}$"
+      },
+      {
+        "label": "B",
+        "text": "$E[X] = \\dfrac{10}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$P(X = 2 \\mid X \\le 3) = \\dfrac{1}{3}$"
+      },
+      {
+        "label": "D",
+        "text": "$F(2) = \\dfrac{1}{6}$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Normalisation gives $c(1+4+9+16) = 30c = 1$, so $c = \\tfrac{1}{30}$ and the probabilities are $\\tfrac{1}{30}, \\tfrac{4}{30}, \\tfrac{9}{30}, \\tfrac{16}{30}$ for $k = 1, 2, 3, 4$. Then $P(X \\ge 3) = \\tfrac{25}{30} = \\tfrac56$, $E[X] = \\tfrac{100}{30} = \\tfrac{10}{3}$, $F(2) = \\tfrac{5}{30} = \\tfrac16$, but $P(X = 2 \\mid X \\le 3) = \\tfrac{4}{14} = \\tfrac27 \\ne \\tfrac13$.",
+      "steps": [
+        {
+          "title": "Find the constant $c$",
+          "body": "A PMF must sum to $1$: $c\\,(1^2 + 2^2 + 3^2 + 4^2) = 30c = 1$, so $c = \\dfrac{1}{30}$. The probabilities are $\\dfrac{1}{30}, \\dfrac{4}{30}, \\dfrac{9}{30}, \\dfrac{16}{30}$ for $k = 1, 2, 3, 4$."
+        },
+        {
+          "title": "Tail probability and CDF value",
+          "body": "$P(X \\ge 3) = P(X=3) + P(X=4) = \\dfrac{9 + 16}{30} = \\dfrac{25}{30} = \\dfrac56$. \n\n$F(2) = P(X=1) + P(X=2) = \\dfrac{1 + 4}{30} = \\dfrac{5}{30} = \\dfrac16$."
+        },
+        {
+          "title": "Expected value",
+          "body": "$E[X] = \\sum_k k\\,P(X=k) = \\dfrac{1\\cdot 1 + 2\\cdot 4 + 3\\cdot 9 + 4\\cdot 16}{30} = \\dfrac{1 + 8 + 27 + 64}{30} = \\dfrac{100}{30} = \\dfrac{10}{3}$."
+        },
+        {
+          "title": "Conditional probability",
+          "body": "$P(X = 2 \\mid X \\le 3) = \\dfrac{P(X = 2)}{P(X \\le 3)} = \\dfrac{4/30}{(1 + 4 + 9)/30} = \\dfrac{4}{14} = \\dfrac{2}{7}$, which is not $\\dfrac13$. So statements A, B and D are true and C is false."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$P(X \\ge 3) = \\dfrac{9 + 16}{30} = \\dfrac{5}{6}$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$E[X] = \\dfrac{1 + 8 + 27 + 64}{30} = \\dfrac{100}{30} = \\dfrac{10}{3}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$P(X=2 \\mid X \\le 3) = \\dfrac{4/30}{14/30} = \\dfrac{2}{7}$. The value $\\dfrac13$ would arise only if the three values $1, 2, 3$ were equally likely, but the weights are $1 : 4 : 9$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$F(2) = P(X=1) + P(X=2) = \\dfrac{1 + 4}{30} = \\dfrac{1}{6}$."
+        }
+      ],
+      "commonTrap": "Forgetting to renormalise in a conditional probability: dividing $P(X=2)$ by $P(X \\le 3) = \\tfrac{14}{30}$ (not by $1$, and not by $3$ as if the three values were equally likely). Also using the unweighted mean $2.5$ instead of $\\sum k\\,p(k)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D (c = 1/30; P(X>=3)=5/6, E[X]=10/3, P(X=2|X<=3)=2/7, F(2)=1/6)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nc = F(1, sum(k * k for k in range(1, 5)))\np = {k: c * k * k for k in range(1, 5)}\nassert sum(p.values()) == 1\nA = sum(v for k, v in p.items() if k >= 3) == F(5, 6)\nB = sum(k * v for k, v in p.items()) == F(10, 3)\nC = p[2] / sum(p[k] for k in (1, 2, 3)) == F(1, 3)\nD = (p[1] + p[2]) == F(1, 6)\nprint(c, A, B, C, D)   # 1/30 True True False True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-stacks"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (LIFO stack behaviour) applied through a 12-instruction trace with operand-order care in subtraction; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Tracing a stack-based evaluator: LIFO push/pop, operand order (second-from-top op top) for SUB, DUP and SWAP.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A small stack-based virtual machine is simulated by the following Python function. Each instruction is a string. `PUSH n` pushes the integer `n`, `DUP` pushes a copy of the top element, `SWAP` exchanges the top two elements, and each of `ADD`, `SUB`, `MUL` first pops the top element into `b`, then pops the next element into `a`, and finally pushes `a + b`, `a - b` or `a * b` respectively.\n\n```python\ndef run(prog):\n    st = []\n    for ins in prog:\n        op = ins.split()\n        if op[0] == \"PUSH\":\n            st.append(int(op[1]))\n        elif op[0] == \"DUP\":\n            st.append(st[-1])\n        elif op[0] == \"SWAP\":\n            st[-1], st[-2] = st[-2], st[-1]\n        else:\n            b = st.pop()\n            a = st.pop()\n            if op[0] == \"ADD\":\n                st.append(a + b)\n            elif op[0] == \"SUB\":\n                st.append(a - b)\n            else:\n                st.append(a * b)\n    return sum(st)\n\nprog = [\"PUSH 6\", \"PUSH 2\", \"PUSH 5\", \"SUB\", \"DUP\", \"MUL\",\n        \"SWAP\", \"PUSH 4\", \"SWAP\", \"SUB\", \"PUSH 3\", \"ADD\"]\nprint(run(prog))\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 10,
+      "max": 10
+    },
+    "solution": {
+      "quick": "Trace the stack (bottom to top). Since `b` is the top and `a` the element below it, `SUB` computes (second from top) $-$ (top). The stack evolves $[6] \\to [6,2] \\to [6,2,5] \\to [6,-3] \\to [6,-3,-3] \\to [6,9] \\to [9,6] \\to [9,6,4] \\to [9,4,6] \\to [9,-2] \\to [9,-2,3] \\to [9,1]$. The function returns $9 + 1 = 10$.",
+      "steps": [
+        {
+          "title": "Fix the operand order",
+          "body": "For `ADD`, `SUB`, `MUL` the code pops `b` first (the top) and `a` second, then pushes `a op b`. So `SUB` computes (element below the top) $-$ (top)."
+        },
+        {
+          "title": "Trace the first half",
+          "body": "| Instruction | Stack after (bottom $\\to$ top) |\n|---|---|\n| `PUSH 6` | $[6]$ |\n| `PUSH 2` | $[6, 2]$ |\n| `PUSH 5` | $[6, 2, 5]$ |\n| `SUB` ($b=5$, $a=2$, $2-5$) | $[6, -3]$ |\n| `DUP` | $[6, -3, -3]$ |\n| `MUL` ($b=-3$, $a=-3$) | $[6, 9]$ |"
+        },
+        {
+          "title": "Trace the second half",
+          "body": "| Instruction | Stack after (bottom $\\to$ top) |\n|---|---|\n| `SWAP` | $[9, 6]$ |\n| `PUSH 4` | $[9, 6, 4]$ |\n| `SWAP` | $[9, 4, 6]$ |\n| `SUB` ($b=6$, $a=4$, $4-6$) | $[9, -2]$ |\n| `PUSH 3` | $[9, -2, 3]$ |\n| `ADD` ($b=3$, $a=-2$) | $[9, 1]$ |"
+        },
+        {
+          "title": "Return value",
+          "body": "The final stack is $[9, 1]$ and `run` returns `sum(st)` $= 9 + 1 = 10$, which is what is printed."
+        }
+      ],
+      "finalAnswer": "**10**",
+      "commonTrap": "Computing `SUB` as top $-$ second (that is, `b - a`) gives the stack $[9, 5]$ and the value $14$. Returning only the top element ($1$) instead of the sum of the whole stack is another slip."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "10 (final stack [9, 1])",
+      "agreesWithKey": true,
+      "checkCode": "def run(prog):\n    st = []\n    for ins in prog:\n        op = ins.split()\n        if op[0] == \"PUSH\": st.append(int(op[1]))\n        elif op[0] == \"DUP\": st.append(st[-1])\n        elif op[0] == \"SWAP\": st[-1], st[-2] = st[-2], st[-1]\n        else:\n            b = st.pop(); a = st.pop()\n            st.append({\"ADD\": a + b, \"SUB\": a - b, \"MUL\": a * b}[op[0]])\n    return st\nprog = [\"PUSH 6\", \"PUSH 2\", \"PUSH 5\", \"SUB\", \"DUP\", \"MUL\", \"SWAP\", \"PUSH 4\", \"SWAP\", \"SUB\", \"PUSH 3\", \"ADD\"]\ns = run(prog)\nprint(s, sum(s))   # [9, 1] 10",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-pdf"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (piecewise PDF, normalisation and median from the CDF) needing three steps: find $c$, locate the median's piece, solve a quadratic; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Median of a piecewise-defined PDF: normalise to find $c$, locate the piece via $F(1)$, solve $F(m) = \\tfrac12$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The delivery time $X$ (in days) of a parcel is a continuous random variable with probability density function\n\n$$f(x) = \\begin{cases} c\\,x, & 0 \\le x \\le 1,\\\\[4pt] \\dfrac{c\\,(4 - x)}{3}, & 1 < x \\le 4,\\\\[4pt] 0, & \\text{otherwise,} \\end{cases}$$\n\nwhere $c$ is a constant. The median of $X$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\sqrt{2}$"
+      },
+      {
+        "label": "B",
+        "text": "$4 - \\sqrt{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$4 - \\sqrt{6}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{5}{3}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Total area $= \\tfrac{c}{2} + \\tfrac{c}{3}\\cdot\\tfrac{9}{2} = 2c = 1$, so $c = \\tfrac12$. Since $F(1) = \\tfrac14 < \\tfrac12$, the median $m$ lies in $(1, 4]$, where $P(X > m) = \\int_m^4 \\tfrac{4-x}{6}\\,dx = \\tfrac{(4-m)^2}{12}$. Setting this equal to $\\tfrac12$ gives $(4-m)^2 = 6$, so $m = 4 - \\sqrt6 \\approx 1.55$.",
+      "steps": [
+        {
+          "title": "Normalise to find $c$",
+          "body": "$\\displaystyle\\int_0^1 c\\,x\\,dx = \\frac{c}{2}$ and $\\displaystyle\\int_1^4 \\frac{c(4-x)}{3}\\,dx = \\frac{c}{3}\\cdot\\frac{(4-1)^2}{2} = \\frac{3c}{2}$. Their sum is $2c = 1$, so $c = \\dfrac12$."
+        },
+        {
+          "title": "Decide which piece contains the median",
+          "body": "$F(1) = \\displaystyle\\int_0^1 \\frac{x}{2}\\,dx = \\frac14 < \\frac12$, so the median $m$ is larger than $1$ and lies in the second piece."
+        },
+        {
+          "title": "Solve $F(m) = \tfrac12$ on $(1, 4]$",
+          "body": "For $1 < m \\le 4$: $P(X > m) = \\displaystyle\\int_m^4 \\frac{4 - x}{6}\\,dx = \\frac{(4-m)^2}{12}$. Setting $\\dfrac{(4-m)^2}{12} = \\dfrac12$ gives $(4-m)^2 = 6$, hence $m = 4 - \\sqrt{6}$ (the root $4 + \\sqrt6 > 4$ is outside the support)."
+        },
+        {
+          "title": "Check",
+          "body": "$m = 4 - \\sqrt6 \\approx 1.5505$ lies in $(1, 4]$, as required, and $F(1) = 0.25 < 0.5$ is consistent with $m > 1$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This solves $\\dfrac{x^2}{4} = \\dfrac12$ on the first piece, giving $\\sqrt2 \\approx 1.414$. But that formula for $F$ holds only on $[0, 1]$, where $F(1) = \\tfrac14$ never reaches $\\tfrac12$; the root lies outside the piece."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This comes from $(4-m)^2/6 = \\tfrac12$, which drops the factor $\\tfrac12$ in $\\int_m^4 (4-x)\\,dx = \\tfrac{(4-m)^2}{2}$. The correct tail is $\\tfrac{(4-m)^2}{12}$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$P(X > m) = \\dfrac{(4-m)^2}{12} = \\dfrac12$ gives $m = 4 - \\sqrt6 \\approx 1.5505$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\dfrac53$ is the mean $E[X]$ of this triangular density (the average of $0, 1, 4$), not the median: the density is skewed to the right, so mean $>$ median."
+        }
+      ],
+      "commonTrap": "Assuming the median lies in the first piece and solving $\\tfrac{x^2}{4} = \\tfrac12$ (giving $\\sqrt2 > 1$, outside that piece), or confusing the median with the mean $\\tfrac53$. Always test $F$ at the breakpoint first."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: m = 4 - sqrt(6) ~ 1.5505 (c = 1/2)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nfrom scipy import integrate, optimize\ng = lambda x: x if x <= 1 else (4 - x) / 3          # density divided by c\nc = 1 / (integrate.quad(g, 0, 1)[0] + integrate.quad(g, 1, 4)[0])\nF = lambda m: c * (integrate.quad(g, 0, min(m, 1))[0] + (integrate.quad(g, 1, m)[0] if m > 1 else 0))\nm = optimize.brentq(lambda t: F(t) - 0.5, 0, 4)\nmean = integrate.quad(lambda x: x * c * g(x), 0, 4, points=[1])[0]\nprint(round(c, 6), round(F(1), 6), round(m, 6), round(4 - math.sqrt(6), 6), round(mean, 6))   # 0.5 0.25 1.550510 1.550510 1.666667",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (behaviour and comparison count of linear search) tested by four direct single-step statements; about 1.25 minutes.",
+    "estimatedTimeSec": 75,
+    "concept": "Linear search: stops at the first match, needs no ordering, and makes exactly $n$ comparisons on an unsuccessful search and at most $n$ on a successful one.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python function, which performs linear search on a list `a` of $n \\ge 1$ integers. The list is not assumed to be sorted, and it may contain repeated values.\n\n```python\ndef find(a, key):\n    for i in range(len(a)):\n        if a[i] == key:\n            return i\n    return -1\n```\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "If `key` occurs more than once in `a`, `find` returns the largest index at which it occurs."
+      },
+      {
+        "label": "B",
+        "text": "If `key` does not occur in `a`, the comparison `a[i] == key` is evaluated exactly $n$ times."
+      },
+      {
+        "label": "C",
+        "text": "`find` returns the correct result only when `a` is sorted in ascending order."
+      },
+      {
+        "label": "D",
+        "text": "In every call in which `key` occurs in `a`, the comparison `a[i] == key` is evaluated at most $n - 1$ times."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "The loop returns at the first match, so it reports the smallest index of `key`, and it never uses the order of the list. If `key` is absent every one of the $n$ elements is compared once, so exactly $n$ evaluations occur. When `key` sits at the last position the count is $n$, not $n - 1$. Only statement B is true.",
+      "steps": [
+        {
+          "title": "Which occurrence is returned",
+          "body": "The `return i` executes on the first index with `a[i] == key`, so with repeated values the smallest index is returned. For example, `find([4, 7, 4], 4)` returns $0$, not $2$. Statement A is false."
+        },
+        {
+          "title": "Unsuccessful search",
+          "body": "If no element equals `key`, the `return i` never runs and the loop finishes all $n$ iterations. The comparison is evaluated once per iteration, so exactly $n$ times. Statement B is true."
+        },
+        {
+          "title": "Is sorted order needed",
+          "body": "The function compares for equality only and never uses any ordering. For instance `find([9, 2, 7], 7)` returns $2$, which is correct on an unsorted list. Statement C is false."
+        },
+        {
+          "title": "Successful search bound",
+          "body": "If `key` occurs only at the last index, the loop reaches iteration $n$ before matching, so the comparison is evaluated $n$ times. For `find([5, 8, 3], 3)` that is $3 = n > n - 1$. Statement D is false. Hence only B is true."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The loop stops at the first match, so it returns the smallest index. `find([4, 7, 4], 4)` returns $0$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "With no match, all $n$ elements are examined, one comparison each: exactly $n$ evaluations."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Linear search uses only equality tests; it works on any list, sorted or not. Sorting is required for binary search, not for this function."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "When `key` is at the last position, all $n$ comparisons are made. For example `find([5, 8, 3], 3)` needs $3 = n$ evaluations."
+        }
+      ],
+      "commonTrap": "Confusing linear search with binary search (needing sorted input), or being off by one in the worst case: a successful search may need all $n$ comparisons, exactly like an unsuccessful one."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B only",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\ndef find(a, k):\n    n = 0\n    for i in range(len(a)):\n        n += 1\n        if a[i] == k: return i, n\n    return -1, n\ntests = [(list(a), k) for L in range(1, 6) for a in product(range(3), repeat=L) for k in range(4)]\nA = all(find(a, k)[0] == max(i for i, x in enumerate(a) if x == k) for a, k in tests if a.count(k) > 1)\nB = all(find(a, k)[1] == len(a) for a, k in tests if k not in a)\nC = not any(find(a, k)[0] == (a.index(k) if k in a else -1) and a != sorted(a) for a, k in tests)\nD = all(find(a, k)[1] <= len(a) - 1 for a, k in tests if k in a)\nprint(A, B, C, D)   # False True False False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (bubble sort with an early-exit flag) and a direct three-pass trace on six elements; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Bubble sort with a swapped flag: number of passes equals one plus the largest leftward displacement of any element, not the swap count or $n-1$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The following Python function runs bubble sort with an early-exit flag and returns the number of passes it makes. A pass is one execution of the body of the `while` loop, including the final pass in which no swap occurs.\n\n```python\ndef bubble_passes(a):\n    n = len(a)\n    passes = 0\n    swapped = True\n    while swapped:\n        swapped = False\n        passes += 1\n        for j in range(n - 1):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n                swapped = True\n    return passes\n```\n\nThe value returned by `bubble_passes([5, 1, 2, 6, 3, 4])` is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2$"
+      },
+      {
+        "label": "B",
+        "text": "$3$"
+      },
+      {
+        "label": "C",
+        "text": "$5$"
+      },
+      {
+        "label": "D",
+        "text": "$6$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Pass 1 turns $[5,1,2,6,3,4]$ into $[1,2,5,3,4,6]$. Pass 2 gives $[1,2,3,4,5,6]$. Pass 3 makes no swap, so `swapped` stays `False` and the loop ends. The function returns $3$.",
+      "steps": [
+        {
+          "title": "Pass 1",
+          "body": "Scan adjacent pairs of $[5,1,2,6,3,4]$: swap $5,1$; swap $5,2$; $5<6$ no swap; swap $6,3$; swap $6,4$. The list becomes $[1,2,5,3,4,6]$ and `swapped = True`."
+        },
+        {
+          "title": "Pass 2",
+          "body": "Scan $[1,2,5,3,4,6]$: $1<2$ and $2<5$ no swap; swap $5,3$; swap $5,4$; $5<6$ no swap. The list becomes $[1,2,3,4,5,6]$ and `swapped = True`."
+        },
+        {
+          "title": "Pass 3",
+          "body": "Scan $[1,2,3,4,5,6]$: every adjacent pair is in order, so no swap occurs and `swapped` remains `False`. The `while` condition fails after this pass."
+        },
+        {
+          "title": "Count",
+          "body": "Two passes made swaps and the third pass confirmed the order, so `passes = 3`."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$2$ counts only the passes that made swaps. The third pass, in which no swap occurs, also increments `passes`."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Two passes with swaps plus the final swap-free pass give $3$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$n - 1 = 5$ is the number of passes of the plain version without the flag. Here the loop exits as soon as a pass makes no swap, which happens after pass 3."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$6$ is the number of inversions (equivalently the total number of swaps), not the number of passes; a single pass can remove several inversions."
+        }
+      ],
+      "shortcut": "Each pass moves any element at most one place to the left, so the number of swapping passes equals the largest number of bigger elements standing to the left of any element. Here $3$ and $4$ each have two bigger elements ($5$ and $6$) before them, so $2$ swapping passes $+\\ 1$ final pass $= 3$.",
+      "commonTrap": "Equating the number of passes with the number of swaps or inversions ($6$), or with $n - 1$ ($5$). Also forgetting the last pass that detects that no swap is needed."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: 3 passes",
+      "agreesWithKey": true,
+      "checkCode": "def bubble_passes(a):\n    n = len(a); passes = 0; swapped = True\n    while swapped:\n        swapped = False; passes += 1\n        for j in range(n - 1):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]; swapped = True\n    return passes\na = [5, 1, 2, 6, 3, 4]\ninv = sum(a[i] > a[j] for i in range(6) for j in range(i + 1, 6))\nprint(bubble_passes(list(a)), inv)   # 3 6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-uninformed"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (DFS graph search with a LIFO frontier and explicit tie-breaking) requiring a nine-pop trace with duplicate stack entries; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Depth-first graph search with a stack: last-pushed neighbour is expanded first, and already-expanded duplicates are discarded on popping.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A drone inspects seven checkpoints $S, A, B, C, D, E$ and $G$ joined by two-way corridors. The neighbours of each checkpoint, listed in alphabetical order, are:\n\n| Checkpoint | $S$ | $A$ | $B$ | $C$ | $D$ | $E$ | $G$ |\n|---|---|---|---|---|---|---|---|\n| Neighbours | $A, D, E$ | $G, S$ | $C, D, E$ | $B$ | $B, E, S$ | $B, D, S$ | $A$ |\n\nDepth-first graph search starts at $S$ and uses a stack as the frontier, initially containing only $S$. It repeats the following step:\n\n- pop the top node $u$;\n- if $u$ has already been expanded, discard it and continue;\n- if $u = G$, stop (the goal test is applied when a node is popped);\n- otherwise mark $u$ as expanded and push every neighbour of $u$ that has not been expanded, in alphabetical order (so the alphabetically last of them is pushed last and popped first).\n\nWhich one of the following lists the expanded nodes in the order in which they were expanded?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$S, A$"
+      },
+      {
+        "label": "B",
+        "text": "$S, E, B, C, D, A$"
+      },
+      {
+        "label": "C",
+        "text": "$S, E, D, B, C, B, D, A$"
+      },
+      {
+        "label": "D",
+        "text": "$S, E, D, B, C, A$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Because the last neighbour pushed is popped first, the search goes $S \\to E \\to D \\to B \\to C$, hits a dead end, discards the stale copies of $B$ and $D$, and finally pops $A$ (which was pushed first). $A$ pushes $G$, and $G$ is popped as the goal. The expanded order is $S, E, D, B, C, A$.",
+      "steps": [
+        {
+          "title": "Set up the rule",
+          "body": "Neighbours are pushed in alphabetical order, so the alphabetically last unexpanded neighbour is on top and is popped next. Stack contents below are written bottom $\\to$ top."
+        },
+        {
+          "title": "Trace the stack",
+          "body": "| Pop | Action | Stack afterwards |\n|---|---|---|\n| $S$ | expand; push $A, D, E$ | $[A, D, E]$ |\n| $E$ | expand; push $B, D$ ($S$ already expanded) | $[A, D, B, D]$ |\n| $D$ | expand; push $B$ ($E, S$ already expanded) | $[A, D, B, B]$ |\n| $B$ | expand; push $C$ ($D, E$ already expanded) | $[A, D, B, C]$ |\n| $C$ | expand; nothing to push ($B$ already expanded) | $[A, D, B]$ |\n| $B$ | already expanded, discard | $[A, D]$ |\n| $D$ | already expanded, discard | $[A]$ |\n| $A$ | expand; push $G$ ($S$ already expanded) | $[G]$ |\n| $G$ | goal, stop | $[\\ ]$ |"
+        },
+        {
+          "title": "Read off the expansion order",
+          "body": "The nodes marked as expanded, in order, are $S, E, D, B, C, A$. The node $G$ is popped and recognised as the goal but not expanded."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This follows the alphabetically first neighbour $A$ straight to $G$, as a recursive DFS that visits neighbours in alphabetical order would. With a stack that pushes neighbours in alphabetical order, $E$ is on top after expanding $S$, not $A$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This marks nodes as seen at the moment they are pushed, so $B$ is pushed only once and gets expanded before $D$. The rules here allow duplicates on the stack and mark a node only when it is expanded, so $D$ is expanded before $B$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This expands the second copies of $B$ and $D$ again. The rules say a node that has already been expanded is discarded when popped."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Matches the stack trace: $S, E, D, B, C$, then the stale $B$ and $D$ are discarded, and $A$ is expanded before $G$ is popped."
+        }
+      ],
+      "commonTrap": "Reading the rule as an alphabetical recursive DFS (which reaches $G$ via $A$ at once), or forgetting that duplicates stay on the stack and must be discarded, not re-expanded, when popped."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D: S, E, D, B, C, A",
+      "agreesWithKey": true,
+      "checkCode": "adj = {\"S\": \"ADE\", \"A\": \"GS\", \"B\": \"CDE\", \"C\": \"B\", \"D\": \"BES\", \"E\": \"BDS\", \"G\": \"A\"}\nassert all(u in adj[v] for u in adj for v in adj[u])          # corridors are two-way\nst, done = [\"S\"], []\nwhile st:\n    u = st.pop()\n    if u in done: continue\n    if u == \"G\": break\n    done.append(u)\n    st += [v for v in sorted(adj[u]) if v not in done]\nprint(done)   # ['S', 'E', 'D', 'B', 'C', 'A']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-integrity-constraints"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (referential actions) with a two-level self-referencing cascade followed by SET NULL and a count that includes pre-existing NULLs; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Referential integrity actions: a cascading delete along a self-referencing foreign key, then ON DELETE SET NULL on a second table.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An organisation's database has the following schema. All integrity constraints are enforced, and standard SQL semantics apply.\n\n```sql\nCREATE TABLE Emp  (eid  INT PRIMARY KEY,\n                   boss INT REFERENCES Emp(eid) ON DELETE CASCADE);\nCREATE TABLE Task (tid   INT PRIMARY KEY,\n                   owner INT REFERENCES Emp(eid) ON DELETE SET NULL);\n```\n\nThe current instances are:\n\n| `Emp.eid` | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| `Emp.boss` | NULL | 1 | 1 | 2 | 2 | 3 | 4 | NULL | 8 | 4 |\n\n| `Task.tid` | 101 | 102 | 103 | 104 | 105 | 106 | 107 | 108 | 109 | 110 | 111 | 112 | 113 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| `Task.owner` | 1 | 2 | NULL | 4 | 6 | 7 | 8 | NULL | 5 | 9 | 10 | 3 | NULL |\n\nThe statement `DELETE FROM Emp WHERE eid = 2;` is executed. The number of rows of `Task` whose `owner` is `NULL` after the statement completes is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 8,
+      "max": 8
+    },
+    "solution": {
+      "quick": "Deleting employee $2$ cascades through the `boss` links: $4$ and $5$ (bosses $2$), then $7$ and $10$ (boss $4$), so employees $2, 4, 5, 7, 10$ disappear. The tasks owned by them ($102, 104, 106, 109, 111$) get `owner = NULL`, and three tasks ($103, 108, 113$) were already `NULL`. Total $5 + 3 = 8$.",
+      "steps": [
+        {
+          "title": "Cascade inside `Emp`",
+          "body": "`ON DELETE CASCADE` on `boss` removes every employee whose boss is deleted, repeatedly. Level 1: bosses $=2$ gives employees $4, 5$. Level 2: boss $=4$ gives employees $7, 10$; nobody has boss $5$. Level 3: nobody has boss $7$ or $10$. The deleted set is $\\{2, 4, 5, 7, 10\\}$; employees $1, 3, 6, 8, 9$ remain."
+        },
+        {
+          "title": "Apply `SET NULL` to `Task`",
+          "body": "Each deleted employee that owns tasks sets those `owner` values to `NULL` (the `Task` rows themselves stay). Tasks owned by $\\{2, 4, 5, 7, 10\\}$ are $102$ (owner $2$), $104$ (owner $4$), $106$ (owner $7$), $109$ (owner $5$) and $111$ (owner $10$): $5$ tasks."
+        },
+        {
+          "title": "Add the tasks that were already `NULL`",
+          "body": "Tasks $103$, $108$ and $113$ had `owner = NULL` before the statement and are unaffected: $3$ tasks."
+        },
+        {
+          "title": "Total",
+          "body": "Rows of `Task` with `owner IS NULL` afterwards: $5 + 3 = 8$."
+        }
+      ],
+      "finalAnswer": "**8**",
+      "commonTrap": "Stopping the cascade after the first level (only employees $4$ and $5$ are removed, giving $3 + 3 = 6$) or forgetting the three tasks whose `owner` was already `NULL` (giving $5$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "8",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\ncon = sqlite3.connect(\":memory:\")\ncon.execute(\"PRAGMA foreign_keys=ON\")\ncon.executescript('''\nCREATE TABLE Emp (eid INT PRIMARY KEY, boss INT REFERENCES Emp(eid) ON DELETE CASCADE);\nCREATE TABLE Task (tid INT PRIMARY KEY, owner INT REFERENCES Emp(eid) ON DELETE SET NULL);\nINSERT INTO Emp VALUES (1,NULL),(2,1),(3,1),(4,2),(5,2),(6,3),(7,4),(8,NULL),(9,8),(10,4);\nINSERT INTO Task VALUES (101,1),(102,2),(103,NULL),(104,4),(105,6),(106,7),(107,8),(108,NULL),(109,5),(110,9),(111,10),(112,3),(113,NULL);\n''')\ncon.execute(\"DELETE FROM Emp WHERE eid = 2\")\nprint(con.execute(\"SELECT COUNT(*) FROM Task WHERE owner IS NULL\").fetchone()[0],\n      [r[0] for r in con.execute(\"SELECT eid FROM Emp\")])   # 8 [1, 3, 6, 8, 9]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-multiple-linear-regression"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (adjusted $R^2$) needing a direct substitution after recovering SST from SSR and SSE; about 1.25 minutes.",
+    "estimatedTimeSec": 75,
+    "concept": "Adjusted $R^2 = 1 - \\dfrac{\\mathrm{SSE}/(n-p-1)}{\\mathrm{SST}/(n-1)}$ in multiple linear regression, with $\\mathrm{SST} = \\mathrm{SSR} + \\mathrm{SSE}$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data scientist fits a multiple linear regression model, with an intercept and $p = 4$ predictors, to data on $n = 30$ laptops in order to predict battery life. The analysis of variance gives a regression sum of squares $\\mathrm{SSR} = 205$ and a residual sum of squares $\\mathrm{SSE} = 45$.\n\nThe adjusted coefficient of determination of the model,\n\n$$\\bar{R}^{2} = 1 - \\frac{\\mathrm{SSE}/(n - p - 1)}{\\mathrm{SST}/(n - 1)},$$\n\nis ________ (rounded off to three decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.79,
+      "max": 0.792
+    },
+    "solution": {
+      "quick": "$\\mathrm{SST} = \\mathrm{SSR} + \\mathrm{SSE} = 250$, and $n - p - 1 = 25$, $n - 1 = 29$. Then $\\bar R^2 = 1 - \\dfrac{45/25}{250/29} = 1 - \\dfrac{1.8}{8.6207} = 0.7912 \\approx 0.791$.",
+      "steps": [
+        {
+          "title": "Recover SST",
+          "body": "The total sum of squares splits as $\\mathrm{SST} = \\mathrm{SSR} + \\mathrm{SSE} = 205 + 45 = 250$."
+        },
+        {
+          "title": "Degrees of freedom",
+          "body": "Residual degrees of freedom: $n - p - 1 = 30 - 4 - 1 = 25$. Total degrees of freedom: $n - 1 = 29$."
+        },
+        {
+          "title": "Mean squares",
+          "body": "$\\mathrm{SSE}/(n-p-1) = 45/25 = 1.8$ and $\\mathrm{SST}/(n-1) = 250/29 \\approx 8.6207$."
+        },
+        {
+          "title": "Adjusted $R^2$",
+          "body": "$\\bar R^2 = 1 - \\dfrac{1.8}{8.6207} = 1 - 0.2088 = 0.7912$, i.e. $0.791$ to three decimal places. (For comparison, the unadjusted $R^2 = 205/250 = 0.82$.)"
+        }
+      ],
+      "finalAnswer": "**0.791**",
+      "commonTrap": "Using $n - p$ instead of $n - p - 1$ for the residual degrees of freedom (gives $0.799$), reporting the unadjusted $R^2 = 0.82$, or treating $\\mathrm{SSR}$ as if it were $\\mathrm{SST}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.791",
+      "agreesWithKey": true,
+      "checkCode": "n, p, ssr, sse = 30, 4, 205, 45\nsst = ssr + sse\nadj = 1 - (sse / (n - p - 1)) / (sst / (n - 1))\nprint(sst, round(ssr / sst, 4), round(adj, 4), round(adj, 3))   # 250 0.82 0.7912 0.791",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-svm"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (margin width $2/\\lVert\\mathbf{w}\\rVert$ of a hard-margin SVM) with a one-step norm computation; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Hard-margin SVM in canonical form: the margin (distance between $\\mathbf{w}^\\top\\mathbf{x}+b=\\pm1$) equals $2/\\lVert\\mathbf{w}\\rVert_2$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hard-margin linear support vector machine is trained on linearly separable data with three features. In canonical form, the learned decision function is $f(\\mathbf{x}) = \\mathbf{w}^\\top \\mathbf{x} + b$ with\n\n$$\\mathbf{w} = \\begin{bmatrix} 2 \\\\ -1 \\\\ 2 \\end{bmatrix}, \\qquad b = -3,$$\n\nso that $y_i\\,f(\\mathbf{x}_i) \\ge 1$ for every training point, with equality at the support vectors.\n\nThe perpendicular distance between the two margin hyperplanes $\\mathbf{w}^\\top \\mathbf{x} + b = +1$ and $\\mathbf{w}^\\top \\mathbf{x} + b = -1$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{2}{5}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{2}{9}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The two hyperplanes $\\mathbf{w}^\\top\\mathbf{x} + b = \\pm 1$ are parallel, and the distance between them is $\\dfrac{2}{\\lVert\\mathbf{w}\\rVert}$. Here $\\lVert\\mathbf{w}\\rVert = \\sqrt{4 + 1 + 4} = 3$, so the distance is $\\dfrac23$.",
+      "steps": [
+        {
+          "title": "Distance from the boundary to each margin hyperplane",
+          "body": "The distance from a point $\\mathbf{x}_0$ to the hyperplane $\\mathbf{w}^\\top\\mathbf{x} + b = 0$ is $\\dfrac{|\\mathbf{w}^\\top\\mathbf{x}_0 + b|}{\\lVert\\mathbf{w}\\rVert}$. A point on $\\mathbf{w}^\\top\\mathbf{x} + b = \\pm 1$ therefore lies at distance $\\dfrac{1}{\\lVert\\mathbf{w}\\rVert}$ from the decision boundary, on either side."
+        },
+        {
+          "title": "Width of the margin",
+          "body": "The two margin hyperplanes lie on opposite sides of the boundary, so the distance between them is $\\dfrac{1}{\\lVert\\mathbf{w}\\rVert} + \\dfrac{1}{\\lVert\\mathbf{w}\\rVert} = \\dfrac{2}{\\lVert\\mathbf{w}\\rVert}$. The bias $b$ shifts all three hyperplanes together and does not change this width."
+        },
+        {
+          "title": "Substitute",
+          "body": "$\\lVert\\mathbf{w}\\rVert_2 = \\sqrt{2^2 + (-1)^2 + 2^2} = \\sqrt{9} = 3$, so the margin width is $\\dfrac{2}{3}$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Width $= \\dfrac{2}{\\lVert\\mathbf{w}\\rVert_2} = \\dfrac{2}{3}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\dfrac{1}{\\lVert\\mathbf{w}\\rVert} = \\dfrac13$ is the distance from the decision boundary to one margin hyperplane, i.e. half of the required distance between the two margin hyperplanes."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This uses the sum of absolute values $|2| + |-1| + |2| = 5$ in place of the Euclidean norm. Perpendicular distance in the standard SVM is measured with $\\lVert\\mathbf{w}\\rVert_2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This divides by $\\lVert\\mathbf{w}\\rVert^2 = 9$ instead of $\\lVert\\mathbf{w}\\rVert = 3$."
+        }
+      ],
+      "shortcut": "Margin width $= 2/\\lVert\\mathbf{w}\\rVert_2$; only $\\mathbf{w}$ matters, so $b$ can be ignored. Here $\\lVert\\mathbf{w}\\rVert_2 = 3$ gives $2/3$.",
+      "commonTrap": "Forgetting the factor $2$ (that is, quoting $1/\\lVert\\mathbf{w}\\rVert$, the distance to only one margin hyperplane), or using $\\lVert\\mathbf{w}\\rVert^2$ or the sum of the components instead of the Euclidean norm."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: 2/3",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nw, b = np.array([2.0, -1.0, 2.0]), -3.0\nx1 = (1 - b) * w / (w @ w)     # a point on w.x + b = +1\nx2 = (-1 - b) * w / (w @ w)    # a point on w.x + b = -1\nprint(round(np.linalg.norm(x1 - x2), 6), round(2 / np.linalg.norm(w), 6),\n      round(1 / np.linalg.norm(w), 6), round(2 / np.abs(w).sum(), 6), round(2 / (w @ w), 6))   # 0.666667 0.666667 0.333333 0.4 0.222222",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M20-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-hypothesis-tests"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked ideas (sample mean and standard deviation, $t$ statistic, one-sided versus two-sided critical values, $p$-value bracketing) with a likely trap (normal critical values); every statement needs its own check, so about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "One-sample $t$-test: compute $t = (\\bar{x}-\\mu_0)/(s/\\sqrt{n})$, compare with one-sided and two-sided critical values, and bracket the $p$-value.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A supplier claims that the mean length of its bolts is $100$ mm. A quality engineer measures a random sample of $n = 8$ bolts (lengths in mm):\n\n$$98,\\ 101,\\ 104,\\ 99,\\ 107,\\ 103,\\ 105,\\ 107.$$\n\nAssume the lengths are normally distributed with unknown variance, and let $\\mu$ be the true mean length. The engineer carries out a one-sample $t$-test of $H_0: \\mu = 100$, using the sample standard deviation with divisor $n - 1$. The upper-tail critical values $t_{\\alpha,7}$ of the $t$-distribution with $7$ degrees of freedom are:\n\n| $\\alpha$ | $0.05$ | $0.025$ | $0.01$ | $0.005$ |\n|---|---|---|---|---|\n| $t_{\\alpha,7}$ | $1.895$ | $2.365$ | $2.998$ | $3.499$ |\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Against $H_1: \\mu \\ne 100$, $H_0$ is rejected at significance level $0.05$."
+      },
+      {
+        "label": "B",
+        "text": "Against $H_1: \\mu \\ne 100$, $H_0$ is rejected at significance level $0.01$."
+      },
+      {
+        "label": "C",
+        "text": "Against $H_1: \\mu > 100$, $H_0$ is rejected at significance level $0.01$."
+      },
+      {
+        "label": "D",
+        "text": "The $p$-value of the test against $H_1: \\mu > 100$ lies between $0.01$ and $0.025$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$\\bar x = 103$, $s^2 = 82/7$, $s \\approx 3.423$, so $t = \\dfrac{3}{3.423/\\sqrt8} \\approx 2.479$ with $7$ df. Two-sided: $2.479 > 2.365$ (reject at $0.05$) but $< 3.499$ (not at $0.01$). One-sided at $0.01$ needs $t > 2.998$, which fails, and $2.365 < 2.479 < 2.998$ puts the one-sided $p$-value in $(0.01, 0.025)$. Statements A and D are true.",
+      "steps": [
+        {
+          "title": "Sample mean and standard deviation",
+          "body": "$\\sum x = 824$, so $\\bar x = 103$. Deviations from $103$: $-5, -2, 1, -4, 4, 0, 2, 4$, whose squares $25, 4, 1, 16, 16, 0, 4, 16$ sum to $82$. Hence $s^2 = \\dfrac{82}{7} \\approx 11.714$ and $s \\approx 3.423$."
+        },
+        {
+          "title": "Test statistic",
+          "body": "$\\text{SE} = \\dfrac{s}{\\sqrt{n}} = \\dfrac{3.423}{\\sqrt{8}} \\approx 1.210$, so $t = \\dfrac{\\bar x - 100}{\\text{SE}} = \\dfrac{3}{1.210} \\approx 2.479$ with $7$ degrees of freedom."
+        },
+        {
+          "title": "Two-sided alternative $\\mu \\ne 100$",
+          "body": "Reject at level $\\alpha$ if $|t| > t_{\\alpha/2,7}$. At $\\alpha = 0.05$ the cutoff is $t_{0.025,7} = 2.365$ and $2.479 > 2.365$, so reject (A true). At $\\alpha = 0.01$ the cutoff is $t_{0.005,7} = 3.499$ and $2.479 < 3.499$, so do not reject (B false)."
+        },
+        {
+          "title": "One-sided alternative $\\mu > 100$",
+          "body": "Reject at level $\\alpha$ if $t > t_{\\alpha,7}$. At $\\alpha = 0.01$ the cutoff is $t_{0.01,7} = 2.998 > 2.479$, so do not reject (C false)."
+        },
+        {
+          "title": "One-sided $p$-value",
+          "body": "Since $t_{0.025,7} = 2.365 < 2.479 < 2.998 = t_{0.01,7}$, the upper-tail area beyond $2.479$ lies between $0.01$ and $0.025$ (exactly $\\approx 0.0211$). D is true. So A and D are true."
+        }
+      ],
+      "finalAnswer": "**(A), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Two-sided cutoff at $0.05$ is $t_{0.025,7} = 2.365$, and $|t| = 2.479 > 2.365$: reject."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Two-sided cutoff at $0.01$ is $t_{0.005,7} = 3.499$, and $2.479 < 3.499$: do not reject."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "One-sided cutoff at $0.01$ is $t_{0.01,7} = 2.998$, and $2.479 < 2.998$: do not reject. (The normal cutoff $2.326$ would wrongly suggest rejection; with only $7$ degrees of freedom the $t$ cutoff is much larger.)"
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$2.365 < 2.479 < 2.998$ places the upper-tail probability between $0.01$ and $0.025$ (exactly $0.0211$)."
+        }
+      ],
+      "commonTrap": "Using normal ($z$) critical values such as $2.326$ for a one-sided $0.01$ test, which wrongly makes C true, or mixing up one-sided and two-sided cutoffs (comparing $t$ with $t_{\\alpha,7}$ for a two-sided test at level $\\alpha$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, D (t = 2.479 on 7 df; one-sided p = 0.0211, two-sided p = 0.0423)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nfrom scipy import stats\nx = np.array([98, 101, 104, 99, 107, 103, 105, 107]); n = len(x)\nt = (x.mean() - 100) / (x.std(ddof=1) / np.sqrt(n))\ncrit = {a: float(round(stats.t.ppf(1 - a, n - 1), 3)) for a in (0.05, 0.025, 0.01, 0.005)}\nA = t > crit[0.025]\nB = t > crit[0.005]\nC = t > crit[0.01]\np1 = stats.t.sf(t, n - 1)\nD = 0.01 < p1 < 0.025\nprint(round(t, 4), crit, A, B, C, D, round(p1, 4), round(2 * p1, 4))   # 2.4792 {0.05: 1.895, 0.025: 2.365, 0.01: 2.998, 0.005: 3.499} True False False True 0.0211 0.0423",
+      "notes": ""
+    }
+  }
+]
