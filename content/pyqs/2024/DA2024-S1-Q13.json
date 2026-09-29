@@ -1,0 +1,116 @@
+{
+  "id": "DA2024-S1-Q13",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 13,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-eigen",
+  "subtopicIds": [
+    "la-eigen",
+    "la-determinant"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (eigenvalues of a 2×2 matrix from its characteristic polynomial) with a single short computation of the trace, determinant and discriminant, about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider the matrix $\\boldsymbol{M} = \\begin{bmatrix} 2 & -1 \\\\ 3 & 1 \\end{bmatrix}$.\n\nWhich **ONE** of the following statements is **TRUE**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "The eigenvalues of $\\boldsymbol{M}$ are non-negative and real."
+    },
+    {
+      "label": "B",
+      "text": "The eigenvalues of $\\boldsymbol{M}$ are complex conjugate pairs."
+    },
+    {
+      "label": "C",
+      "text": "One eigenvalue of $\\boldsymbol{M}$ is positive and real, and another eigenvalue of $\\boldsymbol{M}$ is zero."
+    },
+    {
+      "label": "D",
+      "text": "One eigenvalue of $\\boldsymbol{M}$ is non-negative and real, and another eigenvalue of $\\boldsymbol{M}$ is negative and real."
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "For a $2 \\times 2$ matrix, $\\lambda^2 - (\\operatorname{tr}\\boldsymbol{M})\\lambda + \\det\\boldsymbol{M} = 0$. Here $\\operatorname{tr}\\boldsymbol{M} = 3$ and $\\det\\boldsymbol{M} = 2 \\cdot 1 - (-1)(3) = 5$, so $\\lambda^2 - 3\\lambda + 5 = 0$ with discriminant $9 - 20 = -11 < 0$. The eigenvalues $\\lambda = \\tfrac{3 \\pm i\\sqrt{11}}{2}$ are a complex conjugate pair → **(B)**.",
+    "steps": [
+      {
+        "title": "Set up the characteristic equation",
+        "body": "The eigenvalues are the roots of $\\det(\\boldsymbol{M} - \\lambda I) = 0$:\n\n$$\n\\det\\begin{bmatrix} 2 - \\lambda & -1 \\\\ 3 & 1 - \\lambda \\end{bmatrix} = (2 - \\lambda)(1 - \\lambda) - (-1)(3) = 0 .\n$$"
+      },
+      {
+        "title": "Expand the polynomial",
+        "body": "$$\n(2 - \\lambda)(1 - \\lambda) + 3 = 2 - 3\\lambda + \\lambda^2 + 3 = \\lambda^2 - 3\\lambda + 5 = 0 .\n$$\n\nThis matches the $2 \\times 2$ shortcut $\\lambda^2 - (\\operatorname{tr}\\boldsymbol{M})\\lambda + \\det\\boldsymbol{M}$, with $\\operatorname{tr}\\boldsymbol{M} = 2 + 1 = 3$ and $\\det\\boldsymbol{M} = (2)(1) - (-1)(3) = 2 + 3 = 5$."
+      },
+      {
+        "title": "Check the discriminant",
+        "body": "For $a\\lambda^2 + b\\lambda + c$ with $a = 1$, $b = -3$, $c = 5$:\n\n$$\n\\Delta = b^2 - 4ac = (-3)^2 - 4(1)(5) = 9 - 20 = -11 < 0 .\n$$\n\nA negative discriminant means there are no real roots."
+      },
+      {
+        "title": "Solve for the eigenvalues",
+        "body": "$$\n\\lambda = \\frac{3 \\pm \\sqrt{-11}}{2} = \\frac{3}{2} \\pm \\frac{\\sqrt{11}}{2}\\,i \\approx 1.5 \\pm 1.658\\,i .\n$$\n\nBecause $\\boldsymbol{M}$ has real entries, its characteristic polynomial has real coefficients, so non-real roots come as a **complex conjugate pair**. Check: $\\lambda_1 + \\lambda_2 = 3 = \\operatorname{tr}\\boldsymbol{M}$ and $\\lambda_1\\lambda_2 = \\tfrac{9}{4} + \\tfrac{11}{4} = 5 = \\det\\boldsymbol{M}$ ✓. `sympy` and `numpy.linalg.eigvals` both return $1.5 \\pm 1.6583\\,i$."
+      },
+      {
+        "title": "Match with the options",
+        "body": "Neither eigenvalue is real, so every option that describes real eigenvalues (A, C, D) is false. The eigenvalues form a complex conjugate pair, which is option **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)** The eigenvalues of $\\boldsymbol{M}$ are complex conjugate pairs.",
+    "teaching": "**Eigenvalues of a $2 \\times 2$ matrix.** An eigenvalue $\\lambda$ of a square matrix $A$ is a number for which some non-zero vector $\\mathbf{x}$ satisfies $A\\mathbf{x} = \\lambda\\mathbf{x}$: $A$ only stretches $\\mathbf{x}$, without changing its direction. Rewriting as $(A - \\lambda I)\\mathbf{x} = \\mathbf{0}$, a non-zero solution exists exactly when $A - \\lambda I$ is singular, i.e. $\\det(A - \\lambda I) = 0$. This is the **characteristic equation**.\n\nFor $A = \\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}$ it expands to\n\n$$\n\\lambda^2 - (a + d)\\lambda + (ad - bc) = \\lambda^2 - (\\operatorname{tr}A)\\,\\lambda + \\det A = 0,\n$$\n\nso the eigenvalues satisfy $\\lambda_1 + \\lambda_2 = \\operatorname{tr}A$ and $\\lambda_1\\lambda_2 = \\det A$. The **discriminant** $\\Delta = (\\operatorname{tr}A)^2 - 4\\det A$ decides the nature of the eigenvalues:\n\n- $\\Delta > 0$: two distinct real eigenvalues;\n- $\\Delta = 0$: one repeated real eigenvalue;\n- $\\Delta < 0$: a complex conjugate pair $\\alpha \\pm i\\beta$ with $\\beta \\ne 0$.\n\nA real matrix can have complex eigenvalues. Geometrically, such a matrix acts (in a suitable basis) as a rotation combined with a scaling, so no real direction is mapped onto itself and there is no real eigenvector. Because the polynomial has real coefficients, complex roots always come in conjugate pairs. (A real *symmetric* matrix, by contrast, always has real eigenvalues; $\\boldsymbol{M}$ is not symmetric, since its off-diagonal entries are $-1$ and $3$.)\n\nThe signs also follow from trace and determinant when the eigenvalues are real: $\\det A < 0$ means one positive and one negative eigenvalue, and $\\det A = 0$ means one eigenvalue is zero.\n\nFor $\\boldsymbol{M}$, $\\operatorname{tr} = 3$ and $\\det = 5$, so $\\Delta = 9 - 20 = -11 < 0$. The eigenvalues are $\\tfrac{3}{2} \\pm \\tfrac{\\sqrt{11}}{2}i$, a complex conjugate pair.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "The discriminant is $9 - 20 = -11 < 0$, so the eigenvalues are not real at all. (They have positive real part $\\tfrac32$, but \"non-negative\" is only meaningful for real numbers.)"
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$\\lambda^2 - 3\\lambda + 5 = 0$ gives $\\lambda = \\tfrac{3}{2} \\pm \\tfrac{\\sqrt{11}}{2}i$, a complex conjugate pair, as expected for a real matrix with negative discriminant."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "A zero eigenvalue would require $\\det\\boldsymbol{M} = \\lambda_1\\lambda_2 = 0$, but $\\det\\boldsymbol{M} = 5 \\ne 0$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "One non-negative and one negative real eigenvalue would make $\\det\\boldsymbol{M} = \\lambda_1\\lambda_2 \\le 0$, but $\\det\\boldsymbol{M} = 5 > 0$. In any case the eigenvalues are not real."
+      }
+    ],
+    "shortcut": "For a real $2 \\times 2$ matrix, compute $(\\operatorname{tr})^2 - 4\\det$. Here $3^2 - 4(5) = -11 < 0$, so the eigenvalues are a complex conjugate pair, with no need to solve the quadratic.",
+    "commonTrap": "Getting the sign of the determinant wrong: writing $\\det\\boldsymbol{M} = 2 \\cdot 1 - 3 = -1$ instead of $2 \\cdot 1 - (-1)(3) = 2 + 3 = 5$. With $\\det = -1$ the discriminant would be $9 + 4 = 13 > 0$, giving real eigenvalues $\\tfrac{3 \\pm \\sqrt{13}}{2} \\approx 3.30, -0.30$ and leading to option D. The off-diagonal product $(-1)(3) = -3$ is **subtracted**, so the determinant is $+5$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q13-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The matrix symbol M is bold italic in the paper and is rendered with \\boldsymbol{M}. \"ONE\" and \"TRUE\" are bold in the paper and are kept bold here. The matrix layout (rows [2, −1] and [3, 1]) was read from the rendered image, because the PDF text layer scrambles it."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B) complex conjugate eigenvalues 3/2 ± (√11/2)i",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp\nM = sp.Matrix([[2, -1], [3, 1]])\nlam = sp.symbols('lambda')\np = M.charpoly(lam).as_expr()\nprint(\"char poly:\", p, \" trace =\", M.trace(), \" det =\", M.det())   # lambda**2 - 3*lambda + 5, 3, 5\nprint(\"discriminant:\", sp.discriminant(p, lam))                      # -11\nprint(\"eigenvalues:\", list(M.eigenvals()))                           # 3/2 -+ sqrt(11)*I/2\nimport numpy as np\nprint(np.linalg.eigvals(np.array([[2, -1], [3, 1]], dtype=float)))  # [1.5+1.658j, 1.5-1.658j]",
+    "notes": "The characteristic polynomial is λ² − 3λ + 5 (trace 3, determinant 5), and its discriminant is −11 < 0, so the eigenvalues 3/2 ± (√11/2)i form a complex conjugate pair. sympy and numpy.linalg.eigvals both return 1.5 ± 1.6583i. This agrees with official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

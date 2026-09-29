@@ -1,0 +1,124 @@
+{
+  "id": "DA2025-S5-Q50",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 50,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-projection-matrix",
+    "la-eigen",
+    "la-svd"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it needs two directly linked concepts (recognising a sum of orthonormal outer products as an orthogonal projection, and the relation between eigenvalues and singular values of a symmetric positive semidefinite matrix) with no heavy computation, taking about 1.5 to 2 minutes for a prepared student.",
+  "estimatedTimeSec": 105,
+  "stem": "Let $x_1, x_2, x_3, x_4, x_5$ be a system of orthonormal vectors in $\\mathbb{R}^{10}$. Consider the matrix $A = x_1x_1^\\top + \\ldots + x_5x_5^\\top$. Which of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Singular values of $A$ are also its eigenvalues"
+    },
+    {
+      "label": "B",
+      "text": "Singular values of $A$ are either $0$ or $1$"
+    },
+    {
+      "label": "C",
+      "text": "Determinant of $A$ is $1$"
+    },
+    {
+      "label": "D",
+      "text": "$A$ is invertible"
+    }
+  ],
+  "officialKeyRaw": "A;B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "With $Q = [x_1 \\; \\cdots \\; x_5] \\in \\mathbb{R}^{10 \\times 5}$ and $Q^\\top Q = I_5$, we have $A = QQ^\\top$, which is symmetric with $A^2 = A$: the orthogonal projection onto the 5-dimensional span of the $x_i$. Its eigenvalues are $1$ (five times) and $0$ (five times). Because $A$ is symmetric positive semidefinite, its singular values equal its eigenvalues, so (A) and (B) are true. $\\det A = 1^5 \\cdot 0^5 = 0$ and $A$ is singular, so (C) and (D) are false. The answer is **(A), (B)**.",
+    "steps": [
+      {
+        "title": "Rewrite A as QQ^T",
+        "body": "Stack the vectors as columns: $Q = [x_1 \\; x_2 \\; x_3 \\; x_4 \\; x_5] \\in \\mathbb{R}^{10 \\times 5}$. Orthonormality means $x_i^\\top x_j = 1$ if $i = j$ and $0$ otherwise, i.e.\n\n$$\nQ^\\top Q = I_5 .\n$$\n\nBy the column-times-row expansion of a matrix product,\n\n$$\nQQ^\\top = \\sum_{i=1}^{5} x_i x_i^\\top = A .\n$$\n\n$A$ is $10 \\times 10$, while $Q^\\top Q$ is $5 \\times 5$. Do not confuse the two."
+      },
+      {
+        "title": "A is an orthogonal projection",
+        "body": "- **Symmetric:** $A^\\top = (QQ^\\top)^\\top = QQ^\\top = A$.\n- **Idempotent:** $A^2 = Q(Q^\\top Q)Q^\\top = Q I_5 Q^\\top = A$.\n\nA symmetric idempotent matrix is an orthogonal projection. Here $A$ projects $\\mathbb{R}^{10}$ onto $W = \\operatorname{span}\\{x_1, \\ldots, x_5\\}$, which has dimension $5$. For any $v$, $Av = \\sum_i (x_i^\\top v)\\,x_i$ keeps the components of $v$ along the $x_i$ and discards the rest."
+      },
+      {
+        "title": "Eigenvalues of A",
+        "body": "Extend $x_1, \\ldots, x_5$ to an orthonormal basis $x_1, \\ldots, x_{10}$ of $\\mathbb{R}^{10}$. Then\n\n- for $j \\le 5$: $A x_j = \\sum_{i=1}^{5} x_i (x_i^\\top x_j) = x_j$, so $\\lambda = 1$;\n- for $k \\ge 6$: $A x_k = \\sum_{i=1}^{5} x_i (x_i^\\top x_k) = 0$, so $\\lambda = 0$.\n\nThe spectrum is $\\{1, 1, 1, 1, 1, 0, 0, 0, 0, 0\\}$. (A quicker argument: if $Av = \\lambda v$ with $v \\ne 0$, then $A^2 = A$ gives $\\lambda^2 v = \\lambda v$, so $\\lambda \\in \\{0, 1\\}$; and $\\operatorname{rank} A = \\operatorname{trace} A = \\sum_i x_i^\\top x_i = 5$ fixes five of each.)"
+      },
+      {
+        "title": "Singular values of A (statements A and B)",
+        "body": "Singular values are the square roots of the eigenvalues of $A^\\top A$. Here\n\n$$\nA^\\top A = A \\cdot A = A^2 = A,\n$$\n\nso the singular values are $\\sqrt{1} = 1$ (five times) and $\\sqrt{0} = 0$ (five times).\n\nPut differently, with $U = [x_1 \\; \\cdots \\; x_{10}]$ (orthogonal),\n\n$$\nA = U \\,\\operatorname{diag}(1,1,1,1,1,0,0,0,0,0)\\, U^\\top ,\n$$\n\nwhich is simultaneously the eigendecomposition and a valid SVD of $A$. The singular values $\\{1,1,1,1,1,0,0,0,0,0\\}$ coincide with the eigenvalues. In general, a symmetric matrix has singular values $|\\lambda_i|$, and here every $\\lambda_i \\ge 0$.\n\nSo **(A) is true** and **(B) is true**."
+      },
+      {
+        "title": "Determinant and invertibility (statements C and D)",
+        "body": "$$\n\\det A = \\prod_{i=1}^{10} \\lambda_i = 1^5 \\cdot 0^5 = 0 .\n$$\n\nAlso $\\operatorname{rank} A = 5 < 10$: for instance $A x_6 = 0$ with $x_6 \\ne 0$, so $A$ has a nontrivial null space.\n\nHence $\\det A = 0 \\ne 1$, so **(C) is false**, and $A$ is singular, so **(D) is false**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "$A$ is the rank-5 orthogonal projection onto $\\operatorname{span}\\{x_1, \\ldots, x_5\\}$ in $\\mathbb{R}^{10}$. Its singular values equal its eigenvalues (A) and are all $0$ or $1$ (B). It has five zero eigenvalues, so its determinant is $0$ and it is not invertible. The correct statements are **(A) and (B)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B)**",
+    "teaching": "**Outer products.** For a column vector $u \\in \\mathbb{R}^n$, the outer product $uu^\\top$ is an $n \\times n$ matrix of rank $1$. If $u$ is a unit vector, $uu^\\top v = (u^\\top v)\\,u$ is the projection of $v$ onto the line through $u$.\n\n**Projection matrices.** If $u_1, \\ldots, u_k$ are orthonormal, then $P = \\sum_{i=1}^{k} u_i u_i^\\top = QQ^\\top$ (with $Q = [u_1 \\cdots u_k]$) projects any vector onto their span. Two properties characterise orthogonal projections:\n\n- $P^\\top = P$ (symmetric), and\n- $P^2 = P$ (idempotent: projecting twice changes nothing).\n\nVectors in the subspace are left unchanged (eigenvalue $1$), and vectors orthogonal to it are sent to $0$ (eigenvalue $0$). So a rank-$k$ projection in $\\mathbb{R}^n$ has $k$ eigenvalues equal to $1$ and $n - k$ equal to $0$. Its trace equals its rank, $k$, and it is invertible only when $k = n$, in which case $P = I$.\n\n**Eigenvalues versus singular values.** For any matrix $M$, the singular values are $\\sigma_i = \\sqrt{\\lambda_i(M^\\top M)} \\ge 0$. They agree with the eigenvalues only in special cases. For a symmetric matrix, $\\sigma_i = |\\lambda_i|$, so they coincide exactly when the matrix is also positive semidefinite (all $\\lambda_i \\ge 0$). Two contrasting examples: $\\begin{bmatrix} -1 \\end{bmatrix}$ has eigenvalue $-1$ but singular value $1$, and $\\begin{bmatrix} 0 & 1 \\\\ 0 & 0 \\end{bmatrix}$ has eigenvalues $0, 0$ but singular values $1, 0$.\n\n**Determinant and invertibility.** $\\det M$ is the product of the eigenvalues, so a single zero eigenvalue forces $\\det M = 0$, and then $M$ is not invertible.\n\n**Back to this question.** $A$ is a sum of five orthonormal outer products in $\\mathbb{R}^{10}$, a rank-5 orthogonal projection. It is symmetric PSD with eigenvalues five $1$s and five $0$s, so its singular values are the same numbers (A and B true). With zero eigenvalues its determinant is $0$ and it is singular (C and D false).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$A = QQ^\\top$ is symmetric positive semidefinite, so its singular values are $|\\lambda_i| = \\lambda_i$. Both lists are $\\{1,1,1,1,1,0,0,0,0,0\\}$, so every singular value of $A$ is also an eigenvalue."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$A^\\top A = A^2 = A$ has eigenvalues $0$ and $1$ only, so the singular values $\\sqrt{\\lambda_i(A^\\top A)}$ are $1$ (five times) and $0$ (five times)."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$A$ has five zero eigenvalues (every vector orthogonal to all $x_i$ is sent to $0$), so $\\det A = 1^5 \\cdot 0^5 = 0$, not $1$. It would be $1$ only if $A = I_{10}$, which needs ten orthonormal vectors."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$\\operatorname{rank} A = 5 < 10$ and $\\det A = 0$. Any nonzero vector orthogonal to $x_1, \\ldots, x_5$ is in the null space, so $A$ is not invertible."
+      }
+    ],
+    "shortcut": "A sum of $k$ orthonormal outer products in $\\mathbb{R}^n$ is a rank-$k$ orthogonal projection: its eigenvalues and singular values are $k$ ones and $n - k$ zeros. With $k = 5 < n = 10$ there are zeros, so $\\det A = 0$ and $A$ is singular.",
+    "commonTrap": "Thinking 'orthonormal vectors' makes $A$ an orthogonal matrix or the identity, which leads to choosing (C) and (D). That would need all ten basis vectors; with only five, $A$ is a rank-5 projection with $\\det A = 0$. A related slip is confusing $A = QQ^\\top$ ($10 \\times 10$, rank 5) with $Q^\\top Q = I_5$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q50-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the transpose with the $\\top$ symbol and the middle terms of the sum as '+ . . . +', rendered here as $x_1x_1^\\top + \\ldots + x_5x_5^\\top$. The digits $0$ and $1$ in options (B) and (C) are typeset in math mode in the paper. No figure is needed. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B (A is the rank-5 orthogonal projection: eigenvalues = singular values = five 1s and five 0s; det A = 0, singular)",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=x**4/4-2*x**3/3-3*x**2/2+1\nd1=sp.diff(f,x); d2=sp.diff(f,x,2)\nprint('f\\'=',sp.factor(d1),' f\\'\\'=',d2)\nfor c in sorted(sp.solve(d1,x)):\n    s=d2.subs(x,c); print(c,'f=',f.subs(x,c),'f\\'\\'=',s,'local min' if s>0 else 'local max' if s<0 else 'test fails')\n# 0: f''=-3 local max; 3: f''=12 local min; -1: f''=4 local min -> (A),(B) true; (C),(D) false\n",
+    "notes": "Hand solve: A = QQ^T with Q^T Q = I_5, so A is symmetric and idempotent, i.e. the orthogonal projection onto a 5-dimensional subspace of R^10. Its eigenvalues are 1 (x5) and 0 (x5); since A is symmetric PSD its singular values are the same, so A and B are true. det A = 0 and rank A = 5, so C and D are false. The NumPy check builds A from 5 random orthonormal vectors in R^10 and confirms symmetry, idempotence, identical eigenvalue and singular-value lists {1 x5, 0 x5}, det approximately 0 and rank 5. This agrees with the official key A;B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

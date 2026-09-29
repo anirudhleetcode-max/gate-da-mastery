@@ -1,0 +1,110 @@
+{
+  "id": "DA2025-S5-Q47",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 47,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it is a routine program trace with a few steps (two loop iterations of set difference/union updates) that hinges on one linked concept, simultaneous tuple assignment, taking about 2 minutes for a prepared student.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider the following Python code snippet.\n\n```python\nA={\"this\",\"that\"}\nB={\"that\",\"other\"}\nC={\"other\",\"this\"}\nwhile \"other\" in C:\n    if \"this\" in A:\n        A,B,C=A-B,B-C,C-A\n    if \"that\" in B:\n        A,B,C=C|A,A|B,B|C\n```\n\nWhen the above program is executed, at the end, which of the following sets contains `\"this\"`?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Only `A`"
+    },
+    {
+      "label": "B",
+      "text": "Only `B`"
+    },
+    {
+      "label": "C",
+      "text": "Only `C`"
+    },
+    {
+      "label": "D",
+      "text": "`A`, `C`"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Trace with **simultaneous** tuple assignment. Iteration 1: the first `if` gives `A={\"this\"}, B={\"that\"}, C={\"other\"}`, and the second `if` gives `A={\"other\",\"this\"}, B={\"this\",\"that\"}, C={\"that\",\"other\"}`. Iteration 2: the first `if` gives `A={\"other\"}, B={\"this\"}, C={\"that\"}`, and the second `if` is skipped. Now `\"other\"` is not in `C`, so the loop stops and only `B` contains `\"this\"`: option **(B)**.",
+    "steps": [
+      {
+        "title": "The semantics that matter",
+        "body": "- `X - Y` is **set difference**: the elements of `X` that are not in `Y`. `X | Y` is **set union**.\n- `A,B,C = e1,e2,e3` is **simultaneous (tuple) assignment**: Python evaluates all three right-hand expressions using the **old** values of `A`, `B`, `C`, then assigns them together.\n- Inside the loop body the two `if` statements run one after the other in the same iteration, so the second `if` sees the values produced by the first.\n- The `while` condition `\"other\" in C` is checked only at the top of each iteration."
+      },
+      {
+        "title": "Iteration 1",
+        "body": "Start: `A={\"this\",\"that\"}`, `B={\"that\",\"other\"}`, `C={\"other\",\"this\"}`. The loop test `\"other\" in C` is true.\n\n**First `if`:** `\"this\" in A` is true.\n\n- `A-B = {\"this\",\"that\"} - {\"that\",\"other\"} = {\"this\"}`\n- `B-C = {\"that\",\"other\"} - {\"other\",\"this\"} = {\"that\"}`\n- `C-A = {\"other\",\"this\"} - {\"this\",\"that\"} = {\"other\"}`\n\nNow `A={\"this\"}`, `B={\"that\"}`, `C={\"other\"}`.\n\n**Second `if`:** `\"that\" in B` is true.\n\n- `C|A = {\"other\",\"this\"}`\n- `A|B = {\"this\",\"that\"}`\n- `B|C = {\"that\",\"other\"}`\n\nEnd of iteration 1: `A={\"other\",\"this\"}`, `B={\"this\",\"that\"}`, `C={\"that\",\"other\"}`."
+      },
+      {
+        "title": "Iteration 2",
+        "body": "The loop test `\"other\" in C` is true (`C={\"that\",\"other\"}`).\n\n**First `if`:** `\"this\" in A` is true.\n\n- `A-B = {\"other\",\"this\"} - {\"this\",\"that\"} = {\"other\"}`\n- `B-C = {\"this\",\"that\"} - {\"that\",\"other\"} = {\"this\"}`\n- `C-A = {\"that\",\"other\"} - {\"other\",\"this\"} = {\"that\"}`\n\nNow `A={\"other\"}`, `B={\"this\"}`, `C={\"that\"}`.\n\n**Second `if`:** `\"that\" in B` is **false** (`B={\"this\"}`), so it is skipped."
+      },
+      {
+        "title": "Loop exit and the answer",
+        "body": "The loop test is checked again: `\"other\" in C` with `C={\"that\"}` is **false**, so the loop ends.\n\n| Point in execution | `A` | `B` | `C` |\n| --- | --- | --- | --- |\n| start | {this, that} | {that, other} | {other, this} |\n| iter 1, after 1st `if` | {this} | {that} | {other} |\n| iter 1, after 2nd `if` | {other, this} | {this, that} | {that, other} |\n| iter 2, after 1st `if` | {other} | {this} | {that} |\n| iter 2, 2nd `if` skipped; loop exits | {other} | {this} | {that} |\n\nAt the end, `\"this\"` is in `B` only. The answer is option **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "**Python sets.** A `set` is an unordered collection of distinct, hashable items, written `{\"x\", \"y\"}`. The membership test `item in S` is true when `item` belongs to `S`. The operators mirror set algebra:\n\n- `S | T`: union (in either set),\n- `S & T`: intersection (in both),\n- `S - T`: difference (in `S` but not in `T`),\n- `S ^ T`: symmetric difference (in exactly one).\n\nThese operators build **new** sets; they do not modify the operands.\n\n**Tuple (simultaneous) assignment.** In `A,B,C = A-B, B-C, C-A`, the right-hand side is a tuple expression. Python evaluates the whole tuple first, using the current values of `A`, `B` and `C`, and only then unpacks it into the three names. The familiar swap `a, b = b, a` works for exactly this reason. Writing the same update as three separate statements (`A = A-B`, then `B = B-C`, then `C = C-A`) is **not** equivalent, because the later lines would see the already-updated `A`.\n\n**Tracing loops.** For a `while` loop, check the condition, run the whole body (every statement in order, each seeing the effects of the previous ones), then check the condition again. A trace table with one row per update is the safest way to do this under exam pressure.\n\n**Back to this question.** Initially each string lies in exactly two of the three sets. The first `if` keeps, for each set, only the element it does not share with the next set in the cycle (`A` with `B`, `B` with `C`, `C` with `A`), so each set shrinks to one element. The second `if` then merges neighbours again. After two iterations the state is `A={\"other\"}`, `B={\"this\"}`, `C={\"that\"}`. `B` no longer contains `\"that\"` (so the second `if` is skipped) and `C` no longer contains `\"other\"` (so the loop exits). Only `B` holds `\"this\"`.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "At the end `A={\"other\"}`, so `A` does not contain `\"this\"`. \"Only `A`\" describes the state after the **first** assignment of iteration 1 (`A={\"this\"}`), not the final state."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "The loop ends with `A={\"other\"}`, `B={\"this\"}`, `C={\"that\"}`, so `\"this\"` is in `B` and in no other set."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "At the end `C={\"that\"}` (which is exactly why the loop condition `\"other\" in C` fails), so `C` does not contain `\"this\"`."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "`A` and `C` both contain `\"this\"` only in the **initial** state (`A={\"this\",\"that\"}`, `C={\"other\",\"this\"}`). The loop body runs twice and changes all three sets, so this is not the final state."
+      }
+    ],
+    "commonTrap": "Executing `A,B,C=A-B,B-C,C-A` as three sequential assignments, so that `C-A` uses the new `A`. The trace then differs: after iteration 1 you get `A={\"other\",\"this\"}`, `B=C={\"other\",\"that\",\"this\"}`, from iteration 2 on `A` and `B` are empty while `C` keeps `\"other\"`, and the loop would never terminate. Python evaluates the whole right-hand tuple before assigning. Another slip is forgetting that the second `if` runs in the same iteration as the first, using the freshly updated sets."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q47-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed character for character: all quotes, `-` and `|` are ASCII in the PDF text layer. The paper typesets the set braces in a math font; they are the ordinary `{` and `}` characters. The paper indents the code by layout position rather than with literal space characters (the text layer contains no leading spaces; the `if` lines sit about 3.4 and the assignment lines about 5.7 monospace character widths right of `while`). The nesting is rendered here with standard 4- and 8-space indentation, which keeps the printed structure (both `if` statements inside the `while` body, each assignment inside its `if`). The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B (final A={'other'}, B={'this'}, C={'that'})",
+    "agreesWithKey": true,
+    "checkCode": "A={\"this\",\"that\"}\nB={\"that\",\"other\"}\nC={\"other\",\"this\"}\nwhile \"other\" in C:\n    if \"this\" in A:\n        A,B,C=A-B,B-C,C-A\n    if \"that\" in B:\n        A,B,C=C|A,A|B,B|C\n    print(A, B, C)\nprint(\"final:\", A, B, C)\nprint([n for n, s in ((\"A\", A), (\"B\", B), (\"C\", C)) if \"this\" in s])   # ['B']\n",
+    "notes": "Hand trace: the loop runs twice. Iteration 1 applies both updates; in iteration 2 only the first applies. The final state is A={'other'}, B={'this'}, C={'that'}. Running the transcribed code in Python 3 (with a print added per iteration) gives the same final state, and only B contains \"this\". This agrees with the official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

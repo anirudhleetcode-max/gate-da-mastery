@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q40",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 40,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-searching",
+  "subtopicIds": [
+    "pdsa-binary-search"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (binary search discards half the array after each probe), answered by direct recall and confirmed with a one-line check such as n = 4, in about a minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $F(n)$ denote the maximum number of comparisons made while searching for an entry in a sorted array of size $n$ using binary search.\n\nWhich **ONE** of the following options is **TRUE**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$F(n) = F(\\lfloor n/2 \\rfloor) + 1$"
+    },
+    {
+      "label": "B",
+      "text": "$F(n) = F(\\lfloor n/2 \\rfloor) + F(\\lceil n/2 \\rceil)$"
+    },
+    {
+      "label": "C",
+      "text": "$F(n) = F(\\lfloor n/2 \\rfloor)$"
+    },
+    {
+      "label": "D",
+      "text": "$F(n) = F(n - 1) + 1$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Binary search makes one comparison with the middle element and then continues in only one half. The larger half has at most $\\lfloor n/2 \\rfloor$ elements, so the worst case is $F(n) = F(\\lfloor n/2 \\rfloor) + 1$, which solves to $F(n) = \\lfloor \\log_2 n \\rfloor + 1$. That is option **(A)**.",
+    "steps": [
+      {
+        "title": "Model one step of binary search",
+        "body": "Search the range $a[lo..hi]$ holding $n = hi - lo + 1$ elements. Take $mid = \\lfloor (lo + hi)/2 \\rfloor$ and compare the key with $a[mid]$, counting this three-way test as one comparison, the usual convention.\n\n- If key $= a[mid]$, stop.\n- If key $< a[mid]$, continue in $a[lo..mid-1]$.\n- If key $> a[mid]$, continue in $a[mid+1..hi]$.\n\nOnly **one** of the two halves is searched next."
+      },
+      {
+        "title": "Size of the half that remains",
+        "body": "Left half: $mid - lo = \\lfloor (n-1)/2 \\rfloor$ elements. Right half: $hi - mid = \\lceil (n-1)/2 \\rceil = \\lfloor n/2 \\rfloor$ elements.\n\nExamples: for $n = 8$ the halves have $3$ and $4 = \\lfloor 8/2 \\rfloor$ elements, and for $n = 7$ they have $3$ and $3 = \\lfloor 7/2 \\rfloor$. In the worst case the search continues in the larger half, which has $\\lfloor n/2 \\rfloor$ elements."
+      },
+      {
+        "title": "Write and solve the worst-case recurrence",
+        "body": "Worst case = 1 comparison now + worst case on $\\lfloor n/2 \\rfloor$ elements:\n\n$$F(n) = F(\\lfloor n/2 \\rfloor) + 1, \\qquad F(1) = 1 \\;(\\text{and } F(0) = 0).$$\n\nUnrolling for $n = 8$: $F(8) = F(4) + 1 = F(2) + 2 = F(1) + 3 = 4$. In general $n$ is halved $\\lfloor \\log_2 n \\rfloor$ times before it reaches 1, so\n\n$$F(n) = \\lfloor \\log_2 n \\rfloor + 1.$$\n\nFor $n = 1, 2, \\dots, 16$ this gives $1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5$. A brute-force simulation over every target, present or absent, gives the same values."
+      },
+      {
+        "title": "Test the other options on small n",
+        "body": "The true values are $F(1) = 1$, $F(2) = 2$, $F(3) = 2$ and $F(4) = 3$.\n\n- (B): $F(3) = F(1) + F(2) = 3 \\ne 2$. In general (B) gives $F(n) = n \\cdot F(1) = n$.\n- (C): $F(2) = F(1) = 1 \\ne 2$. In general (C) makes $F$ constant.\n- (D): $F(4) = F(3) + 1 = 3$ only if $F(3) = 2$, but (D) itself forces $F(3) = F(2) + 1 = 3$ and so $F(4) = 4 \\ne 3$. In general (D) gives $F(n) = n$.\n\nOnly (A) matches: $F(2) = F(1) + 1 = 2$, $F(3) = F(1) + 1 = 2$, $F(4) = F(2) + 1 = 3$."
+      },
+      {
+        "title": "Answer",
+        "body": "The maximum number of comparisons satisfies $F(n) = F(\\lfloor n/2 \\rfloor) + 1$, which is option **(A)**, and grows as $\\Theta(\\log n)$."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**Binary search** works on a **sorted** array. It compares the key with the middle element. Because the array is sorted, that single comparison tells us which side the key must be on, if it is present at all. The other side, roughly half the array, is thrown away without being examined, and the same step repeats on the half that remains.\n\n**Why a recurrence?** Let $F(n)$ be the *worst-case* (maximum) number of comparisons for $n$ elements. One step costs 1 comparison and leaves a single subproblem. In the worst case that subproblem is the larger half, which has $\\lfloor n/2 \\rfloor$ elements. So\n\n$$F(n) = F(\\lfloor n/2 \\rfloor) + 1.$$\n\nThe worst case happens when the key is absent or is found only at the last probe.\n\n**Solving it.** Each level halves $n$ and adds 1. Starting from $n$, we reach size 1 after $\\lfloor \\log_2 n \\rfloor$ halvings, and one more comparison is made there. So $F(n) = \\lfloor \\log_2 n \\rfloor + 1 = \\Theta(\\log n)$. For example, $10^6$ elements need at most 20 comparisons.\n\n**Recognising recurrence shapes.**\n\n- $T(n) = T(n/2) + c$: one subproblem of half the size. This is binary search, $\\Theta(\\log n)$.\n- $T(n) = 2T(n/2) + cn$: both halves are solved, plus linear work. This is merge sort, $\\Theta(n \\log n)$. Without the $cn$ term, $T(n) = 2T(n/2)$ is $\\Theta(n)$.\n- $T(n) = T(n-1) + c$: the problem shrinks by one element per step. This is linear search, $\\Theta(n)$.\n\n**Back to this question.** Binary search keeps exactly one half and pays one comparison per level. The only option with a single recursive call on $\\lfloor n/2 \\rfloor$ plus a constant is (A). If you count the equality and the less-than tests separately, the constant becomes 2, but the shape is the same, and it still matches only (A) among the choices.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "One comparison with the middle element, then the worst case continues in the larger half, which has $\\lfloor n/2 \\rfloor$ elements. This gives $F(n) = F(\\lfloor n/2 \\rfloor) + 1$ with solution $\\lfloor \\log_2 n \\rfloor + 1$, and it matches exhaustive simulation for all $n$ tested."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "This recurrence searches **both** halves, like a divide-and-conquer sort, and solves to $F(n) = n \\cdot F(1) = n$. Binary search discards one half. Counterexample: $F(3) = 2$, but (B) gives $F(1) + F(2) = 3$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Without the $+1$, the cost of the comparison at each level is dropped, and $F(n) = F(1)$ for every $n$. But $F(2) = 2 \\ne F(1) = 1$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Shrinking the problem by one element per comparison is linear search, which gives $F(n) = n$. Binary search on $n = 4$ needs at most 3 comparisons, not 4."
+      }
+    ],
+    "shortcut": "Plug in $n = 4$, where binary search needs at most 3 comparisons ($F(1) = 1$, $F(2) = 2$). (A) gives $F(2) + 1 = 3$. (B) gives $F(2) + F(2) = 4$. (C) gives $F(2) = 2$. (D) forces $F(4) = 4$. Only (A) survives.",
+    "commonTrap": "Choosing (B) because it resembles the divide-and-conquer recurrence of merge sort. Binary search recurses into only **one** half. (D) is also tempting, but it describes linear search, where each comparison eliminates just one element."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q40-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Floor and ceiling brackets in the options were checked against the rendered image: option (B) is $F(\\lfloor n/2 \\rfloor) + F(\\lceil n/2 \\rceil)$, and options (A) and (C) use floor."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A",
+    "agreesWithKey": true,
+    "checkCode": "def probes(a,t):\n    lo,hi,c=0,len(a)-1,0\n    while lo<=hi:\n        mid=(lo+hi)//2; c+=1   # one 3-way comparison with a[mid]\n        if a[mid]==t: return c\n        if t<a[mid]: hi=mid-1\n        else: lo=mid+1\n    return c\ndef F(n):\n    a=list(range(0,2*n,2))   # odd targets are absent\n    return max(probes(a,t) for t in range(-1,2*n+1)) if n else 0\nFv=[F(n) for n in range(300)]\nprint('A',all(Fv[n]==Fv[n//2]+1 for n in range(1,300)))            # True\nprint('B',all(Fv[n]==Fv[n//2]+Fv[-(-n//2)] for n in range(2,300))) # False\nprint('C',all(Fv[n]==Fv[n//2] for n in range(2,300)))              # False\nprint('D',all(Fv[n]==Fv[n-1]+1 for n in range(2,300)))             # False\nprint(all(Fv[n]==n.bit_length() for n in range(1,300)))            # floor(log2 n)+1\n",
+    "notes": "An exhaustive simulation of binary search over every present and absent target, for n = 1..299, confirms that F(n) = F(floor(n/2)) + 1 = floor(log2 n) + 1 and that options B, C and D fail. This matches the official key A. The simulation counts each three-way comparison with the middle element as one comparison."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

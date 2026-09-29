@@ -1,0 +1,106 @@
+{
+  "id": "DA2026-S8-Q13",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 13,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-uninformed",
+    "ai-informed"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: direct recall of one concept (the uninformed versus informed classification of standard search algorithms) with no computation, well under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 20,
+  "stem": "Which of the following algorithms is **NOT** an example of uninformed search?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Breadth First Search"
+    },
+    {
+      "label": "B",
+      "text": "Depth First Search"
+    },
+    {
+      "label": "C",
+      "text": "A\\* Search"
+    },
+    {
+      "label": "D",
+      "text": "Depth-limited Search"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "Uninformed (blind) search uses only the problem definition and has no estimate of how far a state is from the goal. BFS, DFS and depth-limited search are all uninformed. **A\\*** orders its frontier by $f(n) = g(n) + h(n)$, where $h(n)$ is a heuristic estimate of the cost to the goal, so it is an **informed** search. Answer: **(C)**.",
+    "steps": [
+      {
+        "title": "Define uninformed vs informed search",
+        "body": "- **Uninformed (blind) search** uses only what the problem definition gives: the initial state, the actions, the transition model, the goal test and the step costs. It cannot tell whether one non-goal state is \"closer\" to the goal than another.\n- **Informed (heuristic) search** also uses a **heuristic function** $h(n)$, a problem-specific estimate of the cost of the cheapest path from node $n$ to a goal, to decide which node to expand next."
+      },
+      {
+        "title": "Classify each algorithm by how it picks the next node",
+        "body": "| Algorithm | Frontier ordering | Uses $h(n)$? | Type |\n| --- | --- | --- | --- |\n| Breadth First Search | FIFO queue: shallowest node first | No | Uninformed |\n| Depth First Search | LIFO stack: deepest node first | No | Uninformed |\n| A\\* Search | Priority queue on $f(n) = g(n) + h(n)$ | **Yes** | **Informed** |\n| Depth-limited Search | DFS that treats nodes at depth $\\ell$ as having no successors | No | Uninformed |\n\nHere $g(n)$ is the path cost from the start to $n$. BFS, DFS and depth-limited search use only the structure of the search tree (depth, order of generation); A\\* adds the heuristic estimate $h(n)$."
+      },
+      {
+        "title": "Conclude",
+        "body": "The only algorithm that is **not** uninformed is **A\\* Search**, option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** A\\* Search",
+    "teaching": "**Search as frontier management.** Every classical search algorithm keeps a *frontier* of generated but not yet expanded nodes and repeatedly picks one to expand. Algorithms differ only in **which** node they pick, and that choice defines their category.\n\n**Uninformed (blind) strategies** decide using only the problem definition and the shape of the search tree:\n\n- **Breadth-first search (BFS)** expands the shallowest node (FIFO queue). It is complete, and optimal when all step costs are equal.\n- **Uniform-cost search (UCS)** expands the node with the smallest path cost $g(n)$. It is optimal for non-negative step costs.\n- **Depth-first search (DFS)** expands the deepest node (LIFO stack). It uses little memory but is neither optimal nor, in infinite spaces, complete.\n- **Depth-limited search (DLS)** is DFS with a cutoff $\\ell$: nodes at depth $\\ell$ are treated as having no successors. **Iterative deepening (IDS)** runs DLS with $\\ell = 0, 1, 2, \\dots$\n\nNone of these knows whether a state is near the goal; the goal test only says yes or no.\n\n**Informed (heuristic) strategies** add a heuristic $h(n)$, an estimate of the cheapest cost from $n$ to a goal (e.g. straight-line distance on a road map):\n\n- **Greedy best-first search** expands the node with the smallest $h(n)$.\n- **A\\*** expands the node with the smallest $f(n) = g(n) + h(n)$, the estimated cost of the cheapest solution through $n$. With an admissible heuristic ($h$ never overestimates) A\\* tree search is optimal, and with a consistent heuristic A\\* graph search is optimal.\n\nA quick test: *does the algorithm need a heuristic function $h(n)$ as input?* If yes, it is informed; if no, it is uninformed.\n\n**Back to this question.** BFS, DFS and depth-limited search need no heuristic, so they are uninformed. A\\* cannot run without $h(n)$, so it is the informed one and the answer is **(C)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Breadth First Search expands nodes level by level using a FIFO queue. It uses no heuristic, so it **is** uninformed and is not the answer."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Depth First Search always expands the deepest frontier node using a LIFO stack. It uses no goal-distance estimate, so it **is** uninformed."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "A\\* Search ranks nodes by $f(n) = g(n) + h(n)$, where $h(n)$ is a heuristic estimate of the remaining cost to the goal. Using a heuristic makes it an **informed** (heuristic) search, so it is NOT uninformed."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Depth-limited Search is DFS with a fixed depth cutoff $\\ell$. The cutoff limits the depth explored but gives no per-node estimate of distance to the goal, so it **is** uninformed."
+      }
+    ],
+    "commonTrap": "Reading past the **NOT** and choosing a familiar uninformed method, or thinking that depth-limited search is \"informed\" because it uses a depth limit. The limit is a fixed cutoff on depth, not a heuristic estimate of the cost to reach the goal."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q13-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. \"NOT\" is bold in the paper. The asterisk in \"A* Search\" is escaped in Markdown so it renders literally."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C",
+    "agreesWithKey": true,
+    "notes": "Conceptual classification item; no computation needed. BFS, DFS and depth-limited search use no heuristic and are uninformed, while A* uses f(n) = g(n) + h(n) with a heuristic h(n) and is informed. This matches the official key (C)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

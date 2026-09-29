@@ -1,0 +1,112 @@
+{
+  "id": "DA2026-S8-Q42",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 42,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-relational-algebra"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (evaluating a relational algebra expression with natural joins, selections and a projection) carried through 3–4 routine steps on small tables, with a likely trap of joining the two intermediate results on P alone instead of on all shared attributes; about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider the given relations $X$, $Y$ and $Z$. The relation $X$ has three columns $P$, $Q$ and $R$. The relation $Y$ has three columns $P$, $Q$ and $S$. The relation $Z$ has two columns $P$ and $T$.\n\n$X$\n\n| $P$ | $Q$ | $R$ |\n| --- | --- | --- |\n| P1 | Q1 | R1 |\n| P2 | Q2 | R2 |\n| P3 | Q3 | R2 |\n\n$Y$\n\n| $P$ | $Q$ | $S$ |\n| --- | --- | --- |\n| P1 | Q1 | 2 |\n| P1 | Q2 | 5 |\n| P2 | Q1 | 6 |\n| P3 | Q3 | 1 |\n\n$Z$\n\n| $P$ | $T$ |\n| --- | --- |\n| P1 | T1 |\n| P3 | T2 |\n| P4 | T3 |\n| P4 | NULL |\n\nConsider the relational algebra expression\n\n$$\n\\prod\\nolimits_{PRS}\\Big[\\big(\\sigma_{(Q\\,=\\,Q3\\ \\vee\\ R\\,=\\,R2)}[X \\bowtie Y]\\big) \\bowtie \\big(\\sigma_{(S\\,>\\,1)}[Y \\bowtie Z]\\big)\\Big]\n$$\n\nwhere $\\bowtie$ denotes natural join operation.\n\nWhich of the following options is the correct output for the given expression?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Two rows (P1, R1, 2) and (P1, R1, 5)"
+    },
+    {
+      "label": "B",
+      "text": "Three rows (P1, R1, 2), (P1, R1, 5) and (P2, R2, 6)"
+    },
+    {
+      "label": "C",
+      "text": "One row (P1, R1, 2)"
+    },
+    {
+      "label": "D",
+      "text": "Zero rows"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "$X \\bowtie Y$ (on $P, Q$) gives $(\\text{P1},\\text{Q1},\\text{R1},2)$ and $(\\text{P3},\\text{Q3},\\text{R2},1)$, and the selection $Q = Q3 \\vee R = R2$ keeps only the P3 tuple.\n\n$Y \\bowtie Z$ (on $P$) followed by $S > 1$ keeps only the two P1 tuples. The final natural join matches on $P, Q, S$, and a P3 tuple can never match a P1 tuple, so the result is empty. **(D)**",
+    "steps": [
+      {
+        "title": "Left operand: compute $X \\bowtie Y$",
+        "body": "$X(P, Q, R)$ and $Y(P, Q, S)$ share the attributes $P$ and $Q$, so a tuple of $X$ pairs with a tuple of $Y$ only when **both** $P$ and $Q$ are equal.\n\n| $X$ tuple | Matching $Y$ tuple(s) | Joined tuple $(P, Q, R, S)$ |\n| --- | --- | --- |\n| (P1, Q1, R1) | (P1, Q1, 2) | (P1, Q1, R1, 2) |\n| (P2, Q2, R2) | none: $Y$'s only P2 tuple has Q1 | — |\n| (P3, Q3, R2) | (P3, Q3, 1) | (P3, Q3, R2, 1) |\n\nSo $X \\bowtie Y = \\{(\\text{P1}, \\text{Q1}, \\text{R1}, 2),\\ (\\text{P3}, \\text{Q3}, \\text{R2}, 1)\\}$."
+      },
+      {
+        "title": "Apply $\\sigma_{(Q = Q3 \\vee R = R2)}$",
+        "body": "- $(\\text{P1}, \\text{Q1}, \\text{R1}, 2)$: $Q = \\text{Q1} \\ne \\text{Q3}$ and $R = \\text{R1} \\ne \\text{R2}$, so the condition is false. **Dropped.**\n- $(\\text{P3}, \\text{Q3}, \\text{R2}, 1)$: $Q = \\text{Q3}$ (and also $R = \\text{R2}$), so the condition is true. **Kept.**\n\nLeft operand $L(P, Q, R, S) = \\{(\\text{P3}, \\text{Q3}, \\text{R2}, 1)\\}$."
+      },
+      {
+        "title": "Right operand: compute $Y \\bowtie Z$ and apply $\\sigma_{(S > 1)}$",
+        "body": "$Y(P, Q, S)$ and $Z(P, T)$ share only $P$.\n\n| $Y$ tuple | Matching $Z$ tuple(s) | Joined tuple $(P, Q, S, T)$ | $S > 1$? |\n| --- | --- | --- | --- |\n| (P1, Q1, 2) | (P1, T1) | (P1, Q1, 2, T1) | $2 > 1$: kept |\n| (P1, Q2, 5) | (P1, T1) | (P1, Q2, 5, T1) | $5 > 1$: kept |\n| (P2, Q1, 6) | none: no P2 in $Z$ | — | — |\n| (P3, Q3, 1) | (P3, T2) | (P3, Q3, 1, T2) | $1 > 1$ is false: dropped |\n\nThe two P4 tuples of $Z$, including the one with $T = \\text{NULL}$, have no partner in $Y$ and disappear.\n\nRight operand $R'(P, Q, S, T) = \\{(\\text{P1}, \\text{Q1}, 2, \\text{T1}),\\ (\\text{P1}, \\text{Q2}, 5, \\text{T1})\\}$."
+      },
+      {
+        "title": "Final natural join and projection",
+        "body": "$L$ has schema $(P, Q, R, S)$ and $R'$ has schema $(P, Q, S, T)$, so $L \\bowtie R'$ matches on **all three** shared attributes $P$, $Q$ and $S$.\n\n$L$'s only tuple has $(P, Q, S) = (\\text{P3}, \\text{Q3}, 1)$. Both tuples of $R'$ have $P = \\text{P1}$, so no pair agrees even on $P$ alone, let alone on $Q$ and $S$ as well.\n\n$$\nL \\bowtie R' = \\varnothing \\quad\\Longrightarrow\\quad \\prod\\nolimits_{PRS}(\\varnothing) = \\varnothing\n$$\n\nThe projection of an empty relation is empty, so the output has **zero rows** → **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)** Zero rows",
+    "teaching": "**The three operators involved.**\n\n- **Selection** $\\sigma_{\\theta}(E)$ keeps the rows of $E$ for which the condition $\\theta$ is true. It never changes the columns. Here $\\theta$ uses $\\vee$ (OR), so a row survives if **either** part holds.\n- **Projection** $\\prod_{A_1 \\dots A_k}(E)$ keeps only the listed columns and removes any duplicate rows this creates. It can never create rows, so the projection of an empty relation is empty.\n- **Natural join** $E_1 \\bowtie E_2$ pairs every row of $E_1$ with every row of $E_2$ that agrees on **every attribute name the two schemas share**, and keeps one copy of each shared column. If the schemas share several attributes, all of them must be equal at once. Rows with no partner simply vanish (this is not an outer join), and a NULL never equals anything, so it can never produce a match.\n\n**How to evaluate a nested expression.** Work inside out, and write down the **schema** of every intermediate result, because the schema decides which attributes the next natural join uses:\n\n- $X \\bowtie Y$: shared $\\{P, Q\\}$, result schema $(P, Q, R, S)$.\n- $Y \\bowtie Z$: shared $\\{P\\}$, result schema $(P, Q, S, T)$.\n- The outer join: shared $\\{P, Q, S\\}$.\n\n**Applying it here.** The left branch starts with two joined tuples, and the OR-selection keeps only the P3 one, since the P1 tuple has neither Q3 nor R2. The right branch keeps the two P1 tuples. The P3 tuple is dropped by $S > 1$ because its $S$ is exactly 1. The two branches now have no $P$ value in common, so the outer natural join, which needs agreement on $P$, $Q$ and $S$, returns nothing. Projecting nothing onto $P, R, S$ still gives nothing. Options (A)–(C) all list P1 rows, which could appear only if the P1 tuple wrongly survived the left selection.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "A P1 row needs $X$'s P1 tuple in the left operand, but $(\\text{P1}, \\text{Q1}, \\text{R1}, 2)$ fails $Q = Q3 \\vee R = R2$ ($\\text{Q1} \\ne \\text{Q3}$, $\\text{R1} \\ne \\text{R2}$). Moreover $(\\text{P1}, \\text{R1}, 5)$ would pair $X$'s $(\\text{P1}, \\text{Q1}, \\text{R1})$ with $S = 5$, which belongs to $Y$'s tuple $(\\text{P1}, \\text{Q2}, 5)$ with a different $Q$. Rows like these would arise, for example, if the left selection were skipped **and** the final join matched on $P$ alone."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Besides the P1 rows ruled out in (A), $(\\text{P2}, \\text{R2}, 6)$ cannot appear. $X$'s P2 tuple has Q2, while $Y$'s only P2 tuple has Q1, so it is lost in $X \\bowtie Y$. $Y$'s $(\\text{P2}, \\text{Q1}, 6)$ is also lost in $Y \\bowtie Z$ because $Z$ has no P2."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$(\\text{P1}, \\text{R1}, 2)$ is what the final join would give if the selection on $X \\bowtie Y$ were ignored: $(\\text{P1}, \\text{Q1}, \\text{R1}, 2)$ matches $(\\text{P1}, \\text{Q1}, 2, \\text{T1})$ on $P, Q, S$. But the selection removes that tuple, since it has neither Q3 nor R2."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "After the selections, the left operand holds only $(\\text{P3}, \\text{Q3}, \\text{R2}, 1)$ and the right operand holds only P1 tuples. The natural join on $P, Q, S$ is empty, so the projection is empty: zero rows."
+      }
+    ],
+    "shortcut": "Track only the $P$ values, since every join here includes $P$. After $\\sigma_{(Q = Q3 \\vee R = R2)}$ the left side has $P \\in \\{\\text{P3}\\}$. After $\\sigma_{(S > 1)}$ the right side has $P \\in \\{\\text{P1}\\}$. Disjoint $P$ sets mean an empty natural join, so the answer is zero rows without computing any further columns.",
+    "commonTrap": "Skipping or misreading the OR-selection on $X \\bowtie Y$. The P1 tuple has Q1 and R1, so it fails **both** parts of $Q = Q3 \\vee R = R2$. Keeping it leads straight to option (C). A second trap is joining the two intermediate results on $P$ only; a natural join must match on every shared attribute, here $P$, $Q$ and $S$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q42-1.webp",
+    "/pyq/2026/official/Q42-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The relations X, Y and Z are transcribed as GFM tables. The paper writes the projection with the ∏ symbol subscripted PRS; it is transcribed as \\prod\\nolimits_{PRS}. The constants Q3 and R2 in the selection condition appear in math italics on the paper and are kept as written."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "D (zero rows)",
+    "agreesWithKey": true,
+    "checkCode": "X=[dict(P=p,Q=q,R=r) for p,q,r in [('P1','Q1','R1'),('P2','Q2','R2'),('P3','Q3','R2')]]\nY=[dict(P=p,Q=q,S=s) for p,q,s in [('P1','Q1',2),('P1','Q2',5),('P2','Q1',6),('P3','Q3',1)]]\nZ=[dict(P=p,T=t) for p,t in [('P1','T1'),('P3','T2'),('P4','T3'),('P4',None)]]\ndef nj(A,B):\n    c=set(A[0])&set(B[0]); return [{**a,**b} for a in A for b in B if all(a[k]==b[k] and a[k] is not None for k in c)]\nL=[t for t in nj(X,Y) if t['Q']=='Q3' or t['R']=='R2']\nR=[t for t in nj(Y,Z) if t['S']>1]\nprint('X*Y sel:',L); print('Y*Z sel:',R)\nout={(t['P'],t['R'],t['S']) for t in nj(L,R)} if L and R else set()\nprint('result:',out); assert out==set()",
+    "notes": "Hand evaluation: X⋈Y (on P,Q) = {(P1,Q1,R1,2), (P3,Q3,R2,1)}; σ(Q=Q3 ∨ R=R2) keeps only (P3,Q3,R2,1). Y⋈Z (on P) = {(P1,Q1,2,T1), (P1,Q2,5,T1), (P3,Q3,1,T2)}; σ(S>1) keeps the two P1 tuples. The outer natural join on P,Q,S is empty, so the projection has zero rows. A Python simulation of the natural joins gives the same empty result. This matches official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

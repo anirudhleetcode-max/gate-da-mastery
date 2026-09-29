@@ -1,0 +1,119 @@
+{
+  "id": "DA2025-S5-Q48",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 48,
+  "section": "DA",
+  "subjectId": "co",
+  "topicId": "co-limits-continuity",
+  "subtopicIds": [
+    "co-continuity-differentiability",
+    "co-functions"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (continuity versus differentiability of a piecewise-linear function) where each statement is settled by direct recall or a one-line check (one-sided limits, one-sided derivatives, a single counterexample), taking about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Which of the following statements is/are correct about the rectified linear unit (ReLU) activation function defined as $\\mathrm{ReLU}(x) = \\max(x, 0)$, where $x \\in \\mathbb{R}$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "ReLU is continuous everywhere"
+    },
+    {
+      "label": "B",
+      "text": "ReLU is differentiable everywhere"
+    },
+    {
+      "label": "C",
+      "text": "ReLU is not differentiable at $x = 0$"
+    },
+    {
+      "label": "D",
+      "text": "$\\mathrm{ReLU}(x) = \\mathrm{ReLU}(ax)$, for all $a \\in \\mathbb{R}$"
+    }
+  ],
+  "officialKeyRaw": "A;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "$\\mathrm{ReLU}(x)$ equals $0$ for $x < 0$ and $x$ for $x \\ge 0$: two straight pieces that meet at the origin. It is therefore continuous everywhere, so (A) is true. At $x = 0$ the left derivative is $0$ and the right derivative is $1$, so ReLU is **not** differentiable there: (C) is true and (B) is false. (D) fails for $a = -1$, $x = 1$, since $\\mathrm{ReLU}(1) = 1 \\ne 0 = \\mathrm{ReLU}(-1)$. The answer is **(A), (C)**.",
+    "steps": [
+      {
+        "title": "Write ReLU piecewise",
+        "body": "By definition $\\mathrm{ReLU}(x) = \\max(x, 0)$, so\n\n$$\n\\mathrm{ReLU}(x) = \\begin{cases} 0, & x < 0 \\\\ x, & x \\ge 0. \\end{cases}\n$$\n\nThe graph is the flat half-line $y = 0$ on the left joined at the origin to the line $y = x$ (slope $1$) on the right. Its only possible trouble spot is the junction $x = 0$."
+      },
+      {
+        "title": "Continuity everywhere (statement A)",
+        "body": "- For $x < 0$, ReLU is the constant $0$, and for $x > 0$ it is the polynomial $x$. Both are continuous on their open intervals.\n- At the junction $x = 0$:\n\n$$\n\\lim_{x \\to 0^-} \\mathrm{ReLU}(x) = \\lim_{x \\to 0^-} 0 = 0, \\qquad \\lim_{x \\to 0^+} \\mathrm{ReLU}(x) = \\lim_{x \\to 0^+} x = 0, \\qquad \\mathrm{ReLU}(0) = \\max(0,0) = 0.\n$$\n\nBoth one-sided limits equal the function value, so ReLU is continuous at $0$ as well. (Equivalently, $|\\max(x,0) - \\max(y,0)| \\le |x - y|$ for all $x, y$, so ReLU is 1-Lipschitz and hence continuous.)\n\nStatement **(A) is true**."
+      },
+      {
+        "title": "Differentiability at x = 0 (statements B and C)",
+        "body": "Compute the one-sided derivatives at $0$ from the difference quotient $\\dfrac{\\mathrm{ReLU}(0+h) - \\mathrm{ReLU}(0)}{h} = \\dfrac{\\mathrm{ReLU}(h)}{h}$:\n\n$$\n\\mathrm{ReLU}'_-(0) = \\lim_{h \\to 0^-} \\frac{0}{h} = 0, \\qquad \\mathrm{ReLU}'_+(0) = \\lim_{h \\to 0^+} \\frac{h}{h} = 1.\n$$\n\nSince $0 \\ne 1$, the two-sided limit does not exist, and ReLU is **not differentiable at $x = 0$**. Elsewhere it is differentiable, with $\\mathrm{ReLU}'(x) = 0$ for $x < 0$ and $\\mathrm{ReLU}'(x) = 1$ for $x > 0$.\n\nStatement **(B) is false** and statement **(C) is true**."
+      },
+      {
+        "title": "The scaling identity (statement D)",
+        "body": "Statement (D) claims $\\mathrm{ReLU}(x) = \\mathrm{ReLU}(ax)$ for **every** $a \\in \\mathbb{R}$. One counterexample is enough to refute it:\n\n| $a$ | $x$ | $\\mathrm{ReLU}(x)$ | $\\mathrm{ReLU}(ax)$ |\n| --- | --- | --- | --- |\n| $-1$ | $1$ | $1$ | $\\mathrm{ReLU}(-1) = 0$ |\n| $2$ | $1$ | $1$ | $\\mathrm{ReLU}(2) = 2$ |\n| $0$ | $1$ | $1$ | $\\mathrm{ReLU}(0) = 0$ |\n\nThe identity that ReLU does satisfy is **positive homogeneity**: $\\mathrm{ReLU}(ax) = a\\,\\mathrm{ReLU}(x)$ for $a \\ge 0$. That is a different statement, and it still fails for negative $a$.\n\nStatement **(D) is false**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "ReLU is continuous everywhere (A) and has a corner at $x = 0$, where it is not differentiable (C). It is not differentiable everywhere (B fails), and $\\mathrm{ReLU}(x) = \\mathrm{ReLU}(ax)$ does not hold for all $a$ (D fails). The correct statements are **(A) and (C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (C)**",
+    "teaching": "**Continuity.** A function $f$ is continuous at a point $c$ when $\\lim_{x \\to c} f(x) = f(c)$: the graph has no jump or hole there. For a function defined in pieces, each piece is usually continuous on its own interval, so you only have to check the junction points. At a junction, compute the left-hand limit, the right-hand limit and the function value; if all three agree, the function is continuous there.\n\n**Differentiability.** $f$ is differentiable at $c$ when the limit\n\n$$\nf'(c) = \\lim_{h \\to 0} \\frac{f(c+h) - f(c)}{h}\n$$\n\nexists. At a junction of two pieces, compute the **left derivative** (with $h \\to 0^-$) and the **right derivative** (with $h \\to 0^+$). The function is differentiable only when they are equal. Geometrically, differentiable means the graph has a single tangent line; a \"corner\" where two different slopes meet has none.\n\n**The key relationship.** Differentiable $\\Rightarrow$ continuous, but **not** the other way round. $|x|$ is the classic example: continuous everywhere, but with slopes $-1$ and $+1$ meeting at $0$. ReLU is the same kind of function, with slopes $0$ and $1$ meeting at the origin.\n\n**ReLU in neural networks.** ReLU is popular because it is cheap to compute, and its slope is exactly $1$ for positive inputs, which helps gradients flow through deep networks. Training uses gradients, yet ReLU has no derivative at $0$. Frameworks handle this with a convention: they simply use a fixed value there (typically $0$), which is a valid **subgradient** (any number in $[0, 1]$ is). Hitting exactly $0$ is rare in practice, so the convention causes no trouble, but it does not make ReLU differentiable in the mathematical sense.\n\n**Back to this question.** (A) and (C) are the standard facts: continuous everywhere, with a corner at $0$. (B) confuses \"usable in gradient training\" with \"differentiable\". (D) is a garbled version of positive homogeneity, $\\mathrm{ReLU}(ax) = a\\,\\mathrm{ReLU}(x)$ for $a \\ge 0$; the stated identity breaks for $a = -1$, $a = 0$ or $a = 2$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Both pieces ($0$ and $x$) are continuous, and at the junction $\\lim_{x\\to 0^-} = \\lim_{x \\to 0^+} = \\mathrm{ReLU}(0) = 0$. So ReLU is continuous at every real $x$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "At $x = 0$ the left derivative is $0$ and the right derivative is $1$. They differ, so the derivative does not exist at $0$ and ReLU is not differentiable everywhere."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "The one-sided derivatives at $0$ are $0$ (from the left) and $1$ (from the right). The graph has a corner at the origin, so ReLU is not differentiable at $x = 0$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Take $a = -1$ and $x = 1$: $\\mathrm{ReLU}(1) = 1$ but $\\mathrm{ReLU}(-1) = 0$. The identity fails, so it does not hold for all $a \\in \\mathbb{R}$. (What ReLU satisfies is $\\mathrm{ReLU}(ax) = a\\,\\mathrm{ReLU}(x)$ for $a \\ge 0$.)"
+      }
+    ],
+    "shortcut": "For a piecewise-linear function whose pieces meet, continuity is automatic, and differentiability at a junction holds exactly when the two slopes agree. ReLU's slopes are $0$ and $1$ at the origin, so it is continuous everywhere but not differentiable at $0$. For (D), test $a = -1$, $x = 1$.",
+    "commonTrap": "Marking (B) because neural networks are trained with gradients through ReLU. Frameworks just assign a conventional value (usually $0$) at $x = 0$; the mathematical derivative does not exist there. A second trap is misremembering positive homogeneity, $\\mathrm{ReLU}(ax) = a\\,\\mathrm{ReLU}(x)$ for $a \\ge 0$, as (D)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q48-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the name ReLU in upright text and its argument in math italic, rendered here as $\\mathrm{ReLU}(x)$ inside math and as plain text where the paper writes the bare word. In option (D) the equals sign between the two ReLU expressions is set in text font in the paper; it is rendered in math mode here, with no change in meaning. No figure is needed. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;C (continuous everywhere; one-sided derivatives at 0 are 0 and 1, so not differentiable at 0; D fails for a = -1, x = 1)",
+    "agreesWithKey": true,
+    "checkCode": "import itertools, numpy as np\nr=np.linalg.matrix_rank\ndef count(M,b):  # Rouche-Capelli: 0, 1 or 'inf' solutions of Mx=b\n    rM=r(M); rA=r(np.column_stack([M,b]))\n    return 0 if rA>rM else (1 if rM==M.shape[1] else 'inf')\n# Worked examples\nM=np.diag([1.,1,0]); print('B:', count(M,[0,0,1]), count(M,[0,0,0]))          # 0 inf -> (B) true\nM=np.array([[1.,0],[0,1],[0,0]]); print('D:', count(M,[1,2,0]), count(M,[0,0,1]))  # 1 0 -> (D) true\n# Exhaustive check over all matrices with entries in {-1,0,1}: which pairs of behaviours co-occur?\ndef behaviours(m,n):\n    out=set()\n    for e in itertools.product([-1,0,1],repeat=m*n):\n        M=np.array(e,float).reshape(m,n); k=r(M)\n        # over all b: 'none' possible iff k<m; 'unique' possible iff k==n; 'inf' possible iff k<n (b=0)\n        out.add((k<m, k==n, k<n))\n    return out\nb33=behaviours(3,3); b23=behaviours(2,3); b32=behaviours(3,2)\nprint('A possible:', any(u and i for _,u,i in b33))   # False\nprint('B possible:', any(no and i for no,_,i in b33)) # True\nprint('C possible:', any(u and i for _,u,i in b23))   # False\nprint('D possible:', any(u and no for no,u,_ in b32)) # True\n",
+    "notes": "Hand solve: both one-sided limits at 0 equal ReLU(0) = 0, so ReLU is continuous everywhere (A true). The left and right derivatives at 0 are 0 and 1, so it is not differentiable at 0 (C true, B false). D fails for a = -1, x = 1 (1 vs 0) and for a = 2, x = 1 (1 vs 2). The SymPy check reproduces the one-sided limits and one-sided derivatives, and evaluates the counterexamples. This agrees with the official key A;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

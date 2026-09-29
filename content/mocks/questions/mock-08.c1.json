@@ -1,0 +1,683 @@
+[
+  {
+    "id": "M08-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen",
+      "la-determinant"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (eigenvalues of a polynomial in $A$, determinant as their product) with a one-line computation; about a minute for a prepared student.",
+    "estimatedTimeSec": 60,
+    "concept": "Eigenvalues of a matrix polynomial p(A) are p(λ); the determinant is the product of the eigenvalues.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $A$ be a real $3 \\times 3$ matrix whose eigenvalues are $1$, $2$ and $4$.\n\nThe determinant of the matrix $A^2 - A$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0$"
+      },
+      {
+        "label": "B",
+        "text": "$14$"
+      },
+      {
+        "label": "C",
+        "text": "$42$"
+      },
+      {
+        "label": "D",
+        "text": "$56$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "If $A\\mathbf{v} = \\lambda \\mathbf{v}$, then $(A^2 - A)\\mathbf{v} = (\\lambda^2 - \\lambda)\\mathbf{v}$, so the eigenvalues of $A^2 - A$ are $1 - 1 = 0$, $4 - 2 = 2$ and $16 - 4 = 12$.\nThe determinant is their product: $0 \\cdot 2 \\cdot 12 = 0$.",
+      "steps": [
+        {
+          "title": "Eigenvalues of a polynomial in A",
+          "body": "If $A\\mathbf{v} = \\lambda\\mathbf{v}$ with $\\mathbf{v} \\ne \\mathbf{0}$, then $A^2\\mathbf{v} = A(\\lambda\\mathbf{v}) = \\lambda^2\\mathbf{v}$. Hence\n$$(A^2 - A)\\mathbf{v} = (\\lambda^2 - \\lambda)\\mathbf{v},$$\nso every eigenvalue $\\lambda$ of $A$ produces the eigenvalue $p(\\lambda) = \\lambda^2 - \\lambda$ of $A^2 - A$. Because $A$ has three distinct eigenvalues it is diagonalizable, and these three values are exactly the eigenvalues of $A^2 - A$."
+        },
+        {
+          "title": "Substitute the eigenvalues",
+          "body": "$\\lambda = 1 \\Rightarrow 1 - 1 = 0$\n\n$\\lambda = 2 \\Rightarrow 4 - 2 = 2$\n\n$\\lambda = 4 \\Rightarrow 16 - 4 = 12$"
+        },
+        {
+          "title": "Determinant = product of eigenvalues",
+          "body": "$\\det(A^2 - A) = 0 \\times 2 \\times 12 = 0$.\n\nCross-check by factorising: $A^2 - A = A(A - I)$, so $\\det(A^2 - A) = \\det(A)\\,\\det(A - I) = 8 \\times \\big[(1-1)(2-1)(4-1)\\big] = 8 \\times 0 = 0$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "The eigenvector of $A$ for $\\lambda = 1$ satisfies $A\\mathbf{v} = \\mathbf{v}$, hence $(A^2 - A)\\mathbf{v} = \\mathbf{v} - \\mathbf{v} = \\mathbf{0}$: it lies in the null space of $A^2 - A$, so that matrix is singular and its determinant is $0$ — option (A)."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "An eigenvector $\\mathbf{v}$ of $A$ is a non-zero vector that $A$ only stretches: $A\\mathbf{v} = \\lambda\\mathbf{v}$. Applying $A$ again stretches it again, so $A^k\\mathbf{v} = \\lambda^k\\mathbf{v}$, and any polynomial $p(A) = c_0 I + c_1 A + c_2 A^2 + \\dots$ acts on $\\mathbf{v}$ as the number $p(\\lambda)$. This is the *spectral mapping* rule: the eigenvalues of $p(A)$ are $p(\\lambda_1), \\dots, p(\\lambda_n)$, with the same eigenvectors.\n\nTwo facts then finish most such questions: the **determinant** of a matrix is the **product** of its eigenvalues and the **trace** is their **sum**. A matrix is singular exactly when $0$ is one of its eigenvalues.\n\nIn this question $p(\\lambda) = \\lambda^2 - \\lambda = \\lambda(\\lambda - 1)$ vanishes at $\\lambda = 1$. Since $1$ is an eigenvalue of $A$, $A^2 - A$ has eigenvalue $0$ and therefore determinant $0$ — no further arithmetic is needed.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The eigenvalues of $A^2 - A$ are $0, 2, 12$; their product is $0$. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$14 = 0 + 2 + 12$ is the **sum** of the eigenvalues of $A^2 - A$, i.e. its trace, not its determinant."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$42 = 7^2 - 7$ applies the polynomial to $\\operatorname{tr}(A) = 1 + 2 + 4 = 7$. The polynomial must be applied to each eigenvalue separately, and the determinant is a product, not a function of the trace."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$56 = 8^2 - 8 = \\det(A)^2 - \\det(A)$ assumes $\\det(A^2 - A) = \\det(A^2) - \\det(A)$. The determinant is multiplicative, **not** additive."
+        }
+      ],
+      "shortcut": "$A^2 - A = A(A - I)$, and $A - I$ is singular because $1$ is an eigenvalue of $A$. Hence $\\det(A^2 - A) = 0$ instantly.",
+      "commonTrap": "Writing $\\det(A^2 - A) = \\det(A^2) - \\det(A) = 64 - 8 = 56$. The determinant of a difference is not the difference of determinants."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nP = sp.Matrix([[1,1,0],[0,1,1],[1,0,1]])      # any invertible P\nA = P*sp.diag(1,2,4)*P.inv()                  # eigenvalues 1, 2, 4\nprint((A*A - A).det())                        # 0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-nullity",
+      "la-rank"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked concepts (finding the rank by spotting row dependencies, then applying rank–nullity to $A^\\top$ rather than $A$) in about three steps; roughly 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Rank–nullity theorem applied to the transpose: dim N(Aᵀ) = (number of rows) − rank(A).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the $4 \\times 6$ real matrix\n\n$$A = \\begin{bmatrix} 1 & -1 & 2 & 0 & 3 & 1 \\\\ 0 & 2 & 1 & 1 & -1 & 2 \\\\ 1 & 1 & 3 & 1 & 2 & 3 \\\\ 2 & -4 & 3 & -1 & 7 & 0 \\end{bmatrix}$$\n\nThe dimension of the subspace $\\{\\mathbf{y} \\in \\mathbb{R}^4 : A^\\top \\mathbf{y} = \\mathbf{0}\\}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1$"
+      },
+      {
+        "label": "B",
+        "text": "$2$"
+      },
+      {
+        "label": "C",
+        "text": "$3$"
+      },
+      {
+        "label": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Rows: $R_3 = R_1 + R_2$ and $R_4 = 2R_1 - R_2$, while $R_1, R_2$ are independent, so $\\operatorname{rank}(A) = 2$.\n$A^\\top$ is $6 \\times 4$ with rank $2$, so $\\dim N(A^\\top) = 4 - 2 = 2$.",
+      "steps": [
+        {
+          "title": "Identify the subspace",
+          "body": "$\\{\\mathbf{y} \\in \\mathbb{R}^4 : A^\\top\\mathbf{y} = \\mathbf{0}\\}$ is the null space of $A^\\top$ (the *left null space* of $A$). $A^\\top$ has $4$ columns, so by rank–nullity\n$$\\dim N(A^\\top) = 4 - \\operatorname{rank}(A^\\top) = 4 - \\operatorname{rank}(A).$$"
+        },
+        {
+          "title": "Find the row dependencies",
+          "body": "Let $R_1, \\dots, R_4$ be the rows.\n\n$R_1 + R_2 = (1+0,\\ -1+2,\\ 2+1,\\ 0+1,\\ 3-1,\\ 1+2) = (1, 1, 3, 1, 2, 3) = R_3$.\n\n$2R_1 - R_2 = (2-0,\\ -2-2,\\ 4-1,\\ 0-1,\\ 6+1,\\ 2-2) = (2, -4, 3, -1, 7, 0) = R_4$.\n\nSo $R_3$ and $R_4$ lie in the span of $R_1$ and $R_2$."
+        },
+        {
+          "title": "Rank of A",
+          "body": "$R_1 = (1, -1, 2, 0, 3, 1)$ and $R_2 = (0, 2, 1, 1, -1, 2)$ are not multiples of each other (the first entries are $1$ and $0$ but $R_2 \\ne \\mathbf{0}$), so they are linearly independent. Row reduction ($R_3 \\to R_3 - R_1 - R_2$, $R_4 \\to R_4 - 2R_1 + R_2$) leaves exactly two non-zero rows. Hence $\\operatorname{rank}(A) = 2$."
+        },
+        {
+          "title": "Apply rank–nullity to the transpose",
+          "body": "$\\dim N(A^\\top) = 4 - 2 = 2$.\n\nExplicit basis: the dependencies give $\\mathbf{y}_1 = (1, 1, -1, 0)^\\top$ (since $R_1 + R_2 - R_3 = \\mathbf{0}$) and $\\mathbf{y}_2 = (2, -1, 0, -1)^\\top$ (since $2R_1 - R_2 - R_4 = \\mathbf{0}$); both satisfy $A^\\top\\mathbf{y} = \\mathbf{0}$ and are independent. Answer: $2$ — option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "For an $m \\times n$ matrix $A$, the **rank** is the number of linearly independent rows (equivalently, columns), and the **nullity** is the dimension of the solution space of $A\\mathbf{x} = \\mathbf{0}$. The rank–nullity theorem says that rank plus nullity equals the number of **columns**, because each column is one unknown and each independent equation removes one degree of freedom.\n\nRow rank equals column rank, so $\\operatorname{rank}(A^\\top) = \\operatorname{rank}(A)$. Applying rank–nullity to the $n \\times m$ matrix $A^\\top$ gives $\\dim N(A^\\top) = m - \\operatorname{rank}(A)$, where $m$ is the number of **rows** of $A$. A vector $\\mathbf{y}$ in $N(A^\\top)$ satisfies $\\mathbf{y}^\\top A = \\mathbf{0}^\\top$, i.e. it lists the coefficients of a linear combination of the rows that vanishes — each independent row dependency contributes one dimension.\n\nHere the $4$ rows satisfy two independent dependencies, so $\\operatorname{rank}(A) = 2$ and the left null space has dimension $4 - 2 = 2$, while the ordinary null space of $A$ has dimension $6 - 2 = 4$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$1$ results from spotting only one row dependency (e.g. $R_3 = R_1 + R_2$), taking the rank as $3$ and computing $4 - 3$. Row 4 is also dependent: $R_4 = 2R_1 - R_2$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\operatorname{rank}(A) = 2$ and $\\dim N(A^\\top) = (\\text{rows of } A) - \\operatorname{rank} = 4 - 2 = 2$. Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$3 = 6 - 3$ is the nullity of $A$ (not $A^\\top$) computed with the wrong rank $3$ — two errors at once."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$4 = 6 - 2$ is the nullity of $A$ itself (solutions of $A\\mathbf{x} = \\mathbf{0}$ in $\\mathbb{R}^6$). The question asks about $A^\\top\\mathbf{y} = \\mathbf{0}$ with $\\mathbf{y} \\in \\mathbb{R}^4$, so subtract the rank from the number of rows, $4$."
+        }
+      ],
+      "shortcut": "Count row dependencies directly: every independent linear relation among the rows is one basis vector of $N(A^\\top)$. Two relations ($R_3 = R_1 + R_2$, $R_4 = 2R_1 - R_2$) give dimension $2$.",
+      "commonTrap": "Using the number of columns ($6$) instead of the number of rows ($4$) and answering $6 - 2 = 4$, which is the nullity of $A$, not of $A^\\top$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[1,-1,2,0,3,1],[0,2,1,1,-1,2],[1,1,3,1,2,3],[2,-4,3,-1,7,0]])\nprint(A.rank(), len(A.T.nullspace()))   # 2 2",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-mlp",
+      "ml-feedforward"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single forward pass through one small ReLU hidden layer (three dot products, a ReLU and one output sum); about a minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Forward pass of a one-hidden-layer MLP with ReLU activations and a linear output unit.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A multi-layer perceptron has 2 inputs, one hidden layer of 3 units with ReLU activation, and a single linear output unit. For an input $\\mathbf{x} \\in \\mathbb{R}^2$ it computes\n\n$$\\mathbf{h} = \\operatorname{ReLU}(W\\mathbf{x} + \\mathbf{b}), \\qquad y = \\mathbf{v}^\\top \\mathbf{h} + c,$$\n\nwhere $\\operatorname{ReLU}(z) = \\max(0, z)$ is applied element-wise and\n\n$$W = \\begin{bmatrix} 1 & 3 \\\\ -1 & -2 \\\\ 0.5 & 1 \\end{bmatrix}, \\quad \\mathbf{b} = \\begin{bmatrix} 0.5 \\\\ 1 \\\\ 2 \\end{bmatrix}, \\quad \\mathbf{v} = \\begin{bmatrix} 4 \\\\ 3 \\\\ -1 \\end{bmatrix}, \\quad c = 0.5.$$\n\nFor the input $\\mathbf{x} = \\begin{bmatrix} 2 \\\\ -1 \\end{bmatrix}$, the output $y$ is ________ (rounded off to one decimal place).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 1.5,
+      "max": 1.5
+    },
+    "solution": {
+      "quick": "$W\\mathbf{x} + \\mathbf{b} = (-0.5,\\ 1,\\ 2)$, so $\\mathbf{h} = \\operatorname{ReLU}(\\cdot) = (0,\\ 1,\\ 2)$.\n$y = 4(0) + 3(1) + (-1)(2) + 0.5 = 1.5$.",
+      "steps": [
+        {
+          "title": "Hidden pre-activations",
+          "body": "$z_1 = 1(2) + 3(-1) + 0.5 = 2 - 3 + 0.5 = -0.5$\n\n$z_2 = -1(2) + (-2)(-1) + 1 = -2 + 2 + 1 = 1$\n\n$z_3 = 0.5(2) + 1(-1) + 2 = 1 - 1 + 2 = 2$"
+        },
+        {
+          "title": "Apply ReLU",
+          "body": "$\\mathbf{h} = (\\max(0, -0.5),\\ \\max(0, 1),\\ \\max(0, 2)) = (0,\\ 1,\\ 2)$. The first hidden unit is inactive for this input."
+        },
+        {
+          "title": "Linear output unit",
+          "body": "$y = \\mathbf{v}^\\top\\mathbf{h} + c = 4(0) + 3(1) + (-1)(2) + 0.5 = 0 + 3 - 2 + 0.5 = 1.5$."
+        }
+      ],
+      "finalAnswer": "**1.5**",
+      "teaching": "A multi-layer perceptron is a chain of simple layers. Each layer first forms a weighted sum of its inputs plus a bias — one row of the weight matrix per unit, so unit $j$ computes $z_j = \\mathbf{w}_j^\\top\\mathbf{x} + b_j$ — and then passes that number through a non-linear **activation**. ReLU keeps positive values unchanged and replaces negative values by $0$; a unit whose pre-activation is negative is therefore \"switched off\" and contributes nothing downstream.\n\nThe output layer here is **linear** (no activation), as is usual for regression: it simply takes the weighted sum of the hidden activations plus its own bias.\n\nComputing a forward pass is always the same routine: pre-activation → activation → next layer. In this question the non-linearity matters: the first hidden unit has $z_1 = -0.5 < 0$, so ReLU sets it to $0$ and its large output weight $4$ is irrelevant for this input. Skipping the ReLU would change the answer from $1.5$ to $-0.5$.",
+      "commonTrap": "Forgetting the ReLU (using $z_1 = -0.5$ directly) gives $y = 4(-0.5) + 3 - 2 + 0.5 = -0.5$; forgetting the output bias $c$ gives $1.0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1.5",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nW = np.array([[1,3],[-1,-2],[0.5,1]]); b = np.array([0.5,1,2])\nv = np.array([4,3,-1]); c = 0.5; x = np.array([2,-1])\nh = np.maximum(0, W@x + b)\nprint(h, v@h + c)   # [0. 1. 2.] 1.5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a six-iteration loop trace combined with one linked concept (list aliasing: the function mutates the caller's list through a second name); about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Python list aliasing and in-place mutation of a list passed to a function.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef f(xs, k):\n    out = []\n    for i in range(len(xs)):\n        if xs[i] % k == 0:\n            out.append(xs[i] // k)\n        else:\n            xs[i] += 1\n    return out\n\na = [3, 4, 6, 7, 9, 10]\nb = a\nr = f(b, 3)\nprint(sum(r) + sum(a))\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 48,
+      "max": 48
+    },
+    "solution": {
+      "quick": "`b = a` makes `b` another name for the same list, and `f` modifies that list in place.\nMultiples of 3 give `r = [1, 2, 3]` (sum 6); every other element is incremented, so `a` becomes `[3, 5, 6, 8, 9, 11]` (sum 42). Output: $6 + 42 = 48$.",
+      "steps": [
+        {
+          "title": "Aliasing",
+          "body": "`b = a` does **not** copy the list; `a`, `b` and the parameter `xs` all refer to the same list object. So every `xs[i] += 1` inside `f` changes `a` as well."
+        },
+        {
+          "title": "Trace the loop (k = 3)",
+          "body": "| `i` | `xs[i]` | divisible by 3? | action | `out` |\n|---|---|---|---|---|\n| 0 | 3 | yes | append $3 // 3 = 1$ | [1] |\n| 1 | 4 | no | `xs[1]` becomes 5 | [1] |\n| 2 | 6 | yes | append $6 // 3 = 2$ | [1, 2] |\n| 3 | 7 | no | `xs[3]` becomes 8 | [1, 2] |\n| 4 | 9 | yes | append $9 // 3 = 3$ | [1, 2, 3] |\n| 5 | 10 | no | `xs[5]` becomes 11 | [1, 2, 3] |\n\nEach index is visited once, so an incremented element is never re-tested."
+        },
+        {
+          "title": "Final values",
+          "body": "`r = [1, 2, 3]`, so `sum(r)` $= 6$.\n\n`a = [3, 5, 6, 8, 9, 11]`, so `sum(a)` $= 3 + 5 + 6 + 8 + 9 + 11 = 42$."
+        },
+        {
+          "title": "Output",
+          "body": "`print(sum(r) + sum(a))` prints $6 + 42 = 48$."
+        }
+      ],
+      "finalAnswer": "**48**",
+      "teaching": "In Python, a variable is a *name bound to an object*, not a box holding a value. An assignment such as `b = a` binds a second name to the **same** list object; no copy is made (a copy needs `a[:]`, `list(a)` or `a.copy()`). Passing a list to a function works the same way: the parameter becomes one more name for the caller's object.\n\nLists are **mutable**, so an item assignment like `xs[i] += 1` changes the shared object, and the change is visible through every name bound to it — `xs`, `b` and `a` here. Contrast this with rebinding (`xs = xs + [0]`), which would create a new list and leave the caller's list untouched.\n\nTo trace such code reliably, first decide which names share objects, then follow the loop index by index, updating both the shared list and any new objects (`out`). In this program the three multiples of 3 contribute $1 + 2 + 3 = 6$ through `r`, and the three other elements each grow by 1, raising `sum(a)` from $39$ to $42$.",
+      "commonTrap": "Assuming `b = a` makes a copy, so that `a` is unchanged with sum $39$, and answering $6 + 39 = 45$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "48",
+      "agreesWithKey": true,
+      "checkCode": "def f(xs, k):\n    out = []\n    for i in range(len(xs)):\n        if xs[i] % k == 0:\n            out.append(xs[i] // k)\n        else:\n            xs[i] += 1\n    return out\n\na = [3, 4, 6, 7, 9, 10]\nb = a\nr = f(b, 3)\nprint(sum(r) + sum(a))   # 48",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-marginal-joint"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (conditional probability from a joint PMF table: one row sum and one division); about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Conditional probability of an event in Y given a value of X, read from a joint PMF table via the row marginal.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "For a randomly chosen subscriber of an online learning platform in a given month, let $X = 1$ if the subscriber joined that month and $X = 0$ otherwise, and let $Y$ be the number of support tickets the subscriber raised that month. The joint probability mass function of $(X, Y)$ is:\n\n| | $Y = 0$ | $Y = 1$ | $Y = 2$ |\n|---|---|---|---|\n| $X = 0$ | 0.40 | 0.15 | 0.05 |\n| $X = 1$ | 0.10 | 0.20 | 0.10 |\n\nThe conditional probability $P(Y \\ge 1 \\mid X = 1)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.30$"
+      },
+      {
+        "label": "B",
+        "text": "$0.50$"
+      },
+      {
+        "label": "C",
+        "text": "$0.60$"
+      },
+      {
+        "label": "D",
+        "text": "$0.75$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$P(X = 1) = 0.10 + 0.20 + 0.10 = 0.40$ (row sum) and $P(Y \\ge 1, X = 1) = 0.20 + 0.10 = 0.30$.\n$P(Y \\ge 1 \\mid X = 1) = 0.30 / 0.40 = 0.75$.",
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "$P(Y \\ge 1 \\mid X = 1) = \\dfrac{P(Y \\ge 1,\\ X = 1)}{P(X = 1)}$. The conditioning event $X = 1$ goes in the denominator."
+        },
+        {
+          "title": "Marginal of the condition",
+          "body": "$P(X = 1)$ is the sum of the $X = 1$ row: $0.10 + 0.20 + 0.10 = 0.40$."
+        },
+        {
+          "title": "Joint probability",
+          "body": "$P(Y \\ge 1,\\ X = 1) = P(X=1, Y=1) + P(X=1, Y=2) = 0.20 + 0.10 = 0.30$."
+        },
+        {
+          "title": "Divide",
+          "body": "$P(Y \\ge 1 \\mid X = 1) = \\dfrac{0.30}{0.40} = 0.75$ — option (D).\n\nCheck via the complement: $P(Y = 0 \\mid X = 1) = 0.10 / 0.40 = 0.25$, and $1 - 0.25 = 0.75$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A joint PMF table gives $P(X = x, Y = y)$ for every pair of values; all cells sum to $1$. Adding the cells of one row gives the **marginal** probability of that value of $X$, because the cells of a row are disjoint events whose union is \"$X = x$\".\n\nA **conditional** probability restricts attention to the outcomes where the condition holds and rescales them so they again sum to 1:\n$$P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)}.$$\nConditioning on $X = 1$ keeps only the $X = 1$ row, $(0.10, 0.20, 0.10)$, and divides it by its total $0.40$, giving the conditional PMF $(0.25, 0.50, 0.25)$ for $Y = 0, 1, 2$. The requested event $Y \\ge 1$ then has probability $0.50 + 0.25 = 0.75$.\n\nAlways check which variable is being conditioned on: $P(Y \\ge 1 \\mid X = 1) = 0.75$ but $P(X = 1 \\mid Y \\ge 1) = 0.30 / 0.50 = 0.60$ — conditional probability is not symmetric.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.30 = P(Y \\ge 1,\\ X = 1)$ is the joint probability; it has not been divided by $P(X = 1) = 0.40$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.50 = P(Y \\ge 1) = 0.15 + 0.05 + 0.20 + 0.10$ is the unconditional (marginal) probability; it ignores the information $X = 1$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.60 = 0.30 / 0.50 = P(X = 1 \\mid Y \\ge 1)$ is the reverse conditional — it divides by the probability of $Y \\ge 1$ instead of $X = 1$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$0.30 / 0.40 = 0.75$: joint probability divided by the marginal of the conditioning event $X = 1$. Correct."
+        }
+      ],
+      "commonTrap": "Dividing by the wrong marginal: $0.30 / 0.50 = 0.60$ computes $P(X = 1 \\mid Y \\ge 1)$, not $P(Y \\ge 1 \\mid X = 1)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.75",
+      "agreesWithKey": true,
+      "checkCode": "J = {(0,0):.40,(0,1):.15,(0,2):.05,(1,0):.10,(1,1):.20,(1,2):.10}\nnum = sum(p for (x,y),p in J.items() if x==1 and y>=1)\nden = sum(p for (x,y),p in J.items() if x==1)\nprint(round(num/den, 4))   # 0.75",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-hierarchical"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (single-linkage distance = closest pair) applied to five 1-D points in four short merge steps; about a minute and a quarter.",
+    "estimatedTimeSec": 75,
+    "concept": "Agglomerative hierarchical clustering with single linkage: cluster distance is the minimum pairwise distance.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Five sensors report one reading each:\n\n| Sensor | P | Q | R | S | T |\n|---|---|---|---|---|---|\n| Reading | 0 | 1 | 3 | 7 | 8.5 |\n\nAgglomerative (bottom-up) hierarchical clustering is applied to these readings, using the absolute difference between readings as the distance and **single linkage** as the distance between clusters. Merging continues until all five sensors are in one cluster.\n\nThe distance at which the final merge takes place is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2$"
+      },
+      {
+        "label": "B",
+        "text": "$4$"
+      },
+      {
+        "label": "C",
+        "text": "$6.42$ (approximately)"
+      },
+      {
+        "label": "D",
+        "text": "$8.5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Merges: $\\{P, Q\\}$ at 1, $\\{S, T\\}$ at 1.5, $\\{P, Q, R\\}$ at 2 (closest pair $Q$–$R$).\nFinal merge $\\{P, Q, R\\}$ with $\\{S, T\\}$ at the closest pair $R$–$S$: $|7 - 3| = 4$.",
+      "steps": [
+        {
+          "title": "Single-linkage rule",
+          "body": "$d_{\\text{single}}(C_1, C_2) = \\min_{a \\in C_1,\\, b \\in C_2} |a - b|$ — the distance between the two **closest** members. At every step, merge the pair of clusters with the smallest such distance."
+        },
+        {
+          "title": "First two merges",
+          "body": "Distances between neighbouring readings: $P$–$Q = 1$, $Q$–$R = 2$, $R$–$S = 4$, $S$–$T = 1.5$ (all other pairs are farther apart).\n\nMerge 1: $\\{P, Q\\}$ at distance $1$.\nMerge 2: $\\{S, T\\}$ at distance $1.5$."
+        },
+        {
+          "title": "Third merge",
+          "body": "Now the clusters are $\\{P, Q\\}$, $\\{R\\}$, $\\{S, T\\}$:\n- $d(\\{P, Q\\}, \\{R\\}) = \\min(3, 2) = 2$\n- $d(\\{R\\}, \\{S, T\\}) = \\min(4, 5.5) = 4$\n- $d(\\{P, Q\\}, \\{S, T\\}) = \\min(7, 8.5, 6, 7.5) = 6$\n\nMerge 3: $\\{P, Q, R\\}$ at distance $2$."
+        },
+        {
+          "title": "Final merge",
+          "body": "$d(\\{P, Q, R\\}, \\{S, T\\}) = \\min$ over all cross pairs $= |7 - 3| = 4$ (pair $R$–$S$). The final merge happens at distance $4$ — option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Agglomerative hierarchical clustering starts with every point as its own cluster and repeatedly merges the two closest clusters until one cluster remains; the sequence of merges and their distances forms a **dendrogram**. The only design choice is how to measure the distance between two *clusters* (the **linkage**):\n\n- **Single linkage**: the closest pair of points, one from each cluster.\n- **Complete linkage**: the farthest such pair.\n- **Average linkage**: the mean of all cross-cluster pairwise distances.\n\nSingle linkage merges two groups as soon as any two of their members are close, so it tends to form long \"chains\"; complete linkage waits until the whole groups are close, favouring compact clusters and producing larger merge heights.\n\nIn one dimension single linkage is especially simple: two adjacent groups are joined at the gap between their facing end-points. Here the last gap to be bridged is the one between readings 3 and 7, so the final merge height is $4$. Complete linkage would instead report $8.5 - 0 = 8.5$ for the same final merge.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$2$ is the height of the **third** merge ($\\{P, Q\\}$ with $R$), not the final one."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The final merge joins $\\{P, Q, R\\}$ and $\\{S, T\\}$; their closest pair is $R = 3$, $S = 7$, giving $4$. Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\approx 6.42 = 77/12$ is the **average-linkage** distance between $\\{P, Q, R\\}$ and $\\{S, T\\}$ (mean of the six cross distances $7, 8.5, 6, 7.5, 4, 5.5$)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$8.5 = |8.5 - 0|$ is the **complete-linkage** (farthest pair) distance, which uses the wrong linkage criterion."
+        }
+      ],
+      "shortcut": "In 1-D, single linkage is equivalent to cutting the sorted points at their gaps: the final merge height equals the largest gap between consecutive sorted points, here $\\max(1, 2, 4, 1.5) = 4$.",
+      "commonTrap": "Using the farthest pair (complete linkage) and answering $8.5$, or stopping at the third merge and answering $2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4.0",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\nZ = linkage(np.array([[0],[1],[3],[7],[8.5]]), method='single')\nprint(Z[:,2])   # [1.  1.5 2.  4. ] -> final merge at 4",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-dim-reduction",
+      "ml-pca"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — four statements on core facts of dimensionality reduction, each settled by recall or a one-line variance ratio; about a minute and a quarter.",
+    "estimatedTimeSec": 75,
+    "concept": "Basic properties of dimensionality reduction and PCA: unsupervised nature, explained variance, scale sensitivity, and no guaranteed accuracy gain.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following statements about dimensionality reduction is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Principal component analysis (PCA) is an unsupervised technique: the principal components are computed from the feature values alone, without using any class labels."
+      },
+      {
+        "label": "B",
+        "text": "For centred 3-dimensional data whose sample covariance matrix has eigenvalues $6$, $3$ and $1$, projecting onto the first two principal components retains $90\\%$ of the total variance."
+      },
+      {
+        "label": "C",
+        "text": "Reducing the number of features with PCA before training a classifier is guaranteed to lower that classifier's test error."
+      },
+      {
+        "label": "D",
+        "text": "Standardising every feature to unit variance before applying PCA can never change the principal directions, because PCA already centres the data."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "(A) True — PCA uses only the covariance of the features.\n(B) True — $(6 + 3)/(6 + 3 + 1) = 0.9$.\n(C) False — PCA may discard low-variance directions that are exactly the ones separating the classes. (D) False — centring removes the mean but not scale differences; rescaling changes the covariance matrix and hence its eigenvectors.",
+      "steps": [
+        {
+          "title": "Statement A: supervision",
+          "body": "PCA finds the eigenvectors of the sample covariance matrix $S = \\frac{1}{n-1}\\sum_i (\\mathbf{x}_i - \\bar{\\mathbf{x}})(\\mathbf{x}_i - \\bar{\\mathbf{x}})^\\top$. Only the feature vectors $\\mathbf{x}_i$ appear; labels are never used. **True.**"
+        },
+        {
+          "title": "Statement B: explained variance",
+          "body": "The variance along each principal component equals the corresponding eigenvalue, and the total variance is their sum $6 + 3 + 1 = 10$. Keeping the top two components retains\n$$\\frac{6 + 3}{10} = 0.9 = 90\\%.$$ **True.**"
+        },
+        {
+          "title": "Statement C: no guarantee of better accuracy",
+          "body": "PCA keeps the directions of largest variance, which need not be the directions that separate the classes. Example: two classes that differ only along a low-variance feature can become inseparable after projecting onto the high-variance direction, **raising** the test error. Dimensionality reduction *can* help (less noise, less overfitting) but is not guaranteed to. **False.**"
+        },
+        {
+          "title": "Statement D: effect of standardisation",
+          "body": "Centring subtracts the mean; it does not rescale. Standardising replaces the covariance matrix by the correlation matrix, which generally has different eigenvectors. Example: covariance $\\begin{bmatrix} 100 & 5 \\\\ 5 & 1 \\end{bmatrix}$ has its first principal direction almost along feature 1 (about $(0.998, 0.050)$), while the correlation matrix $\\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}$ has first principal direction $(1, 1)/\\sqrt{2}$. **False.**"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Correct statements: **(A)** and **(B)**."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "teaching": "Dimensionality reduction replaces $d$ features by $k < d$ features while trying to keep the useful information. It is done either by **feature selection** (keeping a subset of the original columns) or by **feature extraction** (building new features, as PCA does with linear combinations).\n\nPCA answers a purely geometric question: along which orthogonal directions does the data vary most? It centres the data, forms the covariance matrix, and takes its eigenvectors; each eigenvalue is the variance of the data along its eigenvector. The fraction of variance retained by the first $k$ components is therefore (sum of the top $k$ eigenvalues)/(sum of all eigenvalues). Because labels are never consulted, PCA is **unsupervised**.\n\nTwo consequences follow. First, since variance is measured in the original units, a feature measured on a large numeric scale dominates the components — which is why features are usually standardised first, and why standardising changes the result. Second, \"high variance\" is not the same as \"useful for prediction\", so PCA can discard exactly the direction a classifier needed; it is a tool to try, not a guaranteed improvement.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "PCA diagonalises the feature covariance matrix; no class labels are involved, so it is unsupervised. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Variance retained $= (6 + 3)/(6 + 3 + 1) = 9/10 = 90\\%$. Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "No such guarantee exists: the discarded low-variance directions may carry the class information, so test error can increase."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Centring does not remove scale differences. Standardising turns the covariance matrix into the correlation matrix, whose eigenvectors are generally different (e.g. $\\begin{bmatrix} 100 & 5 \\\\ 5 & 1 \\end{bmatrix}$ vs $\\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}$)."
+        }
+      ],
+      "commonTrap": "Believing that centring and standardising are the same preprocessing step (marking D true), or assuming that fewer features always means better generalisation (marking C true)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nev = [6, 3, 1]; print(sum(ev[:2]) / sum(ev))          # B: 0.9\nS = np.array([[100, 5], [5, 1.0]])\nD = np.diag(1/np.sqrt(np.diag(S))); R = D @ S @ D\npc = lambda M: np.linalg.eigh(M)[1][:, -1]\nprint(np.abs(pc(S)), np.abs(pc(R)))                    # D: directions differ",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M08-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-08",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-trees"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (building a 12-node BST from an insertion sequence, then performing a post-order traversal) with a traversal-order trap; about 2–2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Binary search tree construction by insertion followed by post-order traversal.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The following distinct integer keys are inserted, in the order given, into an initially empty binary search tree (a key smaller than a node's key goes into its left subtree, a larger key into its right subtree):\n\n$$40,\\ 61,\\ 25,\\ 33,\\ 10,\\ 70,\\ 52,\\ 5,\\ 36,\\ 18,\\ 66,\\ 28$$\n\nA post-order traversal (left subtree, then right subtree, then the node itself) is then performed on the resulting tree.\n\nThe key visited **7th** in this post-order traversal is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 25,
+      "max": 25
+    },
+    "solution": {
+      "quick": "Post-order: $5, 18, 10, 28, 36, 33, 25, 52, 66, 70, 61, 40$; the 7th key is $25$.\nFaster: the root's left subtree holds the 7 keys smaller than 40, and post-order finishes that subtree with its root, $25$, in position 7.",
+      "steps": [
+        {
+          "title": "Build the BST",
+          "body": "Insert in order, comparing from the root each time:\n\n| Key | Path | Placed as |\n|---|---|---|\n| 40 | — | root |\n| 61 | 40 | right child of 40 |\n| 25 | 40 | left child of 40 |\n| 33 | 40 → 25 | right child of 25 |\n| 10 | 40 → 25 | left child of 25 |\n| 70 | 40 → 61 | right child of 61 |\n| 52 | 40 → 61 | left child of 61 |\n| 5 | 40 → 25 → 10 | left child of 10 |\n| 36 | 40 → 25 → 33 | right child of 33 |\n| 18 | 40 → 25 → 10 | right child of 10 |\n| 66 | 40 → 61 → 70 | left child of 70 |\n| 28 | 40 → 25 → 33 | left child of 33 |"
+        },
+        {
+          "title": "Resulting tree (level order)",
+          "body": "- Level 0: 40\n- Level 1: 25 (L of 40), 61 (R of 40)\n- Level 2: 10 (L of 25), 33 (R of 25), 52 (L of 61), 70 (R of 61)\n- Level 3: 5 (L of 10), 18 (R of 10), 28 (L of 33), 36 (R of 33), 66 (L of 70)"
+        },
+        {
+          "title": "Post-order traversal",
+          "body": "Left subtree of 40 (rooted at 25): post-order of subtree(10) = $5, 18, 10$; post-order of subtree(33) = $28, 36, 33$; then $25$.\nRight subtree of 40 (rooted at 61): $52$; post-order of subtree(70) = $66, 70$; then $61$.\nFinally the root $40$.\n\nFull post-order: $5, 18, 10, 28, 36, 33, 25, 52, 66, 70, 61, 40$."
+        },
+        {
+          "title": "Pick the 7th key",
+          "body": "Positions 1–7: $5, 18, 10, 28, 36, 33, \\mathbf{25}$. The 7th key visited is **25**."
+        }
+      ],
+      "finalAnswer": "**25**",
+      "teaching": "A binary search tree (BST) keeps every key in a node's left subtree smaller than the node and every key in its right subtree larger. Inserting a key means walking down from the root — left if smaller, right if larger — until an empty spot is found; the insertion order therefore fixes the shape of the tree.\n\nThe three depth-first traversals differ only in *when* a node is visited relative to its two subtrees:\n- **pre-order**: node, left, right;\n- **in-order**: left, node, right — for a BST this lists the keys in sorted order;\n- **post-order**: left, right, node — every node appears after all of its descendants, so the root comes last.\n\nA useful counting fact: in post-order the entire left subtree of the root is visited first, and it ends with its own root. Here the keys smaller than 40 are $25, 33, 10, 5, 36, 18, 28$ — exactly 7 of them — so the 7th post-order key must be the root of the left subtree, $25$. The full traversal confirms this.",
+      "shortcut": "Count the keys smaller than the root: there are 7 of them (25, 33, 10, 5, 36, 18, 28), so post-order positions 1–7 cover the left subtree and position 7 is its root, the first key smaller than 40 to be inserted — $25$.",
+      "commonTrap": "Using the wrong traversal: the 7th key in in-order (sorted order) is $36$ and in pre-order is $28$; neither is the post-order answer."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "25",
+      "agreesWithKey": true,
+      "checkCode": "class N:\n    def __init__(s, k): s.k, s.l, s.r = k, None, None\ndef ins(t, k):\n    if t is None: return N(k)\n    if k < t.k: t.l = ins(t.l, k)\n    else: t.r = ins(t.r, k)\n    return t\ndef post(t, o):\n    if t: post(t.l, o); post(t.r, o); o.append(t.k)\n    return o\nt = None\nfor k in [40, 61, 25, 33, 10, 70, 52, 5, 36, 18, 66, 28]: t = ins(t, k)\nprint(post(t, [])[6])   # 25",
+      "notes": ""
+    }
+  }
+]

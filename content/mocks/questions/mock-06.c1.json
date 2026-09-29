@@ -1,0 +1,710 @@
+[
+  {
+    "id": "M06-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-problem-types"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (the best constant under squared loss is the mean, the best constant label under 0–1 loss is the mode) combined with a short routine computation; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Regression vs classification framing: the loss function decides the optimal constant prediction (mean under squared loss, mode under 0–1 loss).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A grocery-delivery company records, for 9 past orders, the number of days by which each delivery was late:\n\n| Order | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |\n|---|---|---|---|---|---|---|---|---|---|\n| Days late | 3 | 1 | 0 | 6 | 1 | 8 | 2 | 1 | 5 |\n\nTwo analysts must each predict one *constant* value for every order (they ignore all input features).\n\n- Analyst A treats the task as a **regression** problem and chooses the real number $a$ that minimises the mean squared error on these 9 orders.\n- Analyst B treats the task as a **classification** problem in which every distinct value of \"days late\" is a separate class label, and chooses the class label $b$ that minimises the misclassification rate (0–1 loss) on these 9 orders.\n\nThe value of $a - b$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2,
+      "max": 2
+    },
+    "solution": {
+      "quick": "Squared loss is minimised by the **mean**: $a = 27/9 = 3$. 0–1 loss is minimised by the **most frequent label** (mode): $b = 1$, which occurs 3 times. Hence $a - b = 3 - 1 = 2$.",
+      "steps": [
+        {
+          "title": "Regression: squared loss is minimised by the mean",
+          "body": "For a constant prediction $c$, $\\text{MSE}(c) = \\frac{1}{9}\\sum_{i=1}^{9}(y_i - c)^2$. Setting $\\frac{d}{dc}\\text{MSE}(c) = -\\frac{2}{9}\\sum_{i}(y_i - c) = 0$ gives $c = \\bar{y}$.\n\nSum of the values: $3 + 1 + 0 + 6 + 1 + 8 + 2 + 1 + 5 = 27$, so $a = \\bar{y} = 27/9 = 3$."
+        },
+        {
+          "title": "Classification: 0–1 loss is minimised by the mode",
+          "body": "If B always predicts label $c$, every order whose label is not $c$ is misclassified, so the error rate is $1 - \\frac{n_c}{9}$, where $n_c$ is the number of orders with label $c$. This is smallest for the most frequent label.\n\nFrequencies: $0{:}\\,1,\\; 1{:}\\,3,\\; 2{:}\\,1,\\; 3{:}\\,1,\\; 5{:}\\,1,\\; 6{:}\\,1,\\; 8{:}\\,1$. So $b = 1$, with error rate $6/9$."
+        },
+        {
+          "title": "Combine",
+          "body": "$a - b = 3 - 1 = 2$."
+        },
+        {
+          "title": "Sanity check: each choice is poor under the other loss",
+          "body": "Under squared loss, $\\text{MSE}(3) = 60/9 \\approx 6.67$ while $\\text{MSE}(1) = 60/9 + (3-1)^2 = 96/9 \\approx 10.67$. Under 0–1 loss, predicting 3 is correct for only one order (error rate $8/9$), worse than $6/9$ for label 1. The framing of the problem really does change the best answer."
+        }
+      ],
+      "finalAnswer": "**2**",
+      "teaching": "Whether a task is *regression* or *classification* depends on what the output is and how errors are scored. In regression the output is a real number and an error is measured by *how far* the prediction is from the truth, typically with squared loss $(y - \\hat{y})^2$. In classification the output is one of a set of labels and an error is simply *wrong or right*: 0–1 loss charges 1 for any mismatch, however \"close\" the labels look numerically.\n\nThis difference shows up even for the simplest possible model, a constant. Minimising the average squared distance pulls the constant to the **mean**, because large deviations are penalised heavily. Minimising the number of mistakes pushes it to the **mode**, the label that is right most often. (Absolute loss would give the median, a third answer.) Here the mean is 3 and the mode is 1, so the two analysts disagree by 2.",
+      "commonTrap": "Using the **median** (2) for Analyst B, which gives $a - b = 1$; the median minimises absolute error, not the misclassification rate. Another slip is assuming both framings must give the same constant (answer 0)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\ny = np.array([3, 1, 0, 6, 1, 8, 2, 1, 5])\ngrid = np.linspace(0, 8, 8001)\na = grid[np.argmin([np.mean((y - c) ** 2) for c in grid])]   # regression constant\nb = min(set(y.tolist()), key=lambda c: np.sum(y != c))        # 0-1 loss constant label\nprint(round(a - b, 6))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-logistic-regression"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a logistic-regression coefficient is an additive change in log-odds, i.e. a multiplicative change in odds) with the one-line computation $e^{3\\ln 2} = 8$; under a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Interpreting a logistic-regression coefficient: a unit increase in a feature multiplies the odds by $e^{\\beta}$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A help-desk team fits the logistic regression model\n\n$$P(\\text{escalated} = 1 \\mid x_1, x_2) = \\sigma(\\beta_0 + \\beta_1 x_1 + \\beta_2 x_2), \\qquad \\sigma(z) = \\frac{1}{1 + e^{-z}},$$\n\nwhere $x_1$ is the number of replies the customer has posted on a support ticket and $x_2$ is the age of the ticket in hours. The fitted coefficient of $x_1$ is $\\beta_1 = \\ln 2$.\n\nTwo tickets have the same age, but the second ticket has 3 more customer replies than the first. Which one of the following statements is true, whatever the common age and the values of $\\beta_0$ and $\\beta_2$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The odds of escalation of the second ticket are 8 times the odds of escalation of the first ticket."
+      },
+      {
+        "label": "B",
+        "text": "The probability of escalation of the second ticket is 8 times the probability of escalation of the first ticket."
+      },
+      {
+        "label": "C",
+        "text": "The odds of escalation of the second ticket are 6 times the odds of escalation of the first ticket."
+      },
+      {
+        "label": "D",
+        "text": "The log-odds of escalation of the second ticket are 8 times the log-odds of escalation of the first ticket."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "In logistic regression the log-odds $\\ln\\frac{p}{1-p} = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2$ is linear. Three extra replies add $3\\ln 2$ to the log-odds, so the odds are multiplied by $e^{3\\ln 2} = 2^3 = 8$. Answer **(A)**.",
+      "steps": [
+        {
+          "title": "Write the model in log-odds form",
+          "body": "Inverting the sigmoid gives $\\ln\\dfrac{p}{1-p} = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2$, where $\\frac{p}{1-p}$ is the **odds** of escalation."
+        },
+        {
+          "title": "Change in log-odds",
+          "body": "Ticket 2 has $x_1$ larger by 3 and the same $x_2$, so its log-odds exceed those of ticket 1 by $3\\beta_1 = 3\\ln 2 \\approx 2.079$, whatever $\\beta_0$, $\\beta_2$ and $x_2$ are."
+        },
+        {
+          "title": "Convert to odds",
+          "body": "$\\dfrac{\\text{odds}_2}{\\text{odds}_1} = e^{3\\ln 2} = 2^3 = 8$."
+        },
+        {
+          "title": "Why probabilities do not scale the same way",
+          "body": "If ticket 1 has $p_1 = 0.2$ (odds $0.25$), ticket 2 has odds $2$ and $p_2 = 2/3$: the probability ratio is $3.33$, not 8. The multiplicative effect holds for the odds only."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "Logistic regression models a probability $p$ through a linear score $z = \\beta_0 + \\beta_1 x_1 + \\dots$ passed through the sigmoid $\\sigma(z) = 1/(1+e^{-z})$. Solving $p = \\sigma(z)$ for $z$ gives $z = \\ln\\frac{p}{1-p}$: the linear score *is* the log-odds. That is the key to interpreting coefficients.\n\nBecause the log-odds is linear, increasing $x_1$ by one unit (others fixed) adds $\\beta_1$ to the log-odds, which **multiplies the odds by $e^{\\beta_1}$**. Increasing it by $k$ units multiplies the odds by $e^{k\\beta_1} = (e^{\\beta_1})^k$. The probability itself changes non-linearly, since it must stay in $(0,1)$; how much it moves depends on where on the S-curve the ticket starts.\n\nHere $e^{\\beta_1} = 2$, so each extra reply doubles the odds of escalation, and three extra replies multiply them by $2 \\times 2 \\times 2 = 8$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Log-odds rise by $3\\ln 2$, so odds are multiplied by $e^{3\\ln 2} = 8$ for every ticket."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Probabilities cannot scale by a fixed factor: if $p_1 = 0.5$, then $8p_1 = 4 > 1$. With $p_1 = 0.2$ the actual ratio is $3.33$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$6 = 3 \\times 2$ adds the per-reply factor three times instead of multiplying it: the correct factor is $2 \\times 2 \\times 2 = 8$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Log-odds change **additively** by $3\\ln 2 \\approx 2.08$, not by a factor of 8. If ticket 1 has log-odds 1, ticket 2 has about 3.08, not 8."
+        }
+      ],
+      "shortcut": "$e^{\\beta_1} = 2$ is the per-unit odds multiplier; for 3 units raise it to the power 3.",
+      "commonTrap": "Reading the coefficient as an effect on the **probability** (option B) or on the log-odds as a multiplier (option D). A coefficient acts additively on log-odds and multiplicatively on odds."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (odds ratio = 8.0 for every baseline log-odds)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nb1 = math.log(2)\nfor z in [-3, -1, 0.5, 2]:          # log-odds of the first ticket\n    o1, o2 = math.exp(z), math.exp(z + 3 * b1)\n    p1, p2 = o1 / (1 + o1), o2 / (1 + o2)\n    print(round(o2 / o1, 6), round(p2 / p1, 3), round((z + 3 * b1) / z, 3))\n# odds ratio is always 8; probability ratio and log-odds ratio vary",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a direct application of the bias–variance decomposition with a mean, a variance of four numbers and one addition; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Bias–variance decomposition of the expected squared prediction error at a point.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "At a test input $x_0$, the true regression function takes the value $f(x_0) = 5$, and an observed label is $y = f(x_0) + \\varepsilon$, where the noise $\\varepsilon$ has mean 0 and variance 0.5 and is independent of the training data.\n\nA regression algorithm can be trained on one of four training sets, which are equally likely. The four resulting models predict the following values at $x_0$:\n\n| Training set | $T_1$ | $T_2$ | $T_3$ | $T_4$ |\n|---|---|---|---|---|\n| Prediction $\\hat{f}(x_0)$ | 5 | 7 | 8 | 8 |\n\nTreating the variance of $\\hat{f}(x_0)$ as the variance over these four equally likely outcomes (that is, dividing by 4), the expected squared prediction error $E\\big[(y - \\hat{f}(x_0))^2\\big]$ at $x_0$ is ________ (rounded off to one decimal place).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 5.9,
+      "max": 6.1
+    },
+    "solution": {
+      "quick": "Mean prediction $= 7$, so bias $= 7 - 5 = 2$ and bias$^2 = 4$. Variance $= (4 + 0 + 1 + 1)/4 = 1.5$. Expected error $= 4 + 1.5 + 0.5 = 6.0$.",
+      "steps": [
+        {
+          "title": "Decomposition",
+          "body": "$E\\big[(y - \\hat{f}(x_0))^2\\big] = \\underbrace{\\big(E[\\hat{f}(x_0)] - f(x_0)\\big)^2}_{\\text{bias}^2} + \\underbrace{\\operatorname{Var}\\big(\\hat{f}(x_0)\\big)}_{\\text{variance}} + \\underbrace{\\sigma^2}_{\\text{noise}}$."
+        },
+        {
+          "title": "Bias",
+          "body": "$E[\\hat{f}(x_0)] = \\dfrac{5 + 7 + 8 + 8}{4} = \\dfrac{28}{4} = 7$. Bias $= 7 - 5 = 2$, so bias$^2 = 4$."
+        },
+        {
+          "title": "Variance",
+          "body": "Deviations from 7: $-2, 0, 1, 1$; squares $4, 0, 1, 1$; sum $= 6$. $\\operatorname{Var} = 6/4 = 1.5$."
+        },
+        {
+          "title": "Add the noise and cross-check",
+          "body": "Total $= 4 + 1.5 + 0.5 = 6.0$.\n\nDirect check: the average of $(f(x_0) - \\hat{f})^2$ is $(0 + 4 + 9 + 9)/4 = 5.5 = \\text{bias}^2 + \\text{variance}$; adding $\\sigma^2 = 0.5$ gives $6.0$."
+        }
+      ],
+      "finalAnswer": "**6.0**",
+      "teaching": "A model's prediction at a point depends on which training set it happened to see, so $\\hat{f}(x_0)$ is itself a random variable. Its expected squared error against a fresh noisy label splits into three non-negative parts. **Bias** is how far the *average* prediction is from the truth: a systematic error that more data of the same kind will not remove. **Variance** is how much the prediction jumps around from one training set to another: the price of a flexible model. **Irreducible noise** $\\sigma^2$ is randomness in the label itself that no model can predict.\n\nSimple models tend to have high bias and low variance; flexible models the reverse, and the best test error comes from balancing the two. In this question the models are consistently too high (bias 2) and also somewhat unstable (variance 1.5); together with the noise 0.5 they give an expected error of 6.0.",
+      "commonTrap": "Forgetting to square the bias (giving $2 + 1.5 + 0.5 = 4.0$), dividing by $n - 1 = 3$ for the variance (giving 6.5), or leaving out the noise term (giving 5.5)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6.0",
+      "agreesWithKey": true,
+      "checkCode": "f, P, s2 = 5, [5, 7, 8, 8], 0.5\nm = sum(P) / len(P)\nbias2 = (m - f) ** 2\nvar = sum((p - m) ** 2 for p in P) / len(P)\nprint(bias2, var, bias2 + var + s2)\nprint(sum((f - p) ** 2 for p in P) / len(P) + s2)  # direct check",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-mlp",
+      "ml-feedforward"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single forward pass through a 2-2-1 network: one matrix–vector product, an element-wise ReLU and a dot product; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Forward propagation through a one-hidden-layer MLP with ReLU hidden units and a linear output.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward neural network has two inputs, one hidden layer with two ReLU units, and a single output unit with the identity (linear) activation. For an input $\\mathbf{x} \\in \\mathbb{R}^2$,\n\n$$\\mathbf{h} = \\operatorname{ReLU}\\left(W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)}\\right), \\qquad \\hat{y} = \\mathbf{w}^{(2)\\top}\\mathbf{h} + b^{(2)},$$\n\nwhere $\\operatorname{ReLU}(z) = \\max(0, z)$ is applied element-wise and\n\n$$W^{(1)} = \\begin{bmatrix} 1 & -3 \\\\ 0.5 & 1 \\end{bmatrix}, \\quad \\mathbf{b}^{(1)} = \\begin{bmatrix} 0 \\\\ -1 \\end{bmatrix}, \\quad \\mathbf{w}^{(2)} = \\begin{bmatrix} 2 \\\\ -3 \\end{bmatrix}, \\quad b^{(2)} = 1.$$\n\nFor the input $\\mathbf{x} = \\begin{bmatrix} 2 \\\\ 1 \\end{bmatrix}$, the output $\\hat{y}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$-4$"
+      },
+      {
+        "label": "B",
+        "text": "$-2$"
+      },
+      {
+        "label": "C",
+        "text": "$0$"
+      },
+      {
+        "label": "D",
+        "text": "$6$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Pre-activations: $W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)} = (-1,\\ 1)^\\top$; after ReLU, $\\mathbf{h} = (0,\\ 1)^\\top$. Output $\\hat{y} = 2(0) - 3(1) + 1 = -2$. Answer **(B)**.",
+      "steps": [
+        {
+          "title": "Hidden pre-activations",
+          "body": "$W^{(1)}\\mathbf{x} = \\begin{bmatrix} 1(2) - 3(1) \\\\ 0.5(2) + 1(1) \\end{bmatrix} = \\begin{bmatrix} -1 \\\\ 2 \\end{bmatrix}$; adding $\\mathbf{b}^{(1)}$ gives $\\begin{bmatrix} -1 \\\\ 1 \\end{bmatrix}$."
+        },
+        {
+          "title": "Apply ReLU",
+          "body": "$\\mathbf{h} = \\begin{bmatrix} \\max(0, -1) \\\\ \\max(0, 1) \\end{bmatrix} = \\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix}$. The first hidden unit is inactive for this input."
+        },
+        {
+          "title": "Output unit (linear)",
+          "body": "$\\hat{y} = 2(0) + (-3)(1) + 1 = -2$. No ReLU is applied at the output, so the negative value is kept."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "A multi-layer perceptron computes its output layer by layer. Each unit forms a weighted sum of the previous layer's values plus a bias (the *pre-activation*), then passes it through an activation function. Row $i$ of $W^{(1)}$ holds the weights of hidden unit $i$, so $W^{(1)}\\mathbf{x}$ gives all hidden pre-activations at once.\n\nReLU, $\\max(0, z)$, passes positive values unchanged and sets negative ones to zero. This non-linearity is what lets a network represent more than a single linear function: without it, stacking layers would collapse to one affine map. A hidden unit with a negative pre-activation contributes nothing downstream for that input.\n\nThe output layer's activation is chosen for the task. For regression it is usually the identity, so outputs can be any real number, including negative ones as here. Tracing carefully (pre-activation → activation → next layer) gives $\\hat{y} = -2$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$-4$ comes from skipping the ReLU: using $\\mathbf{h} = (-1, 1)^\\top$ gives $2(-1) - 3(1) + 1 = -4$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\mathbf{h} = (0, 1)^\\top$ after ReLU, so $\\hat{y} = 0 - 3 + 1 = -2$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0$ comes from applying ReLU at the output as well, $\\max(0, -2) = 0$; the output unit is linear."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$6$ comes from using $W^{(1)\\top}$ instead of $W^{(1)}$: $W^{(1)\\top}\\mathbf{x} + \\mathbf{b}^{(1)} = (2.5, -6)^\\top$, $\\mathbf{h} = (2.5, 0)^\\top$, $\\hat{y} = 5 + 1 = 6$."
+        }
+      ],
+      "commonTrap": "Applying ReLU to the linear output unit (giving 0), or forgetting the hidden ReLU so the negative pre-activation $-1$ leaks through (giving $-4$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-2.0 (option B)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nW1 = np.array([[1, -3], [0.5, 1]]); b1 = np.array([0, -1])\nw2 = np.array([2, -3]); b2 = 1\nx = np.array([2, 1])\nh = np.maximum(0, W1 @ x + b1)\nprint(h, w2 @ h + b2)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-clustering-algorithms",
+      "ml-kmeans"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — each statement is a direct recall check of a basic property of k-means, k-medoids, agglomerative clustering or unsupervised learning; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Basic properties of clustering algorithms: centre updates in k-means/k-medoids, dendrograms, unsupervised nature and sensitivity to initialisation.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following statements about clustering algorithms is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "In $k$-means, each cluster centre is updated to the mean of the points currently assigned to it, whereas in $k$-medoids each cluster centre is required to be one of the data points."
+      },
+      {
+        "label": "B",
+        "text": "Agglomerative (bottom-up) hierarchical clustering does not require the number of clusters to be fixed before the algorithm runs; a partition with a desired number of clusters can be obtained afterwards by cutting the dendrogram."
+      },
+      {
+        "label": "C",
+        "text": "Since a clustering algorithm assigns a cluster label to every point, it must be trained on examples whose correct cluster labels are known in advance."
+      },
+      {
+        "label": "D",
+        "text": "The final clusters produced by $k$-means (Lloyd's algorithm) on a given dataset with a given $k$ do not depend on the choice of the initial centres."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "(A) and (B) are standard facts. (C) is false: clustering is unsupervised and uses no labels. (D) is false: Lloyd's algorithm converges to a local optimum that depends on the starting centres.",
+      "steps": [
+        {
+          "title": "k-means vs k-medoids (A)",
+          "body": "$k$-means alternates *assign each point to the nearest centre* and *move each centre to the mean of its points*; the mean need not be a data point. $k$-medoids instead chooses as centre an actual data point (the medoid) that minimises total dissimilarity within the cluster. (A) is correct."
+        },
+        {
+          "title": "Dendrogram (B)",
+          "body": "Agglomerative clustering starts with $n$ singleton clusters and merges the closest pair repeatedly until one cluster remains, recording the merges in a dendrogram. The number of clusters is chosen afterwards by cutting the tree at a suitable level. (B) is correct."
+        },
+        {
+          "title": "Unsupervised nature (C)",
+          "body": "Clustering discovers groups from the feature values alone; the cluster labels are *outputs*, not training targets. No labelled examples are needed. (C) is incorrect."
+        },
+        {
+          "title": "Dependence on initialisation (D)",
+          "body": "Counter-example: points $(0,0), (0,1), (4,0), (4,1)$ with $k = 2$. Starting centres $(0, 0.5), (4, 0.5)$ give clusters {left pair}, {right pair} with WCSS $= 1$. Starting centres $(2, 0), (2, 1)$ give clusters {bottom pair}, {top pair}, which is already stable, with WCSS $= 16$. Different starts, different final clusters. (D) is incorrect."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "teaching": "Clustering is **unsupervised** learning: the data have features but no target labels, and the algorithm groups points so that points in the same group are similar. Two families dominate.\n\n*Partitional* methods such as $k$-means fix the number of clusters $k$ and iteratively improve a partition. $k$-means minimises the within-cluster sum of squared distances by alternating an assignment step and an update step in which each centre becomes its cluster mean. Each step can only lower the objective, so the algorithm converges, but only to a *local* minimum that depends on the starting centres; that is why it is usually run from several initialisations. $k$-medoids restricts centres to actual data points, which makes it less sensitive to outliers.\n\n*Hierarchical* methods build a whole tree of nested clusterings. The bottom-up (agglomerative) version merges the closest clusters step by step, and the analyst picks the number of clusters afterwards by cutting the dendrogram.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The $k$-means update uses the cluster mean (which may not be a data point); $k$-medoids restricts each centre to an actual data point."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Agglomerative clustering produces the full merge hierarchy; the number of clusters is chosen afterwards by cutting the dendrogram."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Clustering is unsupervised. The cluster labels are produced by the algorithm, not supplied as training targets."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Lloyd's algorithm reaches a local optimum that depends on initialisation; the four-point example gives WCSS 1 from one start and 16 from another."
+        }
+      ],
+      "commonTrap": "Marking (D) as correct because each $k$-means step is deterministic. The *steps* are deterministic, but the fixed point reached depends on where the algorithm starts."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B (k-means counter-example confirms D is false)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX = np.array([[0, 0], [0, 1], [4, 0], [4, 1]], float)\ndef lloyd(C):\n    for _ in range(20):\n        lab = np.argmin(((X[:, None] - C[None]) ** 2).sum(2), 1)\n        C = np.array([X[lab == j].mean(0) for j in range(len(C))])\n    return lab.tolist(), float(((X - C[lab]) ** 2).sum())\nprint(lloyd(np.array([[0, .5], [4, .5]])))   # ([0,0,1,1], 1.0)\nprint(lloyd(np.array([[2., 0], [2, 1]])))    # ([0,1,0,1], 16.0) -> (D) is false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-dim-reduction",
+      "ml-pca"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (feature selection keeps a subset of the original variables, feature extraction builds new ones) applied to four familiar procedures; under a minute.",
+    "estimatedTimeSec": 45,
+    "concept": "Feature selection vs feature extraction as the two routes to dimensionality reduction.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A predictive-maintenance dataset records 40 numerical sensor readings for each machine. An engineer wants to reduce the number of features to 8. Which one of the following procedures is a feature **extraction** method, that is, one whose 8 output features are in general **not** a subset of the original 40 readings?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Keep the 8 readings that have the largest sample variance."
+      },
+      {
+        "label": "B",
+        "text": "Starting from all 40 readings, repeatedly remove the reading whose removal causes the smallest drop in validation accuracy, until 8 readings remain."
+      },
+      {
+        "label": "C",
+        "text": "Keep the 8 readings that have the highest absolute correlation with the target variable."
+      },
+      {
+        "label": "D",
+        "text": "Replace each machine's 40 readings by its coordinates along the top 8 principal components of the centred data."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "(A), (B) and (C) each *keep 8 of the original readings*, so they are feature selection. PCA in (D) produces 8 new features, each a linear combination of all 40 readings, so it is feature extraction. Answer **(D)**.",
+      "steps": [
+        {
+          "title": "Two routes to fewer dimensions",
+          "body": "**Feature selection** keeps a subset of the original variables. **Feature extraction** builds new variables as functions (often linear combinations) of the original ones."
+        },
+        {
+          "title": "Classify options (A)–(C)",
+          "body": "(A) is a variance filter, (B) is backward elimination (a wrapper method) and (C) is a correlation filter. Each outputs 8 of the original 40 readings unchanged, so all three are feature selection."
+        },
+        {
+          "title": "Classify option (D)",
+          "body": "The $j$-th principal-component score of a machine is $z_j = \\mathbf{v}_j^\\top(\\mathbf{x} - \\bar{\\mathbf{x}})$, a weighted sum of all 40 centred readings. The 8 scores are new features, not a subset of the readings: feature extraction."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "High-dimensional data are costly to store, slow to model and prone to overfitting, and distances between points become less informative as the number of dimensions grows. Dimensionality reduction tackles this in one of two ways.\n\n**Feature selection** decides which original variables to keep. *Filter* methods score each variable on its own (variance, correlation with the target); *wrapper* methods such as forward selection or backward elimination search over subsets using a model's validation performance. The result is easy to interpret, because every kept feature is a real sensor.\n\n**Feature extraction** constructs new variables. PCA projects the centred data onto the orthogonal directions of largest variance, so each new feature mixes all the original readings. It can pack more information into fewer dimensions, but the new features no longer correspond to single sensors.\n\nThe test is simple: are the outputs a subset of the inputs? For (A)–(C) yes; for PCA, no.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "A variance filter keeps 8 original readings unchanged: feature selection."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Backward elimination is a wrapper selection method; the 8 survivors are original readings."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "A correlation filter ranks and keeps original readings: feature selection."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Principal-component scores are linear combinations of all 40 centred readings, i.e. newly constructed features."
+        }
+      ],
+      "commonTrap": "Picking (A) because PCA is also \"about variance\". Ranking the *original* readings by variance is selection; PCA finds *new directions* of maximum variance, which is extraction."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\nX = rng.normal(size=(100, 40)) @ rng.normal(size=(40, 40)); Xc = X - X.mean(0)\nVt = np.linalg.svd(Xc, full_matrices=False)[2]; Z = Xc @ Vt[:8].T\nprint(any(np.allclose(Z[:, i], Xc[:, j]) for i in range(8) for j in range(40)))  # False\nprint((np.abs(Vt[:8]) > 1e-8).sum(1))  # each PC mixes all 40 readings",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-simple-linear-regression"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single routine least-squares fit on five points with small integer deviations, followed by one prediction; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Ordinary least squares slope and intercept for simple linear regression, and prediction from the fitted line.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The table below gives, for five data annotators, their years of experience $x$ and the number of labels $y$ they complete per hour.\n\n| Annotator | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| $x$ (years) | 2 | 4 | 4 | 4 | 6 |\n| $y$ (labels per hour) | 7 | 9 | 10 | 11 | 13 |\n\nA simple linear regression model $\\hat{y} = \\beta_0 + \\beta_1 x$ is fitted to these data by ordinary least squares. The predicted number of labels per hour for an annotator with 5 years of experience is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$7.5$"
+      },
+      {
+        "label": "B",
+        "text": "$\\approx 10.67$"
+      },
+      {
+        "label": "C",
+        "text": "$11.5$"
+      },
+      {
+        "label": "D",
+        "text": "$17.5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$\\bar{x} = 4$, $\\bar{y} = 10$, $S_{xy} = 12$, $S_{xx} = 8$, so $\\hat\\beta_1 = 1.5$ and $\\hat\\beta_0 = 10 - 1.5(4) = 4$. At $x = 5$: $\\hat{y} = 4 + 7.5 = 11.5$. Answer **(C)**.",
+      "steps": [
+        {
+          "title": "Means",
+          "body": "$\\bar{x} = (2 + 4 + 4 + 4 + 6)/5 = 20/5 = 4$ and $\\bar{y} = (7 + 9 + 10 + 11 + 13)/5 = 50/5 = 10$."
+        },
+        {
+          "title": "Sums of deviations",
+          "body": "$x - \\bar{x}$: $-2, 0, 0, 0, 2$; $\\;y - \\bar{y}$: $-3, -1, 0, 1, 3$.\n\n$S_{xy} = \\sum (x - \\bar{x})(y - \\bar{y}) = 6 + 0 + 0 + 0 + 6 = 12$ and $S_{xx} = \\sum (x - \\bar{x})^2 = 4 + 0 + 0 + 0 + 4 = 8$."
+        },
+        {
+          "title": "Coefficients",
+          "body": "$\\hat\\beta_1 = S_{xy}/S_{xx} = 12/8 = 1.5$; $\\hat\\beta_0 = \\bar{y} - \\hat\\beta_1\\bar{x} = 10 - 1.5 \\times 4 = 4$."
+        },
+        {
+          "title": "Prediction",
+          "body": "$\\hat{y}(5) = 4 + 1.5 \\times 5 = 11.5$ labels per hour. Equivalently, $\\hat{y}(5) = \\bar{y} + \\hat\\beta_1(5 - \\bar{x}) = 10 + 1.5 = 11.5$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Simple linear regression fits a straight line $\\hat{y} = \\beta_0 + \\beta_1 x$ by choosing the coefficients that minimise the sum of squared vertical errors $\\sum (y_i - \\beta_0 - \\beta_1 x_i)^2$. Setting the two partial derivatives to zero gives the normal equations, whose solution is\n$$\\hat\\beta_1 = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sum (x_i - \\bar{x})^2}, \\qquad \\hat\\beta_0 = \\bar{y} - \\hat\\beta_1 \\bar{x}.$$\n\nThe slope is the covariance of $x$ and $y$ divided by the variance of $x$. The intercept formula says the fitted line always passes through the point of means $(\\bar{x}, \\bar{y})$, which gives a quick way to predict: start at $\\bar{y}$ and move $\\hat\\beta_1$ units for every unit that $x$ is away from $\\bar{x}$. Here the line passes through $(4, 10)$ with slope 1.5, so one year beyond the mean gives $10 + 1.5 = 11.5$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$7.5 = 1.5 \\times 5$ drops the intercept $\\hat\\beta_0 = 4$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\approx 10.67$ uses the inverted slope $S_{xx}/S_{xy} = 8/12$: $10 + \\tfrac{2}{3}(5 - 4) \\approx 10.67$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\hat{y} = 4 + 1.5 \\times 5 = 11.5$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$17.5 = \\bar{y} + \\hat\\beta_1 x = 10 + 1.5 \\times 5$ forgets to centre $x$ at $\\bar{x}$."
+        }
+      ],
+      "shortcut": "The OLS line passes through $(\\bar{x}, \\bar{y}) = (4, 10)$, so $\\hat{y}(5) = 10 + \\hat\\beta_1 \\times (5 - 4) = 11.5$.",
+      "commonTrap": "Mixing up the slope formula as $S_{xx}/S_{xy}$ (the regression of $x$ on $y$ viewed the wrong way), or adding $\\hat\\beta_1 x$ to $\\bar{y}$ instead of to $\\hat\\beta_0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "11.5 (option C)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx = np.array([2, 4, 4, 4, 6.]); y = np.array([7, 9, 10, 11, 13.])\nb1 = ((x - x.mean()) * (y - y.mean())).sum() / ((x - x.mean()) ** 2).sum()\nb0 = y.mean() - b1 * x.mean()\nprint(b1, b0, b0 + b1 * 5)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-knn"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (k-NN majority vote) with six Euclidean distances to rank, all from small integers; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "k-nearest-neighbour classification with Euclidean distance and majority vote for different k.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A telecom company describes each customer by two numerical features $f_1$ and $f_2$. Six labelled customers are:\n\n| Customer | $f_1$ | $f_2$ | Class |\n|---|---|---|---|\n| $C_1$ | 4 | 8 | Churn |\n| $C_2$ | 8 | 6 | Stay |\n| $C_3$ | 6 | 10 | Stay |\n| $C_4$ | 4 | 1 | Churn |\n| $C_5$ | 10 | 10 | Churn |\n| $C_6$ | 9 | 1 | Stay |\n\nA new customer has $(f_1, f_2) = (4, 6)$. It is classified by the $k$-nearest-neighbour rule with **Euclidean** distance and a simple majority vote among the $k$ neighbours. Which one of the following gives the predicted class for $k = 1$ and for $k = 3$, respectively?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$k = 1$: Churn; $\\;k = 3$: Churn"
+      },
+      {
+        "label": "B",
+        "text": "$k = 1$: Stay; $\\;k = 3$: Stay"
+      },
+      {
+        "label": "C",
+        "text": "$k = 1$: Stay; $\\;k = 3$: Churn"
+      },
+      {
+        "label": "D",
+        "text": "$k = 1$: Churn; $\\;k = 3$: Stay"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Euclidean distances from $(4, 6)$: $C_1 = 2$, $C_2 = 4$, $C_3 = \\sqrt{20} \\approx 4.47$, $C_4 = 5$, $C_6 \\approx 7.07$, $C_5 \\approx 7.21$. For $k = 1$ the nearest is $C_1$ (Churn); for $k = 3$ the neighbours $C_1, C_2, C_3$ vote Churn, Stay, Stay, giving Stay. Answer **(D)**.",
+      "steps": [
+        {
+          "title": "Distances to the query $(4, 6)$",
+          "body": "| Customer | $(\\Delta f_1, \\Delta f_2)$ | Euclidean distance | Class |\n|---|---|---|---|\n| $C_1$ | $(0, 2)$ | $2$ | Churn |\n| $C_2$ | $(4, 0)$ | $4$ | Stay |\n| $C_3$ | $(2, 4)$ | $\\sqrt{20} \\approx 4.47$ | Stay |\n| $C_4$ | $(0, -5)$ | $5$ | Churn |\n| $C_5$ | $(6, 4)$ | $\\sqrt{52} \\approx 7.21$ | Churn |\n| $C_6$ | $(5, -5)$ | $\\sqrt{50} \\approx 7.07$ | Stay |"
+        },
+        {
+          "title": "k = 1",
+          "body": "The single nearest neighbour is $C_1$ at distance 2, so the prediction is **Churn**."
+        },
+        {
+          "title": "k = 3",
+          "body": "The three nearest are $C_1$ (2), $C_2$ (4) and $C_3$ (4.47), with classes Churn, Stay, Stay. The majority is **Stay** (2 votes to 1)."
+        },
+        {
+          "title": "Check the distance metric matters",
+          "body": "With Manhattan distance $C_3$ would be at $2 + 4 = 6$, farther than $C_4$ at $5$; the three nearest would then be $C_1, C_2, C_4$ and the vote would be Churn. Using Euclidean distance as stated, $C_3$ ($\\approx 4.47$) is closer than $C_4$ (5)."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "The $k$-nearest-neighbour classifier has no training phase beyond storing the labelled data. To classify a new point it computes the distance from the point to every stored example, takes the $k$ closest, and predicts the majority class among them.\n\nTwo choices drive the result. The first is $k$: $k = 1$ follows the single closest example and can be swayed by one unusual point, while a larger $k$ averages over more neighbours, giving smoother, more stable decision boundaries at the risk of blurring genuine local structure. The second is the distance metric: Euclidean distance $\\sqrt{\\sum_j (a_j - b_j)^2}$ and Manhattan distance $\\sum_j |a_j - b_j|$ can rank neighbours differently, especially for points that differ in several coordinates at once.\n\nHere the closest customer churned, but the next two stayed, so the prediction flips from Churn at $k = 1$ to Stay at $k = 3$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The $k = 3$ vote of Churn arises only if $C_4$ (distance 5) replaces $C_3$ (distance $\\approx 4.47$), e.g. by using Manhattan distance instead of the stated Euclidean distance."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The single nearest neighbour is $C_1$ (distance 2), which is Churn, so $k = 1$ cannot give Stay."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Both parts are wrong: $k = 1$ gives Churn and $k = 3$ gives Stay."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$k = 1$: $C_1$ gives Churn; $k = 3$: $\\{C_1, C_2, C_3\\}$ gives Stay by 2 votes to 1."
+        }
+      ],
+      "commonTrap": "Ranking neighbours by Manhattan distance (or by eye) and taking $C_4$ as the third neighbour instead of $C_3$, which flips the $k = 3$ prediction to Churn."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "k=1 Churn, k=3 Stay (option D)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nfrom collections import Counter\npts = [((4, 8), 'Churn'), ((8, 6), 'Stay'), ((6, 10), 'Stay'),\n       ((4, 1), 'Churn'), ((10, 10), 'Churn'), ((9, 1), 'Stay')]\nq = np.array([4, 6])\norder = sorted(pts, key=lambda p: np.linalg.norm(np.array(p[0]) - q))\nfor k in (1, 3):\n    print(k, Counter(l for _, l in order[:k]).most_common(1)[0][0])",
+      "notes": ""
+    }
+  }
+]

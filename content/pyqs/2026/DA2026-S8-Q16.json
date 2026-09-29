@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q16",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 16,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (a default argument value is evaluated once, so a mutable default list is shared between calls) and a three-call trace, under a minute for a prepared student.",
+  "estimatedTimeSec": 50,
+  "stem": "Consider the given Python program.\n\n```python\ndef append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))\n```\n\nWhich of the following is the correct output of this program?",
+  "options": [
+    {
+      "label": "A",
+      "text": "```text\n[1]\n[2]\n[3]\n```"
+    },
+    {
+      "label": "B",
+      "text": "```text\n[1]\n[1, 2]\n[3]\n```"
+    },
+    {
+      "label": "C",
+      "text": "```text\n[1]\n[2]\n[1, 2, 3]\n```"
+    },
+    {
+      "label": "D",
+      "text": "```text\n[1]\n[1, 2]\n[1, 3]\n```"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Default argument values are evaluated **once**, when the `def` statement runs, so every call that omits `lst` works on the **same** list object. Call 1 appends 1 to it and prints `[1]`. Call 2 appends 2 to that same list and prints `[1, 2]`. Call 3 passes a brand-new `[]`, so it prints `[3]` and leaves the shared default alone. The output is `[1]`, `[1, 2]`, `[3]`, which is **(B)**.",
+    "steps": [
+      {
+        "title": "When is `lst=[]` evaluated?",
+        "body": "In Python, the default value in `def append_to_lst(val, lst=[]):` is evaluated **once**, at the moment the `def` statement is executed. One empty list object is created then and stored with the function (in `append_to_lst.__defaults__`).\n\nEvery call that does not pass `lst` binds the parameter name `lst` to **that same object**. `lst.append(val)` mutates the object in place, so the change persists after the call returns."
+      },
+      {
+        "title": "Call 1: `append_to_lst(1)`",
+        "body": "`lst` is not supplied, so `lst` refers to the shared default list, currently `[]`.\n\n- `lst.append(1)` changes the shared list to `[1]`.\n- The function returns (a reference to) that list, and `print` shows `[1]`.\n\nShared default now: `[1]`."
+      },
+      {
+        "title": "Call 2: `append_to_lst(2)`",
+        "body": "Again `lst` is not supplied, so `lst` refers to the **same** shared list, which already holds `[1]`.\n\n- `lst.append(2)` changes it to `[1, 2]`.\n- `print` shows `[1, 2]`.\n\nShared default now: `[1, 2]`."
+      },
+      {
+        "title": "Call 3: `append_to_lst(3, [])`",
+        "body": "Here the caller passes a new empty list literal `[]`, created fresh for this call. The default is **not** used, so `lst` refers to this new, independent list.\n\n- `lst.append(3)` changes the new list to `[3]`.\n- `print` shows `[3]`.\n\nThe shared default list is untouched and is still `[1, 2]`."
+      },
+      {
+        "title": "Collect the output",
+        "body": "| Call | List object used | Contents after `append` | Printed |\n| --- | --- | --- | --- |\n| `append_to_lst(1)` | shared default | `[1]` | `[1]` |\n| `append_to_lst(2)` | shared default | `[1, 2]` | `[1, 2]` |\n| `append_to_lst(3, [])` | new list passed in | `[3]` | `[3]` |\n\nThe program prints\n\n```text\n[1]\n[1, 2]\n[3]\n```\n\nwhich is option **(B)**. Running the program confirms this output."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "**Names, objects and mutability.** In Python a variable is a *name* bound to an *object*. A list is **mutable**: methods such as `append` change the object itself, and every name bound to that object sees the change. Rebinding a name (`lst = [...]`) is different: it points the name at another object and changes no object.\n\n**When default arguments are evaluated.** A `def` statement is executed like any other statement. When it runs, Python evaluates each default-value expression **once** and stores the resulting objects with the function object (visible as `f.__defaults__`). Later calls do **not** re-evaluate `[]`; they reuse the stored object.\n\n- With an **immutable** default (`x=0`, `s=''`, `t=()`) this never causes trouble, because the object cannot be changed.\n- With a **mutable** default (`lst=[]`, `d={}`), any in-place change made during one call is still there in the next call that relies on the default. This is the classic \"mutable default argument\" pitfall.\n- Passing an argument explicitly bypasses the default completely: the parameter is bound to whatever object the caller passed.\n\nThe idiomatic fix, when a fresh list is wanted on each call, is:\n\n```python\ndef append_to_lst(val, lst=None):\n    if lst is None:\n        lst = []\n    lst.append(val)\n    return lst\n```\n\nWith this version the program would print `[1]`, `[2]`, `[3]`, which is option (A).\n\n**Back to this question.** The first two calls rely on the default and so share one list, which grows from `[1]` to `[1, 2]`. The third call supplies its own new list, so it prints `[3]`. That is option (B).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "This would be the output if `lst=[]` created a new list on every call, as the `lst=None` idiom does. In Python the default list is created once and shared, so the second call sees the `1` left over from the first call and prints `[1, 2]`, not `[2]`."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Calls 1 and 2 share the single default list, which becomes `[1]` and then `[1, 2]`. Call 3 passes its own new list, which becomes `[3]`. This is exactly the program's output."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Both the second and the third lines are wrong. `[2]` assumes a fresh default list for call 2. `[1, 2, 3]` assumes that call 3 appends to the shared default, but the explicit `[]` argument is a new, independent list, so call 3 prints `[3]`."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The third line is wrong. `[1, 3]` would need call 3 to append to a list that holds only `1`. The explicitly passed `[]` is empty, so the result is `[3]`, and the shared default holds `[1, 2]` at that point anyway."
+      }
+    ],
+    "shortcut": "A mutable default is one object shared by every call that omits the argument, so its contents accumulate across those calls. A call that passes the argument explicitly uses its own object and is unaffected. Here that gives: accumulate for calls 1-2 (`[1]`, `[1, 2]`), then a fresh `[3]`.",
+    "commonTrap": "Assuming that `lst=[]` builds a new empty list on every call, which leads to (A). The default is evaluated only once, when `def` runs. The opposite slip is thinking that the explicitly passed `[]` somehow still refers to the shared default, which leads to (C)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q16-1.webp",
+    "/pyq/2026/official/Q16-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed from the monospace (Consolas) block in the paper. In the paper the two body lines are indented by a single tab stop (the PDF text layer shows one whitespace character, and the text resumes at a 0.5-inch tab position, about 5.5 character widths in). They are transcribed with the conventional 4-space Python indentation, which does not change the program; all other characters match the paper. The option outputs are printed in the same monospace font, one list per line, and are transcribed as plain-text code blocks. The second official crop (Q16-2) shows only the header and a table border of the next page. The only embedded image on the page is the background watermark; no figure is needed for this question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B) - [1], [1, 2], [3]: the default list is created once and shared by calls 1 and 2; call 3 passes a fresh list.",
+    "agreesWithKey": true,
+    "checkCode": "import io, contextlib\nsrc = '''def append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))\n'''\nbuf, ns = io.StringIO(), {}\nwith contextlib.redirect_stdout(buf): exec(src, ns)\nout = buf.getvalue().splitlines(); print(out)  # ['[1]', '[1, 2]', '[3]']\nopts = {'A': ['[1]', '[2]', '[3]'], 'B': ['[1]', '[1, 2]', '[3]'],\n        'C': ['[1]', '[2]', '[1, 2, 3]'], 'D': ['[1]', '[1, 2]', '[1, 3]']}\nprint('matching option:', [k for k, v in opts.items() if v == out])  # ['B']\nprint('shared default after the run:', ns['append_to_lst'].__defaults__)  # ([1, 2],)",
+    "notes": "Author trace agrees with the official key B. The Python check executes the transcribed program and compares its printed lines with the four options; only (B) matches (['[1]', '[1, 2]', '[3]']). It also shows that the function's stored default is [1, 2] after the run, which confirms that the default list is shared."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,120 @@
+{
+  "id": "DA2025-S5-Q52",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 52,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-orthogonal-matrix",
+    "la-eigen",
+    "la-rank"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it rests on one concept (norm preservation is equivalent to A^T A = I) followed by 2-3 short deductions (det A = ±1 for full rank, |λ| = 1 for the eigenvalues) and a counterexample such as the 90-degree rotation to reject (B) and (C); about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "An $n \\times n$ matrix $A$ with real entries satisfies the property: $\\|Ax\\|^2 = \\|x\\|^2$, for all $x \\in \\mathbb{R}^n$, where $\\| \\cdot \\|$ denotes the Euclidean norm. Which of the following statements is/are ALWAYS correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$A$ must be orthogonal"
+    },
+    {
+      "label": "B",
+      "text": "$A = I$, where $I$ denotes the identity matrix, is the only solution"
+    },
+    {
+      "label": "C",
+      "text": "The eigenvalues of $A$ are either $+1$ or $-1$"
+    },
+    {
+      "label": "D",
+      "text": "$A$ has full rank"
+    }
+  ],
+  "officialKeyRaw": "A;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "$\\|Ax\\|^2 = \\|x\\|^2$ for all $x$ means $x^\\top (A^\\top A - I) x = 0$ for all $x$; as $A^\\top A - I$ is symmetric, $A^\\top A = I$, so $A$ is orthogonal (A) with $\\det A = \\pm 1$, hence full rank (D). $-I$ and the $90^\\circ$ rotation also satisfy the property, so $I$ is not the only solution (B), and the rotation's eigenvalues are $\\pm i$, not $\\pm 1$ (C). Answer: **(A), (D)**.",
+    "steps": [
+      {
+        "title": "Rewrite the norm condition as a quadratic form",
+        "body": "For a real vector, $\\|v\\|^2 = v^\\top v$. Hence\n\n$$\n\\|Ax\\|^2 = (Ax)^\\top (Ax) = x^\\top A^\\top A\\, x, \\qquad \\|x\\|^2 = x^\\top x = x^\\top I\\, x .\n$$\n\nThe given property therefore says\n\n$$\nx^\\top M x = 0 \\quad \\text{for all } x \\in \\mathbb{R}^n, \\qquad \\text{where } M = A^\\top A - I .\n$$\n\nNote that $M$ is **symmetric**, because $(A^\\top A)^\\top = A^\\top A$."
+      },
+      {
+        "title": "A symmetric matrix with zero quadratic form is zero, so A is orthogonal",
+        "body": "Test the identity on special vectors ($e_i$ is the $i$-th standard basis vector):\n\n- $x = e_i$: $\\;e_i^\\top M e_i = M_{ii} = 0$ for every $i$.\n- $x = e_i + e_j$ ($i \\ne j$): $\\;M_{ii} + M_{jj} + M_{ij} + M_{ji} = 0 + 0 + 2M_{ij} = 0$, so $M_{ij} = 0$ (using $M_{ij} = M_{ji}$).\n\nSo $M = 0$, i.e.\n\n$$\nA^\\top A = I .\n$$\n\nFor a square matrix a left inverse is also a right inverse, so $A^{-1} = A^\\top$ and $AA^\\top = I$ as well. This is exactly the definition of an **orthogonal matrix**: **(A) is correct**. (Conversely, every orthogonal matrix satisfies the property, since $x^\\top A^\\top A x = x^\\top x$.)\n\nFor $n = 2$ the check can be done by expanding: with $A = \\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}$, $\\|Ax\\|^2 - \\|x\\|^2 = (a^2 + c^2 - 1)x_1^2 + 2(ab + cd)x_1x_2 + (b^2 + d^2 - 1)x_2^2$, and all three coefficients vanishing is precisely $A^\\top A = I$."
+      },
+      {
+        "title": "Full rank (D)",
+        "body": "Two quick arguments:\n\n1. **Null space.** If $Ax = 0$ then $\\|x\\| = \\|Ax\\| = 0$, so $x = 0$. The null space is $\\{0\\}$, the nullity is $0$, and by rank–nullity $\\operatorname{rank} A = n$.\n2. **Determinant.** $\\det(A^\\top A) = \\det(A^\\top)\\det(A) = (\\det A)^2 = \\det I = 1$, so $\\det A = \\pm 1 \\ne 0$.\n\nEither way $A$ is invertible, i.e. has full rank: **(D) is correct**."
+      },
+      {
+        "title": "Eigenvalues (C): modulus 1, but not necessarily real",
+        "body": "Let $Av = \\lambda v$ with $v \\ne 0$, where $\\lambda$ and $v$ may be complex. Since $A$ is real, $A^* = A^\\top$, and\n\n$$\n|\\lambda|^2\\, v^* v = (Av)^*(Av) = v^* A^\\top A\\, v = v^* v \\;\\Longrightarrow\\; |\\lambda| = 1 .\n$$\n\nSo every eigenvalue lies on the unit circle. A **real** eigenvalue must be $\\pm 1$, but complex ones are allowed. Counterexample: the $90^\\circ$ rotation\n\n$$\nR = \\begin{bmatrix} 0 & -1 \\\\ 1 & 0 \\end{bmatrix}, \\qquad Rx = \\begin{bmatrix} -x_2 \\\\ x_1 \\end{bmatrix}, \\qquad \\|Rx\\|^2 = x_2^2 + x_1^2 = \\|x\\|^2 .\n$$\n\nIts characteristic polynomial is $\\det(R - \\lambda I) = \\lambda^2 + 1$, so its eigenvalues are $\\pm i$, which are neither $+1$ nor $-1$. Hence **(C) is not always correct**. (More generally, a rotation by $\\theta$ has eigenvalues $e^{\\pm i\\theta}$.)"
+      },
+      {
+        "title": "Uniqueness (B) and summary",
+        "body": "Many matrices other than $I$ preserve norms: $-I$, the reflection $\\begin{bmatrix} 1 & 0 \\\\ 0 & -1 \\end{bmatrix}$, the rotation $R$ above, and in fact every orthogonal matrix. So $A = I$ is **not** the only solution: **(B) is incorrect**.\n\n| Option | Always true? | Reason |\n| --- | --- | --- |\n| (A) | Yes | $\\|Ax\\|^2 = \\|x\\|^2\\ \\forall x \\iff A^\\top A = I$ |\n| (B) | No | $-I$, reflections and rotations also work |\n| (C) | No | $\\lvert\\lambda\\rvert = 1$, but the $90^\\circ$ rotation has $\\lambda = \\pm i$ |\n| (D) | Yes | $\\det A = \\pm 1 \\ne 0$ (equivalently, trivial null space) |\n\nThe always-correct statements are **(A), (D)**."
+      }
+    ],
+    "finalAnswer": "**(A), (D)**",
+    "teaching": "**Orthogonal matrices are exactly the length-preserving ones.** A real square matrix $Q$ is *orthogonal* when $Q^\\top Q = I$, which says its columns are orthonormal. Then $\\|Qx\\|^2 = x^\\top Q^\\top Q x = x^\\top x = \\|x\\|^2$, so $Q$ preserves lengths. This question is about the converse: if lengths are preserved for every $x$, then $x^\\top (Q^\\top Q - I) x = 0$ for all $x$, and because $Q^\\top Q - I$ is symmetric this forces $Q^\\top Q = I$. The key fact is that a symmetric matrix is completely determined by its quadratic form (polarization: $x^\\top M y = \\tfrac14\\left[(x+y)^\\top M (x+y) - (x-y)^\\top M (x-y)\\right]$ for symmetric $M$). Preserving lengths also preserves inner products and angles, so orthogonal matrices are the rigid motions of $\\mathbb{R}^n$ that fix the origin: rotations, reflections and their compositions.\n\n**Consequences worth remembering.**\n\n- $Q^{-1} = Q^\\top$, so $Q$ is invertible and has full rank $n$.\n- $\\det Q = \\pm 1$, from $(\\det Q)^2 = \\det(Q^\\top Q) = 1$: $+1$ for rotations, $-1$ for reflections.\n- Every eigenvalue satisfies $|\\lambda| = 1$: it lies on the unit circle in $\\mathbb{C}$. Real eigenvalues can only be $\\pm 1$, but complex pairs $e^{\\pm i\\theta}$ appear for rotations by $\\theta$.\n- All singular values equal $1$.\n\n**Why the eigenvalue claim fails.** A $90^\\circ$ rotation of the plane moves every nonzero vector off its own line, so it has no real eigenvector at all; its characteristic polynomial $\\lambda^2 + 1$ has roots $\\pm i$. The statement \"eigenvalues are $\\pm 1$\" holds only for special orthogonal matrices, for example symmetric ones such as reflections: $Q = Q^\\top = Q^{-1}$ gives $Q^2 = I$, so $\\lambda^2 = 1$.\n\n**Back to this question.** The condition $\\|Ax\\|^2 = \\|x\\|^2$ for all $x$ is exactly $A^\\top A = I$, so $A$ is orthogonal (A) and invertible, hence of full rank (D). Many orthogonal matrices other than $I$ exist ($-I$, reflections, rotations), which rules out (B), and rotations have non-real eigenvalues, which rules out (C). Answer: **(A), (D)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$\\|Ax\\|^2 = \\|x\\|^2$ means $x^\\top (A^\\top A - I) x = 0$ for all $x$. Since $A^\\top A - I$ is symmetric, it must be the zero matrix, so $A^\\top A = I$ and, for square $A$, $A^\\top = A^{-1}$. That is the definition of an orthogonal matrix."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Every orthogonal matrix satisfies the property, e.g. $-I$, the reflection $\\begin{bmatrix} 1 & 0 \\\\ 0 & -1 \\end{bmatrix}$ or the rotation $\\begin{bmatrix} 0 & -1 \\\\ 1 & 0 \\end{bmatrix}$ (check: $\\|(-x_2, x_1)\\|^2 = x_1^2 + x_2^2$). So $I$ is not the only solution."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Eigenvalues of an orthogonal matrix have modulus $1$ but need not be real. The $90^\\circ$ rotation $\\begin{bmatrix} 0 & -1 \\\\ 1 & 0 \\end{bmatrix}$ preserves norms, and its characteristic polynomial $\\lambda^2 + 1$ gives eigenvalues $\\pm i$. (The claim does hold when $n = 1$, where $A = \\pm 1$, or for symmetric orthogonal matrices, but not ALWAYS.)"
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "If $Ax = 0$ then $\\|x\\| = \\|Ax\\| = 0$, so $x = 0$. The null space is $\\{0\\}$ and, by rank–nullity, $\\operatorname{rank} A = n$. Equivalently, $\\det A = \\pm 1 \\ne 0$."
+      }
+    ],
+    "shortcut": "Norm-preserving square matrix $\\iff$ orthogonal ($A^\\top A = I$), which gives (A) and, via $\\det A = \\pm 1$, (D). A single test matrix, the $90^\\circ$ rotation $\\begin{bmatrix} 0 & -1 \\\\ 1 & 0 \\end{bmatrix}$, preserves norms yet is not $I$ and has eigenvalues $\\pm i$, killing (B) and (C) at once.",
+    "commonTrap": "Selecting (C) from the half-remembered fact \"orthogonal matrices have eigenvalues $\\pm 1$\". The correct statement is $|\\lambda| = 1$: only the **real** eigenvalues are forced to be $\\pm 1$, and rotations have complex eigenvalues such as $\\pm i$. Checking only diagonal examples like $I$, $-I$ or $\\operatorname{diag}(1, -1)$ hides this."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q52-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The norm, typeset as a double bar in the paper, is written with \\| here, and \"+1\" and \"−1\" in option (C) are set in math mode. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;D",
+    "agreesWithKey": true,
+    "checkCode": "from functools import lru_cache\n# a tree is None (empty) or (left, right); enumerate all non-empty binary tree shapes with n nodes\n@lru_cache(None)\ndef trees(n):\n    if n==0: return (None,)\n    return tuple((l,r) for k in range(n) for l in trees(k) for r in trees(n-1-k))\ndef stats(t):  # returns (H in edges, I, L, N)\n    l,r=t; kids=[c for c in (l,r) if c is not None]\n    if not kids: return (0,0,1,1)\n    s=[stats(c) for c in kids]\n    return (1+max(x[0] for x in s), 1+sum(x[1] for x in s), sum(x[2] for x in s), 1+sum(x[3] for x in s))\nchk={'A':lambda H,I,L,N: L<=I+1,\n     'B':lambda H,I,L,N: H+1<=N<=2**(H+1)-1,\n     'C':lambda H,I,L,N: H<=I<=2**H-1,\n     'D':lambda H,I,L,N: H<=L<=2**(H-1)}\nfails={k:None for k in chk}; cnt=0\nfor n in range(1,12):\n    for t in trees(n):\n        H,I,L,N=stats(t); cnt+=1\n        for k,f in chk.items():\n            if not f(H,I,L,N) and fails[k] is None: fails[k]=(H,I,L,N)\nprint('trees checked:',cnt)\nfor k in chk: print(k,'always true' if fails[k] is None else 'FALSE, counterexample (H,I,L,N)=%s'%(fails[k],))\n# tightness of bounds\nimport collections\next=collections.defaultdict(lambda:[10**9,-1])\nfor n in range(1,12):\n    for t in trees(n):\n        H,I,L,N=stats(t)\n        for nm,v in (('N',N),('I',I),('L',L)):\n            e=ext[(H,nm)]; e[0]=min(e[0],v); e[1]=max(e[1],v)\nfor H in range(0,4): print('H=%d'%H,{nm:tuple(ext[(H,nm)]) for nm in 'NIL'})\n# with height counted in NODES (h=H+1), statement B would read h+1<=N<=2^(h+1)-1: check\nprint('B under node-count height:',all(stats(t)[0]+2<=stats(t)[3] for n in range(1,6) for t in trees(n)))\n",
+    "notes": "Proof: ||Ax||^2 = ||x||^2 for all x gives x^T(A^T A - I)x = 0 for all x, and since A^T A - I is symmetric this forces A^T A = I, so A is orthogonal (A) and det A = ±1, so A has full rank (D). The sympy part of the check confirms, for a general 2x2 matrix, that the coefficients of ||Ax||^2 - ||x||^2 are exactly the entries of A^T A - I. The numpy part confirms that I, -I, the 90-degree rotation, the reflection diag(1, -1) and a random 5x5 orthogonal matrix all preserve norms and have full rank, so I is not the only solution (B false), and that the rotation has eigenvalues ±i (C false; all eigenvalues have modulus 1). This gives A;D, matching the official key A;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

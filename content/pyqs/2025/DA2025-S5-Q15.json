@@ -1,0 +1,111 @@
+{
+  "id": "DA2025-S5-Q15",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 15,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-propositional"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (logical equivalence of propositional formulas) settled by recalling p → q ≡ ¬p ∨ q or a 4-row truth table, about 1 min for a prepared student.",
+  "estimatedTimeSec": 50,
+  "stem": "Let $p$ and $q$ be any two propositions. Consider the following propositional statements.\n\n$$S_1 : p \\rightarrow q, \\quad S_2 : \\neg p \\land q, \\quad S_3 : \\neg p \\lor q, \\quad S_4 : \\neg p \\lor \\neg q,$$\n\nwhere $\\land$ denotes conjunction (AND operation), $\\lor$ denotes disjunction (OR operation), and $\\neg$ denotes negation (NOT operation). Which one of the following options is correct? (Note: $\\equiv$ denotes logical equivalence)",
+  "options": [
+    {
+      "label": "A",
+      "text": "$S_1 \\equiv S_3$"
+    },
+    {
+      "label": "B",
+      "text": "$S_2 \\equiv S_3$"
+    },
+    {
+      "label": "C",
+      "text": "$S_2 \\equiv S_4$"
+    },
+    {
+      "label": "D",
+      "text": "$S_1 \\equiv S_4$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "The implication $p \\rightarrow q$ is false only when $p$ is true and $q$ is false. $\\neg p \\lor q$ is also false exactly in that one case. So $S_1 \\equiv S_3$ (the implication law). Every other pair differs on at least one row of the truth table. Answer **(A)**.",
+    "steps": [
+      {
+        "title": "What logical equivalence means",
+        "body": "Two formulas are logically equivalent ($\\equiv$) when they have the **same truth value for every assignment** of truth values to $p$ and $q$. With two variables there are only $2^2 = 4$ assignments, so a truth table settles each option. One row where the columns differ is enough to show that two formulas are *not* equivalent."
+      },
+      {
+        "title": "Build the truth table",
+        "body": "Recall that $p \\rightarrow q$ is false **only** when $p = \\text{T}$ and $q = \\text{F}$.\n\n| $p$ | $q$ | $S_1: p \\rightarrow q$ | $S_2: \\neg p \\land q$ | $S_3: \\neg p \\lor q$ | $S_4: \\neg p \\lor \\neg q$ |\n| --- | --- | --- | --- | --- | --- |\n| T | T | T | F | T | F |\n| T | F | F | F | F | T |\n| F | T | T | T | T | T |\n| F | F | T | F | T | T |"
+      },
+      {
+        "title": "Compare the columns for each option",
+        "body": "- **(A) $S_1$ vs $S_3$:** $(\\text{T},\\text{F},\\text{T},\\text{T})$ and $(\\text{T},\\text{F},\\text{T},\\text{T})$ agree in all four rows, so they are **equivalent**.\n- **(B) $S_2$ vs $S_3$:** these differ at $(p,q) = (\\text{T},\\text{T})$, where $S_2 = \\text{F}$ and $S_3 = \\text{T}$, and also at $(\\text{F},\\text{F})$, so they are not equivalent.\n- **(C) $S_2$ vs $S_4$:** these differ at $(p,q) = (\\text{T},\\text{F})$, where $S_2 = \\text{F}$ and $S_4 = \\text{T}$, and also at $(\\text{F},\\text{F})$, so they are not equivalent.\n- **(D) $S_1$ vs $S_4$:** these differ at $(p,q) = (\\text{T},\\text{T})$, where $S_1 = \\text{T}$ and $S_4 = \\text{F}$, and also at $(\\text{T},\\text{F})$, so they are not equivalent."
+      },
+      {
+        "title": "Confirm algebraically",
+        "body": "- Implication elimination: $p \\rightarrow q \\equiv \\neg p \\lor q$, so $S_1 \\equiv S_3$ directly.\n- De Morgan: $S_4 = \\neg p \\lor \\neg q \\equiv \\neg(p \\land q)$ (NAND). It is false only when both $p$ and $q$ are true.\n- $S_2 = \\neg p \\land q \\equiv \\neg(p \\lor \\neg q) \\equiv \\neg(q \\rightarrow p)$. It is true in exactly one row ($p = \\text{F}, q = \\text{T}$), so it cannot match any of the other three, which are each true in three rows.\n\nOnly option **(A)** is correct."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**Propositions and connectives.** A proposition is a statement that is either true (T) or false (F). Connectives build new statements from old ones. $\\neg p$ flips the value. $p \\land q$ is true only when both are true. $p \\lor q$ is true when at least one is true.\n\n**Material implication.** $p \\rightarrow q$ (\"if $p$ then $q$\") makes a promise: whenever $p$ holds, $q$ holds. The promise is broken only when $p$ is true and $q$ is false. When $p$ is false, the promise is not tested, so the implication counts as true (\"vacuously true\"). This is exactly the behaviour of $\\neg p \\lor q$: it is false only when $\\neg p$ is false (so $p$ is true) **and** $q$ is false. That is why the identity\n\n$$p \\rightarrow q \\;\\equiv\\; \\neg p \\lor q$$\n\nis one of the most-used rewrites in logic. It is how implications are turned into clauses for resolution and CNF conversion.\n\n**Logical equivalence.** $A \\equiv B$ means that $A \\leftrightarrow B$ is a tautology, i.e. the two truth-table columns are identical. To *prove* an equivalence you check all rows or use known laws (De Morgan, distribution, implication elimination). To *disprove* one, a single counterexample row is enough.\n\n**Useful companions.** De Morgan's laws, $\\neg(p \\land q) \\equiv \\neg p \\lor \\neg q$ and $\\neg(p \\lor q) \\equiv \\neg p \\land \\neg q$. The contrapositive, $p \\rightarrow q \\equiv \\neg q \\rightarrow \\neg p$. The converse $q \\rightarrow p$ is **not** equivalent to $p \\rightarrow q$.\n\n**Back to the question.** $S_1$ is an implication and $S_3$ is its disjunctive form, so they are equivalent and (A) is correct. $S_2$ (true in one row) and $S_4$ (false in one row) are different functions from each other and from $S_1$. A single row refutes each of (B), (C) and (D).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Implication elimination: $p \\rightarrow q \\equiv \\neg p \\lor q$. Both columns are $(\\text{T},\\text{F},\\text{T},\\text{T})$, false only when $p = \\text{T}, q = \\text{F}$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$\\neg p \\land q$ and $\\neg p \\lor q$ differ only in the connective, but at $p = q = \\text{T}$ the first is F and the second is T (they also differ at $p = q = \\text{F}$)."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$\\neg p \\land q$ is true only at $(\\text{F},\\text{T})$, while $\\neg p \\lor \\neg q \\equiv \\neg(p \\land q)$ is true in three rows. For example, at $(\\text{F},\\text{F})$ they give F and T."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$S_1 \\equiv \\neg p \\lor q$, whereas $S_4 = \\neg p \\lor \\neg q$ has $\\neg q$ in place of $q$. At $p = q = \\text{T}$, $S_1 = \\text{T}$ but $S_4 = \\text{F}$, and at $(\\text{T},\\text{F})$, $S_1 = \\text{F}$ but $S_4 = \\text{T}$."
+      }
+    ],
+    "shortcut": "Memorise $p \\rightarrow q \\equiv \\neg p \\lor q$, which gives (A) immediately. To double-check the rest, the single row $p = q = \\text{F}$ gives $S_2 = \\text{F}$ but $S_3 = S_4 = \\text{T}$, ruling out (B) and (C). The row $p = q = \\text{T}$ gives $S_1 = \\text{T}$ but $S_4 = \\text{F}$, ruling out (D).",
+    "commonTrap": "Treating $p \\rightarrow q$ as false whenever $p$ is false (confusing implication with $p \\land q$ or with the biconditional). This makes $S_1$ look like $S_2$ or some other formula. Another slip is misreading $\\neg p \\land q$ as $\\neg p \\lor q$, since the two formulas look almost identical."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q15-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (S1 = p -> q is equivalent to S3 = ~p v q)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nimp = lambda a, b: (not a) or b\nS = {'S1': lambda p, q: imp(p, q), 'S2': lambda p, q: (not p) and q,\n     'S3': lambda p, q: (not p) or q, 'S4': lambda p, q: (not p) or (not q)}\nrows = list(product([True, False], repeat=2))\nfor n, s in S.items(): print(n, [int(s(p, q)) for p, q in rows])\nfor opt, (a, b) in {'A': ('S1', 'S3'), 'B': ('S2', 'S3'), 'C': ('S2', 'S4'), 'D': ('S1', 'S4')}.items():\n    diff = [(p, q) for p, q in rows if S[a](p, q) != S[b](p, q)]\n    print(opt, a, '==', b, ':', not diff, 'differs at (p,q)=', diff)",
+    "notes": "Independent solve: p -> q is false only at (p,q) = (T,F), exactly like ~p v q, so S1 = S3 and option (A) is correct. This matches the official key A. The Python truth table gives the columns S1 = S3 = (T,F,T,T), S2 = (F,F,T,F), S4 = (F,T,T,T) over the rows (T,T),(T,F),(F,T),(F,F). It confirms that B, C and D each fail on two rows."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

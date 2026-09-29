@@ -1,0 +1,113 @@
+{
+  "id": "DA2026-S8-Q09",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 9,
+  "section": "GA",
+  "subjectId": "ga",
+  "topicId": "ga-analytical",
+  "subtopicIds": [
+    "ga-numerical-reasoning",
+    "ga-numerical"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE — one idea (digit/place-value reasoning) with 2–3 linked steps (bound the numbers, use distinct tens digits, match the units digit) and routine squaring; about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "$P$, $Q$, $R$, $S$, $X$, and $Y$ are distinct single-digit whole numbers taking values from 0 to 9.\n\n$PQ$ is a two-digit number with $Q$ being in the units place and $P$ in the tens place. Similarly, $RS$ is a two-digit number.\n\nIt is known that $PQ$ and $RS$ are consecutive numbers and $(PQ)^2 + (RS)^2 = XYP$, with $XYP$ being a three-digit number.\n\nThe value of $Y$ is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_",
+  "options": [
+    {
+      "label": "A",
+      "text": "4"
+    },
+    {
+      "label": "B",
+      "text": "5"
+    },
+    {
+      "label": "C",
+      "text": "6"
+    },
+    {
+      "label": "D",
+      "text": "7"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "The sum of squares is below 1000, so both numbers are at most 22. $P \\ne R$ means the two consecutive numbers have different tens digits, so they are 19 and 20. $19^2 + 20^2 = 761$ ends in $1 = P$, giving $PQ = 19$, $RS = 20$, $X = 7$ and $Y = 6$. The answer is option **(C)**.",
+    "steps": [
+      {
+        "title": "Bound the size of the numbers",
+        "body": "Let the smaller of the two consecutive numbers be $n$, so the pair is $\\{n, n+1\\}$. The sum of squares must be a three-digit number:\n\n$$n^2 + (n+1)^2 \\le 999.$$\n\nFor $n = 21$: $441 + 484 = 925$ ✓. For $n = 22$: $484 + 529 = 1013$ ✗.\n\nSo $n \\le 21$, and both numbers lie in $10, 11, \\dots, 22$ (they are two-digit numbers)."
+      },
+      {
+        "title": "Use distinctness of the tens digits",
+        "body": "$P$ is the tens digit of $PQ$ and $R$ is the tens digit of $RS$. Since all six letters are distinct, $P \\ne R$, so the two consecutive numbers must have **different tens digits**.\n\nTwo consecutive numbers have different tens digits only when they straddle a multiple of 10, i.e. $\\{19, 20\\}$ or $\\{29, 30\\}$, and so on. Within $10$–$22$, the only such pair is $\\{19, 20\\}$. Pairs like $\\{14, 15\\}$ or $\\{20, 21\\}$ share their tens digit and are ruled out."
+      },
+      {
+        "title": "Compute the sum of squares",
+        "body": "$$19^2 + 20^2 = 361 + 400 = 761.$$\n\nSo $XYP = 761$, i.e. $X = 7$, $Y = 6$ and the units digit is $1$."
+      },
+      {
+        "title": "Decide which number is PQ and check every condition",
+        "body": "The units digit of $XYP$ must equal $P$, the tens digit of $PQ$. Since $761$ ends in $1$, $P = 1$, so $PQ = 19$ and $RS = 20$. (With $PQ = 20$ we would need $P = 2$, but the sum ends in 1.)\n\n| Letter | $P$ | $Q$ | $R$ | $S$ | $X$ | $Y$ |\n| --- | --- | --- | --- | --- | --- | --- |\n| Digit | 1 | 9 | 2 | 0 | 7 | 6 |\n\nAll six digits are distinct ✓, $19$ and $20$ are consecutive ✓, and $19^2 + 20^2 = 761 = XYP$ with $P = 1$ ✓.\n\nTherefore $Y = 6$, option **(C)**. A brute-force search over all consecutive pairs, which even allows a leading zero, finds only this assignment."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Digit puzzles** (also called cryptarithms) give each letter a digit and ask you to recover the digits from arithmetic facts. The main tools are:\n\n1. **Place value.** A two-digit number $PQ$ means $10P + Q$, and a three-digit number $XYP$ means $100X + 10Y + P$. Keep the letters (digits) separate from the numbers they form.\n2. **Size bounds.** Being a three-digit number means lying between $100$ and $999$, which caps how large the inputs can be. Here, squaring two consecutive numbers and staying below $1000$ restricts both to $22$ or less.\n3. **Distinctness.** \"All letters are distinct\" is a strong filter. Two numbers written with the *same* tens digit would make two letters equal. For consecutive numbers, distinct tens digits happen only across a multiple of 10 ($9 \\to 0$ in the units place), e.g. 19 and 20.\n4. **Units-digit matching.** The last digit of a sum or product depends only on the last digits of the inputs. Checking that the units digit comes out as the required letter quickly picks the correct ordering.\n\n**Method:** first use bounds to get a short candidate list. Then apply distinctness to shrink it, often to a single case. Finally verify every condition, including that the repeated letter ($P$ here, which appears in both $PQ$ and $XYP$) takes the same value in both places.\n\nIn this question the bound leaves 10–22, the distinct tens digits leave only 19 and 20, and units-digit matching fixes $PQ = 19$. That gives $761$, so $Y = 6$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$Y = 4$ would come from, e.g., $20^2 + 21^2 = 841$ or $16^2 + 17^2 = 545$. Both pairs share a tens digit ($P = R$), and neither sum ends in the required $P$. No valid assignment gives $Y = 4$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "No pair of consecutive numbers from 10 to 22 has a sum of squares with tens digit 5, so $Y = 5$ is impossible."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "The unique valid assignment is $PQ = 19$, $RS = 20$, with $19^2 + 20^2 = 761$, so $X = 7$, $Y = 6$, $P = 1$. All six digits (1, 9, 2, 0, 7, 6) are distinct."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$7$ is the hundreds digit $X$ of $761$, not $Y$. Choosing it is a misreading of the positions in $XYP$."
+      }
+    ],
+    "shortcut": "Distinct $P$ and $R$ mean the consecutive numbers must cross a multiple of ten. Since the squares must sum to under 1000, the only candidates are 19 and 20. $361 + 400 = 761$, so $Y$ is the middle digit, $6$.",
+    "commonTrap": "Choosing **7** by reading the wrong position of $761$ (7 is $X$). Another trap is testing pairs like 20 and 21 without noticing that they share a tens digit, which violates distinctness."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q09-1.webp",
+    "/pyq/2026/official/Q09-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. In the paper, the equation $(PQ)^2 + (RS)^2 = XYP$ starts on a new line within the same sentence; here it is kept inline. Official crop Q09-2 shows only the top edge of the next page's table and contains no question content."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (Y = 6; PQ = 19, RS = 20, XYP = 761)",
+    "agreesWithKey": true,
+    "checkCode": "sols=[]\nfor pq in range(0,100):          # also allows a leading zero, for robustness\n  for rs in (pq-1,pq+1):\n    if not 0<=rs<=99: continue\n    t=pq*pq+rs*rs\n    if not 100<=t<=999: continue\n    P,Q=divmod(pq,10); R,S=divmod(rs,10); X,Y,P2=t//100,(t//10)%10,t%10\n    if P2==P and len({P,Q,R,S,X,Y})==6: sols.append((pq,rs,t,Y))\nprint(sols)  # [(19, 20, 761, 6)] -> Y = 6",
+    "notes": "The hand derivation and an exhaustive search (which also allows leading zeros) give one assignment: PQ = 19, RS = 20, XYP = 761, so Y = 6. This agrees with official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

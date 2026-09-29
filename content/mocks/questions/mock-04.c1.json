@@ -1,0 +1,748 @@
+[
+  {
+    "id": "M04-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (rebinding with `+` versus in-place mutation with `+=` on a list, plus reference semantics of parameters) traced over a few lines; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Python reference semantics: `a = a + [...]` rebinds a local name, while `b += a` mutates the caller's list in place.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef f(a, b):\n    a = a + [len(b)]\n    b += a\n    return a, b\n\nx = [1, 2]\ny = [3]\np, q = f(x, y)\nprint(x, y)\n```\n\nWhat is printed when the program is executed?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`[1, 2, 1] [3, 1, 2, 1]`"
+      },
+      {
+        "label": "B",
+        "text": "`[1, 2] [3]`"
+      },
+      {
+        "label": "C",
+        "text": "`[1, 2] [3, 1, 2, 1]`"
+      },
+      {
+        "label": "D",
+        "text": "`[1, 2] [3, [1, 2, 1]]`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "`a = a + [len(b)]` builds a **new** list `[1, 2, 1]` and rebinds only the local name `a`, so `x` stays `[1, 2]`.\n`b += a` on a list **extends the same object in place**, so the caller's `y` becomes `[3, 1, 2, 1]`. Output: `[1, 2] [3, 1, 2, 1]`, option (C).",
+      "steps": [
+        {
+          "title": "Parameters share the caller's objects",
+          "body": "At the call `f(x, y)`, the local name `a` is bound to the same list object as `x` (`[1, 2]`) and `b` to the same list object as `y` (`[3]`). Python passes object references; nothing is copied."
+        },
+        {
+          "title": "Line `a = a + [len(b)]` rebinds",
+          "body": "The right-hand side is evaluated first. `len(b)` is `len([3]) = 1`, and `a + [1]` creates a **new** list `[1, 2, 1]`. The assignment moves only the local name `a` to this new list. The object that `x` refers to is untouched, so `x` is still `[1, 2]`."
+        },
+        {
+          "title": "Line `b += a` mutates",
+          "body": "For a list, `b += a` calls `list.__iadd__`, which behaves like `b.extend(a)`: the *elements* `1, 2, 1` are appended to the existing object. Because `b` and `y` are the same object, `y` becomes `[3, 1, 2, 1]`."
+        },
+        {
+          "title": "Output",
+          "body": "`print(x, y)` prints `[1, 2] [3, 1, 2, 1]`. (For completeness, `p` is `[1, 2, 1]` and `q is y` is `True`, but neither is printed.)"
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "In Python a variable is a *name* bound to an object, and a function call binds the parameter names to the caller's objects. What happens next depends on whether a statement **rebinds a name** or **mutates an object**. A plain assignment `a = <expression>` always rebinds: the expression produces some object and only the local name moves to it, so the caller never sees the change. For lists, `a + [...]` builds a brand-new list, which is why `a = a + [...]` leaves `x` alone.\n\nAugmented assignment is different for mutable types. On a list, `b += a` calls `b.extend(a)`, changing the very object the caller also holds. For immutable types such as `int`, `str` or `tuple` there is no in-place version, so `+=` merely rebinds. In this program the caller's `x` therefore survives unchanged, while `y` grows by the three elements of the new local list.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Assumes `a = a + [len(b)]` changes `x`. The `+` operator creates a new list and only the local name `a` is rebound, so `x` remains `[1, 2]`."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Treats `b += a` as a rebinding (as it would be for an `int` or a `tuple`). For a list, `+=` extends the same object in place, so `y` does change."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "`x` is untouched by the rebinding of `a`, and `y` is extended in place by the elements of `[1, 2, 1]`: `[1, 2] [3, 1, 2, 1]`."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Confuses `extend` with `append`. `b += a` adds the elements of `a` one by one; only `b.append(a)` would give the nested list `[3, [1, 2, 1]]`."
+        }
+      ],
+      "shortcut": "Label each line inside the function as *rebind* (`name = ...`) or *mutate* (`+=` on a list, `.append`, `.extend`, item assignment). Only mutations are visible to the caller.",
+      "commonTrap": "Believing that `a = a + [...]` and `b += a` behave alike. For lists, `+` builds a new object (caller unaffected) whereas `+=` mutates in place (caller affected)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "[1, 2] [3, 1, 2, 1] -> (C)",
+      "agreesWithKey": true,
+      "checkCode": "def f(a, b):\n    a = a + [len(b)]\n    b += a\n    return a, b\n\nx = [1, 2]\ny = [3]\np, q = f(x, y)\nprint(x, y)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-stacks"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (stack evaluation of a postfix expression) applied in one short trace of nine tokens; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Evaluating a postfix (reverse Polish) expression with a stack, with correct operand order for non-commutative operators.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A calculator app stores each formula in postfix (reverse Polish) notation and evaluates it with a stack. Tokens are separated by spaces, every operator is binary, and `/` denotes exact division.\n\nWhat is the value of the following postfix expression?\n\n```text\n9 5 - 4 2 / * 7 +\n```",
+    "options": [
+      {
+        "label": "A",
+        "text": "$-1$"
+      },
+      {
+        "label": "B",
+        "text": "$15$"
+      },
+      {
+        "label": "C",
+        "text": "$9$"
+      },
+      {
+        "label": "D",
+        "text": "$5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Scan left to right: push operands; on an operator pop the **right** operand first, then the left one. $9 - 5 = 4$, $4 / 2 = 2$, $4 \\times 2 = 8$, $8 + 7 = 15$. Equivalent infix: $((9 - 5) \\times (4 / 2)) + 7 = 15$.",
+      "steps": [
+        {
+          "title": "Evaluation rule",
+          "body": "Operands are pushed. For a binary operator, pop the top element as the **right** operand $r$, pop the next as the **left** operand $l$, and push $l \\; \\text{op} \\; r$. The order matters for $-$ and $/$."
+        },
+        {
+          "title": "Trace",
+          "body": "| Token | Action | Stack (bottom → top) |\n| --- | --- | --- |\n| `9` | push | 9 |\n| `5` | push | 9, 5 |\n| `-` | pop 5, pop 9, push $9 - 5 = 4$ | 4 |\n| `4` | push | 4, 4 |\n| `2` | push | 4, 4, 2 |\n| `/` | pop 2, pop 4, push $4 / 2 = 2$ | 4, 2 |\n| `*` | pop 2, pop 4, push $4 \\times 2 = 8$ | 8 |\n| `7` | push | 8, 7 |\n| `+` | pop 7, pop 8, push $8 + 7 = 15$ | 15 |"
+        },
+        {
+          "title": "Result",
+          "body": "Exactly one value, $15$, remains on the stack, so the expression is well formed and its value is $15$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "In postfix notation an operator is written *after* its two operands, so `a b -` means $a - b$. No parentheses or precedence rules are needed, because the position of each operator fixes exactly what it applies to. That is why postfix is convenient for machines: a single left-to-right scan with a stack evaluates it.\n\nThe algorithm is short. Push every operand. When an operator arrives, its two operands are the two most recent unfinished values, which sit on top of the stack. Pop the top one (the *right* operand), pop the next (the *left* operand), apply the operator and push the result. A well-formed expression leaves exactly one value on the stack. The only real danger is operand order: for $+$ and $\\times$ it does not matter, but for $-$ and $/$ swapping the operands changes the answer. Here that happens at the $-$ and at the $/$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Comes from reversing only the subtraction: $5 - 9 = -4$, then $-4 \\times 2 + 7 = -1$. The first element popped is the right operand, so the step is $9 - 5$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$(9 - 5) \\times (4 / 2) + 7 = 4 \\times 2 + 7 = 15$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Comes from reversing only the division: $2 / 4 = 0.5$, then $4 \\times 0.5 + 7 = 9$. The correct step is $4 / 2 = 2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Comes from reversing both non-commutative steps: $(5 - 9) \\times (2 / 4) + 7 = -2 + 7 = 5$."
+        }
+      ],
+      "commonTrap": "Using the first popped value as the *left* operand. That gives $5 - 9$ and $2 / 4$ instead of $9 - 5$ and $4 / 2$, producing the distractors $-1$, $9$ or $5$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "15",
+      "agreesWithKey": true,
+      "checkCode": "def ev(expr):\n    st = []\n    for t in expr.split():\n        if t in '+-*/':\n            r = st.pop(); l = st.pop()   # first pop is the RIGHT operand\n            st.append({'+': l + r, '-': l - r, '*': l * r, '/': l / r}[t])\n        else:\n            st.append(int(t))\n    return st\nprint(ev('9 5 - 4 2 / * 7 +'))   # [15.0]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (expected cost of successful linear search) used in 2–3 steps: write the expectation, see that decreasing-probability order minimises it, then compute; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Expected number of comparisons in successful linear search with non-uniform access probabilities, and the order that minimises it.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A small in-memory cache keeps five records in an unsorted array and finds a record by **linear search** starting from the first position, stopping at the first match. Every lookup is for one of these five records (so every search is successful), and each comparison of the search key with a stored key counts as one comparison. The records, in their current storage order, and their access probabilities are:\n\n| Position | 1 | 2 | 3 | 4 | 5 |\n| --- | --- | --- | --- | --- | --- |\n| Record | R1 | R2 | R3 | R4 | R5 |\n| Access probability | 0.10 | 0.25 | 0.05 | 0.40 | 0.20 |\n\nBefore any lookup, the five records may be rearranged in the array in any order. The minimum possible expected number of comparisons per lookup is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$3.35$"
+      },
+      {
+        "label": "B",
+        "text": "$3.85$"
+      },
+      {
+        "label": "C",
+        "text": "$3.00$"
+      },
+      {
+        "label": "D",
+        "text": "$2.15$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "A record at position $i$ costs $i$ comparisons, so $E = \\sum i \\, p_i$. This is smallest when records are stored in decreasing order of probability: R4, R2, R5, R1, R3 gives $1(0.40) + 2(0.25) + 3(0.20) + 4(0.10) + 5(0.05) = 2.15$.",
+      "steps": [
+        {
+          "title": "Cost model",
+          "body": "Linear search compares the key with positions $1, 2, 3, \\dots$ until it matches. A record stored at position $i$ is found after exactly $i$ comparisons. Hence\n\n$$E[\\text{comparisons}] = \\sum_{i=1}^{5} i \\cdot p(\\text{record at position } i).$$"
+        },
+        {
+          "title": "Current order (for reference)",
+          "body": "$1(0.10) + 2(0.25) + 3(0.05) + 4(0.40) + 5(0.20) = 0.10 + 0.50 + 0.15 + 1.60 + 1.00 = 3.35$."
+        },
+        {
+          "title": "Which order is optimal?",
+          "body": "Take two neighbours at positions $i$ and $i+1$ holding records with probabilities $p_u$ and $p_v$, where $p_u < p_v$. Swapping them changes $E$ by $\\big(i p_v + (i+1) p_u\\big) - \\big(i p_u + (i+1) p_v\\big) = p_u - p_v < 0$. So any adjacent pair that is out of decreasing order can be swapped to lower $E$, and the minimum is reached with probabilities in **decreasing** order: R4 (0.40), R2 (0.25), R5 (0.20), R1 (0.10), R3 (0.05)."
+        },
+        {
+          "title": "Compute the minimum",
+          "body": "$1(0.40) + 2(0.25) + 3(0.20) + 4(0.10) + 5(0.05) = 0.40 + 0.50 + 0.60 + 0.40 + 0.25 = 2.15$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "Linear search checks elements one by one, so its cost for a particular key equals that key's position. When all keys are equally likely, the expected cost of a successful search in an array of $n$ elements is $\\frac{1 + 2 + \\dots + n}{n} = \\frac{n+1}{2}$. Real workloads are rarely uniform, though: a few keys are requested far more often than others. The expected cost then becomes a weighted average, $\\sum i \\, p_i$, where $p_i$ is the probability of the key at position $i$.\n\nTo make a weighted sum of positions small, the largest weights should get the smallest positions. The swap argument makes this precise: moving a more popular record one place forward always lowers the cost. This is the idea behind self-organising lists (move-to-front, transpose), which try to discover this order online. Here, sorting by decreasing probability cuts the expected cost from 3.35 to 2.15 comparisons.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$3.35$ is the expected cost of the **current** order, not the minimum over all orders."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$3.85$ comes from arranging the records in **increasing** order of probability, which is the worst arrangement (the maximum, not the minimum)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$3.00 = \\frac{5 + 1}{2}$ is the uniform-probability formula; it ignores the given access probabilities."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Decreasing-probability order R4, R2, R5, R1, R3 gives $0.40 + 0.50 + 0.60 + 0.40 + 0.25 = 2.15$, the minimum."
+        }
+      ],
+      "shortcut": "Sort the probabilities in decreasing order and take the dot product with $1, 2, 3, \\dots$: $(0.40, 0.25, 0.20, 0.10, 0.05) \\cdot (1, 2, 3, 4, 5) = 2.15$.",
+      "commonTrap": "Using $\\frac{n+1}{2} = 3$ out of habit, or computing the cost of the given order (3.35) without rearranging."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2.15",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import permutations\np = [0.10, 0.25, 0.05, 0.40, 0.20]          # current order R1..R5\nE = lambda order: sum((i + 1) * x for i, x in enumerate(order))\nprint(round(E(p), 2))                                           # current: 3.35\nprint(round(min(E(o) for o in permutations(p)), 2))             # minimum: 2.15\nprint(round(E(sorted(p, reverse=True)), 2), round(E(sorted(p)), 2))  # 2.15 3.85",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — each statement is a standard recall-level property of one elementary sort (stability, best case, fixed comparison count, swaps versus inversions); about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Properties of selection, insertion and bubble sort: stability, comparison counts and the swaps–inversions link.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the standard array implementations of selection sort, insertion sort and bubble sort, each sorting $n \\ge 2$ keys into non-decreasing order. A *key comparison* is a comparison between two array elements, and an *inversion* is a pair of positions $i < j$ with $A[i] > A[j]$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Selection sort, which in each pass swaps the minimum of the unsorted part into the first unsorted position, is a stable sorting algorithm."
+      },
+      {
+        "label": "B",
+        "text": "If the input is already in non-decreasing order, insertion sort makes exactly $n - 1$ key comparisons."
+      },
+      {
+        "label": "C",
+        "text": "Selection sort makes exactly $\\frac{n(n-1)}{2}$ key comparisons on every input of size $n$, whatever the initial order."
+      },
+      {
+        "label": "D",
+        "text": "The total number of swaps performed by bubble sort equals the number of inversions in the input array."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Swap-based selection sort can jump an element over an equal one, so it is **not** stable (A false). Insertion sort on sorted input compares each new element once: $n-1$ comparisons (B true). Selection sort always scans the whole unsorted part: $\\frac{n(n-1)}{2}$ comparisons (C true). Each bubble-sort swap removes exactly one inversion (D true).",
+      "steps": [
+        {
+          "title": "Statement A: stability of selection sort",
+          "body": "Counterexample with keys $[2_a, 2_b, 1]$. Pass 1 finds the minimum $1$ at index 2 and swaps it with index 0, giving $[1, 2_b, 2_a]$. Pass 2 leaves the array unchanged. The two equal keys have swapped their relative order, so the algorithm is **not stable**. A is FALSE."
+        },
+        {
+          "title": "Statement B: insertion sort on sorted input",
+          "body": "For $j = 2, \\dots, n$, the new element is compared with its left neighbour; since the neighbour is not larger, the inner loop stops after that single comparison. Total $= n - 1$ comparisons (the best case, $\\Theta(n)$). B is TRUE."
+        },
+        {
+          "title": "Statement C: selection sort comparisons",
+          "body": "Pass $i$ scans all $n - i$ remaining elements to find the minimum, independent of their values. Total $= (n-1) + (n-2) + \\dots + 1 = \\frac{n(n-1)}{2}$ on every input. C is TRUE."
+        },
+        {
+          "title": "Statement D: bubble sort swaps",
+          "body": "Bubble sort swaps only adjacent elements with $A[j] > A[j+1]$. Such a swap fixes exactly that one inverted pair and leaves every other pair's order unchanged, so each swap reduces the inversion count by exactly 1. The sorted output has 0 inversions, so the number of swaps equals the initial number of inversions. D is TRUE."
+        }
+      ],
+      "finalAnswer": "**(B), (C), (D)**",
+      "teaching": "The three elementary sorts differ in *how* they build the sorted prefix. **Selection sort** repeatedly scans the unsorted part for its minimum and swaps it into place. The scan never stops early, so it always makes $\\frac{n(n-1)}{2}$ comparisons but at most $n - 1$ swaps; the long-distance swap is what can jump an element over an equal one and break stability.\n\n**Insertion sort** takes the next element and shifts larger elements right until the element fits. On sorted input nothing shifts, so each element costs one comparison and the whole run is $\\Theta(n)$; on reverse-sorted input it is $\\Theta(n^2)$. **Bubble sort** swaps adjacent out-of-order pairs. An adjacent swap changes the relative order of just one pair, so it removes exactly one inversion. That is why the swap count of bubble sort, like the shift count of insertion sort, equals the number of inversions.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Swap-based selection sort is unstable: on $[2_a, 2_b, 1]$ the first swap moves $2_a$ behind $2_b$, giving $[1, 2_b, 2_a]$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "On sorted input each of the $n - 1$ insertions ends after one comparison with the left neighbour: exactly $n - 1$ comparisons."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Pass $i$ always scans the remaining $n - i$ elements, so the total is $\\sum_{i=1}^{n-1} (n - i) = \\frac{n(n-1)}{2}$ regardless of input order."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Each adjacent swap of an out-of-order pair removes exactly one inversion, and the sorted array has none, so swaps = inversions."
+        }
+      ],
+      "commonTrap": "Assuming selection sort is stable because it is simple, or thinking its comparison count drops on sorted input (that is true of insertion sort, not selection sort)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import random\ndef ins(a):\n    a = a[:]; c = 0\n    for j in range(1, len(a)):\n        k = a[j]; i = j - 1\n        while i >= 0:\n            c += 1\n            if a[i] > k: a[i + 1] = a[i]; i -= 1\n            else: break\n        a[i + 1] = k\n    return c\ndef sel(a, key=lambda v: v):\n    a = a[:]; c = 0\n    for i in range(len(a) - 1):\n        m = i\n        for j in range(i + 1, len(a)):\n            c += 1\n            if key(a[j]) < key(a[m]): m = j\n        a[i], a[m] = a[m], a[i]\n    return a, c\ndef bub(a):\n    a = a[:]; s = 0\n    for i in range(len(a) - 1):\n        for j in range(len(a) - 1 - i):\n            if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; s += 1\n    return s\ninv = lambda a: sum(a[i] > a[j] for i in range(len(a)) for j in range(i + 1, len(a)))\nprint(sel([(2, 'a'), (2, 'b'), (1, 'c')], key=lambda v: v[0])[0])  # 2b before 2a -> A false\nfor n in range(2, 9):\n    assert ins(list(range(n))) == n - 1                              # B true\n    for _ in range(300):\n        a = [random.randint(0, 5) for _ in range(n)]\n        assert sel(a)[1] == n * (n - 1) // 2                         # C true\n        assert bub(a) == inv(a)                                      # D true\nprint('B, C, D')",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-graph-theory"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (the handshaking lemma, sum of degrees $= 2|E|$) and one linear equation; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Handshaking lemma: in an undirected graph the sum of vertex degrees equals twice the number of edges.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A network of 12 sensor nodes is modelled as a simple undirected graph $G$ with 19 edges (links). In $G$, five nodes have degree 4, four nodes have degree 3, and each of the remaining three nodes has the same degree $d$.\n\nThe value of $d$ is ________.",
+    "answer": {
+      "kind": "NAT",
+      "min": 2,
+      "max": 2
+    },
+    "solution": {
+      "quick": "Sum of degrees $= 2|E| = 38$. Known degrees contribute $5 \\times 4 + 4 \\times 3 = 32$, so $3d = 6$ and $d = 2$.",
+      "steps": [
+        {
+          "title": "Handshaking lemma",
+          "body": "Every edge has two endpoints, so it adds 1 to the degree of each of two vertices. Hence $\\sum_{v} \\deg(v) = 2|E| = 2 \\times 19 = 38$."
+        },
+        {
+          "title": "Degrees that are known",
+          "body": "$5 \\times 4 + 4 \\times 3 = 20 + 12 = 32$."
+        },
+        {
+          "title": "Solve for $d$",
+          "body": "The remaining three vertices contribute $3d$: $32 + 3d = 38 \\Rightarrow 3d = 6 \\Rightarrow d = 2$."
+        },
+        {
+          "title": "Sanity check",
+          "body": "The degree sequence $(4,4,4,4,4,3,3,3,3,2,2,2)$ has an even sum (38) and passes the Havel–Hakimi test, so a simple graph with these degrees really exists."
+        }
+      ],
+      "finalAnswer": "**2**",
+      "teaching": "The degree of a vertex in an undirected graph is the number of edges touching it. If you add up all the degrees, each edge is counted exactly twice, once from each endpoint. This gives the **handshaking lemma**: $\\sum_v \\deg(v) = 2|E|$. Two quick consequences are worth remembering: the sum of degrees is always even, and so the number of odd-degree vertices is always even.\n\nThe lemma turns many graph questions into simple arithmetic. If you know the number of edges and most of the degrees, the missing degrees follow from one equation. Here the 19 edges force a degree total of 38; the known vertices account for 32, leaving 6 to be shared equally by three vertices, so each has degree 2.",
+      "commonTrap": "Setting the degree sum equal to $|E| = 19$ instead of $2|E| = 38$, which gives a negative value for $d$, or dividing the leftover 6 by the wrong number of vertices."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2",
+      "agreesWithKey": true,
+      "checkCode": "E = 19\nknown = [4] * 5 + [3] * 4\nd = (2 * E - sum(known)) / 3\nprint(d)   # 2.0\n# graphicality check (Havel-Hakimi) for 4,4,4,4,4,3,3,3,3,2,2,2\nseq = sorted(known + [int(d)] * 3, reverse=True)\nwhile seq and seq[0] > 0:\n    k = seq.pop(0)\n    assert k <= len(seq)\n    seq = sorted([x - 1 for x in seq[:k]] + seq[k:], reverse=True)\n    assert min(seq) >= 0\nprint('graphical')",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — several routine Python ideas (counting with `dict.get`, a tuple sort key, negative-step slicing, `KeyError` on a missing key) must each be checked, but every check is a short computation; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Python dictionaries and strings: frequency counting with `dict.get`, sorting with a tuple key, slicing with a negative step.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ns = \"statistical\"\nd = {}\nfor ch in s:\n    d[ch] = d.get(ch, 0) + 1\nt = sorted(d, key=lambda c: (-d[c], c))\nprint(t[:3])\nprint(s[::-3])\nprint(len(d))\n```\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "If the statement `print(d['z'])` were appended at the end of the program, it would print `0`."
+      },
+      {
+        "label": "B",
+        "text": "The first line of output is `['t', 'a', 'i']`."
+      },
+      {
+        "label": "C",
+        "text": "The third line of output is `11`."
+      },
+      {
+        "label": "D",
+        "text": "The second line of output is `liit`."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Counts: `t`:3, `s`:2, `a`:2, `i`:2, `c`:1, `l`:1. Sorting by (count descending, letter ascending) gives `t, a, i, s, c, l`, so line 1 is `['t', 'a', 'i']`. `s[::-3]` takes indices 10, 7, 4, 1: `liit`. There are 6 distinct keys, and `d['z']` raises `KeyError`. TRUE: (B), (D).",
+      "steps": [
+        {
+          "title": "Build the frequency dictionary",
+          "body": "`d.get(ch, 0)` returns 0 for a new key, so the loop counts characters. For `statistical` (s-t-a-t-i-s-t-i-c-a-l) the dictionary is `{'s': 2, 't': 3, 'a': 2, 'i': 2, 'c': 1, 'l': 1}` (keys in first-occurrence order)."
+        },
+        {
+          "title": "Line 1: sorting with a tuple key",
+          "body": "`sorted(d, ...)` sorts the **keys**. The key `(-d[c], c)` orders by count descending, and ties by letter ascending. Count 3: `t`; count 2: `a`, `i`, `s`; count 1: `c`, `l`. So `t = ['t', 'a', 'i', 's', 'c', 'l']` and `t[:3]` prints `['t', 'a', 'i']`. Statement B is TRUE."
+        },
+        {
+          "title": "Line 2: slicing with step −3",
+          "body": "With a negative step and no start, slicing starts at the last index, 10. Indices visited: 10, 7, 4, 1 (the next, −2, is out of range). Characters: `s[10]='l'`, `s[7]='i'`, `s[4]='i'`, `s[1]='t'`, giving `liit`. Statement D is TRUE."
+        },
+        {
+          "title": "Line 3 and the missing key",
+          "body": "`len(d)` counts **distinct** keys: `s, t, a, i, c, l` → 6, not 11 (11 is `len(s)`). Statement C is FALSE. Indexing a dict with a missing key, `d['z']`, raises `KeyError`; only `d.get('z', 0)` would return 0. Statement A is FALSE."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "teaching": "A Python `dict` maps unique keys to values. `d[k]` looks a key up and raises `KeyError` if it is absent, while `d.get(k, default)` returns the default instead. That is why `d[ch] = d.get(ch, 0) + 1` is the standard counting idiom. Iterating over a dict, or passing it to `sorted`, uses its **keys**.\n\n`sorted` accepts a `key` function, and tuples compare element by element. So the key `(-count, letter)` sorts first by count in descending order (because of the minus sign) and breaks ties alphabetically. Slicing `s[start:stop:step]` with a negative step walks backwards; when `start` is omitted it begins at the last character, and it keeps stepping while the index stays at 0 or above. Putting these together: the tie among `a`, `i` and `s` is broken alphabetically, and the backward walk from index 10 in steps of 3 spells `liit`.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "`d['z']` raises `KeyError` because `'z'` was never inserted. The default of 0 applies only to `d.get('z', 0)`."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Counts are t:3, then a, i, s with 2 each; ties are broken alphabetically by the second element of the key, so the first three keys are `t`, `a`, `i`."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "`len(d)` is the number of distinct characters, 6. The value 11 is the length of the string, not of the dictionary."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Starting from the last index 10 and stepping by −3 visits indices 10, 7, 4, 1, which hold `l`, `i`, `i`, `t`."
+        }
+      ],
+      "commonTrap": "Breaking the count ties by first-occurrence order (giving `['t', 's', 'a']`), which is what happens if the second element `c` of the sort key is overlooked."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, D (lines: ['t', 'a', 'i'] / liit / 6; d['z'] raises KeyError)",
+      "agreesWithKey": true,
+      "checkCode": "s = \"statistical\"\nd = {}\nfor ch in s:\n    d[ch] = d.get(ch, 0) + 1\nt = sorted(d, key=lambda c: (-d[c], c))\nprint(t[:3])\nprint(s[::-3])\nprint(len(d))\ntry:\n    print(d['z'])\nexcept KeyError:\n    print('KeyError')   # so option A is false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-queues"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a circular-array queue with modular indexing) traced through nine given operations; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Circular-array implementation of a queue: wrap-around indexing with `front` and `count`.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A queue of integers is stored in a circular array `Q` of size 7 (indices 0 to 6). The variable `front` holds the index of the element at the front of the queue, and `count` holds the number of elements currently in the queue. The operations are defined as follows.\n\n- `enqueue(x)`: set `Q[(front + count) % 7] = x`, then `count = count + 1`.\n- `dequeue()`: store `v = Q[front]`, set `front = (front + 1) % 7` and `count = count - 1`, then return `v`.\n\nInitially `front = 5` and `count = 0`. The following operations are performed in this order:\n\n`enqueue(10)`, `enqueue(20)`, `enqueue(30)`, `enqueue(40)`, `dequeue()`, `dequeue()`, `enqueue(50)`, `enqueue(60)`, `enqueue(70)`\n\nWhich of the following gives (index of `Q` at which 70 is stored, value returned by the next `dequeue()`)?",
+    "options": [
+      {
+        "label": "A",
+        "text": "(4, 30)"
+      },
+      {
+        "label": "B",
+        "text": "(6, 30)"
+      },
+      {
+        "label": "C",
+        "text": "(2, 10)"
+      },
+      {
+        "label": "D",
+        "text": "(4, 70)"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "10, 20, 30, 40 go to indices 5, 6, 0, 1. Two dequeues move `front` to 0 (count 2). Then 50, 60, 70 go to $(0+2)\\%7 = 2$, 3, 4. The next dequeue returns `Q[0] = 30`. Answer: (4, 30).",
+      "steps": [
+        {
+          "title": "Four enqueues from front = 5",
+          "body": "`front = 5`, so the slots used are $(5+0)\\%7 = 5$, $(5+1)\\%7 = 6$, $(5+2)\\%7 = 0$, $(5+3)\\%7 = 1$: `Q[5]=10`, `Q[6]=20`, `Q[0]=30`, `Q[1]=40`; `count = 4`."
+        },
+        {
+          "title": "Two dequeues",
+          "body": "First returns `Q[5] = 10`, `front = 6`, `count = 3`. Second returns `Q[6] = 20`, `front = (6 + 1) % 7 = 0`, `count = 2`. The queue now holds 30, 40 at indices 0, 1."
+        },
+        {
+          "title": "Three more enqueues",
+          "body": "`Q[(0+2)%7] = Q[2] = 50`, `Q[3] = 60`, `Q[4] = 70`; `count = 5`. So 70 is at index **4**."
+        },
+        {
+          "title": "Next dequeue",
+          "body": "It returns `Q[front] = Q[0] = 30`, the oldest remaining element (FIFO). The pair is **(4, 30)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "A queue is first-in, first-out: elements leave in the order they arrived. Storing it in a plain array and shifting everything left on each dequeue would cost $O(n)$ per operation. A **circular array** avoids this: the array is treated as a ring, and indices wrap around with `% capacity`. The queue is described by where it starts (`front`) and how long it is (`count`); the next free slot is `(front + count) % capacity`.\n\nA dequeue simply advances `front` by one (with wrap-around) and decrements `count`, so both operations take $O(1)$ time. When tracing such code, write down `front`, `count` and the slot used at every step, and apply the modulus whenever an index would reach the capacity. Here the queue starts near the end of the array (index 5), so it wraps to index 0 almost immediately.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "70 is written at $(0 + 4)\\%7 = 4$, and the front element after the two dequeues is 30 at index 0."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is what you get if you ignore `front = 5` and start filling from index 0: 70 would land at index 6. The given start index shifts every slot."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Results from forgetting to advance `front` on dequeue (keeping `front = 5`, `count = 2`): 50, 60, 70 would go to indices 0, 1, 2, and the next dequeue would wrongly return 10 again."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The index is right, but a queue is FIFO. The next dequeue returns the oldest element, 30, not the most recently inserted one, 70 (that would be stack behaviour)."
+        }
+      ],
+      "commonTrap": "Forgetting the wrap-around at the end of the array, or treating the queue as LIFO and answering 70 for the next dequeue."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(4, 30)",
+      "agreesWithKey": true,
+      "checkCode": "N = 7\nQ = [None] * N; front = 5; count = 0\ndef enqueue(x):\n    global count\n    Q[(front + count) % N] = x; count += 1\ndef dequeue():\n    global front, count\n    v = Q[front]; front = (front + 1) % N; count -= 1; return v\nfor x in (10, 20, 30, 40): enqueue(x)\ndequeue(); dequeue()\nfor x in (50, 60, 70): enqueue(x)\nprint(Q.index(70), Q[front])   # 4 30",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-binary-search"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (iterative binary search) traced for four probes on a 14-element array; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Tracing iterative binary search with floor midpoint on an unsuccessful search.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python function.\n\n```python\ndef bsearch(A, key):\n    lo, hi = 0, len(A) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        print(A[mid], end=\" \")\n        if A[mid] == key:\n            return mid\n        elif A[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n```\n\nIt is called as `bsearch(A, 45)` with\n\n`A = [3, 8, 11, 17, 20, 26, 31, 35, 42, 47, 53, 58, 64, 70]`\n\nWhich of the following correctly describes what the call prints and what it returns?",
+    "options": [
+      {
+        "label": "A",
+        "text": "It prints `31 53 42` and returns `-1`."
+      },
+      {
+        "label": "B",
+        "text": "It prints `31 53 42 47` and returns `-1`."
+      },
+      {
+        "label": "C",
+        "text": "It prints `35 58 47 42` and returns `-1`."
+      },
+      {
+        "label": "D",
+        "text": "It prints `31 53 42 47` and returns `9`."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Probes (lo, hi, mid): (0, 13, 6) → 31; (7, 13, 10) → 53; (7, 9, 8) → 42; (9, 9, 9) → 47; then `lo = 9 > hi = 8`, so the loop ends and `-1` is returned.",
+      "steps": [
+        {
+          "title": "Setup",
+          "body": "`len(A) = 14`, so `lo = 0`, `hi = 13`. The key 45 is not in the array, so the search must end with `lo > hi`."
+        },
+        {
+          "title": "Trace",
+          "body": "| lo | hi | mid | A[mid] | Action |\n| --- | --- | --- | --- | --- |\n| 0 | 13 | 6 | 31 | 31 < 45 → lo = 7 |\n| 7 | 13 | 10 | 53 | 53 > 45 → hi = 9 |\n| 7 | 9 | 8 | 42 | 42 < 45 → lo = 9 |\n| 9 | 9 | 9 | 47 | 47 > 45 → hi = 8 |"
+        },
+        {
+          "title": "Termination and return value",
+          "body": "Now `lo = 9 > hi = 8`, so the loop exits and the function returns `-1`. The printed values, in order, are `31 53 42 47`."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Binary search works on a sorted array by keeping an interval `[lo, hi]` that must contain the key if the key is present. Each step compares the key with the middle element `A[mid]`, where `mid = (lo + hi) // 2` rounds down. If the middle element is smaller than the key, the key can only be to the right, so `lo = mid + 1`; if it is larger, `hi = mid - 1`. Every probe roughly halves the interval, so at most $\\lfloor \\log_2 n \\rfloor + 1$ probes are needed, which is 4 for $n = 14$.\n\nAn unsuccessful search does not stop when the interval has one element left: that last element is still probed. Only when `lo` passes `hi` does the loop end, and this function then returns $-1$. At that moment `lo` is the insertion position of the key (9 here), but this function does not return it.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Stops one probe too early. When `lo = hi = 9` the condition `lo <= hi` still holds, so `A[9] = 47` is also printed."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The four probes are at indices 6, 10, 8 and 9, printing `31 53 42 47`; the loop then ends with `lo > hi` and returns `-1`."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This trace uses the upper midpoint (or `hi = len(A)`), starting at index 7. The code uses `(lo + hi) // 2` with `hi = 13`, so the first probe is index 6."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The printed values are right, but the function returns `-1` on failure. The value 9 is the final `lo` (the insertion position), which this function does not return."
+        }
+      ],
+      "commonTrap": "Stopping the trace when the interval shrinks to one element, or computing the midpoint as a ceiling. Both change the sequence of probed elements."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "prints 31 53 42 47, returns -1 -> (B)",
+      "agreesWithKey": true,
+      "checkCode": "def bsearch(A, key):\n    lo, hi = 0, len(A) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        print(A[mid], end=\" \")\n        if A[mid] == key:\n            return mid\n        elif A[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n\nA = [3, 8, 11, 17, 20, 26, 31, 35, 42, 47, 53, 58, 64, 70]\nr = bsearch(A, 45)\nprint()\nprint(r)   # prints 31 53 42 47, returns -1",
+      "notes": ""
+    }
+  }
+]

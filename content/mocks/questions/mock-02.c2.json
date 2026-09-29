@@ -1,0 +1,615 @@
+[
+  {
+    "id": "M02-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-gaussian-elimination"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (forward elimination) carried through two elimination stages, where the second multiplier must be taken from the updated rows; about 1.5–2 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Forward elimination without row interchanges: computing the pivots from the updated rows",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the matrix\n\n$$\nA = \\begin{bmatrix} 1 & 2 & -1 \\\\ 3 & 8 & 1 \\\\ -2 & 2 & 9 \\end{bmatrix}.\n$$\n\nGaussian elimination **without row interchanges** is applied to $A$. First, suitable multiples of row 1 are subtracted from rows 2 and 3 to create zeros below the $(1,1)$ entry. Then a suitable multiple of the new row 2 is subtracted from the new row 3 to create a zero below the $(2,2)$ entry. The result is an upper-triangular matrix $U$.\n\nThe third pivot, that is, the $(3,3)$ entry of $U$, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$7$"
+      },
+      {
+        "label": "B",
+        "text": "$-10$"
+      },
+      {
+        "label": "C",
+        "text": "$-5$"
+      },
+      {
+        "label": "D",
+        "text": "$19$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Stage 1 uses the multipliers $\\ell_{21} = 3$ and $\\ell_{31} = -2$, which give the new rows $[0,\\ 2,\\ 4]$ and $[0,\\ 6,\\ 7]$.\nStage 2 uses $\\ell_{32} = 6/2 = 3$, so the $(3,3)$ entry becomes $7 - 3(4) = -5$. The third pivot is $-5$, option **(C)**.",
+      "steps": [
+        {
+          "title": "Stage 1: eliminate below the first pivot",
+          "body": "The first pivot is $a_{11} = 1$, so the multipliers are $\\ell_{21} = 3/1 = 3$ and $\\ell_{31} = -2/1 = -2$.\n\n$$\nR_2 \\leftarrow R_2 - 3R_1 = [3,\\ 8,\\ 1] - [3,\\ 6,\\ -3] = [0,\\ 2,\\ 4]\n$$\n\n$$\nR_3 \\leftarrow R_3 - (-2)R_1 = [-2,\\ 2,\\ 9] + [2,\\ 4,\\ -2] = [0,\\ 6,\\ 7]\n$$"
+        },
+        {
+          "title": "Stage 2: eliminate below the second pivot",
+          "body": "The second pivot is the **updated** $(2,2)$ entry, $2$, so the multiplier is $\\ell_{32} = 6/2 = 3$.\n\n$$\nR_3 \\leftarrow R_3 - 3R_2 = [0,\\ 6,\\ 7] - [0,\\ 6,\\ 12] = [0,\\ 0,\\ -5]\n$$"
+        },
+        {
+          "title": "Read off U",
+          "body": "$$\nU = \\begin{bmatrix} 1 & 2 & -1 \\\\ 0 & 2 & 4 \\\\ 0 & 0 & -5 \\end{bmatrix}\n$$\n\nThe pivots are $1$, $2$ and $-5$, so the third pivot is $-5$."
+        },
+        {
+          "title": "Cross-check with the determinant",
+          "body": "Row replacements do not change the determinant, so $\\det A = 1 \\times 2 \\times (-5) = -10$. Cofactor expansion along row 1 agrees: $1(72 - 2) - 2(27 + 2) + (-1)(6 + 16) = 70 - 58 - 22 = -10$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Gaussian elimination turns $A\\mathbf{x} = \\mathbf{b}$ into an equivalent triangular system $U\\mathbf{x} = \\mathbf{c}$ using only row replacements $R_i \\leftarrow R_i - \\ell_{ij}R_j$, where the multiplier is $\\ell_{ij} = (\\text{entry to be eliminated}) / (\\text{current pivot})$. Each replacement can be undone, so the solution set and the determinant stay the same.\n\nA pivot is a diagonal entry **at the moment it is used**. Only the first pivot is an entry of the original $A$. The second and third pivots are entries of the rows after the earlier stages have changed them. That is why the $(3,3)$ entry here comes from the updated row $[0,\\ 6,\\ 7]$, not from the original row $[-2,\\ 2,\\ 9]$.\n\nWhen no row interchanges are needed, the product of the pivots equals $\\det A$. Here that is $1 \\cdot 2 \\cdot (-5) = -10$. All three pivots are non-zero, so $A$ is invertible, and back substitution on $U$ solves any system $A\\mathbf{x} = \\mathbf{b}$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$7$ is the $(3,3)$ entry after stage 1 only. Stopping there leaves the $(3,2)$ entry $6$ uneliminated, so the matrix is not yet upper triangular."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$-10$ is the product of all three pivots, which is $\\det A$, not the third pivot."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Subtracting $3 \\times [0,\\ 2,\\ 4]$ from $[0,\\ 6,\\ 7]$ gives $[0,\\ 0,\\ -5]$, so the third pivot is $-5$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$19 = 7 + 3(4)$ comes from adding $3R_2$ instead of subtracting it. That sign error would not even zero the $(3,2)$ entry, since $6 + 3(2) = 12$."
+        }
+      ],
+      "commonTrap": "Stopping after the first stage and reporting $7$, or getting the sign of a multiplier wrong. Remember that $R_3 - (-2)R_1 = R_3 + 2R_1$ and that $R_3 - 3R_2$ must make the $(3,2)$ entry exactly zero."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-5.0 (third pivot); option C",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA=np.array([[1,2,-1],[3,8,1],[-2,2,9]],float); U=A.copy()\nfor j in range(2):\n    for i in range(j+1,3): U[i]-=U[i,j]/U[j,j]*U[j]\nprint(U[2,2])  # -5.0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single use of the eigenvector definition Ax = λx (one component gives λ, the other gives a); under a minute for a prepared student.",
+    "estimatedTimeSec": 60,
+    "concept": "Eigenvector condition Ax = λx used to recover an unknown matrix entry",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A two-group population model evolves as $\\mathbf{x}_{t+1} = A\\mathbf{x}_t$, where\n\n$$\nA = \\begin{bmatrix} a & 3 \\\\ 2 & 5 \\end{bmatrix}\n$$\n\nand $a$ is a real constant. Starting from $\\mathbf{x}_0 = \\begin{bmatrix} 3 \\\\ 2 \\end{bmatrix}$, the next state $\\mathbf{x}_1 = A\\mathbf{x}_0$ turns out to be a scalar multiple of $\\mathbf{x}_0$, that is, $A\\mathbf{x}_0 = \\lambda\\mathbf{x}_0$ for some real number $\\lambda$.\n\nThe value of $a$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 6,
+      "max": 6
+    },
+    "solution": {
+      "quick": "$A\\mathbf{x}_0 = (3a + 6,\\ 16)^\\top$ must equal $\\lambda(3,\\ 2)^\\top$.\nThe second component gives $2\\lambda = 16$, so $\\lambda = 8$. The first then gives $3a + 6 = 24$, so $a = 6$.",
+      "steps": [
+        {
+          "title": "Compute A x₀",
+          "body": "$$\nA\\mathbf{x}_0 = \\begin{bmatrix} a(3) + 3(2) \\\\ 2(3) + 5(2) \\end{bmatrix} = \\begin{bmatrix} 3a + 6 \\\\ 16 \\end{bmatrix}\n$$"
+        },
+        {
+          "title": "Use the component that has no unknown",
+          "body": "$A\\mathbf{x}_0 = \\lambda\\mathbf{x}_0 = (3\\lambda,\\ 2\\lambda)^\\top$. Matching second components gives $16 = 2\\lambda$, so $\\lambda = 8$."
+        },
+        {
+          "title": "Solve for a",
+          "body": "Matching first components gives $3a + 6 = 3\\lambda = 24$, so $a = 6$."
+        },
+        {
+          "title": "Check",
+          "body": "With $a = 6$, $A = \\begin{bmatrix} 6 & 3 \\\\ 2 & 5 \\end{bmatrix}$ has trace $11$ and determinant $30 - 6 = 24$. Its characteristic polynomial is $\\lambda^2 - 11\\lambda + 24 = (\\lambda - 8)(\\lambda - 3)$, so $8$ is indeed an eigenvalue, and $A\\mathbf{x}_0 = (24,\\ 16)^\\top = 8\\,(3,\\ 2)^\\top$."
+        }
+      ],
+      "finalAnswer": "**6**",
+      "teaching": "An eigenvector of a square matrix $A$ is a non-zero vector $\\mathbf{v}$ whose direction $A$ leaves unchanged: $A\\mathbf{v} = \\lambda\\mathbf{v}$. The scalar $\\lambda$, the eigenvalue, is the stretch factor. To test whether a given vector is an eigenvector, compute $A\\mathbf{v}$ and ask whether it is a multiple of $\\mathbf{v}$. Every component must share the same ratio $\\lambda$.\n\nIn a population model $\\mathbf{x}_{t+1} = A\\mathbf{x}_t$, a state along an eigenvector keeps its proportions from one step to the next. Here the two groups stay in the ratio $3:2$, and both grow by the factor $\\lambda = 8$ at every step.\n\nWith an unknown entry, the fastest route is to use first the component of $A\\mathbf{v} = \\lambda\\mathbf{v}$ that does not involve the unknown. Here that is the second row, which fixes $\\lambda = 8$. The other component then gives the unknown, $a = 6$.",
+      "commonTrap": "Reporting the eigenvalue $\\lambda = 8$ instead of $a$. Another slip is to assume the state stays the same ($\\lambda = 1$) and solve $3a + 6 = 3$ to get $a = -1$. But \"a scalar multiple\" allows any $\\lambda$, and the second component forces $\\lambda = 8$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "a = 6 (with λ = 8)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\na,l=sp.symbols('a l'); A=sp.Matrix([[a,3],[2,5]]); x=sp.Matrix([3,2])\nprint(sp.solve(list(A*x-l*x),[a,l]))  # {a: 6, l: 8}",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-rank"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (rank as the number of independent columns), settled by spotting a single column relation or by a short row reduction; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Rank of a data matrix: a feature that is a linear combination of other features lowers the rank",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Four customers are described by three numerical features, giving the $4 \\times 3$ data matrix $X$ below. Each row is a customer and the columns are the features $f_1$, $f_2$ and $f_3$.\n\n| Customer | $f_1$ | $f_2$ | $f_3$ |\n|---|---|---|---|\n| 1 | 1 | 2 | 0 |\n| 2 | 3 | 1 | 5 |\n| 3 | 0 | 4 | $-4$ |\n| 4 | 2 | 2 | 2 |\n\nThe rank of $X$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1$"
+      },
+      {
+        "label": "B",
+        "text": "$2$"
+      },
+      {
+        "label": "C",
+        "text": "$3$"
+      },
+      {
+        "label": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Every row satisfies $f_3 = 2f_1 - f_2$, so column 3 depends on columns 1 and 2. Columns 1 and 2 are not proportional, so exactly two columns are independent and $\\operatorname{rank}(X) = 2$, option **(B)**.",
+      "steps": [
+        {
+          "title": "Bound the rank",
+          "body": "For a $4 \\times 3$ matrix, $\\operatorname{rank}(X) \\le \\min(4, 3) = 3$, so a rank of $4$ is impossible."
+        },
+        {
+          "title": "Look for a relation among the columns",
+          "body": "Columns $f_1$ and $f_2$ are not multiples of each other (row 1 has $1, 2$ while row 2 has $3, 1$), so $\\operatorname{rank} \\ge 2$.\n\nTry $f_3 = \\alpha f_1 + \\beta f_2$. Rows 1 and 2 give $\\alpha + 2\\beta = 0$ and $3\\alpha + \\beta = 5$, so $\\alpha = 2$ and $\\beta = -1$. Rows 3 and 4 also fit: $2(0) - 4 = -4$ and $2(2) - 2 = 2$. Hence $f_3 = 2f_1 - f_2$ holds for every customer."
+        },
+        {
+          "title": "Confirm by row reduction",
+          "body": "$R_2 - 3R_1 = [0,\\ -5,\\ 5]$, $R_3 = [0,\\ 4,\\ -4]$ and $R_4 - 2R_1 = [0,\\ -2,\\ 2]$. All three are multiples of $[0,\\ 1,\\ -1]$, so the echelon form is\n\n$$\n\\begin{bmatrix} 1 & 2 & 0 \\\\ 0 & 1 & -1 \\\\ 0 & 0 & 0 \\\\ 0 & 0 & 0 \\end{bmatrix},\n$$\n\nwhich has two non-zero rows."
+        },
+        {
+          "title": "Conclude",
+          "body": "There are two pivots, so $\\operatorname{rank}(X) = 2$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "The rank of a matrix is the maximum number of linearly independent columns. This always equals the maximum number of linearly independent rows, and also the number of pivots in its echelon form. A $4 \\times 3$ matrix therefore has rank at most $3$.\n\nFor a data matrix, rank counts how many features carry genuinely new information. If one feature is an exact linear combination of the others, it adds nothing new, and the rank drops below the number of features. Here $f_3 = 2f_1 - f_2$ for every customer, so the three feature columns span only a 2-dimensional space.\n\nThis matters in practice. When features are exactly collinear, $X^\\top X$ is singular and ordinary least squares has no unique solution. Checking the rank, or finding the redundant feature as done here, is the first step before fitting a model.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Rank $1$ would need every column to be a multiple of a single column. Columns $f_1 = (1, 3, 0, 2)$ and $f_2 = (2, 1, 4, 2)$ are not proportional."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$f_1$ and $f_2$ are independent, and $f_3 = 2f_1 - f_2$, so exactly two columns are independent."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$3$ is the number of features. It would be the rank only if no feature were a combination of the others, but $f_3 = 2f_1 - f_2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$4$ is the number of rows. The rank can never exceed the number of columns, which is $3$."
+        }
+      ],
+      "commonTrap": "Concluding that the rank is $3$ because no column is a multiple of another. Having no proportional pair of columns does not make the columns independent: a column can be a combination of two others, as $f_3 = 2f_1 - f_2$ is here."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX=np.array([[1,2,0],[3,1,5],[0,4,-4],[2,2,2]])\nprint(np.linalg.matrix_rank(X))  # 2",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-lu",
+      "la-gaussian-elimination"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Doolittle LU through elimination) needing three multipliers over two stages, where the last multiplier must come from the updated matrix; about 2–2.5 minutes.",
+    "estimatedTimeSec": 140,
+    "concept": "Doolittle LU factorisation: L stores the elimination multipliers from the updated matrix",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The matrix\n\n$$\nA = \\begin{bmatrix} 3 & -1 & 2 \\\\ 6 & 1 & 3 \\\\ -3 & 7 & 1 \\end{bmatrix}\n$$\n\nis factorised as $A = LU$, where $L$ is lower triangular with every diagonal entry equal to $1$, $U$ is upper triangular, and no row interchanges are used.\n\nWhich one of the following is $L$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\begin{bmatrix} 1 & 0 & 0 \\\\ 2 & 1 & 0 \\\\ -1 & \\tfrac{1}{2} & 1 \\end{bmatrix}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\begin{bmatrix} 1 & 0 & 0 \\\\ -2 & 1 & 0 \\\\ 1 & -2 & 1 \\end{bmatrix}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\begin{bmatrix} 1 & 0 & 0 \\\\ 2 & 1 & 0 \\\\ -1 & 7 & 1 \\end{bmatrix}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\begin{bmatrix} 1 & 0 & 0 \\\\ 2 & 1 & 0 \\\\ -1 & 2 & 1 \\end{bmatrix}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The multipliers are $\\ell_{21} = 6/3 = 2$ and $\\ell_{31} = -3/3 = -1$. After stage 1, rows 2 and 3 are $[0,\\ 3,\\ -1]$ and $[0,\\ 6,\\ 3]$, so $\\ell_{32} = 6/3 = 2$.\nHence $L$ has sub-diagonal entries $2, -1, 2$, which is option **(D)**.",
+      "steps": [
+        {
+          "title": "Stage 1: multipliers for column 1",
+          "body": "The first pivot is $3$, so $\\ell_{21} = 6/3 = 2$ and $\\ell_{31} = -3/3 = -1$.\n\n$$\nR_2 - 2R_1 = [6,\\ 1,\\ 3] - [6,\\ -2,\\ 4] = [0,\\ 3,\\ -1]\n$$\n\n$$\nR_3 - (-1)R_1 = [-3,\\ 7,\\ 1] + [3,\\ -1,\\ 2] = [0,\\ 6,\\ 3]\n$$"
+        },
+        {
+          "title": "Stage 2: multiplier for column 2",
+          "body": "The second pivot is the **updated** $(2,2)$ entry, $3$, so $\\ell_{32} = 6/3 = 2$.\n\n$$\nR_3 - 2R_2 = [0,\\ 6,\\ 3] - [0,\\ 6,\\ -2] = [0,\\ 0,\\ 5]\n$$"
+        },
+        {
+          "title": "Assemble L and U",
+          "body": "$$\nL = \\begin{bmatrix} 1 & 0 & 0 \\\\ 2 & 1 & 0 \\\\ -1 & 2 & 1 \\end{bmatrix}, \\qquad U = \\begin{bmatrix} 3 & -1 & 2 \\\\ 0 & 3 & -1 \\\\ 0 & 0 & 5 \\end{bmatrix}\n$$"
+        },
+        {
+          "title": "Verify LU = A",
+          "body": "Row 2 of $LU$ is $2(3,\\ -1,\\ 2) + (0,\\ 3,\\ -1) = (6,\\ 1,\\ 3)$.\n\nRow 3 of $LU$ is $-1(3,\\ -1,\\ 2) + 2(0,\\ 3,\\ -1) + (0,\\ 0,\\ 5) = (-3,\\ 1 + 6,\\ -2 - 2 + 5) = (-3,\\ 7,\\ 1)$.\n\nBoth match $A$, and row 1 matches trivially."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "LU factorisation is Gaussian elimination written down as a matrix product. Each elimination step $R_i \\leftarrow R_i - \\ell_{ij}R_j$ is undone by adding $\\ell_{ij}R_j$ back. Collecting all the undo steps puts each multiplier $\\ell_{ij}$, with its own sign, into position $(i, j)$ of a unit lower-triangular matrix $L$, while the final triangular matrix is $U$.\n\nThe subtle point is that $\\ell_{32}$ is computed after stage 1 has already changed rows 2 and 3. It is (updated $a_{32}$) / (updated $a_{22}$) $= 6/3$, not $7/1$ from the original matrix.\n\nThis form (called Doolittle, with 1s on the diagonal of $L$) is unique when every leading principal minor is non-zero; here they are $3$, $9$ and $45$. Once $A = LU$ is known, each new right-hand side $\\mathbf{b}$ needs only a forward solve $L\\mathbf{y} = \\mathbf{b}$ and a back solve $U\\mathbf{x} = \\mathbf{y}$, each costing $O(n^2)$ instead of a fresh $O(n^3)$ elimination.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Here $\\ell_{32} = 3/6 = \\tfrac{1}{2}$: the ratio is inverted (pivot divided by the entry, instead of the entry divided by the pivot). Row 3 of $LU$ would be $(-3,\\ 2.5,\\ 2.5) \\ne (-3,\\ 7,\\ 1)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The multipliers are negated. These are the coefficients of the row operations (\"add $-2R_1$\"), not the entries of $L$. Row 2 of $LU$ would be $(-6,\\ 5,\\ -5) \\ne (6,\\ 1,\\ 3)$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Here $\\ell_{32} = 7/1$ is taken from the original matrix instead of the updated entries $6/3$. Row 3 of $LU$ would be $(-3,\\ 22,\\ -4) \\ne (-3,\\ 7,\\ 1)$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The multipliers $\\ell_{21} = 2$, $\\ell_{31} = -1$ and $\\ell_{32} = 2$ give $LU = A$ exactly."
+        }
+      ],
+      "commonTrap": "Computing $\\ell_{32}$ from the original entries ($7/1$) instead of from the matrix after stage 1 ($6/3$), or storing the negated multipliers in $L$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "L = [[1,0,0],[2,1,0],[-1,2,1]]; option D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA=np.array([[3,-1,2],[6,1,3],[-3,7,1]],float); L=np.eye(3); U=A.copy()\nfor j in range(2):\n    for i in range(j+1,3): L[i,j]=U[i,j]/U[j,j]; U[i]-=L[i,j]*U[j]\nprint(L, np.allclose(L@U,A))  # L rows [1,0,0],[2,1,0],[-1,2,1]; True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-independence",
+      "la-vector-space"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (determinant test on coordinate vectors) with a routine 3×3 determinant and a factorable quadratic; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Linear dependence of polynomials via the determinant of their coordinate vectors",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $\\mathcal{P}_2$ be the vector space of all real polynomials of degree at most $2$. Consider\n\n$$\np_1(x) = 1 + kx, \\qquad p_2(x) = x + kx^2, \\qquad p_3(x) = 1 - x - 6x^2,\n$$\n\nwhere $k$ is a real parameter.\n\nThe set of all real values of $k$ for which $\\{p_1, p_2, p_3\\}$ is linearly **dependent** is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{2,\\ -3\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\{-2,\\ 3\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\mathbb{R}$, that is, every real $k$"
+      },
+      {
+        "label": "D",
+        "text": "$\\varnothing$, that is, no real $k$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The coordinate vectors in the basis $\\{1, x, x^2\\}$ are $(1, k, 0)$, $(0, 1, k)$ and $(1, -1, -6)$. Their determinant is $k^2 + k - 6 = (k - 2)(k + 3)$, which is zero exactly when $k \\in \\{2, -3\\}$. The answer is option **(A)**.",
+      "steps": [
+        {
+          "title": "Translate to coordinate vectors",
+          "body": "In the basis $\\{1, x, x^2\\}$: $p_1 \\mapsto (1, k, 0)$, $p_2 \\mapsto (0, 1, k)$ and $p_3 \\mapsto (1, -1, -6)$. Since $\\dim \\mathcal{P}_2 = 3$, the three polynomials are dependent exactly when the $3 \\times 3$ matrix of these coordinates has determinant $0$."
+        },
+        {
+          "title": "Compute the determinant",
+          "body": "$$\n\\det\\begin{bmatrix} 1 & k & 0 \\\\ 0 & 1 & k \\\\ 1 & -1 & -6 \\end{bmatrix} = 1\\big(1(-6) - k(-1)\\big) - k\\big(0(-6) - k(1)\\big) + 0 = (k - 6) + k^2 = k^2 + k - 6\n$$"
+        },
+        {
+          "title": "Solve",
+          "body": "$k^2 + k - 6 = (k - 2)(k + 3) = 0$, so $k = 2$ or $k = -3$."
+        },
+        {
+          "title": "Verify with explicit combinations",
+          "body": "For $k = 2$: $p_1 - 3p_2 = (1 + 2x) - 3(x + 2x^2) = 1 - x - 6x^2 = p_3$.\n\nFor $k = -3$: $p_1 + 2p_2 = (1 - 3x) + 2(x - 3x^2) = 1 - x - 6x^2 = p_3$.\n\nFor any other $k$ the determinant is non-zero, so the set is independent. For example, $k = 0$ gives $-6$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "Vectors $\\mathbf{v}_1, \\dots, \\mathbf{v}_m$ are linearly dependent when some combination $c_1\\mathbf{v}_1 + \\dots + c_m\\mathbf{v}_m = \\mathbf{0}$ has at least one $c_i \\ne 0$. Equivalently, one of the vectors is a combination of the others.\n\nPolynomials are vectors too. Writing each one by its coefficients in the basis $\\{1, x, x^2\\}$ turns $\\mathcal{P}_2$ into $\\mathbb{R}^3$ without losing any linear structure, so polynomials are dependent exactly when their coefficient vectors are.\n\nWith $n$ vectors in an $n$-dimensional space, the coordinate matrix is square, and the vectors are dependent if and only if its determinant is $0$. Because $\\dim \\mathcal{P}_2 = 3$, three polynomials can be independent; only four or more are automatically dependent. Here the determinant is a quadratic in $k$ with two real roots, so dependence happens at exactly two values of $k$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The determinant $k^2 + k - 6 = (k - 2)(k + 3)$ vanishes exactly at $k = 2$ and $k = -3$, and the explicit combinations confirm both values."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This comes from a sign slip in factoring: $(k + 2)(k - 3) = k^2 - k - 6$, which is not the determinant. At $k = 3$ the determinant is $6 \\ne 0$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This confuses \"three vectors in a 3-dimensional space\" with \"more vectors than the dimension\". Dependence is automatic only for four or more polynomials in $\\mathcal{P}_2$. For example, $k = 0$ gives determinant $-6 \\ne 0$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This comes from a cofactor sign error. Using $+k$ instead of $-k$ for the $(1,2)$ cofactor gives $-k^2 + k - 6$, whose discriminant $1 - 24 < 0$ wrongly suggests there is no real root."
+        }
+      ],
+      "commonTrap": "Dropping the alternating sign on the $(1,2)$ cofactor, which produces a quadratic with no real roots. The other trap is believing that any three polynomials in the 3-dimensional space $\\mathcal{P}_2$ must be dependent."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "k in {-3, 2}; option A",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nk=sp.symbols('k'); M=sp.Matrix([[1,k,0],[0,1,k],[1,-1,-6]])\nprint(sp.factor(M.det()), sp.solve(M.det(),k))  # (k - 2)*(k + 3) [-3, 2]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-orthogonal-matrix"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (orthonormal rows fix the third row up to sign through a cross product; det R = +1 fixes the sign), with routine arithmetic; about 2–2.5 minutes.",
+    "estimatedTimeSec": 140,
+    "concept": "Completing an orthogonal (rotation) matrix: orthonormal rows, cross product and the sign of the determinant",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a robotics pipeline, the orientation of a sensor is stored as a $3 \\times 3$ rotation matrix $R$. This means $R$ is orthogonal ($R^\\top R = I$) and $\\det R = +1$. The first two rows of $R$ are\n\n$$\n\\mathbf{r}_1 = \\tfrac{1}{3}\\begin{bmatrix} 2 & -2 & 1 \\end{bmatrix}, \\qquad \\mathbf{r}_2 = \\tfrac{1}{3}\\begin{bmatrix} 1 & 2 & 2 \\end{bmatrix}.\n$$\n\nWhich one of the following is the third row $\\mathbf{r}_3$ of $R$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\tfrac{1}{3}\\begin{bmatrix} 2 & 1 & -2 \\end{bmatrix}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\tfrac{1}{3}\\begin{bmatrix} -2 & 1 & 2 \\end{bmatrix}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\tfrac{1}{3}\\begin{bmatrix} -2 & -1 & 2 \\end{bmatrix}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\begin{bmatrix} -2 & -1 & 2 \\end{bmatrix}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The rows of an orthogonal matrix are orthonormal, so $\\mathbf{r}_3 = \\pm\\,\\mathbf{r}_1 \\times \\mathbf{r}_2 = \\pm\\tfrac{1}{3}(-2,\\ -1,\\ 2)$.\nSince $\\det R = \\mathbf{r}_3 \\cdot (\\mathbf{r}_1 \\times \\mathbf{r}_2)$, the condition $\\det R = +1$ picks the $+$ sign. The answer is option **(C)**.",
+      "steps": [
+        {
+          "title": "What orthogonality demands of the rows",
+          "body": "For a square matrix, $R^\\top R = I$ implies $RR^\\top = I$, so the rows are orthonormal. The given rows pass this test: $\\|\\mathbf{r}_1\\|^2 = \\tfrac{4 + 4 + 1}{9} = 1$, $\\|\\mathbf{r}_2\\|^2 = \\tfrac{1 + 4 + 4}{9} = 1$ and $\\mathbf{r}_1 \\cdot \\mathbf{r}_2 = \\tfrac{2 - 4 + 2}{9} = 0$. The third row must be a unit vector orthogonal to both."
+        },
+        {
+          "title": "Direction of the third row",
+          "body": "A vector orthogonal to both $\\mathbf{r}_1$ and $\\mathbf{r}_2$ is parallel to their cross product:\n\n$$\n(2, -2, 1) \\times (1, 2, 2) = \\big((-2)(2) - (1)(2),\\ (1)(1) - (2)(2),\\ (2)(2) - (-2)(1)\\big) = (-6,\\ -3,\\ 6)\n$$\n\nIncluding the factors $\\tfrac{1}{3} \\cdot \\tfrac{1}{3}$ gives $\\mathbf{r}_1 \\times \\mathbf{r}_2 = \\tfrac{1}{9}(-6, -3, 6) = \\tfrac{1}{3}(-2, -1, 2)$, which already has unit length. So $\\mathbf{r}_3 = \\pm\\tfrac{1}{3}(-2, -1, 2)$."
+        },
+        {
+          "title": "Fix the sign with the determinant",
+          "body": "For a $3 \\times 3$ matrix with rows $\\mathbf{r}_1, \\mathbf{r}_2, \\mathbf{r}_3$, $\\det R = \\mathbf{r}_3 \\cdot (\\mathbf{r}_1 \\times \\mathbf{r}_2)$ (scalar triple product). Choosing $\\mathbf{r}_3 = +\\,\\mathbf{r}_1 \\times \\mathbf{r}_2$ gives $\\det R = \\|\\mathbf{r}_1 \\times \\mathbf{r}_2\\|^2 = +1$, while the minus sign gives $-1$. Hence $\\mathbf{r}_3 = \\tfrac{1}{3}(-2,\\ -1,\\ 2)$."
+        },
+        {
+          "title": "Verify",
+          "body": "$\\mathbf{r}_3 \\cdot \\mathbf{r}_1 = \\tfrac{-4 + 2 + 2}{9} = 0$, $\\mathbf{r}_3 \\cdot \\mathbf{r}_2 = \\tfrac{-2 - 2 + 4}{9} = 0$ and $\\|\\mathbf{r}_3\\|^2 = \\tfrac{4 + 1 + 4}{9} = 1$. So $R^\\top R = I$ and $\\det R = +1$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "A square matrix $Q$ is orthogonal when $Q^\\top Q = I$. Equivalently, its columns, and also its rows, form an orthonormal set. Such matrices preserve lengths and angles, since $\\|Q\\mathbf{x}\\| = \\|\\mathbf{x}\\|$, and their inverse is simply the transpose, $Q^{-1} = Q^\\top$.\n\nTaking determinants of $Q^\\top Q = I$ gives $(\\det Q)^2 = 1$, so $\\det Q = \\pm 1$. Determinant $+1$ means a proper rotation. Determinant $-1$ means the transformation also contains a reflection, which would mirror the sensor's frame.\n\nIn three dimensions, two orthonormal rows leave only two choices for the third row: plus or minus their cross product. The cross product is automatically orthogonal to both rows and has unit length. The determinant condition then picks the sign that gives a right-handed frame. This is exactly how robotics and graphics code rebuilds a rotation matrix from two of its axes.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is $-(\\mathbf{r}_1 \\times \\mathbf{r}_2)$. It is orthonormal to both rows, so $R$ would be orthogonal, but $\\det R = -1$ (a reflection), which violates the rotation condition."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This comes from a sign slip in the middle component of the cross product ($+3$ instead of $-3$). It is not orthogonal to $\\mathbf{r}_1$: $\\tfrac{-4 - 2 + 2}{9} = -\\tfrac{4}{9} \\ne 0$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "This is $+\\,\\mathbf{r}_1 \\times \\mathbf{r}_2$: a unit vector orthogonal to both rows, and it gives $\\det R = +1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The direction is right, but the vector has length $3$, not $1$. The $(3,3)$ entry of $RR^\\top$ would be $9$, so $R$ is not orthogonal (and $\\det R = 3$)."
+        }
+      ],
+      "commonTrap": "Finding a vector orthogonal to $\\mathbf{r}_1$ and $\\mathbf{r}_2$ but choosing its sign arbitrarily, which gives option A with $\\det R = -1$. Also watch the minus sign on the middle component of the cross product."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "r3 = (1/3)(-2, -1, 2); det R = 1; option C",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nr1=np.array([2,-2,1])/3; r2=np.array([1,2,2])/3; r3=np.cross(r1,r2)\nR=np.vstack([r1,r2,r3]); print(np.round(3*r3), np.allclose(R.T@R,np.eye(3)), round(np.linalg.det(R),6))  # [-2 -1 2] True 1.0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-systems"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (solving a non-singular 3×3 system by elimination and substitution) with routine integer arithmetic and a one-line evaluation; about 1.5–2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "Solving a square non-singular linear system (exact-fit weights of a linear model)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A linear model with no intercept, $\\hat{y} = w_1x_1 + w_2x_2 + w_3x_3$, must reproduce the three training examples below exactly.\n\n| Example | $x_1$ | $x_2$ | $x_3$ | $y$ |\n|---|---|---|---|---|\n| 1 | 1 | 1 | 0 | 5 |\n| 2 | 0 | 2 | 1 | 7 |\n| 3 | 2 | 1 | 1 | 8 |\n\nThe weights $w_1, w_2, w_3$ are therefore determined by a system of three linear equations.\n\nThe predicted value $\\hat{y}$ for the new input $(x_1, x_2, x_3) = (1, 3, 1)$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 12,
+      "max": 12
+    },
+    "solution": {
+      "quick": "The equations are $w_1 + w_2 = 5$, $2w_2 + w_3 = 7$ and $2w_1 + w_2 + w_3 = 8$. They give $(w_1, w_2, w_3) = (2, 3, 1)$.\nThen $\\hat{y}(1, 3, 1) = 2 + 9 + 1 = 12$.",
+      "steps": [
+        {
+          "title": "Write the system",
+          "body": "$$\n\\begin{aligned}\nw_1 + w_2 &= 5 \\\\\n2w_2 + w_3 &= 7 \\\\\n2w_1 + w_2 + w_3 &= 8\n\\end{aligned}\n$$\n\nThe coefficient determinant is $1(2 \\cdot 1 - 1 \\cdot 1) - 1(0 \\cdot 1 - 1 \\cdot 2) + 0 = 1 + 2 = 3 \\ne 0$, so the solution is unique."
+        },
+        {
+          "title": "Eliminate",
+          "body": "From the first equation, $w_1 = 5 - w_2$. From the second, $w_3 = 7 - 2w_2$. Substituting both into the third:\n\n$$\n2(5 - w_2) + w_2 + (7 - 2w_2) = 8 \\;\\Rightarrow\\; 17 - 3w_2 = 8 \\;\\Rightarrow\\; w_2 = 3.\n$$\n\nThen $w_1 = 2$ and $w_3 = 1$."
+        },
+        {
+          "title": "Check the fit",
+          "body": "Example 1: $2 + 3 = 5$. Example 2: $6 + 1 = 7$. Example 3: $4 + 3 + 1 = 8$. All three are reproduced exactly."
+        },
+        {
+          "title": "Predict",
+          "body": "$\\hat{y} = 2(1) + 3(3) + 1(1) = 12$."
+        }
+      ],
+      "finalAnswer": "**12**",
+      "teaching": "Fitting a model exactly to data is solving a linear system. Each training example gives one equation, and the unknowns are the weights. With as many examples as weights, the coefficient matrix is square. The system has exactly one solution when that matrix is non-singular (non-zero determinant, full rank), and elimination or substitution finds it.\n\nBecause the model has no intercept, it is a linear map: $\\hat{y}(\\alpha\\mathbf{u} + \\beta\\mathbf{v}) = \\alpha\\,\\hat{y}(\\mathbf{u}) + \\beta\\,\\hat{y}(\\mathbf{v})$. So the prediction at any input that is a combination of the training inputs is the same combination of the training targets. Here $(1, 3, 1)$ is the sum of examples 1 and 2.\n\nWith more examples than weights, the system is usually inconsistent, and one instead minimises the squared error. That is least squares, which leads to the normal equations $X^\\top X\\mathbf{w} = X^\\top\\mathbf{y}$.",
+      "shortcut": "The new input $(1, 3, 1)$ equals example 1 plus example 2, since $(1, 1, 0) + (0, 2, 1) = (1, 3, 1)$. The no-intercept model is linear, so $\\hat{y} = 5 + 7 = 12$ without solving for the weights at all.",
+      "commonTrap": "Reporting one of the weights (for example $w_2 = 3$) instead of the prediction, or making a substitution slip such as writing $w_3 = 7 - w_2$ instead of $7 - 2w_2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "w = (2, 3, 1); y_hat = 12.0",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX=np.array([[1,1,0],[0,2,1],[2,1,1]],float); y=np.array([5,7,8],float)\nw=np.linalg.solve(X,y); print(w, w@np.array([1,3,1]))  # [2. 3. 1.] 12.0",
+      "notes": ""
+    }
+  }
+]

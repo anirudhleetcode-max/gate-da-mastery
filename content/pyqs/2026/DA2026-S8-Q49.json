@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q49",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 49,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-sorting",
+  "subtopicIds": [
+    "pdsa-basic-sorts"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - two directly linked concepts (bubble sort and insertion sort) traced on a 5-element array with routine counting of comparisons and swaps, plus a likely trap (omitting insertion sort's final stopping comparison, which gives the tempting N2 = 4 of option A); about 2-2.5 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider the problem of sorting the given array in ascending order:\n\n```text\nP = [1, 2, 3, 5, 4]\n```\n\nConsider two sorting algorithms Bubble Sort (BS) and Insertion Sort (IS).\n\nLet `N1` be the total number of comparisons done by BS on the elements of `P` and `N2` be the total number of comparisons done by IS on the elements of `P`.\n\nWhich of the following options is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "`N1` = 10, `N2` = 4"
+    },
+    {
+      "label": "B",
+      "text": "`N1` > `N2`"
+    },
+    {
+      "label": "C",
+      "text": "IS on `P` will perform only one swap"
+    },
+    {
+      "label": "D",
+      "text": "Both BS and IS on `P` will make at least one unnecessary comparison (i.e., comparing elements that are already in correct order)"
+    }
+  ],
+  "officialKeyRaw": "B;C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "Plain bubble sort always makes $4+3+2+1 = 10$ comparisons on 5 elements (7 with the early-exit flag). Insertion sort makes one comparison each while inserting 2, 3 and 5, and two while inserting 4 (5 vs 4 shifts, 3 vs 4 stops), so $N_2 = 5$.\n\nSo (A) fails ($N_2 \\ne 4$), $N_1 > N_2$ holds, IS makes exactly one swap (P has one inversion), and both algorithms compare already-ordered pairs such as (1, 2). **(B), (C), (D)**.",
+    "steps": [
+      {
+        "title": "Input and what is counted",
+        "body": "`P = [1, 2, 3, 5, 4]` has $n = 5$ elements and exactly **one inversion** (a pair out of order): (5, 4). Only comparisons between two elements of `P` are counted; loop-bound checks such as `j >= 0` are not comparisons of elements.\n\n- **Bubble sort (BS):** in pass $k$ ($k = 1, \\dots, n-1$), compare adjacent pairs `A[j]`, `A[j+1]` for $j = 0, \\dots, n-1-k$ and swap when `A[j] > A[j+1]`. A common optimised variant stops after a pass that makes no swap.\n- **Insertion sort (IS):** for $i = 1, \\dots, n-1$, take `key = A[i]` and compare it leftwards with the sorted prefix, shifting (swapping) each larger element one place right, until an element $\\le$ `key` is found or the front is reached."
+      },
+      {
+        "title": "Execution trace: bubble sort",
+        "body": "| Pass | Pairs compared | Swaps | Array after the pass |\n| --- | --- | --- | --- |\n| 1 | (1, 2), (2, 3), (3, 5), (5, 4) | 1, namely (5, 4) | `[1, 2, 3, 4, 5]` |\n| 2 | (1, 2), (2, 3), (3, 4) | 0 | `[1, 2, 3, 4, 5]` |\n| 3 | (1, 2), (2, 3) | 0 | `[1, 2, 3, 4, 5]` |\n| 4 | (1, 2) | 0 | `[1, 2, 3, 4, 5]` |\n\nPlain BS runs all four passes:\n\n$$\nN_1 = 4 + 3 + 2 + 1 = 10 = \\frac{n(n-1)}{2},\n$$\n\nwhatever the input. With the early-exit flag, BS stops after pass 2 (it made no swap), so $N_1 = 4 + 3 = 7$. Either way BS makes exactly **1** swap."
+      },
+      {
+        "title": "Execution trace: insertion sort",
+        "body": "| $i$ | key | Sorted prefix before | Comparisons (prefix element vs key) | Count |\n| --- | --- | --- | --- | --- |\n| 1 | 2 | `[1]` | 1 vs 2: $1 \\le 2$, stop | 1 |\n| 2 | 3 | `[1, 2]` | 2 vs 3: $2 \\le 3$, stop | 1 |\n| 3 | 5 | `[1, 2, 3]` | 3 vs 5: $3 \\le 5$, stop | 1 |\n| 4 | 4 | `[1, 2, 3, 5]` | 5 vs 4: $5 > 4$, shift 5 right (one swap); then 3 vs 4: $3 \\le 4$, stop | 2 |\n\n$$\nN_2 = 1 + 1 + 1 + 2 = 5,\n$$\n\nand IS performs exactly **one** swap (shift). Cross-check with the general count: comparisons $= (n-1) + (\\text{inversions}) - (\\text{keys that reach the front}) = 4 + 1 - 0 = 5$."
+      },
+      {
+        "title": "Evaluate each option",
+        "body": "- **(A)** $N_1 = 10$ matches plain BS, but $N_2 = 5 \\ne 4$, so (A) is **false**. (With early-exit BS, $N_1 = 7 \\ne 10$ as well.)\n- **(B)** $N_1 = 10 > 5 = N_2$ for plain BS, and $7 > 5$ for early-exit BS, so (B) is **true** under either variant.\n- **(C)** IS moves 5 one place right to insert 4, exactly one swap for the single inversion, so (C) is **true**.\n- **(D)** BS's very first comparison is (1, 2), which is already in order; 9 of its 10 comparisons (6 of 7 with early exit) involve ordered pairs. IS's first comparison, 1 vs 2, is also between ordered elements, and 4 of its 5 comparisons are. So (D) is **true**.\n\nCorrect options: **(B), (C), (D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C), (D)**",
+    "teaching": "**Bubble sort** sweeps through the array again and again, comparing each adjacent pair and swapping it when it is out of order. After pass $k$, the $k$ largest elements sit in their final places at the end, so pass $k$ needs only $n-k$ comparisons. The plain version always performs all $n-1$ passes, so it makes $\\sum_{k=1}^{n-1}(n-k) = \\frac{n(n-1)}{2}$ comparisons **for every input**; only the number of swaps depends on the data. The optimised version keeps a `swapped` flag and stops after a pass with no swaps, so on nearly sorted input it finishes much sooner (only $n-1$ comparisons on already sorted input).\n\n**Insertion sort** grows a sorted prefix. Each new element, the key, is compared with prefix elements from right to left; every larger element is shifted one place right, and the scan stops at the first element that is $\\le$ key. A key therefore costs (number of larger elements before it) $+ 1$ comparisons, unless it travels all the way to the front. Summing over all keys, comparisons $= (n-1) + I - (\\text{keys reaching the front})$, where $I$ is the number of **inversions**. Insertion sort is **adaptive**: on sorted input it makes just $n-1$ comparisons and no shifts.\n\n**Swaps and inversions.** Each adjacent swap in bubble sort, and each shift in insertion sort, removes exactly one inversion, so both algorithms perform exactly $I$ swaps.\n\n**Unnecessary comparisons.** Neither algorithm can know a pair is in order without comparing it, so on almost-sorted data most comparisons lead to no swap.\n\n**Applying it here.** `P = [1, 2, 3, 5, 4]` has $I = 1$. Plain bubble sort still makes $10$ comparisons (7 with early exit), while insertion sort makes $4 + 1 = 5$. Both perform one swap, and both spend comparisons on already-ordered pairs such as (1, 2).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$N_1 = 10$ is right for plain bubble sort, but $N_2 = 5$, not 4. Inserting the key 4 needs two comparisons: 5 vs 4 (shift) **and** 3 vs 4 (stop). Counting only the comparison that causes a shift gives the tempting but wrong 4."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$N_1 = 10$ (plain) or $7$ (early exit), and $N_2 = 5$, so $N_1 > N_2$ holds for either version of bubble sort."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "`P` has a single inversion, (5, 4). Insertion sort shifts 5 one place right to insert 4, so it performs exactly one swap."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Bubble sort's first comparison is 1 vs 2, and insertion sort's first comparison is also 1 vs 2. Both pairs are already in order, so both algorithms make unnecessary comparisons (BS: 9 of 10; IS: 4 of 5)."
+      }
+    ],
+    "shortcut": "Plain bubble sort: $N_1 = \\frac{n(n-1)}{2} = 10$ regardless of the input. Insertion sort: $N_2 = (n-1) + I = 4 + 1 = 5$ when no key has to travel to the front. Swaps in either algorithm $= I = 1$.",
+    "commonTrap": "Forgetting the final stopping comparison (3 vs 4) when inserting 4, which gives $N_2 = 4$ and makes (A) look right. Another worry is whether early-exit bubble sort changes the verdict on (B): it lowers $N_1$ to 7, which is still greater than 5."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q49-1.webp",
+    "/pyq/2026/official/Q49-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array P = [1, 2, 3, 5, 4] is printed in a monospace font on its own indented line and is rendered as a code block; the names N1, N2 and P are set in monospace in the paper and are rendered as inline code. In option (A) only N1 and N2 are monospace (\"= 10,\" and \"= 4\" are in the serif text font); this is reproduced. The only embedded image in the page region is the background watermark; no figure is needed. The second official crop (Q49-2) shows only the next page's header and a table border."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C;D",
+    "agreesWithKey": true,
+    "checkCode": "P = [1, 2, 3, 5, 4]\ndef bubble(a, early_exit):\n    a = a[:]; comps = swaps = 0; log = []; n = len(a)\n    for i in range(n - 1):\n        swapped = False\n        for j in range(n - 1 - i):\n            comps += 1; log.append((a[j], a[j+1]))\n            if a[j] > a[j+1]:\n                a[j], a[j+1] = a[j+1], a[j]; swaps += 1; swapped = True\n        if early_exit and not swapped: break\n    return a, comps, swaps, log\ndef insertion(a):\n    a = a[:]; comps = swaps = 0; log = []\n    for i in range(1, len(a)):\n        j = i\n        while j > 0:\n            comps += 1; log.append((a[j-1], a[j]))      # element comparison only\n            if a[j-1] > a[j]:\n                a[j-1], a[j] = a[j], a[j-1]; swaps += 1; j -= 1\n            else: break\n    return a, comps, swaps, log\nfor ee in (False, True):\n    s, c, w, log = bubble(P, ee); print('BS early_exit=%s' % ee, s, 'comparisons', c, 'swaps', w, log)\ns, N2, w_is, log_is = insertion(P); print('IS', s, 'comparisons', N2, 'swaps', w_is, log_is)\nN1 = bubble(P, False)[1]; N1_opt = bubble(P, True)[1]\nunnec = lambda log: sum(x < y for x, y in log)       # pairs already in correct order\nres = dict(A=(N1 == 10 and N2 == 4), B=(N1 > N2 and N1_opt > N2), C=(w_is == 1),\n           D=(unnec(bubble(P, False)[3]) >= 1 and unnec(bubble(P, True)[3]) >= 1 and unnec(log_is) >= 1))\nprint(N1, N1_opt, N2, res); assert res == dict(A=False, B=True, C=True, D=True)   # -> B;C;D",
+    "notes": "Traced in Python counting only element-to-element comparisons. Plain bubble sort: 10 comparisons, 1 swap (early-exit variant: 7 comparisons, 1 swap). Insertion sort: 5 comparisons (1+1+1+2), 1 swap. (A) is false because N2 = 5, not 4; (B) is true for either bubble-sort variant (10 > 5 and 7 > 5); (C) is true (one swap for the single inversion (5, 4)); (D) is true because both algorithms first compare 1 and 2, which are already in order. Result B;C;D matches official key B;C;D. The question does not specify which bubble-sort variant is meant, but no option's verdict depends on it."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

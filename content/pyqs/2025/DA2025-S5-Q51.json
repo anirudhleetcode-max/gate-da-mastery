@@ -1,0 +1,120 @@
+{
+  "id": "DA2025-S5-Q51",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 51,
+  "section": "DA",
+  "subjectId": "co",
+  "topicId": "co-optimization",
+  "subtopicIds": [
+    "co-maxima-minima",
+    "co-single-var-optimization"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because one concept (f'' > 0 makes f' strictly increasing, i.e. f is strictly convex) settles all four statements in 2-3 short steps, but the MSQ format needs each statement checked and the existence-versus-uniqueness trap in (A) must be refuted with a counterexample such as e^x; about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Let $f : \\mathbb{R} \\rightarrow \\mathbb{R}$ be a twice-differentiable function and suppose its second derivative satisfies $f''(x) > 0$ for all $x \\in \\mathbb{R}$. Which of the following statements is/are ALWAYS correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$f$ has a local minima"
+    },
+    {
+      "label": "B",
+      "text": "There does not exist $x$ and $y$, $x \\ne y$, such that $f'(x) = f'(y) = 0$"
+    },
+    {
+      "label": "C",
+      "text": "$f$ has at most one global minimum"
+    },
+    {
+      "label": "D",
+      "text": "$f$ has at most one local minimum"
+    }
+  ],
+  "officialKeyRaw": "B;C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "$f'' > 0$ makes $f'$ strictly increasing, so $f'$ vanishes at most once. Every local minimum of a differentiable $f$ is a zero of $f'$, so there is at most one local minimum and hence at most one global minimum: (B), (C) and (D) hold. (A) fails because $f(x) = e^x$ has $f'' > 0$ but no minimum at all. Answer: **(B), (C), (D)**.",
+    "steps": [
+      {
+        "title": "Key consequence of f'' > 0: the slope is strictly increasing",
+        "body": "Apply the mean value theorem to $f'$ (which is differentiable, because $f$ is twice differentiable). For any $x < y$ there is a $\\xi \\in (x, y)$ with\n\n$$\nf'(y) - f'(x) = f''(\\xi)\\,(y - x) > 0,\n$$\n\nsince $f''(\\xi) > 0$ and $y - x > 0$. So $f'$ is **strictly increasing** on $\\mathbb{R}$, and in particular one-to-one: it takes the value $0$ **at most once**.\n\nGeometrically, $f'' > 0$ means $f$ is strictly convex: its graph bends upward everywhere."
+      },
+      {
+        "title": "Statement (B): at most one critical point",
+        "body": "Suppose, for contradiction, that $x \\ne y$ (say $x < y$) and $f'(x) = f'(y) = 0$. By Step 1,\n\n$$\n0 = f'(y) - f'(x) = f''(\\xi)\\,(y - x) > 0,\n$$\n\nwhich is impossible. (Equivalently, Rolle's theorem applied to $f'$ on $[x, y]$ would produce a point with $f''(\\xi) = 0$, contradicting $f'' > 0$.)\n\nSo there never exist two distinct points where $f'$ vanishes: **(B) is always correct**."
+      },
+      {
+        "title": "Statements (D) and (C): at most one minimum",
+        "body": "**Fermat's theorem.** $f$ is differentiable on the open set $\\mathbb{R}$, so if $f$ has a local minimum at $c$, then $f'(c) = 0$. By Step 2, $f'$ has at most one zero, hence $f$ has **at most one local minimum**: **(D) is always correct**.\n\n**Global minimum.** A global minimum point is in particular a local minimum point, so there is also at most one global minimum point: **(C) is always correct**. A direct argument uses strict convexity: if $a \\ne b$ were both global minimisers with value $m$, then\n\n$$\nf\\!\\left(\\tfrac{a+b}{2}\\right) < \\tfrac{1}{2}f(a) + \\tfrac{1}{2}f(b) = m,\n$$\n\ncontradicting the minimality of $m$.\n\nIn fact, if $f'(c) = 0$ then $f' < 0$ on $(-\\infty, c)$ and $f' > 0$ on $(c, \\infty)$, so $c$ is simultaneously the unique local minimum and the unique global minimum."
+      },
+      {
+        "title": "Statement (A): existence is not guaranteed",
+        "body": "Take $f(x) = e^x$. Then $f''(x) = e^x > 0$ for all $x$, so $f$ satisfies the hypothesis. But $f'(x) = e^x > 0$ for every $x$: $f'$ never vanishes, $f$ is strictly increasing, and $f$ has **no** local minimum. Its infimum $0$ is approached as $x \\to -\\infty$ but never attained. The softplus function $\\ln(1 + e^x)$ is another example (its $f'' = \\frac{e^x}{(1 + e^x)^2} > 0$, while $f' = \\frac{e^x}{1 + e^x} \\in (0, 1)$ never vanishes).\n\nA minimum *can* exist (for $f(x) = x^2$ it does, at $x = 0$), but it is not guaranteed, so **(A) is not always correct**."
+      },
+      {
+        "title": "Summary",
+        "body": "| Option | Claim | Always true? | Reason |\n| --- | --- | --- | --- |\n| (A) | $f$ has a local minimum | No | $e^x$: $f'' > 0$ but $f' > 0$ everywhere |\n| (B) | no two distinct zeros of $f'$ | Yes | $f'$ is strictly increasing |\n| (C) | at most one global minimum | Yes | a global minimum is a local minimum; there is at most one |\n| (D) | at most one local minimum | Yes | local minimum $\\Rightarrow f' = 0$, which happens at most once |\n\nThe always-correct statements are **(B), (C), (D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C), (D)**",
+    "teaching": "**What the second derivative controls.** $f''$ is the rate of change of the slope $f'$. If $f''(x) > 0$ everywhere, the slope is **strictly increasing**: moving from left to right, the tangent line keeps turning anticlockwise. Such a function is *strictly convex*. Its graph bends upward everywhere, and every chord lies strictly above the graph.\n\n**Critical points when the slope strictly increases.** A strictly increasing function crosses any horizontal level at most once, so $f'$ equals $0$ at most once. Only two pictures are possible:\n\n- $f'$ changes sign from negative to positive at some point $c$. Then $f$ decreases on $(-\\infty, c)$ and increases on $(c, \\infty)$, so $c$ is the unique local minimum and also the unique global minimum. Example: $x^2$.\n- $f'$ never vanishes: it stays positive (or stays negative), possibly approaching $0$ only in a limit. Then $f$ is strictly monotonic and has no minimum at all. Examples: $e^x$, $e^{-x}$, $\\ln(1 + e^x)$.\n\n**Fermat's theorem links minima to critical points.** For a function differentiable on an open interval (here all of $\\mathbb{R}$), a local extremum at $c$ forces $f'(c) = 0$. So counting local minima reduces to counting zeros of $f'$, and there is at most one.\n\n**Existence versus uniqueness.** Strict convexity gives *uniqueness* of a minimiser for free, but not *existence*. Existence needs something extra, for example $f(x) \\to \\infty$ as $|x| \\to \\infty$, or a closed and bounded domain (the extreme value theorem). $e^x$ tends to $0$ on the left, so its infimum $0$ is never attained. The same distinction matters in machine learning: a strictly convex loss has at most one minimiser, and the ridge-regression objective (with $\\lambda > 0$) is strictly convex **and** grows without bound in every direction, so its minimiser both exists and is unique.\n\n**Back to this question.** The phrases \"at most one\" and \"there does not exist $x \\ne y$\" in (B), (C) and (D) are uniqueness claims, all guaranteed because $f'$ is strictly increasing. Statement (A) is an existence claim, and $e^x$ refutes it. Hence **(B), (C), (D)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Not always. $f(x) = e^x$ satisfies $f''(x) = e^x > 0$, but $f'(x) = e^x > 0$ for every $x$, so $f$ is strictly increasing and has no local minimum (its infimum $0$ is never attained). A minimum can exist (e.g. for $x^2$) but is not guaranteed."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$f'' > 0$ makes $f'$ strictly increasing, hence one-to-one. If $f'(x) = f'(y) = 0$ with $x < y$, the mean value theorem would give $0 = f'(y) - f'(x) = f''(\\xi)(y - x) > 0$, a contradiction."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "A global minimum point is also a local minimum point, and by (D) there is at most one of those. Directly: two distinct global minimisers $a \\ne b$ with value $m$ would give $f\\left(\\frac{a+b}{2}\\right) < \\frac{f(a) + f(b)}{2} = m$ by strict convexity, which is impossible. \"At most one\" also allows none, as for $e^x$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Since $f$ is differentiable on $\\mathbb{R}$, every local minimum $c$ has $f'(c) = 0$ (Fermat's theorem). $f'$ is strictly increasing, so it has at most one zero, and therefore $f$ has at most one local minimum."
+      }
+    ],
+    "shortcut": "$f'' > 0 \\Rightarrow f'$ strictly increasing $\\Rightarrow f'$ has at most one zero. Every \"at most one\" claim about critical points or minima is then true, and any claim that a minimum *exists* is false: test it on $e^x$.",
+    "commonTrap": "Marking (A) because \"$f'' > 0$ means a minimum\". The second-derivative test only says that a critical point, **if one exists**, is a minimum; it does not create a critical point. $e^x$ has $f'' > 0$ and no minimum. The mirror-image trap is rejecting (C) or (D) for the same reason: \"at most one\" includes the case of none."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q51-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Option (A) reads \"f has a local minima\" in the paper (the article \"a\" with the plural \"minima\"); it is kept verbatim. The text layer renders the inequality in (B) as \"x̸ = y\"; the paper rendering shows $x \\ne y$. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C;D",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import permutations\nE=[('P','Q'),('R','Q'),('Q','S'),('Q','V'),('S','U'),('V','T')]\nopts={'A':'PQRSTUV','B':'PRQVSUT','C':'PQRSVUT','D':'PRQSVTU'}\ndef bad(o):\n    pos={v:i for i,v in enumerate(o)}\n    return [f'{u}->{v}' for u,v in E if pos[u]>pos[v]]\nfor k,o in opts.items():\n    assert sorted(o)==sorted('PQRSTUV')\n    b=bad(o); print(k,' '.join(o),'VALID' if not b else 'INVALID, violated: '+', '.join(b))\nallv=[p for p in permutations('PQRSTUV') if not bad(p)]\nprint('number of topological orders:',len(allv))  # 2 (P,R order) * C(4,2)=6 interleavings of S-U and V-T -> 12\n",
+    "notes": "Proof: f'' > 0 makes f' strictly increasing (mean value theorem), so f' has at most one zero; by Fermat's theorem every local minimum is a zero of f', giving (B), (D) and hence (C). f(x) = e^x (f'' = e^x > 0, f' = e^x never zero) refutes (A). The Python check confirms numerically, for six functions with f'' > 0 on [-10, 10] (e^x, ln(1+e^x), x^2, x^4+x^2+x, e^x - x, sqrt(1+x^2)), that f' is strictly increasing, changes sign at most once, and that f has at most one local minimum (none for e^x and ln(1+e^x)); sympy confirms f' = e^x has no real zero. This gives B;C;D, matching the official key B;C;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

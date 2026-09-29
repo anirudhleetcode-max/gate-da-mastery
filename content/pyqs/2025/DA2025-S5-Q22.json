@@ -1,0 +1,116 @@
+{
+  "id": "DA2025-S5-Q22",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 22,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-neural-networks",
+  "subtopicIds": [
+    "ml-mlp",
+    "ml-feedforward"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the perceptron update rule) checked by a single substitution showing the score rises by ||x_n||^2 + 1, about 1 min for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider designing a linear classifier\n\n$$\ny = \\mathrm{sign}(f(x; w, b)), \\quad f(x; w, b) = w^\\top x + b\n$$\n\non a dataset $D = \\{(x_1, y_1), (x_2, y_2), \\ldots, (x_N, y_N)\\}$, $x_i \\in \\mathbb{R}^d$, $y_i \\in \\{+1, -1\\}$, $i = 1, 2, \\ldots, N$. Recall that the sign function outputs $+1$ if the argument is positive, and $-1$ if the argument is non-positive. The parameters $w$ and $b$ are updated as per the following training algorithm:\n\n$$\nw_{new} = w_{old} + y_n x_n, \\quad b_{new} = b_{old} + y_n\n$$\n\nwhenever $\\mathrm{sign}(f(x_n; w_{old}, b_{old})) \\ne y_n$. In other words, whenever the classifier wrongly predicts a sample $(x_n, y_n)$ from the dataset, $w_{old}$ gets updated to $w_{new}$, and likewise $b_{old}$ gets updated to $b_{new}$. Consider the case $(x_n, +1)$, $f(x_n; w_{old}, b_{old}) < 0$. Then",
+  "options": [
+    {
+      "label": "A",
+      "text": "$f(x_n; w_{new}, b_{new}) > f(x_n; w_{old}, b_{old})$"
+    },
+    {
+      "label": "B",
+      "text": "$f(x_n; w_{new}, b_{new}) < f(x_n; w_{old}, b_{old})$"
+    },
+    {
+      "label": "C",
+      "text": "$f(x_n; w_{new}, b_{new}) = f(x_n; w_{old}, b_{old})$"
+    },
+    {
+      "label": "D",
+      "text": "$y_n f(x_n; w_{old}, b_{old}) > 1$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "With $y_n = +1$ and $f(x_n; w_{old}, b_{old}) < 0$ the sample is misclassified, so $w_{new} = w_{old} + x_n$ and $b_{new} = b_{old} + 1$. Then $f(x_n; w_{new}, b_{new}) = f(x_n; w_{old}, b_{old}) + \\|x_n\\|^2 + 1$, which is strictly larger. Option **(A)**.",
+    "steps": [
+      {
+        "title": "Check that an update happens",
+        "body": "The sample is $(x_n, y_n)$ with $y_n = +1$, and $f(x_n; w_{old}, b_{old}) < 0$. A negative argument is non-positive, so\n\n$$\n\\mathrm{sign}(f(x_n; w_{old}, b_{old})) = -1 \\ne +1 = y_n.\n$$\n\nThe sample is misclassified, so the update rule fires. With $y_n = +1$ it reads\n\n$$\nw_{new} = w_{old} + x_n, \\qquad b_{new} = b_{old} + 1.\n$$"
+      },
+      {
+        "title": "Compute the new score on the same sample",
+        "body": "$$\n\\begin{aligned}\nf(x_n; w_{new}, b_{new}) &= w_{new}^\\top x_n + b_{new} \\\\\n&= (w_{old} + x_n)^\\top x_n + (b_{old} + 1) \\\\\n&= \\underbrace{w_{old}^\\top x_n + b_{old}}_{f(x_n;\\, w_{old},\\, b_{old})} + x_n^\\top x_n + 1 \\\\\n&= f(x_n; w_{old}, b_{old}) + \\|x_n\\|^2 + 1.\n\\end{aligned}\n$$"
+      },
+      {
+        "title": "Sign of the change",
+        "body": "$\\|x_n\\|^2 = x_n^\\top x_n \\ge 0$ for every $x_n \\in \\mathbb{R}^d$, so the change is\n\n$$\nf(x_n; w_{new}, b_{new}) - f(x_n; w_{old}, b_{old}) = \\|x_n\\|^2 + 1 \\ge 1 > 0.\n$$\n\nHence $f(x_n; w_{new}, b_{new}) > f(x_n; w_{old}, b_{old})$: the score of the misclassified positive sample strictly increases, i.e. it moves toward the correct (positive) side. In general, for either label, $y_n f$ increases by $y_n^2(\\|x_n\\|^2 + 1) = \\|x_n\\|^2 + 1$."
+      },
+      {
+        "title": "Eliminate the other options",
+        "body": "- **(B)** and **(C)** contradict the strict increase of at least $1$ shown above.\n- **(D)**: $y_n f(x_n; w_{old}, b_{old}) = (+1)\\cdot f(x_n; w_{old}, b_{old}) < 0$, so it cannot exceed $1$. (For any misclassified sample, $y_n f \\le 0$.)\n\nOnly **(A)** is true."
+      },
+      {
+        "title": "A numerical illustration",
+        "body": "Take $d = 2$, $w_{old} = (-1, 0)^\\top$, $b_{old} = 0$, $x_n = (2, 1)^\\top$, $y_n = +1$.\n\n- Old score: $f = -1\\cdot 2 + 0 \\cdot 1 + 0 = -2 < 0$, so the sample is misclassified.\n- Update: $w_{new} = (-1 + 2,\\ 0 + 1)^\\top = (1, 1)^\\top$, $b_{new} = 0 + 1 = 1$.\n- New score: $f = 1\\cdot 2 + 1\\cdot 1 + 1 = 4$.\n\nThe increase is $4 - (-2) = 6 = \\|x_n\\|^2 + 1 = (4 + 1) + 1$ ✓."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**The perceptron.** The classifier $y = \\mathrm{sign}(w^\\top x + b)$ separates $\\mathbb{R}^d$ with the hyperplane $w^\\top x + b = 0$: points where the score $f(x) = w^\\top x + b$ is positive get label $+1$, the rest get $-1$. The training rule in the question is the classic **perceptron learning rule** (Rosenblatt): visit the samples, and whenever one is misclassified, add $y_n x_n$ to $w$ and $y_n$ to $b$. Correctly classified samples cause no change.\n\n**Why the rule makes sense.** Use the quantity $y_n f(x_n)$, which is positive exactly when the sample is on the correct side. After an update on sample $n$,\n\n$$\ny_n f_{new}(x_n) = y_n\\big[(w + y_n x_n)^\\top x_n + b + y_n\\big] = y_n f_{old}(x_n) + \\|x_n\\|^2 + 1,\n$$\n\nbecause $y_n^2 = 1$. So each update pushes the offending sample's score toward its correct side by at least $1$. Equivalently, the rule is one step of (stochastic) gradient descent, with learning rate $1$, on the perceptron loss $\\max(0,\\, -y_n f(x_n))$: for a sample with $y_n f(x_n) < 0$ its gradient with respect to $(w, b)$ is $(-y_n x_n, -y_n)$.\n\n**What an update does not promise.** A single update need not *fix* the sample: if $f_{old}(x_n)$ is very negative, $f_{old} + \\|x_n\\|^2 + 1$ can still be $\\le 0$. It can also break other samples that were correct. What is guaranteed (the perceptron convergence theorem) is that on **linearly separable** data the algorithm makes only finitely many mistakes and then stops changing. On non-separable data it never settles.\n\n**Connection to neural networks.** A perceptron is a single neuron with a step activation. Stacking such units, with smooth activations so that gradients exist, gives the multi-layer perceptron / feed-forward network.\n\n**Back to the question.** For $y_n = +1$ and $f_{old}(x_n) < 0$, the new score is $f_{old}(x_n) + \\|x_n\\|^2 + 1$, strictly larger than before: option (A).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$f(x_n; w_{new}, b_{new}) = f(x_n; w_{old}, b_{old}) + \\|x_n\\|^2 + 1$, and $\\|x_n\\|^2 + 1 \\ge 1 > 0$, so the new score is strictly greater."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "A decrease would need $\\|x_n\\|^2 + 1 < 0$, which is impossible. The update moves the score of a positive sample upward, never downward."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Equality would need $\\|x_n\\|^2 + 1 = 0$. Even if $x_n = 0$, the bias update alone adds $+1$, so the score always changes."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "With $y_n = +1$, $y_n f(x_n; w_{old}, b_{old}) = f(x_n; w_{old}, b_{old}) < 0$, so it cannot be greater than $1$. A misclassified sample always has $y_n f \\le 0$."
+      }
+    ],
+    "shortcut": "Substitute the update into $f$: a mistake on $(x_n, y_n)$ changes $f(x_n)$ by $y_n(\\|x_n\\|^2 + 1)$. With $y_n = +1$ the change is positive, so the score goes up.",
+    "commonTrap": "Believing the update guarantees the sample is now correctly classified, and overthinking the options on that basis. The rule only guarantees that $f(x_n)$ increases by $\\|x_n\\|^2 + 1$; it may still be negative. Another slip is to forget the bias update and write the change as $\\|x_n\\|^2$, which makes equality (C) look possible when $x_n = 0$. Option (D) is a distractor borrowed from the SVM margin condition $y_n f(x_n) \\ge 1$, which describes a correctly classified sample, not a misclassified one."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q22-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The subscripts new/old are italic in the paper and are transcribed as $w_{new}$, $b_{old}$, etc.; \"sign\" is upright in the paper and is transcribed as $\\mathrm{sign}$. The paper's line break inside \"$i = 1, 2, \\ldots, N$\" is joined."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (score strictly increases by ||x_n||^2 + 1)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\nd = 3\nX1 = rng.normal([0, 0, 0], 1.0, (40, d)); X2 = rng.normal([2, 1, -1], 1.5, (60, d))\nm1, m2 = X1.mean(0), X2.mean(0)\nSW = (X1 - m1).T @ (X1 - m1) + (X2 - m2).T @ (X2 - m2)       # within-class scatter (non-singular)\nSB = np.outer(m1 - m2, m1 - m2)                              # between-class scatter (non-zero)\nJ = lambda u: (u @ SB @ u) / (u @ SW @ u)\n# maximise J by brute force over many random directions, then refine by local ascent\nU = rng.normal(size=(200000, d)); vals = np.einsum('ij,jk,ik->i', U, SB, U) / np.einsum('ij,jk,ik->i', U, SW, U)\nu = U[vals.argmax()]\nfor _ in range(2000):\n    g = 2 * (SB @ u - J(u) * SW @ u) / (u @ SW @ u)         # gradient of J\n    u = u + 1e-2 * g / np.linalg.norm(g) * np.linalg.norm(u) if np.linalg.norm(g) > 1e-12 else u\nlam = J(u)\nw, V = np.linalg.eig(np.linalg.solve(SW, SB)); top = np.real(w).max()\nprint('max J (search) =', lam, ' top eigenvalue of SW^-1 SB =', top)\nus = np.linalg.solve(SW, m1 - m2)                          # closed form for two classes\nprint('cos(u_search, SW^-1(m1-m2)) =', abs(u @ us) / np.linalg.norm(u) / np.linalg.norm(us))\nu, lam = us, J(us)\nres = lambda v: np.linalg.norm(v)\nprint('A  SW^-1 SB u - lam u :', res(np.linalg.solve(SW, SB @ u) - lam * u))\nprint('B  SW u - lam SB u     :', res(SW @ u - lam * SB @ u))\nprint('C  SB SW u - lam u     :', res(SB @ SW @ u - lam * u))\nprint('D  u.u - lam^2         :', u @ u - lam**2, '(and for 5u:', (5*u) @ (5*u) - J(5*u)**2, ')')",
+    "notes": "Independent solve: y_n = +1 and f_old < 0 means the sample is misclassified, so w_new = w_old + x_n and b_new = b_old + 1. Then f(x_n; w_new, b_new) = f(x_n; w_old, b_old) + ||x_n||^2 + 1 > f(x_n; w_old, b_old), option (A), matching the official key A. (D) fails because y_n f_old = f_old < 0. The Python check draws 100000 random misclassified positive samples (random d, w, b, x with f_old < 0), applies the update, asserts f_new - f_old = ||x||^2 + 1 each time, and finds option (A) true in every trial and (B), (C), (D) true in none. Topic note: the question tests the perceptron learning rule; the syllabus lists no separate perceptron phrase, so it is tagged under neural networks (multi-layer perceptron / feed-forward network building block)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,840 @@
+[
+  {
+    "id": "M11-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (conditional binomial moments and the law of total variance) with a short routine computation; about 2–2.5 minutes for a prepared student.",
+    "estimatedTimeSec": 140,
+    "concept": "Law of total variance for a binomial count whose number of trials is itself random.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A help-desk agent handles $N$ tickets in a particular hour, where $N$ has the following probability mass function.\n\n| $n$ | 1 | 2 | 3 |\n| --- | --- | --- | --- |\n| $P(N = n)$ | 0.2 | 0.5 | 0.3 |\n\nEach ticket, independently of $N$ and of every other ticket, is resolved on the first contact with probability $0.8$. Let $S$ be the number of tickets in that hour that are resolved on the first contact, so that given $N = n$, $S \\sim \\text{Binomial}(n,\\, 0.8)$.\n\nThe variance of $S$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.64,
+      "max": 0.66
+    },
+    "solution": {
+      "quick": "Law of total variance: $\\operatorname{Var}(S) = E[\\operatorname{Var}(S \\mid N)] + \\operatorname{Var}(E[S \\mid N]) = 0.16\\,E[N] + 0.64\\,\\operatorname{Var}(N)$.\nWith $E[N] = 2.1$ and $\\operatorname{Var}(N) = 0.49$: $\\operatorname{Var}(S) = 0.336 + 0.3136 = 0.6496 \\approx 0.65$.",
+      "steps": [
+        {
+          "title": "Conditional mean and variance of S given N",
+          "body": "Given $N = n$, $S \\sim \\text{Binomial}(n, 0.8)$, so\n$$E[S \\mid N] = 0.8\\,N, \\qquad \\operatorname{Var}(S \\mid N) = N(0.8)(0.2) = 0.16\\,N.$$"
+        },
+        {
+          "title": "Moments of N",
+          "body": "$E[N] = 1(0.2) + 2(0.5) + 3(0.3) = 0.2 + 1.0 + 0.9 = 2.1$.\n$E[N^2] = 1(0.2) + 4(0.5) + 9(0.3) = 0.2 + 2.0 + 2.7 = 4.9$.\n$\\operatorname{Var}(N) = 4.9 - 2.1^2 = 4.9 - 4.41 = 0.49$."
+        },
+        {
+          "title": "Apply the law of total variance",
+          "body": "$$\\operatorname{Var}(S) = E[\\operatorname{Var}(S \\mid N)] + \\operatorname{Var}(E[S \\mid N]).$$\n- $E[\\operatorname{Var}(S \\mid N)] = 0.16 \\times E[N] = 0.16 \\times 2.1 = 0.336$ (within-group spread).\n- $\\operatorname{Var}(E[S \\mid N]) = \\operatorname{Var}(0.8N) = 0.64 \\times 0.49 = 0.3136$ (spread caused by $N$ itself varying).\n\nSo $\\operatorname{Var}(S) = 0.336 + 0.3136 = 0.6496$."
+        },
+        {
+          "title": "Cross-check with the PMF of S",
+          "body": "$P(S=0) = 0.2(0.2) + 0.5(0.04) + 0.3(0.008) = 0.0624$, $P(S=1) = 0.16 + 0.16 + 0.0288 = 0.3488$,\n$P(S=2) = 0.32 + 0.1152 = 0.4352$, $P(S=3) = 0.3(0.512) = 0.1536$.\n$E[S] = 0.3488 + 2(0.4352) + 3(0.1536) = 1.68$ and $E[S^2] = 0.3488 + 4(0.4352) + 9(0.1536) = 3.472$.\n$\\operatorname{Var}(S) = 3.472 - 1.68^2 = 3.472 - 2.8224 = 0.6496$, which rounds to $0.65$."
+        }
+      ],
+      "finalAnswer": "**0.65** (exact value 0.6496; accepted range 0.64 to 0.66)",
+      "teaching": "When a random quantity is built in two stages (first $N$ is drawn, then $S$ is drawn given $N$), its variability also comes from two sources. The **law of total variance** makes this precise:\n$$\\operatorname{Var}(S) = E[\\operatorname{Var}(S \\mid N)] + \\operatorname{Var}(E[S \\mid N]).$$\nThe first term is the average spread of $S$ *within* each fixed value of $N$: even with exactly two tickets, the number resolved still varies. The second term is the spread of the conditional mean *between* values of $N$: an hour with three tickets tends to produce more resolutions than an hour with one.\n\nBoth terms are needed. Here the binomial formulas give the conditional pieces ($0.8N$ and $0.16N$), and only the first two moments of $N$ are required to finish. The companion rule $E[S] = E[E[S \\mid N]] = 0.8 \\times 2.1 = 1.68$ is the law of total expectation.",
+      "shortcut": "For $S \\mid N \\sim \\text{Binomial}(N, p)$: $\\operatorname{Var}(S) = p(1-p)E[N] + p^2 \\operatorname{Var}(N) = 0.16(2.1) + 0.64(0.49) = 0.6496$.",
+      "commonTrap": "Keeping only one term: $0.336$ (treating $S$ as $\\text{Binomial}(2.1, 0.8)$ by plugging in $E[N]$) or $0.3136$ (only the between-group term). Both ignore half of the variability."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.6496",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\npN = {1: 0.2, 2: 0.5, 3: 0.3}; p = 0.8\npS = {}\nfor n, pn in pN.items():\n    for k in range(n + 1):\n        pS[k] = pS.get(k, 0) + pn * comb(n, k) * p**k * (1 - p)**(n - k)\nm = sum(k * v for k, v in pS.items())\nprint(round(sum(k * k * v for k, v in pS.items()) - m * m, 4))  # 0.6496",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-problem-types"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (whether the target is a continuous quantity or a category) applied by direct recall to eight short items; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Distinguishing regression (continuous numeric target) from classification (categorical target).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data-science team has listed eight supervised prediction tasks. For each task, the target to be predicted is given below.\n\n1. The electricity consumption (in kWh) of an office building tomorrow.\n2. Whether an incoming e-mail is spam or not spam.\n3. The resale price (in rupees) of a used motorcycle.\n4. Which of the ten digits $0, 1, \\ldots, 9$ a scanned handwritten character represents.\n5. The number of minutes until a food delivery arrives.\n6. The blood group (A, B, AB or O) of a patient, read from an image of a test card.\n7. The maximum temperature (in °C) in a city next Monday.\n8. Whether a loan applicant will default on the loan (yes/no).\n\nWhen each task is posed as a supervised learning problem with the stated target, the number of tasks that are regression problems is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 4,
+      "max": 4
+    },
+    "solution": {
+      "quick": "Regression predicts a continuous numeric quantity; classification predicts a label from a finite set of categories.\nRegression: tasks 1, 3, 5, 7. Classification: tasks 2, 4, 6, 8. Answer: **4**.",
+      "steps": [
+        {
+          "title": "Criterion",
+          "body": "Look only at the **type of the target variable**. If it is a real-valued quantity where the size of the error matters (being off by 2 is worse than being off by 1), the task is regression. If it is one of a finite set of categories, it is classification."
+        },
+        {
+          "title": "Classify each task",
+          "body": "| Task | Target | Type |\n| --- | --- | --- |\n| 1 | kWh consumed | continuous → regression |\n| 2 | spam / not spam | 2 categories → classification |\n| 3 | price in rupees | continuous → regression |\n| 4 | digit 0–9 | 10 categories → classification |\n| 5 | minutes until arrival | continuous → regression |\n| 6 | A / B / AB / O | 4 categories → classification |\n| 7 | temperature in °C | continuous → regression |\n| 8 | default yes/no | 2 categories → classification |"
+        },
+        {
+          "title": "Count",
+          "body": "Regression tasks: 1, 3, 5, 7, so the count is $4$."
+        }
+      ],
+      "finalAnswer": "**4**",
+      "teaching": "In supervised learning every training example is an input paired with a target, and the **type of the target** decides the problem type. In a **regression** problem the target is a numeric quantity on a continuous scale (energy, price, time, temperature); the model outputs a number, and it is judged by how far that number is from the truth, for example with squared error. In a **classification** problem the target is one of a fixed set of classes (spam/not spam, blood group); the model outputs a class (or class probabilities), and it is judged by whether the class is right.\n\nA useful test: does \"being close\" mean anything? Predicting 21 °C when the truth is 22 °C is nearly right, so temperature is regression. Predicting the digit 7 when the truth is 8 is simply wrong, even though 7 and 8 are adjacent numbers, because digit labels are categories. That is why task 4 is classification.",
+      "commonTrap": "Counting task 4 as regression because its labels are written as numbers (0–9). The digits are names of classes, not quantities, so the task is 10-class classification and the answer is 4, not 5."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation",
+      "independentAnswer": "4",
+      "agreesWithKey": true,
+      "checkCode": "targets = {1: 'continuous', 2: 'binary', 3: 'continuous', 4: '10-class',\n           5: 'continuous', 6: '4-class', 7: 'continuous', 8: 'binary'}\nprint(sum(v == 'continuous' for v in targets.values()))  # 4",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-functions"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — an MSQ whose four statements each need a separate non-trivial check (injectivity of a cubic, odd symmetry via a logarithm identity, the fundamental period of a sum, and the exact range with attainment), with traps in two of them; about 3–4 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Properties of real functions of one variable: injectivity, odd/even symmetry, periodicity and range.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following functions, each defined for all real $x$:\n\n$$g(x) = x^3 - 3x, \\qquad h(x) = \\ln\\left(x + \\sqrt{x^2 + 1}\\right), \\qquad p(x) = \\sin(2x) + \\cos(3x), \\qquad q(x) = \\frac{2x}{1 + x^2}.$$\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$g$ is one-to-one (injective) on $\\mathbb{R}$."
+      },
+      {
+        "label": "B",
+        "text": "$h$ is an odd function."
+      },
+      {
+        "label": "C",
+        "text": "$p$ is periodic, and its fundamental (smallest positive) period is $2\\pi$."
+      },
+      {
+        "label": "D",
+        "text": "The range of $q$ is the open interval $(-1, 1)$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "$g(0) = g(\\sqrt{3}) = 0$, so $g$ is not one-to-one. $h(-x) = \\ln\\big(\\sqrt{x^2+1} - x\\big) = -h(x)$, so $h$ is odd.\nThe periods of $\\sin 2x$ and $\\cos 3x$ are $\\pi$ and $2\\pi/3$, whose least common multiple is $2\\pi$. Finally, $q(\\pm 1) = \\pm 1$, so the range of $q$ is the closed interval $[-1, 1]$. Answer: **B, C**.",
+      "steps": [
+        {
+          "title": "Statement A: injectivity of g",
+          "body": "$g(x) = x(x^2 - 3)$ has three real roots, $x = -\\sqrt{3}, 0, \\sqrt{3}$, so $g(0) = g(\\sqrt{3}) = 0$ with $0 \\ne \\sqrt{3}$. Equivalently, $g'(x) = 3x^2 - 3$ is negative on $(-1, 1)$ and positive outside, so $g$ rises, falls and rises again. **Not** one-to-one, so A is false."
+        },
+        {
+          "title": "Statement B: symmetry of h",
+          "body": "$h$ is defined everywhere because $\\sqrt{x^2+1} > |x|$. Since $\\big(\\sqrt{x^2+1} - x\\big)\\big(\\sqrt{x^2+1} + x\\big) = (x^2 + 1) - x^2 = 1$,\n$$h(-x) = \\ln\\left(\\sqrt{x^2+1} - x\\right) = \\ln\\frac{1}{\\sqrt{x^2+1} + x} = -h(x).$$\nSo $h$ is odd, and B is true. ($h$ is $\\sinh^{-1} x$.)"
+        },
+        {
+          "title": "Statement C: period of p",
+          "body": "$\\sin 2x$ has period $\\pi$ and $\\cos 3x$ has period $2\\pi/3$. In units of $\\pi/3$ these periods are $3$ and $2$, so their least common multiple is $6 \\cdot \\pi/3 = 2\\pi$, and $p(x + 2\\pi) = p(x)$.\nBecause the two terms have different frequencies (2 and 3), $p(x+T) = p(x)$ for all $x$ forces each term to repeat on its own, so every period of $p$ is a common multiple of $\\pi$ and $2\\pi/3$. No smaller $T$ works. For example, $p(0) = 1$, but $p(\\pi) = 0 + \\cos 3\\pi = -1$ and $p(2\\pi/3) = \\sin(4\\pi/3) + \\cos 2\\pi \\approx 0.134$. The fundamental period is $2\\pi$, so C is true."
+        },
+        {
+          "title": "Statement D: range of q",
+          "body": "For every real $x$, $1 + x^2 - 2|x| = (|x| - 1)^2 \\ge 0$, so $|q(x)| \\le 1$. Equality holds at $x = \\pm 1$: $q(1) = 2/2 = 1$ and $q(-1) = -1$. Since $q$ is continuous, it takes every value in between, so the range is the **closed** interval $[-1, 1]$, not $(-1, 1)$. D is false."
+        }
+      ],
+      "finalAnswer": "**(B), (C)**",
+      "teaching": "A function of one variable can be studied through a few standard properties. **One-to-one**: distinct inputs give distinct outputs. A continuous function is one-to-one exactly when it is strictly monotonic, so look at the sign of $f'$ or search for two inputs with the same output. **Odd/even**: compare $f(-x)$ with $\\pm f(x)$. Algebraic identities such as rationalising a surd often expose the symmetry. **Periodicity**: for a sum of sinusoids with angular frequencies $\\omega_1, \\omega_2$, the function repeats only when every term repeats, so the fundamental period is the least common multiple of the individual periods (provided the frequency ratio is rational). **Range**: bound the function with an inequality, then check whether the bound is actually attained. Attainment is exactly what separates a closed interval from an open one. In this question each statement exercises one of these checks.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "False. $g(0) = g(\\sqrt{3}) = g(-\\sqrt{3}) = 0$. A cubic is one-to-one only when it has no turning points, but $g'(x) = 3x^2 - 3$ vanishes at $x = \\pm 1$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "True. Rationalising gives $\\sqrt{x^2+1} - x = 1/(\\sqrt{x^2+1} + x)$, so $h(-x) = -h(x)$ for all $x$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "True. The periods $\\pi$ and $2\\pi/3$ have least common multiple $2\\pi$. Smaller candidates fail, for example $p(\\pi) = -1 \\ne p(0) = 1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "False. $q(1) = 1$ and $q(-1) = -1$ are attained, so the range is $[-1, 1]$, a closed interval."
+        }
+      ],
+      "commonTrap": "Assuming every cubic is one-to-one (true only for monotonic cubics), and assuming a bounded rational function never reaches its bound, which here would make the range the open interval (−1, 1)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx = np.linspace(-5, 5, 200001)\ng = lambda t: t**3 - 3*t; A = not np.isclose(g(0.0), g(np.sqrt(3)))  # g(0)=g(sqrt3)=0 -> not injective\nh = lambda t: np.log(t + np.sqrt(t*t + 1)); B = np.max(np.abs(h(x) + h(-x))) < 1e-9\np = lambda t: np.sin(2*t) + np.cos(3*t); t = np.linspace(0, 2*np.pi, 2001)\nTs = np.linspace(0.05, 2*np.pi - 0.05, 20000)\nC = np.max(np.abs(p(t + 2*np.pi) - p(t))) < 1e-9 and min(np.max(np.abs(p(t+T) - p(t))) for T in Ts) > 0.1\nqf = lambda t: 2*t/(1 + t*t); D = not (np.max(np.abs(qf(x))) <= 1 and qf(1.0) == 1 and qf(-1.0) == -1)  # |q|<=1 attained -> [-1,1]\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['B', 'C']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-svm"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked ideas (locating the maximum-margin hyperplane from the closest opposite-class pair, then fixing the canonical scaling of w and b) with light arithmetic; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Hard-margin SVM: maximum-margin hyperplane and the canonical scaling y_i(w^T x_i + b) >= 1.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hard-margin linear support vector machine (SVM) with decision function $f(\\mathbf{x}) = \\mathbf{w}^\\top \\mathbf{x} + b$ is trained on the six labelled points below.\n\n| Point | $x_1$ | $x_2$ | Label $y$ |\n| --- | --- | --- | --- |\n| $P_1$ | 3 | 3 | $+1$ |\n| $P_2$ | 4 | 2 | $+1$ |\n| $P_3$ | 5 | 5 | $+1$ |\n| $N_1$ | 1 | 1 | $-1$ |\n| $N_2$ | 0 | 2 | $-1$ |\n| $N_3$ | 1 | $-1$ | $-1$ |\n\nThe learned parameters are expressed in the usual canonical form: $y_i(\\mathbf{w}^\\top \\mathbf{x}_i + b) \\ge 1$ for every training point, with equality for the support vectors.\n\nWhich one of the following is the pair $(\\mathbf{w}, b)$ learned by the SVM?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\mathbf{w} = (1,\\ 1)^\\top,\\ b = -4$"
+      },
+      {
+        "label": "B",
+        "text": "$\\mathbf{w} = \\left(\\tfrac{1}{4},\\ \\tfrac{1}{4}\\right)^\\top,\\ b = -1$"
+      },
+      {
+        "label": "C",
+        "text": "$\\mathbf{w} = \\left(\\tfrac{1}{2},\\ \\tfrac{1}{2}\\right)^\\top,\\ b = -2$"
+      },
+      {
+        "label": "D",
+        "text": "$\\mathbf{w} = \\left(\\tfrac{1}{\\sqrt{2}},\\ \\tfrac{1}{\\sqrt{2}}\\right)^\\top,\\ b = -2\\sqrt{2}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The closest opposite-class pair is $N_1(1,1)$ and $P_1(3,3)$, a distance $2\\sqrt{2}$ apart. Their perpendicular bisector $x_1 + x_2 = 4$ keeps every point at least $\\sqrt{2}$ away, so it is the maximum-margin hyperplane.\nScaling it so that the smallest functional margin equals 1 gives $\\mathbf{w} = (1/2, 1/2)^\\top$, $b = -2$. Answer: **(C)**.",
+      "steps": [
+        {
+          "title": "Upper bound on the margin",
+          "body": "For any separating hyperplane, each point is at least the margin $\\gamma$ away and opposite-class points lie on opposite sides, so for every positive–negative pair the distance between the two points is at least $2\\gamma$.\nThe closest such pair is $P_1 = (3,3)$ and $N_1 = (1,1)$: $\\lVert P_1 - N_1 \\rVert = \\sqrt{4 + 4} = 2\\sqrt{2}$. (The next closest pairs, such as $P_2N_1$ and $P_1N_2$, are $\\sqrt{10}$ apart.) Hence $\\gamma \\le \\sqrt{2}$."
+        },
+        {
+          "title": "A hyperplane that attains the bound",
+          "body": "The perpendicular bisector of $N_1P_1$ passes through the midpoint $(2,2)$ with normal $(1,1)$, so it is $x_1 + x_2 - 4 = 0$. The distance of each point from it is $|x_1 + x_2 - 4|/\\sqrt{2}$:\n$P_1: 2/\\sqrt{2} = \\sqrt{2}$, $P_2: \\sqrt{2}$, $P_3: 6/\\sqrt{2}$, $N_1: \\sqrt{2}$, $N_2: \\sqrt{2}$, $N_3: 4/\\sqrt{2}$.\nEvery point lies on its correct side, at distance at least $\\sqrt{2}$. The bound is attained, so this is the maximum-margin hyperplane. Its support vectors are $P_1, P_2, N_1, N_2$."
+        },
+        {
+          "title": "Canonical scaling",
+          "body": "Every rescaling $\\mathbf{w} = c(1,1)^\\top$, $b = -4c$ with $c > 0$ describes the same hyperplane. At a support vector, for example $P_1$: $y(\\mathbf{w}^\\top\\mathbf{x} + b) = c(6) - 4c = 2c$. The canonical form requires this to equal 1, so $c = 1/2$, giving $\\mathbf{w} = (1/2, 1/2)^\\top$ and $b = -2$.\nCheck: the margin width is $2/\\lVert\\mathbf{w}\\rVert = 2/(1/\\sqrt{2}) = 2\\sqrt{2}$, which equals $\\lVert P_1 - N_1 \\rVert$."
+        },
+        {
+          "title": "Test each option",
+          "body": "All four options describe the hyperplane $x_1 + x_2 = 4$. Only the scaling differs, and the minimum functional margin is:\nA: $2$ (feasible, but not canonical); B: $0.5$ (violates $\\ge 1$); C: $1$ (canonical); D: $\\sqrt{2}$ (unit normal, feasible, but not canonical). Only (C) satisfies the canonical form."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "A linear classifier $\\operatorname{sign}(\\mathbf{w}^\\top\\mathbf{x} + b)$ is unchanged if $\\mathbf{w}$ and $b$ are multiplied by the same positive constant, so a hyperplane has infinitely many parameterisations. The hard-margin SVM removes this freedom by fixing the **functional margin** of the closest points to 1: $\\min_i y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b) = 1$. The geometric distance from a point to the hyperplane is $|\\mathbf{w}^\\top\\mathbf{x} + b|/\\lVert\\mathbf{w}\\rVert$, so under this scaling the closest points are $1/\\lVert\\mathbf{w}\\rVert$ away and the full margin width is $2/\\lVert\\mathbf{w}\\rVert$. Maximising the margin is therefore the same as minimising $\\lVert\\mathbf{w}\\rVert^2$ subject to $y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b) \\ge 1$.\n\nOn small datasets, first find the best hyperplane geometrically. The margin can never exceed half the distance between the closest pair of opposite-class points, and if the perpendicular bisector of that pair separates all the data, it is optimal. Then rescale $(\\mathbf{w}, b)$ to canonical form.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the correct hyperplane, but the closest points have functional margin $2$, not $1$. The pair must be halved to reach canonical form."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Same hyperplane, but the functional margin of $P_1$ is $\\tfrac{1}{4}(6) - 1 = 0.5 < 1$, which violates the constraints. This comes from confusing the full margin $2/\\lVert\\mathbf{w}\\rVert$ with the half-margin $1/\\lVert\\mathbf{w}\\rVert$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The functional margin is exactly 1 at $P_1, P_2, N_1, N_2$ and larger elsewhere ($P_3$: 3, $N_3$: 2), and $2/\\lVert\\mathbf{w}\\rVert = 2\\sqrt{2}$ equals the maximum possible margin width."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the unit-normal form ($\\lVert\\mathbf{w}\\rVert = 1$), where $|\\mathbf{w}^\\top\\mathbf{x} + b|$ is the geometric distance. The closest points then have functional margin $\\sqrt{2}$, not 1, so it is not the canonical SVM solution."
+        }
+      ],
+      "shortcut": "With support vectors $\\mathbf{x}_+$ and $\\mathbf{x}_-$ that form the closest opposite pair, $\\mathbf{w} = \\dfrac{2(\\mathbf{x}_+ - \\mathbf{x}_-)}{\\lVert\\mathbf{x}_+ - \\mathbf{x}_-\\rVert^2} = \\dfrac{2(2,2)}{8} = (1/2, 1/2)$, and $b = -\\mathbf{w}^\\top(\\text{midpoint}) = -\\tfrac{1}{2}(2 + 2) = -2$.",
+      "commonTrap": "Stopping once the hyperplane x1 + x2 = 4 is found and picking any (w, b) that describes it. The SVM's (w, b) is pinned down by the requirement that the support vectors have functional margin exactly 1."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: w = (0.5, 0.5), b = -2",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nfrom scipy.optimize import minimize\nX = np.array([[3,3],[4,2],[5,5],[1,1],[0,2],[1,-1]], float); y = np.array([1,1,1,-1,-1,-1], float)\ncons = [{'type': 'ineq', 'fun': (lambda z, i=i: y[i]*(X[i] @ z[:2] + z[2]) - 1)} for i in range(6)]\nr = minimize(lambda z: z[0]**2 + z[1]**2, x0=[1, 1, -4], constraints=cons, method='SLSQP')\nprint(np.round(r.x, 4))  # [ 0.5  0.5 -2. ]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-traversals"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single, direct simulation of breadth-first search on a 7-vertex graph with a fixed tie-breaking rule; about 1–1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Breadth-first search visiting order with a queue and a fixed neighbour order.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An undirected graph has vertex set $\\{1, 2, 3, 4, 5, 6, 7\\}$ and the following eight edges:\n\n1–4, 1–6, 2–4, 2–5, 3–5, 3–6, 4–7, 6–7.\n\nBreadth-first search (BFS) is started at vertex 1. When a vertex is removed from the queue, its not-yet-discovered neighbours are added to the queue in increasing numerical order.\n\nWhich one of the following is the order in which BFS removes the vertices from the queue?",
+    "options": [
+      {
+        "label": "A",
+        "text": "1, 4, 2, 5, 3, 6, 7"
+      },
+      {
+        "label": "B",
+        "text": "1, 4, 6, 2, 3, 7, 5"
+      },
+      {
+        "label": "C",
+        "text": "1, 6, 4, 7, 3, 2, 5"
+      },
+      {
+        "label": "D",
+        "text": "1, 4, 6, 2, 7, 3, 5"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Adjacency lists: $1{:}\\,\\{4,6\\}$, $4{:}\\,\\{1,2,7\\}$, $6{:}\\,\\{1,3,7\\}$, $2{:}\\,\\{4,5\\}$, $7{:}\\,\\{4,6\\}$, $3{:}\\,\\{5,6\\}$.\nFrom 1 the queue receives 4, 6; then 4 adds 2, 7; 6 adds 3; 2 adds 5. Order: **1, 4, 6, 2, 7, 3, 5**, which is (D).",
+      "steps": [
+        {
+          "title": "Build the adjacency lists (sorted)",
+          "body": "1: 4, 6 · 2: 4, 5 · 3: 5, 6 · 4: 1, 2, 7 · 5: 2, 3 · 6: 1, 3, 7 · 7: 4, 6"
+        },
+        {
+          "title": "Trace the queue",
+          "body": "| Removed | New neighbours enqueued | Queue afterwards |\n| --- | --- | --- |\n| 1 | 4, 6 | [4, 6] |\n| 4 | 2, 7 (1 already discovered) | [6, 2, 7] |\n| 6 | 3 (1, 7 already discovered) | [2, 7, 3] |\n| 2 | 5 | [7, 3, 5] |\n| 7 | none | [3, 5] |\n| 3 | none | [5] |\n| 5 | none | [] |"
+        },
+        {
+          "title": "Read off the order",
+          "body": "Removal order: 1, 4, 6, 2, 7, 3, 5, which is option (D)."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "Breadth-first search explores a graph in **layers of increasing distance** (number of edges) from the start vertex. It uses a FIFO queue: take the vertex at the front, discover each of its neighbours that has not been seen before, mark them as discovered and append them to the back. Because the queue is first-in-first-out, every vertex at distance 1 is processed before any vertex at distance 2, and so on.\n\nInside a layer, the order is *not* sorted afresh. It is the order in which the vertices were discovered, which depends on which parent processed them first. Here layer 2 is $\\{2, 7, 3\\}$: vertex 4 (processed first) discovers 2 and 7, and only then does vertex 6 discover 3. So the order is 2, 7, 3, not 2, 3, 7. Marking vertices when they are enqueued (rather than when removed) prevents a vertex such as 7, adjacent to both 4 and 6, from entering the queue twice.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the depth-first order (1 → 4 → 2 → 5 → 3 → 6 → 7), which follows each branch as deep as possible before backtracking. BFS does not do this."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The layers are right, but layer 2 has been sorted numerically (2, 3, 7). BFS processes a layer in discovery order: 4 discovers 7 before 6 discovers 3, so the order is 2, 7, 3."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This results from enqueuing neighbours in decreasing order, which breaks the stated rule."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "This matches the queue trace with neighbours enqueued in increasing order: 1, 4, 6, 2, 7, 3, 5."
+        }
+      ],
+      "commonTrap": "Sorting each BFS level numerically instead of keeping discovery order, which gives 1, 4, 6, 2, 3, 7, 5 (option B)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1, 4, 6, 2, 7, 3, 5 (D)",
+      "agreesWithKey": true,
+      "checkCode": "from collections import deque\nE = [(1,4),(1,6),(2,4),(2,5),(3,5),(3,6),(4,7),(6,7)]\nadj = {v: [] for v in range(1, 8)}\nfor a, b in E: adj[a].append(b); adj[b].append(a)\nseen, q, order = {1}, deque([1]), []\nwhile q:\n    u = q.popleft(); order.append(u)\n    for v in sorted(adj[u]):\n        if v not in seen: seen.add(v); q.append(v)\nprint(order)  # [1, 4, 6, 2, 7, 3, 5]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — four independent but routine checks on binomial, discrete-uniform and Bernoulli facts, each needing one or two steps (moment identity, mode via PMF ratio, variance scaling); about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Moments and mode of the binomial, variance of a scaled discrete uniform, and the distribution of a sum of Bernoullis.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $X \\sim \\text{Binomial}(n = 10,\\ p = 0.3)$. Let $U$ be uniformly distributed over the ten values $\\{2, 4, 6, \\ldots, 20\\}$. Let $B_1$ and $B_2$ be independent Bernoulli random variables, each with success probability $\\tfrac{1}{2}$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$E[X^2] = 11.1$"
+      },
+      {
+        "label": "B",
+        "text": "$B_1 + B_2$ is uniformly distributed over $\\{0, 1, 2\\}$."
+      },
+      {
+        "label": "C",
+        "text": "The most probable value (mode) of $X$ is $3$."
+      },
+      {
+        "label": "D",
+        "text": "$\\operatorname{Var}(U) = 33$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$E[X^2] = np(1-p) + (np)^2 = 2.1 + 9 = 11.1$. $B_1 + B_2 \\sim \\text{Binomial}(2, \\tfrac12)$ has PMF $\\tfrac14, \\tfrac12, \\tfrac14$, which is not uniform.\nThe mode of $X$ is $\\lfloor (n+1)p \\rfloor = \\lfloor 3.3 \\rfloor = 3$. $U = 2V$ with $V$ uniform on $\\{1, \\ldots, 10\\}$, so $\\operatorname{Var}(U) = 4 \\cdot \\tfrac{99}{12} = 33$. Answer: **A, C, D**.",
+      "steps": [
+        {
+          "title": "Statement A",
+          "body": "$E[X] = np = 3$ and $\\operatorname{Var}(X) = np(1-p) = 10(0.3)(0.7) = 2.1$.\n$E[X^2] = \\operatorname{Var}(X) + (E[X])^2 = 2.1 + 9 = 11.1$. **True.**"
+        },
+        {
+          "title": "Statement B",
+          "body": "$P(B_1 + B_2 = 0) = \\tfrac12 \\cdot \\tfrac12 = \\tfrac14$, $P(=1) = 2 \\cdot \\tfrac14 = \\tfrac12$, $P(=2) = \\tfrac14$.\nThe sum is $\\text{Binomial}(2, \\tfrac12)$, not uniform, because the middle value arises in two ways. **False.**"
+        },
+        {
+          "title": "Statement C",
+          "body": "The ratio of consecutive probabilities is\n$$\\frac{P(X=k)}{P(X=k-1)} = \\frac{(n-k+1)\\,p}{k\\,(1-p)} = \\frac{(11-k)(0.3)}{0.7\\,k},$$\nwhich exceeds 1 exactly when $3.3 - 0.3k > 0.7k$, i.e. $k < 3.3$. So the PMF increases up to $k = 3$ and decreases after it: $P(2) \\approx 0.2335$, $P(3) \\approx 0.2668$, $P(4) \\approx 0.2001$. The mode is $3$. **True.**"
+        },
+        {
+          "title": "Statement D",
+          "body": "Write $U = 2V$ with $V$ uniform on $\\{1, 2, \\ldots, 10\\}$. For a discrete uniform on $m$ consecutive integers, $\\operatorname{Var} = \\frac{m^2 - 1}{12}$, so $\\operatorname{Var}(V) = \\frac{99}{12} = 8.25$.\n$\\operatorname{Var}(U) = 2^2 \\cdot 8.25 = 33$. **True.**"
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "teaching": "Three named discrete distributions cover most GATE counting models. A **Bernoulli($p$)** variable is 1 with probability $p$ and 0 otherwise, with mean $p$ and variance $p(1-p)$. A **binomial($n, p$)** variable is the sum of $n$ independent Bernoulli($p$) variables, so its mean and variance add: $np$ and $np(1-p)$. Its PMF rises while $k < (n+1)p$ and then falls, so its mode is $\\lfloor (n+1)p \\rfloor$ (two modes if $(n+1)p$ is an integer). A **discrete uniform** on $m$ consecutive integers has variance $(m^2-1)/12$. For equally spaced values with step $d$, multiply by $d^2$, since $\\operatorname{Var}(aY) = a^2\\operatorname{Var}(Y)$.\n\nTwo habits help: get second moments from $E[X^2] = \\operatorname{Var}(X) + (E[X])^2$, and never assume a sum of uniform variables is uniform. Summing spreads probability toward the middle.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$E[X^2] = \\operatorname{Var}(X) + (E[X])^2 = 2.1 + 3^2 = 11.1$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The value 1 can arise as $(1,0)$ or $(0,1)$, so $P(B_1 + B_2 = 1) = \\tfrac12$ while $P(0) = P(2) = \\tfrac14$. This is $\\text{Binomial}(2, \\tfrac12)$, not uniform."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\lfloor (n+1)p \\rfloor = \\lfloor 3.3 \\rfloor = 3$. Directly, $P(X=3) \\approx 0.2668$ exceeds $P(X=2) \\approx 0.2335$ and $P(X=4) \\approx 0.2001$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$U = 2V$ with $\\operatorname{Var}(V) = (10^2 - 1)/12 = 8.25$, so $\\operatorname{Var}(U) = 4 \\times 8.25 = 33$."
+        }
+      ],
+      "commonTrap": "For D, applying (m² − 1)/12 directly to U (giving 8.25), or scaling by 2 instead of 2² (giving 16.5). The spacing of the values enters the variance squared."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\nfrom fractions import Fraction as F\nn, p = 10, F(3, 10)\npmf = [comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1)]\nA = sum(k*k*v for k, v in enumerate(pmf)) == F(111, 10)\nB = False  # P(B1+B2=0,1,2) = 1/4, 1/2, 1/4 -> not uniform\nC = max(range(n + 1), key=lambda k: pmf[k]) == 3\nU = range(2, 21, 2); m = F(sum(U), 10); D = sum((u - m)**2 for u in U) / 10 == 33\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['A', 'C', 'D']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single short trace of list slicing, zip and a conditional expression over three iterations; about 1–1.5 minutes.",
+    "estimatedTimeSec": 75,
+    "concept": "Python slicing with steps, zip truncation to the shorter sequence, and the conditional expression.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndata = [3, 8, 9, 6, 4, 2, 5]\na = data[1::2]\nb = data[::2]\nresult = 0\nfor x, y in zip(a, b):\n    result += x * y if x > y else x - y\nprint(result)\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 19,
+      "max": 19
+    },
+    "solution": {
+      "quick": "`a = [8, 6, 2]` (odd indices) and `b = [3, 9, 4, 5]` (even indices). `zip` stops after 3 pairs: $(8,3) \\to 24$, $(6,9) \\to -3$, $(2,4) \\to -2$.\nTotal $= 24 - 3 - 2 = 19$.",
+      "steps": [
+        {
+          "title": "Evaluate the slices",
+          "body": "`data[1::2]` starts at index 1 and takes every second element: indices 1, 3, 5, giving `a = [8, 6, 2]`.\n`data[::2]` takes indices 0, 2, 4, 6, giving `b = [3, 9, 4, 5]`."
+        },
+        {
+          "title": "Pairs produced by zip",
+          "body": "`zip` stops at the shorter sequence, so it yields 3 pairs: (8, 3), (6, 9), (2, 4). The trailing 5 in `b` is never used."
+        },
+        {
+          "title": "Apply the conditional expression",
+          "body": "The line parses as `result += (x * y if x > y else x - y)`.\n- (8, 3): $8 > 3$, add $8 \\times 3 = 24$, so result $= 24$.\n- (6, 9): $6 \\le 9$, add $6 - 9 = -3$, so result $= 21$.\n- (2, 4): $2 \\le 4$, add $2 - 4 = -2$, so result $= 19$."
+        },
+        {
+          "title": "Output",
+          "body": "The program prints `19`."
+        }
+      ],
+      "finalAnswer": "**19**",
+      "teaching": "Three small Python features combine here. **Extended slicing** `seq[start:stop:step]` begins at `start` and jumps by `step`. With `start` omitted it begins at 0, and with `stop` omitted it runs to the end. So `[1::2]` picks the odd positions and `[::2]` the even ones. **`zip`** pairs items position by position and stops as soon as the *shortest* input runs out, so an unmatched extra element is silently ignored. The **conditional expression** `A if cond else B` has the lowest precedence of all operators, so `x * y if x > y else x - y` means `(x * y) if (x > y) else (x - y)`, and the whole value is added by `+=`. Trace each iteration and write the running total. That habit avoids most mistakes in tracing questions.",
+      "commonTrap": "Swapping the two slices (which gives 57) or expecting zip to pair the unmatched 5 with something. zip truncates to the shorter list."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "19",
+      "agreesWithKey": true,
+      "checkCode": "data = [3, 8, 9, 6, 4, 2, 5]\na = data[1::2]\nb = data[::2]\nresult = 0\nfor x, y in zip(a, b):\n    result += x * y if x > y else x - y\nprint(result)  # 19",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the bias–variance–noise decomposition) applied in three routine steps (mean prediction, squared bias, population variance, plus noise); about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Bias–variance decomposition of expected squared prediction error at a fixed input.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A regression model is trained on a randomly chosen training set that is equally likely to be any one of four sets $D_1, D_2, D_3, D_4$. At a fixed test input $x_0$, the trained model's prediction $\\hat{f}(x_0)$ depends on the training set as follows.\n\n| Training set | $D_1$ | $D_2$ | $D_3$ | $D_4$ |\n| --- | --- | --- | --- | --- |\n| $\\hat{f}(x_0)$ | 5.0 | 6.0 | 7.2 | 5.8 |\n\nThe observed response at $x_0$ is $y = f(x_0) + \\varepsilon$, where the true value is $f(x_0) = 5.4$, and the noise $\\varepsilon$ has mean 0 and variance 0.40 and is independent of the training set.\n\nThe expected squared prediction error $E\\left[\\left(y - \\hat{f}(x_0)\\right)^2\\right]$ at $x_0$, taken over both the choice of training set and the noise, is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 1.37,
+      "max": 1.39
+    },
+    "solution": {
+      "quick": "Expected error $=$ bias$^2$ $+$ variance $+$ noise. The mean prediction is $6.0$, so bias$^2 = (6.0 - 5.4)^2 = 0.36$.\nVariance $= (1 + 0 + 1.44 + 0.04)/4 = 0.62$ and noise $= 0.40$. Total $= 0.36 + 0.62 + 0.40 = 1.38$.",
+      "steps": [
+        {
+          "title": "Decomposition",
+          "body": "Since $\\varepsilon$ has mean 0 and is independent of $\\hat{f}$,\n$$E\\big[(y - \\hat{f})^2\\big] = \\underbrace{\\big(E[\\hat{f}] - f(x_0)\\big)^2}_{\\text{bias}^2} + \\underbrace{E\\big[(\\hat{f} - E[\\hat{f}])^2\\big]}_{\\text{variance}} + \\underbrace{\\sigma^2}_{\\text{noise}}.$$"
+        },
+        {
+          "title": "Mean prediction and bias",
+          "body": "$E[\\hat{f}(x_0)] = (5.0 + 6.0 + 7.2 + 5.8)/4 = 24.0/4 = 6.0$.\nBias $= 6.0 - 5.4 = 0.6$, so bias$^2 = 0.36$."
+        },
+        {
+          "title": "Variance over training sets",
+          "body": "The deviations from 6.0 are $-1.0, 0, 1.2, -0.2$, with squares $1.00, 0, 1.44, 0.04$. The four sets are equally likely, so average with weight $1/4$ (not $1/3$):\nVariance $= (1.00 + 0 + 1.44 + 0.04)/4 = 2.48/4 = 0.62$."
+        },
+        {
+          "title": "Add the noise and cross-check",
+          "body": "Total $= 0.36 + 0.62 + 0.40 = 1.38$.\nCross-check: $E[(f - \\hat{f})^2] = (0.16 + 0.36 + 3.24 + 0.16)/4 = 3.92/4 = 0.98$, and $0.98 + 0.40 = 1.38$."
+        }
+      ],
+      "finalAnswer": "**1.38** (accepted range 1.37 to 1.39)",
+      "teaching": "A model's prediction at a point is random because the training set is random. Its expected squared error against a fresh noisy observation splits into three non-negative parts. **Bias²** measures how far the *average* prediction (over all training sets) is from the truth; it reflects systematic error, typical of models that are too simple. **Variance** measures how much the prediction wobbles from one training set to another around its own average; it is typical of models that are too flexible. **Irreducible noise** $\\sigma^2$ is the randomness in $y$ itself, which no model can remove.\n\nThe cross terms vanish because the noise has mean zero and is independent of the model, and because deviations from a mean average to zero. When the distribution over training sets is given explicitly, as here, the variance is a population variance (divide by the number of equally likely cases), not a sample variance.",
+      "commonTrap": "Using the bias 0.6 instead of bias² 0.36 (total 1.62), dividing by 3 when computing the variance (total ≈ 1.59), or leaving out the noise term (0.98)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1.38",
+      "agreesWithKey": true,
+      "checkCode": "preds = [5.0, 6.0, 7.2, 5.8]; f = 5.4; s2 = 0.40\nm = sum(preds) / 4\nbias2 = (m - f)**2; var = sum((p - m)**2 for p in preds) / 4\nprint(round(bias2 + var + s2, 4), round(sum((f - p)**2 for p in preds) / 4 + s2, 4))  # 1.38 1.38",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-uninformed"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — three uninformed strategies (BFS, IDS, UCS) traced on a small 5-node graph with stated conventions; each trace is routine but the four statements need separate checking; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Behaviour of BFS, iterative deepening and uniform-cost search on a weighted state graph.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A search problem has start state $S$ and a single goal state $G$. The directed edges and their step costs are:\n\n| Edge | S→A | S→B | A→B | A→C | B→C | B→G | C→G |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| Cost | 1 | 4 | 2 | 6 | 1 | 5 | 2 |\n\nEvery algorithm below starts from $S$, generates the successors of a node in alphabetical order, and applies the goal test when a node is selected for expansion (removed from the frontier). Breadth-first search (BFS) and iterative deepening search (IDS) ignore the step costs. For IDS, the depth limit counts edges from $S$ and takes the values $0, 1, 2, \\ldots$ in turn.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "BFS returns the same path as uniform-cost search (UCS)."
+      },
+      {
+        "label": "B",
+        "text": "IDS finds the goal for the first time when the depth limit is 3."
+      },
+      {
+        "label": "C",
+        "text": "UCS removes node C from the frontier before it removes node B."
+      },
+      {
+        "label": "D",
+        "text": "The path returned by UCS has total cost 6."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "UCS removes nodes in the order S(0), A(1), B(3), C(4), G(6) and returns S→A→B→C→G with cost 6.\nBFS returns the fewest-edge path S→B→G (cost 9), and IDS finds that same path at depth limit 2. Only D is true.",
+      "steps": [
+        {
+          "title": "List the S-to-G paths",
+          "body": "| Path | Edges | Cost |\n| --- | --- | --- |\n| S→B→G | 2 | 4 + 5 = 9 |\n| S→A→B→G | 3 | 1 + 2 + 5 = 8 |\n| S→B→C→G | 3 | 4 + 1 + 2 = 7 |\n| S→A→C→G | 3 | 1 + 6 + 2 = 9 |\n| S→A→B→C→G | 4 | 1 + 2 + 1 + 2 = 6 |"
+        },
+        {
+          "title": "Trace UCS",
+          "body": "Remove S(0): frontier A:1, B:4.\nRemove A(1): B improves to 1 + 2 = 3, C = 1 + 6 = 7.\nRemove B(3): C improves to 3 + 1 = 4, G = 3 + 5 = 8.\nRemove C(4): G improves to 4 + 2 = 6.\nRemove G(6): goal test succeeds.\nUCS returns S→A→B→C→G with cost **6**, which is optimal (D true). B is removed (at cost 3) before C (at cost 4), so C is false."
+        },
+        {
+          "title": "Trace BFS",
+          "body": "BFS finds the goal at the smallest depth. The only path with 2 edges is S→B→G, and no path has fewer edges, so BFS returns S→B→G (cost 9). This differs from the UCS path, so A is false."
+        },
+        {
+          "title": "Trace IDS",
+          "body": "Limit 0: only S, which is not the goal. Limit 1: S, A, B; no goal.\nLimit 2: S→A→B, S→A→C, then S→B→C and S→B→G. G is removed and passes the goal test.\nIDS first succeeds at limit **2**, not 3, so B is false."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "Uninformed search strategies differ only in *which frontier node they expand next*. **BFS** uses a FIFO queue, so it expands nodes in order of depth (number of edges). It returns the shallowest goal, which is optimal only when all step costs are equal. **IDS** runs depth-limited DFS with limits $0, 1, 2, \\ldots$. It finds the goal at the same depth as BFS while using only linear memory. **UCS** uses a priority queue keyed on the path cost $g(n)$ and always expands the cheapest frontier node. With the goal test applied at expansion, the first time $G$ is removed its cost is minimal, so UCS is optimal for positive step costs.\n\nOn this graph the cheap edges lie along a long path. BFS and IDS stop at the 2-edge path of cost 9, while UCS keeps extending cheaper partial paths and finds the 4-edge path of cost 6.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "BFS returns the fewest-edge path S→B→G (cost 9). UCS returns S→A→B→C→G (cost 6). The two paths differ."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "S→B→G has only 2 edges, so the depth-limited search with limit 2 already removes G from the frontier and succeeds."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "UCS removes B at path cost 3 (via A) and C only at cost 4 (via B), so B comes first."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The removal order is S(0), A(1), B(3), C(4), G(6), and the returned path S→A→B→C→G costs 1 + 2 + 1 + 2 = 6, the minimum over all paths."
+        }
+      ],
+      "commonTrap": "Assuming BFS is optimal on a weighted graph, or mistaking the cost of S→B→G for the depth at which IDS succeeds. BFS and IDS minimise the number of edges, not the total cost."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nfrom collections import deque\nG = {'S':[('A',1),('B',4)], 'A':[('B',2),('C',6)], 'B':[('C',1),('G',5)], 'C':[('G',2)], 'G':[]}\ncost = lambda p: sum(dict(G[u])[v] for u, v in zip(p, p[1:]))\nfr, done, order = [(0, 'S', ['S'])], set(), []\nwhile fr:\n    g, u, p = heapq.heappop(fr)\n    if u in done: continue\n    done.add(u); order.append(u)\n    if u == 'G': ucs = p; break\n    for v, c in G[u]: heapq.heappush(fr, (g + c, v, p + [v]))\nq = deque([['S']]); seen = {'S'}\nwhile q:\n    p = q.popleft()\n    if p[-1] == 'G': bfs = p; break\n    for v, _ in sorted(G[p[-1]]):\n        if v not in seen: seen.add(v); q.append(p + [v])\ndef dls(p, L):\n    if p[-1] == 'G': return p\n    if L == 0: return None\n    for v, _ in sorted(G[p[-1]]):\n        r = dls(p + [v], L - 1)\n        if r: return r\nids_L = next(L for L in range(10) if dls(['S'], L))\nA = bfs == ucs; B = ids_L == 3; C = order.index('C') < order.index('B'); D = cost(ucs) == 6\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['D']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-stacks"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (stack-realisable output sequences) with a capacity twist; each option needs a short forced push/pop simulation that tracks the stack size; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Output sequences realisable by a bounded-capacity stack with a fixed push order.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The integers $1, 2, 3, 4, 5$ are pushed onto an initially empty stack in this order ($1$ first). Pops may be interleaved with the pushes at any time, and each popped value is printed immediately. Every value is pushed exactly once and is eventually popped. The stack can hold **at most three** elements at any moment, so a push is not allowed when the stack already contains three elements.\n\nWhich of the following printed sequences can be produced?",
+    "options": [
+      {
+        "label": "A",
+        "text": "3, 2, 5, 4, 1"
+      },
+      {
+        "label": "B",
+        "text": "4, 3, 5, 2, 1"
+      },
+      {
+        "label": "C",
+        "text": "1, 5, 3, 4, 2"
+      },
+      {
+        "label": "D",
+        "text": "2, 1, 5, 4, 3"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "For a given output sequence the push/pop order is forced: to print $x$, push up to $x$ and pop it. A: peak size 3 (valid). B: printing 4 first needs 1–4 on the stack at once (size 4). C: after 5 is printed, 4 is on top but 3 must come next, which is impossible. D: peak size 3 (valid). Answer: **A, D**.",
+      "steps": [
+        {
+          "title": "Why the operation sequence is forced",
+          "body": "To print $x$, all values up to $x$ must already have been pushed. Pushing any value larger than $x$ before popping $x$ would bury $x$ under it. So before each print we push exactly the values needed (up to $x$) and then pop. Simulate this and track the stack size."
+        },
+        {
+          "title": "Option A: 3, 2, 5, 4, 1",
+          "body": "push 1, 2, 3 (size 3) → pop 3 → pop 2 (stack [1]) → push 4, 5 (stack [1, 4, 5], size 3) → pop 5 → pop 4 → pop 1. The peak size is 3, so the sequence is **possible**."
+        },
+        {
+          "title": "Option B: 4, 3, 5, 2, 1",
+          "body": "Printing 4 first requires 1, 2, 3, 4 all to be pushed before any pop, so the stack reaches size 4 and exceeds the capacity. (With unlimited capacity this sequence would be valid.) **Not possible.**"
+        },
+        {
+          "title": "Option C: 1, 5, 3, 4, 2",
+          "body": "push 1 → pop 1 → push 2, 3, 4, 5 (this already needs size 4) → pop 5, leaving 4 on top of 3. The next printed value must be 3, but 3 is under 4. **Not possible** even with unlimited capacity."
+        },
+        {
+          "title": "Option D: 2, 1, 5, 4, 3",
+          "body": "push 1, 2 → pop 2 → pop 1 (empty) → push 3, 4, 5 (size 3) → pop 5 → pop 4 → pop 3. The peak size is 3, so the sequence is **possible**."
+        }
+      ],
+      "finalAnswer": "**(A), (D)**",
+      "teaching": "A stack is last-in-first-out: only the most recently pushed element that is still present can be removed. When the inputs arrive in a fixed order and pops may be interleaved, an output sequence is achievable exactly when it never needs to pop an element that is buried. Equivalently, after $x$ is printed, any smaller values still on the stack must come out in decreasing order.\n\nThe decision procedure is to simulate greedily. For each value to be printed, push inputs until that value is on top, then pop it. If the value is already inside the stack but not on top, the sequence is impossible. Because pushes are made only when needed, this simulation also gives the *smallest* possible peak stack size for that output, so comparing the peak with the capacity decides the bounded case. Here option B passes the ordinary stack test but needs four slots.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The forced operations are push 1, 2, 3; pop, pop; push 4, 5; pop, pop, pop. The stack never holds more than 3 elements."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "4 can be printed first only if 1, 2, 3, 4 are on the stack together, which needs 4 slots. It would be valid without the capacity limit, which is the trap."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "After 5 is popped, 4 sits on top of 3, so 3 cannot be printed before 4. This is invalid for any capacity."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Push 1, 2; pop, pop; push 3, 4, 5; pop, pop, pop. The peak size is exactly 3."
+        }
+      ],
+      "commonTrap": "Checking only the usual stack-order rule and forgetting the capacity. Option B is a valid stack permutation, but it needs four elements on the stack at once."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, D",
+      "agreesWithKey": true,
+      "checkCode": "def ok(seq, n=5, cap=3):\n    st, nxt, peak = [], 1, 0\n    for x in seq:\n        while (not st or st[-1] != x) and nxt <= n:\n            st.append(nxt); nxt += 1; peak = max(peak, len(st))\n        if st and st[-1] == x: st.pop()\n        else: return False\n    return peak <= cap\nopts = {'A': [3,2,5,4,1], 'B': [4,3,5,2,1], 'C': [1,5,3,4,2], 'D': [2,1,5,4,3]}\nprint([k for k, s in opts.items() if ok(s)])  # ['A', 'D']",
+      "notes": ""
+    }
+  }
+]

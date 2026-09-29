@@ -1,0 +1,914 @@
+[
+  {
+    "id": "M11-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-indexing",
+      "dbw-file-organization"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — three linked routine computations (data-file blocking factor, sparse-index size, binary-search cost) with an off-by-one trap; about 1.5–2 minutes.",
+    "estimatedTimeSec": 105,
+    "concept": "Block-access cost of a record lookup through a single-level sparse primary index searched by binary search",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A library stores its `LOAN` relation as a file of 60,000 fixed-length records of 200 bytes each, sorted on the primary key `loan_id`. The disk block size is 4096 bytes and records are **unspanned** (no record crosses a block boundary).\n\nA single-level **primary (sparse) index** is built on `loan_id`, with one index entry per data block (for the first record in that block). Each index entry consists of a 12-byte key and an 8-byte block pointer, and index entries are also unspanned. The index blocks are stored contiguously and are searched using binary search.\n\nIn the worst case, the number of block accesses needed to retrieve the record with a given `loan_id` using this index is",
+    "options": [
+      {
+        "label": "A",
+        "text": "4"
+      },
+      {
+        "label": "B",
+        "text": "5"
+      },
+      {
+        "label": "C",
+        "text": "10"
+      },
+      {
+        "label": "D",
+        "text": "12"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Data blocking factor $= \\lfloor 4096/200 \\rfloor = 20$, so the file has $60000/20 = 3000$ blocks and the sparse index has 3000 entries.\nIndex blocking factor $= \\lfloor 4096/20 \\rfloor = 204$, so the index occupies $\\lceil 3000/204 \\rceil = 15$ blocks.\nBinary search over 15 blocks costs at most $\\lceil \\log_2 15 \\rceil = 4$ accesses, plus 1 data-block access: **5**.",
+      "steps": [
+        {
+          "title": "Size of the data file",
+          "body": "Unspanned records: blocking factor $\\text{bfr} = \\lfloor 4096/200 \\rfloor = \\lfloor 20.48 \\rfloor = 20$ records per block (the last 96 bytes of each block are unused).\n\nNumber of data blocks: $b = \\lceil 60000/20 \\rceil = 3000$."
+        },
+        {
+          "title": "Size of the sparse index",
+          "body": "Index entry size $= 12 + 8 = 20$ bytes, so the index blocking factor is $\\text{bfr}_i = \\lfloor 4096/20 \\rfloor = \\lfloor 204.8 \\rfloor = 204$ entries per block.\n\nA primary (sparse) index has one entry per **data block**, so it has $3000$ entries and occupies\n$$\nb_i = \\left\\lceil \\frac{3000}{204} \\right\\rceil = \\lceil 14.71 \\rceil = 15 \\text{ blocks.}\n$$"
+        },
+        {
+          "title": "Cost of the lookup",
+          "body": "Binary search over $15$ contiguous index blocks needs at most $\\lfloor \\log_2 15 \\rfloor + 1 = \\lceil \\log_2 15 \\rceil = 4$ block accesses to find the index entry whose key is the largest one $\\le$ the search key.\n\nThat entry's pointer leads to the single data block that must hold the record: $+1$ access.\n\nWorst-case total $= 4 + 1 = 5$ block accesses."
+        },
+        {
+          "title": "Compare with the alternatives",
+          "body": "- Binary search directly on the 3000-block data file: $\\lceil \\log_2 3000 \\rceil = 12$ accesses.\n- A dense index (one entry per record): $\\lceil 60000/204 \\rceil = 295$ index blocks, so $\\lceil \\log_2 295 \\rceil + 1 = 9 + 1 = 10$ accesses.\n\nThe sparse index is small precisely because it stores one entry per block, not per record. The answer is **(B) 5**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "A disk is read one block at a time, so the cost of a lookup is counted in block accesses, not record comparisons. The **blocking factor** $\\lfloor B/R \\rfloor$ tells how many whole records fit in a block when records are unspanned.\n\nA **primary index** is built on the ordering key of a sorted file. Because the file is sorted, you only need to know where each block starts: one index entry (the block's first key, called its anchor, plus a block pointer) per data block. Such an index is **sparse**. Its entries are much smaller than the records, so many more fit in a block, and the whole index is tiny compared with the file.\n\nSearching works in two phases: binary search over the index blocks, which costs $\\lceil \\log_2 b_i \\rceil$ accesses, then one access to the data block that the chosen entry points to. Here the index is only 15 blocks, so the lookup costs $4 + 1 = 5$ accesses instead of the 12 needed without an index.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "4 is only the binary search over the 15 index blocks. It forgets the final access to the data block that holds the record."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\lceil \\log_2 15 \\rceil + 1 = 4 + 1 = 5$: binary search on the 15-block sparse index, then one data-block access."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "10 is the cost for a **dense** index (60,000 entries in 295 blocks, $9 + 1 = 10$). The index described has one entry per data block, not per record."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "12 is $\\lceil \\log_2 3000 \\rceil$, the cost of binary search directly on the data file. It ignores the index altogether."
+        }
+      ],
+      "commonTrap": "Creating one index entry per **record** instead of per data block, which gives the dense-index cost 10, or forgetting the final $+1$ data-block access, which gives 4."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "5 block accesses (bfr=20, b=3000, bfr_i=204, b_i=15, ceil(log2 15)+1=5)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nbfr=4096//200; b=math.ceil(60000/bfr)\nbfri=4096//(12+8); bi=math.ceil(b/bfri)\nprint(bfr,b,bfri,bi, math.ceil(math.log2(bi))+1)  # 20 3000 204 15 5\nprint('dense', math.ceil(math.log2(math.ceil(60000/bfri)))+1, 'no index', math.ceil(math.log2(b)))  # 10, 12",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-conditional-pdf",
+      "ps-pdf"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (marginal density, then conditional density and its integral) plus a check of the support limits; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Conditional PDF from a joint PDF on a triangular support, and a conditional probability computed from it",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Within a unit-length time window, $X$ denotes the (scaled) time at which a job enters a processing queue and $Y$ the time at which it leaves, so that $X < Y$. The joint probability density function of $(X, Y)$ is\n\n$$\nf_{X,Y}(x, y) = \\begin{cases} 6(1 - y), & 0 < x < y < 1 \\\\ 0, & \\text{otherwise} \\end{cases}\n$$\n\nThe conditional probability $P(Y \\le 0.8 \\mid X = 0.5)$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.83,
+      "max": 0.85
+    },
+    "solution": {
+      "quick": "$f_X(x) = \\int_x^1 6(1-y)\\,dy = 3(1-x)^2$, so $f_{Y\\mid X}(y \\mid x) = \\dfrac{2(1-y)}{(1-x)^2}$ for $x < y < 1$.\nAt $x = 0.5$ this is $8(1-y)$ on $(0.5, 1)$, and $\\int_{0.5}^{0.8} 8(1-y)\\,dy = 4\\left[(0.5)^2 - (0.2)^2\\right] = 0.84$.",
+      "steps": [
+        {
+          "title": "Marginal density of X",
+          "body": "For $0 < x < 1$, $y$ ranges over $(x, 1)$:\n$$\nf_X(x) = \\int_x^1 6(1 - y)\\,dy = 6 \\left[ -\\frac{(1-y)^2}{2} \\right]_x^1 = 3(1 - x)^2 .\n$$\nCheck: $\\int_0^1 3(1-x)^2\\,dx = 1$."
+        },
+        {
+          "title": "Conditional density of Y given X = x",
+          "body": "$$\nf_{Y \\mid X}(y \\mid x) = \\frac{f_{X,Y}(x, y)}{f_X(x)} = \\frac{6(1-y)}{3(1-x)^2} = \\frac{2(1-y)}{(1-x)^2}, \\qquad x < y < 1 .\n$$\nAt $x = 0.5$: $(1 - 0.5)^2 = 0.25$, so $f_{Y\\mid X}(y \\mid 0.5) = 8(1 - y)$ for $0.5 < y < 1$. It integrates to $4(0.5)^2 = 1$, as it must."
+        },
+        {
+          "title": "Integrate over the event",
+          "body": "Given $X = 0.5$, $Y$ cannot be below $0.5$, so the lower limit is $0.5$, not $0$:\n$$\nP(Y \\le 0.8 \\mid X = 0.5) = \\int_{0.5}^{0.8} 8(1-y)\\,dy = 4\\left[(1-0.5)^2 - (1-0.8)^2\\right] = 4(0.25 - 0.04) = 0.84 .\n$$"
+        },
+        {
+          "title": "Final answer",
+          "body": "$P(Y \\le 0.8 \\mid X = 0.5) = 0.84$ (exactly $21/25$)."
+        }
+      ],
+      "finalAnswer": "**0.84** (accepted range 0.83 to 0.85)",
+      "teaching": "A conditional PDF answers the question \"if I already know $X = x$, how is $Y$ distributed?\". Geometrically, you take the joint density along the vertical line $X = x$ (a slice), which is a function of $y$ only. The slice does not integrate to 1 by itself, so you divide by its total area. That area is exactly the marginal density $f_X(x) = \\int f_{X,Y}(x, y)\\,dy$. Hence $f_{Y\\mid X}(y \\mid x) = f_{X,Y}(x,y)/f_X(x)$.\n\nTwo details decide most answers. First, the **support**: on this triangle, knowing $X = 0.5$ forces $0.5 < Y < 1$, so every integral in $y$ starts at $0.5$. Second, normalise **before** integrating over the event. Integrating the joint density itself gives a number that is not a probability of anything conditional.\n\nHere the slice is proportional to $1 - y$, a straight line falling to zero at $y = 1$. After normalising, the required probability is $0.84$.",
+      "shortcut": "Given $X = 0.5$, the conditional density is proportional to $1 - y$ on $(0.5, 1)$: a right triangle that shrinks to 0 at $y = 1$. The part with $y > 0.8$ is a similar triangle scaled by $0.2/0.5 = 0.4$, so it holds $0.4^2 = 0.16$ of the area. Therefore $P(Y \\le 0.8 \\mid X = 0.5) = 1 - 0.16 = 0.84$.",
+      "commonTrap": "Integrating the joint density directly, $\\int_{0.5}^{0.8} 6(1-y)\\,dy = 0.63$, without dividing by $f_X(0.5) = 0.75$, or starting the $y$-integral at $0$ although $Y > X = 0.5$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.84 (exact 21/25)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx,y=sp.symbols('x y'); f=6*(1-y)\nfx=sp.integrate(f,(y,x,1))              # 3(1-x)^2\ncond=(f/fx).subs(x,sp.Rational(1,2))\nprint(sp.integrate(cond,(y,sp.Rational(1,2),sp.Rational(4,5))))  # 21/25 = 0.84",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-clt",
+      "ps-continuous-named"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — recall that an exponential's standard deviation equals its mean, then a routine CLT standardisation over an asymmetric interval (2–3 steps); about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Central limit theorem for the sample mean of a skewed (exponential) population",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A warehouse robot picks items one at a time. The time (in seconds) it takes to pick an item is exponentially distributed with mean 20 s, and the pick times of different items are independent. Let $\\bar{T}$ be the average pick time over the next 64 items.\n\nUsing the central limit theorem, the approximate value of $P(18 \\le \\bar{T} \\le 22.5)$ is\n\nUse: $\\Phi(0.32) = 0.6255$, $\\Phi(0.40) = 0.6554$, $\\Phi(0.80) = 0.7881$, $\\Phi(1.00) = 0.8413$, where $\\Phi$ is the cumulative distribution function of the standard normal distribution.",
+    "options": [
+      {
+        "label": "A",
+        "text": "0.6294"
+      },
+      {
+        "label": "B",
+        "text": "0.2809"
+      },
+      {
+        "label": "C",
+        "text": "0.0896"
+      },
+      {
+        "label": "D",
+        "text": "0.0532"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "An exponential with mean 20 has standard deviation 20, so by the CLT $\\bar{T} \\approx N\\!\\left(20,\\ (20/\\sqrt{64})^2\\right) = N(20,\\ 2.5^2)$.\nThe z-limits are $(18-20)/2.5 = -0.8$ and $(22.5-20)/2.5 = 1.0$.\n$P \\approx \\Phi(1.0) - \\Phi(-0.8) = 0.8413 - 0.2119 = 0.6294$.",
+      "steps": [
+        {
+          "title": "Population mean and standard deviation",
+          "body": "For an exponential distribution with mean $\\mu = 1/\\lambda$, the variance is $1/\\lambda^2 = \\mu^2$. With $\\mu = 20$ s, $\\sigma^2 = 400$ and $\\sigma = 20$ s."
+        },
+        {
+          "title": "Apply the central limit theorem",
+          "body": "For $n = 64$ independent pick times,\n$$\n\\bar{T} \\approx N\\!\\left(\\mu,\\ \\frac{\\sigma^2}{n}\\right), \\qquad \\text{standard error} = \\frac{\\sigma}{\\sqrt{n}} = \\frac{20}{8} = 2.5 \\text{ s}.\n$$"
+        },
+        {
+          "title": "Standardise the limits",
+          "body": "$$\nz_1 = \\frac{18 - 20}{2.5} = -0.8, \\qquad z_2 = \\frac{22.5 - 20}{2.5} = 1.0 .\n$$"
+        },
+        {
+          "title": "Read the probability",
+          "body": "$$\nP(18 \\le \\bar{T} \\le 22.5) \\approx \\Phi(1.0) - \\Phi(-0.8) = 0.8413 - (1 - 0.7881) = 0.8413 - 0.2119 = 0.6294 .\n$$\nThe answer is **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "The central limit theorem says that the average of $n$ independent, identically distributed values with mean $\\mu$ and finite standard deviation $\\sigma$ is approximately normal for large $n$, with mean $\\mu$ and standard deviation $\\sigma/\\sqrt{n}$. The individual values need not be normal. The exponential distribution is strongly right-skewed, yet the average of 64 of them is already close to bell-shaped.\n\nTwo facts do all the work here. First, an exponential distribution's standard deviation equals its mean, so $\\sigma = 20$. Second, averaging shrinks the spread by $\\sqrt{n}$, not by $n$, so the standard error is $20/8 = 2.5$. After that the problem is ordinary standardisation. Use $\\Phi(-z) = 1 - \\Phi(z)$ for the negative limit, because the interval is not symmetric about the mean.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Standard error $20/\\sqrt{64} = 2.5$, limits $z = -0.8$ and $1.0$: $0.8413 - 0.2119 = 0.6294$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "0.2809 uses the variance of the mean, $\\sigma^2/n = 400/64 = 6.25$, as if it were the standard error: $z = -0.32$ and $0.40$, giving $0.6554 - 0.3745$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "0.0896 forgets to divide by $\\sqrt{n}$ and uses $\\sigma = 20$ as the spread of $\\bar{T}$: $z = -0.1$ and $0.125$, a very narrow slice of the normal curve."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "0.0532 is a sign error: it computes $\\Phi(1.0) - \\Phi(0.8)$ instead of $\\Phi(1.0) - \\Phi(-0.8)$."
+        }
+      ],
+      "commonTrap": "Using $\\sigma^2/n$ (or $\\sigma$ itself) instead of $\\sigma/\\sqrt{n}$ as the standard deviation of the sample mean, or treating $\\Phi(-0.8)$ as $\\Phi(0.8)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.6294 (exact normal value 0.62949)",
+      "agreesWithKey": true,
+      "checkCode": "from scipy.stats import norm\nse=20/64**0.5\nprint(round(norm.cdf((22.5-20)/se)-norm.cdf((18-20)/se),4))  # 0.6295; table values give 0.8413-0.2119=0.6294",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-mlp",
+      "ml-feedforward"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — each statement needs only a one-step parameter count or direct recall of a standard MLP fact; about 2 minutes for all four.",
+    "estimatedTimeSec": 120,
+    "concept": "Parameter counting and the role of the nonlinearity in a one-hidden-layer MLP",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A multi-layer perceptron for a 3-class classification problem takes an input $\\mathbf{x} \\in \\mathbb{R}^4$. It has one hidden layer of 5 units with ReLU activation $g(z) = \\max(0, z)$, followed by an output layer of 3 units whose outputs are passed through a softmax. The layers are fully connected, and every hidden unit and every output unit has its own bias term.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The network has exactly 43 trainable parameters (weights and biases)."
+      },
+      {
+        "label": "B",
+        "text": "If the hidden-layer activation is replaced by the identity function $g(z) = z$, each of the three output-layer pre-activations (the inputs to the softmax) becomes an affine function of $\\mathbf{x}$."
+      },
+      {
+        "label": "C",
+        "text": "Since ReLU is not differentiable at $z = 0$, this network cannot be trained using gradient-based backpropagation."
+      },
+      {
+        "label": "D",
+        "text": "Inserting a second hidden layer of 5 ReLU units (each with a bias) between the existing hidden layer and the output layer increases the number of trainable parameters by exactly 25."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "Parameters: $(4 \\times 5 + 5) + (5 \\times 3 + 3) = 25 + 18 = 43$, so (A) is true. Without a nonlinearity, a composition of affine maps is affine, so (B) is true.\nReLU's kink at one point does not stop backpropagation (a subgradient is used), so (C) is false. A new $5 \\to 5$ layer adds $25 + 5 = 30$ parameters, not 25, so (D) is false.",
+      "steps": [
+        {
+          "title": "Count the parameters (A)",
+          "body": "A fully connected layer with fan-in $m$ and fan-out $k$ has $mk$ weights and $k$ biases.\n\n- Input to hidden: $4 \\times 5 + 5 = 25$.\n- Hidden to output: $5 \\times 3 + 3 = 18$.\n\nTotal $= 43$, so (A) is **true**."
+        },
+        {
+          "title": "Identity activation (B)",
+          "body": "With $g(z) = z$: $\\mathbf{h} = W_1\\mathbf{x} + \\mathbf{b}_1$ and\n$$\n\\mathbf{z} = W_2\\mathbf{h} + \\mathbf{b}_2 = (W_2 W_1)\\mathbf{x} + (W_2\\mathbf{b}_1 + \\mathbf{b}_2),\n$$\nan affine function of $\\mathbf{x}$. The model collapses to multinomial logistic regression, a linear classifier. (B) is **true**."
+        },
+        {
+          "title": "Differentiability of ReLU (C)",
+          "body": "ReLU fails to be differentiable only at the single point $z = 0$. Backpropagation uses a subgradient there (any value in $[0, 1]$, usually 0), and a pre-activation is almost never exactly 0 during training. ReLU is in fact the default activation in networks trained by backpropagation. (C) is **false**."
+        },
+        {
+          "title": "Adding a layer (D)",
+          "body": "The new layer maps 5 units to 5 units: $5 \\times 5 = 25$ weights plus $5$ biases $= 30$ parameters. The output layer still receives 5 inputs, so its 18 parameters are unchanged. The increase is $30$, not $25$. (D) is **false**.\n\nCorrect options: **(A), (B)**."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "teaching": "An MLP is a stack of fully connected layers. Each layer computes $\\mathbf{h} = g(W\\mathbf{x} + \\mathbf{b})$: an affine map followed by an element-wise nonlinearity $g$. A layer with $m$ inputs and $k$ outputs has a $k \\times m$ weight matrix and a length-$k$ bias vector, so it has $mk + k$ parameters. Forgetting the $+k$ is the most common counting error.\n\nThe nonlinearity is what makes depth useful. If $g$ is the identity, stacking layers just multiplies matrices together and adds vectors, and the result is still one affine map. Such a network can draw only linear decision boundaries, no matter how many layers it has.\n\nBackpropagation needs only a usable derivative almost everywhere. ReLU has slope 0 for negative inputs and slope 1 for positive inputs, and at the single kink we simply choose a subgradient. This is why ReLU networks train without difficulty.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$(4\\cdot5 + 5) + (5\\cdot3 + 3) = 25 + 18 = 43$ trainable parameters."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The logits become $(W_2W_1)\\mathbf{x} + (W_2\\mathbf{b}_1 + \\mathbf{b}_2)$, which is affine in $\\mathbf{x}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Non-differentiability at one point is handled with a subgradient. ReLU networks are routinely trained by backpropagation."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The added $5 \\to 5$ layer contributes $25$ weights **and** $5$ biases, so the increase is $30$. The value 25 forgets the biases."
+        }
+      ],
+      "commonTrap": "Forgetting the bias terms. This gives 35 instead of 43 for the original network and 25 instead of 30 for the added layer, and makes (D) look true."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B (43 parameters; added layer adds 30)",
+      "agreesWithKey": true,
+      "checkCode": "def params(sizes): return sum(a*b+b for a,b in zip(sizes,sizes[1:]))\nprint(params([4,5,3]), params([4,5,5,3])-params([4,5,3]))  # 43 30\nimport numpy as np\nW1,b1,W2,b2=np.random.randn(5,4),np.random.randn(5),np.random.randn(3,5),np.random.randn(3)\nx=np.random.randn(4); print(np.allclose(W2@(W1@x+b1)+b2,(W2@W1)@x+(W2@b1+b2)))  # True (B)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen",
+      "la-determinant"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — spotting the block-triangular structure, finding the eigenvalues and mapping them through a polynomial are three linked routine steps; about 2.5–3 minutes.",
+    "estimatedTimeSec": 165,
+    "concept": "Eigenvalues of a polynomial in a matrix and the determinant as the product of eigenvalues",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the matrix\n\n$$\nA = \\begin{bmatrix} 2 & 4 & 0 \\\\ 1 & -1 & 0 \\\\ 5 & -3 & 3 \\end{bmatrix}\n$$\n\nThe value of $\\det\\left(A^3 - 2A^2\\right)$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": -1296,
+      "max": -1296
+    },
+    "solution": {
+      "quick": "The third column is $(0, 0, 3)^\\top$, so the eigenvalues are $3$ together with those of $\\begin{bmatrix} 2 & 4 \\\\ 1 & -1 \\end{bmatrix}$, the roots of $\\lambda^2 - \\lambda - 6 = 0$, namely $3$ and $-2$. So $\\lambda \\in \\{3, 3, -2\\}$.\n$A^3 - 2A^2$ has eigenvalues $\\lambda^2(\\lambda - 2)$: $9, 9, -16$. The determinant is $9 \\cdot 9 \\cdot (-16) = -1296$.",
+      "steps": [
+        {
+          "title": "Characteristic polynomial",
+          "body": "Expand $\\det(A - \\lambda I)$ along the third column, whose only nonzero entry is $3 - \\lambda$:\n$$\n\\det(A - \\lambda I) = (3 - \\lambda)\\,\\det\\begin{bmatrix} 2-\\lambda & 4 \\\\ 1 & -1-\\lambda \\end{bmatrix} = (3-\\lambda)\\left(\\lambda^2 - \\lambda - 6\\right) = (3-\\lambda)(\\lambda - 3)(\\lambda + 2).\n$$"
+        },
+        {
+          "title": "Eigenvalues and a quick check",
+          "body": "The eigenvalues are $3, 3, -2$ (the eigenvalue 3 has algebraic multiplicity 2).\n\nCheck: $\\operatorname{tr}(A) = 2 - 1 + 3 = 4 = 3 + 3 - 2$, and $\\det(A) = 3 \\times (-2 - 4) = -18 = 3 \\cdot 3 \\cdot (-2)$."
+        },
+        {
+          "title": "Eigenvalues of the polynomial in A",
+          "body": "For $p(t) = t^3 - 2t^2 = t^2(t - 2)$, the eigenvalues of $p(A)$ are $p(\\lambda_i)$, with multiplicities. This holds for every square matrix, diagonalisable or not.\n\n$p(3) = 9 \\times 1 = 9$ (twice) and $p(-2) = 4 \\times (-4) = -16$."
+        },
+        {
+          "title": "Determinant as the product of eigenvalues",
+          "body": "$$\n\\det\\left(A^3 - 2A^2\\right) = 9 \\times 9 \\times (-16) = -1296 .\n$$\nCross-check: $\\det\\left(A^2(A - 2I)\\right) = \\det(A)^2 \\det(A - 2I) = 324 \\times (-4) = -1296$, where $\\det(A - 2I) = 1 \\times (0 \\cdot (-3) - 4 \\cdot 1) = -4$."
+        }
+      ],
+      "finalAnswer": "**−1296**",
+      "teaching": "If $A\\mathbf{v} = \\lambda\\mathbf{v}$, then applying $A$ again gives $A^2\\mathbf{v} = \\lambda^2\\mathbf{v}$, and in general $A^k\\mathbf{v} = \\lambda^k\\mathbf{v}$. Hence for any polynomial $p$, $p(A)\\mathbf{v} = p(\\lambda)\\mathbf{v}$. Every eigenvalue $\\lambda$ of $A$ becomes the eigenvalue $p(\\lambda)$ of $p(A)$, and repeated eigenvalues stay repeated. (For a non-diagonalisable matrix the same conclusion follows from triangularising $A$.)\n\nThe determinant of any square matrix is the product of its eigenvalues, counted with multiplicity. So $\\det p(A) = \\prod p(\\lambda_i)$. That turns a painful $3 \\times 3$ cube-and-subtract into three scalar evaluations.\n\nFinding the eigenvalues was easy here because a column with a single nonzero entry splits the characteristic polynomial into a linear factor and a $2 \\times 2$ block. Always look for such zeros before expanding.",
+      "shortcut": "Factor first: $A^3 - 2A^2 = A^2(A - 2I)$, so $\\det = \\det(A)^2\\,\\det(A - 2I) = (-18)^2 \\times (-4) = -1296$. No eigenvalues are needed.",
+      "commonTrap": "Counting the repeated eigenvalue 3 only once (giving $9 \\times (-16) = -144$), or treating the determinant as additive and computing $\\det(A)^3 - 2\\det(A)^2 = -6480$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-1296",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nA=sp.Matrix([[2,4,0],[1,-1,0],[5,-3,3]])\nprint(A.eigenvals(), (A**3-2*A**2).det())  # {3: 2, -2: 1} -1296",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-determinant"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — three standard determinant properties (effects of row operations, scalar multiple of an n×n matrix, inverse and transpose) applied in sequence; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Determinant under elementary row operations, scalar multiplication, inversion and transposition",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $A$ be a $4 \\times 4$ real matrix with $\\det(A) = 3$. A matrix $B$ is obtained from $A$ by applying the following elementary row operations in the given order:\n\n1. interchange rows 1 and 3;\n2. multiply row 2 by $-2$;\n3. add 5 times row 4 to row 1.\n\nThe value of $\\det\\left(3\\,B^{-1}A^{\\top}\\right)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1.5$"
+      },
+      {
+        "label": "B",
+        "text": "$8.1$"
+      },
+      {
+        "label": "C",
+        "text": "$-40.5$"
+      },
+      {
+        "label": "D",
+        "text": "$40.5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$\\det(B) = 3 \\times (-1) \\times (-2) \\times 1 = 6$.\nFor a $4 \\times 4$ matrix, $\\det(3M) = 3^4 \\det(M)$, so $\\det(3B^{-1}A^\\top) = 81 \\times \\dfrac{1}{6} \\times 3 = 40.5$.",
+      "steps": [
+        {
+          "title": "Effect of each row operation",
+          "body": "- Interchanging two rows multiplies the determinant by $-1$.\n- Multiplying one row by $-2$ multiplies the determinant by $-2$.\n- Adding a multiple of one row to another row leaves the determinant unchanged.\n\n$$\n\\det(B) = 3 \\times (-1) \\times (-2) \\times 1 = 6 .\n$$"
+        },
+        {
+          "title": "Properties needed",
+          "body": "For $n \\times n$ matrices: $\\det(cM) = c^n \\det(M)$, $\\det(MN) = \\det(M)\\det(N)$, $\\det(B^{-1}) = 1/\\det(B)$ and $\\det(A^\\top) = \\det(A)$. Here $n = 4$."
+        },
+        {
+          "title": "Compute",
+          "body": "$$\n\\det\\left(3B^{-1}A^\\top\\right) = 3^4 \\cdot \\frac{1}{\\det(B)} \\cdot \\det(A) = 81 \\times \\frac{1}{6} \\times 3 = \\frac{243}{6} = 40.5 .\n$$\nThe answer is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "The determinant of an $n \\times n$ matrix is multilinear in its rows and changes sign when two rows are swapped. The three row-operation rules follow from this. A swap flips the sign. Scaling one row by $c$ scales the determinant by $c$, because the determinant is linear in each row separately. Adding a multiple of another row adds a determinant with two equal rows, which is 0, so nothing changes.\n\nMultiplying the whole matrix by $c$ scales **every** row, so linearity applies $n$ times and $\\det(cM) = c^n\\det(M)$. For a $4 \\times 4$ matrix, a factor of 3 in front becomes $81$.\n\nThe product rule $\\det(MN) = \\det(M)\\det(N)$ then gives $\\det(B^{-1}) = 1/\\det(B)$, because $BB^{-1} = I$. Transposing does not change the determinant. Chaining these facts gives $81 \\times 3/6 = 40.5$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "1.5 pulls the scalar out as $3$ instead of $3^4$: $3 \\times \\frac{1}{6} \\times 3 = 1.5$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "8.1 wrongly multiplies the determinant by 5 for the row-addition step, giving $\\det(B) = 30$ and $81 \\times 3/30 = 8.1$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$-40.5$ gets the sign of $\\det(B)$ wrong, for example by ignoring the $-1$ from the row swap, which gives $\\det(B) = -6$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\det(B) = 6$, so $\\det(3B^{-1}A^\\top) = 3^4 \\times \\frac{1}{6} \\times 3 = 40.5$."
+        }
+      ],
+      "commonTrap": "Writing $\\det(3M) = 3\\det(M)$ instead of $3^4\\det(M)$ for a $4 \\times 4$ matrix, or thinking that \"add 5 times a row\" scales the determinant by 5."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "40.5",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nrng=np.random.default_rng(0); A=rng.normal(size=(4,4)); A[0]*=3/np.linalg.det(A)   # det(A)=3\nB=A.copy(); B[[0,2]]=B[[2,0]]; B[1]*=-2; B[0]+=5*B[3]\nprint(round(np.linalg.det(B),6), round(np.linalg.det(3*np.linalg.inv(B)@A.T),6))  # 6.0 40.5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-transformation"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one application of the min–max formula after reading the minimum and maximum off a small table, with one conceptual point (no clipping); about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Min–max normalization to [−1, 1] with parameters fixed on training data, applied to an out-of-range value",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The monthly electricity consumption (in kWh) of 8 households in a training dataset is given below.\n\n| Household | H1 | H2 | H3 | H4 | H5 | H6 | H7 | H8 |\n|---|---|---|---|---|---|---|---|---|\n| Consumption (kWh) | 46 | 118 | 30 | 94 | 190 | 62 | 150 | 78 |\n\nThe attribute is transformed by min–max normalization to the target range $[-1, 1]$, with the minimum and maximum computed from these 8 training values. Later, a new household with a consumption of 210 kWh is transformed using the **same** parameters. Its normalized value is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1.00$"
+      },
+      {
+        "label": "B",
+        "text": "$0.7125$"
+      },
+      {
+        "label": "C",
+        "text": "$1.25$"
+      },
+      {
+        "label": "D",
+        "text": "$1.125$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "From the training data, $\\min = 30$ and $\\max = 190$.\n$v' = \\dfrac{v - 30}{190 - 30}\\,(1 - (-1)) + (-1) = \\dfrac{180}{160} \\times 2 - 1 = 1.25$.\nMin–max normalization is a fixed linear map and does not clip, so an unseen value above the training maximum lands above 1.",
+      "steps": [
+        {
+          "title": "Parameters from the training data",
+          "body": "$\\min = 30$ (H3) and $\\max = 190$ (H5), so $\\max - \\min = 160$."
+        },
+        {
+          "title": "Min–max formula",
+          "body": "$$\nv' = \\frac{v - \\min}{\\max - \\min}\\,(b - a) + a, \\qquad [a, b] = [-1, 1],\n$$\nso $v' = \\dfrac{v - 30}{160} \\times 2 - 1$.\nSanity check: $30 \\mapsto -1$, $190 \\mapsto 1$ and $110 \\mapsto 0$."
+        },
+        {
+          "title": "Transform the new value",
+          "body": "$$\nv' = \\frac{210 - 30}{160} \\times 2 - 1 = 1.125 \\times 2 - 1 = 1.25 .\n$$"
+        },
+        {
+          "title": "Interpret",
+          "body": "The value lies outside $[-1, 1]$ because 210 exceeds the training maximum. Min–max normalization is an affine map whose parameters were fixed on the training data, so it does not clip. The answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Min–max normalization rescales an attribute linearly so that the observed minimum maps to the lower end $a$ of the target range and the observed maximum maps to the upper end $b$. It first measures how far $v$ is along the interval, $(v - \\min)/(\\max - \\min)$, a number in $[0, 1]$ for the observed data. It then stretches that fraction to the width $b - a$ of the target range and shifts it to start at $a$.\n\nThe minimum and maximum are **parameters** learned from the training data. They must not be recomputed from test data, because that would leak information and make the transformation inconsistent. A known side effect is the \"out-of-bounds\" problem: a future value outside the training range maps outside the target range. Nothing in the formula clips it.\n\nHere 210 is 180 kWh above the minimum, which is $1.125$ times the training range. On the $[-1, 1]$ scale that becomes $1.25$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "1.00 assumes the result is clipped to the target range, or recomputes the maximum as 210 using the new value. The parameters are fixed from training, and the linear map gives 1.25."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "0.7125 subtracts the mean (96) instead of the minimum: $(210 - 96)/160$. That is mean normalization, not min–max normalization."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$(210 - 30)/160 \\times 2 - 1 = 1.25$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "1.125 is the min–max value for the range $[0, 1]$. It forgets to stretch and shift the result to $[-1, 1]$."
+        }
+      ],
+      "commonTrap": "Believing that a min–max-normalized value can never exceed the target range, and so picking 1.00. That is true only for the data used to fit the minimum and maximum."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1.25",
+      "agreesWithKey": true,
+      "checkCode": "d=[46,118,30,94,190,62,150,78]; mn,mx=min(d),max(d); v=210\nprint((v-mn)/(mx-mn)*2-1)  # 1.25",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-projections"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single projection formula with two dot products; about 1–1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Orthogonal projection of a vector onto the line spanned by another vector",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $\\mathbf{a} = (2, -1, 2)^{\\top}$ and $\\mathbf{b} = (4, 2, 6)^{\\top}$ be vectors in $\\mathbb{R}^3$. The orthogonal projection of $\\mathbf{b}$ onto the line spanned by $\\mathbf{a}$ (that is, the vector in $\\operatorname{span}\\{\\mathbf{a}\\}$ closest to $\\mathbf{b}$) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(0,\\ 4,\\ 2)^{\\top}$"
+      },
+      {
+        "label": "B",
+        "text": "$(4,\\ -2,\\ 4)^{\\top}$"
+      },
+      {
+        "label": "C",
+        "text": "$(12,\\ -6,\\ 12)^{\\top}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\left(\\tfrac{9}{7},\\ \\tfrac{9}{14},\\ \\tfrac{27}{14}\\right)^{\\top}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$\\operatorname{proj}_{\\mathbf{a}}\\mathbf{b} = \\dfrac{\\mathbf{a}^\\top\\mathbf{b}}{\\mathbf{a}^\\top\\mathbf{a}}\\,\\mathbf{a} = \\dfrac{18}{9}\\,\\mathbf{a} = (4, -2, 4)^\\top$.\nCheck: the residual $(0, 4, 2)^\\top$ is orthogonal to $\\mathbf{a}$.",
+      "steps": [
+        {
+          "title": "Formula",
+          "body": "$$\n\\operatorname{proj}_{\\mathbf{a}}\\mathbf{b} = \\frac{\\mathbf{a}^\\top\\mathbf{b}}{\\mathbf{a}^\\top\\mathbf{a}}\\,\\mathbf{a}\n$$"
+        },
+        {
+          "title": "Dot products",
+          "body": "$\\mathbf{a}^\\top\\mathbf{b} = 2(4) + (-1)(2) + 2(6) = 8 - 2 + 12 = 18$ and $\\mathbf{a}^\\top\\mathbf{a} = 4 + 1 + 4 = 9$. The coefficient is $18/9 = 2$."
+        },
+        {
+          "title": "Projection",
+          "body": "$\\operatorname{proj}_{\\mathbf{a}}\\mathbf{b} = 2\\mathbf{a} = (4, -2, 4)^\\top$."
+        },
+        {
+          "title": "Verify orthogonality",
+          "body": "Residual: $\\mathbf{b} - 2\\mathbf{a} = (0, 4, 2)^\\top$, and $\\mathbf{a}^\\top(0, 4, 2)^\\top = 0 - 4 + 4 = 0$. The error is perpendicular to the line, as it must be for the closest point. The answer is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "The closest point to $\\mathbf{b}$ on the line $\\{c\\,\\mathbf{a}\\}$ is found by making the error $\\mathbf{b} - c\\,\\mathbf{a}$ perpendicular to $\\mathbf{a}$. Setting $\\mathbf{a}^\\top(\\mathbf{b} - c\\,\\mathbf{a}) = 0$ gives $c = \\mathbf{a}^\\top\\mathbf{b}/\\mathbf{a}^\\top\\mathbf{a}$. The projection is $c\\,\\mathbf{a}$, and in matrix form the projection matrix is $P = \\mathbf{a}\\mathbf{a}^\\top/(\\mathbf{a}^\\top\\mathbf{a})$.\n\nThe denominator is the **squared** length of $\\mathbf{a}$. One factor of $\\|\\mathbf{a}\\|$ turns $\\mathbf{a}^\\top\\mathbf{b}$ into the scalar projection (a length), and the other turns $\\mathbf{a}$ into a unit direction. You may drop the denominator only when $\\mathbf{a}$ is already a unit vector.\n\nEvery vector splits into a part on the line (the projection) and a part orthogonal to it (the residual). Here $\\mathbf{b} = (4, -2, 4)^\\top + (0, 4, 2)^\\top$, and only the first part lies along $\\mathbf{a}$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$(0, 4, 2)^\\top$ is the residual $\\mathbf{b} - \\operatorname{proj}_{\\mathbf{a}}\\mathbf{b}$. It is orthogonal to $\\mathbf{a}$ and does not lie on the line."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$(18/9)\\,\\mathbf{a} = 2\\mathbf{a} = (4, -2, 4)^\\top$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$(12, -6, 12)^\\top = (18/3)\\,\\mathbf{a}$ divides by $\\|\\mathbf{a}\\| = 3$ instead of $\\|\\mathbf{a}\\|^2 = 9$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is $(18/56)\\,\\mathbf{b}$, the projection of $\\mathbf{a}$ onto $\\mathbf{b}$. The roles of the two vectors are reversed."
+        }
+      ],
+      "commonTrap": "Dividing by $\\|\\mathbf{a}\\|$ instead of $\\|\\mathbf{a}\\|^2$. That shortcut is valid only when $\\mathbf{a}$ is a unit vector."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(4, -2, 4)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\na=np.array([2,-1,2]); b=np.array([4,2,6])\np=(a@b)/(a@a)*a; print(p, a@(b-p))  # [ 4. -2.  4.] 0.0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a short inference chain (modus tollens, disjunctive syllogism, simplification) plus counter-model checks for the other three options; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Propositional entailment: deriving consequences of a knowledge base and refuting non-entailed sentences with counter-models",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A home-security controller uses the following propositional variables:\n\n- $M$: motion is detected in the hall,\n- $D$: the back door is open,\n- $L$: the hall lights are on,\n- $N$: it is night,\n- $R$: the alarm rings.\n\nIts knowledge base is\n\n$$\nKB = \\{\\; M \\lor D,\\;\\; M \\rightarrow L,\\;\\; (D \\land N) \\rightarrow R,\\;\\; \\lnot L \\;\\}\n$$\n\nWhich one of the following sentences is entailed by $KB$ (that is, is true in every model of $KB$)?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$R$"
+      },
+      {
+        "label": "B",
+        "text": "$R \\rightarrow N$"
+      },
+      {
+        "label": "C",
+        "text": "$N \\rightarrow R$"
+      },
+      {
+        "label": "D",
+        "text": "$\\lnot R \\rightarrow \\lnot D$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "From $M \\rightarrow L$ and $\\lnot L$: $\\lnot M$. From $M \\lor D$ and $\\lnot M$: $D$. With $D$ true, $(D \\land N) \\rightarrow R$ reduces to $N \\rightarrow R$.\nThe models of $KB$ are $M = L = \\text{F}$, $D = \\text{T}$ with $(N, R) \\in \\{(\\text{F},\\text{F}), (\\text{F},\\text{T}), (\\text{T},\\text{T})\\}$. Only $N \\rightarrow R$ holds in all three.",
+      "steps": [
+        {
+          "title": "Derive the forced facts",
+          "body": "- $M \\rightarrow L$ and $\\lnot L$ give $\\lnot M$ (modus tollens).\n- $M \\lor D$ and $\\lnot M$ give $D$ (disjunctive syllogism, i.e. resolution)."
+        },
+        {
+          "title": "Simplify the remaining rule",
+          "body": "With $D$ true, $(D \\land N) \\rightarrow R$ is equivalent to $N \\rightarrow R$. Nothing else constrains $N$ or $R$."
+        },
+        {
+          "title": "List the models of KB",
+          "body": "| $M$ | $D$ | $L$ | $N$ | $R$ |\n|---|---|---|---|---|\n| F | T | F | F | F |\n| F | T | F | F | T |\n| F | T | F | T | T |\n\n(The assignment $N = \\text{T}, R = \\text{F}$ violates $N \\rightarrow R$.)"
+        },
+        {
+          "title": "Test each option",
+          "body": "- (A) $R$: false in the first model, so not entailed.\n- (B) $R \\rightarrow N$: false in the second model ($R = \\text{T}$, $N = \\text{F}$), so not entailed.\n- (C) $N \\rightarrow R$: true in all three models, so **entailed**.\n- (D) $\\lnot R \\rightarrow \\lnot D$: in the first model $\\lnot R$ is true and $\\lnot D$ is false, so not entailed.\n\nThe answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "$KB \\models \\alpha$ (KB entails $\\alpha$) means that $\\alpha$ is true in **every** model, that is every truth assignment, that makes all sentences of $KB$ true. There are two ways to use this. To **prove** entailment, derive $\\alpha$ with sound rules such as modus tollens or resolution, or check all models. To **refute** it, a single counter-model is enough: one assignment that satisfies $KB$ but makes $\\alpha$ false.\n\nA good habit is to squeeze out the forced literals first. Here $\\lnot L$ kills $M$, which forces $D$, and the only freedom left is in $N$ and $R$. This leaves just three models to inspect instead of $2^5 = 32$ rows.\n\nWatch the direction of implications. $N \\rightarrow R$ is entailed, but its converse $R \\rightarrow N$ is not. Neither is a statement that depends on facts the $KB$ never fixes, such as whether it is night.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The alarm is forced only at night, and $KB$ does not say it is night. The model $N = R = \\text{F}$ satisfies $KB$ with $R$ false."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the converse of the rule. The model with $N = \\text{F}$ and $R = \\text{T}$ satisfies $KB$ (the alarm may ring for other reasons) but falsifies $R \\rightarrow N$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$KB$ forces $D$, so $(D \\land N) \\rightarrow R$ becomes $N \\rightarrow R$, which is true in every model of $KB$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$D$ is true in every model, so $\\lnot R \\rightarrow \\lnot D$ reduces to $R$, which is not entailed. The model $N = R = \\text{F}$ is a counter-model."
+        }
+      ],
+      "commonTrap": "Concluding $R$ (A) after deriving $D$, forgetting that the rule also needs $N$, or accepting the converse $R \\rightarrow N$ (B) of the entailed implication."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (N -> R); KB has 3 models",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nkb=lambda M,D,L,N,R:(M or D) and (not M or L) and (not(D and N) or R) and (not L)\nms=[m for m in itertools.product([0,1],repeat=5) if kb(*m)]\nopts={'A':lambda M,D,L,N,R:R,'B':lambda M,D,L,N,R:(not R) or N,'C':lambda M,D,L,N,R:(not N) or R,'D':lambda M,D,L,N,R:R or (not D)}\nprint(len(ms),[k for k,f in opts.items() if all(f(*m) for m in ms)])  # 3 ['C']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M11-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-11",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-multidimensional-schema",
+      "dbw-concept-hierarchies"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines the hierarchy-aware cuboid count with a non-chain (branching) time hierarchy and a case split on the number of active dimensions, and every distractor is a likely trap; about 3–4 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Counting cuboids of a data cube with concept hierarchies (including a branching hierarchy) under a dimensionality constraint",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retail data warehouse uses a star schema with the fact table `Sales(date_key, store_key, product_key, payment_key, revenue)` and four dimension tables. The concept hierarchies of the dimensions are:\n\n| Dimension | Hierarchy levels (lowest to highest) |\n|---|---|\n| Time | day < month < quarter < year, and separately day < week (weeks are not nested inside months, quarters or years) |\n| Store | store < city < state |\n| Product | product < brand |\n| Payment | payment mode (a single level) |\n\nA cuboid is obtained by choosing, independently for every dimension, exactly one of its hierarchy levels or the virtual top level *all* (meaning that the dimension is fully aggregated). A dimension is *active* in a cuboid if the level chosen for it is not *all*.\n\nHow many cuboids of this data cube have **at most two** active dimensions?",
+    "options": [
+      {
+        "label": "A",
+        "text": "41"
+      },
+      {
+        "label": "B",
+        "text": "46"
+      },
+      {
+        "label": "C",
+        "text": "80"
+      },
+      {
+        "label": "D",
+        "text": "53"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The non-*all* level counts are Time 5 (day, week, month, quarter, year), Store 3, Product 2 and Payment 1.\n0 active: $1$. 1 active: $5 + 3 + 2 + 1 = 11$. 2 active: $5\\cdot3 + 5\\cdot2 + 5\\cdot1 + 3\\cdot2 + 3\\cdot1 + 2\\cdot1 = 41$.\nTotal $= 1 + 11 + 41 = 53$.",
+      "steps": [
+        {
+          "title": "Levels per dimension",
+          "body": "Count the distinct levels in each hierarchy, excluding *all*:\n\n- Time: day, week, month, quarter, year, so $L_T = 5$. The hierarchy branches at day, but each node is still one level.\n- Store: store, city, state, so $L_S = 3$.\n- Product: product, brand, so $L_P = 2$.\n- Payment: $L_M = 1$.\n\nWith *all* included, the whole cube has $(5+1)(3+1)(2+1)(1+1) = 144$ cuboids."
+        },
+        {
+          "title": "Zero or one active dimension",
+          "body": "- 0 active: every dimension at *all*. This is the apex cuboid, so $1$.\n- 1 active: choose the active dimension and one of its levels: $5 + 3 + 2 + 1 = 11$."
+        },
+        {
+          "title": "Exactly two active dimensions",
+          "body": "Choose the pair of dimensions, then one level in each:\n$$\n5\\cdot3 + 5\\cdot2 + 5\\cdot1 + 3\\cdot2 + 3\\cdot1 + 2\\cdot1 = 15 + 10 + 5 + 6 + 3 + 2 = 41 .\n$$"
+        },
+        {
+          "title": "Add up",
+          "body": "$$\n1 + 11 + 41 = 53 .\n$$\nThe answer is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A data cube is the set of all group-by views (cuboids) of a fact table. Without hierarchies, $n$ dimensions give $2^n$ cuboids, because each dimension is either grouped or aggregated away. A concept hierarchy gives a dimension several grouping granularities. If dimension $i$ has $L_i$ levels, it offers $L_i + 1$ choices: its $L_i$ levels plus the virtual top level *all*. Hence the classic count $\\prod_i (L_i + 1)$.\n\nA hierarchy need not be a chain. Weeks do not nest in months, so time forms a small lattice (a partial order), but every node of that lattice is still one selectable level. Here that gives 5 levels, not 4.\n\nConstraints such as \"at most two active dimensions\" are handled by splitting on how many dimensions are active. For each case, choose which dimensions are active and multiply their level counts. The case sums are the elementary symmetric sums of $(5, 3, 2, 1)$: $1$, $11$ and $41$.",
+      "shortcut": "Expand $(1 + 5t)(1 + 3t)(1 + 2t)(1 + t)$. The coefficient of $t^k$ is the number of cuboids with exactly $k$ active dimensions, so the answer is the sum of the coefficients of $t^0$, $t^1$ and $t^2$: $1 + 11 + 41 = 53$. Setting $t = 1$ gives the full count $144$ as a check.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "41 counts only cuboids with **exactly** two active dimensions. It misses the apex cuboid (1) and the 11 cuboids with one active dimension."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "46 treats time as the chain day < month < quarter < year with 4 levels and drops week: $1 + 10 + 35 = 46$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "80 multiplies $(L_i + 1)(L_j + 1)$ over the 6 pairs of dimensions: $24 + 18 + 12 + 12 + 8 + 6$. This counts lower-dimensional cuboids several times; the apex cuboid alone is counted 6 times."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$1 + (5 + 3 + 2 + 1) + (15 + 10 + 5 + 6 + 3 + 2) = 1 + 11 + 41 = 53$."
+        }
+      ],
+      "commonTrap": "Treating the time hierarchy as a simple chain and losing the week level, or using $(L_i + 1)$ in the case analysis, which counts the *all* choice again inside a case that has already fixed which dimensions are active."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "53 (144 cuboids in total)",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nL=[5,3,2,1]  # non-'all' levels: time(day,week,month,quarter,year), store, product, payment\ncubs=list(itertools.product(*[range(l+1) for l in L]))  # 0 = all\nprint(len(cubs), sum(1 for c in cubs if sum(x!=0 for x in c)<=2))  # 144 53",
+      "notes": ""
+    }
+  }
+]

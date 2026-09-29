@@ -1,0 +1,111 @@
+{
+  "id": "DA2025-S5-Q03",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 3,
+  "section": "GA",
+  "subjectId": "ga",
+  "topicId": "ga-quant",
+  "subtopicIds": [
+    "ga-data-interpretation"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: a single concept (counting grid entries against an inclusive threshold) done with one direct count in under a minute.",
+  "estimatedTimeSec": 45,
+  "stem": "A $4 \\times 4$ digital image has pixel intensities ($U$) as shown in the figure. The number of pixels with $U \\le 4$ is:\n\n$$\n\\begin{array}{|c|c|c|c|}\n\\hline\n0 & 1 & 0 & 2 \\\\\n\\hline\n4 & 7 & 3 & 3 \\\\\n\\hline\n5 & 5 & 4 & 4 \\\\\n\\hline\n6 & 7 & 3 & 2 \\\\\n\\hline\n\\end{array}\n$$",
+  "options": [
+    {
+      "label": "A",
+      "text": "3"
+    },
+    {
+      "label": "B",
+      "text": "8"
+    },
+    {
+      "label": "C",
+      "text": "11"
+    },
+    {
+      "label": "D",
+      "text": "9"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "Count the cells whose value is at most 4, **including** 4. Row by row this gives $4 + 3 + 2 + 2 = 11$. As a check, only 5 of the 16 pixels exceed 4, and $16 - 5 = 11$. Answer: **(C)**.",
+    "steps": [
+      {
+        "title": "Read the condition carefully",
+        "body": "$U \\le 4$ means the intensity is **0, 1, 2, 3 or 4**. The value 4 itself counts, because the inequality is not strict."
+      },
+      {
+        "title": "Count row by row",
+        "body": "| Row | Intensities | Values $\\le 4$ | Count |\n| --- | --- | --- | --- |\n| 1 | 0, 1, 0, 2 | 0, 1, 0, 2 | 4 |\n| 2 | 4, 7, 3, 3 | 4, 3, 3 | 3 |\n| 3 | 5, 5, 4, 4 | 4, 4 | 2 |\n| 4 | 6, 7, 3, 2 | 3, 2 | 2 |\n\n$$\n4 + 3 + 2 + 2 = 11\n$$"
+      },
+      {
+        "title": "Cross-check using the complement",
+        "body": "The pixels with $U > 4$ are 7 (row 2), 5 and 5 (row 3), and 6 and 7 (row 4). That is $5$ pixels, so\n\n$$\n16 - 5 = 11.\n$$\n\nBoth counts agree."
+      },
+      {
+        "title": "Cross-check with the intensity histogram",
+        "body": "| Intensity $U$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Number of pixels | 2 | 1 | 2 | 3 | 3 | 2 | 1 | 2 |\n\nThe total is $16$ ✓. The cumulative count up to $U = 4$ is $2 + 1 + 2 + 3 + 3 = 11$.\n\nThe answer is **(C) 11**."
+      }
+    ],
+    "finalAnswer": "**(C)** 11",
+    "teaching": "**A digital image is a matrix of numbers.** A grayscale image of size $m \\times n$ stores one intensity value per pixel. Here there are $4 \\times 4 = 16$ pixels. Each has an integer intensity, and in this grid the values range from 0 to 7.\n\n**Thresholding.** Many image-processing and data-analysis tasks ask \"how many entries satisfy a condition?\". Applying $U \\le 4$ to every pixel turns the image into a **binary mask** (1 where the condition holds, 0 elsewhere), and the answer is the number of 1s in that mask:\n\n$$\n\\begin{array}{|c|c|c|c|}\\hline 1&1&1&1\\\\ \\hline 1&0&1&1\\\\ \\hline 0&0&1&1\\\\ \\hline 0&0&1&1\\\\ \\hline\\end{array}\\quad\\Rightarrow\\quad 11 \\text{ ones}.\n$$\n\n**Histogram and cumulative count.** A histogram lists how many pixels take each intensity value. The number of pixels with $U \\le t$ is the **cumulative** histogram at $t$, which is the discrete analogue of a cumulative distribution function. Dividing by 16 gives the empirical probability $P(U \\le 4) = 11/16$.\n\n**Strict vs non-strict inequalities.** $\\le$ includes the boundary value and $<$ excludes it. With three pixels of intensity exactly 4, confusing the two changes the answer from 11 to 8, and 8 is one of the options.\n\n**Counting tip.** When most entries satisfy the condition, count the entries that **fail** it and subtract from the total. It is quicker and gives an independent check.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "3 is the number of pixels with intensity **exactly** 4 (or exactly 3), not the number with $U \\le 4$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "8 is the number of pixels with $U < 4$ ($2 + 1 + 2 + 3$). You get it if you treat $\\le$ as $<$ and leave out the three pixels of intensity 4."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Row-wise the count is $4 + 3 + 2 + 2 = 11$, and the complement gives $16 - 5 = 11$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "9 is two short of the correct count. It does not correspond to a correct count of $U \\le 4$ and would come from missing qualifying pixels."
+      }
+    ],
+    "shortcut": "Count the complement instead. Only five pixels exceed 4 (7, 5, 5, 6, 7), so the answer is $16 - 5 = 11$.",
+    "commonTrap": "Reading $U \\le 4$ as $U < 4$ and leaving out the three pixels whose intensity is exactly 4. This gives 8, which is option (B)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q03-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The 4 × 4 pixel-intensity grid, printed as an embedded image in the paper, is transcribed as a bordered KaTeX array. The values were read from the official rendering."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (11)",
+    "agreesWithKey": true,
+    "checkCode": "g=[[0,1,0,2],[4,7,3,3],[5,5,4,4],[6,7,3,2]]\nprint([sum(v<=4 for v in r) for r in g], sum(v<=4 for r in g for v in r), 16-sum(v>4 for r in g for v in r), sum(v<4 for r in g for v in r))  # [4,3,2,2] 11 11 8",
+    "notes": "Row-wise count 4+3+2+2 = 11 and complement 16−5 = 11. This matches the official key (C). The strict-inequality count (8) equals distractor (B)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

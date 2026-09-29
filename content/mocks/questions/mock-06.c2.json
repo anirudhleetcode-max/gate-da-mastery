@@ -1,0 +1,610 @@
+[
+  {
+    "id": "M06-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-cross-validation"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (LOOCV) carried out as five refits with fractional training means and squared errors; routine but multi-step, about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Leave-one-out cross-validation estimate of test MSE for a baseline regressor that predicts the training mean",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A food-delivery startup wants a baseline before it builds a real model. The baseline regressor ignores every input feature and always predicts the arithmetic mean of the target values in its training set. The delays (in minutes, beyond the promised delivery time) of five past orders are:\n\n| Order | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| Delay $y$ (minutes) | 4 | 8 | 12 | 12 | 14 |\n\nThe baseline is evaluated by leave-one-out cross-validation (LOOCV): for each order in turn, the baseline is trained on the other four orders and used to predict the held-out order, and the LOOCV estimate is the average of the five squared prediction errors.\n\nThe LOOCV estimate of the mean squared error (in minutes$^2$) is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 20,
+      "max": 20
+    },
+    "solution": {
+      "quick": "Each fold predicts the mean of the other four orders, $(50 - y_i)/4$. The held-out errors are $-7.5, -2.5, 2.5, 2.5, 5$, whose squares $56.25, 6.25, 6.25, 6.25, 25$ sum to $100$.\nLOOCV MSE $= 100/5 = 20$.",
+      "steps": [
+        {
+          "title": "Set up the five folds",
+          "body": "The total of all five delays is $4 + 8 + 12 + 12 + 14 = 50$. When order $i$ is held out, the baseline is trained on the remaining four orders, so its prediction is\n\n$$\n\\hat{y}_{-i} = \\frac{50 - y_i}{4}.\n$$"
+        },
+        {
+          "title": "Predict each held-out order",
+          "body": "| Held-out order | $y_i$ | Training mean $\\hat{y}_{-i}$ | Error $y_i - \\hat{y}_{-i}$ | Squared error |\n|---|---|---|---|---|\n| 1 | 4 | $46/4 = 11.5$ | $-7.5$ | $56.25$ |\n| 2 | 8 | $42/4 = 10.5$ | $-2.5$ | $6.25$ |\n| 3 | 12 | $38/4 = 9.5$ | $2.5$ | $6.25$ |\n| 4 | 12 | $38/4 = 9.5$ | $2.5$ | $6.25$ |\n| 5 | 14 | $36/4 = 9$ | $5$ | $25$ |"
+        },
+        {
+          "title": "Average the squared errors",
+          "body": "$$\n\\text{LOOCV MSE} = \\frac{56.25 + 6.25 + 6.25 + 6.25 + 25}{5} = \\frac{100}{5} = 20 \\text{ minutes}^2.\n$$"
+        },
+        {
+          "title": "Compare with the training error",
+          "body": "With all five orders the mean is $10$, the deviations are $-6, -2, 2, 2, 4$, and the training (resubstitution) MSE is $(36 + 4 + 4 + 4 + 16)/5 = 64/5 = 12.8$. The LOOCV estimate $20$ is larger because each held-out order is no longer part of the data used to fit its own prediction. Indeed $20 = (5/4)^2 \\times 12.8$."
+        }
+      ],
+      "finalAnswer": "**20**",
+      "teaching": "Cross-validation estimates how well a model predicts data it has **not** seen. In leave-one-out cross-validation with $n$ observations, the model is fitted $n$ times; each fit leaves out exactly one observation, predicts it, and records the squared error. The average of these $n$ held-out errors estimates the test MSE.\n\nThe key discipline is that the held-out point must never influence its own prediction. For the mean predictor this matters a lot: the full-data mean $\\bar{y}$ is pulled toward every point, so training residuals look smaller than genuine prediction errors. Removing $y_i$ gives $\\bar{y}_{-i} = (n\\bar{y} - y_i)/(n-1)$, hence $y_i - \\bar{y}_{-i} = \\frac{n}{n-1}(y_i - \\bar{y})$: every LOOCV error is the training residual inflated by $n/(n-1)$.\n\nHere $n = 5$, so each squared error grows by $(5/4)^2 = 1.5625$, turning the optimistic training MSE $12.8$ into the honest LOOCV estimate $20$.",
+      "shortcut": "For a mean predictor, LOOCV MSE $= \\left(\\frac{n}{n-1}\\right)^2 \\times$ (training MSE). Here the training MSE is $64/5 = 12.8$, so LOOCV MSE $= \\frac{25}{16} \\times 12.8 = 20$.",
+      "commonTrap": "Using the full-data mean $10$ for every prediction gives the training MSE $12.8$, and dividing the sum of squared deviations by $n - 1 = 4$ gives the sample variance $16$. Neither is the LOOCV estimate: each fold must recompute the mean without the held-out order."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "20.0",
+      "agreesWithKey": true,
+      "checkCode": "y=[4,8,12,12,14]\ne=[(y[i]-(sum(y)-y[i])/4)**2 for i in range(5)]\nprint(e, sum(e)/5)  # [56.25, 6.25, 6.25, 6.25, 25.0] 20.0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-feedforward"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — four independently checkable statements covering parameter counting, two forward passes with ReLU clipping and the algebraic collapse of a linear network; each is short, about 2.5 minutes in total.",
+    "estimatedTimeSec": 150,
+    "concept": "Forward pass, parameter count and linear collapse of a small feed-forward ReLU network",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A fully connected feed-forward neural network takes an input $\\mathbf{x} = (x_1, x_2)$. It has one hidden layer with two ReLU units, where $\\text{ReLU}(z) = \\max(0, z)$, and a single output unit with a linear (identity) activation:\n\n$$\nh_1 = \\text{ReLU}(2x_1 - x_2 - 1), \\qquad h_2 = \\text{ReLU}(-x_1 + 3x_2 - 2), \\qquad \\hat{y} = 3h_1 - 2h_2 + 1.\n$$\n\nEvery weight and every bias (constant term) shown above is a trainable parameter.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The network has $6$ trainable parameters."
+      },
+      {
+        "label": "B",
+        "text": "For $\\mathbf{x} = (1, 2)$, the output is $\\hat{y} = -5$."
+      },
+      {
+        "label": "C",
+        "text": "For $\\mathbf{x} = (2, 1)$, the output is $\\hat{y} = 9$."
+      },
+      {
+        "label": "D",
+        "text": "If both hidden activation functions are replaced by the identity function $f(z) = z$, the network computes $\\hat{y} = 8x_1 - 9x_2 + 2$ for every input."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Parameters: hidden layer $2 \\times 2 + 2 = 6$, output layer $2 + 1 = 3$, total $9$, so (A) is false.\nAt $(1,2)$: $h_1 = \\text{ReLU}(-1) = 0$, $h_2 = \\text{ReLU}(3) = 3$, $\\hat{y} = -5$ (B true). At $(2,1)$: $h_1 = 2$, $h_2 = \\text{ReLU}(-1) = 0$, $\\hat{y} = 7$ (C false).\nWith identity activations, $\\hat{y} = 3(2x_1 - x_2 - 1) - 2(-x_1 + 3x_2 - 2) + 1 = 8x_1 - 9x_2 + 2$ (D true).",
+      "steps": [
+        {
+          "title": "Count the trainable parameters",
+          "body": "A dense layer with $n_{\\text{in}}$ inputs and $n_{\\text{out}}$ units has $n_{\\text{in}} n_{\\text{out}}$ weights and $n_{\\text{out}}$ biases.\n\n- Hidden layer: $2 \\times 2 = 4$ weights $+ 2$ biases $= 6$.\n- Output layer: $2 \\times 1 = 2$ weights $+ 1$ bias $= 3$.\n\nTotal $= 9$, so (A) is **incorrect**."
+        },
+        {
+          "title": "Forward pass at x = (1, 2)",
+          "body": "Pre-activations: $z_1 = 2(1) - 2 - 1 = -1$ and $z_2 = -1 + 3(2) - 2 = 3$.\n\nActivations: $h_1 = \\max(0, -1) = 0$ and $h_2 = \\max(0, 3) = 3$.\n\nOutput: $\\hat{y} = 3(0) - 2(3) + 1 = -5$. So (B) is **correct**."
+        },
+        {
+          "title": "Forward pass at x = (2, 1)",
+          "body": "Pre-activations: $z_1 = 2(2) - 1 - 1 = 2$ and $z_2 = -2 + 3(1) - 2 = -1$.\n\nActivations: $h_1 = 2$ and $h_2 = \\max(0, -1) = 0$.\n\nOutput: $\\hat{y} = 3(2) - 2(0) + 1 = 7 \\ne 9$. So (C) is **incorrect**."
+        },
+        {
+          "title": "Replace ReLU by the identity",
+          "body": "$$\n\\hat{y} = 3(2x_1 - x_2 - 1) - 2(-x_1 + 3x_2 - 2) + 1 = (6x_1 - 3x_2 - 3) + (2x_1 - 6x_2 + 4) + 1 = 8x_1 - 9x_2 + 2.\n$$\n\nThis holds for every input, so (D) is **correct**. The correct options are **(B)** and **(D)**."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "teaching": "A feed-forward network passes information in one direction only: input, then hidden layers, then output, with no cycles. Each unit first forms an affine combination of the previous layer, $z = \\mathbf{w}^\\top \\mathbf{h} + b$, and then applies an activation function. ReLU keeps positive pre-activations and sets negative ones to $0$, so a forward pass is always \"compute $z$, clip, combine\".\n\nEvery weight **and** every bias is learned by training, so a dense layer from $n_{\\text{in}}$ to $n_{\\text{out}}$ units contributes $n_{\\text{in}} n_{\\text{out}} + n_{\\text{out}}$ parameters.\n\nThe non-linearity is what gives depth its power. An affine function of an affine function is still affine, so a network whose activations are all the identity collapses to a single linear layer, here $8x_1 - 9x_2 + 2$, no matter how many layers it has. With ReLU the network instead computes a piecewise-linear function, which is why the outputs at $(1,2)$ and $(2,1)$ differ from the linear formula.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "There are $4 + 2 = 6$ parameters in the hidden layer and $2 + 1 = 3$ in the output layer, $9$ in total. The value $6$ comes from counting only the hidden layer, or only the weights ($4 + 2$) and forgetting the biases."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$z_1 = -1 \\Rightarrow h_1 = 0$ and $z_2 = 3 \\Rightarrow h_2 = 3$, so $\\hat{y} = 0 - 6 + 1 = -5$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$z_1 = 2 \\Rightarrow h_1 = 2$ and $z_2 = -1 \\Rightarrow h_2 = 0$, so $\\hat{y} = 6 - 0 + 1 = 7$. The value $9$ appears only if ReLU is skipped for $h_2$ and $-1$ is used: $6 - 2(-1) + 1 = 9$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Expanding $3(2x_1 - x_2 - 1) - 2(-x_1 + 3x_2 - 2) + 1$ gives $8x_1 - 9x_2 + 2$; a stack of affine maps is a single affine map."
+        }
+      ],
+      "commonTrap": "Forgetting to clip a negative pre-activation to $0$. Skipping ReLU gives $\\hat{y} = -8$ at $(1, 2)$ and $\\hat{y} = 9$ at $(2, 1)$, which makes (C) look true. Counting weights but not biases gives $6$ parameters, which makes (A) look true."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, D (params = 9; y(1,2) = -5; y(2,1) = 7; identity net = 8x1 - 9x2 + 2)",
+      "agreesWithKey": true,
+      "checkCode": "relu=lambda z:max(0,z)\ndef net(x1,x2,a=relu): return 3*a(2*x1-x2-1)-2*a(-x1+3*x2-2)+1\nprint(2*2+2+2*1+1, net(1,2), net(2,1))  # 9 -5 7\nprint(all(net(u,v,lambda z:z)==8*u-9*v+2 for u in range(-5,6) for v in range(-5,6)))  # True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-kmeans"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single k-means iteration (twelve squared distances, one visually borderline point, then two coordinate-wise means); routine computation in about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "One iteration of Lloyd's k-means algorithm: nearest-centroid assignment followed by the mean update",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A city plans two battery-swap depots for electric scooters. The locations (in km on a city grid) of six frequent swap requests are:\n\n| Point | $P_1$ | $P_2$ | $P_3$ | $P_4$ | $P_5$ | $P_6$ |\n|---|---|---|---|---|---|---|\n| Location | $(1, 1)$ | $(2, 4)$ | $(5, 3)$ | $(7, 5)$ | $(10, 6)$ | $(7, 8)$ |\n\nk-means clustering with $k = 2$ and Euclidean distance is run with initial centroids $\\mu_1 = (2, 2)$ and $\\mu_2 = (8, 6)$. After **one** complete iteration (assignment step followed by centroid-update step), the centroids, rounded off to two decimal places, are",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\mu_1 = (1.50,\\ 2.50)$ and $\\mu_2 = (7.25,\\ 5.50)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\mu_1 = (2.50,\\ 2.50)$ and $\\mu_2 = (8.00,\\ 6.25)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\mu_1 = (2.67,\\ 2.67)$ and $\\mu_2 = (8.00,\\ 6.33)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\mu_1 = (2.00,\\ 3.00)$ and $\\mu_2 = (7.00,\\ 6.00)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Squared distances put $P_1, P_2, P_3$ with $\\mu_1$ (for $P_3$: $10 < 18$) and $P_4, P_5, P_6$ with $\\mu_2$.\nNew centroids: $\\mu_1 = \\left(\\frac{1+2+5}{3}, \\frac{1+4+3}{3}\\right) = (2.67, 2.67)$ and $\\mu_2 = \\left(\\frac{7+10+7}{3}, \\frac{5+6+8}{3}\\right) = (8.00, 6.33)$.",
+      "steps": [
+        {
+          "title": "Assignment step",
+          "body": "Compare squared Euclidean distances (the square root does not change which centroid is nearer):\n\n| Point | $d^2$ to $\\mu_1 = (2,2)$ | $d^2$ to $\\mu_2 = (8,6)$ | Cluster |\n|---|---|---|---|\n| $P_1 (1,1)$ | $1 + 1 = 2$ | $49 + 25 = 74$ | 1 |\n| $P_2 (2,4)$ | $0 + 4 = 4$ | $36 + 4 = 40$ | 1 |\n| $P_3 (5,3)$ | $9 + 1 = 10$ | $9 + 9 = 18$ | 1 |\n| $P_4 (7,5)$ | $25 + 9 = 34$ | $1 + 1 = 2$ | 2 |\n| $P_5 (10,6)$ | $64 + 16 = 80$ | $4 + 0 = 4$ | 2 |\n| $P_6 (7,8)$ | $25 + 36 = 61$ | $1 + 4 = 5$ | 2 |"
+        },
+        {
+          "title": "Update step",
+          "body": "Each new centroid is the mean of the points assigned to it (the old centroid is not included):\n\n$$\n\\mu_1 = \\left(\\frac{1 + 2 + 5}{3}, \\frac{1 + 4 + 3}{3}\\right) = \\left(\\frac{8}{3}, \\frac{8}{3}\\right) \\approx (2.67, 2.67)\n$$\n\n$$\n\\mu_2 = \\left(\\frac{7 + 10 + 7}{3}, \\frac{5 + 6 + 8}{3}\\right) = \\left(8, \\frac{19}{3}\\right) \\approx (8.00, 6.33)\n$$"
+        },
+        {
+          "title": "Match with the options",
+          "body": "The pair $(2.67, 2.67)$, $(8.00, 6.33)$ is option **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "k-means (Lloyd's algorithm) looks for $k$ centroids that minimise the within-cluster sum of squared distances. It alternates two steps, and each step can only lower (or keep) that objective:\n\n1. **Assignment:** attach every point to its nearest centroid. Comparing squared distances is enough, since the square root preserves order.\n2. **Update:** replace each centroid by the arithmetic mean of its assigned points. For a fixed group of points, the mean is exactly the location that minimises the sum of squared distances.\n\nThe old centroid is only a reference used for the assignment. It is not a data point and does not enter the average. Replacing the mean by the median gives k-medians, and restricting centres to actual data points gives k-medoids; both are different algorithms.\n\nIn this question, $P_3 = (5, 3)$ sits at the $x$-midpoint of the two centroids, but its $y$-coordinate is much closer to $\\mu_1$, so the distances $10 < 18$ put it in cluster 1.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This results from putting $P_3$ into cluster 2 (for example by judging only the $x$-coordinate, which is exactly midway): $\\mu_1 = $ mean of $P_1, P_2 = (1.5, 2.5)$ and $\\mu_2 = $ mean of $P_3$–$P_6 = (7.25, 5.5)$. But $d^2(P_3, \\mu_1) = 10 < 18 = d^2(P_3, \\mu_2)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This averages the old centroid together with the members, e.g. $\\mu_1 = \\frac{(2,2) + (1,1) + (2,4) + (5,3)}{4} = (2.5, 2.5)$. The update uses only the assigned data points."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct assignment $\\{P_1, P_2, P_3\\}$, $\\{P_4, P_5, P_6\\}$ followed by the means $(8/3, 8/3)$ and $(8, 19/3)$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "These are coordinate-wise **medians** of the correct clusters (the k-medians update), not means."
+        }
+      ],
+      "commonTrap": "Eyeballing $P_3 = (5, 3)$ as a tie, or as closer to $\\mu_2$, because its $x$-coordinate is midway between $2$ and $8$. Always compute both distances; here the $y$-coordinates decide it ($10$ versus $18$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: centroids (2.67, 2.67) and (8.00, 6.33)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nP=np.array([(1,1),(2,4),(5,3),(7,5),(10,6),(7,8)]); M=np.array([(2,2),(8,6)])\nlab=((P[:,None,:]-M[None])**2).sum(2).argmin(1)\nprint(lab, [P[lab==k].mean(0).round(2).tolist() for k in (0,1)])  # [0 0 0 1 1 1] [[2.67, 2.67], [8.0, 6.33]]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (solve the characteristic equation of a 2×2 covariance matrix, then find the top eigenvector and the explained-variance ratio); routine computation in about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "First principal component as the top eigenvector of the covariance matrix, and its explained-variance ratio",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two mean-centred features $x_1$ and $x_2$ recorded by a machine-health sensor have the sample covariance matrix\n\n$$\n\\Sigma = \\begin{bmatrix} 6 & 2 \\\\ 2 & 3 \\end{bmatrix}.\n$$\n\nPrincipal component analysis (PCA) is applied to these data. Which of the following correctly gives the direction of the first principal component (up to sign and scaling) and the fraction of the total variance that it explains?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Direction $\\propto (2, 1)$; fraction $= \\dfrac{7}{9}$"
+      },
+      {
+        "label": "B",
+        "text": "Direction $\\propto (1, 2)$; fraction $= \\dfrac{7}{9}$"
+      },
+      {
+        "label": "C",
+        "text": "Direction $\\propto (1, 0)$; fraction $= \\dfrac{2}{3}$"
+      },
+      {
+        "label": "D",
+        "text": "Direction $\\propto (1, -2)$; fraction $= \\dfrac{7}{9}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$\\lambda^2 - 9\\lambda + 14 = 0$ gives $\\lambda_1 = 7$, $\\lambda_2 = 2$. From $(\\Sigma - 7I)\\mathbf{v} = \\mathbf{0}$: $-v_1 + 2v_2 = 0$, so $\\mathbf{v} \\propto (2, 1)$.\nExplained fraction $= 7/(7 + 2) = 7/9 \\approx 77.8\\%$.",
+      "steps": [
+        {
+          "title": "Link PCA to the eigen-decomposition",
+          "body": "The first principal component is the unit eigenvector of $\\Sigma$ with the largest eigenvalue $\\lambda_1$. The variance of the data along it is $\\lambda_1$, and the fraction of total variance explained is $\\lambda_1 / (\\lambda_1 + \\lambda_2) = \\lambda_1 / \\operatorname{tr}(\\Sigma)$."
+        },
+        {
+          "title": "Find the eigenvalues",
+          "body": "$$\n\\det(\\Sigma - \\lambda I) = (6 - \\lambda)(3 - \\lambda) - 4 = \\lambda^2 - 9\\lambda + 14 = (\\lambda - 7)(\\lambda - 2) = 0.\n$$\n\nSo $\\lambda_1 = 7$ and $\\lambda_2 = 2$. Check: $7 + 2 = 9 = \\operatorname{tr}(\\Sigma)$ and $7 \\times 2 = 14 = \\det(\\Sigma)$."
+        },
+        {
+          "title": "Find the first eigenvector",
+          "body": "$$\n(\\Sigma - 7I)\\mathbf{v} = \\begin{bmatrix} -1 & 2 \\\\ 2 & -4 \\end{bmatrix}\\begin{bmatrix} v_1 \\\\ v_2 \\end{bmatrix} = \\mathbf{0} \\;\\Rightarrow\\; -v_1 + 2v_2 = 0 \\;\\Rightarrow\\; v_1 = 2v_2.\n$$\n\nSo $\\mathbf{v}_1 \\propto (2, 1)$, i.e. $\\mathbf{v}_1 = (2, 1)/\\sqrt{5}$. Check: $\\Sigma (2, 1)^\\top = (12 + 2,\\ 4 + 3) = (14, 7) = 7\\,(2, 1)$."
+        },
+        {
+          "title": "Explained-variance ratio",
+          "body": "$$\n\\frac{\\lambda_1}{\\lambda_1 + \\lambda_2} = \\frac{7}{9} \\approx 0.778.\n$$\n\nDirection $\\propto (2, 1)$ with fraction $7/9$ is option **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "PCA looks for the unit direction $\\mathbf{w}$ along which the centred data vary the most. The variance of the projections $\\mathbf{w}^\\top \\mathbf{x}$ is $\\mathbf{w}^\\top \\Sigma \\mathbf{w}$, and maximising this over unit vectors gives the eigenvector of $\\Sigma$ with the largest eigenvalue. That eigenvalue is exactly the variance captured along the direction. The eigenvectors are orthogonal, and the eigenvalues add up to the trace, i.e. to the total variance $6 + 3 = 9$.\n\nThe covariance term matters. If $\\Sigma$ were diagonal, the first component would simply be the feature with the larger variance, $x_1$, capturing $6/9$. The positive covariance $2$ tilts the best direction off the $x_1$-axis towards $x_2$, to $(2, 1)$ at about $26.6^\\circ$, and the variance it captures rises from $6$ to $7$. So PCA always does at least as well as keeping the best single original feature.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\Sigma(2,1)^\\top = (14, 7) = 7(2,1)^\\top$, so $(2,1)$ is the eigenvector for the largest eigenvalue $7$, which explains $7/9$ of the total variance $9$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\Sigma(1,2)^\\top = (10, 8)$ is not a multiple of $(1,2)$, so this is not an eigenvector. It comes from misreading $v_1 = 2v_2$ as $v_2 = 2v_1$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This keeps the original feature $x_1$ with the largest variance ($6/9 = 2/3$) and ignores the covariance. $\\Sigma(1,0)^\\top = (6, 2)$ is not a multiple of $(1,0)$, and PC1 captures $7 > 6$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\Sigma(1,-2)^\\top = (2, -4) = 2(1,-2)^\\top$, so $(1,-2)$ is the eigenvector of the **smaller** eigenvalue $2$, the second component, which explains only $2/9$."
+        }
+      ],
+      "shortcut": "For a $2 \\times 2$ symmetric matrix, $\\lambda = \\frac{\\operatorname{tr} \\pm \\sqrt{\\operatorname{tr}^2 - 4\\det}}{2} = \\frac{9 \\pm 5}{2}$. Then test each option's direction directly: $\\mathbf{v}$ is PC1 only if $\\Sigma\\mathbf{v} = 7\\mathbf{v}$.",
+      "commonTrap": "Picking the original feature with the largest variance ($x_1$, fraction $2/3$), or pairing the eigenvector of the small eigenvalue, $(1, -2)$, with the large eigenvalue. Always verify that $\\Sigma \\mathbf{v} = \\lambda_1 \\mathbf{v}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: eigenvalues 7, 2; PC1 direction (2, 1); fraction 7/9 = 0.7778",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nw,V=np.linalg.eigh(np.array([[6.,2.],[2.,3.]]))\nprint(w, V[:,-1]/V[1,-1], w[-1]/w.sum())  # [2. 7.] [2. 1.] 0.7778",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-multiple-linear-regression"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (evaluating a fitted multiple linear regression model and its mean squared error) by direct substitution into three rows; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Prediction, residuals and mean squared error of a fitted multiple linear regression model",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An agronomist fits a multiple linear regression model for crop yield $y$ (quintals per acre) using three predictors: $x_1$ = seasonal rainfall (in hundreds of mm), $x_2$ = pest-incidence index, and $x_3$ = fertiliser applied (in tens of kg per acre). The fitted model is\n\n$$\n\\hat{y} = 4 + 1.5\\,x_1 - 2\\,x_2 + 0.5\\,x_3.\n$$\n\nThe model is tested on three farms that were not used for fitting:\n\n| Farm | $x_1$ | $x_2$ | $x_3$ | Observed $y$ |\n|---|---|---|---|---|\n| F1 | 2 | 1 | 4 | 8 |\n| F2 | 4 | 3 | 2 | 3 |\n| F3 | 6 | 2 | 0 | 11 |\n\nThe mean squared error of the model on these three farms, $\\dfrac{1}{3}\\displaystyle\\sum_{i=1}^{3}(y_i - \\hat{y}_i)^2$, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.33$"
+      },
+      {
+        "label": "B",
+        "text": "$3.00$"
+      },
+      {
+        "label": "C",
+        "text": "$1.67$"
+      },
+      {
+        "label": "D",
+        "text": "$9.00$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Predictions: $\\hat{y} = 7, 5, 9$, so the residuals are $8 - 7 = 1$, $3 - 5 = -2$ and $11 - 9 = 2$.\nMSE $= (1 + 4 + 4)/3 = 3$.",
+      "steps": [
+        {
+          "title": "Predict each farm",
+          "body": "- F1: $\\hat{y} = 4 + 1.5(2) - 2(1) + 0.5(4) = 4 + 3 - 2 + 2 = 7$\n- F2: $\\hat{y} = 4 + 1.5(4) - 2(3) + 0.5(2) = 4 + 6 - 6 + 1 = 5$\n- F3: $\\hat{y} = 4 + 1.5(6) - 2(2) + 0.5(0) = 4 + 9 - 4 + 0 = 9$"
+        },
+        {
+          "title": "Compute the residuals",
+          "body": "$e_i = y_i - \\hat{y}_i$: $\\quad e_1 = 8 - 7 = 1$, $\\quad e_2 = 3 - 5 = -2$, $\\quad e_3 = 11 - 9 = 2$."
+        },
+        {
+          "title": "Square, sum and average",
+          "body": "$$\n\\text{MSE} = \\frac{1^2 + (-2)^2 + 2^2}{3} = \\frac{1 + 4 + 4}{3} = \\frac{9}{3} = 3.\n$$\n\nThis is option **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "A multiple linear regression model predicts $\\hat{y} = \\beta_0 + \\beta_1 x_1 + \\dots + \\beta_p x_p$. Each slope $\\beta_j$ is the change in the predicted response for a one-unit increase in $x_j$ **with the other predictors held fixed**. Here, for example, one extra unit of pest index lowers the predicted yield by 2 quintals per acre whatever the rainfall and fertiliser are.\n\nTo judge the model on new data, compute each residual $e_i = y_i - \\hat{y}_i$. Residuals can be positive or negative, so averaging them directly lets errors cancel: here the mean residual is only $1/3$ although no prediction is exact. Squaring removes the signs and penalises large misses more heavily, which gives the mean squared error. Related measures are the sum of squared errors (no division, $9$), the mean absolute error (no squaring, $5/3$) and the root mean squared error $\\sqrt{3} \\approx 1.73$ quintals per acre, which is in the units of $y$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.33 = (1 - 2 + 2)/3$ is the mean of the **signed** residuals. Positive and negative errors cancel, so this is not the MSE."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Residuals $1, -2, 2$ give squared errors $1, 4, 4$, whose mean is $9/3 = 3$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$1.67 = (1 + 2 + 2)/3$ is the mean **absolute** error; the residuals were not squared."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$9$ is the sum of squared errors; it was not divided by $3$."
+        }
+      ],
+      "commonTrap": "Averaging the signed residuals ($1/3$), which hides errors that cancel, or forgetting to divide the sum of squares by the number of farms ($9$). Also watch the negative coefficient of $x_2$: using $+2x_2$ gives completely different predictions."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: residuals [1, -2, 2], MSE = 3.0",
+      "agreesWithKey": true,
+      "checkCode": "rows=[(2,1,4,8),(4,3,2,3),(6,2,0,11)]\nr=[y-(4+1.5*a-2*b+0.5*c) for a,b,c,y in rows]\nprint(r, sum(e*e for e in r)/3)  # [1.0, -2.0, 2.0] 3.0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-naive-bayes"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (count-based estimates of priors and class-conditional probabilities, then Bayes normalisation) with a likely trap, since dropping the prior flips the decision; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Naive Bayes posterior from maximum-likelihood count estimates, and the role of the class prior in the decision",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An operations team trains a naive Bayes classifier to decide whether a monitoring alert is a real incident (Incident = Yes) or a false alarm (Incident = No). It uses two categorical features: Time $\\in$ {Day, Night} and Source $\\in$ {DB, Web, Cache}. The training data are:\n\n| Alert | Time | Source | Incident |\n|---|---|---|---|\n| 1 | Night | DB | Yes |\n| 2 | Night | Web | Yes |\n| 3 | Day | DB | Yes |\n| 4 | Night | DB | Yes |\n| 5 | Day | Web | No |\n| 6 | Day | Cache | No |\n| 7 | Night | Cache | No |\n| 8 | Day | DB | No |\n| 9 | Day | Web | No |\n| 10 | Day | Cache | No |\n\nAll probabilities are estimated by maximum likelihood (relative frequencies, no smoothing). A new alert has Time = Day and Source = DB. Which of the following gives the naive Bayes posterior probability $P(\\text{Incident} = \\text{Yes} \\mid \\text{Day}, \\text{DB})$ and the predicted class?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Posterior $\\approx 0.57$; predicted class Yes"
+      },
+      {
+        "label": "B",
+        "text": "Posterior $= 0.50$; the two classes tie"
+      },
+      {
+        "label": "C",
+        "text": "Posterior $\\approx 0.53$; predicted class Yes"
+      },
+      {
+        "label": "D",
+        "text": "Posterior $\\approx 0.47$; predicted class No"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Yes: $0.4 \\times \\frac{1}{4} \\times \\frac{3}{4} = \\frac{3}{40} = 0.075$. No: $0.6 \\times \\frac{5}{6} \\times \\frac{1}{6} = \\frac{1}{12} \\approx 0.0833$.\n$P(\\text{Yes} \\mid \\text{Day}, \\text{DB}) = \\frac{0.075}{0.075 + 0.0833} = \\frac{9}{19} \\approx 0.47$, so the prediction is **No**.",
+      "steps": [
+        {
+          "title": "Estimate the priors",
+          "body": "Alerts 1–4 are Yes and alerts 5–10 are No, so $P(\\text{Yes}) = 4/10 = 0.4$ and $P(\\text{No}) = 6/10 = 0.6$."
+        },
+        {
+          "title": "Estimate the class-conditional probabilities",
+          "body": "Among the 4 Yes alerts: Day occurs once and DB three times, so $P(\\text{Day} \\mid \\text{Yes}) = 1/4$ and $P(\\text{DB} \\mid \\text{Yes}) = 3/4$.\n\nAmong the 6 No alerts: Day occurs five times and DB once, so $P(\\text{Day} \\mid \\text{No}) = 5/6$ and $P(\\text{DB} \\mid \\text{No}) = 1/6$."
+        },
+        {
+          "title": "Compute the unnormalised scores",
+          "body": "Naive Bayes assumes the features are conditionally independent given the class:\n\n$$\n\\text{Yes: } 0.4 \\times \\tfrac{1}{4} \\times \\tfrac{3}{4} = \\tfrac{3}{40} = 0.075, \\qquad \\text{No: } 0.6 \\times \\tfrac{5}{6} \\times \\tfrac{1}{6} = \\tfrac{1}{12} \\approx 0.0833.\n$$"
+        },
+        {
+          "title": "Normalise and decide",
+          "body": "$$\nP(\\text{Yes} \\mid \\text{Day}, \\text{DB}) = \\frac{3/40}{3/40 + 1/12} = \\frac{9/120}{9/120 + 10/120} = \\frac{9}{19} \\approx 0.474.\n$$\n\n$P(\\text{No} \\mid \\text{Day}, \\text{DB}) = 10/19 \\approx 0.526$ is larger, so the predicted class is **No**. This is option **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A naive Bayes classifier applies Bayes' theorem, $P(c \\mid \\mathbf{x}) \\propto P(c)\\,P(\\mathbf{x} \\mid c)$, and makes one simplifying (\"naive\") assumption: given the class, the features are independent, so $P(\\mathbf{x} \\mid c) = \\prod_j P(x_j \\mid c)$. Every factor is estimated by counting within the class. The evidence $P(\\mathbf{x})$ is the same for every class, so it is needed only to turn the scores into probabilities, not to rank the classes.\n\nBoth parts of the product matter. Here the likelihoods alone favour Yes, since $\\frac{1}{4} \\cdot \\frac{3}{4} = 0.1875$ is larger than $\\frac{5}{6} \\cdot \\frac{1}{6} \\approx 0.139$: DB alerts are typical of incidents. But false alarms are more common overall ($0.6$ versus $0.4$), and that prior is just enough to tip the posterior to No, $10/19$ against $9/19$. Leaving out the prior is a modelling error that changes the decision.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{0.1875}{0.1875 + 0.1389} = \\frac{27}{47} \\approx 0.57$ uses the likelihoods alone and **drops the priors** $0.4$ and $0.6$, which flips the decision to Yes."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.50$ comes from looking up the training rows that match (Day, DB) exactly: alert 3 (Yes) and alert 8 (No). That is a lookup table, not naive Bayes, which multiplies per-feature estimates."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$10/19 \\approx 0.53$ is $P(\\text{No} \\mid \\text{Day}, \\text{DB})$, not $P(\\text{Yes} \\mid \\cdot)$; reading it as the Yes posterior mislabels the classes and gives the wrong prediction."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\frac{3/40}{3/40 + 1/12} = \\frac{9}{19} \\approx 0.47 < 0.5$, so the predicted class is No."
+        }
+      ],
+      "commonTrap": "Comparing only the likelihood products ($0.1875$ versus $0.139$) and predicting Yes. The class prior must multiply the likelihoods; with it, No wins, $1/12 > 3/40$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D: P(Yes | Day, DB) = 9/19 = 0.4737, predict No",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nD=[('N','DB','Y'),('N','Web','Y'),('D','DB','Y'),('N','DB','Y'),('D','Web','N'),('D','Cache','N'),('N','Cache','N'),('D','DB','N'),('D','Web','N'),('D','Cache','N')]\ns={}\nfor c in 'YN':\n    R=[r for r in D if r[2]==c]; n=len(R)\n    s[c]=F(n,len(D))*F(sum(r[0]=='D' for r in R),n)*F(sum(r[1]=='DB' for r in R),n)\np=s['Y']/(s['Y']+s['N']); print(p, float(p))  # 9/19 0.4737 -> No",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M06-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-06",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (the bias–variance–noise decomposition) applied by direct substitution after computing the mean and population variance of four predictions; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Expected squared prediction error at a point as squared bias plus variance plus irreducible noise",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "At a fixed test input $x_0$, the true regression function has value $f(x_0) = 20$. An observation at $x_0$ is $y = f(x_0) + \\varepsilon$, where the noise $\\varepsilon$ has mean $0$ and variance $1.5$ and is independent of the training data.\n\nA regression tree of fixed depth is trained separately on four independently drawn training sets $D_1, \\dots, D_4$. Its predictions at $x_0$ are:\n\n| Training set | $D_1$ | $D_2$ | $D_3$ | $D_4$ |\n|---|---|---|---|---|\n| Prediction $\\hat{f}_D(x_0)$ | 22 | 25 | 21 | 24 |\n\nTreat these four training sets as the only possible training sets, each equally likely, so that every expectation over training sets is a plain average over the four.\n\nThe expected squared prediction error $E\\big[(y - \\hat{f}_D(x_0))^2\\big]$ at $x_0$, taken over both the training set and the noise, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 13,
+      "max": 13
+    },
+    "solution": {
+      "quick": "Mean prediction $= 92/4 = 23$, so bias $= 3$ and bias$^2 = 9$. Variance $= (1 + 4 + 4 + 1)/4 = 2.5$.\nExpected error $= 9 + 2.5 + 1.5 = 13$.",
+      "steps": [
+        {
+          "title": "Write the decomposition",
+          "body": "$$\nE\\big[(y - \\hat{f}_D(x_0))^2\\big] = \\underbrace{\\big(E[\\hat{f}_D(x_0)] - f(x_0)\\big)^2}_{\\text{bias}^2} + \\underbrace{\\operatorname{Var}\\big(\\hat{f}_D(x_0)\\big)}_{\\text{variance}} + \\underbrace{\\sigma^2}_{\\text{noise}}.\n$$"
+        },
+        {
+          "title": "Squared bias",
+          "body": "$E[\\hat{f}_D(x_0)] = \\frac{22 + 25 + 21 + 24}{4} = \\frac{92}{4} = 23$, so the bias is $23 - 20 = 3$ and the squared bias is $9$."
+        },
+        {
+          "title": "Variance over training sets",
+          "body": "The deviations from $23$ are $-1, 2, -2, 1$. Because the four training sets are the whole (equally likely) population, divide by $4$:\n\n$$\n\\operatorname{Var} = \\frac{1 + 4 + 4 + 1}{4} = \\frac{10}{4} = 2.5.\n$$"
+        },
+        {
+          "title": "Add the irreducible noise",
+          "body": "$$\nE\\big[(y - \\hat{f}_D(x_0))^2\\big] = 9 + 2.5 + 1.5 = 13.\n$$\n\nCheck directly: the average of $(\\hat{f}_D - 20)^2$ is $(4 + 25 + 1 + 16)/4 = 11.5 = 9 + 2.5$, and adding $\\sigma^2 = 1.5$ gives $13$."
+        }
+      ],
+      "finalAnswer": "**13**",
+      "teaching": "A model's prediction at a point depends on which training set it happened to see, so over many possible training sets $\\hat{f}_D(x_0)$ is a random variable. Its expected squared error against a fresh noisy observation splits into three non-negative parts:\n\n- **Bias$^2$:** how far the *average* prediction is from the truth, a systematic error. Here the tree overshoots by $3$ on average.\n- **Variance:** how much the prediction fluctuates from one training set to another. Here it is $2.5$.\n- **Noise $\\sigma^2$:** randomness in $y$ itself. No model can remove it; here it is $1.5$.\n\nThe cross terms vanish because the noise has mean zero and is independent of the training set, and because the deviations of $\\hat{f}_D$ around its own mean average to zero. Simpler models tend to have high bias and low variance; flexible models such as deep trees tend to have the reverse. The irreducible noise sets a floor that no choice of model can beat.",
+      "shortcut": "Skip the split: average the squared deviations of the predictions from the **true** value, $(4 + 25 + 1 + 16)/4 = 11.5$ (this equals bias$^2$ + variance), then add $\\sigma^2 = 1.5$ to get $13$.",
+      "commonTrap": "Using the sample variance with divisor $3$ ($10/3 \\approx 3.33$, giving $13.83$), forgetting the irreducible noise ($11.5$), or adding the bias $3$ instead of the squared bias $9$ ($7$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "13.0",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\np=np.array([22,25,21,24]); f=20; s2=1.5\nprint((p.mean()-f)**2 + p.var() + s2, np.mean((p-f)**2) + s2)  # 13.0 13.0",
+      "notes": ""
+    }
+  }
+]

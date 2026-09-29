@@ -1,0 +1,74 @@
+{
+  "id": "DA2025-S5-Q60",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 60,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-dimensionality-reduction",
+  "subtopicIds": [
+    "ml-pca",
+    "ml-dim-reduction"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (for centred data, the mean squared projection onto the unit direction of maximum variance equals the largest covariance eigenvalue) followed by a single read-off (λ₁ = 100¹ = 100 from a decreasing sequence), taking about a minute for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "Let $D = \\{x^{(1)}, \\ldots, x^{(n)}\\}$ be a dataset of $n$ observations where each $x^{(i)} \\in \\mathbb{R}^{100}$. It is given that $\\displaystyle\\sum_{i=1}^{n} x^{(i)} = 0$. The covariance matrix computed from $D$ has eigenvalues $\\lambda_i = 100^{2-i}$, $1 \\le i \\le 100$. Let $u \\in \\mathbb{R}^{100}$ be the direction of maximum variance with $u^\\top u = 1$.\n\nThe value of\n\n$$\n\\frac{1}{n}\\sum_{i=1}^{n}\\left(u^\\top x^{(i)}\\right)^2 = \\underline{\\hspace{3cm}}\n$$\n\n(Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "100 to 100",
+  "answer": {
+    "kind": "NAT",
+    "min": 100,
+    "max": 100
+  },
+  "solution": {
+    "quick": "The data are centred ($\\sum_i x^{(i)} = 0$), so $\\frac{1}{n}\\sum_i \\left(u^\\top x^{(i)}\\right)^2 = u^\\top C u$ with $C = \\frac{1}{n}\\sum_i x^{(i)}x^{(i)\\top}$ the covariance matrix: it is the variance of the data along $u$. For the unit direction of maximum variance (the first principal component) this equals the largest eigenvalue. Since $\\lambda_i = 100^{2-i}$ decreases with $i$, $\\lambda_{\\max} = \\lambda_1 = 100$. The answer is **100**.",
+    "steps": [
+      {
+        "title": "Write the quantity as a quadratic form in the covariance matrix",
+        "body": "Each term is the square of a scalar, so\n\n$$\n\\left(u^\\top x^{(i)}\\right)^2 = \\left(u^\\top x^{(i)}\\right)\\left(x^{(i)\\top} u\\right) = u^\\top \\left(x^{(i)} x^{(i)\\top}\\right) u .\n$$\n\nAveraging over $i$ and pulling the fixed vector $u$ outside the sum:\n\n$$\n\\frac{1}{n}\\sum_{i=1}^{n}\\left(u^\\top x^{(i)}\\right)^2 = u^\\top\\left(\\frac{1}{n}\\sum_{i=1}^{n} x^{(i)} x^{(i)\\top}\\right)u .\n$$\n\nThe sample mean is $\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x^{(i)} = \\frac{1}{n}\\cdot 0 = 0$ (given), so the covariance matrix of $D$ is\n\n$$\nC = \\frac{1}{n}\\sum_{i=1}^{n}\\left(x^{(i)} - \\bar{x}\\right)\\left(x^{(i)} - \\bar{x}\\right)^\\top = \\frac{1}{n}\\sum_{i=1}^{n} x^{(i)} x^{(i)\\top}.\n$$\n\nHence the required value is $u^\\top C u$. In words: the projections $z_i = u^\\top x^{(i)}$ have mean $u^\\top \\bar{x} = 0$, so $\\frac{1}{n}\\sum_i z_i^2$ is exactly the variance of the data along the direction $u$."
+      },
+      {
+        "title": "The maximum-variance direction gives the largest eigenvalue",
+        "body": "$C$ is symmetric, so it has orthonormal eigenvectors $v_1, \\ldots, v_{100}$ with $C v_j = \\lambda_j v_j$. Any unit vector can be written $u = \\sum_j a_j v_j$ with $\\sum_j a_j^2 = u^\\top u = 1$, and then\n\n$$\nu^\\top C u = \\sum_{j=1}^{100} \\lambda_j a_j^2 \\le \\lambda_{\\max}\\sum_{j=1}^{100} a_j^2 = \\lambda_{\\max}.\n$$\n\nEquality holds when all the weight is on the top eigenvector, i.e. $u = \\pm v_{\\max}$. (Equivalently, setting the gradient of the Lagrangian $u^\\top C u - \\lambda\\,(u^\\top u - 1)$ to zero gives $Cu = \\lambda u$, and then $u^\\top C u = \\lambda\\, u^\\top u = \\lambda$, which is largest for the largest eigenvalue.)\n\nSo the direction of maximum variance is the first principal component, and\n\n$$\n\\frac{1}{n}\\sum_{i=1}^{n}\\left(u^\\top x^{(i)}\\right)^2 = u^\\top C u = \\lambda_{\\max}.\n$$"
+      },
+      {
+        "title": "Find the largest eigenvalue",
+        "body": "Evaluate $\\lambda_i = 100^{2-i}$ for the first few $i$:\n\n| $i$ | exponent $2-i$ | $\\lambda_i = 100^{2-i}$ |\n| :---: | :---: | :---: |\n| $1$ | $1$ | $100$ |\n| $2$ | $0$ | $1$ |\n| $3$ | $-1$ | $0.01$ |\n| $4$ | $-2$ | $0.0001$ |\n| $\\vdots$ | $\\vdots$ | $\\vdots$ |\n| $100$ | $-98$ | $100^{-98} = 10^{-196}$ |\n\nThe base $100$ is greater than $1$ and the exponent $2-i$ falls as $i$ grows, so the eigenvalues are strictly decreasing and\n\n$$\n\\lambda_{\\max} = \\lambda_1 = 100^{1} = 100.\n$$\n\nSince $\\lambda_1 = 100 > \\lambda_2 = 1$, the top eigenvector (and hence $u$) is unique up to sign, and the sign does not matter because the projection is squared."
+      },
+      {
+        "title": "Final value and a sanity check",
+        "body": "$$\n\\frac{1}{n}\\sum_{i=1}^{n}\\left(u^\\top x^{(i)}\\right)^2 = \\lambda_1 = 100.\n$$\n\nSanity check: the total variance is $\\operatorname{tr}(C) = \\sum_{i=1}^{100} \\lambda_i = 100\\left(1 + 0.01 + 0.01^2 + \\cdots + 0.01^{99}\\right) = 100 \\cdot \\frac{1 - 0.01^{100}}{1 - 0.01} \\approx 101.01$, so this single direction carries $100 / 101.01 \\approx 99\\%$ of the variance, and no unit direction can exceed $100$.\n\nConvention note: the requested average equals $u^\\top C u$ when the covariance matrix is normalised by $\\frac{1}{n}$, as written in Step 1. With the $\\frac{1}{n-1}$ normalisation the same expression would be $\\frac{n-1}{n}\\cdot 100$, which depends on the unstated $n$; the question's integer answer is consistent with the $\\frac{1}{n}$ convention, and the official key is $100$."
+      }
+    ],
+    "finalAnswer": "**100**",
+    "teaching": "**Variance along a direction.** Take centred data (mean zero) $x^{(1)}, \\ldots, x^{(n)} \\in \\mathbb{R}^d$. Pick a unit vector $u$ and project every point onto it: $z_i = u^\\top x^{(i)}$ is the signed length of the shadow of $x^{(i)}$ on the line through $u$. Because the data are centred, the $z_i$ also have mean zero, so their variance is simply the average of their squares, $\\frac{1}{n}\\sum_i z_i^2$. Expanding the square shows this equals $u^\\top C u$, where $C = \\frac{1}{n}\\sum_i x^{(i)} x^{(i)\\top}$ is the covariance matrix. So one symmetric matrix $C$ encodes the variance in **every** direction.\n\n**Why eigenvalues appear.** Principal component analysis asks: which unit direction has the largest variance? Maximising $u^\\top C u$ subject to $u^\\top u = 1$ is a Rayleigh-quotient problem. Writing $u$ in the orthonormal eigenbasis of $C$ turns $u^\\top C u$ into a weighted average $\\sum_j \\lambda_j a_j^2$ of the eigenvalues, with weights $a_j^2$ that add up to $1$. A weighted average can never exceed its largest entry, so the maximum is $\\lambda_{\\max}$, reached at the top eigenvector. The same reasoning gives the other principal components: the $k$-th eigenvector is the direction of largest variance orthogonal to the first $k-1$, and its variance is $\\lambda_k$.\n\n**Useful consequences.**\n- Every eigenvalue of a covariance matrix is a variance, so it is $\\ge 0$.\n- The eigenvalues add up to the total variance $\\operatorname{tr}(C)$; $\\lambda_k / \\sum_j \\lambda_j$ is the fraction of variance explained by component $k$.\n- The sign of an eigenvector is arbitrary, which never matters for variances.\n\n**Back to this question.** The mean is zero, $u$ is the unit direction of maximum variance, and the asked quantity is the mean squared projection, i.e. $u^\\top C u = \\lambda_{\\max}$. The eigenvalues $100^{2-i}$ shrink by a factor of $100$ at each step, so the largest is $\\lambda_1 = 100$, and the answer is $100$.",
+    "shortcut": "For centred data and a unit vector $u$, the mean squared projection $\\frac{1}{n}\\sum_i (u^\\top x^{(i)})^2$ is the variance along $u$; along the top principal direction it is just $\\lambda_{\\max}$. So read off the largest eigenvalue: $\\lambda_1 = 100^{2-1} = 100$.",
+    "commonTrap": "Misreading the eigenvalue formula: $100^{2-i}$ *decreases* with $i$, so the largest is at $i = 1$ (value $100$), not at $i = 100$ (value $10^{-196}$), and $i$ starts at $1$, so $100^2 = 10\\,000$ (from $i = 0$) is not an eigenvalue. Other slips are answering the total variance $\\sum_i \\lambda_i \\approx 101.01$ or the standard deviation $\\sqrt{100} = 10$; the average of squared projections is a variance, i.e. the eigenvalue itself."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q60-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The condition sum_{i=1}^{n} x^(i) = 0 is printed inline with its limits above and below the sigma (display style), so it is written with \\displaystyle. The exponent in lambda_i = 100^{2-i} and the superscripts (i), (1), (n) and 100 are read from the rendering; the PDF text layer flattens them (e.g. '1002−i', 'R100'). The answer blank after the centred formula is rendered as an underlined space inside the display math. No figure is involved."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "100 (for centred data (1/n)Σ(uᵀx⁽ⁱ⁾)² = uᵀCu, which is maximised over unit u at the top eigenvector with value λ_max = λ_1 = 100^(2−1) = 100)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom fractions import Fraction\nd, n = 100, 400\nlam = [Fraction(100)**(2-i) for i in range(1, d+1)]           # lambda_i = 100^(2-i)\nprint('lambda_1..4 =', [str(l) for l in lam[:4]], ' max =', max(lam), 'at i =', lam.index(max(lam))+1)\n# build a zero-mean dataset whose covariance (1/n) sum x x^T has exactly these eigenvalues\nrng = np.random.default_rng(0)\nZ = rng.standard_normal((n, d)); Z -= Z.mean(0)\nL = np.linalg.cholesky(Z.T @ Z / n); W = Z @ np.linalg.inv(L).T      # (1/n) W^T W = I, columns mean 0\nQ, _ = np.linalg.qr(rng.standard_normal((d, d)))                      # random orthonormal eigenbasis\nlf = np.array([float(l) for l in lam])\nX = W @ np.diag(np.sqrt(lf)) @ Q.T                                    # rows are x^(i)\nprint('sum of x^(i) ~ 0 :', np.abs(X.sum(0)).max() < 1e-9)\nC = X.T @ X / n\nev, V = np.linalg.eigh(C); u = V[:, -1]                               # unit top eigenvector\nprint('top eigenvalues:', np.round(ev[::-1][:3], 6))\nprint('(1/n) sum (u^T x)^2 =', round(float(np.mean((X @ u)**2)), 6))\n# any other unit direction gives less\nfor _ in range(3):\n    v = rng.standard_normal(d); v /= np.linalg.norm(v)\n    print('random unit v  ->', round(float(np.mean((X @ v)**2)), 6))\n",
+    "notes": "Hand solve: the data are centred, so (1/n)Σ(uᵀx⁽ⁱ⁾)² = uᵀCu with C = (1/n)Σx⁽ⁱ⁾x⁽ⁱ⁾ᵀ; over unit vectors this is maximised by the top eigenvector with value λ_max; λ_i = 100^(2−i) is strictly decreasing, so λ_max = λ_1 = 100. The Python check builds a zero-mean dataset (n = 400, d = 100) whose 1/n-normalised covariance has eigenvalues exactly 100^(2−i) in a random orthonormal basis, recovers the top eigenvector numerically and gets (1/n)Σ(uᵀx⁽ⁱ⁾)² = 100.0, while random unit directions give values below 1. This agrees with the official key 100 to 100. The equality relies on the covariance being the 1/n-normalised one (with 1/(n−1) the value would be (n−1)/n × 100); the question's integer answer is consistent with the 1/n convention."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

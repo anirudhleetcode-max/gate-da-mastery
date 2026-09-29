@@ -1,0 +1,121 @@
+{
+  "id": "DA2026-S8-Q28",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 28,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named",
+    "ps-cdf",
+    "ps-pdf"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - two directly linked concepts (the t_1 density versus the standard normal density, and CDF values as areas under symmetric densities). It needs the heavier-tail insight and a symmetry argument but no lengthy computation, since c never has to be found; about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Suppose a random variable $Z$ follows $\\mathit{Normal}(\\mu = 0, \\sigma^2 = 1)$ distribution with probability density function $g(z)$ and cumulative distribution function $G(z)$. Another random variable $Y$ follows $t_1$ distribution with probability density function $h(y)$ and cumulative distribution function $H(y)$. Let $c$ be the positive real number for which $g(c) = h(c)$.\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$G(0) = H(0)$"
+    },
+    {
+      "label": "B",
+      "text": "$G(c) < H(c)$"
+    },
+    {
+      "label": "C",
+      "text": "$G(-c) < H(-c)$"
+    },
+    {
+      "label": "D",
+      "text": "$g(0) = h(0)$"
+    }
+  ],
+  "officialKeyRaw": "A;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Both densities are symmetric about 0, so $G(0) = H(0) = \\tfrac{1}{2}$ (A true). The normal has the higher peak, $g(0) = 1/\\sqrt{2\\pi} \\approx 0.399$ versus $h(0) = 1/\\pi \\approx 0.318$ (D false). The $t_1$ density has heavier tails: $h > g$ for $|y| > c$, where $c \\approx 1.851$.\n\nComparing left-tail areas gives $G(-c) \\approx 0.032 < H(-c) \\approx 0.158$ (C true). By symmetry $G(c) \\approx 0.968 > H(c) \\approx 0.842$ (B false). **(A), (C)**",
+    "steps": [
+      {
+        "title": "The two densities",
+        "body": "Standard normal:\n\n$$\ng(z) = \\frac{1}{\\sqrt{2\\pi}}\\, e^{-z^2/2}.\n$$\n\nThe $t_\\nu$ density is $\\dfrac{\\Gamma\\left(\\frac{\\nu+1}{2}\\right)}{\\sqrt{\\nu\\pi}\\,\\Gamma\\left(\\frac{\\nu}{2}\\right)}\\left(1 + \\dfrac{y^2}{\\nu}\\right)^{-(\\nu+1)/2}$. With $\\nu = 1$, $\\Gamma(1) = 1$ and $\\Gamma(\\tfrac12) = \\sqrt{\\pi}$, so\n\n$$\nh(y) = \\frac{1}{\\pi(1 + y^2)}, \\qquad H(y) = \\frac{1}{2} + \\frac{\\arctan y}{\\pi}.\n$$\n\nThis is the standard Cauchy distribution. Both $g$ and $h$ are even functions, so\n\n$$\nG(-x) = 1 - G(x), \\qquad H(-x) = 1 - H(x) \\quad \\text{for every } x.\n$$"
+      },
+      {
+        "title": "Statements (A) and (D): values at 0",
+        "body": "By symmetry, half of each distribution lies below 0: $G(0) = H(0) = \\tfrac{1}{2}$. So **(A) is true**.\n\nThe peak heights, however, differ:\n\n$$\ng(0) = \\frac{1}{\\sqrt{2\\pi}} \\approx 0.3989, \\qquad h(0) = \\frac{1}{\\pi} \\approx 0.3183.\n$$\n\nSo **(D) is false**. The normal is taller in the middle."
+      },
+      {
+        "title": "Where the densities cross",
+        "body": "Compare the two densities through their ratio:\n\n$$\n\\frac{g(y)}{h(y)} = \\sqrt{\\frac{\\pi}{2}}\\,(1 + y^2)\\,e^{-y^2/2}.\n$$\n\nLet $r(y) = (1 + y^2)e^{-y^2/2}$. Then $r'(y) = y(1 - y^2)e^{-y^2/2}$, so for $y > 0$ the ratio rises on $(0, 1)$ and falls on $(1, \\infty)$.\n\n- At $y = 0$ the ratio is $\\sqrt{\\pi/2} \\approx 1.2533 > 1$.\n- At $y = 1$ it peaks at $\\sqrt{\\pi/2}\\cdot 2e^{-1/2} \\approx 1.5203$.\n- As $y \\to \\infty$ it tends to $0$.\n\nSo the ratio equals 1 at exactly one positive point, the $c$ of the question. Numerically $c \\approx 1.8512$ and $g(c) = h(c) \\approx 0.0719$. Moreover\n\n$$\ng(y) > h(y) \\text{ for } |y| < c, \\qquad g(y) < h(y) \\text{ for } |y| > c.\n$$\n\nThe $t_1$ density has the heavier tails."
+      },
+      {
+        "title": "Statement (C): the left tail",
+        "body": "A CDF is the area to the left:\n\n$$\nG(-c) = \\int_{-\\infty}^{-c} g(y)\\,dy \\;<\\; \\int_{-\\infty}^{-c} h(y)\\,dy = H(-c),\n$$\n\nbecause $g < h$ at every point of $(-\\infty, -c)$. Numerically $G(-c) \\approx 0.0321$ and $H(-c) = \\tfrac12 - \\tfrac{\\arctan c}{\\pi} \\approx 0.1577$. So **(C) is true**."
+      },
+      {
+        "title": "Statement (B): the right side, by symmetry",
+        "body": "Using $G(c) = 1 - G(-c)$ and $H(c) = 1 - H(-c)$:\n\n$$\nG(c) = 1 - G(-c) \\;>\\; 1 - H(-c) = H(c).\n$$\n\nNumerically $G(c) \\approx 0.9679$ and $H(c) \\approx 0.8423$. Equivalently, $G(c) - H(c) = \\int_0^c \\big(g(y) - h(y)\\big)\\,dy > 0$, since $g > h$ on $(0, c)$. So $G(c) < H(c)$ is false, and **(B) is false**.\n\n| Statement | Value(s) | Verdict |\n| --- | --- | --- |\n| (A) $G(0) = H(0)$ | $0.5 = 0.5$ | true |\n| (B) $G(c) < H(c)$ | $0.9679$ vs $0.8423$ | false |\n| (C) $G(-c) < H(-c)$ | $0.0321$ vs $0.1577$ | true |\n| (D) $g(0) = h(0)$ | $0.3989$ vs $0.3183$ | false |\n\n**Answer: (A), (C).**"
+      }
+    ],
+    "finalAnswer": "**(A), (C)**",
+    "teaching": "**The t distribution.** If $Z \\sim N(0, 1)$ and $V \\sim \\chi^2_\\nu$ are independent, then $T = Z / \\sqrt{V/\\nu}$ has a $t_\\nu$ distribution with $\\nu$ degrees of freedom. Dividing by a *random* scale makes extreme values more likely. So a $t$ density is bell-shaped and symmetric about 0 like the normal, but **lower in the middle and heavier in the tails**. As $\\nu \\to \\infty$ it approaches $N(0, 1)$. The extreme case $\\nu = 1$ is the Cauchy distribution, $h(y) = 1/(\\pi(1+y^2))$. Its tails decay so slowly that it has no mean.\n\n**Two symmetric densities with equal area.** Both $g$ and $h$ integrate to 1. If $g$ is taller at the centre, it must be shorter somewhere else, and here that is in the tails. So the curves cross at $\\pm c$. Inside $(-c, c)$ the normal is higher, and outside it the $t_1$ density is higher.\n\n**Reading CDFs as areas.** $F(x)$ is the area under the density to the left of $x$. For a density symmetric about 0, $F(0) = \\tfrac12$ and $F(-x) = 1 - F(x)$. When comparing two CDFs, compare the areas, not the heights at a single point.\n\n- For $x < 0$, the area to the left is a left tail, and the heavier-tailed distribution has more of it. In fact $G(x) < H(x)$ for **every** $x < 0$. For $x \\le -c$ this is pointwise ($g < h$ throughout). For $-c < x < 0$, use $G(x) - H(x) = -\\int_x^0 (g - h) < 0$, which holds because both CDFs equal $\\tfrac12$ at 0.\n- For $x > 0$ the inequality flips by symmetry: $G(x) > H(x)$.\n- The CDFs meet only at $x = 0$.\n\n**Back to this question.** At 0 the CDFs agree (A true) but the densities do not (D false). At $-c$ the heavy-tailed $t_1$ has the larger CDF (C true). At $+c$ the normal has the larger CDF, so (B) is false.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Both distributions are symmetric about 0, so each puts probability $\\tfrac12$ below 0: $G(0) = H(0) = \\tfrac12$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$G(c) = 1 - G(-c)$ and $H(c) = 1 - H(-c)$. Since $G(-c) < H(-c)$, it follows that $G(c) > H(c)$ (about $0.9679$ vs $0.8423$). The normal has less mass in the right tail beyond $c$, so it has *more* mass to the left of $c$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "On $(-\\infty, -c)$ the $t_1$ density is above the normal density at every point (heavier tail). Integrating gives $G(-c) < H(-c)$, about $0.0321$ vs $0.1577$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$g(0) = 1/\\sqrt{2\\pi} \\approx 0.3989$ while $h(0) = 1/\\pi \\approx 0.3183$. The normal has the higher peak."
+      }
+    ],
+    "shortcut": "Heavier tails mean more probability in each tail. At any negative point the $t_1$ CDF is larger (C true), and at any positive point the normal CDF is larger (B false). Both are symmetric, so both CDFs equal $\\tfrac12$ at 0 (A true). The peak heights are $1/\\sqrt{2\\pi} \\approx 0.40$ and $1/\\pi \\approx 0.32$ (D false). The value of $c$ is never needed.",
+    "commonTrap": "Reasoning from the density heights at the point $c$ instead of from areas. Since $h > g$ beyond $c$, a student may conclude $H(c) > G(c)$ and mark (B). But a CDF is the area to the *left*. The extra right-tail mass of $t_1$ makes $H(c)$ *smaller* than $G(c)$. Another slip is assuming $g(c) = h(c)$ forces $G(c) = H(c)$: equal heights at one point say nothing about the areas."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q28-1.webp",
+    "/pyq/2026/official/Q28-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. 'Normal' is set in math italics in the paper and is transcribed as \\mathit{Normal}. The subscript in t_1 and the exponent in sigma^2 were taken from the rendered image (the PDF text layer flattens them). The only embedded image in the region is the page background with the GATE 2026 watermark, and no figure is needed. The second official crop (Q28-2) shows only the header and table border of the next page."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;C",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom scipy import stats, optimize\ng, G = stats.norm.pdf, stats.norm.cdf\nh, H = stats.t(1).pdf, stats.t(1).cdf              # t_1 = standard Cauchy: h(y) = 1/(pi(1+y^2))\nc = optimize.brentq(lambda y: g(y) - h(y), 0.5, 5)\nys = np.linspace(1e-6, 20, 200001); d = g(ys) - h(ys)\nprint('positive crossings:', ys[np.where(np.diff(np.sign(d)))[0]])   # exactly one, at c\nprint(f'c={c:.4f} g(c)={g(c):.4f} G(0)={G(0)} H(0)={H(0)} G(c)={G(c):.4f} H(c)={H(c):.4f} '\n      f'G(-c)={G(-c):.4f} H(-c)={H(-c):.4f} g(0)={g(0):.4f} h(0)={h(0):.4f}')\nres = dict(A=bool(np.isclose(G(0), H(0))), B=bool(G(c) < H(c)), C=bool(G(-c) < H(-c)),\n           D=bool(np.isclose(g(0), h(0))))\nprint(res); assert res == dict(A=True, B=False, C=True, D=False)   # -> A;C",
+    "notes": "t_1 is the standard Cauchy, h(y) = 1/(pi(1+y^2)). Both densities are symmetric, so G(0) = H(0) = 0.5 (A true); g(0) = 0.3989 != h(0) = 0.3183 (D false). The ratio g/h = sqrt(pi/2)(1+y^2)exp(-y^2/2) rises on (0,1) and falls on (1,inf), so there is exactly one positive crossing c = 1.8512, with g < h for |y| > c. Hence G(-c) = 0.0321 < H(-c) = 0.1577 (C true) and G(c) = 0.9679 > H(c) = 0.8423 (B false). The scipy check confirms a single positive crossing and these values. This matches official key A;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

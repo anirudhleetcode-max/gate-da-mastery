@@ -1,0 +1,632 @@
+[
+  {
+    "id": "M05-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (attribute closure to find candidate keys) needing only three short closure computations; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Finding all candidate keys with attribute closure when the FD set contains a cycle",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E)$ with the set of functional dependencies\n\n$$\nF = \\{\\, A \\to B,\\; B \\to C,\\; C \\to A,\\; D \\to E \\,\\}\n$$\n\nAssume that the only non-trivial functional dependencies that hold on $R$ are those implied by $F$.\n\nThe number of candidate keys of $R$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "$D$ appears on no right-hand side, so it is in every key, but $D^+ = \\{D, E\\}$ is not the whole schema. Adding any one of $A$, $B$, $C$ (which determine each other through the cycle) completes the closure.\nThe candidate keys are $AD$, $BD$ and $CD$, so the answer is **3**.",
+      "steps": [
+        {
+          "title": "Classify the attributes",
+          "body": "Look at where each attribute appears in $F$:\n\n- $D$ appears **only on a left-hand side**. Nothing can derive $D$, so $D$ must belong to every key.\n- $E$ appears **only on a right-hand side** ($D \\to E$). It is always derivable from $D$, so no minimal key contains $E$.\n- $A$, $B$, $C$ appear on both sides and form the cycle $A \\to B \\to C \\to A$."
+        },
+        {
+          "title": "Is D alone a key?",
+          "body": "$D^+ = \\{D, E\\}$ (only $D \\to E$ applies). This is not $\\{A, B, C, D, E\\}$, so $D$ alone is not a key and at least one of $A$, $B$, $C$ must be added."
+        },
+        {
+          "title": "Compute the closures of the two-attribute candidates",
+          "body": "- $(AD)^+$: $A \\to B$ adds $B$, $B \\to C$ adds $C$, $D \\to E$ adds $E$, giving $\\{A, B, C, D, E\\}$.\n- $(BD)^+$: $B \\to C$ adds $C$, $C \\to A$ adds $A$, $D \\to E$ adds $E$, giving the whole schema.\n- $(CD)^+$: $C \\to A$ adds $A$, $A \\to B$ adds $B$, $D \\to E$ adds $E$, giving the whole schema.\n- $(DE)^+ = \\{D, E\\}$, so $DE$ is not a key."
+        },
+        {
+          "title": "Check minimality and completeness",
+          "body": "Each of $AD$, $BD$, $CD$ is minimal: $D^+ = \\{D, E\\}$ and $A^+ = \\{A, B, C\\}$ (similarly for $B$ and $C$) are not the whole schema.\n\nEvery other superkey must contain $D$ and at least one of $A$, $B$, $C$, so it is a superset of one of these three and is not minimal. Hence $R$ has exactly **3** candidate keys: $AD$, $BD$, $CD$."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "teaching": "A **superkey** is a set of attributes whose values identify a tuple uniquely; formally, a set $X$ with $X^+ = R$, where the closure $X^+$ is everything you can derive from $X$ by repeatedly applying the FDs. A **candidate key** is a *minimal* superkey: removing any attribute from it breaks the superkey property.\n\nA fast way to organise the search is to classify attributes. An attribute that never appears on a right-hand side cannot be derived from anything else, so it must be in every key. An attribute that appears only on right-hand sides is always derivable, so it is never in a minimal key. Only the \"both sides\" attributes need trial and error.\n\nHere $D$ is compulsory and $E$ is excluded. The cycle $A \\to B \\to C \\to A$ makes $A$, $B$ and $C$ mutually derivable, so any one of them can complete the key. That gives three different minimal keys, $AD$, $BD$ and $CD$, which is why cycles in an FD set often produce several candidate keys.",
+      "shortcut": "Put every \"left-side-only\" attribute ($D$) into the key and drop every \"right-side-only\" attribute ($E$). In a cycle of single-attribute FDs, any one attribute of the cycle can stand in for the others, so the number of keys equals the cycle length, here 3.",
+      "commonTrap": "Stopping after finding $AD$ and answering 1, which misses that the cycle makes $A$, $B$ and $C$ interchangeable. Another mistake is counting superkeys such as $ABD$ or $ADE$, which are not minimal, as candidate keys."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3 (candidate keys AD, BD, CD)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nR='ABCDE'; F=[('A','B'),('B','C'),('C','A'),('D','E')]\ndef cl(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nks=[]\nfor k in range(1,6):\n    for c in combinations(R,k):\n        if cl(c)==set(R) and not any(set(x)<=set(c) for x in ks): ks.append(c)\nprint(ks, len(ks))  # [('A','D'),('B','D'),('C','D')] 3",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-indexing",
+      "dbw-file-organization"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (sparse primary versus dense secondary index) plus a single blocking-factor computation; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Number of entries in a sparse primary index versus a dense secondary index",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A telecom operator stores 30,000 call-detail records in a file that is kept sorted on the primary key `call_id`. Each record is 160 bytes long, the disk block size is 4096 bytes, and records are **not** spanned across blocks.\n\nTwo indexes are built on this file:\n\n- a sparse primary index on `call_id` that stores one index entry for each data block, and\n- a secondary index on `imei_hash`, an attribute whose value is unique for every record but on which the file is **not** ordered.\n\nThe numbers of index entries in the primary index and in the secondary index, respectively, are",
+    "options": [
+      {
+        "label": "A",
+        "text": "1200 and 30000"
+      },
+      {
+        "label": "B",
+        "text": "1172 and 30000"
+      },
+      {
+        "label": "C",
+        "text": "1200 and 1200"
+      },
+      {
+        "label": "D",
+        "text": "30000 and 1200"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Blocking factor $= \\lfloor 4096/160 \\rfloor = 25$, so the file occupies $30000/25 = 1200$ blocks and the sparse primary index has **1200** entries.\nThe file is not ordered on `imei_hash`, so the secondary index must be dense: one entry per record, **30000** entries. Answer: **(A)**.",
+      "steps": [
+        {
+          "title": "Blocking factor (unspanned records)",
+          "body": "With unspanned records, a block holds only whole records:\n\n$$\n\\text{bfr} = \\left\\lfloor \\frac{4096}{160} \\right\\rfloor = \\lfloor 25.6 \\rfloor = 25 \\text{ records per block}\n$$\n\n($25 \\times 160 = 4000$ bytes are used; the remaining 96 bytes of each block are wasted.)"
+        },
+        {
+          "title": "Number of data blocks",
+          "body": "$$\nb = \\left\\lceil \\frac{30000}{25} \\right\\rceil = 1200 \\text{ blocks}\n$$"
+        },
+        {
+          "title": "Entries in the sparse primary index",
+          "body": "The file is sorted on `call_id`, so one entry per block (the block's first key, its *anchor*) is enough to locate any record: search the index for the largest anchor $\\le$ the target key, then scan that block. Number of entries $=$ number of blocks $= 1200$."
+        },
+        {
+          "title": "Entries in the secondary index",
+          "body": "The file is **not** ordered on `imei_hash`, so records with nearby `imei_hash` values are scattered across blocks. An anchor entry would say nothing about the other values stored in that block, so a secondary index must be **dense**: one entry per distinct value. Because `imei_hash` is unique, that is one entry per record, $30000$ entries."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Primary index: 1200 entries; secondary index: 30000 entries. The answer is **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "An index is a small sorted file of (key, pointer) pairs that saves scanning the whole data file. Whether an index can be **sparse** depends on how the data file is ordered.\n\nWhen the file is physically sorted on the indexed field, as with a primary index on `call_id`, the records inside each block are in key order. Storing only the first key of each block (its anchor) therefore tells you exactly which block to read, so the index needs one entry per block. That number depends on the **blocking factor**, $\\lfloor B/R \\rfloor$ for unspanned records.\n\nA secondary index is on a field the file is *not* sorted by. Values are scattered, so every value needs its own pointer and the index is **dense**. For a unique field that means one entry per record.\n\nHere the primary index shrinks 30,000 records to 1200 entries, while the secondary index keeps all 30,000.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. $\\lfloor 4096/160 \\rfloor = 25$ records per block gives 1200 blocks, so the sparse primary index has 1200 entries, and the dense secondary index on a unique field has 30000 entries."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $1172 \\approx 30000/25.6$ uses the fractional blocking factor $4096/160 = 25.6$, which is valid only if records may span blocks. The stem says records are unspanned, so the blocking factor is $\\lfloor 25.6 \\rfloor = 25$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This treats the secondary index as sparse. A sparse index works only on the field the file is sorted by; on the unordered `imei_hash` field every record needs its own entry."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This swaps the two: it makes the primary index dense and the secondary index sparse, which is the opposite of what the file ordering allows."
+        }
+      ],
+      "commonTrap": "Dividing $4096/160 = 25.6$ without taking the floor (that assumes spanned records), or assuming that a secondary index can be sparse just like the primary index."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "Primary 1200 entries, secondary 30000 entries -> (A)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nbfr=4096//160            # 25 (unspanned)\nblocks=math.ceil(30000/bfr)  # 1200\nprint(bfr, blocks, 30000)    # primary=1200 (one per block), secondary dense=30000",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-transformation"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked normalization formulas (min–max to a non-standard range and z-score with population standard deviation), each with routine 2–3 step arithmetic; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Min–max normalization to a general range [new_min, new_max] and z-score normalization",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An e-commerce analyst records the delivery time (in hours) of five orders:\n\n$$\n34,\\quad 38,\\quad 40,\\quad 42,\\quad 46\n$$\n\nThe value $42$ is transformed in two separate ways:\n\n1. min–max normalization to the new range $[-1,\\ 1]$, using the minimum and maximum of the five values;\n2. z-score normalization, using the mean and the **population** standard deviation (divisor $n$) of the five values.\n\nThe pair (min–max value, z-score), with each entry rounded off to two decimal places, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(0.67,\\ 0.50)$"
+      },
+      {
+        "label": "B",
+        "text": "$(0.33,\\ 0.45)$"
+      },
+      {
+        "label": "C",
+        "text": "$(0.33,\\ 0.50)$"
+      },
+      {
+        "label": "D",
+        "text": "$(1.33,\\ 0.50)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Min–max: $\\dfrac{42-34}{46-34}\\times(1-(-1)) + (-1) = \\dfrac{8}{12}\\times 2 - 1 = 0.33$.\nz-score: mean $= 40$, population variance $= 80/5 = 16$, so $\\sigma = 4$ and $z = (42-40)/4 = 0.50$. Answer: **(C)**.",
+      "steps": [
+        {
+          "title": "Min–max formula",
+          "body": "$$\nv' = \\frac{v - \\min}{\\max - \\min}\\,(\\text{new\\_max} - \\text{new\\_min}) + \\text{new\\_min}\n$$\n\nHere $\\min = 34$, $\\max = 46$, $\\max - \\min = 12$, $\\text{new\\_min} = -1$, $\\text{new\\_max} = 1$."
+        },
+        {
+          "title": "Min–max value of 42",
+          "body": "$$\nv' = \\frac{42 - 34}{12}\\times(1 - (-1)) + (-1) = \\frac{8}{12}\\times 2 - 1 = 1.3333 - 1 = 0.3333 \\approx 0.33\n$$"
+        },
+        {
+          "title": "Mean and population standard deviation",
+          "body": "$\\bar{x} = (34 + 38 + 40 + 42 + 46)/5 = 200/5 = 40$.\n\nDeviations: $-6, -2, 0, 2, 6$; squares: $36, 4, 0, 4, 36$; sum $= 80$.\n\nPopulation variance $= 80/5 = 16$, so $\\sigma = 4$."
+        },
+        {
+          "title": "z-score of 42",
+          "body": "$$\nz = \\frac{42 - 40}{4} = 0.50\n$$"
+        },
+        {
+          "title": "Conclusion",
+          "body": "The pair is $(0.33,\\ 0.50)$, which is option **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Attributes measured on different scales (hours, rupees, counts) can distort distance-based methods such as k-NN or k-means, so they are rescaled first.\n\n**Min–max normalization** is a straight-line map from $[\\min, \\max]$ onto a chosen interval $[\\text{new\\_min}, \\text{new\\_max}]$. First find the value's relative position $p = (v - \\min)/(\\max - \\min) \\in [0, 1]$, then stretch it by the new width and shift it to the new start: $v' = p\\,(\\text{new\\_max} - \\text{new\\_min}) + \\text{new\\_min}$. It keeps the relative spacing of the values but depends heavily on the two extremes, so an outlier squashes everything else.\n\n**z-score normalization** centres the data at 0 and measures each value in standard deviations: $z = (v - \\bar{x})/\\sigma$. The result is unbounded and less sensitive to one extreme value. Whether $\\sigma$ uses divisor $n$ (population) or $n - 1$ (sample) must be stated, since the two give different values.\n\nFor 42: $p = 2/3$, so $v' = 2(2/3) - 1 = 1/3$, and $z = 2/4 = 0.5$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $0.67 = 8/12$ is the min–max value for the range $[0, 1]$; it has not been stretched and shifted onto $[-1, 1]$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. The z-score $0.45$ uses the sample standard deviation $\\sqrt{80/4} = \\sqrt{20} \\approx 4.47$, giving $2/4.47 \\approx 0.45$. The stem asks for the population standard deviation ($\\sigma = 4$)."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. Min–max gives $(8/12)\\times 2 - 1 = 0.33$ and the z-score is $(42 - 40)/4 = 0.50$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $1.33 = (8/12)\\times 2$ is stretched to the new width but never shifted by $\\text{new\\_min} = -1$."
+        }
+      ],
+      "shortcut": "For a target range $[-1, 1]$, $v' = 2p - 1$, where $p$ is the $[0, 1]$ position. Here $p = 8/12 = 2/3$, so $v' = 1/3 \\approx 0.33$.",
+      "commonTrap": "Forgetting to add $\\text{new\\_min}$ (giving 1.33) or stopping at the $[0, 1]$ value (0.67). For the z-score, dividing by $n - 1$ instead of $n$ gives 0.45."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "min-max = 0.3333 -> 0.33; z = 0.5 -> (C)",
+      "agreesWithKey": true,
+      "checkCode": "import statistics as st\nv=[34,38,40,42,46]; x=42\nmm=(x-min(v))/(max(v)-min(v))*(1-(-1))+(-1)\nz=(x-st.mean(v))/st.pstdev(v)\nprint(round(mm,2), round(z,2))  # 0.33 0.5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-concept-hierarchies",
+      "dbw-multidimensional-schema"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (aggregation levels defined by concept hierarchies) applied in 2–3 steps, with a lattice-shaped hierarchy as the twist; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Counting cuboids of a data cube when each dimension has a concept hierarchy (including a lattice)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retail chain's data warehouse has a sales cube with three dimensions. Their concept hierarchies are:\n\n- **time**: day $<$ month $<$ quarter $<$ year (a total order);\n- **store**: store $<$ city $<$ state (a total order);\n- **product**: SKU $<$ brand and SKU $<$ category, where brand and category are **not** ordered relative to each other (a brand sells products in several categories, and a category contains products of several brands).\n\nA cuboid is obtained by choosing, independently for each dimension, exactly one of that dimension's hierarchy levels listed above, or the special level *all* (the dimension is fully aggregated).\n\nThe total number of cuboids in the cube, including the base cuboid and the apex cuboid, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "8"
+      },
+      {
+        "label": "B",
+        "text": "36"
+      },
+      {
+        "label": "C",
+        "text": "60"
+      },
+      {
+        "label": "D",
+        "text": "80"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Each dimension offers (number of hierarchy levels $+ 1$) choices, the extra one being *all*: time $4 + 1 = 5$, store $3 + 1 = 4$, product $3 + 1 = 4$ (SKU, brand, category, all).\nTotal $= 5 \\times 4 \\times 4 = 80$. Answer: **(D)**.",
+      "steps": [
+        {
+          "title": "Counting rule",
+          "body": "A cuboid picks one aggregation level per dimension, independently. If dimension $i$ offers $L_i$ hierarchy levels, it offers $L_i + 1$ choices (including *all*), so\n\n$$\n\\text{number of cuboids} = \\prod_{i} (L_i + 1)\n$$"
+        },
+        {
+          "title": "Choices for time and store",
+          "body": "- time: day, month, quarter, year, *all*, which is $5$ choices.\n- store: store, city, state, *all*, which is $4$ choices."
+        },
+        {
+          "title": "Choices for product (lattice)",
+          "body": "The product hierarchy is a lattice, not a chain: SKU rolls up to brand **and** to category, but brand and category are incomparable. Each of them is still a separate level you can group by, so the choices are SKU, brand, category, *all*, which is $4$ choices. The branching changes the *shape* of the hierarchy, not the number of available levels."
+        },
+        {
+          "title": "Multiply",
+          "body": "$$\n5 \\times 4 \\times 4 = 80\n$$\n\nThis includes the base cuboid (day, store, SKU) and the apex cuboid (all, all, all). The answer is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A **concept hierarchy** orders the values of a dimension from fine to coarse, for example day, month, quarter, year. It is what makes the OLAP operations possible: **roll-up** climbs the hierarchy (daily sales to monthly sales) and **drill-down** descends it.\n\nA hierarchy need not be a single chain. When one level rolls up along two unrelated paths (SKU to brand and SKU to category, or day to week and day to month), the hierarchy is a **lattice** (a partial order). Each node of the lattice is still a legal grouping level.\n\nA **cuboid** is one group-by of the fact table: pick one level for each dimension, or aggregate the dimension away completely (*all*). Without hierarchies each dimension has only two options (kept or aggregated), giving $2^n$ cuboids. With hierarchies, dimension $i$ contributes $L_i + 1$ options and the cube has $\\prod (L_i + 1)$ cuboids. Here that is $5 \\times 4 \\times 4 = 80$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $8 = 2^3$ is the cuboid count when the hierarchies are ignored and each dimension is only either kept at the base level or aggregated to *all*."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $36 = 4 \\times 3 \\times 3$ counts the hierarchy levels but forgets the extra *all* choice in each dimension, which drops every cuboid with an aggregated dimension, including the apex."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $60 = 5 \\times 4 \\times 3$ treats product as a two-level chain. Brand and category are separate levels, so product has 4 choices, not 3."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. $(4+1)(3+1)(3+1) = 5 \\times 4 \\times 4 = 80$."
+        }
+      ],
+      "commonTrap": "Forgetting the *all* level (giving 36), or assuming a branching (lattice) hierarchy has fewer usable levels than it actually has (giving 60)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "80 -> (D)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nlv={'time':['day','month','quarter','year'],'store':['store','city','state'],'product':['sku','brand','category']}\nprint(len(list(product(*[l+['all'] for l in lv.values()]))))  # 80",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-integrity-constraints"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (referential actions ON DELETE CASCADE / SET NULL) traced on a tiny instance with no calculation; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Propagation of a delete under ON DELETE CASCADE versus ON DELETE SET NULL",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A warehouse-management database has the following schema. All constraints are enforced.\n\n```sql\nCREATE TABLE Warehouse (wid CHAR(2) PRIMARY KEY);\nCREATE TABLE Shelf  (sid CHAR(2) PRIMARY KEY,\n                     wid CHAR(2) NOT NULL REFERENCES Warehouse(wid) ON DELETE CASCADE);\nCREATE TABLE Picker (pid CHAR(2) PRIMARY KEY,\n                     home_wid CHAR(2) REFERENCES Warehouse(wid) ON DELETE SET NULL);\nCREATE TABLE Pick   (pid CHAR(2) REFERENCES Picker(pid) ON DELETE CASCADE,\n                     sid CHAR(2) REFERENCES Shelf(sid)  ON DELETE CASCADE,\n                     PRIMARY KEY (pid, sid));\n```\n\nThe current instance is:\n\n**Warehouse**\n\n| wid |\n|---|\n| W1 |\n| W2 |\n| W3 |\n\n**Shelf**\n\n| sid | wid |\n|---|---|\n| S1 | W1 |\n| S2 | W1 |\n| S3 | W2 |\n| S4 | W3 |\n\n**Picker**\n\n| pid | home_wid |\n|---|---|\n| P1 | W1 |\n| P2 | W2 |\n| P3 | W1 |\n\n**Pick**\n\n| pid | sid |\n|---|---|\n| P1 | S1 |\n| P1 | S3 |\n| P2 | S2 |\n| P3 | S4 |\n| P2 | S3 |\n| P3 | S2 |\n\nThe statement `DELETE FROM Warehouse WHERE wid = 'W1';` is executed. The total number of rows deleted from the four tables together (counting the deleted `Warehouse` row itself) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "3"
+      },
+      {
+        "label": "B",
+        "text": "5"
+      },
+      {
+        "label": "C",
+        "text": "6"
+      },
+      {
+        "label": "D",
+        "text": "10"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Deleting W1 removes 1 Warehouse row, cascades to shelves S1 and S2 (2 rows), and from them to the Pick rows (P1,S1), (P2,S2), (P3,S2) (3 rows).\nPickers P1 and P3 only get `home_wid = NULL` and are not deleted. Total $= 1 + 2 + 3 = 6$. Answer: **(C)**.",
+      "steps": [
+        {
+          "title": "Delete the Warehouse row",
+          "body": "Row `W1` is removed from **Warehouse**: 1 row."
+        },
+        {
+          "title": "Shelf: ON DELETE CASCADE",
+          "body": "Shelves referencing W1 are deleted: `S1` and `S2`, 2 rows. `S3` (W2) and `S4` (W3) remain."
+        },
+        {
+          "title": "Picker: ON DELETE SET NULL",
+          "body": "Pickers `P1` and `P3` referenced W1. With SET NULL their `home_wid` becomes `NULL` and the rows **stay**: 0 rows deleted. Because no picker is deleted, nothing cascades from Picker into Pick."
+        },
+        {
+          "title": "Pick: cascade from the deleted shelves",
+          "body": "Pick rows whose `sid` is S1 or S2 are deleted: (P1, S1), (P2, S2), (P3, S2), 3 rows.\n\nRemaining Pick rows: (P1, S3), (P3, S4), (P2, S3)."
+        },
+        {
+          "title": "Total",
+          "body": "$1 + 2 + 0 + 3 = 6$ rows deleted. The answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "**Referential integrity** says every non-null foreign-key value must match an existing primary-key value in the referenced table. Deleting a referenced (parent) row would leave \"dangling\" children, so SQL lets each foreign key declare a **referential action** for that case:\n\n- `RESTRICT` / `NO ACTION`: reject the delete.\n- `CASCADE`: delete the referencing child rows too. Those deletions can in turn trigger their own children's actions, so a cascade can travel several levels.\n- `SET NULL`: keep the child row but set its foreign key to `NULL` (the column must be nullable).\n- `SET DEFAULT`: set the foreign key to its default value.\n\nThe key point is that SET NULL **stops** the chain: the child row survives, so nothing below it is touched. Here the delete travels Warehouse to Shelf to Pick through CASCADE, while the branch through Picker ends at the SET NULL.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. 3 counts only the Pick rows, or only Warehouse plus Shelf ($1 + 2$), missing the second-level cascade from Shelf into Pick."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. 5 counts the cascaded rows ($2$ shelves $+ 3$ picks) but forgets the deleted `W1` row itself, which the question says to include."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. $1$ (Warehouse) $+ 2$ (Shelf) $+ 0$ (Picker, SET NULL) $+ 3$ (Pick) $= 6$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. 10 treats SET NULL like CASCADE: it deletes P1 and P3 and then all their Pick rows, giving $1 + 2 + 2 + 5 = 10$. SET NULL keeps the picker rows."
+        }
+      ],
+      "commonTrap": "Treating `ON DELETE SET NULL` as if it deleted the pickers (and then their picks), or forgetting that the cascade continues from Shelf into Pick."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6 rows (Warehouse 1, Shelf 2, Picker 0, Pick 3) -> (C)",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\nc=sqlite3.connect(':memory:'); c.execute('PRAGMA foreign_keys=ON')\nc.executescript('''CREATE TABLE Warehouse(wid TEXT PRIMARY KEY);\nCREATE TABLE Shelf(sid TEXT PRIMARY KEY, wid TEXT NOT NULL REFERENCES Warehouse(wid) ON DELETE CASCADE);\nCREATE TABLE Picker(pid TEXT PRIMARY KEY, home_wid TEXT REFERENCES Warehouse(wid) ON DELETE SET NULL);\nCREATE TABLE Pick(pid TEXT REFERENCES Picker(pid) ON DELETE CASCADE, sid TEXT REFERENCES Shelf(sid) ON DELETE CASCADE, PRIMARY KEY(pid,sid));\nINSERT INTO Warehouse VALUES('W1'),('W2'),('W3');\nINSERT INTO Shelf VALUES('S1','W1'),('S2','W1'),('S3','W2'),('S4','W3');\nINSERT INTO Picker VALUES('P1','W1'),('P2','W2'),('P3','W1');\nINSERT INTO Pick VALUES('P1','S1'),('P1','S3'),('P2','S2'),('P3','S4'),('P2','S3'),('P3','S2');''')\nT=['Warehouse','Shelf','Picker','Pick']; n=lambda: sum(c.execute(f'select count(*) from {t}').fetchone()[0] for t in T)\nb=n(); c.execute(\"DELETE FROM Warehouse WHERE wid='W1'\"); print(b-n())  # 6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-sql"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (a correlated subquery evaluated per city and the NULL-ignoring semantics of AVG and of comparisons) with routine arithmetic over nine rows; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Correlated subquery with AVG over a column containing NULLs, and three-valued logic in WHERE",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The relation `Rides` stores trips completed on a ride-hailing app. A `NULL` in `rating` means the rider did not rate the trip.\n\n| ride_id | driver | city | fare | rating |\n|---|---|---|---|---|\n| 1 | Asha | Pune | 220 | 5 |\n| 2 | Bala | Pune | 180 | 3 |\n| 3 | Asha | Pune | 300 | NULL |\n| 4 | Chen | Pune | 150 | 4 |\n| 5 | Bala | Kochi | 400 | 4 |\n| 6 | Dev | Kochi | 260 | NULL |\n| 7 | Chen | Kochi | 310 | 2 |\n| 8 | Dev | Kochi | 190 | 5 |\n| 9 | Asha | Kochi | 280 | 3 |\n\nConsider the following SQL query:\n\n```sql\nSELECT SUM(r.fare)\nFROM Rides r\nWHERE r.rating > (SELECT AVG(r2.rating)\n                  FROM Rides r2\n                  WHERE r2.city = r.city);\n```\n\nThe value returned by the query is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 810,
+      "max": 810
+    },
+    "solution": {
+      "quick": "`AVG` ignores NULLs: Pune's average is $(5+3+4)/3 = 4$ and Kochi's is $(4+2+5+3)/4 = 3.5$. Rows with a NULL rating fail the comparison.\nQualifying rows are ride 1 (Pune, 220), ride 5 (Kochi, 400) and ride 8 (Kochi, 190), so the sum is $220 + 400 + 190 = $ **810**.",
+      "steps": [
+        {
+          "title": "Understand the query",
+          "body": "The subquery is **correlated**: for each outer row `r` it computes the average rating of *that row's city*. The outer row is kept if its own rating is strictly greater than this city average, and the fares of the kept rows are summed.\n\nTwo NULL rules matter:\n\n- `AVG(rating)` ignores NULLs (it divides by the number of non-NULL ratings).\n- `NULL > x` evaluates to UNKNOWN, and `WHERE` keeps only TRUE rows, so unrated trips are never selected."
+        },
+        {
+          "title": "City averages",
+          "body": "- Pune: ratings $5, 3, \\text{NULL}, 4$, so $\\text{AVG} = (5 + 3 + 4)/3 = 12/3 = 4.0$.\n- Kochi: ratings $4, \\text{NULL}, 2, 5, 3$, so $\\text{AVG} = (4 + 2 + 5 + 3)/4 = 14/4 = 3.5$."
+        },
+        {
+          "title": "Filter Pune rows (rating > 4.0)",
+          "body": "Ride 1 (rating 5) qualifies. Ride 2 (3) and ride 4 (4, not strictly greater) fail, and ride 3 (NULL) is UNKNOWN.\n\nPune contribution: $220$."
+        },
+        {
+          "title": "Filter Kochi rows (rating > 3.5)",
+          "body": "Ride 5 (rating 4, fare 400) and ride 8 (rating 5, fare 190) qualify. Ride 7 (2) and ride 9 (3) fail, and ride 6 (NULL) is UNKNOWN.\n\nKochi contribution: $400 + 190 = 590$."
+        },
+        {
+          "title": "Sum",
+          "body": "$$\n220 + 590 = 810\n$$"
+        }
+      ],
+      "finalAnswer": "**810**",
+      "teaching": "SQL uses **three-valued logic**: a comparison involving `NULL` is neither TRUE nor FALSE but UNKNOWN, and a `WHERE` clause keeps a row only when its condition is TRUE. So an unrated trip can never satisfy `rating > ...`.\n\nAggregate functions other than `COUNT(*)` **skip NULLs**. `AVG(rating)` is therefore `SUM(rating) / COUNT(rating)` over the rated trips only; it does not treat a missing rating as 0. (`COUNT(*)` counts rows, `COUNT(rating)` counts non-NULL ratings.)\n\nA **correlated subquery** refers to a column of the outer query (`r.city`), so conceptually it is re-evaluated for every outer row. In effect it compares each trip with the average of its own group, much like a per-city benchmark.\n\nHere that gives Pune an average of 4 and Kochi an average of 3.5. Only three trips beat their city's benchmark, and their fares add up to 810.",
+      "commonTrap": "Treating NULL ratings as 0 inside `AVG` (Pune average 3, Kochi average 2.8), which lets rides 4 and 9 in and gives 1240. Another mistake is ignoring the correlation and using one overall average ($26/7 \\approx 3.71$), which gives 960."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "810",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\nc=sqlite3.connect(':memory:')\nc.execute('CREATE TABLE Rides(ride_id INT, driver TEXT, city TEXT, fare INT, rating INT)')\nc.executemany('INSERT INTO Rides VALUES(?,?,?,?,?)',[(1,'Asha','Pune',220,5),(2,'Bala','Pune',180,3),(3,'Asha','Pune',300,None),(4,'Chen','Pune',150,4),(5,'Bala','Kochi',400,4),(6,'Dev','Kochi',260,None),(7,'Chen','Kochi',310,2),(8,'Dev','Kochi',190,5),(9,'Asha','Kochi',280,3)])\nprint(c.execute('''SELECT SUM(r.fare) FROM Rides r WHERE r.rating > (SELECT AVG(r2.rating) FROM Rides r2 WHERE r2.city = r.city)''').fetchone()[0])  # 810",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (testing 2NF/3NF/BCNF against a single obvious candidate key) with three FDs to check; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Identifying the highest normal form: transitive dependency without partial dependency (2NF but not 3NF)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A college timetable is stored in the relation\n\n`Allotment(course_code, section, room, building, capacity)`\n\nEach (course_code, section) pair is allotted exactly one room, and each room lies in exactly one building and has a fixed seating capacity. The set of functional dependencies is\n\n- `course_code, section` → `room`\n- `room` → `building`\n- `room` → `capacity`\n\nAssume that all attribute values are atomic and that the only non-trivial functional dependencies holding on `Allotment` are those implied by the set above.\n\nThe highest normal form satisfied by `Allotment` is",
+    "options": [
+      {
+        "label": "A",
+        "text": "1NF but not 2NF"
+      },
+      {
+        "label": "B",
+        "text": "2NF but not 3NF"
+      },
+      {
+        "label": "C",
+        "text": "3NF but not BCNF"
+      },
+      {
+        "label": "D",
+        "text": "BCNF"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "The only candidate key is {course_code, section}. No proper part of it determines anything else, so there is no partial dependency and the relation is in 2NF.\nBut `room → building` has a non-superkey left side and a non-prime right side (a transitive dependency), so it violates 3NF. Answer: **(B)**.",
+      "steps": [
+        {
+          "title": "Find the candidate key",
+          "body": "`course_code` and `section` appear on no right-hand side, so both are in every key.\n\n$\\{\\text{course\\_code}, \\text{section}\\}^+$: first add `room`, then `building` and `capacity`, which gives all five attributes. So {course\\_code, section} is the **only** candidate key.\n\nPrime attributes: course\\_code, section. Non-prime: room, building, capacity."
+        },
+        {
+          "title": "2NF: look for partial dependencies",
+          "body": "A partial dependency is a non-prime attribute determined by a *proper subset* of a candidate key.\n\n$\\{\\text{course\\_code}\\}^+ = \\{\\text{course\\_code}\\}$ and $\\{\\text{section}\\}^+ = \\{\\text{section}\\}$, so neither determines any non-prime attribute. There is no partial dependency, so the relation **is in 2NF**."
+        },
+        {
+          "title": "3NF: check each FD",
+          "body": "For 3NF, each non-trivial FD $X \\to A$ needs $X$ to be a superkey **or** $A$ to be prime.\n\n- `course_code, section → room`: the left side is the key. OK.\n- `room → building`: $\\{\\text{room}\\}^+ = \\{\\text{room}, \\text{building}, \\text{capacity}\\}$, so room is not a superkey, and building is non-prime. **Violation.**\n- `room → capacity`: a violation for the same reason.\n\nSo the relation is **not in 3NF**, because the key determines room, which in turn determines building (a transitive dependency)."
+        },
+        {
+          "title": "Conclusion",
+          "body": "It is not in 3NF, so it is not in BCNF either. The highest normal form is **2NF**, which is option **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Normal forms are a ladder, and each rung removes one kind of redundancy.\n\n- **1NF**: every attribute value is atomic.\n- **2NF**: 1NF, plus no non-prime attribute depends on only *part* of a candidate key (no partial dependency). This matters only when some key is composite.\n- **3NF**: every non-trivial FD $X \\to A$ has $X$ a superkey or $A$ prime. This forbids **transitive** dependencies, key $\\to Y \\to A$ with $Y$ not a key.\n- **BCNF**: every non-trivial FD has a superkey on the left.\n\nThe procedure is to find all candidate keys, mark the prime attributes, and then test the FDs rung by rung.\n\nIn `Allotment`, room's building and capacity are repeated for every course section held in that room. That repetition comes from `room → building`, a transitive dependency, not a partial one. Decomposing into `Allotment(course_code, section, room)` and `Room(room, building, capacity)` removes it.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. 1NF but not 2NF would need a partial dependency, meaning a non-prime attribute determined by course\\_code alone or section alone. None exists. `room → building` is not partial, because room is not part of the key."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. There are no partial dependencies (so 2NF holds), but `room → building` and `room → capacity` are transitive dependencies with a non-superkey left side and a non-prime right side (so 3NF fails)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. 3NF would allow a non-superkey left side only if the right side were prime. building and capacity are non-prime, so the relation is not in 3NF at all."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. BCNF requires every determinant to be a superkey. room is not a superkey."
+        }
+      ],
+      "commonTrap": "Calling `room → building` a partial dependency (and answering 1NF) because its left side is \"smaller than the key\". A partial dependency needs the left side to be a proper subset of a candidate key, and room is not part of the key at all."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "Only key {course_code, section}; no partial dependency; room -> building violates 3NF -> 2NF, (B)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nR=['cc','sec','room','bldg','cap']; F=[(('cc','sec'),('room',)),(('room',),('bldg',)),(('room',),('cap',))]\ndef cl(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nK=[]\nfor k in range(1,6):\n    for c in combinations(R,k):\n        if cl(c)==set(R) and not any(set(x)<=set(c) for x in K): K.append(c)\nP=set().union(*map(set,K))\npartial=any(set(s)<set(k) and (cl(s)-P-set(s)) for k in K for n in range(1,len(k)) for s in combinations(k,n))\nnf3=all(cl(l)==set(R) or set(r)<=P for l,r in F)\nprint(K, 'partial:',partial, '3NF:',nf3)  # [('cc','sec')] partial: False 3NF: False -> 2NF",
+      "notes": ""
+    }
+  }
+]

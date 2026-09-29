@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q20",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 20,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-naive-bayes"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the conditional-independence assumption of naive Bayes) settled by a single counting step (one class prior plus one Bernoulli parameter per attribute per class), about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Given a dataset with $K$ binary-valued attributes (where $K > 2$) for a two-class classification task, the number of parameters to be estimated for learning a naïve Bayes classifier is",
+  "options": [
+    {
+      "label": "A",
+      "text": "$2^K + 1$"
+    },
+    {
+      "label": "B",
+      "text": "$2K + 1$"
+    },
+    {
+      "label": "C",
+      "text": "$2^{K+1} + 1$"
+    },
+    {
+      "label": "D",
+      "text": "$K^2 + 1$"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Naive Bayes assumes the attributes are conditionally independent given the class, so it needs only the class prior $P(Y=1)$ (**1** parameter) and one Bernoulli parameter $P(X_j = 1 \\mid Y = c)$ for each of the $K$ attributes in each of the 2 classes (**$2K$** parameters). Total $2K + 1$, option **(B)**.",
+    "steps": [
+      {
+        "title": "What a naive Bayes classifier has to learn",
+        "body": "Let the class be $Y \\in \\{0, 1\\}$ and the attributes be $X_1, \\dots, X_K$, each taking the value 0 or 1. Naive Bayes predicts\n\n$$\n\\hat{y} = \\arg\\max_{c \\in \\{0,1\\}} \\; P(Y = c) \\prod_{j=1}^{K} P(X_j = x_j \\mid Y = c).\n$$\n\nThe product form comes from the **naive** assumption: given the class, the attributes are conditionally independent. So the model is fully specified by\n\n1. the class prior $P(Y = c)$, and\n2. for every class $c$ and every attribute $j$, the one-attribute distribution $P(X_j \\mid Y = c)$.\n\nA \"parameter to be estimated\" is a **free** number: a probability that is forced by the others (because a distribution sums to 1) is not counted."
+      },
+      {
+        "title": "Count the class-prior parameters",
+        "body": "There are two classes. Write $P(Y = 1) = \\pi$. Then $P(Y = 0) = 1 - \\pi$ is determined by $\\pi$.\n\nClass prior: **1** free parameter."
+      },
+      {
+        "title": "Count the class-conditional parameters",
+        "body": "Each $X_j$ is binary, so its distribution within class $c$ is a Bernoulli distribution with one number:\n\n$$\n\\theta_{jc} = P(X_j = 1 \\mid Y = c), \\qquad P(X_j = 0 \\mid Y = c) = 1 - \\theta_{jc}.\n$$\n\nThere is one such $\\theta_{jc}$ for every pair (attribute $j$, class $c$):\n\n$$\n\\underbrace{K}_{\\text{attributes}} \\times \\underbrace{2}_{\\text{classes}} = 2K \\text{ free parameters}.\n$$\n\nIn training, each is simply a relative frequency, e.g. $\\hat{\\theta}_{jc} = \\dfrac{\\#\\{\\text{class-}c \\text{ examples with } X_j = 1\\}}{\\#\\{\\text{class-}c \\text{ examples}\\}}$."
+      },
+      {
+        "title": "Add up and check against the options",
+        "body": "$$\n\\text{total} = \\underbrace{1}_{\\text{prior}} + \\underbrace{2K}_{\\text{conditionals}} = 2K + 1.\n$$\n\nFor example, with $K = 3$ the model needs $\\pi$ and $\\theta_{10}, \\theta_{20}, \\theta_{30}, \\theta_{11}, \\theta_{21}, \\theta_{31}$, which is $7 = 2 \\cdot 3 + 1$ parameters. The options evaluate as follows:\n\n| $K$ | (A) $2^K + 1$ | (B) $2K + 1$ | (C) $2^{K+1} + 1$ | (D) $K^2 + 1$ |\n|---|---|---|---|---|\n| 3 | 9 | **7** | 17 | 10 |\n| 4 | 17 | **9** | 33 | 17 |\n| 10 | 1025 | **21** | 2049 | 101 |\n\nOnly (B) matches the count for every $K$. At $K = 2$, options (A), (B) and (D) would all equal 5; the stated condition $K > 2$ keeps the options distinct."
+      },
+      {
+        "title": "Contrast: what the count would be without the naive assumption",
+        "body": "Without conditional independence, the classifier would need the full joint distribution of $(X_1, \\dots, X_K)$ within each class. That distribution has $2^K$ outcomes, hence $2^K - 1$ free parameters per class, and the total becomes\n\n$$\n1 + 2\\,(2^K - 1) = 2^{K+1} - 1.\n$$\n\nThis grows exponentially in $K$ (for $K = 10$ it is 2047). The naive assumption cuts it to the linear count $2K + 1$ (21 for $K = 10$), which is exactly why naive Bayes can be trained from little data. Hence the answer is **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)** $2K + 1$",
+    "teaching": "**Naive Bayes in one line.** Bayes' theorem says $P(Y = c \\mid \\mathbf{x}) \\propto P(Y = c)\\,P(\\mathbf{x} \\mid Y = c)$. The hard part is the class-conditional distribution $P(\\mathbf{x} \\mid Y = c)$ of the whole attribute vector. Naive Bayes makes one simplifying assumption: **given the class, the attributes are independent**, so\n\n$$\nP(\\mathbf{x} \\mid Y = c) = \\prod_{j=1}^{K} P(x_j \\mid Y = c).\n$$\n\nInstead of one big joint distribution per class, you learn $K$ small one-attribute distributions per class.\n\n**How to count parameters.** A distribution over $r$ possible values has $r - 1$ free parameters, because the probabilities must add up to 1. So:\n\n- a class variable with $C$ classes contributes $C - 1$ parameters;\n- an attribute with $r_j$ values contributes $r_j - 1$ parameters **per class**.\n\nGeneral formula for naive Bayes with discrete attributes:\n\n$$\n(C - 1) + C \\sum_{j=1}^{K} (r_j - 1).\n$$\n\nCompare this with the model without the independence assumption, which needs $(C-1) + C\\left(\\prod_j r_j - 1\\right)$ parameters: exponential in $K$ instead of linear. This reduction is the whole point of the \"naive\" assumption. It also explains why naive Bayes works reasonably well on small training sets: each parameter is a simple frequency estimated from all examples of one class.\n\n**Back to this question.** Here $C = 2$ and every $r_j = 2$ (binary attributes), so the count is $(2 - 1) + 2 \\cdot K \\cdot (2 - 1) = 2K + 1$, which is option (B). The distractors $2^K + 1$ and $2^{K+1} + 1$ carry the exponential flavour of the full joint model, which is precisely what naive Bayes avoids.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$2^K$ is the number of possible attribute vectors, which belongs to modelling the **joint** distribution of the attributes, not to naive Bayes. The naive assumption makes the count linear in $K$. For $K = 3$ this option gives 9, but naive Bayes needs 7."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "One free class-prior parameter $P(Y = 1)$ plus one Bernoulli parameter $P(X_j = 1 \\mid Y = c)$ for each of the $K$ attributes in each of the 2 classes: $1 + 2K$. This matches the official key."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "This is close to the count for a full (non-naive) Bayes classifier, which needs $2^K - 1$ parameters per class for the joint distribution of the attributes: $1 + 2(2^K - 1) = 2^{K+1} - 1$. Naive Bayes does not model that joint distribution. For $K = 3$ this option gives 17, not 7."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "A $K^2$ term would arise from parameters for **pairs** of attributes (interactions or covariances). Naive Bayes assumes the attributes are conditionally independent given the class, so it has no pairwise terms. For $K = 3$ this option gives 10, not 7."
+      }
+    ],
+    "shortcut": "Free parameters of discrete naive Bayes $= (\\text{classes} - 1) + \\text{classes} \\times \\sum_j (\\text{values of } X_j - 1)$. With 2 classes and binary attributes: $1 + 2 \\cdot K \\cdot 1 = 2K + 1$.",
+    "commonTrap": "Counting both $P(X_j = 1 \\mid Y = c)$ and $P(X_j = 0 \\mid Y = c)$ as separate parameters (giving $4K + 2$), forgetting the class prior (giving $2K$), or slipping into the exponential count of the full joint model ($2^K$-type answers). Only probabilities that are not fixed by the sum-to-one constraint are parameters."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q20-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The option expressions were read from the rendered image: the PDF text layer drops the superscript and prints options (A) and (B) identically as \"2K+ 1\", but the image clearly shows (A) $2^K + 1$ and (B) $2K + 1$; (C) is $2^{K+1} + 1$ and (D) is $K^2 + 1$. \"naïve\" is spelled with a diaeresis as in the paper. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B) 2K + 1",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\ndef nb_params(X, y):\n    # Bernoulli naive Bayes: prior P(y=1) + P(x_j=1 | y=c) for every class c and attribute j\n    prior = {'P(y=1)': y.mean()}   # P(y=0) = 1 - P(y=1) is not a new parameter\n    cond = {f'P(x{j+1}=1|y={c})': X[y == c, j].mean() for c in (0, 1) for j in range(X.shape[1])}\n    return {**prior, **cond}\nfor K in (3, 4, 5, 10):\n    X = rng.integers(0, 2, size=(200, K)); y = rng.integers(0, 2, size=200)\n    n = len(nb_params(X, y))\n    full_joint = 2 * (2**K - 1) + 1          # no independence assumption\n    opts = {'A': 2**K + 1, 'B': 2*K + 1, 'C': 2**(K+1) + 1, 'D': K**2 + 1}\n    print(K, 'naive Bayes params =', n, '| full joint =', full_joint, '| matching options:', [k for k, v in opts.items() if v == n])",
+    "notes": "Naive Bayes with a binary class and K binary attributes needs 1 free class-prior parameter P(Y=1) and one Bernoulli parameter P(X_j=1 | Y=c) per attribute per class (2K), so 2K + 1 in total. A Python check fits the parameters on random binary data for K = 3, 4, 5, 10 and counts 7, 9, 11, 21, which matches only option B each time (the full joint model would need 2^(K+1) - 1). This agrees with official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

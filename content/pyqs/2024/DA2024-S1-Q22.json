@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q22",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 22,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-lda"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (maximising Fisher's criterion, a generalised Rayleigh quotient) with 2–3 steps (differentiate the quotient, set the gradient to zero, multiply by the inverse of S_W) and a likely trap in the inverted option (B), about 1.5 minutes unless the result is recalled directly.",
+  "estimatedTimeSec": 90,
+  "stem": "For any binary classification dataset, let $S_B \\in \\mathbb{R}^{d \\times d}$ and $S_W \\in \\mathbb{R}^{d \\times d}$ be the between-class and within-class scatter (covariance) matrices, respectively. The Fisher linear discriminant is defined by $u^* \\in \\mathbb{R}^d$, that maximizes\n\n$$\nJ(u) = \\frac{u^T S_B u}{u^T S_W u}\n$$\n\nIf $\\lambda = J(u^*)$, $S_W$ is non-singular and $S_B \\ne 0$, then $(u^*, \\lambda)$ must satisfy which **ONE** of the following equations?\n\n**Note**: $\\mathbb{R}$ denotes the set of real numbers.",
+  "options": [
+    {
+      "label": "A",
+      "text": "$S_W^{-1} S_B u^* = \\lambda u^*$"
+    },
+    {
+      "label": "B",
+      "text": "$S_W u^* = \\lambda S_B u^*$"
+    },
+    {
+      "label": "C",
+      "text": "$S_B S_W u^* = \\lambda u^*$"
+    },
+    {
+      "label": "D",
+      "text": "${u^*}^T u^* = \\lambda^2$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Set the gradient of the Rayleigh quotient $J(u)$ to zero: $S_B u^* = J(u^*)\\,S_W u^* = \\lambda S_W u^*$. Since $S_W$ is invertible, $S_W^{-1} S_B u^* = \\lambda u^*$: $u^*$ is an eigenvector of $S_W^{-1} S_B$ for its largest eigenvalue $\\lambda$. Option **(A)**.",
+    "steps": [
+      {
+        "title": "What is being maximised",
+        "body": "Fisher's criterion projects the data onto a direction $u$ and compares two quantities:\n\n- $u^T S_B u$: how far apart the projected **class means** are (between-class scatter);\n- $u^T S_W u$: how spread out each class is after projection (within-class scatter).\n\n$J(u)$ is their ratio, so a good direction separates the means while keeping each class tight.\n\nTwo facts about the matrices are used below.\n\n1. Both are symmetric and positive semi-definite, since they are sums of outer products $vv^T$. Because $S_W$ is also non-singular, it is positive definite, so $u^T S_W u > 0$ for every $u \\ne 0$ and $J$ is well defined.\n2. $J$ is **scale-invariant**: $J(cu) = \\dfrac{c^2\\, u^T S_B u}{c^2\\, u^T S_W u} = J(u)$ for any $c \\ne 0$. Only the direction of $u^*$ matters, not its length."
+      },
+      {
+        "title": "Differentiate the quotient",
+        "body": "For a symmetric matrix $A$, $\\nabla_u (u^T A u) = 2Au$. Write $N(u) = u^T S_B u$ and $D(u) = u^T S_W u$. The quotient rule gives\n\n$$\n\\nabla J(u) = \\frac{2 S_B u \\cdot D(u) - 2 S_W u \\cdot N(u)}{D(u)^2}\n= \\frac{2}{u^T S_W u}\\Big(S_B u - J(u)\\, S_W u\\Big).\n$$\n\n(The Python check confirms this identity symbolically.)"
+      },
+      {
+        "title": "Set the gradient to zero at the maximiser",
+        "body": "At the maximiser $u^*$ the gradient vanishes. The factor $\\frac{2}{u^T S_W u}$ is positive, so\n\n$$\nS_B u^* = J(u^*)\\, S_W u^* = \\lambda\\, S_W u^*.\n$$\n\nThis is a **generalised eigenvalue problem**. Because $S_W$ is non-singular, multiply on the left by $S_W^{-1}$:\n\n$$\n\\boxed{S_W^{-1} S_B\\, u^* = \\lambda\\, u^*}\n$$\n\nSo $u^*$ is an eigenvector of $S_W^{-1} S_B$ with eigenvalue $\\lambda$, which is option **(A)**.\n\nMoreover, $\\lambda$ is the **largest** eigenvalue: any eigenpair $(v, \\mu)$ with $S_B v = \\mu S_W v$ has $J(v) = \\dfrac{v^T S_B v}{v^T S_W v} = \\dfrac{\\mu\\, v^T S_W v}{v^T S_W v} = \\mu$, and $u^*$ maximises $J$.\n\nThe same equation comes from the constrained form: maximise $u^T S_B u$ subject to $u^T S_W u = 1$. Setting the gradient of the Lagrangian $u^T S_B u - \\lambda(u^T S_W u - 1)$ to zero gives $S_B u = \\lambda S_W u$, and multiplying by $u^T$ shows the multiplier equals $J(u)$."
+      },
+      {
+        "title": "Worked example and the other options",
+        "body": "Take $d = 2$, $S_W = \\begin{bmatrix} 2 & 0 \\\\ 0 & 1 \\end{bmatrix}$ and $S_B = \\mu\\mu^T$ with $\\mu = \\begin{bmatrix} 2 \\\\ 1 \\end{bmatrix}$, so $S_B = \\begin{bmatrix} 4 & 2 \\\\ 2 & 1 \\end{bmatrix}$. Then\n\n$$\nS_W^{-1} S_B = \\begin{bmatrix} 2 & 1 \\\\ 2 & 1 \\end{bmatrix},\n$$\n\nwith trace 3 and determinant 0, so its eigenvalues are 3 and 0. The eigenvector for 3 is $u^* = \\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}$, and indeed $J(u^*) = \\dfrac{(u^{*T}\\mu)^2}{u^{*T} S_W u^*} = \\dfrac{3^2}{2 + 1} = 3 = \\lambda$. A search over 200 000 random directions finds no value of $J$ above 3.\n\nNow test each option with $u^* = (1, 1)^T$ and $\\lambda = 3$:\n\n| Option | Left side | Right side | Holds? |\n|---|---|---|---|\n| (A) $S_W^{-1}S_B u^* = \\lambda u^*$ | $(3, 3)^T$ | $(3, 3)^T$ | yes |\n| (B) $S_W u^* = \\lambda S_B u^*$ | $(2, 1)^T$ | $3 \\cdot (6, 3)^T = (18, 9)^T$ | no |\n| (C) $S_B S_W u^* = \\lambda u^*$ | $S_B (2, 1)^T = (10, 5)^T$ | $(3, 3)^T$ | no |\n| (D) ${u^*}^T u^* = \\lambda^2$ | $2$ | $9$ | no |\n\nIn general, (B) is the correct equation turned upside down. From $S_B u^* = \\lambda S_W u^*$ with $\\lambda > 0$ (positive because $S_B \\ne 0$ is positive semi-definite, so some direction has $u^T S_B u > 0$), we get $S_W u^* = \\frac{1}{\\lambda} S_B u^*$. Then (B) would force $\\lambda = \\frac{1}{\\lambda}$, i.e. $\\lambda = 1$. (C) uses $S_W$ where $S_W^{-1}$ is needed. (D) cannot be required, because $u^*$ can be rescaled freely without changing $\\lambda$."
+      },
+      {
+        "title": "Two-class closed form (connection)",
+        "body": "For two classes with means $\\mathbf{m}_1, \\mathbf{m}_2$, $S_B$ is proportional to $(\\mathbf{m}_1 - \\mathbf{m}_2)(\\mathbf{m}_1 - \\mathbf{m}_2)^T$. Hence $S_B u^*$ always points along $\\mathbf{m}_1 - \\mathbf{m}_2$, and the eigen-equation of (A) gives the familiar direction\n\n$$\nu^* \\propto S_W^{-1}(\\mathbf{m}_1 - \\mathbf{m}_2).\n$$\n\nIn the worked example, $S_W^{-1}\\mu = (1, 1)^T$, the same $u^*$. On random 3-D two-class data the Python check finds that $S_W^{-1}(\\mathbf{m}_1 - \\mathbf{m}_2)$ satisfies (A) to machine precision, with $\\lambda$ equal to the top eigenvalue of $S_W^{-1}S_B$, while (B) and (C) leave large residuals. The answer is **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)** $S_W^{-1} S_B u^* = \\lambda u^*$",
+    "teaching": "**Fisher's idea.** To separate two classes with a linear rule, project every point $\\mathbf{x}$ onto a line, $z = u^T \\mathbf{x}$, and choose the direction $u$ that makes the two projected classes as distinguishable as possible. Two things matter:\n\n- the projected class means should be far apart, measured by $u^T S_B u$;\n- each projected class should be narrow, measured by $u^T S_W u$.\n\nMaximising only the distance between the means fails, because a direction can separate the means while smearing both classes over each other. Fisher therefore maximises the **ratio**\n\n$$\nJ(u) = \\frac{u^T S_B u}{u^T S_W u}.\n$$\n\n**Rayleigh quotients.** A ratio of two quadratic forms like this is a *generalised Rayleigh quotient*. Its value does not change when $u$ is rescaled, so only the direction matters. Setting its gradient to zero gives the rule worth memorising:\n\n$$\n\\max_u \\frac{u^T A u}{u^T B u} \\;\\Longrightarrow\\; A u = \\lambda B u \\;\\Longleftrightarrow\\; B^{-1} A u = \\lambda u \\quad (B \\text{ positive definite}),\n$$\n\nand the maximum value is the largest such $\\lambda$. The numerator matrix acts on $u$; the denominator matrix multiplies $\\lambda$. With $B = I$ this reduces to the ordinary statement that $\\max_u \\frac{u^T A u}{u^T u}$ is the largest eigenvalue of $A$, the same fact behind PCA.\n\n**Two classes.** When there are only two classes, $S_B$ has rank one and points along $\\mathbf{m}_1 - \\mathbf{m}_2$, so the eigen-problem has the closed-form solution $u^* \\propto S_W^{-1}(\\mathbf{m}_1 - \\mathbf{m}_2)$. The factor $S_W^{-1}$ discounts directions in which the classes are widely spread (or strongly correlated), so the mean difference counts most along directions where the classes are tight.\n\n**Back to this question.** $\\lambda = J(u^*)$ is the maximum of the Rayleigh quotient with $A = S_B$ and $B = S_W$. So $S_B u^* = \\lambda S_W u^*$, i.e. $S_W^{-1} S_B u^* = \\lambda u^*$, which is option (A).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Setting $\\nabla J(u^*) = 0$ gives $S_B u^* = \\lambda S_W u^*$. Multiplying by $S_W^{-1}$ (which exists) gives $S_W^{-1}S_B u^* = \\lambda u^*$, so $u^*$ is the top eigenvector of $S_W^{-1}S_B$. This matches the official key."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "This swaps the roles of the two matrices. The correct relation rearranges to $S_W u^* = \\frac{1}{\\lambda} S_B u^*$, so (B) would require $\\lambda = 1$. In the worked example ($\\lambda = 3$) the left side is $(2, 1)^T$ and the right side is $(18, 9)^T$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "This multiplies by $S_W$ where $S_W^{-1}$ is needed, and in the wrong order; in general $S_B S_W \\ne S_W^{-1} S_B$. In the worked example $S_B S_W u^* = (10, 5)^T \\ne 3u^* = (3, 3)^T$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$J$ is scale-invariant, so $u^*$ is determined only up to a non-zero multiple and its length is arbitrary. No particular normalisation, let alone ${u^*}^T u^* = \\lambda^2$, must hold. In the worked example ${u^*}^T u^* = 2$ while $\\lambda^2 = 9$, and rescaling $u^*$ changes the left side but not $\\lambda$."
+      }
+    ],
+    "shortcut": "Maximiser of $\\dfrac{u^T A u}{u^T B u}$: $A u = \\lambda B u$, i.e. $B^{-1}A u = \\lambda u$ with $\\lambda$ the maximum value. Numerator matrix next to $u$, denominator matrix next to $\\lambda$. With $A = S_B$, $B = S_W$ this is option (A) at once.",
+    "commonTrap": "Writing the generalised eigen-equation upside down, $S_W u = \\lambda S_B u$ (option B), or forgetting the inverse (option C). Another slip is assuming a normalisation such as $\\|u^*\\| = 1$ or ${u^*}^T u^* = \\lambda^2$: Fisher's criterion does not depend on the length of $u$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q22-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The transpose is printed as a superscript T in the paper and is kept as $u^T$ (option D as ${u^*}^T u^*$). The superscript −1 in option (A) and the stacked fraction for J(u) were read from the rendered image, because the PDF text layer splits them across lines. The displayed formula for J(u) has no trailing punctuation in the paper. \"ONE\" and \"Note\" are bold in the paper and are kept bold here; doubled spaces in the text layer were normalised. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(A) S_W^{-1} S_B u* = λ u*",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np, sympy as sp\n# 1) Symbolic stationarity condition of J(u) = u^T SB u / u^T SW u (d = 2, generic symmetric matrices)\nu1, u2, a, b, c, p, q, r = sp.symbols('u1 u2 a b c p q r', real=True)\nu = sp.Matrix([u1, u2]); SB = sp.Matrix([[a, b], [b, c]]); SW = sp.Matrix([[p, q], [q, r]])\nN, D = (u.T * SB * u)[0], (u.T * SW * u)[0]\ngrad = sp.Matrix([sp.diff(N / D, v) for v in (u1, u2)])\nprint('grad J == 2/D (SB u - J SW u):', sp.simplify(grad - 2 / D * (SB * u - N / D * SW * u)) == sp.zeros(2, 1))\n# 2) Worked example: SW = diag(2,1), SB = mu mu^T with mu = (2,1)\nSW = sp.Matrix([[2, 0], [0, 1]]); mu = sp.Matrix([2, 1]); SB = mu * mu.T\nM = SW.inv() * SB; print('SW^-1 SB =', M.tolist(), ' eigenvalues:', M.eigenvals())   # {3: 1, 0: 1}\nus = sp.Matrix([1, 1]); J = lambda v: (v.T * SB * v)[0] / (v.T * SW * v)[0]; lam = J(us)\nprint('u* =', us.T, ' lambda = J(u*) =', lam)                                         # 3\nprint('A:', (SW.inv() * SB * us - lam * us).T, ' B:', (SW * us - lam * SB * us).T,\n      ' C:', (SB * SW * us - lam * us).T, \" D: u*'u* - lam^2 =\", (us.T * us)[0] - lam**2)\n# 3) Brute-force check that no direction beats lambda = 3\nU = np.random.default_rng(0).normal(size=(200000, 2)); Sb, Sw = np.array(SB, float), np.array(SW, float)\nvals = np.einsum('ij,jk,ik->i', U, Sb, U) / np.einsum('ij,jk,ik->i', U, Sw, U)\nprint('max J over random directions =', vals.max(), ' best direction ~', U[vals.argmax()] / U[vals.argmax()][0])\n# 4) Random 3-D two-class data: A holds, B and C fail\nrng = np.random.default_rng(1); X1 = rng.normal([0, 0, 0], 1, (40, 3)); X2 = rng.normal([2, 1, -1], 1.5, (60, 3))\nm1, m2 = X1.mean(0), X2.mean(0); Sw = (X1 - m1).T @ (X1 - m1) + (X2 - m2).T @ (X2 - m2); Sb = np.outer(m1 - m2, m1 - m2)\nv = np.linalg.solve(Sw, m1 - m2); l = (v @ Sb @ v) / (v @ Sw @ v)\nprint('top eig of Sw^-1 Sb =', np.linalg.eigvals(np.linalg.solve(Sw, Sb)).real.max(), ' J(u*) =', l)\nprint('residuals A, B, C:', [np.linalg.norm(x) for x in (np.linalg.solve(Sw, Sb @ v) - l * v, Sw @ v - l * Sb @ v, Sb @ Sw @ v - l * v)])",
+    "notes": "Setting the gradient of J(u) = u^T S_B u / u^T S_W u to zero gives S_B u* = J(u*) S_W u* = λ S_W u*, i.e. S_W^{-1} S_B u* = λ u* since S_W is invertible. A Python check (1) verifies symbolically that ∇J = 2/(u^T S_W u)(S_B u − J S_W u); (2) on S_W = diag(2,1), S_B = μμ^T with μ = (2,1) finds u* = (1,1), λ = 3 (random-direction search gives max J ≈ 3), with A satisfied and B, C, D violated; (3) on random 3-D two-class data finds that S_W^{-1}(m1 − m2) satisfies A with residual ~1e-19 and λ equal to the top eigenvalue of S_W^{-1} S_B, while B and C leave large residuals. This agrees with official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,113 @@
+{
+  "id": "DA2024-S1-Q38",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 38,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python",
+    "pdsa-trees"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: a single concept (tracing a short recursion that computes the size of a tree) with direct execution in about 1–1.5 minutes.",
+  "estimatedTimeSec": 75,
+  "stem": "Consider the following Python code:\n\n```python\ndef count(child_dict, i):\n    if i not in child_dict.keys():\n         return 1\n    ans = 1\n    for j in child_dict[i]:\n        ans += count(child_dict, j)\n    return ans\n\nchild_dict = dict()\nchild_dict[0] = [1,2]\nchild_dict[1] = [3,4,5]\nchild_dict[2] = [6,7,8]\nprint(count(child_dict,0))\n```\n\nWhich **ONE** of the following is the output of this code?",
+  "options": [
+    {
+      "label": "A",
+      "text": "6"
+    },
+    {
+      "label": "B",
+      "text": "1"
+    },
+    {
+      "label": "C",
+      "text": "8"
+    },
+    {
+      "label": "D",
+      "text": "9"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "`count(child_dict, i)` returns 1 for a node that is not a key (a leaf). Otherwise it returns 1 plus the `count` of each child. That is exactly the **number of nodes in the subtree rooted at `i`**. The tree is 0 → {1, 2}, 1 → {3, 4, 5}, 2 → {6, 7, 8}, so `count(child_dict, 0)` $= 1 + 4 + 4 = 9$ → **(D)**.",
+    "steps": [
+      {
+        "title": "Input: the tree encoded by child_dict",
+        "body": "`child_dict` maps a node to the list of its children:\n\n| Node (key) | Children |\n| --- | --- |\n| 0 | 1, 2 |\n| 1 | 3, 4, 5 |\n| 2 | 6, 7, 8 |\n\nNodes 3–8 never appear as keys, so they have no children: they are **leaves**. The tree therefore has root 0, two internal children 1 and 2, and six leaves. That is 9 nodes, $\\{0, 1, \\dots, 8\\}$."
+      },
+      {
+        "title": "Algorithm: what count computes",
+        "body": "- **Base case:** if `i` is not a key of `child_dict`, return `1`. A leaf is a subtree with one node.\n- **Recursive case:** `ans = 1` counts node `i` itself, and the loop adds `count(child_dict, j)` for every child `j`.\n\nSo\n\n$$\n\\text{count}(i) = 1 + \\sum_{j \\in \\text{children}(i)} \\text{count}(j),\n$$\n\nwhich is the size of the subtree rooted at $i$.\n\nThe line `return 1` is indented with 9 spaces as printed (the other nested lines use 8). Python only requires a block to be indented more deeply than its header (and consistently within itself), so this is valid code and runs normally."
+      },
+      {
+        "title": "Execution trace",
+        "body": "The calls happen in depth-first order: `count(0)` → `count(1)` → `count(3)`, `count(4)`, `count(5)` → back to `count(0)` → `count(2)` → `count(6)`, `count(7)`, `count(8)`.\n\n| Call | `i` a key? | Computation | Returns |\n| --- | --- | --- | --- |\n| `count(3)`, `count(4)`, `count(5)` | No | base case | 1 each |\n| `count(1)` | Yes, children [3, 4, 5] | $1 + 1 + 1 + 1$ | 4 |\n| `count(6)`, `count(7)`, `count(8)` | No | base case | 1 each |\n| `count(2)` | Yes, children [6, 7, 8] | $1 + 1 + 1 + 1$ | 4 |\n| `count(0)` | Yes, children [1, 2] | $1 + 4 + 4$ | 9 |"
+      },
+      {
+        "title": "Complexity and result",
+        "body": "Each node is visited exactly once (9 calls in total), so the running time is $O(n)$ in the number of nodes. `print(count(child_dict,0))` prints **9**, which is option **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)** 9",
+    "teaching": "**Recursion on a tree stored as a dictionary.** A common way to store a rooted tree in Python is a dictionary that maps each node to a list of its children (an adjacency list). Nodes without children are often simply left out of the dictionary. That is why this code tests `i not in child_dict.keys()` to detect a leaf.\n\nEvery recursive function needs two parts:\n\n1. **A base case** that stops the recursion. Here, a leaf returns `1`.\n2. **A recursive case** that combines the answers of smaller subproblems. Here, a node returns `1` (itself) plus the results for each child subtree.\n\nWhen the combining rule is \"1 for me plus the sum over my children\", the function computes the **subtree size**:\n\n$$\n\\text{size}(v) = 1 + \\sum_{c \\in \\text{children}(v)} \\text{size}(c).\n$$\n\nSmall changes to this template compute other classic quantities, which is exactly how the distractors are built:\n\n- start `ans` at `0` for internal nodes and you count **leaves** (here 6);\n- use `1 + max(...)` over children and you get the **height** (in levels);\n- leave out the root's own `1` and you count **descendants** (here 8).\n\nTo trace such code safely, draw the tree first, then compute the values bottom-up (leaves first). In a post-order evaluation each call's result depends only on its children's results, so there is nothing to keep in your head beyond the table.\n\nA note on **indentation**: Python determines blocks by indentation. A block must be indented more than the line that opens it and must be consistent within itself. Different blocks may use different amounts, so the 9-space `return 1` inside the `if` is legal.\n\nFor this question, the tree has 9 nodes, and `count` from the root returns 9.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$6$ is the number of **leaves** (nodes 3–8). You would get it only if internal nodes did not count themselves (`ans = 0`). The code initialises `ans = 1`, so nodes 0, 1 and 2 are also counted."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$1$ would be printed only if the base case fired at the root, i.e. if `0` were not a key. But `child_dict[0] = [1,2]` is defined, so the recursion proceeds."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$8$ counts only the nodes appearing in the child lists (1–8), i.e. the descendants of 0, and forgets the root's own contribution `ans = 1`. The actual value is $1 + 4 + 4 = 9$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "`count` returns the subtree size: $\\text{count}(1) = \\text{count}(2) = 4$ and $\\text{count}(0) = 1 + 4 + 4 = 9$, the total number of nodes $\\{0, \\dots, 8\\}$."
+      }
+    ],
+    "shortcut": "The pattern \"`ans = 1`; `ans += f(child)` for each child; leaf returns 1\" is just the subtree node count. Count the distinct nodes $0, 1, \\dots, 8$ to get $9$.",
+    "commonTrap": "Counting only the child entries 1–8 and forgetting the root (8, option C), or counting only the leaves (6, option A). Some students also suspect an `IndentationError` from the 9-space `return 1`, but a new block may use any deeper indentation, so the code runs and prints 9."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q38-1.webp",
+    "/pyq/2024/official/Q38-2.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed character for character. In the paper the line `return 1` is indented 9 spaces, one more than the 8 used for the other doubly nested line; both the PDF text layer and the rendering show this, and it is kept as printed (it is valid Python). The second official crop (Q38-2) shows only the top border of the next table on page 24 and appears to contain no content of this question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D) 9",
+    "agreesWithKey": true,
+    "checkCode": "# Exact code from the paper (note the 9-space indent before 'return 1'); prints 9\ndef count(child_dict, i):\n    if i not in child_dict.keys():\n         return 1\n    ans = 1\n    for j in child_dict[i]:\n        ans += count(child_dict, j)\n    return ans\n\nchild_dict = dict()\nchild_dict[0] = [1,2]\nchild_dict[1] = [3,4,5]\nchild_dict[2] = [6,7,8]\nprint(count(child_dict,0))\n",
+    "notes": "Hand trace gives count(1) = count(2) = 4 and count(0) = 9. Running the exact code (including the 9-space indentation) in Python 3 prints 9. This agrees with the official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

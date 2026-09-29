@@ -1,0 +1,112 @@
+{
+  "id": "DA2024-S1-Q03",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 3,
+  "section": "GA",
+  "subjectId": "ga",
+  "topicId": "ga-quant",
+  "subtopicIds": [
+    "ga-numerical",
+    "ga-numerical-reasoning"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one divisibility rule combined with a single permutation count, well under 1.5 minutes.",
+  "estimatedTimeSec": 60,
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "stem": "How many 4-digit positive integers divisible by 3 can be formed using only the digits $\\{1, 3, 4, 6, 7\\}$, such that no digit appears more than once in a number?",
+  "options": [
+    {
+      "label": "A",
+      "text": "24"
+    },
+    {
+      "label": "B",
+      "text": "48"
+    },
+    {
+      "label": "C",
+      "text": "72"
+    },
+    {
+      "label": "D",
+      "text": "12"
+    }
+  ],
+  "solution": {
+    "quick": "A 4-digit number with distinct digits from $\\{1,3,4,6,7\\}$ uses all but one digit. The five digits sum to 21, so the digit sum is $21-d$ for the omitted digit $d$. This is divisible by 3 only when $d\\in\\{3,6\\}$. Each of the 2 digit sets can be arranged in $4!=24$ ways, giving $2\\times24=48$, option **(B)**.",
+    "steps": [
+      {
+        "title": "Divisibility rule",
+        "body": "An integer is divisible by 3 if and only if the sum of its digits is divisible by 3. The order of the digits does not matter, only which digits are used."
+      },
+      {
+        "title": "Which digit sets work?",
+        "body": "Choosing 4 distinct digits from 5 means leaving out exactly one digit $d$. The sum of all five digits is\n\n$$1+3+4+6+7 = 21,$$\n\nso the chosen digits sum to $21-d$. Since $21$ is a multiple of 3, $21-d$ is a multiple of 3 exactly when $d$ is:\n\n| Omitted $d$ | Digits used | Sum | Divisible by 3? |\n| --- | --- | --- | --- |\n| 1 | 3, 4, 6, 7 | 20 | No |\n| 3 | 1, 4, 6, 7 | 18 | **Yes** |\n| 4 | 1, 3, 6, 7 | 17 | No |\n| 6 | 1, 3, 4, 7 | 15 | **Yes** |\n| 7 | 1, 3, 4, 6 | 14 | No |"
+      },
+      {
+        "title": "Count arrangements",
+        "body": "Each valid set has 4 distinct non-zero digits, so every ordering is a genuine 4-digit number (there is no leading-zero issue). The number of orderings is\n\n$$4! = 24 \\text{ per set}.$$"
+      },
+      {
+        "title": "Total",
+        "body": "$$2 \\text{ sets} \\times 24 = 48.$$\n\nFor comparison, all ${}^5P_4 = 120$ distinct-digit numbers can be formed, and 48 of them are divisible by 3. The answer is **(B)**, matching the official key."
+      }
+    ],
+    "finalAnswer": "**(B)** 48",
+    "teaching": "**Why the digit-sum rule works.** Every power of 10 leaves remainder 1 when divided by 3 ($10 = 9+1$, $100 = 99+1$, and so on). So a number $\\overline{abcd} = 1000a+100b+10c+d$ leaves the same remainder as $a+b+c+d$. Divisibility by 3 therefore depends only on the **multiset of digits**, not on their order.\n\n**Turning it into a counting problem.** Because order is irrelevant for divisibility, split the count into two independent stages:\n\n1. *Choose* which digits to use, and keep only the choices whose sum is a multiple of 3.\n2. *Arrange* each good choice. With $k$ distinct digits and no zero among them, there are $k!$ arrangements. If 0 were available you would subtract the arrangements that start with 0.\n\n**The complement trick.** When you pick $k$ digits out of $n$, it is often quicker to look at the $n-k$ digits you leave out. Here you leave out just one digit. The total sum $21$ is already a multiple of 3, so the remaining sum is a multiple of 3 exactly when the omitted digit is. That turns five sum checks into one glance: omit 3 or omit 6.\n\n**Applying it here.** 2 good digit sets × $4! = 24$ arrangements each gives **48** numbers.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "24 counts the arrangements of only one valid digit set. Both $\\{1,4,6,7\\}$ (omit 3) and $\\{1,3,4,7\\}$ (omit 6) work."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "2 valid digit sets × $4! = 24$ arrangements = 48, matching the official key."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "72 = 3 × 24 would need three valid digit sets, but only two of the five possible omissions give a digit sum divisible by 3."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "12 is half the arrangements of a single set and does not arise from any correct count. Each valid set alone already gives 24 numbers."
+      }
+    ],
+    "shortcut": "The total digit sum 21 is divisible by 3, so omit a digit that is itself divisible by 3 (3 or 6). That gives 2 sets × 4! = 48.",
+    "commonTrap": "Counting only one valid digit set (answer 24), or forgetting that the order of the digits does not affect divisibility by 3 and so trying to test individual numbers."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q03-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The digit set is typeset in the paper as {1, 3, 4, 6, 7} (the text layer shows irregular spacing '{1, 3,4, 6, 7}'); it is rendered here with uniform spacing."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "48 (option B)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import permutations\nprint(sum(1 for p in permutations([1,3,4,6,7],4) if int(''.join(map(str,p)))%3==0))  # 48",
+    "notes": "Brute-force enumeration of all 120 four-digit arrangements with distinct digits gives 48 divisible by 3, which agrees with the official key (B)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

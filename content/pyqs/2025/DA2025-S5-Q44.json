@@ -1,0 +1,115 @@
+{
+  "id": "DA2025-S5-Q44",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 44,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-informed"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (A* ordering by f = g + h) traced through seven expansions on a small graph, including one ignored worse path; routine computation in about 2-2.5 min.",
+  "estimatedTimeSec": 150,
+  "stem": "The state graph shows the action cost along the edges and the heuristic function h associated with each state.\n\n![Figure: A directed state graph. Edges with costs: S to A (4), S to E (1), A to B (2), B to C (2), E to C (2), C to D (3), D to G (3). Heuristic values in boxes next to the states: h=2 for A, h=2 for B, h=6 for C, h=6 for E, h=2 for D, h=0 for G. No heuristic value is shown for S.](/pyq/2025/fig/Q44-1.png)\n\nSuppose $A^*$ algorithm is applied on this state graph using priority queue to store the frontier. In what sequence are the nodes expanded?",
+  "options": [
+    {
+      "label": "A",
+      "text": "S,A,E,C,B,D,G"
+    },
+    {
+      "label": "B",
+      "text": "S,E,A,C,B,D,G"
+    },
+    {
+      "label": "C",
+      "text": "S,A,E,B,C,D,G"
+    },
+    {
+      "label": "D",
+      "text": "S,A,B,E,C,D,G"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "A* always expands the frontier node with the smallest $f = g + h$. After S: $f(A) = 4 + 2 = 6$, $f(E) = 1 + 6 = 7$. Then B gets $f = 6 + 2 = 8$ and C (via E) gets $f = 3 + 6 = 9$; the path to C via B ($f = 14$) is worse. Then D gets $f = 6 + 2 = 8$ and G gets $f = 9 + 0 = 9$. Expansion order: S, A, E, B, C, D, G, which is **(C)**.",
+    "steps": [
+      {
+        "title": "Read the graph and the A* rule",
+        "body": "| Edge | Cost |\n| --- | --- |\n| S → A | 4 |\n| S → E | 1 |\n| A → B | 2 |\n| B → C | 2 |\n| E → C | 2 |\n| C → D | 3 |\n| D → G | 3 |\n\nHeuristic: $h(A) = 2$, $h(B) = 2$, $h(C) = 6$, $h(E) = 6$, $h(D) = 2$, $h(G) = 0$. No $h$ is given for S, and none is needed: S is the start, so it is expanded first.\n\nA* keeps the frontier in a priority queue keyed by $f(n) = g(n) + h(n)$, where $g(n)$ is the cost of the best path found so far from S to $n$. It always removes and expands the node with the smallest $f$."
+      },
+      {
+        "title": "Expand S, then A",
+        "body": "- **Expand S** ($g = 0$). Generate A: $g = 4$, $f = 4 + 2 = 6$. Generate E: $g = 1$, $f = 1 + 6 = 7$. Frontier: $\\{A{:}\\,6,\\ E{:}\\,7\\}$.\n- **Expand A** ($f = 6$, the smallest). Generate B: $g = 4 + 2 = 6$, $f = 6 + 2 = 8$. Frontier: $\\{E{:}\\,7,\\ B{:}\\,8\\}$."
+      },
+      {
+        "title": "Expand E, then B",
+        "body": "- **Expand E** ($f = 7$). Generate C: $g = 1 + 2 = 3$, $f = 3 + 6 = 9$. Frontier: $\\{B{:}\\,8,\\ C{:}\\,9\\}$.\n- **Expand B** ($f = 8$). The path S → A → B → C gives C a cost $g = 6 + 2 = 8$, i.e. $f = 14$. That is worse than the $g = 3$ already found through E, so C keeps $f = 9$. Frontier: $\\{C{:}\\,9\\}$."
+      },
+      {
+        "title": "Expand C, D and G",
+        "body": "- **Expand C** ($f = 9$). Generate D: $g = 3 + 3 = 6$, $f = 6 + 2 = 8$. Frontier: $\\{D{:}\\,8\\}$.\n- **Expand D** ($f = 8$). Generate G: $g = 6 + 3 = 9$, $f = 9 + 0 = 9$. Frontier: $\\{G{:}\\,9\\}$.\n- **Expand G**: it is the goal, so the search stops. The path found is S → E → C → D → G with cost $1 + 2 + 3 + 3 = 9$."
+      },
+      {
+        "title": "Summary of the trace",
+        "body": "| # | Expanded | $g$ | $f = g + h$ | Frontier afterwards |\n| --- | --- | --- | --- | --- |\n| 1 | S | 0 | (start) | A (6), E (7) |\n| 2 | A | 4 | 6 | E (7), B (8) |\n| 3 | E | 1 | 7 | B (8), C (9) |\n| 4 | B | 6 | 8 | C (9); path via B ($f = 14$) ignored |\n| 5 | C | 3 | 9 | D (8) |\n| 6 | D | 6 | 8 | G (9) |\n| 7 | G | 9 | 9 | goal reached |\n\nNo two frontier nodes ever tie on $f$, so the order does not depend on tie-breaking. The sequence is **S, A, E, B, C, D, G**, which is option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Best-first search.** Many search algorithms share one loop: keep a frontier of generated but unexpanded nodes, repeatedly remove the \"best\" one, expand it (generate its successors) and stop when the goal is removed. They differ only in how \"best\" is measured:\n\n- Uniform-cost search uses $g(n)$, the cost of the path from the start to $n$.\n- Greedy best-first search uses $h(n)$, the estimated remaining cost to the goal.\n- A* uses $f(n) = g(n) + h(n)$, an estimate of the total cost of the best solution through $n$.\n\n**A* in practice.** Use a priority queue keyed by $f$. When a node is generated again by a cheaper path, update its $g$ (and $f$); if the new path is more expensive, ignore it. The node is *expanded* only when it is removed from the queue, and the goal counts as expanded when it is removed.\n\n**Admissible and consistent heuristics.** $h$ is admissible if it never overestimates the true remaining cost; then A* returns an optimal path. It is consistent if $h(n) \\le c(n, n') + h(n')$ for every edge; then $f$ never decreases along a path. Here $h$ is admissible (for example $h(C) = 6$ equals the true remaining cost $3 + 3$), but it is not consistent on C → D, because $6 > 3 + 2$. That is why $f$ drops from $9$ at C to $8$ at D. It does not change the procedure: A* still pops the smallest $f$ each time, and the path found (cost $9$) is optimal.\n\n**Back to this question.** The only work is computing $f$ for each generated node and always taking the minimum: A (6) before E (7) before B (8) before C (9), then D (8) and G (9). Watch out for the options built from the other rules. Ranking by $g$ alone puts E first, and ranking by $h$ alone puts B right after A.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "After S, A, E the frontier holds B with $f = 6 + 2 = 8$ and C with $f = 3 + 6 = 9$. A* expands B before C, so the fourth node cannot be C."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "It expands E before A. E has the smaller path cost ($g = 1$ vs $4$), but A* compares $f$: $f(A) = 4 + 2 = 6 < f(E) = 1 + 6 = 7$, so A comes first."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Popping the minimum $f$ each time gives S, A (6), E (7), B (8), C (9), D (8), G (9)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "It expands B right after A, but at that point E ($f = 7$) beats B ($f = 8$). This order is what greedy best-first search (using $h$ alone) would give, with the tie between E and C at $h = 6$ broken in favour of E."
+      }
+    ],
+    "shortcut": "Only the first few pops separate the options. $f(A) = 6 < f(E) = 7$ rules out (B). After A, $f(E) = 7 < f(B) = 8$ rules out (D). After E, $f(B) = 8 < f(C) = 9$ rules out (A). That leaves (C).",
+    "commonTrap": "Ranking the frontier by path cost $g$ alone (which expands E first, as in (B)) or by the heuristic $h$ alone (which expands B right after A, as in (D)) instead of by $f = g + h$. Another slip is letting the more expensive path to C through B ($f = 14$) replace the cheaper one through E ($f = 9$)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q44-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The state graph is vector art; it was rendered from the official PDF page 24 with the background watermark image removed (drawing and labels unchanged). The paper shows no heuristic value for the start state S (not needed for the answer). The line-break hyphenation 'asso-ciated' in the paper was joined as 'associated'; 'h' is upright in the paper and kept as plain text."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (S,A,E,B,C,D,G)",
+    "agreesWithKey": true,
+    "checkCode": "import heapq, itertools\nedges = {'S': [('A', 4), ('E', 1)], 'A': [('B', 2)], 'B': [('C', 2)], 'E': [('C', 2)],\n         'C': [('D', 3)], 'D': [('G', 3)], 'G': []}\nh = {'S': 0, 'A': 2, 'B': 2, 'C': 6, 'E': 6, 'D': 2, 'G': 0}  # h(S) not shown; irrelevant (S is expanded first)\ndef search(key, trace=False):\n    cnt = itertools.count(); pq = [(0, next(cnt), 0, 'S')]; best = {'S': 0}; order = []; closed = set()\n    while pq:\n        k, _, g, n = heapq.heappop(pq)\n        if n in closed: continue\n        closed.add(n); order.append(n)\n        if trace: print(f'  expand {n}: g={g}, priority={k}')\n        if n == 'G': return ','.join(order)\n        for m, c in edges[n]:\n            if m not in closed and (m not in best or g + c < best[m]):\n                best[m] = g + c; heapq.heappush(pq, (key(g + c, m), next(cnt), g + c, m))\n            elif trace: print(f'    {n}->{m}: g={g+c} not better than {best[m]}, ignored')\nprint('A* (f=g+h):', search(lambda g, m: g + h[m], trace=True))\nprint('UCS (g only):', search(lambda g, m: g))\nprint('Greedy (h only, FIFO ties):', search(lambda g, m: h[m]))\nprint('inconsistent edges (h(n) > c + h(m)):', [(n, m) for n in edges for m, c in edges[n] if h[n] > c + h[m]])",
+    "notes": "A* trace with f = g + h: S, then A (f = 6), E (7), B (8), C (9; the path via B with f = 14 is ignored), D (8), G (9). No f-ties occur, so tie-breaking does not matter. This matches official key C. The Python check runs A* with a priority queue and gives S,A,E,B,C,D,G. For comparison, uniform-cost search gives S,E,C,A,D,B,G and greedy best-first with FIFO tie-breaking gives S,A,B,E,C,D,G (option D). The heuristic is admissible but inconsistent on C -> D (6 > 3 + 2), which does not affect the expansion order here."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,124 @@
+{
+  "id": "DA2026-S8-Q52",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 52,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-projection-matrix",
+    "la-idempotent-matrix",
+    "la-matrices"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept (the centering matrix I_n - (1/n) 1 1^T as a symmetric idempotent matrix) needing 2-3 routine steps: transpose it, expand M^2 using 1^T 1 = n, and take the trace. All four options follow from these same facts, so no level bump applies; about 1.5-2 minutes.",
+  "estimatedTimeSec": 105,
+  "stem": "Let $M = \\left(I_n - \\frac{1}{n}\\,\\mathbf{1}\\mathbf{1}^\\top\\right)$ be a matrix, where $\\mathbf{1} = (1,1,1,\\ldots,1)^\\top \\in \\mathbb{R}^n$ and $I_n$ is the identity matrix of order $n$.\n\nWhich of the following options is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$M^\\top = M$"
+    },
+    {
+      "label": "B",
+      "text": "$M^2 = I_n$"
+    },
+    {
+      "label": "C",
+      "text": "$\\mathit{Trace}(M) = n$"
+    },
+    {
+      "label": "D",
+      "text": "$M$ is a projection matrix"
+    }
+  ],
+  "officialKeyRaw": "A;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "$M$ is the centering matrix. It is symmetric because $\\mathbf{1}\\mathbf{1}^\\top$ is symmetric. Since $\\mathbf{1}^\\top\\mathbf{1} = n$, it is idempotent: $M^2 = M$, not $I_n$. A symmetric idempotent matrix is an (orthogonal) projection matrix, and $\\mathit{Trace}(M) = n - \\frac{1}{n}\\cdot n = n - 1$. **(A), (D)**.",
+    "steps": [
+      {
+        "title": "Understand the matrix",
+        "body": "$\\mathbf{1}\\mathbf{1}^\\top$ is an **$n \\times n$ matrix of all ones** (an outer product), while $\\mathbf{1}^\\top\\mathbf{1} = 1 + 1 + \\cdots + 1 = n$ is a **scalar**. Hence\n\n$$\nM = I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top \\quad\\Rightarrow\\quad M_{ii} = 1 - \\frac{1}{n}, \\qquad M_{ij} = -\\frac{1}{n}\\ (i \\ne j).\n$$\n\nFor example, with $n = 3$:\n\n$$\nM = \\begin{bmatrix} \\tfrac{2}{3} & -\\tfrac{1}{3} & -\\tfrac{1}{3} \\\\ -\\tfrac{1}{3} & \\tfrac{2}{3} & -\\tfrac{1}{3} \\\\ -\\tfrac{1}{3} & -\\tfrac{1}{3} & \\tfrac{2}{3} \\end{bmatrix}.\n$$\n\nActing on a vector, $M\\mathbf{x} = \\mathbf{x} - \\frac{1}{n}\\mathbf{1}(\\mathbf{1}^\\top\\mathbf{x}) = \\mathbf{x} - \\bar{x}\\,\\mathbf{1}$, where $\\bar{x}$ is the mean of the entries of $\\mathbf{x}$. $M$ subtracts the mean from every entry; it is the **centering matrix**."
+      },
+      {
+        "title": "Option (A): symmetry",
+        "body": "Transpose term by term, using $(\\mathbf{u}\\mathbf{v}^\\top)^\\top = \\mathbf{v}\\mathbf{u}^\\top$:\n\n$$\nM^\\top = I_n^\\top - \\frac{1}{n}\\left(\\mathbf{1}\\mathbf{1}^\\top\\right)^\\top = I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top = M.\n$$\n\nSo $M^\\top = M$ and (A) is **true**. The $n = 3$ matrix above is visibly symmetric."
+      },
+      {
+        "title": "Option (B): compute the square",
+        "body": "Expand, remembering that $\\mathbf{1}^\\top\\mathbf{1} = n$:\n\n$$\n\\begin{aligned}\nM^2 &= \\left(I_n - \\tfrac{1}{n}\\mathbf{1}\\mathbf{1}^\\top\\right)\\left(I_n - \\tfrac{1}{n}\\mathbf{1}\\mathbf{1}^\\top\\right) \\\\\n&= I_n - \\tfrac{2}{n}\\mathbf{1}\\mathbf{1}^\\top + \\tfrac{1}{n^2}\\,\\mathbf{1}\\left(\\mathbf{1}^\\top\\mathbf{1}\\right)\\mathbf{1}^\\top \\\\\n&= I_n - \\tfrac{2}{n}\\mathbf{1}\\mathbf{1}^\\top + \\tfrac{n}{n^2}\\,\\mathbf{1}\\mathbf{1}^\\top \\\\\n&= I_n - \\tfrac{1}{n}\\mathbf{1}\\mathbf{1}^\\top = M.\n\\end{aligned}\n$$\n\nSo $M^2 = M$ ($M$ is **idempotent**). Is that the same as $I_n$? No: $M\\mathbf{1} = \\mathbf{1} - \\frac{1}{n}\\mathbf{1}\\,(\\mathbf{1}^\\top\\mathbf{1}) = \\mathbf{1} - \\mathbf{1} = \\mathbf{0}$, so $M$ sends a nonzero vector to $\\mathbf{0}$. $M$ is singular and $M^2 = M \\ne I_n$. Even for $n = 1$, $M = [0]$ and $M^2 = [0] \\ne [1]$. (B) is **false**."
+      },
+      {
+        "title": "Option (C): trace",
+        "body": "The trace is linear, and $\\operatorname{tr}(\\mathbf{1}\\mathbf{1}^\\top) = \\mathbf{1}^\\top\\mathbf{1} = n$ (the all-ones matrix has $n$ ones on its diagonal):\n\n$$\n\\operatorname{Trace}(M) = \\operatorname{tr}(I_n) - \\frac{1}{n}\\operatorname{tr}\\left(\\mathbf{1}\\mathbf{1}^\\top\\right) = n - \\frac{1}{n}\\cdot n = n - 1.\n$$\n\nThe same follows from the diagonal entries: $n\\left(1 - \\frac{1}{n}\\right) = n - 1$. Since $n - 1 \\ne n$, (C) is **false**.\n\nCross-check with eigenvalues: $M\\mathbf{1} = \\mathbf{0}$ gives eigenvalue $0$, and every $\\mathbf{x}$ with $\\mathbf{1}^\\top\\mathbf{x} = 0$ satisfies $M\\mathbf{x} = \\mathbf{x}$, giving eigenvalue $1$ with multiplicity $n - 1$. The eigenvalues sum to $0 + (n-1)\\cdot 1 = n - 1$."
+      },
+      {
+        "title": "Option (D): projection matrix",
+        "body": "A projection matrix $P$ satisfies $P^2 = P$ (projecting twice changes nothing). An **orthogonal** projection is additionally symmetric, $P^\\top = P$. $M$ has both properties, from (A) and (B).\n\nConcretely, $P_{\\mathbf{1}} = \\dfrac{\\mathbf{1}\\mathbf{1}^\\top}{\\mathbf{1}^\\top\\mathbf{1}} = \\dfrac{1}{n}\\mathbf{1}\\mathbf{1}^\\top$ is the orthogonal projection onto the line spanned by $\\mathbf{1}$, and\n\n$$\nM = I_n - P_{\\mathbf{1}}\n$$\n\nis the orthogonal projection onto its orthogonal complement $\\{\\mathbf{x} \\in \\mathbb{R}^n : \\mathbf{1}^\\top\\mathbf{x} = 0\\}$, the $(n-1)$-dimensional subspace of vectors whose entries sum to zero. (D) is **true**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "| Option | Finding | Verdict |\n| --- | --- | --- |\n| (A) $M^\\top = M$ | $(\\mathbf{1}\\mathbf{1}^\\top)^\\top = \\mathbf{1}\\mathbf{1}^\\top$ | true |\n| (B) $M^2 = I_n$ | $M^2 = M$, and $M$ is singular ($M\\mathbf{1} = \\mathbf{0}$) | false |\n| (C) $\\mathit{Trace}(M) = n$ | $\\mathit{Trace}(M) = n - 1$ | false |\n| (D) projection matrix | symmetric and idempotent | true |\n\nAnswer → **(A), (D)**."
+      }
+    ],
+    "finalAnswer": "**(A), (D)**",
+    "teaching": "**Projection onto a line.** To project a vector $\\mathbf{x}$ onto the line spanned by a nonzero vector $\\mathbf{a}$, keep only its component along $\\mathbf{a}$:\n\n$$\n\\operatorname{proj}_{\\mathbf{a}}\\mathbf{x} = \\frac{\\mathbf{a}^\\top\\mathbf{x}}{\\mathbf{a}^\\top\\mathbf{a}}\\,\\mathbf{a} = \\underbrace{\\frac{\\mathbf{a}\\mathbf{a}^\\top}{\\mathbf{a}^\\top\\mathbf{a}}}_{P}\\,\\mathbf{x}.\n$$\n\nThe matrix $P$ has the two defining properties of an orthogonal projection:\n\n- **Idempotent**, $P^2 = P$: once a vector lies on the line, projecting it again does nothing.\n- **Symmetric**, $P^\\top = P$: the discarded part $\\mathbf{x} - P\\mathbf{x}$ is perpendicular to the line.\n\nIf $P$ is an orthogonal projection, so is $I - P$. It keeps exactly the perpendicular part, so it projects onto the orthogonal complement.\n\n**Consequences worth memorising.** A projection has eigenvalues only $0$ or $1$, because $P\\mathbf{v} = \\lambda\\mathbf{v}$ and $P^2 = P$ give $\\lambda^2 = \\lambda$. Therefore $\\operatorname{tr}(P) = \\operatorname{rank}(P) = $ the dimension of the subspace it projects onto. A projection other than $I$ is singular, so $P^2 = P$ must never be confused with $P^2 = I$, which describes an involution such as a reflection.\n\n**Connecting to this question.** Take $\\mathbf{a} = \\mathbf{1}$. Then $\\mathbf{a}^\\top\\mathbf{a} = n$ and $P = \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top$ replaces every entry of $\\mathbf{x}$ by the mean $\\bar{x}$. The given $M = I_n - P$ subtracts the mean: the **centering matrix** of statistics. It is symmetric (A) and idempotent, hence a projection (D). It projects onto an $(n-1)$-dimensional subspace, so $\\mathit{Trace}(M) = n - 1$ rather than $n$ (C fails), and being a singular projection, $M^2 = M \\ne I_n$ (B fails). The same matrix explains the $n - 1$ in the sample variance: $\\sum_{i}(x_i - \\bar{x})^2 = \\mathbf{x}^\\top M\\mathbf{x}$, and $M$ has rank $n - 1$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$I_n$ is symmetric and $(\\mathbf{1}\\mathbf{1}^\\top)^\\top = \\mathbf{1}\\mathbf{1}^\\top$, so $M^\\top = M$. Every off-diagonal entry is the same $-\\frac{1}{n}$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Using $\\mathbf{1}^\\top\\mathbf{1} = n$, $M^2 = I_n - \\frac{2}{n}\\mathbf{1}\\mathbf{1}^\\top + \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top = M$, not $I_n$. $M$ is singular because $M\\mathbf{1} = \\mathbf{0}$, so no power of it can equal $I_n$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$\\mathit{Trace}(M) = n - \\frac{1}{n}\\operatorname{tr}(\\mathbf{1}\\mathbf{1}^\\top) = n - \\frac{1}{n}\\cdot n = n - 1$. Equivalently, the $n$ diagonal entries are each $1 - \\frac{1}{n}$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$M$ is idempotent ($M^2 = M$) and symmetric, which is exactly an orthogonal projection matrix. It projects onto the subspace $\\{\\mathbf{x} : \\mathbf{1}^\\top\\mathbf{x} = 0\\}$ orthogonal to $\\mathbf{1}$."
+      }
+    ],
+    "shortcut": "Recognise $\\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top = \\frac{\\mathbf{1}\\mathbf{1}^\\top}{\\mathbf{1}^\\top\\mathbf{1}}$ as the orthogonal projection onto $\\mathbf{1}$, so $M = I - P$ is the complementary orthogonal projection. Projections are symmetric and idempotent (A and D true, B false), and their trace equals their rank, $n - 1$ (C false). No matrix multiplication is needed.",
+    "commonTrap": "Mixing up $\\mathbf{1}\\mathbf{1}^\\top$ (the $n \\times n$ all-ones matrix) with $\\mathbf{1}^\\top\\mathbf{1}$ (the scalar $n$). Writing $\\mathbf{1}^\\top\\mathbf{1} = 1$ when expanding $M^2$ leaves an extra $-\\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top$ term, so $M^2 \\ne M$ and it becomes hard to see that $M$ is a projection. Treating $\\mathbf{1}\\mathbf{1}^\\top$ as the scalar $n$ collapses $M$ to $I_n - I_n = 0$. Separately, \"idempotent\" ($M^2 = M$) is often misremembered as $M^2 = I$, which leads to (B). Using only $\\operatorname{tr}(I_n) = n$ and forgetting the $-1$ from the subtracted term leads to (C)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q52-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes transposes with a superscript italic T (in the stem's 1 1^T and (1,1,1, ...,1)^T, and in option (A) M^T); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The all-ones vector 1 is bold in the paper and is kept bold. 'Trace' in option (C) is set in italic math as in the paper. The paper's parentheses around I_n - (1/n) 1 1^T are kept. The only embedded image in this region is the background watermark, so no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;D",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfor n in range(1, 8):\n    one = np.ones((n, 1))\n    I = np.eye(n)\n    M = I - (one @ one.T) / n\n    res = dict(A=np.allclose(M.T, M),\n               B=np.allclose(M @ M, I),\n               C=bool(np.isclose(np.trace(M), n)),\n               D=np.allclose(M @ M, M) and np.allclose(M.T, M))  # symmetric idempotent => orthogonal projection\n    print(n, 'trace', round(np.trace(M), 10), 'eig', np.round(np.linalg.eigvalsh(M), 10), res)\n    assert res == dict(A=True, B=False, C=False, D=True)   # -> A;D for every n",
+    "notes": "Algebra: M^T = M; M^2 = I - (2/n) 1 1^T + (1/n^2) 1 (1^T 1) 1^T = M (idempotent, not I_n, since M 1 = 0 makes M singular); Trace(M) = n - 1; symmetric plus idempotent means M is the orthogonal projection onto the complement of span{1}. The numpy check for n = 1..7 confirms M^T = M, M^2 = M != I_n and trace n - 1, with eigenvalues one 0 and (n-1) ones. The independent answer A;D matches official key A;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

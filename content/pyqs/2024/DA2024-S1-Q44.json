@@ -1,0 +1,111 @@
+{
+  "id": "DA2024-S1-Q44",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 44,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-uninformed"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (uninformed search order under a given tie-breaking rule) through two short five-step traces (BFS and DFS) with routine bookkeeping, in about 1.5–2.5 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider a state space where the start state is number 1. The successor function for the state numbered $n$ returns two states numbered $n+1$ and $n+2$. Assume that the states in the unexpanded state list are expanded in the ascending order of numbers and the previously expanded states are not added to the unexpanded state list.\n\nWhich **ONE** of the following statements about breadth-first search (BFS) and depth-first search (DFS) is true, when reaching the goal state number 6?",
+  "options": [
+    {
+      "label": "A",
+      "text": "BFS expands more states than DFS."
+    },
+    {
+      "label": "B",
+      "text": "DFS expands more states than BFS."
+    },
+    {
+      "label": "C",
+      "text": "Both BFS and DFS expand equal number of states."
+    },
+    {
+      "label": "D",
+      "text": "Both BFS and DFS do not reach the goal state number 6."
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "After expanding state $n$, the unexpanded list is $\\{n+1, n+2\\}$ for **both** BFS and DFS. The ascending-order rule picks $n+1$ next in both cases. So both expand $1, 2, 3, 4, 5$ and then select the goal 6: 5 expansions each, or 4 each if the goal is tested when generated. The counts are equal, which is option **(C)**.",
+    "steps": [
+      {
+        "title": "Understand the state space",
+        "body": "From state $n$ you can go to $n+1$ or $n+2$. The space is a graph, not a tree: state 4, for example, is a successor of both 2 and 3. It is also infinite ($7, 8, \\dots$ keep appearing). The goal 6 is at depth 3 from state 1, for example $1 \\to 2 \\to 4 \\to 6$ or $1 \\to 3 \\to 5 \\to 6$.\n\nThe rules are:\n\n- **Unexpanded list** (the frontier): the states generated but not yet expanded.\n- Among the candidates, states are taken in **ascending order of number**.\n- A state that has already been expanded is **never re-added**, so no state is expanded twice."
+      },
+      {
+        "title": "Trace BFS (FIFO frontier)",
+        "body": "BFS removes from the front and appends new children at the back, in ascending order. A child that is already waiting is not listed twice.\n\n| Step | Expand | Children generated | Unexpanded list afterwards |\n| --- | --- | --- | --- |\n| 1 | 1 | 2, 3 | [2, 3] |\n| 2 | 2 | 3, 4 | [3, 4] (3 was already waiting) |\n| 3 | 3 | 4, 5 | [4, 5] |\n| 4 | 4 | 5, 6 | [5, 6] |\n| 5 | 5 | 6, 7 | [6, 7] |\n| 6 | **6 = goal** | — | stop |\n\nBFS expands states **1, 2, 3, 4, 5**: 5 states before it selects the goal."
+      },
+      {
+        "title": "Trace DFS (LIFO frontier)",
+        "body": "DFS always continues from the most recently generated states. Because of the ascending-order rule, it takes the smaller child $n+1$ first.\n\n| Step | Expand | Children generated | Next to expand |\n| --- | --- | --- | --- |\n| 1 | 1 | 2, 3 | 2 (smaller child) |\n| 2 | 2 | 3, 4 | 3 |\n| 3 | 3 | 4, 5 | 4 |\n| 4 | 4 | 5, 6 | 5 |\n| 5 | 5 | 6, 7 | 6 |\n| 6 | **6 = goal** | — | stop |\n\nDFS dives along $1 \\to 2 \\to 3 \\to 4 \\to 5 \\to 6$ and also expands states **1, 2, 3, 4, 5**: 5 states."
+      },
+      {
+        "title": "Compare",
+        "body": "Both algorithms expand exactly the same states in the same order. The reason: after expanding $n$ (with all smaller states already expanded), the waiting states are exactly $n+1$ and $n+2$ in both algorithms, and the ascending-order rule picks $n+1$.\n\n- If the goal test is applied when a state is **selected** for expansion, both expand 5 states (1–5).\n- If it is applied when a state is **generated**, both stop after expanding 4, which generates 6. They expand 4 states each.\n\nEither way the counts are equal, and both reach 6. The answer is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Search vocabulary.** A search algorithm keeps an *unexpanded list* (also called the frontier or open list) of states it has generated but not yet explored. **Expanding** a state means removing it from this list and generating its successors. **Generating** a state means adding it to the list. The strategy is defined by *which* state is removed next:\n\n- **Breadth-first search (BFS)** uses a FIFO queue. It expands all states at depth $d$ before any at depth $d+1$, so it finds a shallowest goal.\n- **Depth-first search (DFS)** uses a LIFO stack. It keeps extending the newest path and backtracks only at dead ends.\n\nIn **graph search**, a closed set of already-expanded states stops re-expansion. That is what \"previously expanded states are not added to the unexpanded state list\" means. A **tie-breaking rule**, here ascending state number, fixes the order among children.\n\n**Why the usual intuition fails here.** People remember \"DFS can wander deep into useless branches\" and \"BFS explores whole levels\". Both statements depend on the shape of the space. In this state space, the path DFS prefers ($n \\to n+1$) visits every number in order, so it cannot miss 6 or wander past it. The levels BFS explores, $\\{2, 3\\}$ and then $\\{4, 5\\}$, contain exactly the states on that same path. By induction, both frontiers after expanding $n$ equal $\\{n+1, n+2\\}$. So the two algorithms make identical choices at every step.\n\n**Back to this question.** Tracing both gives the expansion order $1, 2, 3, 4, 5$ and then goal 6, so the counts are equal. Whether the goal is tested on selection (5 expansions) or on generation (4 expansions), BFS and DFS tie, and both clearly reach 6.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "BFS expands $\\{1, 2, 3, 4, 5\\}$, exactly the same set as DFS, not more. Its levels $\\{2, 3\\}$ and $\\{4, 5\\}$ are all states DFS also passes through on $1 \\to 2 \\to 3 \\to 4 \\to 5$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "DFS would expand more only if it went down a branch that does not lead to 6. Taking the smaller child $n+1$ first walks through $2, 3, 4, 5$ and generates 6 from 4 and 5, so DFS expands just those 5 states, the same as BFS."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Both algorithms expand $1, 2, 3, 4, 5$ in that order before the goal 6. That is 5 each, or 4 each if the goal is tested on generation, so the numbers are equal."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The space is infinite, but 6 lies at depth 3. BFS reaches it after finishing depth 2, and DFS reaches it along $1 \\to 2 \\to 3 \\to 4 \\to 5 \\to 6$. Both reach the goal."
+      }
+    ],
+    "shortcut": "After expanding $n$, only $n+1$ and $n+2$ are waiting in either algorithm, and ascending order picks $n+1$. Both searches therefore expand $1, 2, 3, \\dots$ in sequence and must tie.",
+    "commonTrap": "Answering from general folklore (\"BFS explores whole levels, so it expands more\", or \"DFS goes deep, so it expands more\") instead of tracing this particular state space. A related slip is counting states such as 3, 4 or 5 twice because each is generated by two parents. The rule that expanded states are never re-added means each state is expanded at most once."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q44-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper italicises n, n+1 and n+2, which are rendered as inline math; the state numbers 1 and 6 are upright in the paper and kept as plain text. No figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C",
+    "agreesWithKey": true,
+    "checkCode": "import heapq\nsucc=lambda n:[n+1,n+2]\ndef bfs(goal,start=1):\n    frontier=[start]; expanded=[]\n    while frontier:\n        n=frontier.pop(0)                      # FIFO\n        if n==goal: return expanded\n        expanded.append(n)\n        for s in succ(n):                      # children in ascending order\n            if s not in expanded and s not in frontier: frontier.append(s)\ndef dfs(goal,start=1):\n    frontier=[start]; expanded=[]\n    while frontier:\n        n=frontier.pop()                       # LIFO\n        if n==goal: return expanded\n        expanded.append(n)\n        for s in reversed(succ(n)):            # push larger first so smaller is expanded first\n            if s not in expanded:\n                if s in frontier: frontier.remove(s)\n                frontier.append(s)\ndef ascending(goal,start=1):                    # 'unexpanded list kept in ascending order'\n    frontier=[start]; expanded=[]\n    while frontier:\n        n=heapq.heappop(frontier)\n        if n==goal: return expanded\n        expanded.append(n)\n        for s in succ(n):\n            if s not in expanded and s not in frontier: heapq.heappush(frontier,s)\nfor f in (bfs,dfs,ascending): print(f.__name__, f(6), len(f(6)))\n# all three: [1, 2, 3, 4, 5] -> 5 states expanded before goal 6 is selected -> equal -> (C)\ndef early(goal,lifo,start=1):                   # goal test when a state is generated\n    frontier=[start]; expanded=[]\n    while frontier:\n        n=frontier.pop() if lifo else frontier.pop(0)\n        expanded.append(n)\n        kids=[s for s in succ(n) if s not in expanded]\n        if goal in kids: return expanded\n        for s in (reversed(kids) if lifo else kids):\n            if lifo and s in frontier: frontier.remove(s)\n            if lifo or s not in frontier: frontier.append(s)\nprint('goal test on generation: BFS',early(6,False),'DFS',early(6,True))  # both [1,2,3,4]\n",
+    "notes": "A Python simulation of BFS (FIFO) and DFS (LIFO, smaller child first) under the stated rules shows both expand states [1, 2, 3, 4, 5] before selecting goal 6. Reading the rule as a globally ascending unexpanded list gives the same sequence. With a goal test on generation, both expand [1, 2, 3, 4]. In every reading the counts are equal, which matches the official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,112 @@
+{
+  "id": "DA2024-S1-Q07",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 7,
+  "section": "GA",
+  "subjectId": "ga",
+  "topicId": "ga-quant",
+  "subtopicIds": [
+    "ga-stats-prob",
+    "ga-numerical"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (binomial counting of equally likely outcomes) and a single-step computation, 3 x (1/2)^3; under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "The probability of a boy or a girl being born is $1/2$. For a family having only three children, what is the probability of having two girls and one boy?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$3/8$"
+    },
+    {
+      "label": "B",
+      "text": "$1/8$"
+    },
+    {
+      "label": "C",
+      "text": "$1/4$"
+    },
+    {
+      "label": "D",
+      "text": "$1/2$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Each of the three births is a boy or a girl with probability $1/2$, so all $2^3 = 8$ ordered outcomes are equally likely. Exactly two girls and one boy occurs in $\\binom{3}{1} = 3$ of them (BGG, GBG, GGB), so the probability is $3/8$. Answer: **(A)**.",
+    "steps": [
+      {
+        "title": "Set up the model",
+        "body": "Each child is a boy (B) or a girl (G) with probability $1/2$, and the births are treated as independent. Recording the children in birth order, the sample space has\n\n$$2 \\times 2 \\times 2 = 2^3 = 8$$\n\nordered outcomes, each with probability $\\left(\\tfrac{1}{2}\\right)^3 = \\tfrac{1}{8}$."
+      },
+      {
+        "title": "Count the favourable outcomes",
+        "body": "\"Two girls and one boy\" means exactly one of the three children is a boy. The boy can be the first, second or third child:\n\n$$\\text{BGG},\\quad \\text{GBG},\\quad \\text{GGB}$$\n\nThat is $\\binom{3}{1} = \\binom{3}{2} = 3$ favourable outcomes."
+      },
+      {
+        "title": "Compute the probability",
+        "body": "Using the binomial formula with $n = 3$ children, $k = 2$ girls and $p = 1/2$:\n\n$$P(\\text{2 girls, 1 boy}) = \\binom{3}{2}\\left(\\tfrac{1}{2}\\right)^2\\left(\\tfrac{1}{2}\\right)^1 = 3 \\times \\tfrac{1}{8} = \\tfrac{3}{8}.$$"
+      },
+      {
+        "title": "Sanity check",
+        "body": "The number of girls $X$ takes the values $0, 1, 2, 3$ with probabilities $\\tfrac{1}{8}, \\tfrac{3}{8}, \\tfrac{3}{8}, \\tfrac{1}{8}$ (the row $1, 3, 3, 1$ of Pascal's triangle over $8$). These sum to $1$, and $P(X = 2) = 3/8$. The answer is **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)** $3/8$",
+    "teaching": "**Equally likely outcomes.** When an experiment has $N$ equally likely outcomes, the probability of an event is (number of favourable outcomes) / $N$. The crucial point is to choose a sample space whose outcomes really *are* equally likely.\n\nFor three births with $P(\\text{boy}) = P(\\text{girl}) = 1/2$, the equally likely outcomes are the **ordered** sequences such as GGB or BGB: each has probability $(1/2)^3 = 1/8$, and there are $2^3 = 8$ of them. By contrast, the four *unordered* compositions (3 girls; 2 girls + 1 boy; 1 girl + 2 boys; 3 boys) are **not** equally likely: \"all girls\" happens in only one way (GGG), while \"two girls and a boy\" happens in three ways.\n\n**The binomial distribution.** If each of $n$ independent trials succeeds with probability $p$, the number of successes $X$ satisfies\n\n$$P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}.$$\n\nThe factor $\\binom{n}{k}$ counts the positions the $k$ successes can occupy; $p^k(1-p)^{n-k}$ is the probability of any one such arrangement. With $p = 1/2$ every arrangement has probability $(1/2)^n$, so\n\n$$P(X = k) = \\frac{\\binom{n}{k}}{2^n},$$\n\ni.e. a row of Pascal's triangle divided by $2^n$.\n\n**Back to this question.** Treat \"girl\" as a success, with $n = 3$, $k = 2$ and $p = 1/2$: $P = \\binom{3}{2}/2^3 = 3/8$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$\\binom{3}{2}(1/2)^3 = 3/8$: three orderings (BGG, GBG, GGB), each with probability $1/8$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$1/8$ is the probability of **one specific order**, e.g. GGB (or of all three being girls). It forgets that the single boy can be in any of three positions."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$1/4$ results from treating the four compositions (0, 1, 2 or 3 girls) as equally likely. They are not: the compositions have probabilities $1/8, 3/8, 3/8, 1/8$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$1/2$ is the probability of **at least** two girls, $3/8 + 1/8$. The question asks for exactly two girls and one boy."
+      }
+    ],
+    "shortcut": "For $n$ fair, independent binary trials, $P(\\text{exactly } k) = \\binom{n}{k}/2^n$. For $n = 3$ the Pascal row is $1, 3, 3, 1$ over $8$, so exactly two girls has probability $3/8$.",
+    "commonTrap": "Treating the four gender compositions as equally likely (giving $1/4$), or forgetting the $\\binom{3}{2} = 3$ possible orders (giving $1/8$)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q07-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Fractions 1/2, 3/8, 1/8, 1/4 printed inline as slash fractions; rendered here as $1/2$ etc. without change of meaning."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (3/8)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nfrom fractions import Fraction as F\nfrom math import comb\nouts = list(product('BG', repeat=3))            # 8 equally likely ordered outcomes\nfav = [o for o in outs if o.count('G') == 2]    # exactly two girls, one boy\np = F(len(fav), len(outs))\nassert p == F(comb(3, 2), 2**3) == F(3, 8)\nprint(fav, p)  # [('B','G','G'), ('G','B','G'), ('G','G','B')] 3/8",
+    "notes": "Enumerating the 8 equally likely birth orders gives 3 favourable outcomes, i.e. 3/8, which matches the official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

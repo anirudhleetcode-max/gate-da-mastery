@@ -1,0 +1,111 @@
+{
+  "id": "DA2024-S1-Q21",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 21,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-hash-tables"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (under open addressing, an insertion probes exactly like an unsuccessful search) that turns the bound given in the stem into the answer, so it is essentially direct recall in under a minute.",
+  "estimatedTimeSec": 45,
+  "stem": "Consider performing uniform hashing on an open address hash table with load factor $\\alpha = \\dfrac{n}{m} < 1$, where $n$ elements are stored in the table with $m$ slots. The expected number of probes in an unsuccessful search is at most $\\dfrac{1}{1-\\alpha}$ .\n\nInserting an element in this hash table requires at most \\_\\_\\_\\_\\_\\_ probes, on average.",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\ln\\left(\\dfrac{1}{1-\\alpha}\\right)$"
+    },
+    {
+      "label": "B",
+      "text": "$\\dfrac{1}{1-\\alpha}$"
+    },
+    {
+      "label": "C",
+      "text": "$1 + \\dfrac{\\alpha}{2}$"
+    },
+    {
+      "label": "D",
+      "text": "$\\dfrac{1}{1+\\alpha}$"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Under open addressing, inserting a key probes exactly as an unsuccessful search does, stopping at the first empty slot, and then writes the key there. So insertion costs the same as an unsuccessful search: at most $\\dfrac{1}{1-\\alpha}$ probes on average, option **(B)**.",
+    "steps": [
+      {
+        "title": "Set-up: open addressing under uniform hashing",
+        "body": "In an **open-address** hash table every key is stored in the table itself (no chains). To insert or find a key $k$, we examine slots in the order of its **probe sequence**\n\n$$\nh(k, 0),\\; h(k, 1),\\; h(k, 2),\\; \\dots,\\; h(k, m-1),\n$$\n\nwhich is a permutation of the $m$ slots. **Uniform hashing** assumes that each key's probe sequence is equally likely to be any of the $m!$ permutations.\n\nThe table holds $n$ keys in $m$ slots, so the load factor is $\\alpha = n/m$. Since $\\alpha < 1$, at least one slot is empty, so an insertion always succeeds."
+      },
+      {
+        "title": "Insertion probes exactly like an unsuccessful search",
+        "body": "- **Unsuccessful search for $k$:** probe $h(k,0), h(k,1), \\dots$ until an **empty** slot is reached. The empty slot proves $k$ is not in the table.\n- **Insertion of $k$:** probe $h(k,0), h(k,1), \\dots$ until an **empty** slot is reached, then store $k$ there.\n\nBoth procedures follow the same probe sequence and stop at the same slot, the first empty slot on $k$'s sequence. So inserting a key into a table that currently holds $n$ keys costs exactly as many probes as an unsuccessful search in that table.\n\nThe stem tells us that this cost is at most $\\dfrac{1}{1-\\alpha}$ on average, so insertion needs at most $\\dfrac{1}{1-\\alpha}$ probes on average."
+      },
+      {
+        "title": "Why the bound is 1/(1 − α)",
+        "body": "Let $X$ be the number of probes. The first probe finds an occupied slot with probability $\\frac{n}{m}$. Given that, the second probe goes to one of the remaining $m-1$ slots, of which $n-1$ are occupied, and so on. Hence, for $i \\ge 1$,\n\n$$\nP(X \\ge i) = \\frac{n}{m} \\cdot \\frac{n-1}{m-1} \\cdots \\frac{n-i+2}{m-i+2} \\;\\le\\; \\left(\\frac{n}{m}\\right)^{i-1} = \\alpha^{i-1},\n$$\n\nbecause $\\frac{n-j}{m-j} \\le \\frac{n}{m}$ whenever $n < m$. Summing the tail probabilities,\n\n$$\nE[X] = \\sum_{i \\ge 1} P(X \\ge i) \\;\\le\\; \\sum_{i \\ge 1} \\alpha^{i-1} = 1 + \\alpha + \\alpha^2 + \\cdots = \\frac{1}{1-\\alpha}.\n$$\n\nIntuition: each probe \"fails\" with probability at most $\\alpha$, so the number of probes is at most a geometric random variable with success probability $1 - \\alpha$, whose mean is $\\frac{1}{1-\\alpha}$. (The exact mean under uniform hashing is $\\frac{m+1}{m-n+1}$, which is indeed at most $\\frac{1}{1-\\alpha}$.)"
+      },
+      {
+        "title": "Numerical check of the options",
+        "body": "Take $m = 20$ slots and $n = 15$ keys, so $\\alpha = 0.75$.\n\n- Exact average insertion cost: $\\dfrac{m+1}{m-n+1} = \\dfrac{21}{6} = 3.5$ probes. A simulation of uniform hashing (20 000 trials) gives about 3.49.\n- (B) $\\dfrac{1}{1-0.75} = 4 \\ge 3.5$: a valid upper bound.\n- (A) $\\ln 4 \\approx 1.386$, (C) $1 + 0.375 = 1.375$ and (D) $\\dfrac{1}{1.75} \\approx 0.571$ are all **below** the true average 3.5, so none of them can be an upper bound on it.\n\nThe same pattern holds for $\\alpha = 0.25, 0.5, 0.9$ (see the Python check). The answer is **(B)** $\\dfrac{1}{1-\\alpha}$."
+      }
+    ],
+    "finalAnswer": "**(B)** $\\dfrac{1}{1-\\alpha}$",
+    "teaching": "**Open addressing.** In an open-address hash table there are no linked lists: every key lives in one of the $m$ slots. When the home slot of a key is taken, we keep trying other slots in a fixed order, the key's **probe sequence** (linear probing, quadratic probing, double hashing, and so on). The idealised model used in analysis is **uniform hashing**: every key's probe sequence is a uniformly random permutation of the slots.\n\n**Why probes grow like $1/(1-\\alpha)$.** With load factor $\\alpha = n/m$, a random slot is occupied with probability about $\\alpha$. Searching for an empty slot is therefore like tossing a coin that shows \"empty\" with probability about $1 - \\alpha$ and counting the tosses until the first \"empty\". That count is geometric with mean $\\frac{1}{1-\\alpha}$. At $\\alpha = 0.5$ this is 2 probes; at $\\alpha = 0.9$ it is 10. The cost explodes as the table fills up, which is why open-address tables are resized well before they are full.\n\n**The three standard results under uniform hashing:**\n\n| Operation | Expected probes (at most) |\n|---|---|\n| Unsuccessful search | $\\dfrac{1}{1-\\alpha}$ |\n| Insertion | $\\dfrac{1}{1-\\alpha}$ (same probes as an unsuccessful search) |\n| Successful search | $\\dfrac{1}{\\alpha}\\ln\\dfrac{1}{1-\\alpha}$ |\n\nThe successful-search bound is obtained by averaging the insertion costs of the keys already in the table: finding a key retraces the probes made when it was inserted, when the table was less full.\n\n**Back to this question.** The stem gives the unsuccessful-search bound. Insertion is \"an unsuccessful search plus writing the key into the empty slot it ends on\", so the same bound $\\frac{1}{1-\\alpha}$ applies, which is option (B).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "This looks like the successful-search bound $\\frac{1}{\\alpha}\\ln\\frac{1}{1-\\alpha}$ with the $\\frac{1}{\\alpha}$ factor dropped. It is not an upper bound on the insertion cost: it is below 1 whenever $\\alpha < 1 - 1/e \\approx 0.632$, yet every insertion needs at least one probe, and at $\\alpha = 0.75$ it gives about 1.386 while the true average (for $m = 20$) is 3.5."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "An insertion follows the same probe sequence as an unsuccessful search and stops at the same first empty slot, so its expected cost obeys the same bound $\\frac{1}{1-\\alpha}$. This matches the official key."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$1 + \\frac{\\alpha}{2}$ is (approximately) the expected number of elements examined in a successful search when collisions are resolved by **chaining**, a different scheme. It never exceeds 1.5 for $\\alpha < 1$, while the insertion cost under open addressing grows without bound as $\\alpha \\to 1$ (3.5 probes already at $\\alpha = 0.75$, $m = 20$)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$\\frac{1}{1+\\alpha} < 1$ for every $\\alpha > 0$, but an insertion always needs at least one probe. It also decreases as the table fills, which is the opposite of the real behaviour."
+      }
+    ],
+    "shortcut": "Insert = unsuccessful search + one write into the empty slot it finds. So the insertion bound is the unsuccessful-search bound already given in the stem, $\\frac{1}{1-\\alpha}$.",
+    "commonTrap": "Mixing up the three open-addressing results, especially picking a $\\ln\\frac{1}{1-\\alpha}$ expression (the shape of the successful-search bound) for insertion, or recalling a chaining formula such as $1 + \\frac{\\alpha}{2}$. A quick sanity check removes (A), (C) and (D): the insertion cost must be at least 1 and must blow up as $\\alpha \\to 1$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q21-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The fractions n/m and 1/(1−α) are printed as stacked fractions in the paper and are typeset with \\dfrac. The paper prints a space before the full stop after 1/(1−α) (\"1/(1−α) .\"); it is kept as printed. The answer blank is written as six escaped underscores. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B) 1/(1 − α)",
+    "agreesWithKey": true,
+    "checkCode": "import math, random\nfrom fractions import Fraction as F\nrandom.seed(1)\ndef exact_insert(m, n):\n    # E[probes] = sum_{i>=1} P(first i-1 probes all hit occupied slots) under uniform hashing\n    e, p = F(0), F(1)\n    for i in range(1, n + 2):\n        e += p\n        p *= F(n - (i - 1), m - (i - 1))\n    return e\ndef sim_insert(m, n, trials=100000):\n    # uniform hashing: the new key's probe sequence is a random permutation of the m slots\n    tot = 0\n    for _ in range(trials):\n        occ = set(random.sample(range(m), n))    # by symmetry the occupied set is a uniform n-subset\n        for p, s in enumerate(random.sample(range(m), m), 1):\n            if s not in occ: tot += p; break\n    return tot / trials\nm = 20\nfor n in (5, 10, 15, 18):\n    a = n / m; ex = exact_insert(m, n)\n    assert ex == F(m + 1, m - n + 1) and ex <= 1 / (1 - F(n, m))\n    print(f'alpha={a:.2f} exact={float(ex):.3f} sim={sim_insert(m, n, 20000):.3f} | '\n          f'A={math.log(1/(1-a)):.3f} B={1/(1-a):.3f} C={1+a/2:.3f} D={1/(1+a):.3f}')",
+    "notes": "Under open addressing an insertion follows the same probe sequence as an unsuccessful search and stops at the same first empty slot, so its expected cost has the same bound 1/(1−α). A Python check computes the exact mean (m+1)/(m−n+1) from the tail-probability sum, confirms it is at most 1/(1−α), and matches it by simulating uniform hashing for m = 20 and α = 0.25, 0.5, 0.75, 0.9; options A, C and D fall below the true mean at every tested α, so they cannot be upper bounds. This agrees with official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

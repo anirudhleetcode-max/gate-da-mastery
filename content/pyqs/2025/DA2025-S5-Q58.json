@@ -1,0 +1,120 @@
+{
+  "id": "DA2025-S5-Q58",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 58,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-graphs",
+  "subtopicIds": [
+    "pdsa-shortest-path",
+    "pdsa-graph-theory"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (an extra edge must not create a path shorter than a given shortest path) in four short checks, three of them a single 2-edge-path observation and one ((b, g)) a brief argument that no shortcut arises, taking about 2 minutes for a prepared student.",
+  "estimatedTimeSec": 120,
+  "stem": "Let $G$ be a simple, unweighted, and undirected graph. A subset of the vertices and edges of $G$ are shown below.\n\n![Figure: Graph with vertices a, b, c, d in the top row and e, f, g, h in the bottom row. The edges shown are a–b, b–c and c–d along the top row; e–f, f–g and g–h along the bottom row; and three diagonals a–f, f–c and c–h.](/pyq/2025/fig/Q58-1.png)\n\nIt is given that $a - b - c - d$ is a shortest path between $a$ and $d$; $e - f - g - h$ is a shortest path between $e$ and $h$; $a - f - c - h$ is a shortest path between $a$ and $h$. Which of the following is/are NOT the edges of $G$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$(b, d)$"
+    },
+    {
+      "label": "B",
+      "text": "$(b, g)$"
+    },
+    {
+      "label": "C",
+      "text": "$(b, h)$"
+    },
+    {
+      "label": "D",
+      "text": "$(e, g)$"
+    }
+  ],
+  "officialKeyRaw": "A;C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "Each given shortest path has 3 edges, so $d(a, d) = d(e, h) = d(a, h) = 3$ in $G$. An edge that would create a 2-edge path between any of these pairs is impossible. $(b, d)$ gives $a - b - d$, $(b, h)$ gives $a - b - h$ and $(e, g)$ gives $e - g - h$, so none of these can be edges. Adding $(b, g)$ keeps all three distances at 3, so it may be an edge.\n\nNOT edges: **(A), (C), (D)**.",
+    "steps": [
+      {
+        "title": "Turn the given shortest paths into distances",
+        "body": "In an unweighted graph, the length of a path is its number of edges, and a *shortest* path realises the distance $d(u, v)$. So the three facts say:\n\n$$d(a, d) = 3, \\qquad d(e, h) = 3, \\qquad d(a, h) = 3.$$\n\nThe figure shows only part of $G$, but every edge drawn is in $G$: $(a,b), (b,c), (c,d), (e,f), (f,g), (g,h), (a,f), (f,c), (c,h)$. The three given paths use only these edges.\n\n**Test for each option:** if the edge $(u, v)$ were in $G$, together with the known edges, would some pair above be joined by a path of fewer than 3 edges? If yes, the edge cannot exist. Adding edges can only shorten distances, and any other unknown edges of $G$ cannot undo such a shortcut."
+      },
+      {
+        "title": "Option (A): (b, d)",
+        "body": "$(a, b)$ is an edge of $G$. If $(b, d)$ were an edge, then $a - b - d$ would be a path with **2** edges, so\n\n$$d(a, d) \\le 2 < 3.$$\n\nThat contradicts $a - b - c - d$ being a shortest $a$–$d$ path. So $(b, d)$ is **NOT** an edge."
+      },
+      {
+        "title": "Option (C): (b, h)",
+        "body": "Again use the edge $(a, b)$. If $(b, h)$ were an edge, $a - b - h$ would be a 2-edge path, so\n\n$$d(a, h) \\le 2 < 3,$$\n\nwhich contradicts $a - f - c - h$ being a shortest $a$–$h$ path. So $(b, h)$ is **NOT** an edge. (Here $b$ and $h$ do not lie on the same given path, so the contradiction only appears through the edge $(a, b)$.)"
+      },
+      {
+        "title": "Option (D): (e, g)",
+        "body": "$(g, h)$ is an edge of $G$. If $(e, g)$ were an edge, $e - g - h$ would be a 2-edge path, so\n\n$$d(e, h) \\le 2 < 3,$$\n\nwhich contradicts $e - f - g - h$ being a shortest $e$–$h$ path. So $(e, g)$ is **NOT** an edge."
+      },
+      {
+        "title": "Option (B): (b, g) is possible",
+        "body": "Take $G$ to be exactly the drawn graph plus the edge $(b, g)$, and recompute the three distances (for example by BFS):\n\n- $a$ to $d$: $d$ is adjacent only to $c$, and $d(a, c) = 2$ (via $a - b - c$ or $a - f - c$). A route through $b - g$ would be $a - b - g - h - c - d$, which has 5 edges. So $d(a, d) = 3$ still.\n- $e$ to $h$: $e$ is adjacent only to $f$, and $f$ is not adjacent to $h$, so no path of 2 edges exists. The routes through $(b, g)$, such as $e - f - a - b - g - h$, have 5 edges. So $d(e, h) = 3$ still.\n- $a$ to $h$: $a - b - g - h$ has 3 edges, the same length as $a - f - c - h$. The distance stays 3, and $a - f - c - h$ is still *a* shortest path (a shortest path need not be unique).\n\nAll three facts remain true, so the given information does not rule out $(b, g)$. It is **not** among the edges that can be declared absent.\n\n**Answer:** the edges that are NOT in $G$ are $(b, d)$, $(b, h)$ and $(e, g)$, options **(A), (C), (D)**."
+      }
+    ],
+    "finalAnswer": "**(A), (C), (D)**",
+    "teaching": "**Distance in an unweighted graph.** In a graph without weights, the distance $d(u, v)$ is the minimum number of edges on any path from $u$ to $v$. Breadth-first search (BFS) computes it: from a source $s$, BFS finds every vertex at distance 1, then every vertex at distance 2, and so on. A *shortest path* is any path that achieves this minimum, and there can be several.\n\n**The one-step rule.** If $(u, v)$ is an edge, then for any source $s$\n\n$$|d(s, u) - d(s, v)| \\le 1,$$\n\nbecause from $u$ you can always take one more step to reach $v$, and vice versa. In BFS terms, an edge can only join vertices in the same layer or in adjacent layers. An edge that would jump two layers would itself create a shorter path, contradicting the layer numbers.\n\n**Using this to rule edges out.** Here we know some distances from the given shortest paths, and some edges from the figure. Measure from $a$: $d(a, b) = 1$ (edge $a - b$) while $d(a, d) = 3$ and $d(a, h) = 3$. Both $(b, d)$ and $(b, h)$ would join layer 1 to layer 3, which is impossible. Measure from $h$: $d(h, g) = 1$ (edge $g - h$) while $d(h, e) = 3$. The edge $(e, g)$ would also jump two layers, so it is impossible too.\n\n**Why \"not drawn\" is not \"not an edge\".** The question says only a *subset* of the edges is shown, so an edge missing from the picture may still exist. To show an edge is *possible*, it is enough to find one graph that contains it and satisfies all the given facts. The drawn graph plus $(b, g)$ is such a graph: $(b, g)$ only creates a second $a$–$h$ path of length 3, which is allowed because a shortest path need not be unique.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "With the edge $(a, b)$, the edge $(b, d)$ would give the 2-edge path $a - b - d$, contradicting $d(a, d) = 3$ from the shortest path $a - b - c - d$. So $(b, d)$ is not an edge of $G$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$(b, g)$ is consistent with every given fact. In the drawn graph plus $(b, g)$, the distances $d(a, d)$, $d(e, h)$ and $d(a, h)$ all stay equal to 3. The new path $a - b - g - h$ also has length 3, which only ties with $a - f - c - h$. We cannot conclude that $(b, g)$ is absent."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "With the edge $(a, b)$, the edge $(b, h)$ would give the 2-edge path $a - b - h$, contradicting $d(a, h) = 3$ from the shortest path $a - f - c - h$. So $(b, h)$ is not an edge of $G$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "With the edge $(g, h)$, the edge $(e, g)$ would give the 2-edge path $e - g - h$, contradicting $d(e, h) = 3$ from the shortest path $e - f - g - h$. So $(e, g)$ is not an edge of $G$."
+      }
+    ],
+    "shortcut": "Label BFS layers from the endpoints of the given paths. From $a$: $b$ is in layer 1, while $d$ and $h$ are in layer 3. From $h$: $g$ is in layer 1 and $e$ is in layer 3. An edge can never join layers that differ by 2 or more, so $(b, d)$, $(b, h)$ and $(e, g)$ are impossible. $(b, g)$ joins layers 1 and 2 from $a$, and layers 2 and 1 from $h$, so nothing forbids it.",
+    "commonTrap": "Marking $(b, g)$ as \"not an edge\" because it is not in the picture, or because $a - b - g - h$ would compete with the given $a - f - c - h$. The figure shows only a subset of the edges, and a shortest path need not be unique, so a second path of the same length 3 is allowed. The other slip is missing $(b, h)$: $b$ and $h$ do not lie on a common given path, so you only see the contradiction by going through the edge $(a, b)$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q58-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The graph is vector art. It was rendered from the official PDF page 31 at 250 dpi with the background watermark image removed; the drawing and labels are unchanged. It shows vertices a, b, c, d (top row) and e, f, g, h (bottom row) with edges (a,b), (b,c), (c,d), (e,f), (f,g), (g,h), (a,f), (f,c) and (c,h). The paper's wording 'A subset of the vertices and edges of G are shown below' and 'NOT the edges' is kept verbatim. The paths are written with minus signs in the paper (a − b − c − d) and are kept as $a - b - c - d$."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;C;D ((b,d), (b,h) and (e,g) would each create a 2-edge path between a pair whose given shortest path has 3 edges; (b,g) is consistent with all three given shortest paths)",
+    "agreesWithKey": true,
+    "checkCode": "from collections import deque\nshown = [('a','b'),('b','c'),('c','d'),('a','f'),('f','c'),('c','h'),('e','f'),('f','g'),('g','h')]\ndef dist(E, s, t):\n    adj = {}\n    for u, v in E:\n        adj.setdefault(u, set()).add(v); adj.setdefault(v, set()).add(u)\n    D = {s: 0}; q = deque([s])\n    while q:\n        u = q.popleft()\n        for w in adj.get(u, ()):\n            if w not in D: D[w] = D[u] + 1; q.append(w)\n    return D.get(t)\n# given shortest paths, each of length 3\ngiven = [('a','d'), ('e','h'), ('a','h')]\nprint('shown graph distances:', [(s, t, dist(shown, s, t)) for s, t in given])\nfor lab, e in zip('ABCD', [('b','d'), ('b','g'), ('b','h'), ('e','g')]):\n    d = [dist(shown + [e], s, t) for s, t in given]\n    ok = all(x == 3 for x in d)\n    print(lab, e, 'distances with edge added:', d,\n          '-> consistent (could be an edge)' if ok else '-> contradicts a given shortest path (NOT an edge)')\n",
+    "notes": "Hand solve: the given shortest paths fix d(a,d) = d(e,h) = d(a,h) = 3. The edge (b,d) would give a-b-d, (b,h) would give a-b-h and (e,g) would give e-g-h, each of length 2, so all three are impossible. The drawn graph plus (b,g) keeps all three distances at 3, so (b,g) is possible. The Python BFS check adds each option edge to the drawn graph and recomputes the three distances: (2,3,3) for (b,d), (3,3,3) for (b,g), (3,3,2) for (b,h) and (3,2,3) for (e,g). This agrees with the official key A;C;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

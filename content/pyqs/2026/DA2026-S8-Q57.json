@@ -1,0 +1,74 @@
+{
+  "id": "DA2026-S8-Q57",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 57,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-conditional",
+  "subtopicIds": [
+    "ps-bayes",
+    "ps-marginal-joint"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (Bayes' theorem, with the law of total probability for the denominator) applied by direct substitution of the given prior and likelihoods, with routine arithmetic (0.24/0.31); about 1 to 1.5 minutes for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "A clinic specializes in testing for a disease $\\mathsf{D}$. The result of the test can be either positive or negative.\n\nA study revealed that if a person suffers from the disease $\\mathsf{D}$, the test result in that clinic comes out positive 80% of the time, and negative 20% of the time. If a person is not suffering from the disease $\\mathsf{D}$, the test comes out positive 10% of the time and negative 90% of the time. It is also known that among the general population, the disease $\\mathsf{D}$ occurs in 30% of the individuals.\n\nIf a person tests positive for $\\mathsf{D}$ in that clinic, the probability that he/she actually suffers from the disease $\\mathsf{D}$ is __________ . (Rounded off to **two** decimal places)",
+  "options": [],
+  "officialKeyRaw": "0.76 to 0.78",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.76,
+    "max": 0.78
+  },
+  "solution": {
+    "quick": "Bayes' theorem. With prior $P(\\mathsf{D}) = 0.3$ and likelihoods $P(+ \\mid \\mathsf{D}) = 0.8$, $P(+ \\mid \\mathsf{D}^c) = 0.1$, a positive result has total probability $P(+) = 0.8(0.3) + 0.1(0.7) = 0.24 + 0.07 = 0.31$. Hence $P(\\mathsf{D} \\mid +) = 0.24/0.31 = 24/31 \\approx 0.774$, which rounds to **0.77**.",
+    "steps": [
+      {
+        "title": "Name the events and read off the data",
+        "body": "Let $\\mathsf{D}$ be the event that a person has the disease, $\\mathsf{D}^c$ that they do not, and $+$ / $-$ that the test is positive / negative.\n\n| Quantity | Meaning | Value |\n| --- | --- | --- |\n| $P(\\mathsf{D})$ | prior: prevalence in the population | $0.30$ |\n| $P(\\mathsf{D}^c)$ | $1 - P(\\mathsf{D})$ | $0.70$ |\n| $P(+ \\mid \\mathsf{D})$ | positive given diseased (sensitivity) | $0.80$ |\n| $P(+ \\mid \\mathsf{D}^c)$ | positive given not diseased (false-positive rate) | $0.10$ |\n\nThe 20% and 90% figures are the complements $P(- \\mid \\mathsf{D}) = 0.2$ and $P(- \\mid \\mathsf{D}^c) = 0.9$; they are consistent with the positive rates but not needed. The question gives the test behaviour in the direction \"disease $\\to$ result\" and asks for the reverse direction, $P(\\mathsf{D} \\mid +)$."
+      },
+      {
+        "title": "Total probability of a positive result",
+        "body": "A positive result comes either from a person who has $\\mathsf{D}$ or from one who does not. These two cases are disjoint and cover the whole population, so by the law of total probability\n\n$$\nP(+) = P(+ \\mid \\mathsf{D})\\,P(\\mathsf{D}) + P(+ \\mid \\mathsf{D}^c)\\,P(\\mathsf{D}^c) = (0.8)(0.3) + (0.1)(0.7) = 0.24 + 0.07 = 0.31.\n$$\n\nThe first term, $0.24 = P(\\mathsf{D} \\cap +)$, is the probability of having the disease **and** testing positive (true positives); the second, $0.07 = P(\\mathsf{D}^c \\cap +)$, is the false positives."
+      },
+      {
+        "title": "Apply Bayes' theorem",
+        "body": "$$\nP(\\mathsf{D} \\mid +) = \\frac{P(+ \\mid \\mathsf{D})\\,P(\\mathsf{D})}{P(+)} = \\frac{0.24}{0.31} = \\frac{24}{31} = 0.774193\\ldots\n$$\n\nIn words: of all positive results, the fraction that come from truly diseased people is $0.24$ out of $0.31$."
+      },
+      {
+        "title": "Round and sanity-check",
+        "body": "Rounded off to two decimal places, $P(\\mathsf{D} \\mid +) = 0.7742 \\approx 0.77$, which lies in the official range 0.76 to 0.78.\n\nSanity check: the posterior $0.77$ is much higher than the prior $0.30$, as it should be, since a positive result is evidence for the disease. It is still well short of 1, because 7 of every 31 positive results come from the larger group of people without the disease."
+      }
+    ],
+    "finalAnswer": "**0.77** (exactly $\\frac{24}{31} \\approx 0.7742$)",
+    "teaching": "**Conditional probability has a direction.** $P(A \\mid B)$ is the probability of $A$ among the cases where $B$ happened. Diagnostic studies usually report the \"disease $\\to$ test\" direction: among diseased people, how often is the test positive ($P(+ \\mid \\mathsf{D})$, the *sensitivity*), and among healthy people, how often is it positive ($P(+ \\mid \\mathsf{D}^c)$, the *false-positive rate*). A patient with a positive result wants the opposite direction: how likely am I to be ill, $P(\\mathsf{D} \\mid +)$? Bayes' theorem converts one direction into the other.\n\n**Deriving Bayes' theorem.** The joint probability can be written in two ways, $P(\\mathsf{D} \\cap +) = P(+ \\mid \\mathsf{D})\\,P(\\mathsf{D}) = P(\\mathsf{D} \\mid +)\\,P(+)$. Solving for the unknown gives $P(\\mathsf{D} \\mid +) = P(+ \\mid \\mathsf{D})\\,P(\\mathsf{D}) / P(+)$. The denominator comes from the law of total probability: split the positives by where they came from, $P(+) = P(+ \\mid \\mathsf{D})P(\\mathsf{D}) + P(+ \\mid \\mathsf{D}^c)P(\\mathsf{D}^c)$.\n\n**The natural-frequency picture.** Imagine 1000 people. 300 have the disease, and 80% of them, 240 people, test positive. 700 do not, and 10% of them, 70 people, also test positive. Of the 310 positives, 240 are truly ill, so $P(\\mathsf{D} \\mid +) = 240/310 = 24/31$. The formula is exactly this counting written with probabilities.\n\n**Why the prior matters.** With the same test but a rare disease (1% prevalence), the posterior would be $0.008/(0.008 + 0.099) \\approx 0.07$: most positives would be false alarms from the huge healthy group. Here the prevalence is a high 30%, so the posterior is large.\n\n**Connecting to this question.** Prior 0.3, likelihoods 0.8 and 0.1: true positives weigh $0.24$ against $0.07$ false positives, so $P(\\mathsf{D} \\mid +) = 0.24/0.31 \\approx 0.77$.",
+    "shortcut": "Use natural frequencies per 100 people: 30 have $\\mathsf{D}$, and 24 of them test positive; 70 do not, and 7 of them test positive. So $P(\\mathsf{D} \\mid +) = 24/(24 + 7) = 24/31 \\approx 0.77$.",
+    "commonTrap": "Answering $0.80$, which is $P(+ \\mid \\mathsf{D})$, instead of the asked $P(\\mathsf{D} \\mid +)$ (confusing a conditional probability with its inverse). Other slips: reporting the joint probability $0.24 = P(\\mathsf{D} \\cap +)$ without dividing by $P(+)$, leaving the $0.07$ false positives from people without the disease out of the denominator, or putting the negative rates (20%, 90%) into the total-probability sum."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q57-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the disease name D in a sans-serif font that differs from the body text; it is rendered as $\\mathsf{D}$ throughout. The percentages (80%, 20%, 10%, 90%, 30%), 'he/she' and the rounding instruction, with 'two' in bold, are kept as printed. The paper leaves a space between the answer blank and the full stop, and this is kept. The region has no embedded figure (candidate figure list is empty) and none is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.77 (exact 24/31 = 0.7742)",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\np_D, sens, fpr = F(3, 10), F(8, 10), F(1, 10)   # P(D), P(+|D), P(+|not D)\np_pos = sens*p_D + fpr*(1 - p_D)                 # total probability of a positive test\npost = sens*p_D / p_pos                          # Bayes: P(D|+)\nprint(p_pos, post, float(post), round(float(post), 2))   # 31/100 24/31 0.7741935... 0.77\nassert p_pos == F(31, 100) and post == F(24, 31)\nassert 0.76 <= round(float(post), 2) <= 0.78     # official key 0.76 to 0.78\n# natural-frequency cross-check on 1000 people\nsick_pos, healthy_pos = 1000*0.3*0.8, 1000*0.7*0.1   # 240, 70\nassert abs(sick_pos/(sick_pos + healthy_pos) - float(post)) < 1e-12\n# Monte Carlo sanity check\nimport random\nrandom.seed(0); pos = sick = 0\nfor _ in range(1_000_000):\n    d = random.random() < 0.3\n    t = random.random() < (0.8 if d else 0.1)\n    if t: pos += 1; sick += d\nprint('MC P(D|+) =', round(sick/pos, 4))\n",
+    "notes": "Law of total probability: P(+) = 0.8(0.3) + 0.1(0.7) = 0.31. Bayes: P(D|+) = 0.24/0.31 = 24/31 = 0.7742, which rounds to 0.77. Exact rational arithmetic, a natural-frequency cross-check (240 of 310 positives per 1000 people) and a 1,000,000-trial Monte Carlo simulation (0.7747) agree. 0.77 lies within the official key range 0.76 to 0.78."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

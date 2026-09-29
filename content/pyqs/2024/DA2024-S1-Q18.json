@@ -1,0 +1,117 @@
+{
+  "id": "DA2024-S1-Q18",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 18,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-naive-bayes",
+    "ml-logistic-regression",
+    "ml-pca"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: direct recall of what three standard methods are (dimensionality reduction, generative and discriminative models) with no computation, under a minute for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "Match the items in **Column 1** with the items in **Column 2** in the following table:\n\n| Column 1 | Column 2 |\n| --- | --- |\n| (p) Principal Component Analysis | (i) Discriminative Model |\n| (q) Naïve Bayes Classification | (ii) Dimensionality Reduction |\n| (r) Logistic Regression | (iii) Generative Model |",
+  "options": [
+    {
+      "label": "A",
+      "text": "(p) − (iii), (q) − (i), (r) − (ii)"
+    },
+    {
+      "label": "B",
+      "text": "(p) − (ii), (q) − (i), (r) − (iii)"
+    },
+    {
+      "label": "C",
+      "text": "(p) − (ii), (q) − (iii), (r) − (i)"
+    },
+    {
+      "label": "D",
+      "text": "(p) − (iii), (q) − (ii), (r) − (i)"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "PCA projects data onto a few directions of maximum variance, so it is **dimensionality reduction** (ii). Naïve Bayes models $P(y)$ and $P(\\mathbf{x} \\mid y)$, the way the data are generated, and classifies with Bayes' rule, so it is **generative** (iii). Logistic regression models $P(y \\mid \\mathbf{x})$ directly, so it is **discriminative** (i). The matching (p)–(ii), (q)–(iii), (r)–(i) is **(C)**.",
+    "steps": [
+      {
+        "title": "Principal Component Analysis → Dimensionality Reduction",
+        "body": "PCA is an unsupervised method. It computes the eigenvectors of the data covariance matrix and keeps the top $k$ directions (principal components), those with the largest variance. Each $d$-dimensional point is replaced by its $k$ coordinates along these directions, with $k < d$. PCA uses no class labels and does not predict $y$, so it is not a classifier at all. It matches **(ii) Dimensionality Reduction**.\n\nSince the matching is one-to-one, (ii) can only go with PCA anyway: neither Naïve Bayes nor logistic regression reduces dimensionality."
+      },
+      {
+        "title": "Recall generative vs discriminative",
+        "body": "A probabilistic classifier needs $P(y \\mid \\mathbf{x})$, and there are two ways to get it.\n\n- **Generative model:** learn the joint distribution through $P(y)$ and $P(\\mathbf{x} \\mid y)$, i.e. how an example $\\mathbf{x}$ is *generated* from each class, and then obtain the posterior with Bayes' rule (below).\n- **Discriminative model:** learn $P(y \\mid \\mathbf{x})$, or the decision boundary itself, directly, without modelling how $\\mathbf{x}$ is distributed.\n\nThe Bayes' rule step used by a generative classifier is\n\n$$\nP(y \\mid \\mathbf{x}) = \\frac{P(\\mathbf{x} \\mid y)\\,P(y)}{\\sum_{y'} P(\\mathbf{x} \\mid y')\\,P(y')} .\n$$"
+      },
+      {
+        "title": "Naïve Bayes → Generative Model",
+        "body": "Naïve Bayes estimates the class prior $P(y)$ and class-conditional distributions under the assumption that the features are conditionally independent given the class:\n\n$$\nP(\\mathbf{x} \\mid y) = \\prod_{j=1}^{d} P(x_j \\mid y) .\n$$\n\nIt then predicts $\\hat{y} = \\arg\\max_y P(y)\\prod_{j} P(x_j \\mid y)$. Because it models $P(\\mathbf{x} \\mid y)$ and $P(y)$, and could even sample new feature vectors for a given class, it is a **(iii) Generative Model**."
+      },
+      {
+        "title": "Logistic Regression → Discriminative Model",
+        "body": "Logistic regression models the posterior directly:\n\n$$\nP(y = 1 \\mid \\mathbf{x}) = \\sigma(\\mathbf{w}^\\top\\mathbf{x} + b) = \\frac{1}{1 + e^{-(\\mathbf{w}^\\top\\mathbf{x} + b)}} .\n$$\n\nIts parameters are fitted by maximising the conditional likelihood $\\prod_i P(y_i \\mid \\mathbf{x}_i)$. Nothing about the distribution of $\\mathbf{x}$ is modelled, so it is a **(i) Discriminative Model**."
+      },
+      {
+        "title": "Assemble the matching",
+        "body": "(p) PCA – (ii), (q) Naïve Bayes – (iii), (r) Logistic Regression – (i). This is option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** (p) − (ii), (q) − (iii), (r) − (i)",
+    "teaching": "**Three different jobs in machine learning.** Column 1 lists three standard methods, and Column 2 describes what *kind* of method each is.\n\n**Dimensionality reduction** reduces the number of features while keeping as much useful structure as possible. PCA does this by finding orthogonal directions of maximum variance, the eigenvectors of the covariance matrix $\\Sigma = \\frac{1}{n}\\sum_i (\\mathbf{x}_i - \\bar{\\mathbf{x}})(\\mathbf{x}_i - \\bar{\\mathbf{x}})^\\top$ with the largest eigenvalues, and projecting the data onto the top few. It is unsupervised: labels play no role.\n\n**Generative vs discriminative classifiers.** Both aim to predict a label $y$ from features $\\mathbf{x}$, but they model different things.\n\n- A *generative* classifier builds a story of how the data arise: first a class $y$ is drawn with probability $P(y)$, then features are drawn from $P(\\mathbf{x} \\mid y)$. To classify, it inverts this story with Bayes' rule. Naïve Bayes is the textbook example; its \"naïve\" assumption, $P(\\mathbf{x} \\mid y) = \\prod_j P(x_j \\mid y)$, keeps the number of parameters small. Gaussian discriminant analysis (LDA/QDA) is another generative example.\n- A *discriminative* classifier skips the story and models only what is needed for prediction: $P(y \\mid \\mathbf{x})$ or the boundary between the classes. Logistic regression, $P(y = 1 \\mid \\mathbf{x}) = \\sigma(\\mathbf{w}^\\top\\mathbf{x} + b)$, is the standard example; SVMs and most neural-network classifiers are also discriminative.\n\nNaïve Bayes and logistic regression are the classic generative–discriminative pair: with binary features, or Gaussian features whose variances do not depend on the class, the Naïve Bayes posterior has the same sigmoid-of-linear form as logistic regression, but the parameters are obtained differently. Naïve Bayes fits $P(y)$ and $P(x_j \\mid y)$ from counts or means, while logistic regression fits $\\mathbf{w}$ directly by maximising $\\prod_i P(y_i \\mid \\mathbf{x}_i)$.\n\n**Back to the question:** PCA → dimensionality reduction, Naïve Bayes → generative, logistic regression → discriminative, which is option (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "(q) − (i) calls Naïve Bayes discriminative, but it models $P(\\mathbf{x} \\mid y)P(y)$ and is generative. (r) − (ii) calls logistic regression dimensionality reduction, but it is a classifier that keeps all features. (p) − (iii) is also wrong, since PCA's role here is dimensionality reduction."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "(p) − (ii) is right, but the other two are swapped: Naïve Bayes is generative, not discriminative, and logistic regression is discriminative, not generative."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "PCA → Dimensionality Reduction, Naïve Bayes → Generative Model (it models $P(y)$ and $P(\\mathbf{x} \\mid y)$), and Logistic Regression → Discriminative Model (it models $P(y \\mid \\mathbf{x})$ directly). All three pairs are correct."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "(q) − (ii) calls Naïve Bayes a dimensionality-reduction method, which it is not: it is a classifier that uses every feature. (p) − (iii) is also wrong, since PCA is the only listed item that does dimensionality reduction. Only (r) − (i) is right."
+      }
+    ],
+    "shortcut": "Only PCA can be \"Dimensionality Reduction\", so (p) − (ii) leaves options (B) and (C). Naïve Bayes is the textbook generative classifier, so (q) − (iii) gives **(C)**.",
+    "commonTrap": "Deciding by the output instead of by what is modelled. Both Naïve Bayes and logistic regression output class probabilities $P(y \\mid \\mathbf{x})$, so some students call both discriminative, or call logistic regression generative because it is \"probabilistic\". The test is whether the method models the distribution of the features, $P(\\mathbf{x} \\mid y)$: Naïve Bayes does (generative), logistic regression does not (discriminative)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q18-1.webp",
+    "/pyq/2024/official/Q18-2.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The two-column table is transcribed as a GFM table with the rows in the printed order. \"Column 1\" and \"Column 2\" are bold in the paper and are kept bold in the stem. \"Naïve\" carries a diaeresis in the paper (confirmed on a zoomed crop and in the text layer). The dashes in the options are printed as minus signs (−) and are kept as such. The second official crop (Q18-2) shows only the empty top border of the next page. The page has no embedded figure other than the GATE 2024 background watermark; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(C) PCA – dimensionality reduction; Naïve Bayes – generative; logistic regression – discriminative",
+    "agreesWithKey": true,
+    "notes": "This is a conceptual question and no computation is involved, so there is no code check. PCA is the only listed dimensionality-reduction method. Naïve Bayes models P(y) and P(x | y) and applies Bayes' rule, so it is generative. Logistic regression models P(y | x) directly, so it is discriminative. This agrees with official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

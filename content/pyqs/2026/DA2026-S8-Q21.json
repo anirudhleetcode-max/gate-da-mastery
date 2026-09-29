@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q21",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 21,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-orthogonal-matrix",
+    "la-matrices"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (powers of a rotation matrix) with a single reduction step (M^5 = I_2 and 2026 ≡ 1 mod 5); about 1 min for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $M = \\begin{pmatrix} \\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta \\end{pmatrix}$ be a $2 \\times 2$ matrix, where $\\theta = \\frac{2\\pi}{5}$, and\n\n$I_2 = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$.\n\nWhich of the following options is equal to $M^{2026}$ ?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$M^2$"
+    },
+    {
+      "label": "B",
+      "text": "$M$"
+    },
+    {
+      "label": "C",
+      "text": "$M^{-1}$"
+    },
+    {
+      "label": "D",
+      "text": "$I_2$"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "$M$ is the matrix of an anticlockwise rotation of the plane by $\\theta = 2\\pi/5 = 72^\\circ$, so $M^k$ is the rotation by $k\\theta$. Five such rotations make a full turn, so $M^5 = I_2$. Since $2026 = 5 \\cdot 405 + 1$, we get $M^{2026} = (M^5)^{405} M = M$. Answer: **(B)**.",
+    "steps": [
+      {
+        "title": "Recognise M as a rotation matrix",
+        "body": "Write $R(\\alpha) = \\begin{pmatrix} \\cos\\alpha & -\\sin\\alpha \\\\ \\sin\\alpha & \\cos\\alpha \\end{pmatrix}$, so $M = R(\\theta)$ with $\\theta = 2\\pi/5$. $R(\\alpha)$ rotates every vector of $\\mathbb{R}^2$ anticlockwise by the angle $\\alpha$. It is an orthogonal matrix ($R^\\top R = I_2$) with $\\det R(\\alpha) = \\cos^2\\alpha + \\sin^2\\alpha = 1$."
+      },
+      {
+        "title": "Multiplying rotations adds their angles",
+        "body": "$$\nR(\\alpha)R(\\beta) = \\begin{pmatrix} \\cos\\alpha\\cos\\beta - \\sin\\alpha\\sin\\beta & -(\\sin\\alpha\\cos\\beta + \\cos\\alpha\\sin\\beta) \\\\ \\sin\\alpha\\cos\\beta + \\cos\\alpha\\sin\\beta & \\cos\\alpha\\cos\\beta - \\sin\\alpha\\sin\\beta \\end{pmatrix} = R(\\alpha+\\beta),\n$$\n\nby the angle-addition formulas for $\\cos(\\alpha+\\beta)$ and $\\sin(\\alpha+\\beta)$. By induction,\n\n$$\nM^k = R(k\\theta) \\quad \\text{for every integer } k \\ge 1.\n$$"
+      },
+      {
+        "title": "Find the period of M",
+        "body": "$5\\theta = 5 \\cdot \\frac{2\\pi}{5} = 2\\pi$, and $\\cos 2\\pi = 1$, $\\sin 2\\pi = 0$, so\n\n$$\nM^5 = R(2\\pi) = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = I_2.\n$$\n\nNo smaller positive power works: $k\\theta = 2\\pi k/5$ is a multiple of $2\\pi$ only when $5 \\mid k$. So the powers of $M$ repeat with period $5$: $M, M^2, M^3, M^4, I_2, M, \\ldots$"
+      },
+      {
+        "title": "Reduce the exponent modulo 5",
+        "body": "$2026 = 5 \\times 405 + 1$, so $2026 \\equiv 1 \\pmod 5$ and\n\n$$\nM^{2026} = (M^5)^{405} \\, M = I_2^{405} \\, M = M.\n$$\n\nAs an angle check: $2026\\theta = \\frac{4052\\pi}{5} = 405 \\cdot 2\\pi + \\frac{2\\pi}{5}$, so $M^{2026}$ is again the rotation by $2\\pi/5$."
+      },
+      {
+        "title": "Compare with the options",
+        "body": "- $M^2 = R(4\\pi/5) \\ne M$, since $4\\pi/5 \\ne 2\\pi/5$ modulo $2\\pi$.\n- $M^{-1} = R(-2\\pi/5) = R(8\\pi/5) = M^4 \\ne M$.\n- $I_2 = M^5 \\ne M$, since $2\\pi/5$ is not a multiple of $2\\pi$.\n\nOnly $M$ itself matches, so the answer is **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)** $M$",
+    "teaching": "**Rotation matrices.** The matrix $R(\\alpha) = \\begin{pmatrix} \\cos\\alpha & -\\sin\\alpha \\\\ \\sin\\alpha & \\cos\\alpha \\end{pmatrix}$ sends the unit vector $(1,0)^\\top$ to $(\\cos\\alpha, \\sin\\alpha)^\\top$ and $(0,1)^\\top$ to $(-\\sin\\alpha, \\cos\\alpha)^\\top$. Both basis vectors turn anticlockwise by $\\alpha$ and keep their length, so $R(\\alpha)$ rotates the whole plane by $\\alpha$. Its columns are orthonormal, so it is an **orthogonal matrix** with determinant $1$, and its inverse is its transpose: $R(\\alpha)^{-1} = R(\\alpha)^\\top = R(-\\alpha)$.\n\n**Composition adds angles.** Rotating by $\\beta$ and then by $\\alpha$ is the same as rotating by $\\alpha + \\beta$, so $R(\\alpha)R(\\beta) = R(\\alpha+\\beta)$. The angle-addition formulas of trigonometry are exactly this matrix product. Consequently $R(\\alpha)^k = R(k\\alpha)$, and angles only matter modulo $2\\pi$ because $R(2\\pi) = I$.\n\n**Periodic powers.** If $\\alpha = 2\\pi/m$, then $R(\\alpha)^m = I$, and the powers cycle through $m$ distinct matrices. To compute a huge power $R(\\alpha)^N$, reduce $N$ modulo $m$: $R(\\alpha)^N = R(\\alpha)^{N \\bmod m}$.\n\n**Eigenvalue view.** The eigenvalues of $R(\\alpha)$ are $e^{\\pm i\\alpha}$. For $\\alpha = 2\\pi/5$ they are primitive fifth roots of unity, so $\\lambda^5 = 1$ and $\\lambda^{2026} = \\lambda^{1} = \\lambda$. Since $M$ is diagonalisable (over $\\mathbb{C}$), $M^{2026}$ has the same eigenvalues and eigenvectors as $M$, so it equals $M$.\n\n**In this question** $\\alpha = 2\\pi/5$ gives period $5$, and $2026 \\bmod 5 = 1$, so $M^{2026} = M$, option (B).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$M^2 = R(4\\pi/5)$, a rotation by $144^\\circ$. It would equal $M^{2026}$ only if $2026 \\equiv 2 \\pmod 5$, but $2026 \\equiv 1 \\pmod 5$ (it is $M^{2027}$ that equals $M^2$). Only the remainder of the exponent modulo $5$ matters, not, for instance, the fact that $2026$ is even."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$M^5 = R(2\\pi) = I_2$ and $2026 = 5 \\cdot 405 + 1$, so $M^{2026} = (M^5)^{405}M = M$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$M^{-1} = M^\\top = R(-2\\pi/5) = M^4$, a rotation by $-72^\\circ$. It would be the answer only if $2026 \\equiv 4 \\pmod 5$ (e.g. for the exponent $2024$)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$I_2 = M^{5k}$, so it would require $5 \\mid 2026$. It is $2025$ that is divisible by $5$; $2026$ leaves remainder $1$, so one extra factor of $M$ remains."
+      }
+    ],
+    "shortcut": "A rotation by $2\\pi/m$ has period $m$, so reduce the exponent mod $m$. Here $m = 5$ and $2026$ ends in $6$, so $2026 \\bmod 5 = 1$, giving $M^{2026} = M^1$.",
+    "commonTrap": "Reducing the exponent modulo the wrong number, or confusing $2025$ with $2026$. $2025$ is a multiple of $5$ (so $M^{2025} = I_2$, option D), but the question asks for $M^{2026} = M^{2025}M = M$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q21-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The matrices are printed with round brackets and are transcribed with pmatrix; the PDF text layer scrambles them, so they were read from the rendered image. θ = 2π/5 is printed as a small stacked fraction, and I_2 is defined on its own line as printed. The paper prints a space before the final question mark (\"M^2026 ?\"); kept as printed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nt=2*np.pi/5\nM=np.array([[np.cos(t),-np.sin(t)],[np.sin(t),np.cos(t)]])\nP=np.linalg.matrix_power(M,2026)\nassert np.allclose(np.linalg.matrix_power(M,5),np.eye(2)) and 2026%5==1\nopts={'A':M@M,'B':M,'C':np.linalg.inv(M),'D':np.eye(2)}\nprint([k for k,v in opts.items() if np.allclose(P,v)])  # ['B']\n",
+    "notes": "M is the rotation by 2π/5, so M^k = R(kθ) and M^5 = R(2π) = I_2. Since 2026 = 5·405 + 1, M^2026 = M. The Python check computes M^2026 numerically, confirms M^5 = I_2 and 2026 mod 5 = 1, and confirms that of the four options only M (B) equals M^2026 (M^2, M^{-1} and I_2 all differ). This matches the official key (B)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

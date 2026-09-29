@@ -1,0 +1,77 @@
+{
+  "id": "DA2026-S8-Q33",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 33,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-foundations",
+  "subtopicIds": [
+    "ps-counting"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept (f(f(n)) = n forces a permutation made only of fixed points and swaps) followed by a routine three-case count (1 + 6 + 3), roughly 1.5 min for a prepared student, with an easy double-counting trap in the two-swap case.",
+  "estimatedTimeSec": 90,
+  "stem": "The number of bijections $f(\\cdot)$ from the set $S = \\{1, 2, 3, 4\\}$ to itself such that $f(f(n)) = n$, for all $n \\in S$, is __________ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "10 to 10",
+  "answer": {
+    "kind": "NAT",
+    "min": 10,
+    "max": 10
+  },
+  "solution": {
+    "quick": "$f(f(n)) = n$ means $f$ is its own inverse (an **involution**), so in cycle notation it consists only of fixed points and 2-cycles (swaps). On 4 elements: no swap (identity) $= 1$, one swap $= \\binom{4}{2} = 6$, two disjoint swaps $= 3$. Total $= 1 + 6 + 3 = $ **10**.",
+    "steps": [
+      {
+        "title": "Translate the condition into cycle structure",
+        "body": "A bijection of a finite set to itself is a **permutation**, and every permutation splits into disjoint cycles. If $n$ lies on a cycle of length $L$, then $f^{(m)}(n) = n$ exactly when $L$ divides $m$.\n\nThe condition $f(f(n)) = n$ for **every** $n$ therefore requires every cycle length $L$ to divide 2, i.e. $L = 1$ (a fixed point, $f(n) = n$) or $L = 2$ (a swap, $f(a) = b$ and $f(b) = a$). No 3-cycles or 4-cycles are allowed.\n\n(Remark: $f \\circ f = \\text{id}$ already forces $f$ to be a bijection, since $f$ is then its own inverse, so the word \"bijection\" adds no extra restriction.)"
+      },
+      {
+        "title": "Case 1: zero swaps",
+        "body": "All four elements are fixed: $f$ is the identity $(1)(2)(3)(4)$. Count $= 1$."
+      },
+      {
+        "title": "Case 2: exactly one swap",
+        "body": "Choose the 2 elements to swap; the other two stay fixed. Count $= \\binom{4}{2} = 6$:\n\n$(1\\,2),\\ (1\\,3),\\ (1\\,4),\\ (2\\,3),\\ (2\\,4),\\ (3\\,4)$."
+      },
+      {
+        "title": "Case 3: two disjoint swaps",
+        "body": "Split $\\{1, 2, 3, 4\\}$ into two unordered pairs. Element 1 can be paired with any of the other 3 elements, and the remaining two elements form the second pair. Count $= 3$:\n\n$(1\\,2)(3\\,4),\\ (1\\,3)(2\\,4),\\ (1\\,4)(2\\,3)$.\n\nEquivalently $\\dfrac{\\binom{4}{2}\\binom{2}{2}}{2!} = \\dfrac{6 \\cdot 1}{2} = 3$; divide by $2!$ because the order of the two swaps does not matter."
+      },
+      {
+        "title": "Add the cases and cross-check",
+        "body": "$$\n1 + 6 + 3 = 10.\n$$\n\nCross-check with the involution recurrence $I(n) = I(n-1) + (n-1)\\,I(n-2)$ (element $n$ is either fixed, or swapped with one of the other $n-1$ elements): $I(0) = 1$, $I(1) = 1$, $I(2) = 2$, $I(3) = 2 + 2 \\cdot 1 = 4$, $I(4) = 4 + 3 \\cdot 2 = 10$. A brute-force check of all $4! = 24$ permutations (see the verification code) also finds exactly 10. This matches the official key (10 to 10)."
+      }
+    ],
+    "finalAnswer": "**10**",
+    "teaching": "**Permutations and cycles.** A bijection from a finite set to itself is a *permutation*: it rearranges the elements. Start at any element $n$ and keep applying $f$: $n \\to f(n) \\to f(f(n)) \\to \\cdots$. Because the set is finite and $f$ is one-to-one, you must eventually return to $n$, tracing a **cycle**. Every permutation breaks up into disjoint cycles; for example, on $\\{1,2,3,4\\}$ the map $1 \\to 3,\\ 3 \\to 1,\\ 2 \\to 2,\\ 4 \\to 4$ is written $(1\\,3)(2)(4)$.\n\n**Applying $f$ twice.** Applying $f$ moves each element one step around its cycle, so applying it twice moves each element two steps. An element on a cycle of length $L$ returns home after two steps only if $L$ divides 2. Hence a permutation with $f(f(n)) = n$ for all $n$, called an **involution**, is built only from fixed points (length-1 cycles) and swaps (length-2 cycles).\n\n**Counting involutions.** Organise the count by the number of swaps $k$. Choose $2k$ elements to be swapped in $\\binom{n}{2k}$ ways, then pair them up in $\\dfrac{(2k)!}{2^k\\,k!}$ ways: divide by $2^k$ because each pair is unordered, and by $k!$ because the list of pairs is unordered. So\n\n$$\nI(n) = \\sum_{k \\ge 0} \\binom{n}{2k} \\frac{(2k)!}{2^k\\,k!}.\n$$\n\nFor $n = 4$: $k = 0$ gives $1$, $k = 1$ gives $6 \\cdot 1 = 6$, $k = 2$ gives $1 \\cdot \\frac{24}{4 \\cdot 2} = 3$, so $I(4) = 10$. The sequence $I(n)$ for $n = 0, 1, 2, 3, 4, 5$ runs $1, 1, 2, 4, 10, 26$.\n\n**Connection to this question.** The question describes exactly the involutions of a 4-element set, so the answer is $I(4) = 10$.",
+    "shortcut": "Use the involution recurrence $I(n) = I(n-1) + (n-1)\\,I(n-2)$ with $I(1) = 1$, $I(2) = 2$: $I(3) = 4$, $I(4) = 4 + 3 \\cdot 2 = 10$.",
+    "commonTrap": "Over-counting the two-swap case as $\\binom{4}{2}\\binom{2}{2} = 6$ (forgetting that the two swaps are unordered), which gives $1 + 6 + 6 = 13$. Other slips are forgetting the identity (answer 9) or counting only the fixed-point-free involutions (answer 3)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q33-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the function as $f(\\cdot)$ and the set as $S = \\{1, 2, 3, 4\\}$; both are kept. 'integer' is bold in the answer instruction and is kept bold."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "10",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import permutations\nS = [1, 2, 3, 4]\ninv = [p for p in permutations(S) if all(dict(zip(S, p))[dict(zip(S, p))[n]] == n for n in S)]\nprint(len(inv), inv)          # 10 involutions\nI = [1, 1]\nfor n in range(2, 5): I.append(I[n-1] + (n-1)*I[n-2])   # I(n) = I(n-1) + (n-1) I(n-2)\nassert len(inv) == I[4] == 1 + 6 + 3 == 10",
+    "notes": "f(f(n)) = n forces a permutation made only of fixed points and 2-cycles. Counting by number of swaps gives 1 + 6 + 3 = 10, confirmed by brute force over all 24 permutations and by the recurrence I(n) = I(n-1) + (n-1) I(n-2). Matches official key '10 to 10'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

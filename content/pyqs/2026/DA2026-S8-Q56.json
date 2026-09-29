@@ -1,0 +1,74 @@
+{
+  "id": "DA2026-S8-Q56",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 56,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-neural-networks",
+  "subtopicIds": [
+    "ml-mlp",
+    "ml-feedforward"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (a fully-connected layer has one weight per pair of neurons in consecutive layers) and a single short computation over three layer pairs, well under 1.5 minutes.",
+  "estimatedTimeSec": 45,
+  "stem": "Consider a fully-connected feed-forward multi-layer perceptron. It has 30 neurons in the input layer, followed by two hidden layers and an output layer. The first hidden layer has 4 neurons and the second hidden layer has 3 neurons. The output layer has only one neuron. Assume that no bias parameters are used.\n\nThe number of learnable parameters in the multi-layer perceptron is __________ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "135 to 135",
+  "answer": {
+    "kind": "NAT",
+    "min": 135,
+    "max": 135
+  },
+  "solution": {
+    "quick": "With no biases, the only learnable parameters of a fully-connected network are its weights, one for every connection between consecutive layers. The layer sizes $30 \\to 4 \\to 3 \\to 1$ give $30 \\times 4 + 4 \\times 3 + 3 \\times 1 = 120 + 12 + 3 =$ **135**.",
+    "steps": [
+      {
+        "title": "What counts as a learnable parameter",
+        "body": "In a fully-connected feed-forward MLP, every neuron in layer $l-1$ feeds every neuron in layer $l$, and each such connection carries one trainable weight. Between a layer of $n_{l-1}$ neurons and a layer of $n_l$ neurons there is a weight matrix\n\n$$\nW^{(l)} \\in \\mathbb{R}^{n_l \\times n_{l-1}}, \\qquad \\text{with } n_{l-1}\\, n_l \\text{ entries}.\n$$\n\nA bias vector would add $n_l$ more parameters per layer, but the question says **no bias parameters** are used. The 30 input \"neurons\" only hold the input features; they have no parameters of their own."
+      },
+      {
+        "title": "List the layer sizes",
+        "body": "Input → first hidden → second hidden → output:\n\n$$\n30 \\;\\to\\; 4 \\;\\to\\; 3 \\;\\to\\; 1 ,\n$$\n\nso there are three weight matrices, one for each pair of consecutive layers."
+      },
+      {
+        "title": "Count the weights in each block",
+        "body": "| Connection | Shape of $W$ | Weights |\n| --- | --- | --- |\n| Input (30) → Hidden 1 (4) | $4 \\times 30$ | $30 \\times 4 = 120$ |\n| Hidden 1 (4) → Hidden 2 (3) | $3 \\times 4$ | $4 \\times 3 = 12$ |\n| Hidden 2 (3) → Output (1) | $1 \\times 3$ | $3 \\times 1 = 3$ |"
+      },
+      {
+        "title": "Add them up",
+        "body": "$$\n120 + 12 + 3 = 135 .\n$$\n\nAnswer: **135**. For comparison, a bias on every hidden and output neuron would add $4 + 3 + 1 = 8$ parameters, giving $143$, but the question excludes biases."
+      }
+    ],
+    "finalAnswer": "**135**",
+    "teaching": "**Anatomy of a multi-layer perceptron.** An MLP is a stack of layers. The input layer simply presents the feature vector $x$; it computes nothing and stores no parameters. Each later layer $l$ (hidden or output) computes\n\n$$\nh^{(l)} = \\sigma\\!\\left(W^{(l)} h^{(l-1)} + b^{(l)}\\right),\n$$\n\nwhere $h^{(l-1)}$ is the previous layer's output, $W^{(l)}$ is the weight matrix, $b^{(l)}$ is the bias vector and $\\sigma$ is an activation function such as ReLU or sigmoid. Standard activations have no trainable parameters.\n\n**Counting parameters.** \"Fully connected\" means every neuron of layer $l-1$ is wired to every neuron of layer $l$, so $W^{(l)}$ has $n_l$ rows and $n_{l-1}$ columns, which is $n_{l-1} n_l$ weights. The bias adds $n_l$ more. For layer sizes $n_0, n_1, \\dots, n_L$:\n\n$$\n\\#\\text{params} = \\sum_{l=1}^{L} \\big(n_{l-1} n_l + n_l\\big) \\quad\\text{(with biases)}, \\qquad \\sum_{l=1}^{L} n_{l-1} n_l \\quad\\text{(without biases)}.\n$$\n\nA useful picture: draw the network as a layered graph; the weights are the **edges** and the biases sit on the non-input **nodes**. Counting parameters is counting edges (plus non-input nodes if biases are used).\n\n**Why it matters.** The parameter count measures model capacity and memory cost. Notice here that the first layer dominates: $120$ of the $135$ weights connect the $30$ inputs to the first hidden layer. Wide inputs make the first layer expensive.\n\n**Connecting to this question.** The layers are $30 \\to 4 \\to 3 \\to 1$ with no biases, so we count only edges: $30 \\cdot 4 + 4 \\cdot 3 + 3 \\cdot 1 = 120 + 12 + 3 = 135$.",
+    "shortcut": "No biases ⇒ add the products of consecutive layer sizes: $30\\cdot4 + 4\\cdot3 + 3\\cdot1 = 135$. If biases are used, add the number of non-input neurons ($4 + 3 + 1$).",
+    "commonTrap": "Adding biases out of habit ($135 + 8 = 143$) even though the question says no bias parameters are used, or treating the input layer as if it had parameters. Another slip is multiplying all layer sizes together ($30 \\times 4 \\times 3 \\times 1 = 360$) instead of summing the products of **consecutive** layers."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q56-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain text, transcribed verbatim including the hyphenation 'fully-connected feed-forward multi-layer perceptron'. 'integer' in the answer instruction is bold in the paper and is kept bold. No figure is needed: the faint background graphic in the crop is the paper's watermark, and no candidate figures were extracted for this region."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "135",
+    "agreesWithKey": true,
+    "checkCode": "layers = [30, 4, 3, 1]              # input, hidden1, hidden2, output\nweights = [a * b for a, b in zip(layers, layers[1:])]   # 120, 12, 3\ntotal = sum(weights)                # no biases\nwith_bias = sum(a * b + b for a, b in zip(layers, layers[1:]))\nprint(weights, total, 'with biases would be', with_bias)\nassert total == 135",
+    "notes": "Weights between consecutive fully-connected layers 30 -> 4 -> 3 -> 1 counted by hand and in Python: 30*4 = 120, 4*3 = 12, 3*1 = 3, total 135 with no biases, as the question states (with biases it would be 143). Independent answer 135 matches official key 135 to 135."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

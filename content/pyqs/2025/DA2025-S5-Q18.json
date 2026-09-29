@@ -1,0 +1,111 @@
+{
+  "id": "DA2025-S5-Q18",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 18,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-hash-tables"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (linear probing) with a short, routine trace of six insertions and two collisions, about 1 min for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider a hash table of size $10$ with indices $\\{0, 1, \\ldots, 9\\}$, with the hash function\n\n$$\nh(x) = 3x \\pmod{10},\n$$\n\nwhere linear probing is used to handle collisions. The hash table is initially empty and then the following sequence of keys is inserted into the hash table: $1, 4, 5, 6, 14, 15$. The indices where the keys 14 and 15 are stored are, respectively",
+  "options": [
+    {
+      "label": "A",
+      "text": "2 and 5"
+    },
+    {
+      "label": "B",
+      "text": "2 and 6"
+    },
+    {
+      "label": "C",
+      "text": "4 and 5"
+    },
+    {
+      "label": "D",
+      "text": "4 and 6"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "The home slots are $h(1)=3$, $h(4)=2$, $h(5)=5$, $h(6)=8$, $h(14)=2$ and $h(15)=5$. Keys 1, 4, 5 and 6 go straight into slots 3, 2, 5 and 8. Key 14 finds slots 2 and 3 full and lands in **4**. Key 15 finds slot 5 full and lands in **6**. Answer **(D)**.",
+    "steps": [
+      {
+        "title": "Linear probing rule",
+        "body": "With table size $m = 10$, key $x$ first tries its home slot $h(x)$. If that slot is occupied, it tries the next slots in order, wrapping around:\n\n$$h_i(x) = \\big(h(x) + i\\big) \\bmod 10, \\qquad i = 0, 1, 2, \\ldots$$\n\nThe key is stored in the first empty slot found."
+      },
+      {
+        "title": "Compute every home slot",
+        "body": "| key $x$ | $3x$ | $h(x) = 3x \\bmod 10$ |\n| --- | --- | --- |\n| 1 | 3 | 3 |\n| 4 | 12 | 2 |\n| 5 | 15 | 5 |\n| 6 | 18 | 8 |\n| 14 | 42 | 2 |\n| 15 | 45 | 5 |\n\nKey 14 has the same home slot as key 4, and key 15 has the same home slot as key 5. These are the only collisions."
+      },
+      {
+        "title": "Insert 1, 4, 5, 6 (no collisions)",
+        "body": "The table starts empty and the home slots 3, 2, 5 and 8 are all different, so:\n\n- 1 goes to slot 3\n- 4 goes to slot 2\n- 5 goes to slot 5\n- 6 goes to slot 8"
+      },
+      {
+        "title": "Insert 14 and 15 (probing)",
+        "body": "- **14:** home slot $2$ holds key 4, so probe $3$. Slot 3 holds key 1, so probe $4$. Slot 4 is empty, so **14 is stored at index 4**.\n- **15:** home slot $5$ holds key 5, so probe $6$. Slot 6 is empty, so **15 is stored at index 6**.\n\nFinal table:\n\n| index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| key | – | – | 4 | 1 | 14 | 5 | 15 | – | 6 | – |\n\nKeys 14 and 15 are at indices **4 and 6**, option **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Hashing in one paragraph.** A hash table stores keys in an array of $m$ slots. A hash function $h$ maps each key to a slot index, its *home* slot. Lookup, insertion and deletion then take $O(1)$ time on average instead of the $O(\\log n)$ or $O(n)$ of search trees or lists. Because many keys map into few slots, two keys can have the same home slot. This is a **collision**.\n\n**Open addressing and linear probing.** In open addressing every key lives inside the array itself, with no chains. On a collision the key moves along a fixed *probe sequence* until it finds a free slot. Linear probing uses the simplest sequence, $h(x), h(x)+1, h(x)+2, \\ldots$ taken mod $m$, so a key steps one slot to the right and wraps from $m-1$ back to $0$. A later search for the key follows the same sequence and stops when it finds the key or an empty slot.\n\n**Primary clustering.** Occupied slots next to each other form a *cluster*. Any key that hashes anywhere into a cluster must walk to its end, and then the cluster grows by one. That is what happens to key 14 here. Its home slot 2 is in the cluster {2, 3} (keys 4 and 1), so it must walk past **both** slots to reach slot 4. The key in slot 3 (key 1) had a different home slot, but it still blocks key 14.\n\n**A useful observation about this $h$.** Since $\\gcd(3, 10) = 1$, the map $r \\mapsto 3r \\bmod 10$ is a permutation of $\\{0, \\ldots, 9\\}$. So $h(x)$ depends only on $x \\bmod 10$, and two keys collide exactly when they have the same last digit. Here $14 \\equiv 4$ and $15 \\equiv 5 \\pmod{10}$, which tells you at once which keys collide.\n\n**Back to the question.** Keys 1, 4, 5, 6 fill slots 3, 2, 5, 8. Key 14 collides with 4 at slot 2, steps past slot 3 (occupied by key 1) and lands at 4. Key 15 collides with 5 at slot 5 and lands at 6. The answer is (D).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "2 and 5 are the **home** slots $h(14) = 2$ and $h(15) = 5$. Both are already occupied (by keys 4 and 5), so neither key can be stored there under linear probing."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "The 6 for key 15 is right, but slot 2 already holds key 4. Key 14 must probe past slot 2 and also past slot 3 (key 1), ending at slot 4."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The 4 for key 14 is right, but slot 5 already holds key 5 (inserted earlier). Key 15 must move on to the free slot 6."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Key 14: slot 2 (key 4) is full, slot 3 (key 1) is full, slot 4 is free. Key 15: slot 5 (key 5) is full, slot 6 is free. So 14 and 15 are stored at indices 4 and 6."
+      }
+    ],
+    "shortcut": "Because $\\gcd(3, 10) = 1$, keys collide exactly when they share the last digit. So 14 collides only with 4 (slot 2) and 15 only with 5 (slot 5). Then walk right from each home slot past the occupied slots: slot 3 holds key 1 ($h(1) = 3$), so 14 goes to 4; slot 6 is free, so 15 goes to 6.",
+    "commonTrap": "Stopping at the first probe for key 14 and placing it in slot 3. Slot 3 is already taken by key 1, because $h(1) = 3 \\cdot 1 = 3$. Key 1 has a different home slot from 14, but in linear probing it still blocks key 14, so 14 must continue to slot 4. Forgetting the multiplier 3 (using $x \\bmod 10$) is another error; it gives slot numbers that match none of the options."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q18-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The hash function is set as display math h(x) = 3x \\pmod{10} with the trailing comma, as printed. The stem ends with \"respectively\" and no punctuation, as on the paper."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "D (14 at index 4, 15 at index 6)",
+    "agreesWithKey": true,
+    "checkCode": "M = 10\nh = lambda x: (3 * x) % M\ntable = [None] * M\nfor k in [1, 4, 5, 6, 14, 15]:\n    i, probes = h(k), []\n    while table[i] is not None:\n        probes.append(i); i = (i + 1) % M\n    table[i] = k\n    print(f'key {k:2d}: h={h(k)}, collided at {probes}, stored at {i}')\nprint('table:', table)\nprint('14 ->', table.index(14), ', 15 ->', table.index(15))",
+    "notes": "Independent solve: home slots h(1)=3, h(4)=2, h(5)=5, h(6)=8, h(14)=2, h(15)=5. Keys 1, 4, 5, 6 go to slots 3, 2, 5, 8 without collision. Key 14 probes 2 (full) and 3 (full), then stores at 4. Key 15 probes 5 (full), then stores at 6. This gives 4 and 6, option (D), matching the official key D. The Python simulation of linear probing prints the same final table [-, -, 4, 1, 14, 5, 15, -, 6, -]."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

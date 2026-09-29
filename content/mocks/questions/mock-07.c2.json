@@ -1,0 +1,618 @@
+[
+  {
+    "id": "M07-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-sampling"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the likelihood-weighting weight rule) applied as a single product of two CPT entries; under a minute for a prepared student.",
+    "estimatedTimeSec": 60,
+    "concept": "Likelihood weighting: a sample's weight is the product of the evidence likelihoods given the sampled parents",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A wildlife team models a camera trap with a Bayesian network over three Boolean variables: $A$ (an animal is present), $M$ (the motion sensor fires) and $H$ (the infrared heat sensor fires). The only edges are $A \\to M$ and $A \\to H$, and the conditional probabilities are:\n\n| Quantity | Value |\n|---|---|\n| $P(A=1)$ | $0.25$ |\n| $P(M=1 \\mid A=1)$ | $0.9$ |\n| $P(M=1 \\mid A=0)$ | $0.2$ |\n| $P(H=1 \\mid A=1)$ | $0.7$ |\n| $P(H=1 \\mid A=0)$ | $0.1$ |\n\n(Here $1$ = true and $0$ = false.) To estimate $P(A=1 \\mid M=1, H=1)$ by **likelihood weighting**, the evidence variables are fixed at their observed values and every other variable is sampled from its CPT given its parents. In one such sample, the value $A=1$ is drawn.\n\nThe weight attached to this sample is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.1575$"
+      },
+      {
+        "label": "B",
+        "text": "$0.25$"
+      },
+      {
+        "label": "C",
+        "text": "$0.63$"
+      },
+      {
+        "label": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "In likelihood weighting, a sample's weight is the product of $P(\\text{evidence value} \\mid \\text{sampled parents})$ over all evidence variables. With $A=1$ drawn:\n$w = P(M=1 \\mid A=1) \\cdot P(H=1 \\mid A=1) = 0.9 \\times 0.7 = 0.63$. The prior $P(A=1)$ is **not** included, because $A$ was sampled, not fixed.",
+      "steps": [
+        {
+          "title": "Separate evidence from sampled variables",
+          "body": "Evidence: $M=1$ and $H=1$ (fixed, never sampled).\n\nNon-evidence: $A$ only. It is sampled from $P(A)$, and in this sample the draw is $A=1$."
+        },
+        {
+          "title": "Recall the weight rule",
+          "body": "For a sample $\\mathbf{x}$, likelihood weighting sets\n$$\nw(\\mathbf{x}) = \\prod_{E_i \\in \\text{evidence}} P\\big(E_i = e_i \\mid \\text{parents}(E_i)\\text{ as in }\\mathbf{x}\\big).\n$$\nBoth $M$ and $H$ have the single parent $A$, whose sampled value is $1$."
+        },
+        {
+          "title": "Compute the weight",
+          "body": "$$\nw = P(M=1 \\mid A=1) \\times P(H=1 \\mid A=1) = 0.9 \\times 0.7 = 0.63\n$$"
+        },
+        {
+          "title": "How the weights are used",
+          "body": "A sample with $A=0$ would get weight $0.2 \\times 0.1 = 0.02$. The estimate is (total weight of samples with $A=1$) / (total weight of all samples). As the number of samples grows it tends to\n$$\n\\frac{0.25 \\times 0.63}{0.25 \\times 0.63 + 0.75 \\times 0.02} = \\frac{0.1575}{0.1725} \\approx 0.913,\n$$\nwhich is exactly $P(A=1 \\mid M=1, H=1)$. So the weight of the given sample is $0.63$."
+        }
+      ],
+      "finalAnswer": "**(C)** $0.63$",
+      "teaching": "Sampling-based inference estimates a posterior by counting how often the query value appears among generated samples. **Rejection sampling** draws complete samples from the network and throws away every sample that contradicts the evidence. When the evidence is unlikely, almost everything is thrown away.\n\n**Likelihood weighting** avoids this waste. It clamps each evidence variable to its observed value and samples only the other variables, in topological order, from their CPTs. Clamping creates a bias: samples that would rarely produce the evidence now appear just as often as samples that readily produce it. Each sample is therefore weighted by how likely the clamped evidence is under it, i.e. the product of $P(e_i \\mid \\text{parents})$ over the evidence variables.\n\nThe probabilities of the sampled variables are not part of the weight, because they are already reflected in how often each value is drawn. Here $A=1$ is drawn 25% of the time, and each such sample carries weight $0.9 \\times 0.7 = 0.63$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.25 \\times 0.9 \\times 0.7 = 0.1575$ is the joint probability $P(A=1, M=1, H=1)$. The prior $0.25$ is already accounted for by how often $A=1$ is sampled; multiplying it in again counts it twice."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.25$ is the probability of *drawing* $A=1$. The weight measures how well the sample explains the evidence, so it uses only the evidence variables' CPT entries."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$w = P(M=1 \\mid A=1)\\,P(H=1 \\mid A=1) = 0.9 \\times 0.7 = 0.63$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "A weight of $1$ for every retained sample is how rejection sampling behaves. In likelihood weighting the evidence is forced, so each sample must be down-weighted by the probability of that evidence."
+        }
+      ],
+      "commonTrap": "Multiplying the prior $P(A=1)=0.25$ into the weight (giving $0.1575$). Only the evidence variables contribute to the weight; the sampled variables' probabilities enter through the sampling frequency."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.63",
+      "agreesWithKey": true,
+      "checkCode": "pM={1:0.9,0:0.2}; pH={1:0.7,0:0.1}; pA1=0.25\nw=lambda a: pM[a]*pH[a]\nprint(round(w(1),4))  # 0.63\nprint(round(pA1*w(1)/(pA1*w(1)+(1-pA1)*w(0)),4))  # 0.9130 = LW limit",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-uninformed"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one algorithm (uniform-cost search) but a five-expansion trace in which two frontier entries must be replaced by cheaper paths; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Uniform-cost search: priority by path cost g(n), frontier replacement and goal test at expansion",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A courier app plans a route from depot $S$ to hub $G$ over one-way roads. The directed edges and their costs are:\n\n| Edge | Cost |\n|---|---|\n| $S \\to A$ | 5 |\n| $S \\to B$ | 1 |\n| $B \\to C$ | 1 |\n| $B \\to G$ | 10 |\n| $C \\to A$ | 2 |\n| $C \\to D$ | 1 |\n| $A \\to G$ | 4 |\n| $D \\to G$ | 7 |\n\nUniform-cost search (graph-search version) is run from $S$. The goal test is applied when a node is selected for expansion, and whenever a cheaper path to a node already in the frontier is found, that node's frontier entry is replaced by the cheaper path.\n\nWhich one of the following gives the path returned and its cost?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$S \\to B \\to C \\to A \\to G$, cost 8"
+      },
+      {
+        "label": "B",
+        "text": "$S \\to A \\to G$, cost 9"
+      },
+      {
+        "label": "C",
+        "text": "$S \\to B \\to C \\to D \\to G$, cost 10"
+      },
+      {
+        "label": "D",
+        "text": "$S \\to B \\to G$, cost 11"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "UCS always expands the frontier node with the smallest path cost $g$. Expansion order: $S(0), B(1), C(2), D(3), A(4), G(8)$. $A$'s entry drops from 5 to 4 (via $C$) and $G$'s from 11 to 10 to 8, so the returned path is $S \\to B \\to C \\to A \\to G$ with cost $8$.",
+      "steps": [
+        {
+          "title": "Expand S (g = 0)",
+          "body": "Generate $A$ with $g=5$ (path $S \\to A$) and $B$ with $g=1$ (path $S \\to B$).\n\nFrontier: $\\{B:1,\\ A:5\\}$."
+        },
+        {
+          "title": "Expand B (g = 1)",
+          "body": "Generate $C$: $g = 1+1 = 2$; generate $G$: $g = 1+10 = 11$. $G$ is **not** tested now, since the goal test happens only at expansion.\n\nFrontier: $\\{C:2,\\ A:5,\\ G:11\\}$."
+        },
+        {
+          "title": "Expand C (g = 2)",
+          "body": "Via $C$: $A$ gets $2+2 = 4 < 5$, so $A$'s entry is replaced by $S \\to B \\to C \\to A$. $D$ gets $2+1 = 3$.\n\nFrontier: $\\{D:3,\\ A:4,\\ G:11\\}$."
+        },
+        {
+          "title": "Expand D (g = 3), then A (g = 4)",
+          "body": "Expanding $D$: $G$ via $D$ costs $3+7 = 10 < 11$, so replace. Frontier: $\\{A:4,\\ G:10\\}$.\n\nExpanding $A$: $G$ via $A$ costs $4+4 = 8 < 10$, so replace. Frontier: $\\{G:8\\}$."
+        },
+        {
+          "title": "Select G and return",
+          "body": "$G$ is selected with $g=8$, passes the goal test, and the search returns $S \\to B \\to C \\to A \\to G$ with cost $1+1+2+4 = 8$.\n\nCheck against all simple $S$-to-$G$ paths: $S\\!-\\!A\\!-\\!G = 9$, $S\\!-\\!B\\!-\\!G = 11$, $S\\!-\\!B\\!-\\!C\\!-\\!A\\!-\\!G = 8$, $S\\!-\\!B\\!-\\!C\\!-\\!D\\!-\\!G = 10$. UCS has found the cheapest one."
+        }
+      ],
+      "finalAnswer": "**(A)** $S \\to B \\to C \\to A \\to G$, cost 8",
+      "teaching": "Uniform-cost search (UCS) is the uninformed search for weighted graphs. It keeps the frontier in a priority queue ordered by $g(n)$, the cost of the best path found so far from the start to $n$, and always expands the cheapest node. It is essentially Dijkstra's algorithm stopped at the goal.\n\nTwo details make UCS optimal when all edge costs are positive. First, the goal test is applied when a node is **selected for expansion**, not when it is generated. When $G$ is popped, every frontier node costs at least as much, so no cheaper route can still appear. Second, when a node already in the frontier is reached by a cheaper path, its entry is replaced (or a cheaper duplicate is pushed).\n\nIn this graph the cheap edges $S \\to B$ and $B \\to C$ lead to a detour that reaches $A$ for 4 instead of 5, and then $G$ for 8. A search that stops at the first sighting of $G$ misses this.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The trace pops $S, B, C, D, A, G$; $G$ is selected with $g=8$ along $S \\to B \\to C \\to A \\to G$, which is also the cheapest of the four $S$-to-$G$ paths."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Cost $5+4 = 9$ keeps $A$'s original frontier entry from the direct edge $S \\to A$. When $C$ is expanded, $A$ is reached for $4$, and that cheaper entry must replace it."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is the route from always taking the cheapest outgoing edge ($S \\to B$, $B \\to C$, $C \\to D$), a greedy walk. It is also $G$'s frontier entry just after $D$ is expanded, but $G$ is not selected then because $A$ (cost 4) is cheaper than 10."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$S \\to B \\to G$ is the path on which $G$ is **first generated** (while expanding $B$). It would be returned only if the goal test were applied at generation time, which the question rules out."
+        }
+      ],
+      "shortcut": "With positive edge costs and the goal test at expansion, UCS returns a cheapest path. Here there are only four simple $S$-to-$G$ paths (costs 9, 11, 8, 10), so the answer is the cost-8 path without a full trace.",
+      "commonTrap": "Stopping as soon as $G$ first appears in the frontier (via $B$, cost 11), or forgetting to lower $A$'s frontier cost from 5 to 4 after reaching it through $C$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "Path S-B-C-A-G, cost 8 (expansion order S,B,C,D,A,G)",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nE={'S':[('A',5),('B',1)],'B':[('C',1),('G',10)],'C':[('A',2),('D',1)],'A':[('G',4)],'D':[('G',7)],'G':[]}\nfr=[(0,'S',['S'])]; best={'S':0}; closed=set()\nwhile fr:\n    c,n,p=heapq.heappop(fr)\n    if n in closed: continue\n    closed.add(n)\n    if n=='G': print(p,c); break  # ['S','B','C','A','G'] 8\n    for m,w in E[n]:\n        if m not in closed and c+w<best.get(m,1e9): best[m]=c+w; heapq.heappush(fr,(c+w,m,p+[m]))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (translating English into first-order logic with the correct quantifier order and quantifier–connective pairing); each wrong option fails one standard rule, so about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "First-order logic translation: quantifier order and pairing ∃ with ∧, ∀ with →",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following predicates over a domain that contains sensors, drones and other objects:\n\n- $\\text{Sensor}(x)$: $x$ is a sensor\n- $\\text{Drone}(y)$: $y$ is a drone\n- $\\text{Grounded}(y)$: $y$ is grounded\n- $\\text{Mon}(y, x)$: $y$ monitors $x$\n\nWhich one of the following first-order logic formulas correctly expresses the statement\n\n> *There is a sensor that is monitored by every drone that is not grounded.*",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\forall y\\,\\big((\\text{Drone}(y) \\land \\lnot \\text{Grounded}(y)) \\rightarrow \\exists x\\,(\\text{Sensor}(x) \\land \\text{Mon}(y, x))\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\exists x\\,\\big(\\text{Sensor}(x) \\rightarrow \\forall y\\,((\\text{Drone}(y) \\land \\lnot \\text{Grounded}(y)) \\rightarrow \\text{Mon}(y, x))\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\exists x\\,\\big(\\text{Sensor}(x) \\land \\forall y\\,(\\text{Drone}(y) \\land \\lnot \\text{Grounded}(y) \\land \\text{Mon}(y, x))\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\exists x\\,\\big(\\text{Sensor}(x) \\land \\forall y\\,((\\text{Drone}(y) \\land \\lnot \\text{Grounded}(y)) \\rightarrow \\text{Mon}(y, x))\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "\"There is a sensor\" gives an outer $\\exists x$ paired with $\\land$: $\\exists x\\,(\\text{Sensor}(x) \\land \\ldots)$. \"Every drone that is not grounded\" gives an inner $\\forall y$ paired with $\\rightarrow$: $\\forall y\\,((\\text{Drone}(y) \\land \\lnot\\text{Grounded}(y)) \\rightarrow \\text{Mon}(y,x))$. Only (D) has both, in that order.",
+      "steps": [
+        {
+          "title": "Identify the quantifier structure",
+          "body": "The statement asserts the existence of **one particular sensor** $x$ that works for **all** active drones $y$. So $\\exists x$ must be outside $\\forall y$: the pattern is $\\exists x\\,\\forall y$, not $\\forall y\\,\\exists x$."
+        },
+        {
+          "title": "Pair each quantifier with the right connective",
+          "body": "- Existential restriction (\"some $x$ that is a sensor\"): $\\exists x\\,(\\text{Sensor}(x) \\land \\ldots)$.\n- Universal restriction (\"every $y$ that is a non-grounded drone\"): $\\forall y\\,\\big((\\text{Drone}(y) \\land \\lnot\\text{Grounded}(y)) \\rightarrow \\ldots\\big)$."
+        },
+        {
+          "title": "Assemble the formula",
+          "body": "$$\n\\exists x\\,\\Big(\\text{Sensor}(x) \\land \\forall y\\,\\big((\\text{Drone}(y) \\land \\lnot\\text{Grounded}(y)) \\rightarrow \\text{Mon}(y,x)\\big)\\Big)\n$$\nThis is option (D)."
+        },
+        {
+          "title": "Eliminate the others with small counter-models",
+          "body": "- (A): sensors $s_1, s_2$; active drones $d_1, d_2$; $d_1$ monitors only $s_1$, $d_2$ monitors only $s_2$. (A) is true, but no single sensor is monitored by both drones, so the statement is false.\n- (B): sensor $s$, active drone $d$ that monitors nothing. Taking $x = d$ makes $\\text{Sensor}(d)$ false, so the implication is true and (B) holds, yet the statement is false.\n- (C): sensor $s$ and active drone $d$ with $\\text{Mon}(d, s)$. The statement is true, but (C) requires **every** object, including $s$ itself, to be a non-grounded drone, so (C) is false."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "Translating English into first-order logic rests on two rules and one warning.\n\n**Rule 1: $\\exists$ goes with $\\land$.** \"Some $P$ is $Q$\" is $\\exists x\\,(P(x) \\land Q(x))$. Writing $\\exists x\\,(P(x) \\rightarrow Q(x))$ is almost always wrong: it is satisfied by any object that is not a $P$, so it says nearly nothing.\n\n**Rule 2: $\\forall$ goes with $\\rightarrow$.** \"Every $P$ is $Q$\" is $\\forall x\\,(P(x) \\rightarrow Q(x))$. Writing $\\forall x\\,(P(x) \\land Q(x))$ claims that *everything* in the domain is a $P$.\n\n**Warning: quantifier order matters.** $\\exists x\\,\\forall y\\,\\text{Mon}(y,x)$ says one fixed $x$ serves every $y$. $\\forall y\\,\\exists x\\,\\text{Mon}(y,x)$ lets each $y$ pick its own $x$. The first implies the second, but not the other way round.\n\nIn the drone statement, \"there is a sensor\" names a single sensor that must work for all active drones, so the existential comes first. Each quantifier is then restricted with its matching connective.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Quantifier order is swapped: $\\forall y\\,\\exists x$ lets each active drone monitor a *different* sensor. That is weaker than requiring one common sensor."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\exists x\\,(\\text{Sensor}(x) \\rightarrow \\ldots)$ is made true by any non-sensor object, since a false antecedent makes the implication true. So it does not assert that a suitable sensor exists."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Using $\\land$ under $\\forall y$ asserts that *every object* in the domain is a non-grounded drone that monitors $x$. That is false in any domain containing a sensor or a grounded drone."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Outer $\\exists x$ with $\\land$ picks one sensor; inner $\\forall y$ with $\\rightarrow$ restricts the claim to non-grounded drones. This is exactly the statement."
+        }
+      ],
+      "commonTrap": "Choosing (A) because it mentions all the right predicates. It reverses the quantifier order and so allows each drone to monitor a different sensor."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(D); brute force over all interpretations with domain sizes 1-3 finds models where each of (A), (B), (C) differs from (D)",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\ndef models(n):\n    for S,Dr,G in itertools.product(itertools.product([0,1],repeat=n),repeat=3):\n        for M in itertools.product([0,1],repeat=n*n): yield range(n),S,Dr,G,M,n\nact=lambda y,Dr,G: Dr[y] and not G[y]\nfA=lambda D,S,Dr,G,M,n: all(not act(y,Dr,G) or any(S[x] and M[y*n+x] for x in D) for y in D)\nfB=lambda D,S,Dr,G,M,n: any(not S[x] or all(not act(y,Dr,G) or M[y*n+x] for y in D) for x in D)\nfC=lambda D,S,Dr,G,M,n: any(S[x] and all(act(y,Dr,G) and M[y*n+x] for y in D) for x in D)\nfD=lambda D,S,Dr,G,M,n: any(S[x] and all(not act(y,Dr,G) or M[y*n+x] for y in D) for x in D)\nfor k,f in (('A',fA),('B',fB),('C',fC)):\n    print(k, any(f(*m)!=fD(*m) for n in (1,2,3) for m in models(n)))  # all True -> not equivalent to D",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-conditional-independence"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a Bayesian network stores one CPT per node given its parents) applied as a direct sum of five small products; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Compactness of Bayesian networks: independent CPT parameters = (k − 1) × product of parent cardinalities",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A smart greenhouse is modelled by a Bayesian network over five discrete variables:\n\n| Variable | Meaning | Possible values |\n|---|---|---|\n| $T$ | temperature level | low, medium, high |\n| $H$ | humidity | low, high |\n| $F$ | fan status | on, off |\n| $M$ | mould risk | low, medium, high |\n| $A$ | alert raised | yes, no |\n\nThe directed edges are $T \\to F$, $H \\to F$, $H \\to M$, $F \\to M$ and $M \\to A$; there are no other edges.\n\nThe minimum number of independent parameters needed to specify all the conditional probability tables of this network is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 20,
+      "max": 20
+    },
+    "solution": {
+      "quick": "Each node $X$ with $k$ values needs $(k-1)$ free probabilities for every configuration of its parents:\n$T: 2,\\ H: 1,\\ F: 1 \\times (3 \\times 2) = 6,\\ M: 2 \\times (2 \\times 2) = 8,\\ A: 1 \\times 3 = 3$. Total $= 20$ (compared with $3 \\cdot 2 \\cdot 2 \\cdot 3 \\cdot 2 - 1 = 71$ for the full joint table).",
+      "steps": [
+        {
+          "title": "Formula",
+          "body": "A CPT $P(X \\mid \\text{Pa}(X))$ has one distribution over the $k_X$ values of $X$ for each parent configuration. Each distribution sums to 1, so it has $k_X - 1$ free entries:\n$$\n\\#\\text{params}(X) = (k_X - 1) \\times \\prod_{Y \\in \\text{Pa}(X)} k_Y .\n$$"
+        },
+        {
+          "title": "Read off parents and cardinalities",
+          "body": "| Node | $k_X$ | Parents | Parent configurations |\n|---|---|---|---|\n| $T$ | 3 | none | 1 |\n| $H$ | 2 | none | 1 |\n| $F$ | 2 | $T, H$ | $3 \\times 2 = 6$ |\n| $M$ | 3 | $H, F$ | $2 \\times 2 = 4$ |\n| $A$ | 2 | $M$ | 3 |"
+        },
+        {
+          "title": "Compute per node",
+          "body": "$T: (3-1)\\times 1 = 2$\n\n$H: (2-1)\\times 1 = 1$\n\n$F: (2-1)\\times 6 = 6$\n\n$M: (3-1)\\times 4 = 8$\n\n$A: (2-1)\\times 3 = 3$"
+        },
+        {
+          "title": "Add up",
+          "body": "$$\n2 + 1 + 6 + 8 + 3 = 20\n$$\nFor comparison, a full joint table over the same variables has $3 \\times 2 \\times 2 \\times 3 \\times 2 = 72$ entries, so $71$ independent parameters. The network's conditional independences save $51$ parameters."
+        }
+      ],
+      "finalAnswer": "**20**",
+      "teaching": "The chain rule writes any joint distribution as $P(X_1,\\ldots,X_n) = \\prod_i P(X_i \\mid X_1,\\ldots,X_{i-1})$. A Bayesian network adds conditional independence assumptions: each variable is independent of its non-descendants given its parents. Every factor then shrinks to $P(X_i \\mid \\text{Pa}(X_i))$, and the joint distribution is fully specified by one small CPT per node.\n\nCounting parameters follows directly. For each parent configuration, the node needs a probability distribution over its own values. A distribution over $k$ values has only $k-1$ free numbers, since the last one is fixed by the sum-to-one constraint. The number of parent configurations is the product of the parents' cardinalities.\n\nThis is why Bayesian networks are called a *compact* representation. The size of the full joint grows exponentially in the number of variables, while a network with few parents per node grows roughly linearly. Here the network needs 20 numbers where the full joint needs 71.",
+      "commonTrap": "Counting every CPT entry instead of only the free ones ($3 + 2 + 12 + 12 + 6 = 35$), or treating every variable as binary and forgetting that $T$ and $M$ have three values."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "20",
+      "agreesWithKey": true,
+      "checkCode": "import math\ncard={'T':3,'H':2,'F':2,'M':3,'A':2}\npar={'T':[],'H':[],'F':['T','H'],'M':['H','F'],'A':['M']}\nprint(sum((card[v]-1)*math.prod(card[p] for p in par[v]) for v in card))  # 20\nprint(math.prod(card.values())-1)  # 71 (full joint)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-informed"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the definitions of admissibility and consistency) checked directly on a four-node graph with five edges; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Admissible versus consistent heuristics: h(n) ≤ h*(n) versus h(n) ≤ c(n, n') + h(n')",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A warehouse robot must travel from station $S$ to the packing station $G$ along one-way aisles. The directed edges with their costs, and a heuristic $h$, are given below.\n\n| Edge | Cost |\n|---|---|\n| $S \\to A$ | 2 |\n| $S \\to B$ | 4 |\n| $A \\to B$ | 1 |\n| $A \\to G$ | 7 |\n| $B \\to G$ | 3 |\n\n| Node $n$ | $S$ | $A$ | $B$ | $G$ |\n|---|---|---|---|---|\n| $h(n)$ | 5 | 4 | 1 | 0 |\n\nWhich one of the following statements about $h$ is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$h$ is both admissible and consistent."
+      },
+      {
+        "label": "B",
+        "text": "$h$ is admissible but not consistent."
+      },
+      {
+        "label": "C",
+        "text": "$h$ is consistent but not admissible."
+      },
+      {
+        "label": "D",
+        "text": "$h$ is neither admissible nor consistent."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "True costs-to-go: $h^*(G)=0,\\ h^*(B)=3,\\ h^*(A)=\\min(7, 1+3)=4,\\ h^*(S)=\\min(2+4, 4+3)=6$. Every $h(n) \\le h^*(n)$, so $h$ is admissible. But on edge $A \\to B$: $h(A)=4 > c(A,B)+h(B)=1+1=2$, so $h$ is not consistent.",
+      "steps": [
+        {
+          "title": "Definitions",
+          "body": "- **Admissible:** $h(n) \\le h^*(n)$ for every node, where $h^*(n)$ is the true cheapest cost from $n$ to $G$.\n- **Consistent:** $h(n) \\le c(n,n') + h(n')$ for every edge $n \\to n'$ (and $h(G)=0$)."
+        },
+        {
+          "title": "Compute the true costs h*",
+          "body": "Work backwards from $G$:\n\n- $h^*(G) = 0$\n- $h^*(B) = 3$ (edge $B \\to G$)\n- $h^*(A) = \\min(7,\\ 1 + h^*(B)) = \\min(7, 4) = 4$\n- $h^*(S) = \\min(2 + h^*(A),\\ 4 + h^*(B)) = \\min(6, 7) = 6$"
+        },
+        {
+          "title": "Check admissibility",
+          "body": "| Node | $h$ | $h^*$ | $h \\le h^*$? |\n|---|---|---|---|\n| $S$ | 5 | 6 | yes |\n| $A$ | 4 | 4 | yes |\n| $B$ | 1 | 3 | yes |\n| $G$ | 0 | 0 | yes |\n\nSo $h$ is admissible."
+        },
+        {
+          "title": "Check consistency edge by edge",
+          "body": "- $S \\to A$: $5 \\le 2 + 4 = 6$ ✓\n- $S \\to B$: $5 \\le 4 + 1 = 5$ ✓\n- $A \\to B$: $4 \\le 1 + 1 = 2$ ✗\n- $A \\to G$: $4 \\le 7 + 0 = 7$ ✓\n- $B \\to G$: $1 \\le 3 + 0 = 3$ ✓\n\nOne violation is enough: $h$ is **not consistent**. Hence $h$ is admissible but not consistent, option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "A heuristic $h(n)$ estimates the cheapest remaining cost from $n$ to the goal. A* orders the frontier by $f(n) = g(n) + h(n)$.\n\n**Admissibility** means $h$ never overestimates: $h(n) \\le h^*(n)$. It guarantees that A* *tree search* returns an optimal path, because an optimal path's nodes can never look worse than the true optimum.\n\n**Consistency** (monotonicity) is a local triangle inequality: stepping along an edge cannot make the estimate drop by more than the edge's cost, $h(n) \\le c(n,n') + h(n')$. It makes $f$ non-decreasing along every path, so A* *graph search* never has to reopen a node.\n\nConsistency with $h(G)=0$ implies admissibility (sum the inequalities along an optimal path), but not the reverse. Here $h(A)=4$ is exactly right, yet $h(B)=1$ is too pessimistic compared with $A$: moving $A \\to B$ costs 1 while the estimate drops by 3. Along $S \\to A \\to B$, $f$ falls from $2+4=6$ to $3+1=4$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$h$ is admissible, but the edge $A \\to B$ violates consistency: $h(A) = 4 > 1 + h(B) = 2$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "All four nodes satisfy $h \\le h^*$ ($5 \\le 6,\\ 4 \\le 4,\\ 1 \\le 3,\\ 0 \\le 0$), and the edge $A \\to B$ breaks the triangle inequality."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$h$ is not consistent. Moreover, with $h(G)=0$ a consistent heuristic is always admissible, so \"consistent but not admissible\" can never occur here."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$h$ is admissible. Calling it inadmissible usually comes from comparing $h(n)$ with a single edge cost (e.g. $h(A)=4 > c(A,B)=1$) instead of with the full cheapest cost to the goal, $h^*(A)=4$."
+        }
+      ],
+      "commonTrap": "Stopping after the admissibility check and choosing (A). Admissibility does not imply consistency, and the single violation (edge $A \\to B$) is found only by checking every edge, not just the edges into $G$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B): admissible (h* = S6, A4, B3, G0), not consistent (edge A->B violates)",
+      "agreesWithKey": true,
+      "checkCode": "E={'S':[('A',2),('B',4)],'A':[('B',1),('G',7)],'B':[('G',3)],'G':[]}\nh={'S':5,'A':4,'B':1,'G':0}\nhs=lambda n: 0 if n=='G' else min(w+hs(m) for m,w in E[n])\nprint({n:hs(n) for n in h}, all(h[n]<=hs(n) for n in h))  # admissible True\nprint([(n,m) for n in E for m,w in E[n] if h[n]>w+h[m]])  # [('A','B')] -> not consistent",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (model counting via a truth table); once $S$ is seen to be fixed by $P, Q, R$, only an 8-row table is needed; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Model counting in propositional logic; a biconditional that fixes one variable",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $P, Q, R, S$ be propositional variables and let\n$$\nF = (P \\lor Q \\lor R) \\land (P \\rightarrow R) \\land \\big(S \\leftrightarrow (Q \\land \\lnot R)\\big).\n$$\nThe number of truth assignments to $(P, Q, R, S)$, out of the 16 possible assignments, that satisfy $F$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 5,
+      "max": 5
+    },
+    "solution": {
+      "quick": "The conjunct $S \\leftrightarrow (Q \\land \\lnot R)$ fixes $S$ uniquely for each $(P,Q,R)$, so count only the $(P,Q,R)$ triples satisfying $(P \\lor Q \\lor R) \\land (P \\rightarrow R)$. Remove $000$ (all false) and $100, 110$ ($P$ true, $R$ false) from the 8 triples: $8 - 3 = 5$ models.",
+      "steps": [
+        {
+          "title": "Observe that S is determined",
+          "body": "For any fixed $(P,Q,R)$, the biconditional $S \\leftrightarrow (Q \\land \\lnot R)$ is true for exactly one value of $S$, namely $S = Q \\land \\lnot R$. So each $(P,Q,R)$ triple that satisfies the other two conjuncts gives exactly **one** model."
+        },
+        {
+          "title": "Apply the first two conjuncts",
+          "body": "- $P \\lor Q \\lor R$ removes only $(P,Q,R) = (0,0,0)$.\n- $P \\rightarrow R$ removes the triples with $P=1, R=0$: $(1,0,0)$ and $(1,1,0)$.\n\nThese three triples are distinct, so $8 - 3 = 5$ triples remain."
+        },
+        {
+          "title": "List the models",
+          "body": "| $P$ | $Q$ | $R$ | $S = Q \\land \\lnot R$ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| 0 | 1 | 0 | 1 |\n| 0 | 1 | 1 | 0 |\n| 1 | 0 | 1 | 0 |\n| 1 | 1 | 1 | 0 |\n\nEach row satisfies all three conjuncts, so $F$ has **5** models."
+        }
+      ],
+      "finalAnswer": "**5**",
+      "teaching": "A *model* of a propositional formula is a truth assignment that makes it true. With $n$ variables there are $2^n$ assignments, and model counting means finding how many of them satisfy the formula. A full truth table always works, but structure can shorten it.\n\nFor a conjunction, an assignment is a model only if it satisfies every conjunct. So the conjuncts act as filters, and it pays to apply the most restrictive ones first.\n\nA biconditional $S \\leftrightarrow \\varphi$, where $\\varphi$ does not mention $S$, works like a *definition*: for every assignment to the other variables, exactly one value of $S$ makes it true. It neither doubles nor removes models; it just fixes $S$. Here that turns a 16-row problem into an 8-row one.\n\nThe clause $P \\rightarrow R$ is false only when $P = 1$ and $R = 0$, and $P \\lor Q \\lor R$ is false only when all three are 0. Removing these rows leaves 5.",
+      "shortcut": "Count the complement among the 8 triples of $(P,Q,R)$: $P \\lor Q \\lor R$ fails on 1 triple, and $P \\rightarrow R$ fails on 2 other triples, leaving $8 - 3 = 5$. $S$ contributes a factor of 1.",
+      "commonTrap": "Treating $S$ as a free variable and doubling the count to 10. The biconditional pins $S$ to $Q \\land \\lnot R$, so each surviving $(P,Q,R)$ gives exactly one model."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "5",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nprint(sum(1 for P,Q,R,S in itertools.product([0,1],repeat=4)\n        if (P or Q or R) and ((not P) or R) and (S==(Q and not R))))  # 5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-variable-elimination"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (variable elimination) carried through 2–3 steps: sum out a barren node, sum out an intermediate node, then normalise; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Variable elimination: summing out hidden variables into factors, then normalising to get a posterior",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A home network is modelled by a Bayesian network over four Boolean variables ($1$ = true, $0$ = false): $U$ (a power surge occurs), $R$ (the router fails), $O$ (the network goes offline) and $K$ (the circuit breaker trips). The edges are $U \\to R$, $R \\to O$ and $U \\to K$, with\n\n| Quantity | Value |\n|---|---|\n| $P(U=1)$ | $0.2$ |\n| $P(R=1 \\mid U=1)$ | $0.7$ |\n| $P(R=1 \\mid U=0)$ | $0.1$ |\n| $P(O=1 \\mid R=1)$ | $0.9$ |\n| $P(O=1 \\mid R=0)$ | $0.2$ |\n| $P(K=1 \\mid U=1)$ | $0.6$ |\n| $P(K=1 \\mid U=0)$ | $0.05$ |\n\nThe network is observed to be offline ($O=1$); nothing else is observed. Using variable elimination, the value of $P(U=1 \\mid O=1)$, rounded off to two decimal places, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.14$"
+      },
+      {
+        "label": "B",
+        "text": "$0.39$"
+      },
+      {
+        "label": "C",
+        "text": "$0.64$"
+      },
+      {
+        "label": "D",
+        "text": "$0.69$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$K$ is a leaf that is not observed, so summing it out gives 1. Eliminate $R$: $f(U) = \\sum_r P(r \\mid U)\\,P(O=1 \\mid r)$, giving $f(1) = 0.69$ and $f(0) = 0.27$. Then $P(U, O=1) \\propto (0.2 \\times 0.69,\\ 0.8 \\times 0.27) = (0.138,\\ 0.216)$, so $P(U=1 \\mid O=1) = 0.138/0.354 \\approx 0.39$.",
+      "steps": [
+        {
+          "title": "Write the query as a sum over hidden variables",
+          "body": "Query $U$, evidence $O=1$, hidden variables $R$ and $K$:\n$$\nP(U, O=1) = P(U) \\sum_{k} P(k \\mid U) \\sum_{r} P(r \\mid U)\\,P(O=1 \\mid r).\n$$"
+        },
+        {
+          "title": "Eliminate K (barren node)",
+          "body": "$\\sum_{k} P(k \\mid U) = 1$ for each value of $U$. The breaker's CPT therefore drops out: an unobserved leaf has no effect on the query."
+        },
+        {
+          "title": "Eliminate R",
+          "body": "$$\nf_R(U) = \\sum_{r} P(r \\mid U)\\,P(O=1 \\mid r)\n$$\n- $U=1$: $0.7 \\times 0.9 + 0.3 \\times 0.2 = 0.63 + 0.06 = 0.69$\n- $U=0$: $0.1 \\times 0.9 + 0.9 \\times 0.2 = 0.09 + 0.18 = 0.27$"
+        },
+        {
+          "title": "Multiply by the prior of U",
+          "body": "- $P(U=1, O=1) = 0.2 \\times 0.69 = 0.138$\n- $P(U=0, O=1) = 0.8 \\times 0.27 = 0.216$\n\nSo $P(O=1) = 0.138 + 0.216 = 0.354$."
+        },
+        {
+          "title": "Normalise",
+          "body": "$$\nP(U=1 \\mid O=1) = \\frac{0.138}{0.354} = 0.3898\\ldots \\approx 0.39\n$$\nThis is option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)** $0.39$",
+      "teaching": "Exact inference in a Bayesian network computes $P(\\text{query} \\mid \\text{evidence})$ by summing the joint distribution over all hidden variables. Enumerating the full joint repeats a lot of work. **Variable elimination** pushes each sum as far inside the product as possible, so it involves only the factors that mention that variable, and stores the result as a new, smaller factor.\n\nTwo facts make this question quick. First, a hidden variable with no observed descendants, here the breaker $K$, is *barren*: $\\sum_k P(k \\mid U) = 1$, so its factor disappears. Second, summing out $R$ produces a factor $f_R(U) = P(O=1 \\mid U)$, which says how strongly each value of $U$ explains the evidence.\n\nThe product $P(U)\\,f_R(U)$ is the unnormalised joint $P(U, O=1)$. Dividing by its sum over $U$, which is $P(O=1)$, gives the posterior. Although an offline network is far more likely after a surge (0.69 versus 0.27), surges are rare, so the posterior is only about 0.39.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.138 \\approx 0.14$ is the unnormalised $P(U=1, O=1)$. It must still be divided by $P(O=1) = 0.354$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$0.2 \\times 0.69 / (0.2 \\times 0.69 + 0.8 \\times 0.27) = 0.138/0.354 \\approx 0.39$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.126/(0.126 + 0.072) \\approx 0.64$ assumes being offline means the router failed, keeping only the $R=1$ term. It ignores that $O=1$ can also occur with $R=0$ (probability 0.2)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.69 = P(O=1 \\mid U=1)$, the likelihood factor $f_R(1)$. It confuses $P(O \\mid U)$ with the requested $P(U \\mid O)$."
+        }
+      ],
+      "commonTrap": "Stopping at $f_R(U=1) = 0.69$ (which is $P(O=1 \\mid U=1)$) or at the unnormalised $0.138$, instead of combining with the prior and normalising."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.3898 (= 0.138/0.354), rounds to 0.39",
+      "agreesWithKey": true,
+      "checkCode": "pU=0.2; pR={1:0.7,0:0.1}; pO={1:0.9,0:0.2}; pK={1:0.6,0:0.05}\npr=lambda v,p: p if v else 1-p\nj={u:sum(pr(u,pU)*pr(r,pR[u])*pO[r]*pr(k,pK[u]) for r in (0,1) for k in (0,1)) for u in (0,1)}\nprint(round(j[1]/(j[0]+j[1]),4))  # 0.3898",
+      "notes": ""
+    }
+  }
+]

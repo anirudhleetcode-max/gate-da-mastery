@@ -1,0 +1,112 @@
+{
+  "id": "DA2025-S5-Q39",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 39,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-cdf",
+    "ps-pdf"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it needs two directly linked steps (rewriting $X^2 \\le 0.25$ as $-0.5 \\le X \\le 0.5$, then taking a CDF difference) with routine arithmetic, about 1.5 minutes for a prepared student.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider the cumulative distribution function (CDF) of a random variable $X$:\n\n$$\nF_X(x) = \\begin{cases} 0 & x \\le -1 \\\\ \\dfrac{1}{4}(x+1)^2 & -1 \\le x \\le 1 \\\\ 1 & x \\ge 1 \\end{cases}\n$$\n\nThe value of $P(X^2 \\le 0.25)$ is",
+  "options": [
+    {
+      "label": "A",
+      "text": "$0.625$"
+    },
+    {
+      "label": "B",
+      "text": "$0.25$"
+    },
+    {
+      "label": "C",
+      "text": "$0.5$"
+    },
+    {
+      "label": "D",
+      "text": "$0.5625$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "$X^2 \\le 0.25 \\iff -0.5 \\le X \\le 0.5$. Because $F_X$ is continuous, $P(-0.5 \\le X \\le 0.5) = F_X(0.5) - F_X(-0.5) = \\frac{(1.5)^2 - (0.5)^2}{4} = \\frac{2.25 - 0.25}{4} = 0.5$, which is option **(C)**.",
+    "steps": [
+      {
+        "title": "Rewrite the event in terms of X",
+        "body": "The event concerns $X^2$, but the CDF is given for $X$, so first rewrite the event as an interval for $X$:\n\n$$\nX^2 \\le 0.25 \\iff |X| \\le \\sqrt{0.25} = 0.5 \\iff -0.5 \\le X \\le 0.5.\n$$\n\nBoth roots count. Values such as $X = -0.4$ also satisfy $X^2 = 0.16 \\le 0.25$."
+      },
+      {
+        "title": "Check that the CDF has no jumps",
+        "body": "For any CDF, $P(a \\le X \\le b) = F_X(b) - F_X(a^-)$, where $F_X(a^-)$ is the left limit at $a$. The two agree, $F_X(a^-) = F_X(a)$, whenever $F_X$ is continuous at $a$.\n\nHere the pieces join continuously:\n\n- at $x = -1$: $\\frac{1}{4}(-1+1)^2 = 0$, which matches the value $0$ to the left;\n- at $x = 1$: $\\frac{1}{4}(1+1)^2 = \\frac{4}{4} = 1$, which matches the value $1$ to the right;\n- in between, $\\frac{1}{4}(x+1)^2$ is a polynomial.\n\nSo $F_X$ is continuous everywhere, $X$ has no point masses, and\n\n$$\nP(-0.5 \\le X \\le 0.5) = F_X(0.5) - F_X(-0.5).\n$$"
+      },
+      {
+        "title": "Evaluate the CDF at the endpoints",
+        "body": "Both $0.5$ and $-0.5$ lie in $[-1, 1]$, so use the middle piece:\n\n$$\nF_X(0.5) = \\frac{1}{4}(0.5 + 1)^2 = \\frac{(1.5)^2}{4} = \\frac{2.25}{4} = 0.5625,\n$$\n\n$$\nF_X(-0.5) = \\frac{1}{4}(-0.5 + 1)^2 = \\frac{(0.5)^2}{4} = \\frac{0.25}{4} = 0.0625.\n$$"
+      },
+      {
+        "title": "Subtract and cross-check with the density",
+        "body": "$$\nP(X^2 \\le 0.25) = 0.5625 - 0.0625 = 0.5.\n$$\n\n**Cross-check:** differentiating the middle piece gives the density $f_X(x) = \\frac{x+1}{2}$ on $[-1, 1]$. Then\n\n$$\n\\int_{-0.5}^{0.5} \\frac{x+1}{2}\\,dx = \\underbrace{\\int_{-0.5}^{0.5} \\frac{x}{2}\\,dx}_{=0 \\text{ (odd)}} + \\int_{-0.5}^{0.5} \\frac{1}{2}\\,dx = 0 + \\frac{1}{2}\\cdot 1 = 0.5.\n$$\n\nThe answer is $0.5$, which is option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**What a CDF tells you.** The cumulative distribution function of a random variable $X$ is $F_X(x) = P(X \\le x)$. It never decreases, it runs from $0$ (far left) to $1$ (far right), and it is right-continuous. The one fact you use most is that the probability of an interval is a difference of CDF values:\n\n$$\nP(a < X \\le b) = F_X(b) - F_X(a).\n$$\n\nIf $F_X$ jumps at a point, that point carries probability equal to the jump size, so you must decide whether an endpoint is included. When $F_X$ is continuous, as for every continuous random variable, single points have probability $0$. Then $<$ and $\\le$ give the same answer, and $P(a \\le X \\le b) = F_X(b) - F_X(a)$.\n\n**Events about a function of $X$.** A question may ask about $g(X)$ (here $g(X) = X^2$) while the distribution is given for $X$. The method is always the same. Solve the inequality for $X$ and write the result as a union of intervals. Then add up the CDF differences over those intervals. Solving an inequality involving a square produces two roots, and forgetting the negative one is the classic error: $x^2 \\le c$ means $-\\sqrt{c} \\le x \\le \\sqrt{c}$, not just $x \\le \\sqrt{c}$.\n\n**From CDF to density.** Differentiating a continuous, piecewise-smooth CDF gives the density: $f_X(x) = F_X'(x)$. Here $f_X(x) = \\frac{x+1}{2}$ on $[-1, 1]$. This density rises linearly from $0$ at $x = -1$ to $1$ at $x = 1$, and it integrates to $1$ (a triangle with base $2$ and height $1$). The density gives an independent way to check any probability you computed from the CDF.\n\n**Back to this question.** $X^2 \\le 0.25$ becomes $-0.5 \\le X \\le 0.5$. This is a window of width $1$ centred at $0$. Evaluating the CDF gives $0.5625 - 0.0625 = 0.5$. Because the density is linear, its average over a window centred at $0$ equals its value at $0$, namely $\\frac{1}{2}$. The probability is therefore width × average height $= 1 \\times \\frac{1}{2} = 0.5$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$0.625 = 0.5625 + 0.0625 = F_X(0.5) + F_X(-0.5)$. It comes from adding the two CDF values instead of subtracting them. The probability of an interval is $F_X(0.5) - F_X(-0.5) = 0.5$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$0.25$ is the threshold in the event, and it also equals $F_X(0) = \\frac{1}{4}(0+1)^2 = P(X \\le 0)$. Neither is $P(-0.5 \\le X \\le 0.5)$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$P(X^2 \\le 0.25) = P(-0.5 \\le X \\le 0.5) = F_X(0.5) - F_X(-0.5) = 0.5625 - 0.0625 = 0.5$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$0.5625 = F_X(0.5) = P(X \\le 0.5)$. It keeps only the upper root and forgets that the event also requires $X \\ge -0.5$. It therefore wrongly includes $P(X < -0.5) = 0.0625$."
+      }
+    ],
+    "shortcut": "The density is $f_X(x) = \\frac{x+1}{2}$ on $[-1, 1]$. For a symmetric window $[-a, a]$ with $0 \\le a \\le 1$, the odd part $\\frac{x}{2}$ integrates to $0$, so $P(|X| \\le a) = \\frac{1}{2}\\cdot 2a = a$. With $a = 0.5$ the probability is $0.5$, with no CDF evaluation needed.",
+    "commonTrap": "Reading $X^2 \\le 0.25$ as $X \\le 0.5$ drops the negative root and gives $F_X(0.5) = 0.5625$, which is option (D). The event is $-0.5 \\le X \\le 0.5$, so you must subtract $F_X(-0.5) = 0.0625$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q39-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the piecewise conditions as $x \\le -1$, $-1 \\le x \\le 1$ and $x \\ge 1$, so they overlap at $x = \\pm 1$. They are kept as printed; the pieces agree at those points ($0$ at $x = -1$ and $1$ at $x = 1$), so the CDF is well defined. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (0.5)",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as Fr\nimport random\nF = lambda x: Fr(0) if x <= -1 else (Fr(1) if x >= 1 else (x + 1)**2 / 4)\n# X^2 <= 0.25  <=>  -0.5 <= X <= 0.5 ; F is continuous, so no atom at -0.5\np = F(Fr(1, 2)) - F(Fr(-1, 2))\nprint(p, float(p))                      # 1/2 0.5\nrandom.seed(1)                          # Monte Carlo via inverse CDF: x = 2*sqrt(u) - 1\nxs = [2 * random.random()**0.5 - 1 for _ in range(10**6)]\nprint(sum(x * x <= 0.25 for x in xs) / len(xs))   # ~0.4998\nopts = {'A': 0.625, 'B': 0.25, 'C': 0.5, 'D': 0.5625}\nprint([k for k, v in opts.items() if abs(v - float(p)) < 1e-12])   # ['C']",
+    "notes": "Exact rational evaluation gives F(0.5) - F(-0.5) = 9/16 - 1/16 = 1/2. A Monte Carlo inverse-CDF simulation (10^6 samples) gives about 0.4998. Both agree with the official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

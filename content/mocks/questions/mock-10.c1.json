@@ -1,0 +1,676 @@
+[
+  {
+    "id": "M10-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-single-var-optimization",
+      "co-maxima-minima"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (first-derivative condition confirmed by the second-derivative test) followed by one-line arithmetic; about a minute for a prepared student.",
+    "estimatedTimeSec": 70,
+    "concept": "Single-variable optimization: minimising a trade-off function of the form ax + b/x with the derivative test.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data-ingestion job loads records in batches. When every batch holds $x$ thousand records ($x > 0$, treated as a continuous variable), the total run time of the job, in minutes, is modelled as\n\n$$\nT(x) = 2x + \\frac{50}{x}.\n$$\n\nThe first term grows with the batch size (memory pressure) and the second term shrinks with it (fewer batch start-ups). The minimum possible value of $T(x)$ over $x > 0$, in minutes, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$5$"
+      },
+      {
+        "label": "B",
+        "text": "$10$"
+      },
+      {
+        "label": "C",
+        "text": "$20$"
+      },
+      {
+        "label": "D",
+        "text": "$52$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$T'(x) = 2 - \\dfrac{50}{x^2} = 0 \\Rightarrow x^2 = 25 \\Rightarrow x = 5$ (the only critical point with $x > 0$).\n$T''(x) = \\dfrac{100}{x^3} > 0$, so it is the minimum, and $T(5) = 10 + 10 = 20$ minutes.",
+      "steps": [
+        {
+          "title": "Differentiate",
+          "body": "$$\nT(x) = 2x + 50x^{-1} \\quad\\Rightarrow\\quad T'(x) = 2 - \\frac{50}{x^2}.\n$$"
+        },
+        {
+          "title": "Find the critical point in the domain",
+          "body": "$T'(x) = 0 \\Rightarrow \\dfrac{50}{x^2} = 2 \\Rightarrow x^2 = 25 \\Rightarrow x = \\pm 5$. Only $x = 5$ lies in the domain $x > 0$."
+        },
+        {
+          "title": "Confirm it is a (global) minimum",
+          "body": "$T''(x) = \\dfrac{100}{x^3}$, so $T''(5) = \\dfrac{100}{125} = 0.8 > 0$: a local minimum. Moreover $T''(x) > 0$ for every $x > 0$, so $T$ is convex on $(0, \\infty)$ and its only critical point is the global minimum. (Also $T(x) \\to \\infty$ as $x \\to 0^+$ and as $x \\to \\infty$.)"
+        },
+        {
+          "title": "Evaluate the minimum value",
+          "body": "$T(5) = 2(5) + \\dfrac{50}{5} = 10 + 10 = 20$ minutes. The question asks for the minimum **value** of $T$, which is $20$ (the minimiser is $x = 5$)."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "To optimise a differentiable function of one variable on an open interval, remember that an interior minimum or maximum can occur only where the slope is zero, i.e. $f'(c) = 0$. The second derivative then tells you the shape: $f''(c) > 0$ means the curve is cupped upwards (a local minimum), $f''(c) < 0$ means a local maximum. If $f'' > 0$ on the whole interval, the function is convex there, so a critical point is automatically the global minimum.\n\nFunctions of the form $ax + \\dfrac{b}{x}$ with $a, b > 0$ are classic trade-offs: one cost rises with $x$, the other falls. Setting the derivative to zero gives $x^{*} = \\sqrt{b/a}$, and at that point the two terms are equal, each being $\\sqrt{ab}$, so the minimum value is $2\\sqrt{ab}$. Here $a = 2$ and $b = 50$, so $x^{*} = 5$, each term equals $10$, and the minimum run time is $20$ minutes. Always check whether a question asks for the minimiser ($x^{*}$) or the minimum value ($T(x^{*})$).",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$5$ is the **minimiser** (the best batch size, $x^{*} = 5$ thousand records), not the minimum run time. Substituting it gives $T(5) = 20$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$10$ is $\\sqrt{2 \\cdot 50}$, i.e. AM–GM applied without its factor $2$; it is also the value of **each** term at the optimum, not their sum."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$T(5) = 10 + 10 = 20$, and $T'' > 0$ on $x > 0$ confirms this is the global minimum."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$52$ comes from differentiating $50/x$ as $-50/x$ (dropping the square): $2 - 50/x = 0$ gives $x = 25$ and $T(25) = 50 + 2 = 52$, which is not even a critical point of $T$."
+        }
+      ],
+      "shortcut": "AM–GM: $2x + \\dfrac{50}{x} \\ge 2\\sqrt{2x \\cdot \\dfrac{50}{x}} = 2\\sqrt{100} = 20$, with equality when $2x = \\dfrac{50}{x}$, i.e. $x = 5$.",
+      "commonTrap": "Reporting the minimiser $x = 5$ instead of the minimum value $T(5) = 20$, or applying AM–GM as $\\sqrt{ab}$ without the factor 2 (giving 10)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "20 (minimiser x = 5); option C",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', positive=True)\nT = 2*x + 50/x\nc = sp.solve(sp.diff(T, x), x)\nprint(c, T.subs(x, c[0]), sp.diff(T, x, 2).subs(x, c[0]))  # [5] 20 4/5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-relational-algebra"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (join–select–project, then a set difference) over a ten-row instance, with the common 'never watched' versus 'watched something else' trap; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Relational algebra: expressing 'never did X' with projection and set difference over a natural join.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A video-streaming service stores the following relation instances.\n\n**Watch**\n\n| viewer | title_id |\n|---|---|\n| Asha | t1 |\n| Asha | t4 |\n| Bilal | t2 |\n| Chen | t3 |\n| Chen | t5 |\n| Divya | t2 |\n| Divya | t4 |\n| Emeka | t5 |\n| Farah | t1 |\n| Gopal | t3 |\n\n**Title**\n\n| title_id | genre |\n|---|---|\n| t1 | Drama |\n| t2 | Comedy |\n| t3 | Drama |\n| t4 | Comedy |\n| t5 | Documentary |\n\nConsider the following relational algebra expression, evaluated with set semantics, where $\\bowtie$ denotes the natural join:\n\n$$\n\\pi_{\\text{viewer}}(\\text{Watch}) \\;-\\; \\pi_{\\text{viewer}}\\big(\\sigma_{\\text{genre} = \\text{'Drama'}}(\\text{Watch} \\bowtie \\text{Title})\\big)\n$$\n\nThe number of tuples in the result is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$3$"
+      },
+      {
+        "label": "B",
+        "text": "$4$"
+      },
+      {
+        "label": "C",
+        "text": "$5$"
+      },
+      {
+        "label": "D",
+        "text": "$6$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The subtracted part is the set of viewers who watched at least one drama (t1 or t3): {Asha, Chen, Farah, Gopal}.\nAll viewers: {Asha, Bilal, Chen, Divya, Emeka, Farah, Gopal}. The difference is {Bilal, Divya, Emeka}, so the result has **3** tuples.",
+      "steps": [
+        {
+          "title": "Natural join Watch ⋈ Title",
+          "body": "The only common attribute is `title_id`, and every `title_id` in Watch appears in Title, so the join attaches a genre to each of the 10 Watch rows:\n(Asha, t1, Drama), (Asha, t4, Comedy), (Bilal, t2, Comedy), (Chen, t3, Drama), (Chen, t5, Documentary), (Divya, t2, Comedy), (Divya, t4, Comedy), (Emeka, t5, Documentary), (Farah, t1, Drama), (Gopal, t3, Drama)."
+        },
+        {
+          "title": "Select dramas and project viewers",
+          "body": "$\\sigma_{\\text{genre}=\\text{'Drama'}}$ keeps 4 rows: (Asha, t1), (Chen, t3), (Farah, t1), (Gopal, t3).\n$\\pi_{\\text{viewer}}$ gives $\\{\\text{Asha}, \\text{Chen}, \\text{Farah}, \\text{Gopal}\\}$: the viewers who watched **at least one** drama."
+        },
+        {
+          "title": "Project all viewers",
+          "body": "$\\pi_{\\text{viewer}}(\\text{Watch}) = \\{\\text{Asha}, \\text{Bilal}, \\text{Chen}, \\text{Divya}, \\text{Emeka}, \\text{Farah}, \\text{Gopal}\\}$ (7 tuples; duplicates removed under set semantics)."
+        },
+        {
+          "title": "Take the difference",
+          "body": "$\\{7 \\text{ viewers}\\} - \\{\\text{Asha}, \\text{Chen}, \\text{Farah}, \\text{Gopal}\\} = \\{\\text{Bilal}, \\text{Divya}, \\text{Emeka}\\}$.\nThe expression returns the viewers who **never** watched a drama, and the result has $3$ tuples."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "Relational algebra builds queries from a few operators on relations (sets of tuples). Selection $\\sigma_{\\text{condition}}$ keeps the rows that satisfy a condition; projection $\\pi_{\\text{attributes}}$ keeps chosen columns and, under set semantics, removes duplicate rows; the natural join $\\bowtie$ pairs rows that agree on all common attributes; and set difference $R - S$ keeps the tuples of $R$ that are not in $S$ (both must have the same schema, which is why each side is projected on `viewer` first).\n\nA condition such as `genre <> 'Drama'` is tested one row at a time, so it can only express \"watched **some** non-drama title\". To express \"watched **no** drama at all\" you must reason about all of a viewer's rows together, and the standard pattern is *everyone minus those who did it*: $\\pi_{\\text{viewer}}(\\text{Watch}) - \\pi_{\\text{viewer}}(\\text{drama watchers})$. Here Asha and Chen watched both dramas and non-dramas, so they appear in the non-drama set but are correctly removed by the difference, leaving Bilal, Divya and Emeka.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The result is {Bilal, Divya, Emeka}: the viewers who never watched a drama."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$4$ is the size of the **subtracted** set {Asha, Chen, Farah, Gopal} (drama watchers), not of the final result."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$5$ is $|\\pi_{\\text{viewer}}(\\sigma_{\\text{genre} \\ne \\text{'Drama'}}(\\text{Watch} \\bowtie \\text{Title}))|$ = {Asha, Bilal, Chen, Divya, Emeka}. It wrongly includes Asha and Chen, who watched a non-drama **and** a drama."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$6$ is what you get by subtracting at the (viewer, title_id) level: Watch has 10 rows, 4 of which are dramas, leaving 6 rows. The expression subtracts after projecting on `viewer`, so rows are not what is being counted."
+        }
+      ],
+      "commonTrap": "Replacing the set difference by the selection `genre <> 'Drama'`, which returns viewers who watched *some* non-drama title (5) instead of viewers who watched *no* drama (3)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3 (Bilal, Divya, Emeka); option A",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\nc = sqlite3.connect(':memory:')\nc.execute('create table Watch(viewer, title_id)'); c.execute('create table Title(title_id, genre)')\nc.executemany('insert into Watch values(?,?)', [('Asha','t1'),('Asha','t4'),('Bilal','t2'),('Chen','t3'),('Chen','t5'),('Divya','t2'),('Divya','t4'),('Emeka','t5'),('Farah','t1'),('Gopal','t3')])\nc.executemany('insert into Title values(?,?)', [('t1','Drama'),('t2','Comedy'),('t3','Drama'),('t4','Comedy'),('t5','Documentary')])\nr = c.execute(\"select viewer from Watch except select viewer from Watch natural join Title where genre='Drama'\").fetchall()\nprint(len(r), r)  # 3",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-sampling"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a likelihood-weighting weight is the product of the evidence CPT entries given the sampled parents) and a single multiplication; about a minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Approximate inference by likelihood weighting: computing the weight of one sample.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A Bayesian network for a server-room cooling unit has three Boolean variables: $C$ (the air filter is clogged), $T$ (the temperature sensor reads high) and $A$ (the low-airflow alarm fires). The only edges are $C \\to T$ and $C \\to A$, and the conditional probability tables are:\n\n| Quantity | Value |\n|---|---|\n| $P(C = 1)$ | $0.1$ |\n| $P(T = 1 \\mid C = 1)$ | $0.7$ |\n| $P(T = 1 \\mid C = 0)$ | $0.2$ |\n| $P(A = 1 \\mid C = 1)$ | $0.6$ |\n| $P(A = 1 \\mid C = 0)$ | $0.05$ |\n\nTo estimate $P(C = 1 \\mid T = 1, A = 0)$ by **likelihood weighting**, the evidence variables are fixed at $T = 1$ and $A = 0$, and the non-evidence variable $C$ is sampled from its distribution. In one such sample the value $C = 1$ is drawn. The weight assigned to this sample is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.028$"
+      },
+      {
+        "label": "B",
+        "text": "$0.28$"
+      },
+      {
+        "label": "C",
+        "text": "$0.42$"
+      },
+      {
+        "label": "D",
+        "text": "$0.19$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "In likelihood weighting the weight is the product, over evidence variables, of $P(\\text{observed value} \\mid \\text{parents as sampled})$.\nWith $C = 1$: $w = P(T = 1 \\mid C = 1)\\,P(A = 0 \\mid C = 1) = 0.7 \\times (1 - 0.6) = 0.28$.",
+      "steps": [
+        {
+          "title": "Recall the likelihood-weighting rule",
+          "body": "Visit the variables in topological order ($C$, then $T$, $A$). A non-evidence variable is **sampled** from its CPT given its sampled parents; an evidence variable is **fixed** at its observed value and the weight is multiplied by the probability of that value given its parents."
+        },
+        {
+          "title": "Process the sampled variable C",
+          "body": "$C$ is not evidence, so it is simply sampled; here $C = 1$. Its probability $P(C = 1) = 0.1$ does **not** enter the weight, because sampling from $P(C)$ already accounts for it."
+        },
+        {
+          "title": "Process the evidence variables",
+          "body": "$T$ is fixed at $1$: multiply by $P(T = 1 \\mid C = 1) = 0.7$.\n$A$ is fixed at $0$: multiply by $P(A = 0 \\mid C = 1) = 1 - 0.6 = 0.4$."
+        },
+        {
+          "title": "Compute the weight",
+          "body": "$$\nw = 0.7 \\times 0.4 = 0.28.\n$$\n(Samples with $C = 0$ get weight $0.2 \\times 0.95 = 0.19$. The weighted estimate converges to $\\dfrac{0.1 \\times 0.28}{0.1 \\times 0.28 + 0.9 \\times 0.19} = \\dfrac{0.028}{0.199} \\approx 0.141$, the exact posterior.)"
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Exact inference in a Bayesian network can be expensive, so we often estimate a posterior by simulation. Plain rejection sampling draws complete samples from the network and throws away those that disagree with the evidence, which wastes most samples when the evidence is unlikely. **Likelihood weighting** avoids this waste: it never samples the evidence variables. Instead it clamps them to their observed values and gives each sample a weight equal to how likely that evidence is under the rest of the sample, namely the product of $P(e_i \\mid \\text{parents}(E_i))$ over the evidence variables.\n\nThe non-evidence variables are sampled normally, so their probabilities are represented by how often each value appears; multiplying them into the weight would count them twice. The posterior estimate is then (sum of weights of samples with $C = 1$) / (sum of all weights). In this network a sample with $C = 1$ explains the high temperature well ($0.7$) but makes a silent alarm less likely ($0.4$), giving weight $0.28$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.028 = 0.1 \\times 0.7 \\times 0.4$ also multiplies in $P(C = 1)$. That is the joint probability $P(C = 1, T = 1, A = 0)$, not the weight; the prior of a **sampled** variable never enters the weight."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$w = P(T = 1 \\mid C = 1) \\cdot P(A = 0 \\mid C = 1) = 0.7 \\times 0.4 = 0.28$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.42 = 0.7 \\times 0.6$ uses $P(A = 1 \\mid C = 1)$, but the evidence is $A = 0$, so the factor must be $1 - 0.6 = 0.4$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.19 = 0.2 \\times 0.95$ uses the $C = 0$ rows of the CPTs. That is the weight of a sample in which $C = 0$ was drawn, not this sample."
+        }
+      ],
+      "commonTrap": "Multiplying the prior $P(C = 1)$ into the weight (giving 0.028), or using $P(A = 1 \\mid C = 1)$ although the evidence is $A = 0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.28; option B",
+      "agreesWithKey": true,
+      "checkCode": "pT = {1: 0.7, 0: 0.2}; pA = {1: 0.6, 0: 0.05}\nw = lambda c: pT[c] * (1 - pA[c])   # evidence T=1, A=0\nprint(round(w(1), 4))              # 0.28\nprint(round(0.1*w(1) / (0.1*w(1) + 0.9*w(0)), 4))  # exact posterior 0.1407",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-hash-tables"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single mechanical procedure (linear probing with one wrap-around) traced on six keys; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Hash tables with open addressing: tracing linear probing with wrap-around.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hash table has 11 slots, numbered $0$ to $10$, and uses the hash function $h(k) = k \\bmod 11$ with **linear probing**: a key $k$ is placed in the first empty slot in the sequence $h(k), (h(k)+1) \\bmod 11, (h(k)+2) \\bmod 11, \\ldots$\n\nStarting from an empty table, the keys\n\n$$\n42,\\; 19,\\; 31,\\; 23,\\; 64,\\; 53\n$$\n\nare inserted in this order. The index of the slot that finally contains the key $53$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2,
+      "max": 2
+    },
+    "solution": {
+      "quick": "Home slots: $42 \\to 9$, $19 \\to 8$, $31 \\to 9$, $23 \\to 1$, $64 \\to 9$, $53 \\to 9$.\nThe cluster at 9 fills 9, 10 and (after wrapping) 0; slot 1 already holds 23, so 53 probes 9, 10, 0, 1 and lands in slot **2**.",
+      "steps": [
+        {
+          "title": "Compute the home slots",
+          "body": "$42 \\bmod 11 = 9$, $19 \\bmod 11 = 8$, $31 \\bmod 11 = 9$, $23 \\bmod 11 = 1$, $64 \\bmod 11 = 9$, $53 \\bmod 11 = 9$."
+        },
+        {
+          "title": "Insert 42, 19, 31, 23",
+          "body": "- $42$: slot 9 is empty $\\Rightarrow$ slot 9.\n- $19$: slot 8 is empty $\\Rightarrow$ slot 8.\n- $31$: slot 9 is occupied; slot 10 is empty $\\Rightarrow$ slot 10.\n- $23$: slot 1 is empty $\\Rightarrow$ slot 1."
+        },
+        {
+          "title": "Insert 64 (wrap-around)",
+          "body": "$64$: slot 9 occupied, slot 10 occupied, next is $(9 + 2) \\bmod 11 = 0$, which is empty $\\Rightarrow$ slot 0."
+        },
+        {
+          "title": "Insert 53",
+          "body": "$53$: slots 9, 10, 0 and 1 are all occupied (42, 31, 64, 23); the next slot, $2$, is empty $\\Rightarrow$ slot 2.\n\nFinal table:\n\n| Slot | 0 | 1 | 2 | 3–7 | 8 | 9 | 10 |\n|---|---|---|---|---|---|---|---|\n| Key | 64 | 23 | 53 | empty | 19 | 42 | 31 |"
+        }
+      ],
+      "finalAnswer": "**2**",
+      "teaching": "A hash table stores each key in an array slot computed from the key itself, so a lookup can jump straight to the right place instead of scanning. With $m$ slots, the division method uses $h(k) = k \\bmod m$. Two keys with the same hash value **collide**, and open addressing resolves the collision by looking for another slot inside the same array.\n\n**Linear probing** is the simplest rule: try $h(k)$, then $h(k)+1$, $h(k)+2$, and so on, taking every index modulo $m$ so that the search wraps from the last slot back to slot $0$. Its weakness is **primary clustering**: occupied slots merge into long runs, and every new key whose home is anywhere inside a run must walk to its end. In this question four keys share home slot 9; their run spills over the end of the array into slot 0, merges with 23 in slot 1 (a key with a different home), and so 53 has to probe five slots (9, 10, 0, 1, 2) before it is placed in slot 2.",
+      "commonTrap": "Forgetting to wrap around after slot 10 (and wrongly declaring the table full or using index 11), or overlooking that 23 already occupies slot 1 and answering 1."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2",
+      "agreesWithKey": true,
+      "checkCode": "m = 11; tab = [None]*m\nfor k in [42, 19, 31, 23, 64, 53]:\n    i = k % m\n    while tab[i] is not None: i = (i + 1) % m\n    tab[i] = k\nprint(tab, tab.index(53))  # [64, 23, 53, None, None, None, None, None, 19, 42, 31] 2",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one idea (the cost of linear search is one more than the index of the first match) followed by a six-term average; about 1–1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Linear search cost analysis: expected number of comparisons when the array contains duplicates.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python function.\n\n```python\ndef linear_search(a, key):\n    for i in range(len(a)):\n        if a[i] == key:\n            return i\n    return -1\n```\n\nIt is called as `linear_search(a, key)` with\n\n```python\na = [4, 8, 4, 1, 6, 8, 4, 2, 9, 6]\n```\n\nand `key` chosen uniformly at random from the **distinct values** present in `a`, i.e. each of the values $1, 2, 4, 6, 8, 9$ is chosen with probability $\\frac{1}{6}$.\n\nThe expected number of times the comparison `a[i] == key` is evaluated in one call is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 4.82,
+      "max": 4.84
+    },
+    "solution": {
+      "quick": "The search stops at the **first** occurrence, after (index + 1) comparisons: $4 \\to 1$, $8 \\to 2$, $1 \\to 4$, $6 \\to 5$, $2 \\to 8$, $9 \\to 9$.\nExpected value $= \\dfrac{1 + 2 + 4 + 5 + 8 + 9}{6} = \\dfrac{29}{6} \\approx 4.83$.",
+      "steps": [
+        {
+          "title": "Cost of one successful search",
+          "body": "The loop compares `a[0]`, `a[1]`, … with `key` and returns at the first match. If the first occurrence of `key` is at index $i$, exactly $i + 1$ comparisons are made. Later duplicates are never reached."
+        },
+        {
+          "title": "Locate the first occurrence of each value",
+          "body": "| Value | First index | Comparisons |\n|---|---|---|\n| 1 | 3 | 4 |\n| 2 | 7 | 8 |\n| 4 | 0 | 1 |\n| 6 | 4 | 5 |\n| 8 | 1 | 2 |\n| 9 | 8 | 9 |"
+        },
+        {
+          "title": "Average over the six equally likely keys",
+          "body": "$$\nE[\\text{comparisons}] = \\frac{1}{6}(4 + 8 + 1 + 5 + 2 + 9) = \\frac{29}{6} = 4.8333\\ldots\n$$"
+        },
+        {
+          "title": "Round",
+          "body": "Rounded off to two decimal places, the expected number of comparisons is $4.83$."
+        }
+      ],
+      "finalAnswer": "**4.83** (accepted range 4.82 to 4.84)",
+      "teaching": "Linear search examines the elements one by one from the front until it finds the key or runs off the end. Its cost is measured by the number of key comparisons: a key whose first occurrence is at index $i$ costs $i + 1$ comparisons, and an absent key costs $n$. The expected cost is therefore $\\sum_{\\text{keys}} P(\\text{key}) \\times (\\text{cost of that key})$.\n\nThe textbook result $\\frac{n+1}{2}$ is a special case: it assumes all $n$ elements are distinct and the key is equally likely to be at each position. Neither assumption holds here. Because `a` has duplicates, only the first copy of each value matters (4 at index 0 shadows the copies at indices 2 and 6), and the key is uniform over the six distinct values, not over the ten positions. Computing the expectation directly from its definition, rather than recalling a formula, gives $\\frac{29}{6} \\approx 4.83$.",
+      "commonTrap": "Using the formula $(n+1)/2 = 5.5$ for $n = 10$, or averaging over all ten positions or occurrences (e.g. picking a random array element gives $38/10 = 3.8$) instead of over the six distinct values with first-occurrence costs."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4.8333 (29/6)",
+      "agreesWithKey": true,
+      "checkCode": "class K:  # counts evaluations of a[i] == key\n    n = 0\n    def __init__(s, v): s.v = v\n    def __eq__(s, o): K.n += 1; return s.v == o.v\ndef linear_search(a, key):\n    for i in range(len(a)):\n        if a[i] == key:\n            return i\n    return -1\nraw = [4, 8, 4, 1, 6, 8, 4, 2, 9, 6]; a = [K(x) for x in raw]; tot = 0\nfor v in sorted(set(raw)):\n    K.n = 0; linear_search(a, K(v)); tot += K.n\nprint(tot / len(set(raw)))  # 4.8333...",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-feedforward",
+      "ml-mlp"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a two-layer forward pass (matrix–vector product with bias, element-wise ReLU, then a dot product) in three routine but sign-sensitive steps; about 2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "Forward propagation in a feed-forward network with a ReLU hidden layer.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward neural network has 2 inputs, one hidden layer of 3 ReLU units and a single linear output unit. For an input $\\mathbf{x} \\in \\mathbb{R}^2$ it computes\n\n$$\n\\mathbf{h} = \\operatorname{ReLU}\\big(W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)}\\big), \\qquad \\hat{y} = \\mathbf{w}^{(2)\\top}\\mathbf{h} + b^{(2)},\n$$\n\nwhere $\\operatorname{ReLU}(z) = \\max(0, z)$ is applied element-wise and\n\n$$\nW^{(1)} = \\begin{bmatrix} 2 & -1 \\\\ 1 & 1 \\\\ -1 & 0.5 \\end{bmatrix}, \\quad\n\\mathbf{b}^{(1)} = \\begin{bmatrix} 0 \\\\ -2 \\\\ 1 \\end{bmatrix}, \\quad\n\\mathbf{w}^{(2)} = \\begin{bmatrix} 3 \\\\ 2 \\\\ -1 \\end{bmatrix}, \\quad\nb^{(2)} = 0.5.\n$$\n\nFor the input $\\mathbf{x} = \\begin{bmatrix} 1 \\\\ 3 \\end{bmatrix}$, the output $\\hat{y}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.0$"
+      },
+      {
+        "label": "B",
+        "text": "$2.5$"
+      },
+      {
+        "label": "C",
+        "text": "$8.0$"
+      },
+      {
+        "label": "D",
+        "text": "$3.0$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)} = (-1,\\, 4,\\, 0.5) + (0,\\, -2,\\, 1) = (-1,\\, 2,\\, 1.5)$, so $\\mathbf{h} = (0,\\, 2,\\, 1.5)$.\n$\\hat{y} = 3(0) + 2(2) - 1(1.5) + 0.5 = 3.0$.",
+      "steps": [
+        {
+          "title": "Hidden pre-activations",
+          "body": "$$\nW^{(1)}\\mathbf{x} = \\begin{bmatrix} 2(1) + (-1)(3) \\\\ 1(1) + 1(3) \\\\ (-1)(1) + 0.5(3) \\end{bmatrix} = \\begin{bmatrix} -1 \\\\ 4 \\\\ 0.5 \\end{bmatrix}, \\qquad\n\\mathbf{z} = W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)} = \\begin{bmatrix} -1 \\\\ 2 \\\\ 1.5 \\end{bmatrix}.\n$$"
+        },
+        {
+          "title": "Apply ReLU",
+          "body": "$\\mathbf{h} = (\\max(0,-1),\\ \\max(0,2),\\ \\max(0,1.5)) = (0,\\ 2,\\ 1.5)$. The first hidden unit is inactive for this input."
+        },
+        {
+          "title": "Output unit",
+          "body": "$$\n\\hat{y} = 3(0) + 2(2) + (-1)(1.5) + 0.5 = 0 + 4 - 1.5 + 0.5 = 3.0.\n$$"
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A feed-forward network is a chain of layers, and each layer does two things: an **affine map** (multiply by a weight matrix, then add a bias vector) followed by an element-wise **activation**. Information only flows forward, from inputs to hidden units to output, so evaluating the network (forward propagation) is just these operations applied layer by layer in order.\n\nThe activation is what makes the network more than a linear model: without it, two affine layers compose into a single affine map. ReLU, $\\max(0, z)$, passes positive pre-activations unchanged and sets negative ones to zero, so for a given input some hidden units are switched off and contribute nothing downstream. Note the order: the bias is added **before** the activation, so a bias can switch a unit on or off (here $b_2^{(1)} = -2$ lowers the second unit from 4 to 2). In this network the first unit's pre-activation is $-1$, so ReLU zeroes it, and only units 2 and 3 feed the output, giving $\\hat{y} = 3.0$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.0$ results from skipping the ReLU: $3(-1) + 2(2) - 1.5 + 0.5 = 0$. The negative pre-activation $-1$ must be clipped to $0$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$2.5$ omits the output bias $b^{(2)} = 0.5$: $4 - 1.5 = 2.5$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$8.0$ omits the hidden biases: $\\mathbf{h} = \\operatorname{ReLU}(-1, 4, 0.5) = (0, 4, 0.5)$ gives $8 - 0.5 + 0.5 = 8$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\mathbf{h} = (0, 2, 1.5)$ and $\\hat{y} = 4 - 1.5 + 0.5 = 3.0$."
+        }
+      ],
+      "commonTrap": "Forgetting to apply ReLU (letting the $-1$ pass through, giving 0.0) or adding the hidden bias after the activation instead of before it."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3.0; option D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx = np.array([1., 3.]); W1 = np.array([[2., -1.], [1., 1.], [-1., .5]]); b1 = np.array([0., -2., 1.])\nw2 = np.array([3., 2., -1.]); b2 = .5\nh = np.maximum(W1 @ x + b1, 0)\nprint(h, w2 @ h + b2)  # [0. 2. 1.5] 3.0",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-independent"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (product rule for independent events and their complements) leading to a single linear equation; about a minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Independent events: using the product rule on 'exactly one of two events' to recover an unknown probability.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Every code commit pushed to a repository is checked by two automated tools that operate independently of each other. A static analyser flags a commit with probability $0.3$, and a test-coverage bot flags a commit with probability $p$. For a randomly chosen commit, the probability that **exactly one** of the two tools flags it is $0.46$.\n\nThe value of $p$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.39,
+      "max": 0.41
+    },
+    "solution": {
+      "quick": "$P(\\text{exactly one}) = 0.3(1 - p) + 0.7p = 0.3 + 0.4p$.\nSetting $0.3 + 0.4p = 0.46$ gives $p = 0.4$.",
+      "steps": [
+        {
+          "title": "Name the events",
+          "body": "Let $A$ = \"the analyser flags\" with $P(A) = 0.3$, and $B$ = \"the bot flags\" with $P(B) = p$. \"Exactly one flags\" is $(A \\cap B^{c}) \\cup (A^{c} \\cap B)$, a union of two **disjoint** events."
+        },
+        {
+          "title": "Use independence",
+          "body": "If $A$ and $B$ are independent, so are $A$ and $B^{c}$, and $A^{c}$ and $B$. Hence\n$$\nP(\\text{exactly one}) = P(A)P(B^{c}) + P(A^{c})P(B) = 0.3(1 - p) + 0.7p.\n$$"
+        },
+        {
+          "title": "Solve for p",
+          "body": "$0.3 - 0.3p + 0.7p = 0.3 + 0.4p = 0.46 \\Rightarrow 0.4p = 0.16 \\Rightarrow p = 0.4$."
+        },
+        {
+          "title": "Check",
+          "body": "$0.3 \\times 0.6 + 0.7 \\times 0.4 = 0.18 + 0.28 = 0.46$. So $p = 0.40$."
+        }
+      ],
+      "finalAnswer": "**0.40** (accepted range 0.39 to 0.41)",
+      "teaching": "Two events are **independent** when knowing that one happened does not change the probability of the other; formally $P(A \\cap B) = P(A)\\,P(B)$. A useful consequence is that independence carries over to complements: if $A$ and $B$ are independent, then so are $A$ and $B^{c}$, $A^{c}$ and $B$, and $A^{c}$ and $B^{c}$. That lets you multiply probabilities for any combination of \"happens\" and \"does not happen\".\n\n\"Exactly one\" is best split into disjoint cases: either the first happens and the second does not, or the reverse. Disjoint probabilities add, and each case is a product by independence. This gives the general formula $P(\\text{exactly one}) = P(A) + P(B) - 2P(A)P(B)$, which differs from \"at least one\", $P(A) + P(B) - P(A)P(B)$, because the case where both happen is excluded. Here the equation $0.3 + 0.4p = 0.46$ is linear, so $p = 0.4$ is the unique answer.",
+      "shortcut": "Use $P(\\text{exactly one}) = P(A) + P(B) - 2P(A)P(B)$ directly: $0.3 + p - 0.6p = 0.46 \\Rightarrow p = 0.4$.",
+      "commonTrap": "Treating 0.46 as $P(\\text{at least one}) = 0.3 + p - 0.3p$, which gives $p \\approx 0.23$, or adding $0.3 + p = 0.46$ as if the events were mutually exclusive, which gives $p = 0.16$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.4",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\np = sp.symbols('p')\nprint(sp.solve(sp.Rational(3, 10)*(1 - p) + sp.Rational(7, 10)*p - sp.Rational(46, 100), p))  # [2/5]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-bayes",
+      "ps-marginal-joint"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (total probability, then Bayes' theorem conditioned on both $E$ and $E^{c}$) with routine arithmetic across four statements; about 2–2.5 minutes.",
+    "estimatedTimeSec": 140,
+    "concept": "Bayes' theorem with the law of total probability: posterior source probabilities given an observed or unobserved outcome.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An online help desk routes every incoming customer query to exactly one of three chatbots. The share of queries routed to each chatbot, and the probability that a query handled by that chatbot is escalated to a human agent, are given below.\n\n| Chatbot | Share of queries routed to it | Probability that a query it handles is escalated |\n|---|---|---|\n| Alpha | 50% | 0.04 |\n| Beta | 30% | 0.10 |\n| Gamma | 20% | 0.15 |\n\nLet $E$ be the event that a randomly chosen query is escalated, and let $\\text{Alpha}$, $\\text{Beta}$, $\\text{Gamma}$ also denote the events that the query was handled by the corresponding chatbot.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$P(E) = 0.08$"
+      },
+      {
+        "label": "B",
+        "text": "$P(\\text{Alpha} \\mid E) = 0.04$"
+      },
+      {
+        "label": "C",
+        "text": "$P(\\text{Beta} \\mid E) = P(\\text{Gamma} \\mid E)$"
+      },
+      {
+        "label": "D",
+        "text": "$P(\\text{Gamma} \\mid E^{c}) > 0.20$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Joint probabilities with $E$: Alpha $0.02$, Beta $0.03$, Gamma $0.03$, so $P(E) = 0.08$ and the posteriors are $0.25, 0.375, 0.375$.\nGiven $E^{c}$: $P(\\text{Gamma} \\mid E^{c}) = \\dfrac{0.2 \\times 0.85}{0.92} \\approx 0.185 < 0.20$. Correct: **A, C**.",
+      "steps": [
+        {
+          "title": "Joint probabilities (prior × likelihood)",
+          "body": "$P(\\text{Alpha} \\cap E) = 0.5 \\times 0.04 = 0.02$, $P(\\text{Beta} \\cap E) = 0.3 \\times 0.10 = 0.03$, $P(\\text{Gamma} \\cap E) = 0.2 \\times 0.15 = 0.03$."
+        },
+        {
+          "title": "Total probability of escalation",
+          "body": "$$\nP(E) = 0.02 + 0.03 + 0.03 = 0.08.\n$$\nSo statement (A) is correct."
+        },
+        {
+          "title": "Posteriors given E (Bayes' theorem)",
+          "body": "$P(\\text{Alpha} \\mid E) = \\dfrac{0.02}{0.08} = 0.25$, $P(\\text{Beta} \\mid E) = \\dfrac{0.03}{0.08} = 0.375$, $P(\\text{Gamma} \\mid E) = \\dfrac{0.03}{0.08} = 0.375$.\n(B) is wrong ($0.25 \\ne 0.04$); (C) is correct (both are $0.375$)."
+        },
+        {
+          "title": "Posterior of Gamma given no escalation",
+          "body": "$P(E^{c}) = 1 - 0.08 = 0.92$ and $P(\\text{Gamma} \\cap E^{c}) = 0.2 \\times (1 - 0.15) = 0.17$, so\n$$\nP(\\text{Gamma} \\mid E^{c}) = \\frac{0.17}{0.92} \\approx 0.1848 < 0.20.\n$$\n(D) is wrong."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "teaching": "Bayes' theorem reverses a conditional probability. We are told how likely an outcome is for each possible source, $P(E \\mid \\text{source})$, but we want how likely each source is once the outcome has been seen, $P(\\text{source} \\mid E)$. The recipe has two steps. First, multiply each source's prior by its likelihood to get the joint probability $P(\\text{source} \\cap E)$. Second, divide by the total, $P(E) = \\sum P(\\text{source})\\,P(E \\mid \\text{source})$ (the law of total probability), so the posteriors add up to 1.\n\nBecause the denominator is shared, the joint numerators alone decide which source is more likely. Beta has a lower escalation rate than Gamma, but it handles more traffic, and the two effects exactly cancel ($0.03$ each). Evidence also works in the other direction: not seeing an escalation is mild evidence against the chatbot that escalates most, so Gamma's probability drops from its prior $0.20$ to about $0.185$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "By total probability, $P(E) = 0.5(0.04) + 0.3(0.10) + 0.2(0.15) = 0.02 + 0.03 + 0.03 = 0.08$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.04$ is the likelihood $P(E \\mid \\text{Alpha})$, not the posterior. Bayes' theorem gives $P(\\text{Alpha} \\mid E) = 0.02 / 0.08 = 0.25$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Both joint probabilities equal $0.03$ ($0.3 \\times 0.10$ and $0.2 \\times 0.15$), so both posteriors equal $0.375$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$P(\\text{Gamma} \\mid E^{c}) = \\dfrac{0.2 \\times 0.85}{0.92} = \\dfrac{0.17}{0.92} \\approx 0.185$, which is **below** the prior $0.20$: a non-escalated query is less likely to come from the chatbot with the highest escalation rate."
+        }
+      ],
+      "commonTrap": "Confusing the likelihood $P(E \\mid \\text{Alpha}) = 0.04$ with the posterior $P(\\text{Alpha} \\mid E)$, or assuming Gamma (highest escalation rate) must be the most likely source of an escalated query without weighting by the traffic shares."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C (P(E)=0.08; posteriors 0.25/0.375/0.375; P(Gamma|E^c)=0.1848)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\npr = {'Alpha': F(1, 2), 'Beta': F(3, 10), 'Gamma': F(1, 5)}\ne = {'Alpha': F(4, 100), 'Beta': F(10, 100), 'Gamma': F(15, 100)}\nPE = sum(pr[k]*e[k] for k in pr)\npost = {k: pr[k]*e[k]/PE for k in pr}\ngc = pr['Gamma']*(1 - e['Gamma'])/(1 - PE)\nprint(PE == F(8, 100), post['Alpha'] == F(4, 100), post['Beta'] == post['Gamma'], gc > F(1, 5), float(gc))\n# True False True False 0.1847... -> A, C",
+      "notes": ""
+    }
+  }
+]

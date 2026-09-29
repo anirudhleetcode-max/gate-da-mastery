@@ -1,0 +1,112 @@
+{
+  "id": "DA2026-S8-Q37",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 37,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-regression",
+  "subtopicIds": [
+    "ml-ridge-regression",
+    "ml-bias-variance"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - direct recall of a single concept (the L2 penalty of ridge regression and its bias-variance effect); each option can be judged immediately, well under 1.5 minutes.",
+  "stem": "Which of the following statements is true for Ridge Regression?",
+  "options": [
+    {
+      "label": "A",
+      "text": "The regularizer in the objective function of Ridge Regression is used to guard against scenarios where the model works well for the test data, but poorly for the training data."
+    },
+    {
+      "label": "B",
+      "text": "The regularizer of Ridge Regression uses $L_1$ norm."
+    },
+    {
+      "label": "C",
+      "text": "Ridge Regression aims to reduce the number of parameters that have negative values."
+    },
+    {
+      "label": "D",
+      "text": "The regularizer of Ridge Regression may increase the bias of the model, but it helps in reducing the variance in predictions."
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "Ridge regression adds the squared $L_2$ penalty $\\lambda \\lVert \\mathbf{w} \\rVert_2^2$ to the least-squares loss. This shrinks every coefficient toward zero, which introduces some bias but lowers the variance of the predictions. That is exactly statement **(D)**. (A) reverses the overfitting scenario, (B) describes Lasso ($L_1$), and (C) is not what ridge does (the penalty ignores signs).",
+    "steps": [
+      {
+        "title": "The ridge regression objective",
+        "body": "For data $(\\mathbf{x}_i, y_i)$, $i = 1, \\dots, n$, ridge regression chooses $\\mathbf{w}$ to minimise\n\n$$\nJ(\\mathbf{w}) = \\sum_{i=1}^{n} \\left( y_i - \\mathbf{w}^\\top \\mathbf{x}_i \\right)^2 + \\lambda \\sum_{j=1}^{p} w_j^2 = \\lVert \\mathbf{y} - X\\mathbf{w} \\rVert_2^2 + \\lambda \\lVert \\mathbf{w} \\rVert_2^2, \\qquad \\lambda \\ge 0.\n$$\n\nThe regularizer is the **squared $L_2$ norm** of the weights (the intercept is usually left unpenalised). Setting the gradient to zero gives the closed form\n\n$$\n\\hat{\\mathbf{w}}_{\\text{ridge}} = \\left( X^\\top X + \\lambda I \\right)^{-1} X^\\top \\mathbf{y}.\n$$"
+      },
+      {
+        "title": "What the penalty does to the coefficients",
+        "body": "The clearest picture comes from an orthonormal design ($X^\\top X = I$). Then $\\hat{\\mathbf{w}}_{\\text{OLS}} = X^\\top \\mathbf{y}$ and\n\n$$\n\\hat{w}_j^{\\text{ridge}} = \\frac{\\hat{w}_j^{\\text{OLS}}}{1 + \\lambda}.\n$$\n\nEvery coefficient is scaled by the same factor $\\frac{1}{1+\\lambda} < 1$ (for $\\lambda > 0$). Magnitudes shrink toward $0$, but signs are kept and no coefficient is set exactly to $0$. The penalty $w_j^2$ treats $+a$ and $-a$ identically, so ridge has no preference about negative values."
+      },
+      {
+        "title": "Bias and variance of the ridge estimate",
+        "body": "Assume $\\mathbf{y} = X\\mathbf{w} + \\boldsymbol{\\varepsilon}$ with noise variance $\\sigma^2$. In the orthonormal case:\n\n- OLS: $E[\\hat{w}_j^{\\text{OLS}}] = w_j$ (unbiased), $\\operatorname{Var}(\\hat{w}_j^{\\text{OLS}}) = \\sigma^2$.\n- Ridge: $E[\\hat{w}_j^{\\text{ridge}}] = \\frac{w_j}{1+\\lambda}$, so $\\text{bias} = -\\frac{\\lambda}{1+\\lambda} w_j \\ne 0$, and $\\operatorname{Var}(\\hat{w}_j^{\\text{ridge}}) = \\frac{\\sigma^2}{(1+\\lambda)^2} < \\sigma^2$.\n\nFor example, with $\\sigma^2 = 1$ and $\\lambda = 1$, the variance drops from $1$ to $0.25$, and the mean of each coefficient is halved (bias $= -0.5\\,w_j$). A Monte-Carlo check (see `checkCode`) reproduces these numbers.\n\nSo increasing $\\lambda$ **raises bias and lowers variance**. Tuning $\\lambda$, for example by cross-validation, lets us accept a little bias for a larger drop in variance and so a lower test error."
+      },
+      {
+        "title": "Check each statement",
+        "body": "- **(A)** False. Regularization guards against *overfitting*: good performance on the **training** data but poor performance on the **test** data. The statement swaps training and test.\n- **(B)** False. Ridge uses the (squared) $L_2$ norm $\\sum_j w_j^2$. The $L_1$ norm $\\sum_j \\lvert w_j \\rvert$ is the Lasso penalty.\n- **(C)** False. The penalty is sign-symmetric and shrinks all coefficient magnitudes. It neither targets negative parameters nor reduces how many parameters there are (ridge does not zero coefficients out).\n- **(D)** True. This is exactly the bias-variance trade-off derived above.\n\nAnswer: **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Why regularize at all?** Ordinary least squares (OLS) chooses the weights that fit the training data as closely as possible. When there are many features, correlated features or little data, OLS can produce large, unstable coefficients that chase the noise in the training set. This is **overfitting**: a low training error but a high test error.\n\n**Ridge regression** (also called $L_2$ regularization or Tikhonov regularization) fixes this by charging a price for large weights:\n\n$$\n\\min_{\\mathbf{w}} \\; \\lVert \\mathbf{y} - X\\mathbf{w} \\rVert_2^2 + \\lambda \\lVert \\mathbf{w} \\rVert_2^2.\n$$\n\n- $\\lambda = 0$ gives back OLS.\n- $\\lambda \\to \\infty$ forces all weights to $0$, the simplest possible model.\n- The term $\\lambda I$ also makes $X^\\top X + \\lambda I$ invertible even when $X^\\top X$ is singular, for example with perfectly correlated features or more features than samples.\n\n**Bias-variance view.** The expected test error of a model splits into bias$^2$ + variance + irreducible noise. Shrinking the weights makes the model less flexible, so its average prediction moves away from the truth (**bias goes up**). It also changes much less from one training sample to another (**variance goes down**). A well-chosen $\\lambda$ lowers the total error because the fall in variance outweighs the rise in bias.\n\n**Ridge vs Lasso.** Lasso uses the $L_1$ penalty $\\lambda \\sum_j \\lvert w_j \\rvert$. Its diamond-shaped constraint region has corners on the axes, so it drives some weights *exactly* to zero (feature selection). Ridge's circular (spherical) constraint region shrinks weights smoothly without zeroing them. Neither penalty cares about the sign of a weight.\n\nIn this question, only statement (D) describes this trade-off correctly. The others misstate the scenario (A), the norm (B) or the effect of the penalty (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "The regularizer guards against overfitting, where the model does well on the **training** data but poorly on the **test** data. The statement reverses the two, so it describes a scenario that regularization is not designed for."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Ridge penalises the squared $L_2$ norm $\\lambda \\sum_j w_j^2$. An $L_1$ penalty $\\lambda \\sum_j \\lvert w_j \\rvert$ defines Lasso regression."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The penalty $w_j^2$ is the same for $+a$ and $-a$, so ridge has no preference about signs. It shrinks all magnitudes toward zero (in the orthonormal case $\\hat{w}_j^{\\text{ridge}} = \\hat{w}_j^{\\text{OLS}}/(1+\\lambda)$, which keeps each sign) and does not reduce the number of parameters."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Shrinkage biases the estimates (e.g. $E[\\hat{w}_j] = w_j/(1+\\lambda)$ in the orthonormal case) but cuts their variance (from $\\sigma^2$ to $\\sigma^2/(1+\\lambda)^2$). This is the bias-variance trade-off that ridge exploits."
+      }
+    ],
+    "shortcut": "Remember: Ridge = $L_2$ = smooth shrinkage (no exact zeros); Lasso = $L_1$ = sparsity. Any regularizer trades a little extra bias for lower variance. That settles (B), (C) and (D) at once, and (A) fails because it swaps train and test.",
+    "commonTrap": "Mixing up ridge ($L_2$) and Lasso ($L_1$) and picking (B). Another trap is reading (A) too quickly: it sounds like the textbook motivation for regularization, but it describes the reverse of overfitting (good on test, poor on training)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "estimatedTimeSec": 50,
+  "officialImages": [
+    "/pyq/2026/official/Q37-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The subscript in option (B) is rendered as $L_1$ as printed; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\n# Orthonormal design: ridge = OLS/(1+lam) -> E[w]=w/(1+lam) (bias -lam*w/(1+lam)), Var=s^2/(1+lam)^2, signs kept\nrng=np.random.default_rng(0); X,_=np.linalg.qr(rng.normal(size=(30,3))); w=np.array([2.,-1.,0.5]); s=1.0\nfor lam in [0,1,4]:\n  W=np.array([np.linalg.solve(X.T@X+lam*np.eye(3),X.T@(X@w+rng.normal(scale=s,size=30))) for _ in range(20000)])\n  print(lam,W.mean(0).round(3),(w/(1+lam)).round(3),W.var(0).round(3),round(s**2/(1+lam)**2,3))\n# lam=0: mean~[2,-1,0.5] var~1.0; lam=1: mean~[1,-0.5,0.25] var~0.25; lam=4: mean~[0.4,-0.2,0.1] var~0.04",
+    "notes": "Conceptual question. Ridge uses a squared L2 penalty; statement (D), the bias-variance trade-off, is the only true statement, matching the official key D. The Python check simulates ridge on an orthonormal design and confirms coefficient means w/(1+lambda) (bias up, signs preserved) and variance sigma^2/(1+lambda)^2 (variance down)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

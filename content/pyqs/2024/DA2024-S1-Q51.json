@@ -1,0 +1,119 @@
+{
+  "id": "DA2024-S1-Q51",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 51,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-graphs",
+  "subtopicIds": [
+    "pdsa-graph-theory",
+    "pdsa-traversals"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests a single concept (every edge must point forward in a topological order), and each of the four orderings is accepted or rejected by a quick scan of the six edges, in about 1–1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider the directed acyclic graph (DAG) below:\n\n![Figure: A DAG with seven vertices. P and R each have an edge into Q. Q has edges to S and to V. S has an edge to U, and V has an edge to T.](/pyq/2024/fig/Q51-1.png)\n\nWhich of the following is/are valid vertex orderings that can be obtained from a topological sort of the DAG?",
+  "options": [
+    {
+      "label": "A",
+      "text": "P Q R S T U V"
+    },
+    {
+      "label": "B",
+      "text": "P R Q V S U T"
+    },
+    {
+      "label": "C",
+      "text": "P Q R S V U T"
+    },
+    {
+      "label": "D",
+      "text": "P R Q S V T U"
+    }
+  ],
+  "officialKeyRaw": "B;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "The edges are $P \\to Q$, $R \\to Q$, $Q \\to S$, $Q \\to V$, $S \\to U$ and $V \\to T$. In a topological order every edge must point forward. So $Q$ must come after **both** $P$ and $R$, and $U$ after $S$, and $T$ after $V$. (A) and (C) place $Q$ before $R$, and (A) also places $T$ before $V$, so both are invalid. (B) and (D) respect all six edges. Answer: **(B), (D)**.",
+    "steps": [
+      {
+        "title": "Read the edges from the figure",
+        "body": "The DAG has 7 vertices and 6 directed edges:\n\n$$P \\to Q,\\quad R \\to Q,\\quad Q \\to S,\\quad Q \\to V,\\quad S \\to U,\\quad V \\to T$$\n\nIn-degrees: $P = 0$, $R = 0$, $Q = 2$, $S = 1$, $V = 1$, $U = 1$, $T = 1$. The only sources (in-degree 0) are $P$ and $R$."
+      },
+      {
+        "title": "The rule for a topological order",
+        "body": "A topological order is an arrangement of **all** vertices in a line such that for every edge $u \\to v$, $u$ appears before $v$. So a given sequence is valid exactly when none of the six edges points backwards. The edges give these precedence constraints:\n\n- $P$ before $Q$ and $R$ before $Q$. Because $Q$ has two parents, it cannot appear until both $P$ and $R$ have appeared.\n- $Q$ before $S$ and $Q$ before $V$.\n- $S$ before $U$.\n- $V$ before $T$."
+      },
+      {
+        "title": "Check each ordering edge by edge",
+        "body": "Positions are numbered 1 to 7 from the left.\n\n| Option | Ordering | $P, R$ before $Q$? | $Q$ before $S, V$? | $S$ before $U$? | $V$ before $T$? | Valid? |\n| --- | --- | --- | --- | --- | --- | --- |\n| (A) | P Q R S T U V | No: $Q$ is 2nd, $R$ is 3rd | Yes | Yes (4th, 6th) | No: $T$ is 5th, $V$ is 7th | **No** |\n| (B) | P R Q V S U T | Yes (1st, 2nd, then $Q$ 3rd) | Yes | Yes (5th, 6th) | Yes (4th, 7th) | **Yes** |\n| (C) | P Q R S V U T | No: $Q$ is 2nd, $R$ is 3rd | Yes | Yes (4th, 6th) | Yes (5th, 7th) | **No** |\n| (D) | P R Q S V T U | Yes (1st, 2nd, then $Q$ 3rd) | Yes | Yes (4th, 7th) | Yes (5th, 6th) | **Yes** |\n\n(A) violates $R \\to Q$ and $V \\to T$. (C) violates $R \\to Q$. (B) and (D) violate nothing."
+      },
+      {
+        "title": "Confirm (B) and (D) with Kahn's algorithm",
+        "body": "Kahn's algorithm repeatedly outputs any vertex whose in-degree has dropped to 0 (the **ready** set), then decrements the in-degrees of its successors. A sequence is a topological order exactly when every vertex is ready at the moment it is output.\n\n**(B) P R Q V S U T.** Ready $\\{P, R\\}$. Output $P$, so $Q$ has in-degree 1 and the ready set is $\\{R\\}$. Output $R$, so $Q$ drops to 0 and the ready set is $\\{Q\\}$. Output $Q$: ready $\\{S, V\\}$. Output $V$: ready $\\{S, T\\}$. Output $S$: ready $\\{T, U\\}$. Output $U$: ready $\\{T\\}$. Output $T$. Every vertex was ready when chosen, so (B) is valid.\n\n**(D) P R Q S V T U.** The first three steps are the same, leaving ready $\\{S, V\\}$. Output $S$: ready $\\{V, U\\}$. Output $V$: ready $\\{U, T\\}$. Output $T$: ready $\\{U\\}$. Output $U$. So (D) is valid.\n\n**(A) and (C)** both fail at the second position. After $P$ is output, $Q$ still has in-degree 1 because it is waiting for $R$, so $Q$ is not ready."
+      },
+      {
+        "title": "How many valid orders exist (sanity check)",
+        "body": "The first three positions must be $P, R$ in either order and then $Q$: 2 ways. After $Q$, the chains $S \\to U$ and $V \\to T$ are independent. Any interleaving of the two 2-vertex chains keeps the order within each chain, and there are $\\binom{4}{2} = 6$ such interleavings. That gives $2 \\times 6 = 12$ valid topological orders; a brute-force check over all $7! = 5040$ permutations also finds 12. (B) and (D) are two of them."
+      }
+    ],
+    "finalAnswer": "**(B), (D)**",
+    "teaching": "**What a topological order is.** A directed acyclic graph (DAG) encodes \"must happen before\" constraints, such as course prerequisites or build dependencies. A *topological order* lists **all** the vertices in a line so that every edge $u \\to v$ points forward: $u$ comes before $v$. Such an order exists exactly when the graph has no directed cycle. It is usually **not unique**: if no directed path joins two vertices, either may come first.\n\n**Kahn's algorithm (queue based).** Compute every vertex's in-degree and put the in-degree-0 vertices in a ready set. Repeatedly remove any ready vertex, output it, and decrement the in-degree of each of its successors. A successor whose in-degree reaches 0 becomes ready. Every choice from the ready set leads to a valid order, and every valid order can be produced by some sequence of choices. The running time is $O(V + E)$.\n\n**DFS-based method.** Run depth-first search and record each vertex when it *finishes*, that is, after all its descendants are done. The **reverse** of this finishing order is a topological order. The *discovery* (pre-order) sequence of DFS is **not** in general a topological order.\n\n**Checking a proposed order** is even easier. Record each vertex's position and verify, for every edge $u \\to v$, that $\\text{pos}(u) < \\text{pos}(v)$.\n\n**Back to this question.** The key vertex is $Q$, which has in-degree 2. Neither $P$ nor $R$ alone releases it, so the first three places must be $\\{P, R\\}$ in some order, followed by $Q$. Options (A) and (C) put $Q$ second, so they fail immediately. After $Q$, the two chains $S \\to U$ and $V \\to T$ may interleave freely as long as each chain keeps its own order. (B) and (D) are two such interleavings.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$Q$ (2nd) appears before its parent $R$ (3rd), which violates $R \\to Q$. $T$ (5th) also appears before its parent $V$ (7th), which violates $V \\to T$. Not a topological order."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$P, R$ come first, then $Q$. $V$ (4th) precedes $T$ (7th), and $S$ (5th) precedes $U$ (6th). All six edges point forward, and Kahn's algorithm can produce this sequence."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The tail $S, V, U, T$ is fine, but $Q$ (2nd) precedes $R$ (3rd), which violates the edge $R \\to Q$. $Q$ cannot be output while one of its parents is still pending."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$P, R$, then $Q$. After that, $S$ (4th) is before $U$ (7th) and $V$ (5th) is before $T$ (6th). Every edge points forward, so this is a valid topological order."
+      }
+    ],
+    "shortcut": "Only vertices with several parents, or chains, constrain the order. Here $Q$ has two parents, so the prefix must be $\\{P, R\\}$ followed by $Q$. That rules out (A) and (C) at a glance. For the rest, just check $S$ before $U$ and $V$ before $T$.",
+    "commonTrap": "Writing down the DFS discovery order from $P$ (P, Q, S, U, …) and treating it as a topological sort. $Q$ cannot be output until **both** of its parents, $P$ and $R$, have been output. Discovery order is not a topological order; the reverse of the DFS *finishing* order is."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q51-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The DAG is a raster image embedded in the official PDF (page 33). It is copied unchanged as Q51-1.png and carries faint traces of the 'GATE 2024' watermark. The edges as drawn are P→Q, R→Q, Q→S, Q→V, S→U and V→T. The four option orderings were checked against both the PDF text layer and the rendered crop."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;D",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import permutations\nE=[('P','Q'),('R','Q'),('Q','S'),('Q','V'),('S','U'),('V','T')]\nopts={'A':'PQRSTUV','B':'PRQVSUT','C':'PQRSVUT','D':'PRQSVTU'}\ndef bad(o):\n    pos={v:i for i,v in enumerate(o)}\n    return [f'{u}->{v}' for u,v in E if pos[u]>pos[v]]\nfor k,o in opts.items():\n    assert sorted(o)==sorted('PQRSTUV')\n    b=bad(o); print(k,' '.join(o),'VALID' if not b else 'INVALID, violated: '+', '.join(b))\nallv=[p for p in permutations('PQRSTUV') if not bad(p)]\nprint('number of topological orders:',len(allv))  # 2 (P,R order) * C(4,2)=6 interleavings of S-U and V-T -> 12\n",
+    "notes": "A Python check of every edge against each ordering finds (A) violating R→Q and V→T, (C) violating R→Q, and (B) and (D) valid. Brute force over all 5040 permutations finds 12 topological orders, matching 2 × C(4,2). This matches the official key B;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

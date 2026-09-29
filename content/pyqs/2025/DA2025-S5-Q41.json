@@ -1,0 +1,113 @@
+{
+  "id": "DA2025-S5-Q41",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 41,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named",
+    "ps-cdf",
+    "ps-pmf"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two concepts directly (the exponential CDF and the floor-function event $\\ell \\le X < \\ell + 1$) with a short computation and a mean-versus-rate trap, about 2 minutes for a prepared student.",
+  "estimatedTimeSec": 120,
+  "stem": "For $x \\in \\mathbb{R}$, the floor function is denoted by $f(x) = \\lfloor x \\rfloor$ and defined as follows\n\n$$\n\\lfloor x \\rfloor = k, \\quad k \\le x < k + 1,\n$$\n\nwhere $k$ is an integer. Let $Y = \\lfloor X \\rfloor$, where $X$ is an exponentially distributed random variable with mean $\\dfrac{1}{\\ln 10}$, where $\\ln$ denotes natural logarithm. For any positive integer $\\ell$, one can write the probability of the event $Y = \\ell$ as follows\n\n$$\nP(Y = \\ell) = q^{\\ell}(1 - q)\n$$\n\nThe value of $q$ is",
+  "options": [
+    {
+      "label": "A",
+      "text": "$0.1$"
+    },
+    {
+      "label": "B",
+      "text": "$0.01$"
+    },
+    {
+      "label": "C",
+      "text": "$0.5$"
+    },
+    {
+      "label": "D",
+      "text": "$0.434$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "The mean is $\\frac{1}{\\ln 10}$, so the rate is $\\lambda = \\ln 10$. Then $P(Y = \\ell) = P(\\ell \\le X < \\ell + 1) = e^{-\\lambda\\ell} - e^{-\\lambda(\\ell+1)} = (e^{-\\lambda})^{\\ell}(1 - e^{-\\lambda})$. Hence $q = e^{-\\ln 10} = 0.1$, which is option **(A)**.",
+    "steps": [
+      {
+        "title": "Identify the rate of the exponential",
+        "body": "An exponential random variable with rate $\\lambda > 0$ has density $f_X(x) = \\lambda e^{-\\lambda x}$ for $x \\ge 0$ and mean $E[X] = \\frac{1}{\\lambda}$. Its CDF and survival function are\n\n$$\nF_X(x) = 1 - e^{-\\lambda x}, \\qquad P(X > x) = e^{-\\lambda x} \\quad (x \\ge 0).\n$$\n\nThe mean is given as $\\frac{1}{\\ln 10}$, so $\\lambda = \\ln 10 \\approx 2.3026$."
+      },
+      {
+        "title": "Translate the event Y = ℓ into an interval for X",
+        "body": "By the definition of the floor function, $\\lfloor X \\rfloor = \\ell$ exactly when $\\ell \\le X < \\ell + 1$. Therefore\n\n$$\nP(Y = \\ell) = P(\\ell \\le X < \\ell + 1) = F_X(\\ell + 1) - F_X(\\ell).\n$$\n\n(Since $X$ is continuous, whether the endpoints are included does not matter.)"
+      },
+      {
+        "title": "Compute the probability",
+        "body": "$$\nP(Y = \\ell) = \\left(1 - e^{-\\lambda(\\ell+1)}\\right) - \\left(1 - e^{-\\lambda\\ell}\\right) = e^{-\\lambda\\ell} - e^{-\\lambda(\\ell+1)} = e^{-\\lambda\\ell}\\left(1 - e^{-\\lambda}\\right) = \\left(e^{-\\lambda}\\right)^{\\ell}\\left(1 - e^{-\\lambda}\\right).\n$$"
+      },
+      {
+        "title": "Match with q^ℓ(1 − q) and evaluate",
+        "body": "Comparing with $q^{\\ell}(1-q)$ gives $q = e^{-\\lambda}$. The value of $q$ is unique, because the ratio $\\frac{P(Y = \\ell + 1)}{P(Y = \\ell)} = q$ for every $\\ell$. With $\\lambda = \\ln 10$:\n\n$$\nq = e^{-\\ln 10} = \\frac{1}{10} = 0.1.\n$$\n\n**Check:** $P(Y = 1) = 0.1 \\times 0.9 = 0.09$. Directly, $P(1 \\le X < 2) = e^{-\\ln 10} - e^{-2\\ln 10} = 0.1 - 0.01 = 0.09$. ✓\n\nSo $Y$ is geometric on $\\{0, 1, 2, \\ldots\\}$ with $P(Y = \\ell) = (0.1)^{\\ell}(0.9)$. The answer is $q = 0.1$, which is option **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**The exponential distribution.** $X \\sim \\text{Exp}(\\lambda)$ models a waiting time with a constant hazard rate $\\lambda$. Its density is $\\lambda e^{-\\lambda x}$ for $x \\ge 0$, its CDF is $1 - e^{-\\lambda x}$, its survival function is $P(X > x) = e^{-\\lambda x}$, and its mean is $\\frac{1}{\\lambda}$. Always check whether a question states the **mean** ($\\frac{1}{\\lambda}$) or the **rate** ($\\lambda$). Mixing them up is the most common error.\n\n**Memorylessness.** The exponential distribution is memoryless:\n\n$$\nP(X > s + t \\mid X > s) = \\frac{e^{-\\lambda(s+t)}}{e^{-\\lambda s}} = e^{-\\lambda t} = P(X > t).\n$$\n\nHaving survived $s$ units, the chance of surviving $t$ more is the same as at the start.\n\n**Discretising with the floor function.** $Y = \\lfloor X \\rfloor$ records how many whole time units have fully elapsed. Split the time axis into unit intervals $[0, 1), [1, 2), \\ldots$. Surviving each whole unit has probability $q = P(X \\ge 1) = e^{-\\lambda}$, and by memorylessness each unit behaves independently of the ones before it. Landing in $[\\ell, \\ell + 1)$ means surviving $\\ell$ units (probability $q^{\\ell}$) and then stopping in the next unit (probability $1 - q$):\n\n$$\nP(Y = \\ell) = q^{\\ell}(1 - q), \\quad \\ell = 0, 1, 2, \\ldots\n$$\n\nThis is the geometric distribution counting failures before the first success, with success probability $1 - q$. The floor of an exponential is always geometric, and the discrete memoryless distribution (geometric) corresponds to the continuous one (exponential).\n\n**Back to this question.** The mean is $\\frac{1}{\\ln 10}$, so $\\lambda = \\ln 10$. Then $q = e^{-\\ln 10} = 0.1$. The distractor $0.434$ is $\\frac{1}{\\ln 10} = \\log_{10} e$, the mean of $X$ and not $q$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$P(Y = \\ell) = (e^{-\\lambda})^{\\ell}(1 - e^{-\\lambda})$ with $\\lambda = \\ln 10$, so $q = e^{-\\ln 10} = 0.1$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$0.01 = e^{-2\\ln 10} = q^2 = P(X \\ge 2)$. That is the probability of surviving two whole units, not the per-unit ratio $q$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$q = 0.5$ would require $e^{-\\lambda} = 0.5$, that is $\\lambda = \\ln 2$ (a mean of $\\frac{1}{\\ln 2} \\approx 1.443$). The given mean is $\\frac{1}{\\ln 10} \\approx 0.434$, so $\\lambda = \\ln 10$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$0.434 \\approx \\frac{1}{\\ln 10} = \\log_{10} e$ is the **mean** of $X$, not $q$. Here $q = e^{-\\lambda} = e^{-\\ln 10} = 0.1$."
+      }
+    ],
+    "shortcut": "The floor of an $\\text{Exp}(\\lambda)$ variable is geometric with ratio $q = P(X \\ge 1) = e^{-\\lambda}$. Since the rate is the reciprocal of the mean, $\\lambda = \\ln 10$, and so $q = e^{-\\ln 10} = 0.1$.",
+    "commonTrap": "Confusing the mean with the rate. Picking the mean $\\frac{1}{\\ln 10} \\approx 0.434$ itself gives option (D). Using $\\lambda = \\frac{1}{\\ln 10}$ as the rate gives $q = e^{-0.434} \\approx 0.648$, which matches no option. The rate is the **reciprocal** of the mean: $\\lambda = \\ln 10$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q41-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. No figure is needed. The only embedded image in the region is the GATE 2025 / IIT Roorkee watermark logo, which was excluded."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (q = 0.1)",
+    "agreesWithKey": true,
+    "checkCode": "import math, random\nlam = math.log(10)                       # rate = 1/mean = ln 10\nq = math.exp(-lam)\nprint('q =', q)                          # 0.1\nfor l in range(1, 5):                    # P(l <= X < l+1) vs q^l (1-q)\n    print(l, math.exp(-lam * l) - math.exp(-lam * (l + 1)), q**l * (1 - q))\nrandom.seed(0); N = 10**6\nys = [math.floor(random.expovariate(lam)) for _ in range(N)]\nfor l in range(1, 4):\n    print(l, sum(y == l for y in ys) / N, 0.1**l * 0.9)\nprint('1/ln10 =', 1 / lam)               # 0.434... is the mean of X, not q",
+    "notes": "The closed form q = e^{-ln 10} = 0.1 matches P(l <= X < l+1) for l = 1..4. A Monte Carlo simulation (10^6 samples) gives P(Y=1) about 0.0900 and P(Y=2) about 0.0090, matching 0.1^l * 0.9. Agrees with the official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

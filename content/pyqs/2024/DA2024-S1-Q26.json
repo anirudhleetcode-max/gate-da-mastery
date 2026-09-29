@@ -1,0 +1,112 @@
+{
+  "id": "DA2024-S1-Q26",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 26,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-relational-algebra"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (a subset condition written as an empty set difference) applied by reading the four expressions directly, well under a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider a database that includes the following relations:\n\nDefender(*name*, *rating*, *side*, *goals*)\n\nForward(*name*, *rating*, *assists*, *goals*)\n\nTeam(*name*, *club*, *price*)\n\nWhich **ONE** of the following relational algebra expressions checks that every name occurring in Team appears in either Defender or Forward, where $\\phi$ denotes the empty set?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cap \\Pi_{name}(\\text{Forward})\\big) = \\phi$"
+    },
+    {
+      "label": "B",
+      "text": "$(\\Pi_{name}(\\text{Defender}) \\cap \\Pi_{name}(\\text{Forward})) \\setminus \\Pi_{name}(\\text{Team}) = \\phi$"
+    },
+    {
+      "label": "C",
+      "text": "$\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) = \\phi$"
+    },
+    {
+      "label": "D",
+      "text": "$\\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) \\setminus \\Pi_{name}(\\text{Team}) = \\phi$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "The condition \"every name in Team appears in Defender or Forward\" is the subset test $\\Pi_{name}(\\text{Team}) \\subseteq \\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})$. For sets, $X \\subseteq Y$ holds exactly when $X \\setminus Y = \\phi$, so the check is $\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) = \\phi$, option **(C)**.",
+    "steps": [
+      {
+        "title": "Turn the English condition into sets",
+        "body": "Write the three name sets as\n\n$$\nT = \\Pi_{name}(\\text{Team}), \\qquad D = \\Pi_{name}(\\text{Defender}), \\qquad F = \\Pi_{name}(\\text{Forward}).\n$$\n\nProjection keeps only the *name* column (and removes duplicates), so each is simply a set of names.\n\n- \"appears in either Defender or Forward\" means the name is in $D$ **or** in $F$ (a name in both still qualifies), i.e. it is in $D \\cup F$.\n- \"every name occurring in Team\" means this must hold for every $n \\in T$.\n\nSo the condition is\n\n$$\n\\forall n \\in T:\\; n \\in D \\cup F \\quad\\Longleftrightarrow\\quad T \\subseteq D \\cup F.\n$$"
+      },
+      {
+        "title": "Write the subset test as an emptiness test",
+        "body": "Relational algebra has no $\\subseteq$ operator, but set difference gives one:\n\n$$\nX \\subseteq Y \\iff X \\setminus Y = \\phi,\n$$\n\nbecause $X \\setminus Y$ is exactly the set of elements of $X$ that are **missing** from $Y$, i.e. the violators. If there are no violators, $X$ is contained in $Y$.\n\nWith $X = T$ and $Y = D \\cup F$:\n\n$$\nT \\subseteq D \\cup F \\iff T \\setminus (D \\cup F) = \\phi\n\\iff \\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) = \\phi,\n$$\n\nwhich is option **(C)**."
+      },
+      {
+        "title": "Test the other options on small instances",
+        "body": "Let the player names be $a, b, c, d$.\n\n| Instance | Condition $T \\subseteq D \\cup F$ | (A) $T \\setminus (D \\cap F)$ | (B) $(D \\cap F) \\setminus T$ | (D) $(D \\cup F) \\setminus T$ |\n|---|---|---|---|---|\n| $T=\\{a,b\\},\\ D=\\{a\\},\\ F=\\{b\\}$ | holds | $\\{a,b\\} \\ne \\phi$ (**rejects**) | $\\phi$ | $\\phi$ |\n| $T=\\{c\\},\\ D=\\{a\\},\\ F=\\{b\\}$ | fails ($c$ is in neither) | $\\{c\\} \\ne \\phi$ | $\\phi$ (**accepts**) | $\\{a,b\\} \\ne \\phi$ |\n| $T=\\{a\\},\\ D=\\{a,d\\},\\ F=\\phi$ | holds | $\\{a\\} \\ne \\phi$ | $\\phi$ | $\\{d\\} \\ne \\phi$ (**rejects**) |\n\n- (A) really tests $T \\subseteq D \\cap F$ (\"every Team name is **both** a defender and a forward\"), which is too strict (row 1).\n- (B) tests $D \\cap F \\subseteq T$, a different set in the wrong direction; it can accept a Team name that is nowhere else (row 2).\n- (D) tests $D \\cup F \\subseteq T$ (\"every defender and forward is in Team\"), the reverse inclusion (row 3).\n\nOnly (C) agrees with the condition on every row: $\\{a,b\\} \\setminus \\{a,b\\} = \\phi$ (accept), $\\{c\\} \\setminus \\{a,b\\} = \\{c\\}$ (reject), $\\{a\\} \\setminus \\{a,d\\} = \\phi$ (accept)."
+      },
+      {
+        "title": "Exhaustive check",
+        "body": "A Python check enumerates every choice of $T$, $D$, $F$ as subsets (of up to 3 names each) of a 5-name universe and compares each expression's \"$= \\phi$\" result with $T \\subseteq D \\cup F$. Only (C) agrees on every instance; (A), (B) and (D) each fail on some instance. The answer is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** $\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) = \\phi$",
+    "teaching": "**Relational algebra works on sets of tuples.** Projection $\\Pi_{A}(R)$ keeps only the columns in $A$ and removes duplicate rows. Union ($\\cup$), intersection ($\\cap$) and difference ($\\setminus$ or $-$) are the ordinary set operations, but they need **union-compatible** inputs: the same number of attributes with matching domains. Defender has *side* where Forward has *assists*, and Team has a different schema again, so these relations cannot be combined directly. Projecting all three onto *name* makes them compatible: each becomes a one-column set of names.\n\n**Translating words into set operations.**\n\n| English | Set operation |\n|---|---|\n| in X **or** Y (either one, or both) | $X \\cup Y$ |\n| in X **and** Y (both) | $X \\cap Y$ |\n| in X but **not** in Y | $X \\setminus Y$ |\n| **every** element of X is in Y | $X \\subseteq Y$, i.e. $X \\setminus Y = \\phi$ |\n\nThe last line is the key idea. Relational algebra cannot say \"for all\" directly, so a universal condition is checked by computing its **counterexamples** and requiring that there are none. $X \\setminus Y$ lists the members of $X$ that are not in $Y$; an empty result means every member of $X$ is in $Y$.\n\n**Direction matters.** The set being quantified over (\"every name occurring in Team\") must be on the **left** of the difference. Swapping the sides checks the reverse inclusion, a different constraint.\n\n**Where you meet this in practice.** It is exactly how a referential-integrity (foreign-key) constraint is stated: every value in the referencing column must appear in the referenced column, i.e. $\\Pi_{fk}(R) \\setminus \\Pi_{pk}(S) = \\phi$. In SQL the same test is \"`SELECT name FROM Team EXCEPT (SELECT name FROM Defender UNION SELECT name FROM Forward)` returns no rows\".\n\n**Back to this question.** \"Every name in Team\" puts $\\Pi_{name}(\\text{Team})$ on the left, and \"either Defender or Forward\" is the union $\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})$ on the right. That gives option (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$T \\setminus (D \\cap F) = \\phi$ means $T \\subseteq D \\cap F$: every Team name must be **both** a defender and a forward. That is stricter than the condition asked. With $T=\\{a,b\\}$, $D=\\{a\\}$, $F=\\{b\\}$ the condition holds, yet $D \\cap F = \\phi$ and the expression gives $\\{a,b\\} \\ne \\phi$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$(D \\cap F) \\setminus T = \\phi$ means $D \\cap F \\subseteq T$: every player listed as both defender and forward is in Team. It says nothing about Team names outside $D \\cap F$. With $T=\\{c\\}$, $D=\\{a\\}$, $F=\\{b\\}$, name $c$ is in neither relation, yet $D \\cap F = \\phi$ makes the expression $\\phi$, so the check wrongly passes."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$T \\setminus (D \\cup F)$ is the set of Team names found in neither Defender nor Forward, i.e. the violators. It is empty exactly when $T \\subseteq D \\cup F$, which is the stated condition. This matches the official key."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$(D \\cup F) \\setminus T = \\phi$ means $D \\cup F \\subseteq T$: every defender and forward is in Team. That is the reverse inclusion. With $T=\\{a\\}$, $D=\\{a,d\\}$, $F=\\phi$ the condition holds but the expression gives $\\{d\\} \\ne \\phi$; with $T=\\{a,c\\}$, $D=\\{a\\}$, $F=\\phi$ the condition fails but the expression gives $\\phi$."
+      }
+    ],
+    "shortcut": "\"Every $X$ is in $Y$\" $\\iff X \\setminus Y = \\phi$. Put the set after \"every\" (Team) on the **left** of $\\setminus$, and read \"either … or\" as $\\cup$. Only (C) has Team on the left and $\\cup$ on the right.",
+    "commonTrap": "Reversing the difference and picking (D), which checks that every defender and forward is in Team rather than the other way round. A second trap is reading \"either Defender or Forward\" as \"both\", which leads to the intersection in (A)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q26-1.webp",
+    "/pyq/2024/official/Q26-2.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Relation names (Defender, Forward, Team) are upright and attribute names are italic, as printed; in the options the relation names are set with \\text{} and the subscript name is math italic, as in the paper. The paper's straight-phi symbol ϕ for the empty set is written as \\phi. The outer parentheses in options (A), (C) and (D) are printed slightly enlarged and are rendered with \\big( \\big); option (B) uses normal-size parentheses, as printed. The second official crop (Q26-2) shows only the top border of the next question's box. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(C) Π_name(Team) ∖ (Π_name(Defender) ∪ Π_name(Forward)) = ϕ",
+    "agreesWithKey": true,
+    "checkCode": "import itertools\nU = range(5); S = [set(c) for r in range(4) for c in itertools.combinations(U, r)]\nok = {k: True for k in 'ABCD'}\nfor T in S:\n    for D in S:\n        for F in S:\n            want = T <= (D | F)  # every name in Team is a Defender name or a Forward name\n            got = {'A': not (T - (D & F)), 'B': not ((D & F) - T),\n                   'C': not (T - (D | F)), 'D': not ((D | F) - T)}\n            for k in ok: ok[k] &= (got[k] == want)\nprint(ok)  # only C matches the condition on every instance",
+    "notes": "The condition is the set inclusion Π_name(Team) ⊆ Π_name(Defender) ∪ Π_name(Forward), and X ⊆ Y holds exactly when X ∖ Y = ϕ, which is option C. A Python check enumerates all choices of T, D, F (subsets of up to 3 names from a 5-name universe) and confirms that only expression C matches T ⊆ D ∪ F on every instance, while A, B and D each fail on some instance. This agrees with official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

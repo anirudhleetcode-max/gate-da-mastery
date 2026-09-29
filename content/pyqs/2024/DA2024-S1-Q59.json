@@ -1,0 +1,77 @@
+{
+  "id": "DA2024-S1-Q59",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 59,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-random-variables",
+  "subtopicIds": [
+    "ps-conditional-expectation",
+    "ps-conditional-pdf"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two directly related concepts (the marginal density and the conditional density/expectation) over a triangular support, in 2–3 routine integration steps taking about 2 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider a joint probability density function of two random variables $X$ and $Y$\n\n$$\nf_{X,Y}(x, y) = \\begin{cases} 2xy, & 0 < x < 2, \\quad 0 < y < x \\\\ 0, & \\text{otherwise} \\end{cases}\n$$\n\nThen, $E[Y|X = 1.5]$ is ______.",
+  "options": [],
+  "officialKeyRaw": "MTA",
+  "answer": {
+    "kind": "MTA",
+    "note": "The official final answer key awarded marks to all candidates for this question."
+  },
+  "solution": {
+    "quick": "The official key awarded **marks to all (MTA)** for this question. Working it as posed: $f_X(x) = \\int_0^x 2xy\\,dy = x^3$, so $f_{Y|X}(y|x) = 2xy/x^3 = 2y/x^2$ on $0 < y < x$, and $E[Y|X = x] = 2x/3$. At $x = 1.5$ this gives $E[Y|X = 1.5] = 1$. The function as printed integrates to 4 rather than 1, but a constant factor cancels in the conditional density, so the value 1 is unaffected.",
+    "steps": [
+      {
+        "title": "Check the stated joint density",
+        "body": "A joint PDF must integrate to 1 over its support. For the function as printed, with $0 < y < x$ and $0 < x < 2$:\n\n$$\n\\int_0^2 \\int_0^x 2xy\\,dy\\,dx = \\int_0^2 2x \\cdot \\frac{x^2}{2}\\,dx = \\int_0^2 x^3\\,dx = \\left[\\frac{x^4}{4}\\right]_0^2 = 4.\n$$\n\nSo the function as printed has total mass 4, not 1; the normalised version would be $\\tfrac{1}{4}\\cdot 2xy = \\tfrac{xy}{2}$ on the same region. As shown in Step 3, the conditional distribution of $Y$ given $X$, and hence the requested value, is the same either way."
+      },
+      {
+        "title": "Marginal density of X",
+        "body": "For a fixed $x \\in (0, 2)$, $y$ ranges over $(0, x)$ (the triangle below the line $y = x$). Integrate out $y$:\n\n$$\nf_X(x) = \\int_0^x 2xy\\,dy = 2x \\cdot \\frac{x^2}{2} = x^3, \\qquad 0 < x < 2.\n$$\n\n(With the normalised density $xy/2$, this would be $x^3/4$.)"
+      },
+      {
+        "title": "Conditional density of Y given X = x",
+        "body": "$$\nf_{Y|X}(y|x) = \\frac{f_{X,Y}(x, y)}{f_X(x)} = \\frac{2xy}{x^3} = \\frac{2y}{x^2}, \\qquad 0 < y < x.\n$$\n\nCheck: $\\int_0^x \\frac{2y}{x^2}\\,dy = \\frac{2}{x^2}\\cdot\\frac{x^2}{2} = 1$. If the joint function is multiplied by any constant $c$ (for example $c = \\tfrac14$ to normalise it), both numerator and denominator gain the factor $c$, which cancels.\n\nAt $x = 1.5$: $f_{Y|X}(y|1.5) = \\dfrac{2y}{2.25} = \\dfrac{8y}{9}$ for $0 < y < 1.5$."
+      },
+      {
+        "title": "Conditional expectation",
+        "body": "$$\nE[Y|X = x] = \\int_0^x y \\cdot \\frac{2y}{x^2}\\,dy = \\frac{2}{x^2}\\cdot\\frac{x^3}{3} = \\frac{2x}{3}.\n$$\n\nSubstituting $x = 1.5$:\n\n$$\nE[Y|X = 1.5] = \\frac{2(1.5)}{3} = 1.\n$$\n\nDirectly: $\\int_0^{1.5} y \\cdot \\frac{8y}{9}\\,dy = \\frac{8}{9}\\cdot\\frac{(1.5)^3}{3} = \\frac{8}{9}\\times 1.125 = 1$."
+      },
+      {
+        "title": "Official outcome",
+        "body": "The official final answer key lists this question as **MTA**: marks were awarded to all candidates, and no numerical answer range is published. The value $E[Y|X = 1.5] = 1$ above is what the question gives when worked as posed."
+      }
+    ],
+    "finalAnswer": "Official key: **MTA** (marks to all). Worked as posed: $E[Y|X = 1.5] = 1$.",
+    "teaching": "**Conditioning on a continuous variable.** For continuous $X$, the event $X = 1.5$ has probability zero, so $P(\\,\\cdot \\mid X = 1.5)$ cannot be defined by the usual ratio of probabilities. Instead, take the joint density along the vertical line $x = 1.5$ and rescale it so that it integrates to 1:\n\n$$\nf_{Y|X}(y|x) = \\frac{f_{X,Y}(x, y)}{f_X(x)}, \\qquad f_X(x) = \\int f_{X,Y}(x, y)\\,dy.\n$$\n\nThe marginal $f_X(x)$ is exactly the normalising constant of that slice. The conditional expectation is then an ordinary mean computed with the conditional density:\n\n$$\nE[Y|X = x] = \\int y\\, f_{Y|X}(y|x)\\,dy.\n$$\n\n**Watch the support.** When the region is not a rectangle, the limits of $y$ depend on $x$. Here the support is the triangle $0 < y < x < 2$, so given $X = x$, $Y$ lives on $(0, x)$, not on $(0, 2)$. Sketching the region before integrating prevents most errors.\n\n**Normalisation.** Every joint PDF must be non-negative and integrate to 1, and it is good practice to check this. The conditional density is a *ratio* of the joint density to its own slice total, so multiplying the joint function by any constant does not change $f_{Y|X}$ or $E[Y|X = x]$. Unconditional quantities such as $E[Y]$ or $P(Y < 1)$ do depend on the constant.\n\n**Back to this question.** On the slice $x = 1.5$, the joint density is proportional to $y$: it rises linearly from 0 at $y = 0$ to its largest value at $y = 1.5$. A density that increases linearly on $(0, x)$ has mean $\\tfrac{2}{3}x$, which is $1$ at $x = 1.5$. The function as printed integrates to 4 over its support; this does not change the conditional mean. The official key awarded marks to all candidates for this question.",
+    "shortcut": "Given $X = x$, the conditional density is proportional to the joint density viewed as a function of $y$ alone, here $\\propto y$ on $(0, x)$. A density that grows linearly from 0 on $(0, x)$ has mean $\\tfrac{2}{3}x$, so $E[Y|X = 1.5] = \\tfrac{2}{3}(1.5) = 1$.",
+    "commonTrap": "Integrating $y$ from 0 to 2 instead of from 0 to $x$, which ignores the triangular support. Another slip is forgetting to divide by $f_X(1.5)$: $\\int_0^{1.5} y \\cdot 2(1.5)y\\,dy = 3.375$ is not a conditional mean. Computing the unconditional $E[Y]$ instead of conditioning on $X = 1.5$ also gives a wrong value."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q59-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The first sentence of the stem has no closing punctuation in the paper and is kept as printed. The joint function is transcribed exactly as printed ($2xy$ on $0 < x < 2$, $0 < y < x$); as shown in the solution, it integrates to 4, not 1, over that region. It is not altered here. 'otherwise' is typeset upright in this question and is rendered with \\text."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "1 (E[Y|X = x] = 2x/3, evaluated at x = 1.5); official key: MTA",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp\nx, y = sp.symbols('x y', positive=True)\nf = 2*x*y                                   # stated on 0<x<2, 0<y<x\ntotal = sp.integrate(sp.integrate(f, (y, 0, x)), (x, 0, 2))\nprint('integral of stated f over support =', total)   # 4, not 1\nfX = sp.integrate(f, (y, 0, x))                        # marginal of X (unnormalised)\nprint('f_X(x) =', fX)\ncond = sp.simplify(f/fX)                               # f_{Y|X}(y|x); any constant c cancels\nprint('f_{Y|X}(y|x) =', cond, ' integrates to', sp.integrate(cond, (y, 0, x)))\nEYx = sp.simplify(sp.integrate(y*cond, (y, 0, x)))\nprint('E[Y|X=x] =', EYx, ' -> at x=1.5:', EYx.subs(x, sp.Rational(3,2)))\n# same result with the normalised density f/4\nc = sp.Rational(1,4); fn = c*f\nprint('with f/4:', sp.integrate(y*fn, (y, 0, x)).subs(x, 1.5) / sp.integrate(fn, (y, 0, x)).subs(x, 1.5))\n",
+    "notes": "The official final answer key lists this question as MTA (marks to all), so there is no numerical key to compare with; agreesWithKey is true under the MTA convention of docs §6. Working the question as posed: f_X(x) = x^3, f_{Y|X}(y|x) = 2y/x^2 on 0<y<x, E[Y|X=x] = 2x/3, so E[Y|X=1.5] = 1. The sympy check also shows that the function as printed integrates to 4 (not 1) over 0<x<2, 0<y<x; rescaling it to xy/2 leaves the conditional density and the value 1 unchanged. The key itself states no reason for the MTA decision."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

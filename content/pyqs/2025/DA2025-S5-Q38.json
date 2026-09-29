@@ -1,0 +1,113 @@
+{
+  "id": "DA2025-S5-Q38",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 38,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-quadratic-forms",
+    "la-independence",
+    "la-matrices"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: two directly linked concepts (recognising the Gram matrix A = X^T X and linking linear independence to positive definiteness/invertibility) with short routine reasoning, about 1.5 to 2 min.",
+  "estimatedTimeSec": 100,
+  "stem": "Let $\\{x_1, x_2, \\ldots, x_n\\}$ be a set of linearly independent vectors in $\\mathbb{R}^n$. Let the $(i, j)$-th element of matrix $A \\in \\mathbb{R}^{n\\times n}$ be given by $A_{ij} = x_i^\\top x_j,\\ 1 \\le i, j \\le n$. Which one of the following statements is correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$A$ is invertible"
+    },
+    {
+      "label": "B",
+      "text": "$0$ is a singular value of $A$"
+    },
+    {
+      "label": "C",
+      "text": "Determinant of $A$ is $0$"
+    },
+    {
+      "label": "D",
+      "text": "$z^\\top A z = 0$ for some non-zero $z \\in \\mathbb{R}^n$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "$A$ is the Gram matrix $A = X^\\top X$, where $X = [x_1\\ x_2\\ \\cdots\\ x_n]$. Since the columns are linearly independent, $X$ is invertible and $z^\\top A z = \\|Xz\\|^2 > 0$ for every $z \\ne 0$. So $A$ is positive definite, hence invertible, with $\\det A = (\\det X)^2 > 0$ and no zero singular value. Answer **(A)**.",
+    "steps": [
+      {
+        "title": "Write $A$ as a matrix product",
+        "body": "Stack the vectors as columns of $X = [x_1\\ x_2\\ \\cdots\\ x_n] \\in \\mathbb{R}^{n\\times n}$. The $(i,j)$ entry of $X^\\top X$ is (row $i$ of $X^\\top$)$\\cdot$(column $j$ of $X$) $= x_i^\\top x_j$. Hence\n\n$$A = X^\\top X.$$\n\n$A$ is the **Gram matrix** of the vectors. It is symmetric because $x_i^\\top x_j = x_j^\\top x_i$."
+      },
+      {
+        "title": "Use linear independence: $X$ is invertible",
+        "body": "The $n$ columns of the square matrix $X$ are linearly independent, so $\\operatorname{rank}(X) = n$ and $X$ is invertible. In particular, $Xz = \\mathbf{0}$ only when $z = \\mathbf{0}$."
+      },
+      {
+        "title": "The quadratic form is strictly positive",
+        "body": "For any $z \\in \\mathbb{R}^n$:\n\n$$z^\\top A z = z^\\top X^\\top X z = (Xz)^\\top (Xz) = \\|Xz\\|^2 \\ge 0.$$\n\nIf $z \\ne \\mathbf{0}$, then $Xz \\ne \\mathbf{0}$ (Step 2), so $z^\\top A z = \\|Xz\\|^2 > 0$. Therefore $A$ is **positive definite**."
+      },
+      {
+        "title": "Consequences for each option",
+        "body": "- **Invertible:** $\\det A = \\det(X^\\top)\\det(X) = (\\det X)^2 > 0$, so $A$ is invertible. **(A) is correct.**\n- **Singular values:** $A$ is symmetric positive definite, so its singular values equal its eigenvalues, and these are all $> 0$. So $0$ is not a singular value, and **(B) is false**.\n- **Determinant:** $\\det A = (\\det X)^2 > 0$, not $0$, so **(C) is false**.\n- **Quadratic form:** $z^\\top A z > 0$ for every non-zero $z$, so no non-zero $z$ gives $0$, and **(D) is false**.\n\nExample: $x_1 = (1,0)^\\top$, $x_2 = (1,1)^\\top$ give $A = \\begin{bmatrix} 1 & 1 \\\\ 1 & 2 \\end{bmatrix}$ with $\\det A = 1 = (\\det X)^2$. The answer is **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**What a Gram matrix is.** Given vectors $x_1, \\dots, x_n$, their Gram matrix collects every pairwise dot product: $A_{ij} = x_i^\\top x_j$. If you place the vectors as columns of a matrix $X$, the Gram matrix is simply $A = X^\\top X$. Gram matrices appear everywhere in data science. The normal equations of least squares use $X^\\top X$, kernel methods use a matrix of inner products, and the covariance matrix is (up to scaling) $X^\\top X$ of centred data.\n\n**Why $X^\\top X$ is always positive semidefinite.** For any vector $z$,\n\n$$z^\\top X^\\top X z = (Xz)^\\top(Xz) = \\|Xz\\|^2,$$\n\na squared length, which can never be negative. It can be zero only if $Xz = 0$, which means some non-trivial combination of the columns of $X$ vanishes. That is exactly linear *dependence*.\n\n**Independence turns semidefinite into definite.** When the columns are linearly independent, $Xz = 0$ forces $z = 0$, so $z^\\top A z > 0$ for every non-zero $z$. The matrix is then *positive definite*. A positive definite matrix has all eigenvalues strictly positive, since $A v = \\lambda v$ gives $\\lambda\\|v\\|^2 = v^\\top A v > 0$. So:\n- its determinant (the product of the eigenvalues) is positive, so it is invertible;\n- being symmetric, its singular values are the absolute values of its eigenvalues, so none is zero;\n- no non-zero $z$ makes the quadratic form vanish.\n\n**The key equivalence.** For a Gram matrix, \"vectors linearly independent\" $\\iff$ \"Gram matrix positive definite\" $\\iff$ \"Gram matrix invertible\". The determinant $\\det(X^\\top X) = (\\det X)^2$ is the squared volume of the parallelepiped spanned by the vectors. It is non-zero exactly when the vectors are independent.\n\n**Back to the question.** Options (B), (C) and (D) all describe a *singular* matrix; each is equivalent to $A$ being non-invertible. Only (A) is consistent with positive definiteness, so (A) is correct.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$A = X^\\top X$ with $X$ invertible, so $\\det A = (\\det X)^2 > 0$. Equivalently, $A$ is positive definite, so it is invertible."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "For a square matrix, $0$ is a singular value exactly when the matrix is singular. $A$ is symmetric positive definite, so its singular values are its eigenvalues, all strictly positive."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$\\det A = (\\det X)^2 > 0$ because the $x_i$ are linearly independent. It would be $0$ only if the vectors were dependent."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$z^\\top A z = \\|Xz\\|^2$, which is $0$ only when $Xz = 0$, i.e. $z = 0$ (by independence). So no **non-zero** $z$ gives $z^\\top A z = 0$."
+      }
+    ],
+    "shortcut": "Recognise $A = X^\\top X$ (Gram matrix). Independent columns make $A$ positive definite. Then (B), (C) and (D) are all ways of saying \"$A$ is singular\", so only (A) survives.",
+    "commonTrap": "Mixing this up with the *outer-product* sum $\\sum_i x_i x_i^\\top$ or with a rank-one matrix $xx^\\top$ (which is singular for $n \\ge 2$) and choosing (C). Another trap is thinking \"$z^\\top A z = 0$ for some $z$\" is true because $z = 0$ works; the option explicitly requires $z$ to be **non-zero**."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q38-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (A is the positive definite Gram matrix X^T X)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng = np.random.default_rng(2)\nfor _ in range(1000):\n    n = rng.integers(1, 8)\n    X = rng.normal(size=(n, n))            # columns x_1..x_n\n    if abs(np.linalg.det(X)) < 1e-6: continue   # keep linearly independent sets only\n    A = X.T @ X                              # A_ij = x_i^T x_j\n    ev = np.linalg.eigvalsh(A); sv = np.linalg.svd(A, compute_uv=False)\n    assert ev.min() > 0 and sv.min() > 0     # PD => invertible, 0 not a singular value\n    assert np.isclose(np.linalg.det(A), np.linalg.det(X)**2)   # det A = det(X)^2 > 0\n    z = rng.normal(size=n); assert z @ A @ z > 0               # z^T A z = ||Xz||^2 > 0\nprint('Gram matrix of LI vectors: always positive definite -> (A) only')",
+    "notes": "Independent solve: A = X^T X with X = [x_1 ... x_n] invertible, so z^T A z = ||Xz||^2 > 0 for z != 0. A is positive definite and invertible, with det A = (det X)^2 > 0 and no zero singular value. This matches the official key A. A Python check on random linearly independent sets confirmed positive eigenvalues and singular values, det A = det(X)^2 and z^T A z > 0."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

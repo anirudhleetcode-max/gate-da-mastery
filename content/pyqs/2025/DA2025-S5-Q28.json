@@ -1,0 +1,119 @@
+{
+  "id": "DA2025-S5-Q28",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 28,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-eigen",
+  "subtopicIds": [
+    "la-eigen",
+    "la-rank"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the eigenvalues of the rank-one update I + xx^T, found by testing x and vectors orthogonal to x) from which all four statements follow directly, about 1 min for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "Let $A = I_n + xx^\\top$, where $I_n$ is the $n \\times n$ identity matrix and $x \\in \\mathbb{R}^n$, $x^\\top x = 1$. Which of the following options is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Rank of $A$ is $n$"
+    },
+    {
+      "label": "B",
+      "text": "$A$ is invertible"
+    },
+    {
+      "label": "C",
+      "text": "$0$ is an eigenvalue of $A$"
+    },
+    {
+      "label": "D",
+      "text": "$A^{-1}$ has a negative eigenvalue"
+    }
+  ],
+  "officialKeyRaw": "A;B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "$Ax = x + x(x^\\top x) = 2x$, and $Av = v$ for every $v \\perp x$. So the eigenvalues of $A$ are $2$ (once) and $1$ ($n-1$ times), and $\\det A = 2 \\ne 0$. Hence $A$ is invertible with rank $n$, and $0$ is not an eigenvalue. $A^{-1} = I_n - \\tfrac12 xx^\\top$ has eigenvalues $\\tfrac12$ and $1$, none negative. Answer: **(A), (B)**.",
+    "steps": [
+      {
+        "title": "Eigenvector along x",
+        "body": "Apply $A$ to $x$ itself and use $x^\\top x = 1$:\n\n$$\nAx = (I_n + xx^\\top)x = x + x\\,(x^\\top x) = x + x \\cdot 1 = 2x.\n$$\n\nSince $x \\ne 0$ (because $x^\\top x = 1$), $x$ is an eigenvector with eigenvalue $\\lambda = 2$."
+      },
+      {
+        "title": "Eigenvectors orthogonal to x",
+        "body": "Take any $v$ with $x^\\top v = 0$. Then\n\n$$\nAv = v + x\\,(x^\\top v) = v + x \\cdot 0 = v,\n$$\n\nso $v$ is an eigenvector with eigenvalue $\\lambda = 1$. The vectors orthogonal to $x$ form a subspace of dimension $n - 1$, so the eigenvalue $1$ has multiplicity $n - 1$. Together with $x$ these give a full basis of $\\mathbb{R}^n$ ($A$ is symmetric, so an orthonormal eigenbasis exists). The complete spectrum is\n\n$$\n\\{\\,2,\\ \\underbrace{1, 1, \\ldots, 1}_{n-1}\\,\\}, \\qquad \\det A = 2 \\cdot 1^{\\,n-1} = 2 .\n$$\n\n(For $n = 1$, $x = \\pm 1$ and $A = [2]$, so only the eigenvalue $2$ appears.)"
+      },
+      {
+        "title": "Options (A), (B), (C): rank, invertibility, zero eigenvalue",
+        "body": "All eigenvalues are $1$ or $2$, so none is $0$ and $\\det A = 2 \\ne 0$.\n\n- **(B)** $A$ is invertible: **true**, since $\\det A \\ne 0$.\n- **(A)** Rank of $A$ is $n$: **true**. An invertible $n \\times n$ matrix has full rank; equivalently, by rank–nullity, the null space is $\\{0\\}$, so the rank is $n$.\n- **(C)** $0$ is an eigenvalue: **false**. $0$ is an eigenvalue exactly when $A$ is singular, and $A$ is not.\n\nThe null space can also be checked directly. If $Av = v + x(x^\\top v) = 0$, multiply on the left by $x^\\top$ to get $x^\\top v + (x^\\top x)(x^\\top v) = 2\\,x^\\top v = 0$, so $x^\\top v = 0$ and then $v = -x(x^\\top v) = 0$."
+      },
+      {
+        "title": "Option (D): eigenvalues of the inverse",
+        "body": "If $Au = \\lambda u$ with $\\lambda \\ne 0$, then $A^{-1}u = \\frac{1}{\\lambda}u$. So the eigenvalues of $A^{-1}$ are\n\n$$\n\\tfrac12 \\ (\\text{once}), \\qquad 1 \\ (n - 1 \\text{ times}),\n$$\n\nall positive. Explicitly, by the Sherman–Morrison formula $(I + uv^\\top)^{-1} = I - \\dfrac{uv^\\top}{1 + v^\\top u}$:\n\n$$\nA^{-1} = I_n - \\frac{xx^\\top}{1 + x^\\top x} = I_n - \\tfrac12\\, xx^\\top .\n$$\n\nCheck: $(I_n + xx^\\top)(I_n - \\tfrac12 xx^\\top) = I_n + xx^\\top - \\tfrac12 xx^\\top - \\tfrac12 x(x^\\top x)x^\\top = I_n + xx^\\top - \\tfrac12 xx^\\top - \\tfrac12 xx^\\top = I_n$ ✓.\n\nIn fact $A$ is symmetric positive definite, since $v^\\top A v = \\|v\\|^2 + (x^\\top v)^2 > 0$ for $v \\ne 0$, so its inverse is positive definite too. **(D) is false.**"
+      },
+      {
+        "title": "Concrete check",
+        "body": "Take $n = 3$ and $x = \\tfrac13(1, 2, 2)^\\top$, so $x^\\top x = \\tfrac{1 + 4 + 4}{9} = 1$. Then\n\n$$\nA = I_3 + xx^\\top = \\frac19\\begin{bmatrix} 10 & 2 & 2 \\\\ 2 & 13 & 4 \\\\ 2 & 4 & 13 \\end{bmatrix}, \\qquad \\det A = 2, \\qquad \\operatorname{rank} A = 3,\n$$\n\nwith eigenvalues $2, 1, 1$, and $A^{-1}$ has eigenvalues $\\tfrac12, 1, 1$ (exact computation in the Python check). Random unit vectors $x$ with $n = 1, 2, 5, 50$ give the same picture: rank $n$, $\\det A = 2$, eigenvalues of $A$ in $[1, 2]$ and of $A^{-1}$ in $[\\tfrac12, 1]$.\n\nCorrect options: **(A)** and **(B)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B)**",
+    "teaching": "**Rank-one updates of the identity.** A matrix of the form $xx^\\top$ (an outer product) has rank one: for any $v$, $xx^\\top v = (x^\\top v)\\,x$ always points along $x$. When $\\|x\\| = 1$, $P = xx^\\top$ is the **orthogonal projection** onto the line spanned by $x$. It is symmetric and idempotent ($P^2 = x(x^\\top x)x^\\top = P$). Its eigenvalues are $1$ (on the line through $x$) and $0$ (on the $(n-1)$-dimensional hyperplane orthogonal to $x$).\n\n**Shifting by the identity.** Adding $I$ shifts every eigenvalue by $1$ and leaves the eigenvectors unchanged: if $Pv = \\mu v$ then $(I + P)v = (1 + \\mu)v$. So $I + xx^\\top$ has eigenvalues $1 + 1 = 2$ along $x$ and $1 + 0 = 1$ on the orthogonal hyperplane. More generally, for unit $x$ and scalar $c$, $I + c\\,xx^\\top$ has eigenvalues $1 + c$ (once) and $1$ ($n - 1$ times). It is singular only when $c = -1$, which gives $I - xx^\\top$, the projection onto the hyperplane.\n\n**Reading off properties from the spectrum.** Once the eigenvalues of a square matrix are known:\n\n- $\\det A$ is their product, so $A$ is invertible exactly when no eigenvalue is $0$.\n- For a diagonalisable (e.g. symmetric) matrix, the rank equals the number of non-zero eigenvalues, counted with multiplicity.\n- $A^{-1}$ has the reciprocal eigenvalues $1/\\lambda$ with the same eigenvectors, so the signs are preserved.\n- A symmetric matrix is positive definite exactly when all its eigenvalues are positive.\n\n**Back to the question.** The spectrum of $A = I_n + xx^\\top$ with $x^\\top x = 1$ is $\\{2, 1, \\ldots, 1\\}$. No zero eigenvalue gives invertibility and rank $n$, so (A) and (B) are true and (C) is false. The reciprocals $\\tfrac12, 1, \\ldots, 1$ are positive, so (D) is false.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "The eigenvalues are $2, 1, \\ldots, 1$, all non-zero, so $A$ is non-singular and $\\operatorname{rank} A = n$ (null space $= \\{0\\}$)."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$\\det A = 2 \\cdot 1^{n-1} = 2 \\ne 0$. Explicitly, $A^{-1} = I_n - \\tfrac12 xx^\\top$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The only eigenvalues are $2$ (eigenvector $x$) and $1$ (eigenvectors orthogonal to $x$); $0$ would require $A$ to be singular, which it is not."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The eigenvalues of $A^{-1}$ are the reciprocals $\\tfrac12$ and $1$, all positive. $A$ is symmetric positive definite, and so is $A^{-1}$."
+      }
+    ],
+    "shortcut": "For unit $x$, $I + c\\,xx^\\top$ has eigenvalues $1 + c$ (along $x$) and $1$ (orthogonal to $x$). Here $c = 1$ gives $\\{2, 1, \\ldots, 1\\}$: invertible, full rank, positive definite. So only (A) and (B) hold.",
+    "commonTrap": "Seeing that $xx^\\top$ has rank $1$ (and eigenvalue $0$ with multiplicity $n - 1$) and concluding that $A$ is rank-deficient or has eigenvalue $0$. Adding $I_n$ shifts every eigenvalue up by $1$, so the zeros of $xx^\\top$ become $1$s of $A$. Another slip is to confuse $xx^\\top$ (an $n \\times n$ matrix) with $x^\\top x = 1$ (a scalar), which would wrongly give $A = 2I_n$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q28-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper's transpose superscript is transcribed as $^\\top$, the blackboard-bold R as $\\mathbb{R}^n$, and the identity matrix as $I_n$ (subscript n), following the rendering rather than the text layer, which flattens the super- and subscripts. The paper's line break after \"Which\" is joined."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A, B (eigenvalues of A are 2 once and 1 with multiplicity n-1; A^{-1} = I - xx^T/2 has eigenvalues 1/2 and 1)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np, sympy as sp\nrng = np.random.default_rng(0)\nfor n in (1, 2, 5, 50):\n    x = rng.normal(size=n); x /= np.linalg.norm(x)          # x^T x = 1\n    A = np.eye(n) + np.outer(x, x)\n    ev = np.sort(np.linalg.eigvalsh(A)); evinv = np.sort(np.linalg.eigvalsh(np.linalg.inv(A)))\n    print(f'n={n}: rank={np.linalg.matrix_rank(A)}, det={np.linalg.det(A):.6f}, eig(A) in [{ev.min():.6f}, {ev.max():.6f}], '\n          f'eig(A^-1) in [{evinv.min():.6f}, {evinv.max():.6f}], ||A^-1 - (I - xx^T/2)||={np.linalg.norm(np.linalg.inv(A) - (np.eye(n) - np.outer(x, x) / 2)):.1e}')\n# exact symbolic instance: x = (1/3)(1, 2, 2), x^T x = 1\nx = sp.Matrix([1, 2, 2]) / 3; A = sp.eye(3) + x * x.T\nprint('A =', A.tolist(), ' rank =', A.rank(), ' det =', A.det(), ' eig(A) =', A.eigenvals(), ' eig(A^-1) =', A.inv().eigenvals())\nprint('A^-1 == I - x x^T/2 :', sp.simplify(A.inv() - (sp.eye(3) - x * x.T / 2)) == sp.zeros(3))\n",
+    "notes": "Independent solve: Ax = 2x, and Av = v for v orthogonal to x, so the spectrum is {2, 1 (n-1 times)} and det A = 2. A is therefore invertible with rank n (A, B true), 0 is not an eigenvalue (C false), and A^{-1} = I - xx^T/2 has eigenvalues 1/2 and 1, none negative (D false). This gives A;B, matching the official key A;B. The Python check uses random unit x for n = 1, 2, 5, 50 (rank n, det 2, eig(A) in [1, 2], eig(A^-1) in [0.5, 1], A^-1 = I - xx^T/2 to machine precision) and an exact SymPy instance x = (1, 2, 2)/3 (eigenvalues {2: 1, 1: 2}, inverse eigenvalues {1/2: 1, 1: 2})."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

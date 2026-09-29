@@ -1,0 +1,113 @@
+{
+  "id": "DA2026-S8-Q36",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 36,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-clustering",
+  "subtopicIds": [
+    "ml-hierarchical",
+    "ml-clustering-algorithms"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - a single concept (the first agglomerative merge joins the closest pair of points) and a direct single-step computation of six 3-D Manhattan distances, comfortably within about a minute for a prepared student.",
+  "stem": "Let four points in three-dimensional space be:\n\nP1: $[2, 3, -1]$, P2: $[3, 1, 1]$, P3: $[5, -2, 3]$ and P4: $[3, 3, 3]$.\n\nHierarchical Agglomerative Clustering is used to cluster the above points. If Manhattan Distance is used as the distance metric during clustering, which of the following options indicates the two points that will be merged first?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$P1, P2$"
+    },
+    {
+      "label": "B",
+      "text": "$P2, P3$"
+    },
+    {
+      "label": "C",
+      "text": "$P3, P4$"
+    },
+    {
+      "label": "D",
+      "text": "$P2, P4$"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "In agglomerative clustering every point starts as its own cluster, so the **first** merge simply joins the pair of points with the smallest distance (whatever the linkage). The Manhattan distances are $d(P1,P2)=5$, $d(P1,P3)=12$, $d(P1,P4)=5$, $d(P2,P3)=7$, $d(P2,P4)=4$, $d(P3,P4)=7$. The unique minimum is $d(P2,P4)=4$, so $P2$ and $P4$ merge first: **(D)**.",
+    "steps": [
+      {
+        "title": "What \"merged first\" means in agglomerative clustering",
+        "body": "Hierarchical Agglomerative Clustering (HAC) is bottom-up: it starts with each point as a singleton cluster $\\{P1\\}, \\{P2\\}, \\{P3\\}, \\{P4\\}$ and, at every step, merges the two clusters that are closest to each other.\n\nAt the very first step every cluster contains exactly one point, so single, complete and average linkage all reduce to the plain point-to-point distance. Hence the first merge is just the **closest pair of points** among all $\\binom{4}{2} = 6$ pairs."
+      },
+      {
+        "title": "Manhattan distance formula",
+        "body": "For $\\mathbf{x}, \\mathbf{y} \\in \\mathbb{R}^3$ the Manhattan ($L_1$) distance is\n\n$$\nd_1(\\mathbf{x}, \\mathbf{y}) = \\lvert x_1 - y_1 \\rvert + \\lvert x_2 - y_2 \\rvert + \\lvert x_3 - y_3 \\rvert\n$$\n\ni.e. the sum of the absolute coordinate differences (no squaring, no square root)."
+      },
+      {
+        "title": "Compute all six pairwise distances",
+        "body": "With $P1 = (2, 3, -1)$, $P2 = (3, 1, 1)$, $P3 = (5, -2, 3)$, $P4 = (3, 3, 3)$:\n\n| Pair | $\\lvert \\Delta x \\rvert$ | $\\lvert \\Delta y \\rvert$ | $\\lvert \\Delta z \\rvert$ | $d_1$ |\n| --- | --- | --- | --- | --- |\n| $P1, P2$ | $\\lvert 2-3 \\rvert = 1$ | $\\lvert 3-1 \\rvert = 2$ | $\\lvert -1-1 \\rvert = 2$ | $5$ |\n| $P1, P3$ | $\\lvert 2-5 \\rvert = 3$ | $\\lvert 3-(-2) \\rvert = 5$ | $\\lvert -1-3 \\rvert = 4$ | $12$ |\n| $P1, P4$ | $\\lvert 2-3 \\rvert = 1$ | $\\lvert 3-3 \\rvert = 0$ | $\\lvert -1-3 \\rvert = 4$ | $5$ |\n| $P2, P3$ | $\\lvert 3-5 \\rvert = 2$ | $\\lvert 1-(-2) \\rvert = 3$ | $\\lvert 1-3 \\rvert = 2$ | $7$ |\n| $P2, P4$ | $\\lvert 3-3 \\rvert = 0$ | $\\lvert 1-3 \\rvert = 2$ | $\\lvert 1-3 \\rvert = 2$ | $4$ |\n| $P3, P4$ | $\\lvert 5-3 \\rvert = 2$ | $\\lvert -2-3 \\rvert = 5$ | $\\lvert 3-3 \\rvert = 0$ | $7$ |"
+      },
+      {
+        "title": "Pick the minimum",
+        "body": "Sorted distances: $4\\ (P2,P4) < 5\\ (P1,P2) = 5\\ (P1,P4) < 7\\ (P2,P3) = 7\\ (P3,P4) < 12\\ (P1,P3)$.\n\nThe smallest distance, $4$, is attained **only** by the pair $(P2, P4)$ (no tie), so HAC merges $P2$ and $P4$ first. (For reference, the next step would merge $P1$ into $\\{P2, P4\\}$ under single linkage, since $d(P1,P2) = d(P1,P4) = 5$ - but the question asks only for the first merge.)\n\nAnswer: **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Hierarchical Agglomerative Clustering (HAC)** builds a hierarchy of clusters from the bottom up. The recipe is:\n\n1. Treat every data point as its own cluster.\n2. Compute the distance between every pair of clusters.\n3. Merge the two closest clusters into one.\n4. Update the distances and repeat until a single cluster (or the desired number of clusters) remains.\n\nThe sequence of merges is usually drawn as a **dendrogram**, a tree whose merge heights are the distances at which clusters were joined.\n\nTwo design choices control HAC:\n\n- **The point-level distance metric.** Common choices are Euclidean ($L_2$): $\\sqrt{\\sum_i (x_i - y_i)^2}$, and Manhattan ($L_1$, \"city-block\"): $\\sum_i \\lvert x_i - y_i \\rvert$. Manhattan distance measures how far you would walk along a grid, moving one axis at a time.\n- **The linkage criterion** (how to measure the distance between two *clusters*): single linkage uses the closest pair of members, complete linkage uses the farthest pair, and average linkage uses the mean over all cross pairs.\n\nThe key observation for questions like this one is that linkage only matters once some cluster has two or more points. At the first step all clusters are singletons, so every linkage gives the same cluster distances as the raw point distances. The first merge is therefore always the globally closest pair of points under the chosen metric.\n\nHere the metric is Manhattan distance, so you compute the six sums of absolute coordinate differences. $P2 = (3,1,1)$ and $P4 = (3,3,3)$ agree in the first coordinate and differ by $2$ in each of the other two, giving $0 + 2 + 2 = 4$. Every other pair is at distance $5$ or more, so $P2$ and $P4$ merge first.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$d_1(P1, P2) = 1 + 2 + 2 = 5$, which is larger than $d_1(P2, P4) = 4$. $(P1, P2)$ is tied with $(P1, P4)$ for the second-smallest distance, not the smallest."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$d_1(P2, P3) = 2 + 3 + 2 = 7$, well above the minimum of $4$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$d_1(P3, P4) = 2 + 5 + 0 = 7$. Note $\\lvert -2 - 3 \\rvert = 5$, not $1$. This pair is not the closest."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$d_1(P2, P4) = 0 + 2 + 2 = 4$ is the unique smallest of the six pairwise Manhattan distances, so these two singletons are merged first."
+      }
+    ],
+    "shortcut": "The first merge does not depend on the linkage (every cluster is a single point), so do not think about single, complete or average linkage at all. Compute the four option pairs ($5, 7, 7, 4$), then quickly confirm that the two unlisted pairs ($P1,P3 = 12$ and $P1,P4 = 5$) are not smaller.",
+    "commonTrap": "Sign slips with the negative coordinates. For example, evaluating $\\lvert -2 - 3 \\rvert$ as $1$ instead of $5$ gives $d_1(P3, P4) = 2 + 1 + 0 = 3$, which would wrongly make $(P3, P4)$ the closest pair and lead to option (C). Another slip is adding the signed differences without taking absolute values."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "estimatedTimeSec": 75,
+  "officialImages": [
+    "/pyq/2026/official/Q36-1.webp",
+    "/pyq/2026/official/Q36-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The point labels P1-P4 are printed upright in the stem and in italic math in the options; the coordinate vectors are transcribed as inline math. The second official crop (Q36-2) contains only the page header/table border and no question content; no figure is needed for this question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D) P2, P4 - Manhattan distance 4, the unique minimum over all six pairs",
+    "agreesWithKey": true,
+    "checkCode": "import itertools\nP={'P1':(2,3,-1),'P2':(3,1,1),'P3':(5,-2,3),'P4':(3,3,3)}\nd={(a,b):sum(abs(x-y) for x,y in zip(P[a],P[b])) for a,b in itertools.combinations(P,2)}\nprint(d)  # P1P2=5 P1P3=12 P1P4=5 P2P3=7 P2P4=4 P3P4=7\nm=min(d.values()); print(m,[k for k,v in d.items() if v==m])  # 4 [('P2','P4')] -> unique minimum",
+    "notes": "All six pairwise Manhattan distances were computed by hand and in Python (5, 12, 5, 7, 4, 7); the unique minimum is d(P2,P4)=4, matching the official key D. The first merge is linkage-independent because all clusters are singletons."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

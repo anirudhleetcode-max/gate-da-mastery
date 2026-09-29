@@ -1,0 +1,113 @@
+{
+  "id": "DA2026-S8-Q20",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 20,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-foundations",
+  "subtopicIds": [
+    "ps-counting",
+    "ps-sample-space"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (stars and bars) applied in 2–3 steps (count the non-negative solutions, shift the variables to count the positive ones, take the ratio) with a likely off-by-one trap in the binomial indices; about 1.5 min for a prepared student.",
+  "estimatedTimeSec": 90,
+  "stem": "Suppose that a computer program provides a non-negative and integer-valued random solution to the equation $n_1 + n_2 + n_3 + n_4 = 20$.\n\nWhich of the following is the probability that all of $n_1, n_2, n_3, n_4$ in the provided solution are positive?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\binom{19}{3}/\\binom{23}{3}$"
+    },
+    {
+      "label": "B",
+      "text": "$\\binom{20}{4}/\\binom{24}{4}$"
+    },
+    {
+      "label": "C",
+      "text": "$\\binom{20}{3}/\\binom{23}{3}$"
+    },
+    {
+      "label": "D",
+      "text": "$\\binom{19}{4}/\\binom{24}{4}$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Take the program's output to be equally likely to be any of the non-negative integer solutions. By stars and bars there are $\\binom{20+3}{3} = \\binom{23}{3} = 1771$ non-negative solutions of $n_1+n_2+n_3+n_4 = 20$. Substituting $m_i = n_i - 1$ turns the positive solutions into non-negative solutions of $m_1+m_2+m_3+m_4 = 16$, and there are $\\binom{19}{3} = 969$ of them. So $P = \\binom{19}{3}/\\binom{23}{3} = 969/1771 \\approx 0.547$. Answer: **(A)**.",
+    "steps": [
+      {
+        "title": "Set up the sample space",
+        "body": "An outcome is an **ordered** 4-tuple $(n_1, n_2, n_3, n_4)$ of non-negative integers with sum $20$. For example, $(20,0,0,0)$ and $(0,20,0,0)$ are different solutions.\n\n\"A random solution\" is read in the standard way: every solution is equally likely to be returned. (The options are all ratios of solution counts, which confirms this reading.) Then\n\n$$\nP(\\text{all positive}) = \\frac{\\#\\{\\text{solutions with every } n_i \\ge 1\\}}{\\#\\{\\text{solutions with every } n_i \\ge 0\\}}.\n$$"
+      },
+      {
+        "title": "Count the non-negative solutions (stars and bars)",
+        "body": "Write the total $20$ as $20$ identical stars and separate it into $4$ groups with $3$ bars. Each solution is exactly one arrangement of the $20 + 3 = 23$ symbols, fixed by choosing which $3$ of the $23$ positions hold bars:\n\n$$\n\\#\\{n_i \\ge 0\\} = \\binom{20+4-1}{4-1} = \\binom{23}{3} = \\frac{23 \\cdot 22 \\cdot 21}{3!} = \\frac{10626}{6} = 1771.\n$$"
+      },
+      {
+        "title": "Count the positive solutions (shift each variable by 1)",
+        "body": "If every $n_i \\ge 1$, put $m_i = n_i - 1 \\ge 0$. Then\n\n$$\nm_1 + m_2 + m_3 + m_4 = 20 - 4 = 16,\n$$\n\nand this is a one-to-one correspondence between the positive solutions of the original equation and the non-negative solutions of the new one. By stars and bars again:\n\n$$\n\\#\\{n_i \\ge 1\\} = \\binom{16+3}{3} = \\binom{19}{3} = \\frac{19 \\cdot 18 \\cdot 17}{3!} = \\frac{5814}{6} = 969.\n$$\n\n(Equivalently: line up $20$ stars; there are $19$ gaps between them, and choosing $3$ gaps for the bars gives $4$ non-empty groups, $\\binom{19}{3}$ ways.)"
+      },
+      {
+        "title": "Take the ratio and match the options",
+        "body": "$$\nP(\\text{all positive}) = \\frac{\\binom{19}{3}}{\\binom{23}{3}} = \\frac{969}{1771} \\approx 0.5471.\n$$\n\nNumerically, the other options are different: $\\binom{20}{4}/\\binom{24}{4} = 4845/10626 \\approx 0.456$, $\\binom{20}{3}/\\binom{23}{3} = 1140/1771 \\approx 0.644$ and $\\binom{19}{4}/\\binom{24}{4} = 3876/10626 \\approx 0.365$. Only option **(A)** equals the probability. A brute-force enumeration of all $1771$ solutions (in the Python check) finds exactly $969$ positive ones."
+      }
+    ],
+    "finalAnswer": "**(A)** $\\binom{19}{3}/\\binom{23}{3}$",
+    "teaching": "**Stars and bars.** How many ways can a whole number $n$ be split into $k$ ordered non-negative parts, $x_1 + x_2 + \\cdots + x_k = n$? Picture $n$ identical stars in a row. To split them into $k$ groups you need $k-1$ dividing bars. Any arrangement of the $n$ stars and $k-1$ bars gives one solution: $x_1$ is the number of stars before the first bar, $x_2$ the number between the first and second bars, and so on. Different arrangements give different solutions, and every solution arises. An arrangement is fixed by choosing which of the $n+k-1$ positions are bars, so\n\n$$\n\\#\\{x_i \\ge 0\\} = \\binom{n+k-1}{k-1}.\n$$\n\n**Lower bounds by shifting.** If each part must be at least $1$, give every part one star in advance. That uses up $k$ stars and leaves $n-k$ to distribute freely:\n\n$$\n\\#\\{x_i \\ge 1\\} = \\binom{(n-k)+k-1}{k-1} = \\binom{n-1}{k-1}.\n$$\n\nThe same trick handles any lower bounds $x_i \\ge a_i$: subtract $\\sum a_i$ from $n$ first.\n\n**Probability over solutions.** When a solution is \"chosen at random\" with no other information, each solution is equally likely, so a probability is a ratio of two counts. The lower index of both binomials is always $k-1$, the number of bars, not $k$.\n\n**In this question** $n = 20$ and $k = 4$. There are $\\binom{23}{3} = 1771$ non-negative solutions and $\\binom{19}{3} = 969$ positive ones, so the probability is $\\binom{19}{3}/\\binom{23}{3} \\approx 0.547$, option (A). Options (B) and (D) use $4$ bars, which would describe five variables, and option (C) shifts only three of the four variables.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$\\binom{19}{3} = \\binom{20-1}{4-1}$ counts the positive solutions and $\\binom{23}{3} = \\binom{20+4-1}{4-1}$ counts all non-negative solutions, so the ratio $969/1771 \\approx 0.547$ is exactly the required probability."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "The lower index $4$ means $4$ bars, i.e. five variables. $\\binom{24}{4}$ counts non-negative solutions of $n_1+\\cdots+n_5 = 20$, and $\\binom{20}{4}$ counts those with four of the five variables $\\ge 1$. Neither count belongs to this four-variable equation, and the value $4845/10626 \\approx 0.456$ differs from the correct $0.547$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The denominator $\\binom{23}{3}$ is right, but $\\binom{20}{3} = \\binom{17+3}{3}$ counts the solutions in which only **three** of the variables are forced to be $\\ge 1$ (for example $n_2, n_3, n_4 \\ge 1$ with $n_1 \\ge 0$). It still includes solutions with $n_1 = 0$, so it overcounts: $1140/1771 \\approx 0.644$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$\\binom{19}{4}/\\binom{24}{4}$ is the correct formula applied to **five** variables ($\\binom{19}{4}$ positive and $\\binom{24}{4}$ non-negative solutions of $n_1+\\cdots+n_5 = 20$). With four variables there are only $3$ bars, so both lower indices must be $3$. Its value, $3876/10626 \\approx 0.365$, is not the required probability."
+      }
+    ],
+    "shortcut": "For $k$ variables summing to $n$ (uniform over solutions), $P(\\text{all positive}) = \\binom{n-1}{k-1}\\big/\\binom{n+k-1}{k-1}$. Here $k-1 = 3$, which rules out (B) and (D) at once. The numerator's top index is $n-1 = 19$, which picks (A) over (C).",
+    "commonTrap": "Off-by-one errors in stars and bars: writing $\\binom{n+k}{k}$ or $\\binom{n+k-1}{k}$ instead of $\\binom{n+k-1}{k-1}$ (as in (B) and (D)), or subtracting $3$ instead of $4$ from $20$ for the positive count (as in (C)). The lower index is the number of **bars**, $k-1 = 3$, and making all four variables positive removes $4$ from the total."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q20-1.webp",
+    "/pyq/2026/official/Q20-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The options print each binomial coefficient as a stacked pair in round brackets (e.g. 19 over 3); transcribed as \\binom{19}{3} etc. The PDF text layer flattens these, so they were read from the rendered image. The second official crop (Q20-2) contains only the page header and an empty table border."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nfrom math import comb\nfrom fractions import Fraction as F\nsols=[s for s in product(range(21),repeat=4) if sum(s)==20]\npos=[s for s in sols if min(s)>0]\nassert len(sols)==comb(23,3)==1771 and len(pos)==comb(19,3)==969\np=F(len(pos),len(sols))\nopts={'A':F(comb(19,3),comb(23,3)),'B':F(comb(20,4),comb(24,4)),'C':F(comb(20,3),comb(23,3)),'D':F(comb(19,4),comb(24,4))}\nprint(p, float(p), [k for k,v in opts.items() if v==p])  # 969/1771 0.547 ['A']\n",
+    "notes": "Reading \"random solution\" as uniform over the ordered non-negative integer solutions (the reading implied by the options, which are all ratios of solution counts): stars and bars gives C(23,3) = 1771 non-negative solutions and, after the shift m_i = n_i - 1, C(19,3) = 969 positive solutions, so P = 969/1771 ≈ 0.547. The Python check enumerates all 4-tuples summing to 20, confirms both counts, and confirms that only option A equals the probability (B ≈ 0.456, C ≈ 0.644, D ≈ 0.365). This matches the official key (A)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

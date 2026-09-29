@@ -1,0 +1,74 @@
+{
+  "id": "DA2025-S5-Q61",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 61,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-discrete",
+  "subtopicIds": [
+    "ps-discrete-named",
+    "ps-random-variables"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (the binomial mean np for independent draws with replacement) with a single-step computation, 100 × 10/15 = 200/3 ≈ 66.7, taking well under a minute for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "A bag contains $5$ white balls and $10$ black balls. In a random experiment, $n$ balls are drawn from the bag one at a time with replacement. Let $S_n$ denote the total number of black balls drawn in the experiment.\n\nThe expectation of $S_{100}$ denoted by $E[S_{100}] =$ \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n(Round off to one decimal place)",
+  "options": [],
+  "officialKeyRaw": "66.6 to 66.7",
+  "answer": {
+    "kind": "NAT",
+    "min": 66.6,
+    "max": 66.7
+  },
+  "solution": {
+    "quick": "With replacement, the $100$ draws are independent and each is black with probability $p = \\frac{10}{15} = \\frac{2}{3}$. So $S_{100} \\sim \\text{Binomial}\\left(100, \\frac{2}{3}\\right)$ and $E[S_{100}] = np = 100 \\cdot \\frac{2}{3} = \\frac{200}{3} = 66.67$, which rounds to **66.7**.",
+    "steps": [
+      {
+        "title": "Probability of a black ball on one draw",
+        "body": "The bag holds $5 + 10 = 15$ balls, of which $10$ are black, so on any single draw\n\n$$\nP(\\text{black}) = \\frac{10}{15} = \\frac{2}{3}, \\qquad P(\\text{white}) = \\frac{5}{15} = \\frac{1}{3}.\n$$\n\nBecause every ball is put back before the next draw, the bag is the same before each draw: the draws are independent and each one is black with the same probability $p = \\frac{2}{3}$."
+      },
+      {
+        "title": "Write the count as a sum of indicators",
+        "body": "For $k = 1, \\ldots, n$ let $X_k = 1$ if the $k$-th draw is black and $X_k = 0$ otherwise. Then\n\n$$\nS_n = X_1 + X_2 + \\cdots + X_n ,\n$$\n\nand each $X_k$ is Bernoulli$\\left(\\frac{2}{3}\\right)$ with $E[X_k] = 1 \\cdot \\frac{2}{3} + 0 \\cdot \\frac{1}{3} = \\frac{2}{3}$. A sum of $n$ independent Bernoulli$(p)$ variables is Binomial, so $S_n \\sim \\text{Binomial}\\left(n, \\frac{2}{3}\\right)$."
+      },
+      {
+        "title": "Apply linearity of expectation with n = 100",
+        "body": "$$\nE[S_{100}] = \\sum_{k=1}^{100} E[X_k] = 100 \\times \\frac{2}{3} = \\frac{200}{3} = 66.666\\ldots\n$$\n\nThis is the binomial mean $np$ with $n = 100$ and $p = \\frac{2}{3}$. Linearity of expectation does not even need independence; independence matters only for the variance $np(1-p) = 100 \\cdot \\frac{2}{3} \\cdot \\frac{1}{3} = \\frac{200}{9} \\approx 22.2$, which is not asked here."
+      },
+      {
+        "title": "Round off",
+        "body": "$\\frac{200}{3} = 66.666\\ldots$ rounded off to one decimal place is $66.7$. The official key accepts any value from $66.6$ to $66.7$."
+      }
+    ],
+    "finalAnswer": "**66.7**",
+    "teaching": "**Counting successes.** Many probability questions ask for the *number of times* something happens in $n$ repeated trials. If the trials are independent and each succeeds with the same probability $p$, the count of successes follows the **binomial distribution**, $S_n \\sim \\text{Binomial}(n, p)$, with\n\n$$\nP(S_n = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\qquad k = 0, 1, \\ldots, n.\n$$\n\n**The indicator trick for the mean.** You never need the pmf to get the mean. Write the count as a sum of indicators, $S_n = X_1 + \\cdots + X_n$, where $X_k = 1$ when trial $k$ succeeds. Each indicator has $E[X_k] = P(\\text{trial } k \\text{ succeeds}) = p$, and expectation is linear, so\n\n$$\nE[S_n] = E[X_1] + \\cdots + E[X_n] = np .\n$$\n\nLinearity holds for *any* random variables, dependent or not. Independence is needed for the variance formula $\\operatorname{Var}(S_n) = np(1-p)$ and for the binomial pmf, but not for the mean.\n\n**With vs without replacement.** Drawing *with* replacement restores the bag after each draw, so every draw has the same success probability $p = \\frac{\\text{favourable balls}}{\\text{total balls}}$ and the draws are independent: a textbook binomial setting. Without replacement the draws become dependent (hypergeometric), and you could never draw more balls than the bag holds. Here $100$ draws from $15$ balls is possible only because of replacement.\n\n**Note on the answer.** The expected count $np$ need not be an integer, even though every observed count is. It is the long-run average of $S_{100}$ over many repetitions of the experiment.\n\n**Back to this question.** $p = \\frac{10}{15} = \\frac{2}{3}$ per draw, $n = 100$ independent draws, so $E[S_{100}] = 100 \\cdot \\frac{2}{3} = \\frac{200}{3} \\approx 66.7$.",
+    "shortcut": "Count of successes in $n$ identical draws with replacement: $E = n \\times \\frac{\\text{favourable}}{\\text{total}} = 100 \\times \\frac{10}{15} = \\frac{200}{3} \\approx 66.7$.",
+    "commonTrap": "Using the ratio black : white $= 10 : 5$ as if it were a probability (giving $p = \\frac{1}{2}$ or $2$), or using the white-ball probability $\\frac{1}{3}$ and answering $33.3$. Also avoid rounding $p$ early: $100 \\times 0.67 = 67.0$ lies outside the accepted range $66.6$ to $66.7$, so keep $\\frac{200}{3}$ exact and round only at the end."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q61-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The numbers 5 and 10 and the symbols n, S_n, S_100 and E[S_100] are set in math mode as in the paper; the subscripts are read from the rendering (the PDF text layer flattens them to 'Sn', 'S100'). The answer blank is rendered as escaped underscores. The GATE 2025 / IIT Roorkee watermark behind the text is not part of the question; no figure is involved."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "66.7 (S_100 ~ Binomial(100, 2/3), so E[S_100] = 200/3 = 66.666…)",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\nfrom math import comb\nimport random\np = F(10, 15)                                    # P(black) on every draw (with replacement)\nn = 100\nE_lin = n * p                                    # linearity: sum of 100 indicator expectations\nE_pmf = sum(k * comb(n, k) * p**k * (1-p)**(n-k) for k in range(n+1))   # directly from Binomial(100, 2/3) pmf\nprint('p =', p, ' E[S_100] =', E_lin, '=', float(E_lin), ' pmf check equal:', E_pmf == E_lin)\nprint('rounded to one decimal:', round(float(E_lin), 1))\nrandom.seed(1)\nbag = ['W']*5 + ['B']*10\nsims = [sum(random.choice(bag) == 'B' for _ in range(n)) for _ in range(100000)]\nprint('simulation mean:', sum(sims)/len(sims))\n",
+    "notes": "Hand solve: with replacement each draw is black with probability 10/15 = 2/3, independently, so S_100 ~ Binomial(100, 2/3) and E[S_100] = 100 × 2/3 = 200/3 = 66.666…, i.e. 66.7 to one decimal place. The Python check computes the mean exactly both by linearity (100 × 2/3) and from the Binomial(100, 2/3) pmf with fractions (both 200/3), and a 100 000-run simulation of the bag gives a mean of about 66.66. The value 66.67 lies inside the official key range 66.6 to 66.7."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,120 @@
+{
+  "id": "DA2026-S8-Q48",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 48,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-predicate"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (validity of quantified sentences over a non-empty domain); each statement is settled in a single step, either by the non-empty-domain argument or by a one- or two-element countermodel, so the checks are not independent non-trivial work and no MSQ level bump applies; about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Let $P(x)$ be a predicate.\n\nWhich of the following statements is/are **NOT** valid in first-order logic?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\forall x\\, P(x) \\Rightarrow \\exists x\\, P(x)$"
+    },
+    {
+      "label": "B",
+      "text": "$\\exists x\\, P(x) \\Rightarrow \\forall x\\, P(x)$"
+    },
+    {
+      "label": "C",
+      "text": "$\\exists x\\, P(x) \\Leftrightarrow \\forall x\\, P(x)$"
+    },
+    {
+      "label": "D",
+      "text": "$\\forall x\\, P(x) \\Rightarrow \\exists x\\, \\neg P(x)$"
+    }
+  ],
+  "officialKeyRaw": "B;C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "A sentence is valid when it is true in **every** interpretation (every non-empty domain, every choice of where $P$ holds). (A) is valid: if every element satisfies $P$, the non-empty domain contains an element that does.\n\n(B) and (C) fail when $P$ holds for some but not all elements; (D) fails when $P$ holds for every element. NOT valid: **(B), (C), (D)**.",
+    "steps": [
+      {
+        "title": "Concept: what \"valid\" means in first-order logic",
+        "body": "A first-order sentence is **valid** if it is true in **every** interpretation. An interpretation fixes a **non-empty** domain $D$ and decides, for each element of $D$, whether $P$ is true of it.\n\n- To show a sentence is **not valid**, one interpretation that makes it false (a *countermodel*) is enough.\n- To show a sentence **is valid**, you must argue about an arbitrary interpretation.\n\nBy the usual convention each quantifier here binds only the $P(x)$ written right after it, so (B), for example, reads $(\\exists x\\, P(x)) \\Rightarrow (\\forall x\\, P(x))$. An implication $\\alpha \\Rightarrow \\beta$ is false only when $\\alpha$ is true and $\\beta$ is false."
+      },
+      {
+        "title": "(A) is valid",
+        "body": "Take any interpretation with domain $D$ and check $\\forall x\\, P(x) \\Rightarrow \\exists x\\, P(x)$.\n\n- If $\\forall x\\, P(x)$ is false, the implication is true.\n- If $\\forall x\\, P(x)$ is true, every element of $D$ satisfies $P$. Because $D$ is non-empty, pick any $d \\in D$: $P(d)$ is true, so $\\exists x\\, P(x)$ is true and the implication is true.\n\nNo interpretation makes (A) false, so (A) **is valid**. It is therefore **not** one of the statements the question asks for."
+      },
+      {
+        "title": "(B) and (C): countermodel where P holds for some but not all elements",
+        "body": "Let $D = \\{a, b\\}$ with $P(a)$ true and $P(b)$ false.\n\n- $\\exists x\\, P(x)$ is **true** (witness $a$).\n- $\\forall x\\, P(x)$ is **false** ($b$ fails).\n\n(B): $\\text{true} \\Rightarrow \\text{false}$ is **false**, so (B) is **not valid**.\n\n(C): $\\alpha \\Leftrightarrow \\beta$ means $(\\alpha \\Rightarrow \\beta) \\wedge (\\beta \\Rightarrow \\alpha)$. Its left-to-right half is exactly (B), which is false here, so $\\text{true} \\Leftrightarrow \\text{false}$ is **false** and (C) is **not valid**.\n\nBoth (B) and (C) are still **satisfiable**: they are true whenever $P$ holds for all elements or for none. Being true in some interpretations does not make a sentence valid."
+      },
+      {
+        "title": "(D): countermodel where P holds everywhere",
+        "body": "Let $D = \\{a\\}$ with $P(a)$ true (any domain in which every element satisfies $P$ works).\n\n- $\\forall x\\, P(x)$ is **true**.\n- $\\exists x\\, \\neg P(x)$ is **false**, because no element fails $P$.\n\n$\\text{true} \\Rightarrow \\text{false}$ is **false**, so (D) is **not valid**.\n\nAlgebraically, using $\\alpha \\Rightarrow \\beta \\equiv \\neg\\alpha \\vee \\beta$ and $\\neg\\forall x\\, P(x) \\equiv \\exists x\\, \\neg P(x)$:\n\n$$\n\\forall x\\, P(x) \\Rightarrow \\exists x\\, \\neg P(x) \\;\\equiv\\; \\exists x\\, \\neg P(x) \\vee \\exists x\\, \\neg P(x) \\;\\equiv\\; \\exists x\\, \\neg P(x),\n$$\n\nwhich is true only in interpretations where some element fails $P$, not in all of them."
+      },
+      {
+        "title": "Summary",
+        "body": "| Option | Sentence | Countermodel | Valid? |\n| --- | --- | --- | --- |\n| (A) | $\\forall x\\, P(x) \\Rightarrow \\exists x\\, P(x)$ | none exists (domain is non-empty) | valid |\n| (B) | $\\exists x\\, P(x) \\Rightarrow \\forall x\\, P(x)$ | $D=\\{a,b\\}$, $P(a)$ true, $P(b)$ false | **not valid** |\n| (C) | $\\exists x\\, P(x) \\Leftrightarrow \\forall x\\, P(x)$ | same as (B) | **not valid** |\n| (D) | $\\forall x\\, P(x) \\Rightarrow \\exists x\\, \\neg P(x)$ | $D=\\{a\\}$, $P(a)$ true | **not valid** |\n\nThe statements that are **NOT** valid are **(B), (C), (D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C), (D)**",
+    "teaching": "**Validity versus satisfiability.** In propositional logic a formula is valid (a tautology) when every row of its truth table is true. First-order logic replaces truth-table rows with *interpretations*: an interpretation chooses a non-empty domain of objects and decides, for each object, whether $P$ holds. A sentence is **valid** if it is true in every interpretation, **satisfiable** if it is true in at least one, and **unsatisfiable** if it is true in none. A satisfiable but not valid sentence is sometimes called *contingent*.\n\n**Quantifier semantics.** $\\forall x\\, P(x)$ is true when every element of the domain satisfies $P$; $\\exists x\\, P(x)$ is true when at least one element does. They are linked by the quantifier De Morgan laws: $\\neg\\forall x\\, P(x) \\equiv \\exists x\\, \\neg P(x)$ and $\\neg\\exists x\\, P(x) \\equiv \\forall x\\, \\neg P(x)$.\n\n**Why the domain matters.** Standard first-order semantics requires the domain to be non-empty. That is exactly what makes $\\forall x\\, P(x) \\Rightarrow \\exists x\\, P(x)$ valid: if everything is $P$ and there is at least one thing, then something is $P$. The reverse direction, $\\exists \\Rightarrow \\forall$, is the classic invalid jump from one case to all cases.\n\n**Proving and refuting.** To refute validity, build the smallest countermodel: make the left side of the implication true and the right side false. To prove validity, reason about an arbitrary interpretation, or rewrite the sentence with equivalences until it is clearly a tautology.\n\n**Applying it here.** Only (A) is true in every interpretation. (B) and (C) break when $P$ is true for some but not all objects, and (D) breaks when $P$ is true for all objects. Because the question asks for the statements that are **NOT** valid, the answer set is (B), (C), (D).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "(A) **is** valid. Whenever every element satisfies $P$, the non-empty domain contains an element that satisfies $P$, so $\\exists x\\, P(x)$ holds. The question asks for statements that are NOT valid, so (A) is not selected."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Not valid. With $D=\\{a,b\\}$, $P(a)$ true and $P(b)$ false, $\\exists x\\, P(x)$ is true but $\\forall x\\, P(x)$ is false, so the implication is false. One object being $P$ does not make every object $P$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Not valid. Its $\\Rightarrow$ half is (B), which fails in the same two-element model: the left side is true and the right side false, so the biconditional is false. It is true only when $P$ holds for all elements or for none."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Not valid. If $P$ holds for every element, $\\forall x\\, P(x)$ is true but $\\exists x\\, \\neg P(x)$ is false, so the implication is false. The sentence simplifies to $\\exists x\\, \\neg P(x)$, which is satisfiable but not valid."
+      }
+    ],
+    "shortcut": "Every option is built from $\\forall x\\, P(x)$ and $\\exists x\\, P(x)$ (and $\\exists x\\, \\neg P(x) \\equiv \\neg\\forall x\\, P(x)$). Over a non-empty domain only three cases exist: $P$ holds for **all**, for **some but not all**, or for **no** elements. Check the options in those three cases:\n\n| Case | $\\forall x\\, P$ | $\\exists x\\, P$ | (A) | (B) | (C) | (D) |\n| --- | --- | --- | --- | --- | --- | --- |\n| all | T | T | T | T | T | **F** |\n| some, not all | F | T | T | **F** | **F** | T |\n| none | F | F | T | T | T | T |\n\nOnly (A) is true in every row, so (B), (C), (D) are not valid.",
+    "commonTrap": "Overlooking the bold **NOT** and marking the one valid statement (A), or rejecting (A) by imagining an empty domain; standard first-order logic assumes a non-empty domain, so (A) is valid. Another slip is to think (D) always holds because $\\forall x\\, P(x)$ and $\\exists x\\, \\neg P(x)$ are negations of each other; that fact actually makes (D) equivalent to $\\neg\\forall x\\, P(x)$, which fails whenever $P$ holds everywhere."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q48-1.webp",
+    "/pyq/2026/official/Q48-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word NOT is printed in bold in the paper and is kept in bold. The logical symbols are transcribed as \\forall, \\exists, \\Rightarrow (⇒), \\Leftrightarrow (⇔) and \\neg (¬), with a thin space between each quantified variable and P(x). The second official crop (Q48-2) shows only the next page's header and a table border. No figure is needed and the page region has no embedded images."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C;D",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\n# Every interpretation of a unary predicate P over a non-empty domain of size n is a tuple of truth values.\nimp = lambda a, b: (not a) or b\nF = {\n 'A': lambda P: imp(all(P), any(P)),                          # forall P => exists P\n 'B': lambda P: imp(any(P), all(P)),                          # exists P => forall P\n 'C': lambda P: any(P) == all(P),                             # exists P <=> forall P\n 'D': lambda P: imp(all(P), any(not p for p in P)),           # forall P => exists not P\n}\nvalid, cex = {}, {}\nfor k, f in F.items():\n    bad = [P for n in range(1, 6) for P in product([False, True], repeat=n) if not f(P)]\n    valid[k] = not bad\n    cex[k] = bad[0] if bad else None\nprint(valid, cex)\nnot_valid = sorted(k for k in F if not valid[k])\nprint(not_valid); assert not_valid == ['B', 'C', 'D']",
+    "notes": "(A) is valid in every non-empty domain: if all elements satisfy P, any element of the domain witnesses the existential. (B) and (C) are falsified by D = {a, b} with P(a) true and P(b) false; (D) is falsified by D = {a} with P(a) true, since it reduces to 'there exists x with not P(x)'. A brute-force check over every interpretation of P on domains of size 1-5 finds no countermodel for (A) and countermodels for (B), (C), (D). The NOT-valid set is B, C, D, which matches official key B;C;D. The analysis uses the standard reading in which each quantifier scopes only over the P(x) written right after it."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

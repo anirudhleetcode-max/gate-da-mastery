@@ -1,0 +1,576 @@
+[
+  {
+    "id": "M04-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-divide-conquer"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the two-pointer merge step of mergesort) and a single direct trace over nine elements; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Counting key comparisons in the merge step of mergesort",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In mergesort, the *merge* step combines two sorted lists into one sorted list. Consider the following merge procedure:\n\n- repeatedly compare the front (smallest remaining) elements of the two lists and move the smaller one to the output (on a tie, the element of the first list is moved);\n- as soon as one of the lists becomes empty, copy all remaining elements of the other list to the output **without any further comparison**.\n\nTwo sorted lists of packet timestamps are merged with this procedure:\n\n$$\nL_1 = [3,\\ 8,\\ 15,\\ 21], \\qquad L_2 = [5,\\ 9,\\ 12,\\ 30,\\ 41]\n$$\n\nThe total number of element comparisons made during this merge is",
+    "options": [
+      {
+        "label": "A",
+        "text": "4"
+      },
+      {
+        "label": "B",
+        "text": "7"
+      },
+      {
+        "label": "C",
+        "text": "8"
+      },
+      {
+        "label": "D",
+        "text": "9"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Trace the merge: every comparison outputs exactly one element. $L_1$ becomes empty after its last element $21$ is output, at which point $30$ and $41$ are still in $L_2$ and are copied free. Comparisons $= (4+5) - 2 = 7$.",
+      "steps": [
+        {
+          "title": "Input and rule",
+          "body": "$L_1 = [3, 8, 15, 21]$ ($m = 4$) and $L_2 = [5, 9, 12, 30, 41]$ ($n = 5$). Each comparison of the two front elements sends exactly one element to the output; once a list is empty, the rest of the other list is copied with no comparisons."
+        },
+        {
+          "title": "Execution trace",
+          "body": "| Comparison | Fronts compared | Element output |\n|---|---|---|\n| 1 | 3 vs 5 | 3 |\n| 2 | 8 vs 5 | 5 |\n| 3 | 8 vs 9 | 8 |\n| 4 | 15 vs 9 | 9 |\n| 5 | 15 vs 12 | 12 |\n| 6 | 15 vs 30 | 15 |\n| 7 | 21 vs 30 | 21 |\n\nAfter comparison 7, $L_1$ is empty."
+        },
+        {
+          "title": "Copy the leftovers",
+          "body": "The remaining elements of $L_2$, namely $30$ and $41$, are appended without comparisons. Output: $[3, 5, 8, 9, 12, 15, 21, 30, 41]$."
+        },
+        {
+          "title": "Result",
+          "body": "Total comparisons $= 7$, which lies between the bounds $\\min(m, n) = 4$ and $m + n - 1 = 8$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Mergesort is a divide-and-conquer algorithm: split the list into two halves, sort each half recursively, then **merge** the two sorted halves. All the real work happens in the merge. Because both inputs are sorted, the smallest remaining element overall must be at the front of one of them, so one comparison of the two fronts is enough to decide which element goes next.\n\nEach comparison therefore outputs exactly one element. When one list runs out, the other list's leftovers are already in order and are copied without comparing. So for lists of sizes $m$ and $n$:\n\n$$\n\\text{comparisons} = (m + n) - (\\text{elements left over when one list empties}).\n$$\n\nThis gives the bounds $\\min(m, n) \\le C \\le m + n - 1$. Here two elements ($30$, $41$) were left over, so $C = 9 - 2 = 7$. Since merging is linear, mergesort does $O(n)$ work per level over $\\log_2 n$ levels, i.e. $O(n \\log n)$ in total.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$4 = \\min(m, n)$ is the best-case lower bound, reached only if every element of one list is smaller than the first element of the other. Here the lists interleave, so more comparisons are needed."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The trace makes 7 comparisons; $L_1$ empties while $30$ and $41$ remain, and these two are copied without comparisons: $9 - 2 = 7$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$8 = m + n - 1$ is the worst-case upper bound, reached only when a single element is left over at the end. Here two elements are left over."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$9 = m + n$ assumes one comparison per output element, but the elements copied after a list empties need no comparison."
+        }
+      ],
+      "shortcut": "Comparisons $= (m + n) -$ (number of elements still waiting in the other list when one list empties). $L_1$'s last element $21$ is smaller than $30$, so $L_2$'s tail $\\{30, 41\\}$ is left over: $9 - 2 = 7$.",
+      "commonTrap": "Quoting the worst-case formula $m + n - 1 = 8$ as if it were the exact count for every input, or counting a comparison for each copied leftover element (giving 9)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "7 comparisons (option B)",
+      "agreesWithKey": true,
+      "checkCode": "A=[3,8,15,21]; B=[5,9,12,30,41]\ni=j=c=0\nwhile i<len(A) and j<len(B):\n    c+=1\n    if A[i]<=B[j]: i+=1\n    else: j+=1\nprint(c)  # 7",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-traversals"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (recursive depth-first search with a fixed neighbour order) traced on a seven-vertex graph; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Order of first visits in a recursive depth-first search of an undirected graph",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An **undirected** graph on the vertices A, B, C, D, E, F, G has the following adjacency lists (each list is in alphabetical order):\n\n| Vertex | Neighbours |\n|---|---|\n| A | B, C |\n| B | A, D, E |\n| C | A, E, F |\n| D | B |\n| E | B, C, G |\n| F | C, G |\n| G | E, F |\n\nA **recursive** depth-first search (DFS) is started at vertex A. When a vertex is visited, its neighbours are examined in the order listed above, and the search recurses immediately into each neighbour that is still unvisited at the moment it is examined.\n\nThe order in which the vertices are **first visited** is",
+    "options": [
+      {
+        "label": "A",
+        "text": "A, B, C, D, E, F, G"
+      },
+      {
+        "label": "B",
+        "text": "A, B, D, E, C, F, G"
+      },
+      {
+        "label": "C",
+        "text": "A, B, D, E, G, F, C"
+      },
+      {
+        "label": "D",
+        "text": "A, C, F, G, E, B, D"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Go as deep as possible, always taking the first unvisited neighbour in the list: A → B → D (dead end, back to B) → E → C (E's first unvisited neighbour) → F → G. Order: A, B, D, E, C, F, G.",
+      "steps": [
+        {
+          "title": "Start at A",
+          "body": "Visit A. Its first neighbour B is unvisited, so recurse into B."
+        },
+        {
+          "title": "Go deep from B",
+          "body": "Visit B. Neighbours: A (visited), then D (unvisited) → visit D. D's only neighbour B is visited, so D is a dead end; return to B. B's next neighbour E is unvisited → visit E."
+        },
+        {
+          "title": "Continue from E",
+          "body": "At E the neighbours are B (visited), C (unvisited) → visit C. At C: A (visited), E (visited), F (unvisited) → visit F. At F: C (visited), G (unvisited) → visit G. At G: E and F are both visited."
+        },
+        {
+          "title": "Backtrack and finish",
+          "body": "Backtracking through F, C, E, B and A finds no further unvisited neighbours (E's remaining neighbour G is already visited). All seven vertices are visited.\n\nOrder of first visits: **A, B, D, E, C, F, G**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Depth-first search explores a graph like a person in a maze who always takes the first unexplored corridor and only turns back at a dead end. In the recursive form, visiting vertex $u$ means: mark $u$, then for each neighbour $v$ of $u$ in the given order, if $v$ is still unmarked, call DFS on $v$ right away. The call for $v$ finishes completely (exploring everything reachable through $v$) before $u$ looks at its next neighbour. The recursion stack is what remembers where to back up to.\n\nBreadth-first search is different: it uses a FIFO queue and visits all neighbours of a vertex before going one level deeper, so it produces A, B, C, D, E, F, G here. In an undirected graph every edge can be used in both directions, which is why E can reach C even though C comes before E alphabetically. With a fixed neighbour order, recursive DFS gives exactly one visiting order.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the breadth-first order (level by level: A; then B, C; then D, E, F; then G), not depth-first."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Recursive DFS goes A → B → D, backtracks to B, then E → C → F → G, exactly as traced."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This order arises if C is wrongly treated as already visited when the search reaches E (C was only *seen* in A's neighbour list, not visited), so E goes to G first and C is reached last through F. Under the stated rule, E's first unvisited neighbour is C."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is what an iterative DFS gives when it pushes all neighbours in alphabetical order onto a stack and pops the last one pushed; that reverses the neighbour order and violates the stated rule."
+        }
+      ],
+      "commonTrap": "Treating C as visited as soon as it appears in A's neighbour list. In DFS a vertex counts as visited only when the search actually enters it, so at E the vertex C is still unvisited and must be entered before G. Another slip is writing the breadth-first order, which here happens to be alphabetical."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D, E, C, F, G (option B)",
+      "agreesWithKey": true,
+      "checkCode": "adj={'A':'BC','B':'ADE','C':'AEF','D':'B','E':'BCG','F':'CG','G':'EF'}\nseen=[]\ndef dfs(u):\n    seen.append(u)\n    for v in adj[u]:\n        if v not in seen: dfs(v)\ndfs('A'); print(', '.join(seen))  # A, B, D, E, C, F, G",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (aliasing through argument passing, and in-place `+=` versus rebinding `+` on lists) in a three-step trace with a likely trap; about 2–3 minutes for a prepared student.",
+    "estimatedTimeSec": 150,
+    "concept": "List aliasing in Python: in-place += versus rebinding with + inside a function",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef grow(seq, extra):\n    seq += extra\n    seq = seq + extra\n    return len(seq)\n\np = [1, 2]\nq = p\nr = grow(q, [3, 4])\nprint(r * 10 + len(p) + sum(q))\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 74,
+      "max": 74
+    },
+    "solution": {
+      "quick": "`q` and `seq` are aliases of `p`'s list. `seq += extra` extends that shared list in place to `[1, 2, 3, 4]`; `seq = seq + extra` builds a new 6-element list bound only to the local name. So `r = 6`, `len(p) = 4`, `sum(q) = 10`, and the output is $60 + 4 + 10 = 74$.",
+      "steps": [
+        {
+          "title": "Aliasing before the call",
+          "body": "`p = [1, 2]` creates one list object. `q = p` does **not** copy it: `p` and `q` name the same object. Calling `grow(q, [3, 4])` binds the parameter `seq` to that same object, so there are three names (`p`, `q`, `seq`) for one list."
+        },
+        {
+          "title": "`seq += extra` mutates the shared list",
+          "body": "For lists, `+=` calls `list.__iadd__`, which extends the list **in place** and keeps the same object. The shared list becomes `[1, 2, 3, 4]`, and this change is visible through `p` and `q`."
+        },
+        {
+          "title": "`seq = seq + extra` only rebinds the local name",
+          "body": "`seq + extra` creates a **new** list `[1, 2, 3, 4, 3, 4]`, and the assignment makes the local name `seq` refer to it. The caller's list is untouched. The function returns `len(seq) = 6`, so `r = 6`."
+        },
+        {
+          "title": "Evaluate the print expression",
+          "body": "After the call, `p` and `q` both refer to `[1, 2, 3, 4]`:\n\n$$\nr \\times 10 + \\text{len}(p) + \\text{sum}(q) = 6 \\times 10 + 4 + (1 + 2 + 3 + 4) = 60 + 4 + 10 = 74\n$$"
+        }
+      ],
+      "finalAnswer": "**74**",
+      "teaching": "In Python a variable is a name that refers to an object; assignment never copies an object, it only attaches a name to it. When a function is called, each parameter is bound to the same object the caller passed (often described as *call by object reference*). What the caller then sees depends on whether the function **mutates** that object or merely **rebinds** its local name.\n\nFor a mutable list, `x += y` is an in-place extend: the object itself changes, so every alias sees the new elements. In contrast, `x = x + y` evaluates `x + y` into a brand-new list and then points the local name `x` at it, leaving the original object as it was. For immutable types such as `int`, `str` and `tuple`, `+=` cannot mutate and behaves like `x = x + y`.\n\nIn this program, the first statement in `grow` changes `p`'s list to `[1, 2, 3, 4]`, while the second only affects the local copy, giving $60 + 4 + 10 = 74$.",
+      "commonTrap": "Assuming `seq += extra` behaves like `seq = seq + extra` (no effect on the caller) gives $60 + 2 + 3 = 65$; assuming the second line also changes the caller's list gives $60 + 6 + 17 = 83$. Only the in-place `+=` reaches `p` and `q`."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "74",
+      "agreesWithKey": true,
+      "checkCode": "def grow(seq, extra):\n    seq += extra\n    seq = seq + extra\n    return len(seq)\np = [1, 2]\nq = p\nr = grow(q, [3, 4])\nprint(r * 10 + len(p) + sum(q))  # 74",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-linked-lists"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (unlinking a node by bypassing it with `p.next = p.next.next`) applied in a short loop trace after reading the list order from a table; about 1.5 minutes for a prepared student.",
+    "estimatedTimeSec": 100,
+    "concept": "Deleting nodes from a singly linked list by bypassing next references",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Each node of a singly linked list has two fields: `data` (an integer) and `next` (a reference to the next node, or `None` for the last node). Eight nodes N1 to N8 are stored as shown below, and the variable `head` refers to node **N4**.\n\n| Node | `data` | `next` |\n|---|---|---|\n| N1 | 12 | N5 |\n| N2 | 7 | `None` |\n| N3 | 25 | N6 |\n| N4 | 3 | N3 |\n| N5 | 18 | N8 |\n| N6 | 10 | N7 |\n| N7 | 4 | N1 |\n| N8 | 9 | N2 |\n\nThe following Python code is executed on this list:\n\n```python\np = head\nwhile p.next is not None and p.next.next is not None:\n    p.next = p.next.next\n    p = p.next\n```\n\nAfter the loop terminates, the sum of the `data` values of all the nodes that can be reached from `head` by following `next` references is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 41,
+      "max": 41
+    },
+    "solution": {
+      "quick": "Following `next` from N4 gives the list $3 \\to 25 \\to 10 \\to 4 \\to 12 \\to 18 \\to 9 \\to 7$. The loop unlinks the 2nd, 4th and 6th nodes (25, 4, 18) and stops at 9 because only one node follows it, so 7 survives. Remaining: $3 + 10 + 12 + 9 + 7 = 41$.",
+      "steps": [
+        {
+          "title": "Recover the list order from the table",
+          "body": "Start at `head` = N4 and follow `next`:\n\nN4 (3) → N3 (25) → N6 (10) → N7 (4) → N1 (12) → N5 (18) → N8 (9) → N2 (7) → `None`.\n\nSo the list is $3, 25, 10, 4, 12, 18, 9, 7$ (8 nodes)."
+        },
+        {
+          "title": "What one iteration does",
+          "body": "`p.next = p.next.next` makes `p` point past its successor, so the successor is unlinked (no longer reachable). Then `p = p.next` moves `p` to the node after the removed one. The loop continues only while **two** nodes follow `p`."
+        },
+        {
+          "title": "Trace the loop",
+          "body": "| `p` before | two nodes after `p`? | node unlinked | `p` after |\n|---|---|---|---|\n| 3 | 25, 10: yes | 25 | 10 |\n| 10 | 4, 12: yes | 4 | 12 |\n| 12 | 18, 9: yes | 18 | 9 |\n| 9 | 7, `None`: **no** | loop stops | 9 |"
+        },
+        {
+          "title": "Sum the reachable nodes",
+          "body": "The list is now $3 \\to 10 \\to 12 \\to 9 \\to 7$, and the sum is $3 + 10 + 12 + 9 + 7 = 41$."
+        }
+      ],
+      "finalAnswer": "**41**",
+      "teaching": "A singly linked list is a chain of nodes in which each node stores a value and a reference to the next node; the only entry point is `head`. The nodes can sit anywhere in memory, so the table's row order (N1, N2, …) means nothing. The list order comes only from following `next` starting at `head`.\n\nTo delete the node after `p`, you do not erase it; you **bypass** it with `p.next = p.next.next`. Nothing refers to the bypassed node any more, so it is no longer part of the list (Python later frees it). This takes $O(1)$ time, unlike deletion from an array, which shifts elements.\n\nLoop guards matter. Here the loop needs two nodes after `p`: one to delete and one to jump to. With an even number of nodes, the search ends at the second-last node and the last node is never removed. In this list that keeps 7 in the list, giving 41.",
+      "commonTrap": "Assuming every even-position node is removed, including the last node 7, gives $3 + 10 + 12 + 9 = 34$. The loop needs **two** nodes after `p`, so it stops at 9 and 7 stays. Another slip is reading the list in table-row order (N1, N2, …) instead of following `next` from `head`."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "41",
+      "agreesWithKey": true,
+      "checkCode": "class Node:\n    def __init__(s, d): s.data, s.next = d, None\nT={'N1':(12,'N5'),'N2':(7,None),'N3':(25,'N6'),'N4':(3,'N3'),'N5':(18,'N8'),'N6':(10,'N7'),'N7':(4,'N1'),'N8':(9,'N2')}\nN={k:Node(v[0]) for k,v in T.items()}\nfor k,v in T.items(): N[k].next = N[v[1]] if v[1] else None\nhead=N['N4']; p=head\nwhile p.next is not None and p.next.next is not None:\n    p.next = p.next.next\n    p = p.next\ns=0; p=head\nwhile p: s+=p.data; p=p.next\nprint(s)  # 41",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the expected cost of a successful linear search, minimised by placing keys in non-increasing order of probability) and a single weighted sum; about 1.5 minutes for a prepared student.",
+    "estimatedTimeSec": 100,
+    "concept": "Expected comparisons of successful linear search under a non-uniform query distribution",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A small lookup table keeps five distinct product codes V, W, X, Y and Z in an unsorted array, currently stored in the order\n\n$$\n[\\,V,\\ W,\\ X,\\ Y,\\ Z\\,]\n$$\n\nEvery query asks for one of these five codes and is answered by a linear search that starts at the first position and compares the query code with one array element at a time until it finds a match (each such comparison counts as one comparison). The probability that a query asks for each code is:\n\n| Code | V | W | X | Y | Z |\n|---|---|---|---|---|---|\n| Probability | 0.05 | 0.30 | 0.10 | 0.40 | 0.15 |\n\nBefore any query is made, the five codes may be rearranged in the array in any order. The **minimum** possible expected number of comparisons per query is",
+    "options": [
+      {
+        "label": "A",
+        "text": "1.10"
+      },
+      {
+        "label": "B",
+        "text": "2.10"
+      },
+      {
+        "label": "C",
+        "text": "3.00"
+      },
+      {
+        "label": "D",
+        "text": "3.30"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "A key at position $i$ (1-based) costs $i$ comparisons, so $E = \\sum i\\,p_i$. This is minimised by placing keys in non-increasing order of probability: Y, W, Z, X, V. Then $E = 1(0.40) + 2(0.30) + 3(0.15) + 4(0.10) + 5(0.05) = 2.10$.",
+      "steps": [
+        {
+          "title": "Cost model",
+          "body": "If a code is at position $i$ (counting from 1), the linear search makes $i$ comparisons to find it. With query probabilities $p_i$ for the code at position $i$:\n\n$$\nE[\\text{comparisons}] = \\sum_{i=1}^{5} i \\cdot p_i\n$$"
+        },
+        {
+          "title": "Choose the best arrangement",
+          "body": "The position weights $1, 2, 3, 4, 5$ increase, so to minimise the sum the largest probability should get the smallest weight (rearrangement inequality). Sort by non-increasing probability:\n\nY (0.40), W (0.30), Z (0.15), X (0.10), V (0.05)."
+        },
+        {
+          "title": "Compute the expectation",
+          "body": "$$\nE = 1(0.40) + 2(0.30) + 3(0.15) + 4(0.10) + 5(0.05) = 0.40 + 0.60 + 0.45 + 0.40 + 0.25 = 2.10\n$$"
+        },
+        {
+          "title": "Compare with the current order",
+          "body": "For the current order $[V, W, X, Y, Z]$: $1(0.05) + 2(0.30) + 3(0.10) + 4(0.40) + 5(0.15) = 3.30$. Rearranging saves $1.20$ comparisons per query, and the minimum is $2.10$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Linear search checks elements one by one from the front, so the cost of finding a key depends only on its position: the key at position $i$ needs exactly $i$ comparisons. When some keys are requested more often than others, the average cost is a weighted sum $\\sum i\\,p_i$, where each position is weighted by how often its key is asked for.\n\nIf all $n$ keys were equally likely, this becomes $(1 + 2 + \\dots + n)/n = (n+1)/2$, which is 3 for $n = 5$. With a skewed distribution we can do better by putting the popular keys first. Swapping any pair that is out of order (a less likely key ahead of a more likely one) lowers the sum, so the optimum is the order of non-increasing probability.\n\nWhen the probabilities are unknown, self-organising lists (move-to-front, transpose) approximate this ordering as queries arrive. Here the optimal order Y, W, Z, X, V gives 2.10.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$1.10$ uses 0-based positions ($0, 1, 2, 3, 4$), i.e. it counts only the failed comparisons before the match and misses the final, successful comparison that every query makes."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Ordering by non-increasing probability (Y, W, Z, X, V) gives $0.40 + 0.60 + 0.45 + 0.40 + 0.25 = 2.10$, the minimum."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$3.00 = (n+1)/2$ is the average cost when all five keys are equally likely. It ignores the given probabilities, which are far from uniform."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$3.30$ is the expected cost of the current order $[V, W, X, Y, Z]$, not of the best rearrangement."
+        }
+      ],
+      "commonTrap": "Computing the cost of the given order (3.30) instead of optimising the arrangement, or using 0-based positions and forgetting the comparison that finds the key (1.10)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2.10 (option B)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import permutations\np=[0.05,0.30,0.10,0.40,0.15]\nprint(round(min(sum((i+1)*x for i,x in enumerate(o)) for o in permutations(p)),4))  # 2.1",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (bubble-sort swaps equal the number of inversions; selection sort swaps only when the minimum is out of place) with routine tracing of a six-element array; about 2.5–3 minutes for a prepared student.",
+    "estimatedTimeSec": 170,
+    "concept": "Counting swaps in bubble sort (inversions) and selection sort on the same input",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The two Python functions below sort a list in ascending order and return the number of swaps they perform.\n\n```python\ndef bubble_swaps(a):\n    n, swaps = len(a), 0\n    for i in range(n - 1):\n        for j in range(n - 1 - i):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n                swaps += 1\n    return swaps\n\ndef selection_swaps(a):\n    n, swaps = len(a), 0\n    for i in range(n - 1):\n        m = i\n        for j in range(i + 1, n):\n            if a[j] < a[m]:\n                m = j\n        if m != i:\n            a[i], a[m] = a[m], a[i]\n            swaps += 1\n    return swaps\n\nB = bubble_swaps([6, 2, 9, 4, 1, 7])\nS = selection_swaps([6, 2, 9, 4, 1, 7])\n```\n\nAfter this code runs, the pair $(B, S)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(8, 5)$"
+      },
+      {
+        "label": "B",
+        "text": "$(4, 4)$"
+      },
+      {
+        "label": "C",
+        "text": "$(8, 4)$"
+      },
+      {
+        "label": "D",
+        "text": "$(15, 4)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Each bubble-sort swap fixes exactly one inversion, so $B$ = number of inversions of $[6, 2, 9, 4, 1, 7]$ $= 3 + 1 + 3 + 1 + 0 = 8$. Selection sort swaps in passes $i = 0, 2, 3, 4$ but not at $i = 1$ (2 is already in place), so $S = 4$. Answer $(8, 4)$.",
+      "steps": [
+        {
+          "title": "Bubble sort swaps = inversions",
+          "body": "Bubble sort swaps only adjacent out-of-order elements, and each such swap removes exactly one inversion (a pair $i < j$ with $a_i > a_j$). So $B$ equals the number of inversions.\n\nFor $[6, 2, 9, 4, 1, 7]$, count the smaller elements to the right of each element:\n\n- 6: {2, 4, 1} → 3\n- 2: {1} → 1\n- 9: {4, 1, 7} → 3\n- 4: {1} → 1\n- 1: none → 0\n\n$B = 3 + 1 + 3 + 1 + 0 = 8$."
+        },
+        {
+          "title": "Check with the pass-by-pass trace",
+          "body": "| Pass | Array after pass | Swaps |\n|---|---|---|\n| 1 | [2, 6, 4, 1, 7, 9] | 4 |\n| 2 | [2, 4, 1, 6, 7, 9] | 2 |\n| 3 | [2, 1, 4, 6, 7, 9] | 1 |\n| 4 | [1, 2, 4, 6, 7, 9] | 1 |\n| 5 | [1, 2, 4, 6, 7, 9] | 0 |\n\nTotal $= 4 + 2 + 1 + 1 + 0 = 8$."
+        },
+        {
+          "title": "Trace selection sort",
+          "body": "| $i$ | Minimum of `a[i:]` (index $m$) | Swap? | Array after |\n|---|---|---|---|\n| 0 | 1 (index 4) | yes | [1, 2, 9, 4, 6, 7] |\n| 1 | 2 (index 1) | **no** ($m = i$) | [1, 2, 9, 4, 6, 7] |\n| 2 | 4 (index 3) | yes | [1, 2, 4, 9, 6, 7] |\n| 3 | 6 (index 4) | yes | [1, 2, 4, 6, 9, 7] |\n| 4 | 7 (index 5) | yes | [1, 2, 4, 6, 7, 9] |\n\n$S = 4$."
+        },
+        {
+          "title": "Result",
+          "body": "$(B, S) = (8, 4)$. Bubble sort needs twice as many swaps here, because selection sort puts one element in its final place with each swap."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Sorting algorithms differ not only in comparisons but also in how many times they move data. An **inversion** is a pair of positions $i < j$ with $a_i > a_j$; a sorted array has none. Bubble sort only ever swaps *adjacent* out-of-order neighbours, and swapping two adjacent elements changes the relative order of exactly that one pair, so each swap removes exactly one inversion. Hence bubble-sort swaps = number of inversions, which can be as large as $n(n-1)/2$.\n\nSelection sort instead finds the minimum of the unsorted part and swaps it directly into position $i$, so each swap places one element in its final position. It makes at most $n - 1$ swaps, and fewer when some elements are already in place (this code skips the swap when $m = i$).\n\nThis is why selection sort is preferred when writes are expensive, even though both algorithms make $\\Theta(n^2)$ comparisons. For this input, 8 inversions against 4 selection swaps gives $(8, 4)$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$S = 5$ counts a swap in every one of the $n - 1 = 5$ outer iterations, but the code skips the swap when $m = i$, which happens at $i = 1$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$B = 4$ is only the number of swaps in the first pass (or the number of passes that swap anything); later passes add $2 + 1 + 1$ more swaps."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Bubble-sort swaps = inversions = 8; selection sort swaps at $i = 0, 2, 3, 4$ only, so $S = 4$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$15 = n(n-1)/2$ is the number of **comparisons** bubble sort makes on 6 elements (5 + 4 + 3 + 2 + 1), not the number of swaps."
+        }
+      ],
+      "shortcut": "For distinct elements, $B$ = number of inversions, and $S = n - c$, where $c$ is the number of cycles of the permutation that maps each element to its sorted position. Here the cycles are $(0\\,3\\,2\\,5\\,4)$ and the fixed point $(1)$, so $c = 2$ and $S = 6 - 2 = 4$.",
+      "commonTrap": "Mixing up comparisons with swaps: bubble sort always makes 15 comparisons on 6 elements but only 8 swaps. For selection sort, the trap is assuming exactly $n - 1$ swaps even though the code skips the swap when the minimum is already in place."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B, S) = (8, 4) (option C)",
+      "agreesWithKey": true,
+      "checkCode": "def bubble_swaps(a):\n    n, swaps = len(a), 0\n    for i in range(n - 1):\n        for j in range(n - 1 - i):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n                swaps += 1\n    return swaps\ndef selection_swaps(a):\n    n, swaps = len(a), 0\n    for i in range(n - 1):\n        m = i\n        for j in range(i + 1, n):\n            if a[j] < a[m]:\n                m = j\n        if m != i:\n            a[i], a[m] = a[m], a[i]\n            swaps += 1\n    return swaps\nprint(bubble_swaps([6, 2, 9, 4, 1, 7]), selection_swaps([6, 2, 9, 4, 1, 7]))  # 8 4",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M04-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-04",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-shortest-path"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single routine application of Dijkstra's algorithm on a six-vertex directed graph with non-negative weights; about 1.5 minutes for a prepared student.",
+    "estimatedTimeSec": 100,
+    "concept": "Single-source shortest path with Dijkstra's algorithm on a small directed weighted graph",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A courier company has six hubs S, A, B, C, D and T. The **one-way** roads between hubs and their travel times (in minutes) are listed below.\n\n| Road | Travel time (min) |\n|---|---|\n| S → A | 4 |\n| S → B | 1 |\n| B → A | 2 |\n| A → C | 5 |\n| B → C | 8 |\n| B → D | 6 |\n| A → D | 2 |\n| D → C | 1 |\n| C → T | 3 |\n| D → T | 7 |\n\nThe minimum travel time (in minutes) from hub S to hub T is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 9,
+      "max": 9
+    },
+    "solution": {
+      "quick": "Run Dijkstra from S. Vertices are settled in the order S (0), B (1), A (3), D (5), C (6), T (9). The shortest route is S → B → A → D → C → T with time $1 + 2 + 2 + 1 + 3 = 9$ minutes.",
+      "steps": [
+        {
+          "title": "Algorithm",
+          "body": "All travel times are non-negative, so Dijkstra's algorithm applies: repeatedly settle the unsettled vertex with the smallest tentative distance $d$ and relax its outgoing edges, using $d(v) \\leftarrow \\min\\bigl(d(v),\\ d(u) + w(u, v)\\bigr)$. Initially $d(S) = 0$ and every other $d$ is $\\infty$."
+        },
+        {
+          "title": "Execution trace",
+          "body": "| Settle | Relaxations | Tentative $d$ after (A, B, C, D, T) |\n|---|---|---|\n| S (0) | A = 4, B = 1 | 4, 1, ∞, ∞, ∞ |\n| B (1) | A = min(4, 1+2) = 3; C = 1+8 = 9; D = 1+6 = 7 | 3, 1, 9, 7, ∞ |\n| A (3) | C = min(9, 3+5) = 8; D = min(7, 3+2) = 5 | 3, 1, 8, 5, ∞ |\n| D (5) | C = min(8, 5+1) = 6; T = 5+7 = 12 | 3, 1, 6, 5, 12 |\n| C (6) | T = min(12, 6+3) = 9 | 3, 1, 6, 5, 9 |\n| T (9) | none | final |"
+        },
+        {
+          "title": "Recover the path",
+          "body": "Following the predecessors back from T: T ← C ← D ← A ← B ← S. The route is S → B → A → D → C → T with time $1 + 2 + 2 + 1 + 3 = 9$."
+        },
+        {
+          "title": "Answer",
+          "body": "The minimum travel time from S to T is **9** minutes. Routes with fewer roads are slower, e.g. S → A → C → T takes $4 + 5 + 3 = 12$ and S → B → D → T takes $1 + 6 + 7 = 14$."
+        }
+      ],
+      "finalAnswer": "**9**",
+      "teaching": "A shortest-path problem asks for the route of least total weight, not the route with the fewest edges. Dijkstra's algorithm solves it from a single source when no edge weight is negative. It keeps a tentative distance for every vertex (0 for the source, $\\infty$ elsewhere) and repeats two actions: **settle** the unsettled vertex with the smallest tentative distance, since no later route can beat it when weights are non-negative, and **relax** each edge leaving that vertex by checking whether going through it gives a neighbour a shorter distance.\n\nA tentative label can drop several times before it is settled. Here T is first labelled 12 (via D) and later improved to 9 (via C). You can only read off the answer once T is settled. In this network the best route uses five short roads instead of three long ones, which is why the hop count is a poor guide.",
+      "commonTrap": "Stopping as soon as T receives its first label (12 via D → T), or choosing a route with few roads, such as S → A → C → T (12). A label is final only when its vertex is settled with the smallest tentative distance; T's label later drops to 9."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "9",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nE=[('S','A',4),('S','B',1),('B','A',2),('A','C',5),('B','C',8),('B','D',6),('A','D',2),('D','C',1),('C','T',3),('D','T',7)]\nadj={}\nfor u,v,w in E: adj.setdefault(u,[]).append((v,w))\nd={'S':0}; pq=[(0,'S')]; done=set()\nwhile pq:\n    du,u=heapq.heappop(pq)\n    if u in done: continue\n    done.add(u)\n    for v,w in adj.get(u,[]):\n        if du+w<d.get(v,float('inf')): d[v]=du+w; heapq.heappush(pq,(du+w,v))\nprint(d['T'])  # 9",
+      "notes": ""
+    }
+  }
+]

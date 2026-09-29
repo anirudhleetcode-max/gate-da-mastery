@@ -1,0 +1,113 @@
+{
+  "id": "DA2026-S8-Q43",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 43,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-warehousing",
+  "subtopicIds": [
+    "dbw-concept-hierarchies",
+    "dbw-multidimensional-schema"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the cuboid count of a data cube with concept hierarchies) needing direct recall of the formula and a single-step computation, (3+1)^3 = 64; about 1 minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider the concept hierarchies as shown in the figure.\n\nWhich of the following options denotes the total number of possible data cuboids from these concept hierarchies?\n\n![Figure: Three concept hierarchies drawn as vertical chains of three levels each. First: Year at the top, then Month, then Day. Second: Country at the top, then State, then City. Third: Item Category at the top, then Item Type, then Item.](/pyq/2026/fig/Q43-1.png)",
+  "options": [
+    {
+      "label": "A",
+      "text": "$4^3$"
+    },
+    {
+      "label": "B",
+      "text": "$2^3$"
+    },
+    {
+      "label": "C",
+      "text": "$2!$"
+    },
+    {
+      "label": "D",
+      "text": "$4!$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "There are 3 dimensions (time, location, item), each with $L_i = 3$ hierarchy levels. A cuboid chooses, for each dimension, one of its levels or the virtual top level \"all\", so each dimension offers $L_i + 1 = 4$ choices.\n\nTotal cuboids $= \\prod_i (L_i + 1) = 4 \\times 4 \\times 4 = 4^3 = 64$. **(A)**",
+    "steps": [
+      {
+        "title": "Read the dimensions and their levels",
+        "body": "The figure shows three dimensions, each with a 3-level concept hierarchy (lowest level at the bottom):\n\n| Dimension | Levels (fine → coarse) | $L_i$ |\n| --- | --- | --- |\n| time | Day → Month → Year | 3 |\n| location | City → State → Country | 3 |\n| item | Item → Item Type → Item Category | 3 |"
+      },
+      {
+        "title": "Formula: cuboids of a cube with hierarchies",
+        "body": "A cuboid is fixed by deciding, independently for each dimension, the level at which that dimension is summarised. Each dimension can sit at any of its $L_i$ levels, **or** be aggregated away completely, which corresponds to the virtual top level $\\text{all}$. That gives $L_i + 1$ choices per dimension, and the choices multiply:\n\n$$\nT = \\prod_{i=1}^{n} (L_i + 1)\n$$"
+      },
+      {
+        "title": "Substitute and compute",
+        "body": "With $n = 3$ and $L_1 = L_2 = L_3 = 3$:\n\n$$\nT = (3 + 1)(3 + 1)(3 + 1) = 4^3 = 64\n$$\n\nExamples: $(\\text{Day}, \\text{City}, \\text{Item})$ is the base cuboid, $(\\text{Month}, \\text{Country}, \\text{all})$ is an intermediate cuboid, and $(\\text{all}, \\text{all}, \\text{all})$ is the apex cuboid (the grand total)."
+      },
+      {
+        "title": "Sanity check and answer",
+        "body": "Without hierarchies ($L_i = 1$ for each dimension) the formula gives $2^3 = 8$, the familiar count of all subsets of 3 dimensions. The hierarchies enlarge this lattice to $4^3 = 64$ cuboids.\n\nAnswer → **(A)** $4^3$."
+      }
+    ],
+    "finalAnswer": "**(A)** $4^3$",
+    "teaching": "**Data cube and cuboids.** In a data warehouse, a fact such as sales is analysed along dimensions such as time, location and item. A *cuboid* is one summary table of the facts at a particular granularity, for example \"total sales per Month per Country\". The set of all cuboids forms a lattice called the **data cube**. At the bottom is the **base cuboid**, the finest granularity in every dimension. At the top is the **apex cuboid**, where every dimension is aggregated away and a single grand total remains.\n\n**Without hierarchies.** If each dimension has just one level, a cuboid is decided by which dimensions it keeps. Each dimension is either kept or dropped, so $n$ dimensions give $2^n$ cuboids.\n\n**With concept hierarchies.** A concept hierarchy orders a dimension's levels from fine to coarse, such as $\\text{Day} \\prec \\text{Month} \\prec \\text{Year}$. Rolling up moves up the hierarchy, and drilling down moves back down. Now a cuboid decides, for every dimension, *which level* to use, or to drop the dimension entirely, which is the extra virtual top level $\\text{all}$. So a dimension with $L_i$ levels contributes $L_i + 1$ choices, and because the dimensions are chosen independently the counts multiply:\n\n$$\nT = \\prod_{i=1}^{n} (L_i + 1).\n$$\n\n(This is the standard result stated in Han, Kamber and Pei's *Data Mining: Concepts and Techniques*.)\n\n**Applying it here.** Each of the three hierarchies (Year–Month–Day, Country–State–City, Item Category–Item Type–Item) has 3 levels, so each dimension has $3 + 1 = 4$ choices. The total is $4 \\cdot 4 \\cdot 4 = 4^3 = 64$. Remember the \"+1\": forgetting the $\\text{all}$ level gives $3^3 = 27$, and ignoring the hierarchies gives $2^3 = 8$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Each of the 3 dimensions has 3 levels plus the virtual level $\\text{all}$, so 4 choices per dimension and $4 \\times 4 \\times 4 = 4^3 = 64$ cuboids."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$2^3 = 8$ counts cuboids only when each dimension has a single level (keep it or drop it). It ignores the 3-level concept hierarchies shown in the figure."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$2! = 2$ is far too small: the base cuboid $(\\text{Day}, \\text{City}, \\text{Item})$ and the apex cuboid $(\\text{all}, \\text{all}, \\text{all})$ are already 2 cuboids, and $(\\text{Year}, \\text{all}, \\text{all})$ is a third."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$4! = 24$ counts orderings, but a cuboid is a combination of independent level choices, one per dimension. The choices multiply as $4 \\times 4 \\times 4$, not $4 \\times 3 \\times 2 \\times 1$."
+      }
+    ],
+    "shortcut": "For each dimension take (number of hierarchy levels $+ 1$) and multiply across dimensions. Here that is $(3+1)^3 = 4^3$.",
+    "commonTrap": "Using the plain $2^n$ lattice count ($2^3 = 8$, option B), which ignores the hierarchies, or forgetting the \"+1\" for the virtual top level $\\text{all}$ and getting $3^3 = 27$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q43-1.webp",
+    "/pyq/2026/official/Q43-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The concept-hierarchy figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q43-1.png. Options (A) and (B) are rendered on the paper as superscript powers 4^3 and 2^3 (the PDF text layer flattens them to '43' and '23'); transcribed from the image."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (4^3 = 64 cuboids)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nlevels={'time':['Day','Month','Year'],'location':['City','State','Country'],'item':['Item','Item Type','Item Category']}\nchoices=[lv+['all'] for lv in levels.values()]   # each dimension: one of its 3 levels, or rolled up to 'all'\ncuboids=list(product(*choices)); print(len(cuboids), 4**3, 2**3); assert len(cuboids)==4**3==64",
+    "notes": "Three dimensions with 3-level hierarchies each (Year–Month–Day, Country–State–City, Item Category–Item Type–Item). The cuboid count is the product of (L_i + 1) over dimensions = 4^3 = 64; enumeration in Python confirms 64. This matches official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

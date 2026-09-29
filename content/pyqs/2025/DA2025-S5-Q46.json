@@ -1,0 +1,113 @@
+{
+  "id": "DA2025-S5-Q46",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 46,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-warehousing",
+  "subtopicIds": [
+    "dbw-multidimensional-schema",
+    "dbw-measures",
+    "dbw-sql"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (CUBE produces all $2^2$ grouping sets) followed by a single additive count $6 + 3 + 2 + 1$, about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider a fact table in an OLAP application: `Facts(D1, D2, val)`, where `D1` and `D2` are its dimension attributes and `val` is a dependent attribute. Suppose attribute `D1` takes 3 values and `D2` takes 2 values, and all combinations of these values are present in the table `Facts`. How many tuples are there in the result of the following query?\n\n```sql\nSELECT D1, D2, sum(val)\nFROM Facts\nGROUP BY CUBE (D1, D2);\n```",
+  "options": [
+    {
+      "label": "A",
+      "text": "1"
+    },
+    {
+      "label": "B",
+      "text": "6"
+    },
+    {
+      "label": "C",
+      "text": "9"
+    },
+    {
+      "label": "D",
+      "text": "12"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "`GROUP BY CUBE (D1, D2)` computes all $2^2 = 4$ grouping sets: `(D1, D2)`, `(D1)`, `(D2)` and `()`. They give $3 \\times 2 = 6$, $3$, $2$ and $1$ rows, so the result has $6 + 3 + 2 + 1 = 12 = (3+1)(2+1)$ tuples, which is option **(D)**.",
+    "steps": [
+      {
+        "title": "What CUBE means",
+        "body": "`GROUP BY CUBE (D1, D2)` is shorthand for grouping by **every subset** of the listed dimensions:\n\n```sql\nGROUP BY GROUPING SETS ((D1, D2), (D1), (D2), ())\n```\n\nWith $n$ dimensions there are $2^n$ grouping sets; here $2^2 = 4$. The result is the union of the four aggregations. In each row, a dimension that has been aggregated away is shown as `NULL`, which stands for \"all values\"."
+      },
+      {
+        "title": "Count the rows of each grouping set",
+        "body": "Let `D1` take the values $a, b, c$ and `D2` the values $x, y$. All $3 \\times 2 = 6$ combinations are present in `Facts`, so:\n\n| Grouping set | Meaning | Rows |\n| --- | --- | --- |\n| `(D1, D2)` | one row per $(D1, D2)$ pair (base cuboid) | $3 \\times 2 = 6$ |\n| `(D1)` | subtotal per value of `D1`, `D2` = `NULL` | $3$ |\n| `(D2)` | subtotal per value of `D2`, `D1` = `NULL` | $2$ |\n| `()` | grand total, both `NULL` (apex cuboid) | $1$ |"
+      },
+      {
+        "title": "Add them up",
+        "body": "$$\n6 + 3 + 2 + 1 = 12.\n$$\n\nThe $12$ tuples are:\n\n| `D1` | `D2` | `sum(val)` |\n| --- | --- | --- |\n| a | x | sum for (a, x) |\n| a | y | sum for (a, y) |\n| b | x | sum for (b, x) |\n| b | y | sum for (b, y) |\n| c | x | sum for (c, x) |\n| c | y | sum for (c, y) |\n| a | NULL | total for a |\n| b | NULL | total for b |\n| c | NULL | total for c |\n| NULL | x | total for x |\n| NULL | y | total for y |\n| NULL | NULL | grand total |"
+      },
+      {
+        "title": "Cross-check with the product formula",
+        "body": "Each dimension column in the cube result holds either one of its actual values or `NULL` (\"all\"). When every combination of values is present, every such choice appears exactly once, so the count is\n\n$$\n(|D1| + 1)(|D2| + 1) = (3 + 1)(2 + 1) = 4 \\times 3 = 12.\n$$\n\nThe answer is option **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Fact tables and the data cube.** In a data warehouse, a *fact table* stores measurements (here `val`) against *dimensions* (here `D1` and `D2`, for example product and region). OLAP users constantly need summaries at different levels of detail: per product and region, per product only, per region only, and the overall total. Each such summary is a **cuboid**. For $n$ dimensions there are $2^n$ cuboids, one for each subset of the dimensions. Together they form the *data cube*, a lattice running from the base cuboid (all dimensions) up to the apex cuboid (no dimensions, one grand-total row).\n\n**SQL operators for the cube.**\n\n- `GROUP BY D1, D2`: only the base cuboid.\n- `GROUP BY ROLLUP (D1, D2)`: the hierarchical prefixes `(D1, D2)`, `(D1)`, `()`, which is $n + 1$ grouping sets.\n- `GROUP BY CUBE (D1, D2)`: **all** subsets `(D1, D2)`, `(D1)`, `(D2)`, `()`, which is $2^n$ grouping sets.\n- `GROUP BY GROUPING SETS (...)`: exactly the sets you list.\n\nThe outputs of all the grouping sets are stacked into one result. A column that is rolled up appears as `NULL`; the `GROUPING()` function tells such a `NULL` apart from a genuine `NULL` in the data.\n\n**Counting the result.** The number of rows of a grouping set equals the number of distinct value combinations of its columns that occur in the data. Add these counts over all grouping sets. If the fact table is *dense*, meaning every combination occurs, each dimension contributes its $|D_i|$ values plus one \"ALL\" (`NULL`) choice, so\n\n$$\n\\text{rows of CUBE} = \\prod_i (|D_i| + 1).\n$$\n\nThe `sum(val)` measure is *distributive*: each subtotal can be computed by adding smaller subtotals, which is why cubes are cheap to build for `SUM`, `COUNT`, `MIN` and `MAX`.\n\n**Back to this question.** With $|D1| = 3$, $|D2| = 2$ and all $6$ combinations present, the cuboids have $6$, $3$, $2$ and $1$ rows, for a total of $12 = 4 \\times 3$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$1$ is only the grand-total row, i.e. the apex grouping set `()` (what `SELECT sum(val) FROM Facts` returns). CUBE returns this row **plus** the rows of the other three grouping sets."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$6 = 3 \\times 2$ is the result of a plain `GROUP BY D1, D2` (the base cuboid). It ignores the subtotal and grand-total rows that CUBE adds."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$9$ is not the size of any complete set of groupings that CUBE produces. It comes from leaving out grouping sets, for example $6 + 3$ (dropping `(D2)` and `()`) or $6 + 2 + 1$ (dropping `(D1)`). Even `ROLLUP (D1, D2)` would give $6 + 3 + 1 = 10$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "CUBE computes all four grouping sets: $6$ (`D1`, `D2`) $+ 3$ (`D1`) $+ 2$ (`D2`) $+ 1$ (grand total) $= 12 = (3+1)(2+1)$."
+      }
+    ],
+    "shortcut": "For a dense fact table, `CUBE` over dimensions with $k_1, k_2, \\dots$ values returns $\\prod (k_i + 1)$ rows. Here $(3+1)(2+1) = 12$.",
+    "commonTrap": "Treating `CUBE` like an ordinary `GROUP BY D1, D2` and answering $6$, or listing the subtotals but forgetting the single grand-total row `()` (giving $11$). Confusing `CUBE` with `ROLLUP` gives $6 + 3 + 1 = 10$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q46-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The three SQL lines are set as separate monospace lines at the same indentation in the paper and are transcribed as one SQL code block, character for character (including the space in `CUBE (D1, D2)` and the lowercase `sum`). The options are plain numerals in text font. The GATE 2025 logo watermark behind the options (the only embedded image in this region) is not part of the question, so no figure is included."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "D (12)",
+    "agreesWithKey": true,
+    "checkCode": "import sqlite3, itertools\ncon = sqlite3.connect(':memory:')\ncon.execute('CREATE TABLE Facts(D1, D2, val)')\nrows = [(d1, d2, v) for v, (d1, d2) in enumerate(itertools.product(['a','b','c'], ['x','y']), 1)]\ncon.executemany('INSERT INTO Facts VALUES (?,?,?)', rows)   # all 3*2 = 6 combinations present\n# CUBE(D1, D2) = union of the 2^2 grouping sets (D1,D2), (D1), (D2), ()\nq = '''SELECT D1, D2, sum(val) FROM Facts GROUP BY D1, D2\nUNION ALL SELECT D1, NULL, sum(val) FROM Facts GROUP BY D1\nUNION ALL SELECT NULL, D2, sum(val) FROM Facts GROUP BY D2\nUNION ALL SELECT NULL, NULL, sum(val) FROM Facts'''\nres = con.execute(q).fetchall()\nfor r in res: print(r)\nprint(len(res), (3 + 1) * (2 + 1))   # 12 12\n",
+    "notes": "SQLite has no CUBE operator, so the check builds a dense 3 x 2 Facts table and evaluates CUBE (D1, D2) as the UNION ALL of its four grouping sets (D1, D2), (D1), (D2), (). The result has 6 + 3 + 2 + 1 = 12 rows, matching (3+1)(2+1) = 12. This agrees with the official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

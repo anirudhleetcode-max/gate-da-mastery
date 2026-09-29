@@ -1,0 +1,615 @@
+[
+  {
+    "id": "M01-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-bayes",
+      "ps-marginal-joint"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single application of Bayes' theorem with a three-term total-probability denominator; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Bayes' theorem over a three-way partition: posterior probability of the source given an observed error",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A company builds a labelled image dataset using three annotators, P, Q and R, who label 50%, 30% and 20% of the images, respectively. Each image is labelled by exactly one annotator. From past audits, the fraction of wrongly labelled images is 2% for P, 5% for Q and 10% for R.\n\nAn image is picked uniformly at random from the dataset and its label is found to be wrong. The probability that this image was labelled by R is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.43,
+      "max": 0.45
+    },
+    "solution": {
+      "quick": "Let $W$ = \"label is wrong\". By total probability, $P(W) = 0.5(0.02) + 0.3(0.05) + 0.2(0.10) = 0.045$.\nBy Bayes' theorem, $P(R \\mid W) = \\dfrac{0.2 \\times 0.10}{0.045} = \\dfrac{4}{9} \\approx 0.44$.",
+      "steps": [
+        {
+          "title": "Set up priors and likelihoods",
+          "body": "Let $P$, $Q$, $R$ denote \"labelled by P/Q/R\" (a partition of the dataset) and $W$ = \"label is wrong\".\n\nPriors: $P(P) = 0.5$, $P(Q) = 0.3$, $P(R) = 0.2$.\n\nLikelihoods: $P(W \\mid P) = 0.02$, $P(W \\mid Q) = 0.05$, $P(W \\mid R) = 0.10$."
+        },
+        {
+          "title": "Total probability of a wrong label",
+          "body": "$$\nP(W) = 0.5 \\times 0.02 + 0.3 \\times 0.05 + 0.2 \\times 0.10 = 0.010 + 0.015 + 0.020 = 0.045\n$$"
+        },
+        {
+          "title": "Apply Bayes' theorem",
+          "body": "$$\nP(R \\mid W) = \\frac{P(R)\\,P(W \\mid R)}{P(W)} = \\frac{0.020}{0.045} = \\frac{4}{9} = 0.4444\\ldots\n$$"
+        },
+        {
+          "title": "Round and interpret",
+          "body": "Rounded to two decimal places, $P(R \\mid W) \\approx 0.44$. R labels only 20% of the images but is responsible for about 44% of the wrong labels, because R's error rate is the highest."
+        }
+      ],
+      "finalAnswer": "**0.44** (accepted range 0.43 to 0.45)",
+      "teaching": "Bayes' theorem reverses the direction of a conditional probability. The audits give $P(W \\mid \\text{annotator})$, the chance that a given annotator makes an error, but the question asks for $P(\\text{annotator} \\mid W)$, the chance that a known error came from a particular annotator. Both are tied to the same joint probability: $P(R \\cap W) = P(R)\\,P(W \\mid R) = P(W)\\,P(R \\mid W)$. Dividing by $P(W)$ gives Bayes' rule.\n\nThe denominator $P(W)$ comes from the law of total probability. Because every image is labelled by exactly one annotator, the three annotators partition the dataset, so $P(W)$ is the weighted average of the three error rates, weighted by each annotator's share of the work.\n\nHere R's prior share is only 0.2, but R's error rate is five times P's. After an error is observed, the probability that R is responsible rises to $4/9 \\approx 0.44$. The pattern is always the same: prior times likelihood, then normalise.",
+      "shortcut": "Use natural frequencies: out of 1000 images, P labels 500 (10 wrong), Q labels 300 (15 wrong) and R labels 200 (20 wrong). Of the 45 wrong labels, 20 are R's, so the answer is $20/45 \\approx 0.44$.",
+      "commonTrap": "Reporting the likelihood $P(W \\mid R) = 0.10$ or the prior $P(R) = 0.2$ instead of the posterior, or stopping at the joint probability $0.020$ without dividing by $P(W) = 0.045$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.4444 (= 4/9), rounds to 0.44",
+      "agreesWithKey": true,
+      "checkCode": "p={'P':0.5,'Q':0.3,'R':0.2}; e={'P':0.02,'Q':0.05,'R':0.10}\nPW=sum(p[k]*e[k] for k in p)\nprint(round(p['R']*e['R']/PW,4))  # 0.4444",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-correlation-covariance"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (how covariance and correlation change under linear transformations) with a single short computation; under 1.5 minutes.",
+    "estimatedTimeSec": 60,
+    "concept": "Effect of shifting and scaling on covariance and the correlation coefficient",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $X$ and $Y$ be random variables with $\\operatorname{Var}(X) = 4$, $\\operatorname{Var}(Y) = 25$ and $\\operatorname{Cov}(X, Y) = 6$. Define\n\n$$\nU = 3 - 2X, \\qquad V = 5Y + 1.\n$$\n\nThe correlation coefficient $\\rho(U, V)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$-60$"
+      },
+      {
+        "label": "B",
+        "text": "$-0.6$"
+      },
+      {
+        "label": "C",
+        "text": "$0.6$"
+      },
+      {
+        "label": "D",
+        "text": "$-0.06$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$\\operatorname{Cov}(U, V) = (-2)(5)(6) = -60$, $\\sigma_U = 2 \\times 2 = 4$, $\\sigma_V = 5 \\times 5 = 25$.\nSo $\\rho(U, V) = -60/(4 \\times 25) = -0.6$: the magnitude of $\\rho(X, Y) = 0.6$ is kept and the sign flips because exactly one scale factor is negative.",
+      "steps": [
+        {
+          "title": "Covariance of the transformed variables",
+          "body": "For $U = a + bX$ and $V = c + dY$, the constants $a, c$ drop out and $\\operatorname{Cov}(U, V) = bd\\,\\operatorname{Cov}(X, Y)$.\n\nHere $b = -2$, $d = 5$: $\\operatorname{Cov}(U, V) = (-2)(5)(6) = -60$."
+        },
+        {
+          "title": "Standard deviations of the transformed variables",
+          "body": "$\\operatorname{Var}(U) = (-2)^2 \\times 4 = 16 \\Rightarrow \\sigma_U = 4$.\n\n$\\operatorname{Var}(V) = 5^2 \\times 25 = 625 \\Rightarrow \\sigma_V = 25$."
+        },
+        {
+          "title": "Correlation",
+          "body": "$$\n\\rho(U, V) = \\frac{\\operatorname{Cov}(U, V)}{\\sigma_U \\sigma_V} = \\frac{-60}{4 \\times 25} = -0.6\n$$\n\nCheck: $\\rho(X, Y) = \\dfrac{6}{2 \\times 5} = 0.6$, and $\\rho(U, V) = \\operatorname{sign}(bd)\\,\\rho(X, Y) = -0.6$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Covariance measures how two variables move together, but its size depends on the units: measure $X$ in centimetres instead of metres and the covariance grows 100-fold. Correlation removes the units by dividing by both standard deviations, $\\rho(X, Y) = \\operatorname{Cov}(X, Y)/(\\sigma_X \\sigma_Y)$, so it always lies in $[-1, 1]$.\n\nUnder linear maps $U = a + bX$ and $V = c + dY$, adding a constant shifts a variable without changing how it co-varies with anything, so $a$ and $c$ vanish. Scaling multiplies the covariance by $bd$ and the standard deviations by $|b|$ and $|d|$. Therefore\n\n$$\n\\rho(U, V) = \\frac{bd}{|b|\\,|d|}\\,\\rho(X, Y) = \\operatorname{sign}(bd)\\,\\rho(X, Y).\n$$\n\nThe strength of a linear relationship does not depend on units; only reversing the direction of exactly one variable flips the sign. Here $\\rho(X, Y) = 0.6$, and $U$ reverses $X$, so $\\rho(U, V) = -0.6$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$-60$ is $\\operatorname{Cov}(U, V)$, not the correlation. A correlation must lie in $[-1, 1]$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\rho(U, V) = -60/(4 \\times 25) = -0.6$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.6$ is $\\rho(X, Y)$. It ignores that the factor $-2$ in $U$ reverses the direction of $X$ and flips the sign."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Comes from dividing the covariance by the product of the **variances** ($6/(4 \\times 25) = 0.06$, then flipping the sign) instead of the standard deviations."
+        }
+      ],
+      "shortcut": "Shifts never matter, and scalings change only the sign of $\\rho$: $\\rho(U, V) = \\operatorname{sign}((-2)(5)) \\times \\dfrac{6}{2 \\times 5} = -0.6$.",
+      "commonTrap": "Dropping the minus sign (answering $0.6$) or reporting the transformed covariance $-60$ as if it were the correlation."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-0.6 (option B)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nvx,vy,c=4,25,6; b,d=-2,5\nprint(b*d*c/math.sqrt(b*b*vx*d*d*vy))  # -0.6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation",
+      "ps-discrete-named"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (binomial conditional moments and the law of total variance) with three routine computational steps; about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Law of total variance for a two-stage (mixture) random variable",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Overnight, a help desk receives $X$ support tickets, where\n\n| $x$ | 1 | 2 | 3 |\n|---|---|---|---|\n| $P(X = x)$ | 0.2 | 0.5 | 0.3 |\n\nGiven $X = x$, each of the $x$ tickets is independently marked *urgent* with probability $\\tfrac{1}{2}$, so the number $Y$ of urgent tickets satisfies $Y \\mid X = x \\sim \\text{Binomial}\\left(x, \\tfrac{1}{2}\\right)$.\n\nThe variance $\\operatorname{Var}(Y)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.525$"
+      },
+      {
+        "label": "B",
+        "text": "$0.1225$"
+      },
+      {
+        "label": "C",
+        "text": "$1.75$"
+      },
+      {
+        "label": "D",
+        "text": "$0.6475$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$E[Y \\mid X] = X/2$ and $\\operatorname{Var}(Y \\mid X) = X/4$. With $E[X] = 2.1$ and $\\operatorname{Var}(X) = 0.49$:\n$\\operatorname{Var}(Y) = E[X]/4 + \\operatorname{Var}(X)/4 = 0.525 + 0.1225 = 0.6475$.",
+      "steps": [
+        {
+          "title": "Conditional mean and variance",
+          "body": "For $\\text{Binomial}(x, p)$ the mean is $xp$ and the variance is $xp(1-p)$. With $p = \\tfrac{1}{2}$:\n\n$E[Y \\mid X] = \\dfrac{X}{2}$, $\\quad \\operatorname{Var}(Y \\mid X) = \\dfrac{X}{4}$."
+        },
+        {
+          "title": "Moments of X",
+          "body": "$E[X] = 1(0.2) + 2(0.5) + 3(0.3) = 0.2 + 1.0 + 0.9 = 2.1$\n\n$E[X^2] = 1(0.2) + 4(0.5) + 9(0.3) = 0.2 + 2.0 + 2.7 = 4.9$\n\n$\\operatorname{Var}(X) = 4.9 - 2.1^2 = 4.9 - 4.41 = 0.49$"
+        },
+        {
+          "title": "Law of total variance",
+          "body": "$$\n\\operatorname{Var}(Y) = E[\\operatorname{Var}(Y \\mid X)] + \\operatorname{Var}(E[Y \\mid X])\n$$\n\n$E[\\operatorname{Var}(Y \\mid X)] = E[X]/4 = 2.1/4 = 0.525$\n\n$\\operatorname{Var}(E[Y \\mid X]) = \\operatorname{Var}(X/2) = 0.49/4 = 0.1225$\n\n$\\operatorname{Var}(Y) = 0.525 + 0.1225 = 0.6475$"
+        },
+        {
+          "title": "Cross-check via moments",
+          "body": "$E[Y] = E[X]/2 = 1.05$. $E[Y^2] = E\\left[\\operatorname{Var}(Y \\mid X) + (E[Y \\mid X])^2\\right] = E[X]/4 + E[X^2]/4 = 0.525 + 1.225 = 1.75$.\n\n$\\operatorname{Var}(Y) = 1.75 - 1.05^2 = 1.75 - 1.1025 = 0.6475$ ✓"
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "When a random quantity is generated in two stages (first $X$, then $Y$ given $X$), its variance comes from two sources. The law of total variance states\n\n$$\n\\operatorname{Var}(Y) = E[\\operatorname{Var}(Y \\mid X)] + \\operatorname{Var}(E[Y \\mid X]).\n$$\n\nThe first term is the average **within-stage** spread: even if we knew how many tickets arrived, the number of urgent ones would still vary because each ticket is urgent or not by chance. The second term is the **between-stage** spread: the conditional mean $E[Y \\mid X] = X/2$ itself moves as the ticket count changes from night to night. Dropping either term understates the uncertainty.\n\nThe companion rule, the tower property $E[Y] = E[E[Y \\mid X]]$, gives $E[Y] = 1.05$. It also gives a second route to the answer through $E[Y^2] - (E[Y])^2$, which is a useful self-check under exam pressure. Here the within part is $0.525$ and the between part is $0.1225$, giving $0.6475$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.525 = E[\\operatorname{Var}(Y \\mid X)]$ only; it misses the variation of $E[Y \\mid X]$. It is also what you get by wrongly plugging $n = E[X] = 2.1$ into $np(1-p)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.1225 = \\operatorname{Var}(E[Y \\mid X])$ only; it ignores the binomial randomness for a fixed $X$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$1.75 = E[Y^2]$; the square of the mean, $1.05^2 = 1.1025$, was not subtracted."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$0.525 + 0.1225 = 0.6475$."
+        }
+      ],
+      "commonTrap": "Treating $Y$ as $\\text{Binomial}(E[X], \\tfrac{1}{2})$, which gives $0.525$. Replacing a random number of trials by its mean keeps the expectation right but loses the between-stage variance $\\operatorname{Var}(X)/4$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.6475 (option D)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nfrom math import comb\npx={1:F(2,10),2:F(5,10),3:F(3,10)}; h=F(1,2)\nEY=sum(px[x]*sum(y*comb(x,y)*h**x for y in range(x+1)) for x in px)\nEY2=sum(px[x]*sum(y*y*comb(x,y)*h**x for y in range(x+1)) for x in px)\nprint(float(EY2-EY**2))  # 0.6475",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (binomial PMF) applied directly to two terms with a single-step computation; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Binomial distribution: probability of at least k successes in n independent Bernoulli trials",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A plant nursery sows 6 seeds of a rare orchid. Each seed germinates independently of the others with probability 0.8.\n\nThe probability that at least 5 of the 6 seeds germinate is ________ (rounded off to three decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.654,
+      "max": 0.656
+    },
+    "solution": {
+      "quick": "The number of germinating seeds is $X \\sim \\text{Binomial}(6, 0.8)$.\n$P(X \\ge 5) = \\binom{6}{5}(0.8)^5(0.2) + (0.8)^6 = 0.393216 + 0.262144 = 0.65536 \\approx 0.655$.",
+      "steps": [
+        {
+          "title": "Identify the model",
+          "body": "Six independent trials, each a success (germinates) with the same probability $p = 0.8$, so $X \\sim \\text{Binomial}(n = 6, p = 0.8)$ with\n\n$$\nP(X = k) = \\binom{6}{k}(0.8)^k(0.2)^{6-k}.\n$$"
+        },
+        {
+          "title": "Exactly 5 germinate",
+          "body": "$P(X = 5) = \\binom{6}{5}(0.8)^5(0.2)^1 = 6 \\times 0.32768 \\times 0.2 = 0.393216$"
+        },
+        {
+          "title": "All 6 germinate",
+          "body": "$P(X = 6) = (0.8)^6 = 0.262144$"
+        },
+        {
+          "title": "Add and round",
+          "body": "$P(X \\ge 5) = 0.393216 + 0.262144 = 0.65536 \\approx 0.655$ (three decimal places)."
+        }
+      ],
+      "finalAnswer": "**0.655** (accepted range 0.654 to 0.656)",
+      "teaching": "A Bernoulli trial has two outcomes: success with probability $p$ and failure with probability $1 - p$. When $n$ such trials are independent and share the same $p$, the number of successes $X$ follows the binomial distribution:\n\n$$\nP(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}.\n$$\n\nThe factor $p^k(1-p)^{n-k}$ is the probability of one particular arrangement of $k$ successes and $n - k$ failures (independence lets us multiply). The coefficient $\\binom{n}{k}$ counts how many such arrangements exist.\n\n\"At least 5 of 6\" is the union of the disjoint events $X = 5$ and $X = 6$, so their probabilities add. For $X = 5$ there are six arrangements, one for each seed that fails, each with probability $0.8^5 \\times 0.2$. For $X = 6$ there is exactly one arrangement. The mean $np = 4.8$ says a high count is typical, so an answer a little above one half is sensible.",
+      "commonTrap": "Forgetting the coefficient $\\binom{6}{5} = 6$, which gives $0.065536 + 0.262144 = 0.32768$. Other slips are computing only $P(X = 5)$ or reading \"at least 5\" as \"more than 5\"."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.65536, rounds to 0.655",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\nprint(sum(comb(6,k)*0.8**k*0.2**(6-k) for k in (5,6)))  # 0.65536",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-continuous-named"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — four statements on four different distributions (exponential memorylessness, Poisson-process scaling, normal standardisation, chi-squared moments), each a short routine check that must be verified independently; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Signature properties of the exponential, Poisson, normal and chi-squared distributions",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following statements is/are TRUE?\n\n(Here $Z$ denotes a standard normal random variable.)",
+    "options": [
+      {
+        "label": "A",
+        "text": "The lifetime $T$ (in hours) of a battery is exponentially distributed with mean 5 hours. Then $P(T > 7 \\mid T > 3) = e^{-7/5}$."
+      },
+      {
+        "label": "B",
+        "text": "Requests reach a server according to a Poisson process with rate 3 per hour. If $N$ is the number of requests in a given 20-minute window, then $P(N = 0) = e^{-1}$."
+      },
+      {
+        "label": "C",
+        "text": "If $W$ is normally distributed with mean 10 and variance 4, then $P(W > 12) = P(Z > 1)$."
+      },
+      {
+        "label": "D",
+        "text": "If $Z_1, Z_2, Z_3$ are independent standard normal random variables and $S = Z_1^2 + Z_2^2 + Z_3^2$, then $E[S] = 3$ and $\\operatorname{Var}(S) = 3$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "(A) By memorylessness the value is $P(T > 4) = e^{-4/5}$, not $e^{-7/5}$: false. (B) The count in $\\tfrac{1}{3}$ hour is Poisson with mean 1, so $P(N = 0) = e^{-1}$: true.\n(C) $\\sigma = 2$, so $(12 - 10)/2 = 1$: true. (D) $S \\sim \\chi^2_3$ has mean 3 but variance $2 \\times 3 = 6$: false. Answer: B, C.",
+      "steps": [
+        {
+          "title": "(A) Exponential: memoryless property",
+          "body": "Mean 5 means rate $\\lambda = 1/5$ and $P(T > t) = e^{-t/5}$.\n\n$$\nP(T > 7 \\mid T > 3) = \\frac{P(T > 7)}{P(T > 3)} = \\frac{e^{-7/5}}{e^{-3/5}} = e^{-4/5} \\approx 0.449\n$$\n\nThis is not $e^{-7/5} \\approx 0.247$. **False.**"
+        },
+        {
+          "title": "(B) Poisson process over a sub-interval",
+          "body": "20 minutes $= \\tfrac{1}{3}$ hour, so $N \\sim \\text{Poisson}\\left(3 \\times \\tfrac{1}{3}\\right) = \\text{Poisson}(1)$.\n\n$P(N = 0) = e^{-1}\\dfrac{1^0}{0!} = e^{-1} \\approx 0.368$. **True.**"
+        },
+        {
+          "title": "(C) Standardising a normal variable",
+          "body": "Variance 4 means standard deviation $\\sigma = 2$.\n\n$P(W > 12) = P\\left(Z > \\dfrac{12 - 10}{2}\\right) = P(Z > 1) \\approx 0.1587$. **True.**"
+        },
+        {
+          "title": "(D) Chi-squared moments",
+          "body": "$S$ is a sum of squares of 3 independent standard normals, so $S \\sim \\chi^2_3$, with $E[S] = k = 3$ and $\\operatorname{Var}(S) = 2k = 6$.\n\n(Each $Z_i^2$ has mean 1 and variance $E[Z^4] - 1 = 3 - 1 = 2$.) $\\operatorname{Var}(S) = 3$ is wrong. **False.**"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only statements B and C are true."
+        }
+      ],
+      "finalAnswer": "**(B), (C)**",
+      "teaching": "Each named distribution carries a few signature facts that are worth memorising.\n\n- **Exponential** (rate $\\lambda$, mean $1/\\lambda$): $P(T > t) = e^{-\\lambda t}$. It is memoryless: $P(T > s + t \\mid T > s) = P(T > t)$, so an item that has survived $s$ hours behaves like a new one.\n- **Poisson process** (rate $r$ per unit time): the count in any window of length $t$ is Poisson with mean $rt$, so $P(\\text{no event}) = e^{-rt}$.\n- **Normal** $N(\\mu, \\sigma^2)$: standardise with the standard deviation, $Z = (W - \\mu)/\\sigma$, never with the variance.\n- **Chi-squared** with $k$ degrees of freedom: the sum of squares of $k$ independent standard normals, with mean $k$ and variance $2k$.\n\n\"Mean equals variance\" is the Poisson signature, not the chi-squared one. Checking each statement against these facts shows that B and C hold while A and D fail.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Memorylessness gives $P(T > 7 \\mid T > 3) = P(T > 4) = e^{-4/5}$. The stated $e^{-7/5}$ is the unconditional $P(T > 7)$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The count in 20 minutes is $\\text{Poisson}(3 \\times \\tfrac{1}{3}) = \\text{Poisson}(1)$, so $P(N = 0) = e^{-1}$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\sigma = \\sqrt{4} = 2$ and $(12 - 10)/2 = 1$, so $P(W > 12) = P(Z > 1)$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$S \\sim \\chi^2_3$ has $E[S] = 3$ but $\\operatorname{Var}(S) = 6$. Equal mean and variance is a Poisson property."
+        }
+      ],
+      "commonTrap": "In (C), dividing by the variance 4 instead of the standard deviation 2 gives $P(Z > 0.5)$, which makes a true statement look false. In (A), forgetting to condition gives $e^{-7/5}$, which makes a false statement look true."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C",
+      "agreesWithKey": true,
+      "checkCode": "import math\nA=math.isclose(math.exp(-7/5)/math.exp(-3/5), math.exp(-7/5))  # False (=e^-0.8)\nB=math.isclose(math.exp(-3*20/60), math.exp(-1))  # True\nsf=lambda z: 0.5*math.erfc(z/math.sqrt(2))\nC=math.isclose(sf((12-10)/math.sqrt(4)), sf(1))  # True\nf=lambda z: math.exp(-z*z/2)/math.sqrt(2*math.pi); h=1e-3\nEZ4=sum((i*h)**4*f(i*h) for i in range(-10000,10001))*h  # ~3\nD=math.isclose(3*(EZ4-1),3,abs_tol=1e-3)  # Var(S)=3*(E[Z^4]-1)=6 -> False\nprint([k for k,v in zip('ABCD',[A,B,C,D]) if v])  # ['B','C']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-confidence-interval"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (known-sigma z-interval) applied with a single formula and one-step arithmetic; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Confidence interval for a population mean with known standard deviation (z-interval)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A platform team records the response time of $n = 64$ randomly chosen API calls and obtains a sample mean of $\\bar{x} = 212$ ms. The population standard deviation of response times is known to be $\\sigma = 40$ ms, and the sample mean may be treated as normally distributed.\n\nGiven $z_{0.05} = 1.645$, $z_{0.025} = 1.96$ and $z_{0.005} = 2.576$, where $P(Z > z_{\\alpha}) = \\alpha$ for a standard normal random variable $Z$, the 95% confidence interval for the population mean response time (in ms) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(202.2,\\ 221.8)$"
+      },
+      {
+        "label": "B",
+        "text": "$(203.775,\\ 220.225)$"
+      },
+      {
+        "label": "C",
+        "text": "$(199.12,\\ 224.88)$"
+      },
+      {
+        "label": "D",
+        "text": "$(133.6,\\ 290.4)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "95% two-sided means $z_{0.025} = 1.96$. The standard error is $40/\\sqrt{64} = 5$, so the margin is $1.96 \\times 5 = 9.8$.\nThe interval is $212 \\pm 9.8 = (202.2,\\ 221.8)$.",
+      "steps": [
+        {
+          "title": "Formula and critical value",
+          "body": "With $\\sigma$ known, the $100(1-\\alpha)\\%$ interval is $\\bar{x} \\pm z_{\\alpha/2}\\,\\dfrac{\\sigma}{\\sqrt{n}}$.\n\nFor 95%, $\\alpha = 0.05$ is split over two tails, so the critical value is $z_{0.025} = 1.96$."
+        },
+        {
+          "title": "Standard error",
+          "body": "$\\dfrac{\\sigma}{\\sqrt{n}} = \\dfrac{40}{\\sqrt{64}} = \\dfrac{40}{8} = 5$ ms."
+        },
+        {
+          "title": "Margin of error",
+          "body": "$1.96 \\times 5 = 9.8$ ms."
+        },
+        {
+          "title": "Interval",
+          "body": "$(212 - 9.8,\\ 212 + 9.8) = (202.2,\\ 221.8)$ ms, which is option A."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "A confidence interval turns a point estimate into a range that captures the unknown parameter with a stated long-run frequency. When the population standard deviation $\\sigma$ is known and $\\bar{X}$ is (approximately) normal, $\\bar{X}$ has standard deviation $\\sigma/\\sqrt{n}$, called the standard error. Averaging $n$ observations shrinks the spread by a factor of $\\sqrt{n}$, not $n$.\n\nStandardising gives\n\n$$\nP\\left(-z_{\\alpha/2} \\le \\frac{\\bar{X} - \\mu}{\\sigma/\\sqrt{n}} \\le z_{\\alpha/2}\\right) = 1 - \\alpha,\n$$\n\nand rearranging for $\\mu$ gives $\\bar{x} \\pm z_{\\alpha/2}\\,\\sigma/\\sqrt{n}$. For 95% confidence, $\\alpha = 0.05$ is split equally between the two tails, so the critical value is $z_{0.025} = 1.96$, not $z_{0.05}$.\n\nHere the standard error is $40/8 = 5$ ms and the margin is $9.8$ ms. Interpretation: if the sampling were repeated many times, about 95% of the intervals built this way would contain the true mean.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$212 \\pm 1.96 \\times 40/8 = 212 \\pm 9.8$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Uses $z_{0.05} = 1.645$ (margin $8.225$), which gives a two-sided **90%** interval. It comes from not splitting $\\alpha$ between the two tails."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Uses $z_{0.005} = 2.576$ (margin $12.88$), which gives a **99%** interval."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Uses $\\sigma$ instead of $\\sigma/\\sqrt{n}$ (margin $1.96 \\times 40 = 78.4$). That interval is for a single observation, not for the mean."
+        }
+      ],
+      "commonTrap": "Picking $z_{0.05} = 1.645$ because \"95%\" and \"0.05\" appear together. A two-sided 95% interval needs $z_{\\alpha/2} = z_{0.025}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(202.2, 221.8) (option A)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nxbar,s,n,z=212,40,64,1.96\nm=z*s/math.sqrt(n)\nprint(round(xbar-m,3), round(xbar+m,3))  # 202.2 221.8",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-sample-space"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (enumerating the sample space and an event for a sequential experiment with a stopping rule) with short direct checks; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Sample space and events for a sequential experiment with a stopping rule",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A tester checks chips from a batch one at a time. Testing stops as soon as a defective chip is found, or after 3 chips have been tested, whichever happens first. Each outcome is recorded as the sequence of results observed, with G for a good chip and D for a defective chip (for example, GD means the first chip was good and the second was defective).\n\nWhich one of the following statements is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The sample space has 8 outcomes, because each of the 3 chips is either G or D."
+      },
+      {
+        "label": "B",
+        "text": "The sample space is $\\{D, GD, GGD\\}$, because testing always ends with a defective chip."
+      },
+      {
+        "label": "C",
+        "text": "The sample space has 4 outcomes, and the event \"a defective chip is found\" consists of exactly 3 of them."
+      },
+      {
+        "label": "D",
+        "text": "The sample space has 4 outcomes, and if each chip is independently defective with probability $\\tfrac{1}{2}$, all 4 outcomes are equally likely."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Following the stopping rule, the possible records are $S = \\{D, GD, GGD, GGG\\}$ (4 outcomes).\n\"Defective found\" $= \\{D, GD, GGD\\}$, which has 3 outcomes, so C is correct. The outcomes are not equally likely ($\\tfrac{1}{2}, \\tfrac{1}{4}, \\tfrac{1}{8}, \\tfrac{1}{8}$).",
+      "steps": [
+        {
+          "title": "Build the outcome tree",
+          "body": "- Chip 1 is D: stop, giving record **D**.\n- Chip 1 is G, chip 2 is D: stop, giving **GD**.\n- Chips 1 and 2 are G, chip 3 is D: giving **GGD**.\n- Chips 1, 2 and 3 are G: stop after 3 tests, giving **GGG**."
+        },
+        {
+          "title": "Sample space and the event",
+          "body": "$S = \\{D, GD, GGD, GGG\\}$, so $|S| = 4$.\n\nEvent $F$ = \"a defective chip is found\" $= \\{D, GD, GGD\\}$, which has 3 outcomes. Statement C is correct."
+        },
+        {
+          "title": "Eliminate the other options",
+          "body": "- A: the experiment stops early, so length-3 strings such as DGG or DDG are never observed; there are 4 records, not 8.\n- B: omits GGG, which occurs when all three chips are good and testing stops at the limit.\n- D: with $P(D) = \\tfrac{1}{2}$ independently, $P(D) = \\tfrac{1}{2}$, $P(GD) = \\tfrac{1}{4}$, $P(GGD) = \\tfrac{1}{8}$, $P(GGG) = \\tfrac{1}{8}$, which are not equal."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "A sample space is the set of all possible outcomes of an experiment, written so that exactly one outcome occurs on every run. For a sequential experiment with a stopping rule, the outcomes are the complete observation records, and records can have different lengths.\n\nBuild them with a tree: at each test, branch on G or D, and cut the branch as soon as the stopping rule is met. Here the tree gives D, GD, GGD and GGG. An event is any subset of the sample space; \"a defective chip is found\" is the subset of records that contain a D.\n\nA key point is that a sample space lists what *can* happen, not how likely each outcome is. Probabilities come from the model. With independent chips and $P(D) = \\tfrac{1}{2}$, the tree gives $\\tfrac{1}{2}, \\tfrac{1}{4}, \\tfrac{1}{8}, \\tfrac{1}{8}$. So \"favourable outcomes divided by total outcomes\" does not apply here, even though the sample space is finite.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Treats the experiment as always testing 3 chips. Because testing stops at the first D, records like DGG never occur, and $|S| = 4$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Misses GGG: if all three chips are good, testing stops at the 3-chip limit without finding a defective."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$S = \\{D, GD, GGD, GGG\\}$, and \"defective found\" $= \\{D, GD, GGD\\}$ has 3 outcomes."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The probabilities are $\\tfrac{1}{2}, \\tfrac{1}{4}, \\tfrac{1}{8}, \\tfrac{1}{8}$. Shorter records are more likely, so the outcomes are not equally likely."
+        }
+      ],
+      "commonTrap": "Assuming that every outcome in a finite sample space is equally likely (option D), or ignoring the stopping rule and listing all $2^3$ strings (option A)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "S = {D, GD, GGD, GGG}; event has 3 outcomes (option C)",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nfrom fractions import Fraction as F\nS=[]\nfor seq in itertools.product('GD',repeat=3):\n    o=''\n    for ch in seq:\n        o+=ch\n        if ch=='D': break\n    if o not in S: S.append(o)\nprint(len(S), [o for o in S if 'D' in o], {o:F(1,2**len(o)) for o in S})  # 4, 3 outcomes, unequal probs",
+      "notes": ""
+    }
+  }
+]

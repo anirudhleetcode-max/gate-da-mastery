@@ -1,0 +1,111 @@
+{
+  "id": "DA2024-S1-Q39",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 39,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (tracing a short loop with a one-step recurrence) through a direct execution trace over five elements, which a prepared student finishes in about a minute.",
+  "estimatedTimeSec": 75,
+  "stem": "Consider the function `computeS(X)` whose pseudocode is given below:\n\n```text\ncomputeS(X)\nS[1] ← 1\nfor i ← 2 to length(X)\n  S[i] ← 1\n  if X[i − 1] ≤ X[i]\n      S[i] ← S[i] + S[i − 1]\n  end if\nend for\nreturn S\n```\n\nWhich **ONE** of the following values is returned by the function `computeS(X)` for $X = [6, 3, 5, 4, 10]$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$[1, 1, 2, 3, 4]$"
+    },
+    {
+      "label": "B",
+      "text": "$[1, 1, 2, 3, 3]$"
+    },
+    {
+      "label": "C",
+      "text": "$[1, 1, 2, 1, 2]$"
+    },
+    {
+      "label": "D",
+      "text": "$[1, 1, 2, 1, 5]$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "Each $S[i]$ starts at 1, and $S[i-1]$ is added only when $X[i-1] \\le X[i]$. So $S[i]$ is the length of the run of consecutive non-decreasing elements that ends at position $i$. For $X = [6, 3, 5, 4, 10]$ the runs ending at each position have lengths $1, 1, 2, 1, 2$, so the function returns $[1, 1, 2, 1, 2]$, which is option **(C)**.",
+    "steps": [
+      {
+        "title": "Read the pseudocode as a recurrence",
+        "body": "The arrays are 1-indexed, and `for i ← 2 to length(X)` runs $i = 2, 3, \\dots, 5$ inclusive. The line `S[i] ← 1` sits **inside** the loop, so every position restarts at 1 before the test. The code therefore computes\n\n$$S[1] = 1, \\qquad S[i] = \\begin{cases} 1 + S[i-1] & \\text{if } X[i-1] \\le X[i] \\\\ 1 & \\text{otherwise.} \\end{cases}$$\n\nThe code looks back only **one** position ($S[i-1]$), never further."
+      },
+      {
+        "title": "Execution trace for X = [6, 3, 5, 4, 10]",
+        "body": "| $i$ | $X[i-1]$ | $X[i]$ | $X[i-1] \\le X[i]$? | $S[i]$ |\n| --- | --- | --- | --- | --- |\n| 1 | – | 6 | – | $1$ (initialisation) |\n| 2 | 6 | 3 | No ($6 > 3$) | $1$ |\n| 3 | 3 | 5 | Yes | $1 + S[2] = 1 + 1 = 2$ |\n| 4 | 5 | 4 | No ($5 > 4$) | $1$ |\n| 5 | 4 | 10 | Yes | $1 + S[4] = 1 + 1 = 2$ |\n\nSo $S = [1, 1, 2, 1, 2]$."
+      },
+      {
+        "title": "Interpret the result",
+        "body": "Split $X$ wherever an element is smaller than the one before it: $6 \\mid 3, 5 \\mid 4, 10$. Inside each block, $S$ counts $1, 2, \\dots$: $[1]$, $[1, 2]$, $[1, 2]$, which again gives $[1, 1, 2, 1, 2]$. At $i = 5$, the run ending at $10$ is only $4, 10$ (length 2), because the drop $5 > 4$ at $i = 4$ reset the count. The fact that $10$ is at least every earlier element does not matter to this code."
+      },
+      {
+        "title": "Complexity and answer",
+        "body": "The loop makes one comparison and at most one addition per position, so it runs in $\\Theta(n)$ time for $n = \\text{length}(X)$. The returned array is $[1, 1, 2, 1, 2]$, which is option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Tracing pseudocode.** GATE pseudocode normally uses 1-based arrays. `←` means assignment, and `for i ← a to b` includes both ends. To trace a loop, keep a table with one row per iteration and one column per variable the loop reads or writes, then fill it in line by line. Do not guess the pattern from the first two rows.\n\n**Running-count recurrences.** Many array algorithms build an auxiliary array $S$ where $S[i]$ depends on $S[i-1]$. A very common form is *reset or extend*:\n\n- if the new element continues the pattern (here: it is not smaller than its predecessor), **extend** the count, $S[i] = S[i-1] + 1$;\n- otherwise **reset** it, $S[i] = 1$.\n\nSuch an $S[i]$ is the length of the longest block of *consecutive* positions ending at $i$ that satisfies the pattern. The maximum of $S$ is the length of the longest non-decreasing contiguous run in the whole array, and the computation is one $O(n)$ pass.\n\nKeep this apart from two look-alike problems:\n\n1. The **stock-span** problem counts how many consecutive earlier elements (including the current one) are $\\le X[i]$. It keeps jumping back past earlier spans instead of stopping at the first comparison. For this $X$ it gives $[1, 1, 2, 1, 5]$.\n2. The **longest non-decreasing subsequence** ending at $i$ may skip elements. For this $X$ it gives $[1, 1, 2, 2, 3]$.\n\n**Back to this question.** `computeS` compares only adjacent elements and adds only $S[i-1]$, so it is the plain reset-or-extend run length. The two drops ($6 \\to 3$ and $5 \\to 4$) reset the count, and the result is $[1, 1, 2, 1, 2]$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$[1, 1, 2, 3, 4]$ needs $S[4] = 1 + S[3] = 3$, which would require $X[3] \\le X[4]$, i.e. $5 \\le 4$. That is false, so $S[4]$ resets to 1, and then $S[5] = 1 + 1 = 2$, not 4."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$[1, 1, 2, 3, 3]$ also needs $S[4] = 3$, which is impossible because $5 > 4$. It is not even self-consistent: with $S[4] = 3$ and $4 \\le 10$ true, the code would give $S[5] = 1 + 3 = 4$, not 3."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "The trace gives $S[1] = 1$, $S[2] = 1$ ($6 > 3$), $S[3] = 1 + 1 = 2$ ($3 \\le 5$), $S[4] = 1$ ($5 > 4$) and $S[5] = 1 + S[4] = 2$ ($4 \\le 10$), which is $[1, 1, 2, 1, 2]$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The first four entries match, but $S[5]$ can only be $1 + S[4] = 1 + 1 = 2$. The value 5 is what the stock-span computation would give, since all five elements $6, 3, 5, 4, 10$ are $\\le 10$. This code looks back only one position, so it never produces that."
+      }
+    ],
+    "shortcut": "Read $S[i]$ as the length of the non-decreasing streak that ends at $i$. Mark the drops in $X$ ($6 \\to 3$, $5 \\to 4$), which gives the blocks $6 \\mid 3, 5 \\mid 4, 10$, and count $1, 2, \\dots$ inside each block: $[1, 1, 2, 1, 2]$.",
+    "commonTrap": "Choosing (D) by treating $S[5]$ as the number of consecutive earlier values $\\le 10$ (the stock-span idea). The code adds only $S[i-1]$, and $S[4]$ was reset to 1 by the drop $5 > 4$, so $S[5] = 2$. A second slip is to forget that `S[i] ← 1` is inside the loop and keep accumulating past a drop, which leads to (A) or (B)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q39-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The pseudocode is set as a plain-text code block. The paper underlines the header line `computeS(X)` and typesets ←, ≤ and the minus sign mathematically; these are kept as the Unicode characters ←, ≤ and −. The indentation keeps the paper's relative layout (loop body indented 2 spaces, if-body 6 spaces, as in the PDF text layer)."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C",
+    "agreesWithKey": true,
+    "checkCode": "def computeS(X):\n    n=len(X); S=[None]*(n+1); S[1]=1\n    for i in range(2,n+1):\n        S[i]=1\n        if X[i-2]<=X[i-1]: S[i]+=S[i-1]\n    return S[1:]\nX=[6,3,5,4,10]; r=computeS(X); print(r)  # [1, 1, 2, 1, 2]\nopts={'A':[1,1,2,3,4],'B':[1,1,2,3,3],'C':[1,1,2,1,2],'D':[1,1,2,1,5]}\nprint([k for k,v in opts.items() if v==r])  # ['C']\nspan=[]\nfor i in range(len(X)):\n    j=i\n    while j>0 and X[j-1]<=X[i]: j-=1\n    span.append(i-j+1)\nprint(span)  # stock span [1, 1, 2, 1, 5] = option D (trap)\n",
+    "notes": "A direct simulation of the pseudocode (1-indexed) returns [1, 1, 2, 1, 2], which is option C and matches the official key C. The check also confirms that option D equals the stock-span sequence of X, which the solution uses to explain the trap."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

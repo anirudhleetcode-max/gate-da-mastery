@@ -1,0 +1,118 @@
+{
+  "id": "DA2025-S5-Q27",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 27,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-searching",
+  "subtopicIds": [
+    "pdsa-binary-search",
+    "pdsa-linked-lists"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (binary search needs sorted input and constant-time random access) applied by direct recall to four inputs, under 1 min for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "For which of the following inputs does binary search take time $O(\\log n)$ in the worst case?",
+  "options": [
+    {
+      "label": "A",
+      "text": "An array of $n$ integers in any order"
+    },
+    {
+      "label": "B",
+      "text": "A linked list of $n$ integers in any order"
+    },
+    {
+      "label": "C",
+      "text": "An array of $n$ integers in increasing order"
+    },
+    {
+      "label": "D",
+      "text": "A linked list of $n$ integers in increasing order"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Binary search runs in $O(\\log n)$ only when two conditions hold: the data are **sorted**, so one comparison with the middle element safely discards half the range, and the middle element can be read in $O(1)$ time (**random access**). Only a sorted array, option (C), has both. A linked list needs $\\Theta(n)$ pointer hops just to reach the middle, and on an unsorted array binary search is not a correct search. Answer: **(C)**.",
+    "steps": [
+      {
+        "title": "Input: what binary search requires",
+        "body": "The standard iterative binary search for `key` in `a[0..n-1]`:\n\n```python\ndef binary_search(a, key):\n    lo, hi = 0, len(a) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] == key:\n            return mid\n        if a[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n```\n\nIt relies on two properties of the input:\n\n1. **Sorted order.** The step \"`a[mid] < key` $\\Rightarrow$ the key is not in `a[lo..mid]`\" is valid only if the elements are in increasing order.\n2. **Random access.** Reading `a[mid]` must take $O(1)$ time, otherwise each probe is expensive."
+      },
+      {
+        "title": "Execution on a sorted array (C)",
+        "body": "Each probe costs $O(1)$: one index computation and one or two comparisons. Each probe also shrinks the candidate range from size $m$ to at most $\\lfloor m/2 \\rfloor$. Starting from $n$, after $k$ probes at most $\\lfloor n/2^k \\rfloor$ elements remain, and the loop runs only while at least one remains. So the number of probes is at most\n\n$$\n\\lfloor \\log_2 n \\rfloor + 1 .\n$$\n\nThe worst case (key absent, or found at the last probe) therefore takes $O(\\log n)$ time. For example, $n = 1024$ needs at most $11$ probes and $n = 131\\,072$ at most $18$, as the Python check confirms. **(C) qualifies.**"
+      },
+      {
+        "title": "Linked lists (B) and (D): no random access",
+        "body": "A linked list has no indexing: position `mid` is reached only by following `next` pointers. The **first** probe alone needs $\\lfloor (n-1)/2 \\rfloor$ hops from the head, which is already $\\Theta(n)$. Even the best strategy, which walks forward from the current `lo` node instead of restarting from the head, costs about\n\n$$\n\\frac{n}{2} + \\frac{n}{4} + \\frac{n}{8} + \\cdots < n\n$$\n\nhops in the worst case. The number of *comparisons* is still about $\\log_2 n$, but the running time is $\\Theta(n)$, not $O(\\log n)$. In the Python check, the worst-case number of pointer hops was exactly $n$ for $n = 1024$, $16\\,384$ and $131\\,072$.\n\n- **(D)** is sorted, so the halving logic is correct, but sorting does not provide random access, so the time is $\\Theta(n)$.\n- **(B)** is neither sorted nor randomly accessible, so it fails on both counts."
+      },
+      {
+        "title": "Array in any order (A): the halving step is invalid",
+        "body": "In an unsorted array, `a[mid] < key` says nothing about where `key` is. It may sit in the half that gets discarded, so binary search can report \"not found\" for a key that is present. In the Python check, with $1000$ distinct integers in random order, binary search missed $990$ of the $1000$ keys that were actually in the array. Binary search is therefore not a valid search procedure for this input.\n\nA *correct* search of an unsorted array must, in the worst case, look at every element, since any unexamined position could hold the key. It needs $\\Omega(n)$ time: linear search takes $O(n)$, and sorting first then binary searching takes $O(n \\log n)$.\n\nNote: if the halving loop is run blindly, it still stops after at most $\\lfloor \\log_2 n \\rfloor + 1$ probes, but its answer can then be wrong. The official key lists only (C), consistent with the standard convention that binary search is defined for sorted input. **(A) does not qualify.**"
+      },
+      {
+        "title": "Summary and result",
+        "body": "| Input | Sorted? | $O(1)$ access to the middle? | Worst-case behaviour |\n| --- | --- | --- | --- |\n| (A) array, any order | no | yes | binary search not valid; a correct search needs $\\Theta(n)$ |\n| (B) linked list, any order | no | no | not valid; $\\Theta(n)$ traversal anyway |\n| (C) array, increasing | yes | yes | $\\Theta(\\log n)$ ✓ |\n| (D) linked list, increasing | yes | no | $\\Theta(n)$ pointer walking |\n\nOnly **(C)** gives worst-case $O(\\log n)$."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**The idea behind binary search.** Binary search keeps an interval `a[lo..hi]` with one invariant: *if the key is present at all, it lies inside this interval*. Comparing the key with the middle element `a[mid]` then either finds it or lets us throw away half the interval while keeping the invariant true. Halving $n$ repeatedly reaches $1$ after about $\\log_2 n$ steps, which is where the $O(\\log n)$ bound comes from: a million elements need only about $20$ probes.\n\n**Condition 1: order.** The invariant survives a discard only because the data are sorted. If `a[mid] < key` in an increasing array, every element at or left of `mid` is also smaller than the key, so none of them can be the key. Without sorted order that deduction is false, and the algorithm silently returns wrong answers. For unsorted data, the only correct general approach is to examine elements one by one (linear search, $O(n)$) or to sort first.\n\n**Condition 2: random access.** The $O(\\log n)$ bound counts *probes*, and assumes each probe costs $O(1)$. That holds for an array: its elements sit in consecutive memory, so the address of `a[i]` is `base + i × size`, computed in constant time. A linked list stores nodes anywhere in memory, each holding a pointer to the next, so the only way to reach the $i$-th node is to follow $i$ pointers, which costs $\\Theta(i)$. Binary search on a linked list still does only about $\\log_2 n$ comparisons, but the pointer-walking adds up to $\\Theta(n)$. That is no better than a plain linear scan of the list. This is why structures such as balanced binary search trees and skip lists exist: they give logarithmic search on linked (pointer-based) storage.\n\n**Back to the question.** Only the input that satisfies both conditions, an array in increasing order, option (C), gives worst-case $O(\\log n)$. Sorting alone (D) or random access alone (A) is not enough.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Arrays give $O(1)$ access, but without sorted order the discard step is invalid. Binary search can miss keys that are present, so it is not a valid search here. A correct search of an unsorted array needs $\\Theta(n)$ time in the worst case."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Unsorted **and** no random access. Merely reaching the middle node takes about $n/2$ pointer hops, so the time is $\\Theta(n)$, and the halving logic is not valid on unsorted data anyway."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Sorted order makes each discard valid, and array indexing makes each probe $O(1)$. At most $\\lfloor \\log_2 n \\rfloor + 1$ probes are needed, so the worst case is $O(\\log n)$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The order is correct, but a linked list has no random access. Reaching the middle needs $\\Theta(n)$ pointer hops, and the whole search costs about $n/2 + n/4 + \\cdots = \\Theta(n)$ even with the best traversal strategy, not $O(\\log n)$."
+      }
+    ],
+    "shortcut": "Binary search is $O(\\log n)$ only for **sorted + random access**, i.e. a sorted array. Rule out every linked list (no $O(1)$ access to the middle) and every unsorted input (halving is invalid).",
+    "commonTrap": "Choosing (D) because the list is sorted. The number of *comparisons* is still about $\\log_2 n$, but each probe needs a pointer walk, so the *time* is $\\Theta(n)$. A second trap is to count only loop iterations and tick (A): on unsorted data the loop does stop quickly, but it can report \"not found\" for a key that is present, so binary search is not a valid search there."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q27-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. $O(\\log n)$ and $n$ are typeset as math in the paper and are transcribed as KaTeX. The paper's line break after \"worst\" is joined."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C only (sorted array: sorted order plus O(1) random access)",
+    "agreesWithKey": true,
+    "checkCode": "import math, random\ndef bs_array(a, key):                       # binary search on a random-access array\n    lo, hi, probes = 0, len(a) - 1, 0\n    while lo <= hi:\n        mid = (lo + hi) // 2; probes += 1\n        if a[mid] == key: return mid, probes\n        if a[mid] < key: lo = mid + 1\n        else: hi = mid - 1\n    return -1, probes\nclass Node:\n    def __init__(s, v, nxt=None): s.v, s.next = v, nxt\ndef build(vals):\n    head = None\n    for v in reversed(vals): head = Node(v, head)\n    return head\ndef bs_list(head, n, key):                  # best possible linked-list version: walk from the node at lo, never from the head\n    lo, hi, lo_node, hops = 0, n - 1, head, 0\n    while lo <= hi:\n        mid = (lo + hi) // 2; node = lo_node\n        for _ in range(mid - lo): node = node.next; hops += 1   # no random access: must follow pointers\n        if node.v == key: return mid, hops\n        if node.v < key: lo, lo_node = mid + 1, node.next; hops += 1\n        else: hi = mid - 1\n    return -1, hops\nfor n in (2**10, 2**14, 2**17):\n    a = list(range(0, 2 * n, 2)); head = build(a)\n    worst_probes = max(bs_array(a, k)[1] for k in range(-1, 2 * n + 1))\n    worst_hops = max(bs_list(head, n, k)[1] for k in (-1, a[-1], 2 * n + 1, a[n // 3]))\n    print(f'n={n}: sorted array worst probes={worst_probes} (floor(log2 n)+1={int(math.log2(n)) + 1}); '\n          f'sorted linked list worst pointer hops={worst_hops} (hops/n={worst_hops / n:.3f})')\nrandom.seed(0); n = 1000; a = random.sample(range(10 * n), n)   # (A) array in arbitrary order\nmissed = sum(bs_array(a, x)[0] == -1 for x in a)\nprint(f'unsorted array: binary search misses {missed} of {n} keys that ARE present -> not a valid search')\n",
+    "notes": "Independent solve: binary search is O(log n) in the worst case only on a sorted, randomly accessible input, i.e. option (C). Linked lists (B, D) need Theta(n) pointer hops to reach the middle elements. On an unsorted array (A) the halving step is invalid, so binary search is not a correct search there. This gives C, matching the official key C. The Python check confirms at most floor(log2 n)+1 probes on sorted arrays (11, 15, 18 probes for n = 1024, 16384, 131072), exactly n worst-case pointer hops for the best possible linked-list implementation at the same sizes, and that on 1000 distinct integers in random order binary search misses 990 keys that are present. Interpretation caveat for (A): run blindly on an unsorted array, the halving loop still terminates within floor(log2 n)+1 probes, though its answers can be wrong; the key's C-only answer is consistent with the standard reading that binary search presupposes sorted input."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

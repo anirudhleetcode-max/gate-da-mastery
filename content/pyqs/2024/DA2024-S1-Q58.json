@@ -1,0 +1,74 @@
+{
+  "id": "DA2024-S1-Q58",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 58,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-conditional",
+  "subtopicIds": [
+    "ps-bayes",
+    "ps-marginal-joint"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it is a direct application of one concept (Bayes' theorem with the total-probability denominator) needing only a few multiplications, in about a minute.",
+  "estimatedTimeSec": 75,
+  "stem": "Consider two events $T$ and $S$. Let $\\overline{T}$ denote the complement of the event $T$. The probability associated with different events are given as follows:\n\n$$\nP(\\overline{T}) = 0.6, \\qquad P(S|T) = 0.3, \\qquad P(S|\\overline{T}) = 0.6\n$$\n\nThen, $P(T|S)$ is ______ (rounded off to **two** decimal places).",
+  "options": [],
+  "officialKeyRaw": "0.25 to 0.25",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.25,
+    "max": 0.25
+  },
+  "solution": {
+    "quick": "$P(T) = 1 - 0.6 = 0.4$. By total probability, $P(S) = 0.3(0.4) + 0.6(0.6) = 0.12 + 0.36 = 0.48$. By Bayes' theorem, $P(T|S) = 0.12/0.48 = 0.25$, i.e. **0.25**.",
+    "steps": [
+      {
+        "title": "Collect the given information",
+        "body": "$T$ and $\\overline{T}$ are complementary, so they partition the sample space and\n\n$$\nP(T) = 1 - P(\\overline{T}) = 1 - 0.6 = 0.4.\n$$\n\nThe conditional probabilities of $S$ are $P(S|T) = 0.3$ and $P(S|\\overline{T}) = 0.6$. We want the *reverse* conditional $P(T|S)$."
+      },
+      {
+        "title": "Joint probabilities (multiplication rule)",
+        "body": "$$\nP(S \\cap T) = P(S|T)\\,P(T) = 0.3 \\times 0.4 = 0.12\n$$\n\n$$\nP(S \\cap \\overline{T}) = P(S|\\overline{T})\\,P(\\overline{T}) = 0.6 \\times 0.6 = 0.36\n$$\n\nThe full joint table (the $\\overline{S}$ column follows from the row totals):\n\n| | $S$ | $\\overline{S}$ | Total |\n| --- | --- | --- | --- |\n| $T$ | 0.12 | 0.28 | 0.40 |\n| $\\overline{T}$ | 0.36 | 0.24 | 0.60 |\n| Total | 0.48 | 0.52 | 1.00 |"
+      },
+      {
+        "title": "Total probability of S",
+        "body": "$$\nP(S) = P(S \\cap T) + P(S \\cap \\overline{T}) = 0.12 + 0.36 = 0.48.\n$$"
+      },
+      {
+        "title": "Bayes' theorem",
+        "body": "$$\nP(T|S) = \\frac{P(S|T)\\,P(T)}{P(S|T)\\,P(T) + P(S|\\overline{T})\\,P(\\overline{T})} = \\frac{0.12}{0.48} = \\frac{1}{4} = 0.25.\n$$\n\nRounded off to two decimal places, $P(T|S) = 0.25$."
+      }
+    ],
+    "finalAnswer": "**0.25**",
+    "teaching": "**Reversing a conditional.** Problems often tell you how likely an observation is *given* each possible cause, $P(S|T)$ and $P(S|\\overline{T})$, but ask how likely a cause is *given* the observation, $P(T|S)$. These are different numbers, and Bayes' theorem converts one into the other.\n\n**Building blocks.**\n\n- *Multiplication rule*: $P(S \\cap T) = P(S|T)\\,P(T)$. This follows from the definition $P(S|T) = P(S \\cap T)/P(T)$.\n- *Law of total probability*: if $T$ and $\\overline{T}$ split the sample space, then $S$ happens either together with $T$ or together with $\\overline{T}$, so $P(S) = P(S|T)P(T) + P(S|\\overline{T})P(\\overline{T})$.\n- *Bayes' theorem*: divide the branch you care about by the total, $P(T|S) = \\dfrac{P(S|T)\\,P(T)}{P(S)}$.\n\nIn Bayesian language, $P(T)$ is the **prior**, $P(S|T)$ the **likelihood**, $P(S)$ the **evidence**, and $P(T|S)$ the **posterior**.\n\n**Tree picture.** Draw two branches, $T$ (0.4) and $\\overline{T}$ (0.6). From each, draw a branch to $S$ with probabilities 0.3 and 0.6. Multiply along each path to reach $S$: 0.12 and 0.36. Once you know $S$ happened, only these two paths remain, so $P(T|S)$ is the share of the first path: $0.12 / (0.12 + 0.36)$.\n\n**Intuition for this question.** $T$ was already the less likely case before observing anything (0.4 against 0.6), and $S$ is twice as likely under $\\overline{T}$ as under $T$ (0.6 against 0.3). Both effects push against $T$, so observing $S$ lowers the probability of $T$ from 0.4 to 0.25.",
+    "shortcut": "Use the odds form of Bayes: posterior odds = prior odds × likelihood ratio $= \\frac{0.4}{0.6} \\times \\frac{0.3}{0.6} = \\frac{2}{3} \\times \\frac{1}{2} = \\frac{1}{3}$. Odds of $1 : 3$ mean $P(T|S) = \\frac{1}{1 + 3} = 0.25$.",
+    "commonTrap": "Reading $P(\\overline{T}) = 0.6$ as $P(T)$. That gives $P(T|S) = \\frac{0.3 \\times 0.6}{0.3 \\times 0.6 + 0.6 \\times 0.4} = \\frac{0.18}{0.42} \\approx 0.43$. Other slips are answering $P(S|T) = 0.3$ (confusing the direction of conditioning) or stopping at the joint probability $0.12$ without dividing by $P(S)$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q58-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The complement is printed as $T$ with an overbar and is transcribed as $\\overline{T}$; the conditional bar is kept as a plain '|' as in the paper. The paper's wording 'The probability associated with different events are given as follows:' (singular 'probability' with 'are') is kept verbatim."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.25",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\nP_Tc = F(6,10); P_T = 1 - P_Tc\nP_S_T = F(3,10); P_S_Tc = F(6,10)\nP_S = P_S_T*P_T + P_S_Tc*P_Tc          # total probability\nP_T_S = P_S_T*P_T / P_S                # Bayes\nprint('P(T) =', P_T, ' P(S and T) =', P_S_T*P_T, ' P(S) =', P_S, '=', float(P_S))\nprint('P(T|S) =', P_T_S, '=', round(float(P_T_S), 2))\n# simulation check\nimport random\nrandom.seed(1); n = 10**6; s = ts = 0\nfor _ in range(n):\n    t = random.random() < float(P_T)\n    sv = random.random() < (0.3 if t else 0.6)\n    s += sv; ts += sv and t\nprint('MC P(T|S) =', round(ts/s, 3))\n",
+    "notes": "Independent solve: P(T) = 0.4, P(S) = 0.3·0.4 + 0.6·0.6 = 0.48, P(T|S) = 0.12/0.48 = 1/4 = 0.25. Exact fraction arithmetic gives 1/4 and a simulation gives ≈ 0.251. This agrees with the official key '0.25 to 0.25'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

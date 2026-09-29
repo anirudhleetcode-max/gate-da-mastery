@@ -1,0 +1,727 @@
+[
+  {
+    "id": "M01-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-counting"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single counting idea (choose a set, then one distinguished member) with a one-line computation; well under 1.5 minutes for a prepared student.",
+    "estimatedTimeSec": 60,
+    "concept": "Multiplication principle with combinations: selecting a committee that has one distinguished role.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data-labelling team has 7 annotators. A review panel of 3 annotators is to be formed, and exactly one of the 3 panel members is to be designated as the *lead reviewer*; the other two panel members have identical roles. Two panels are regarded as different if they differ in membership or in the choice of lead reviewer.\n\nThe number of different panels that can be formed is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 105,
+      "max": 105
+    },
+    "solution": {
+      "quick": "Choose the 3 members in $\\binom{7}{3} = 35$ ways, then the lead among them in 3 ways: $35 \\times 3 = 105$.\nEquivalently, choose the lead first (7 ways) and then 2 ordinary members from the remaining 6 ($\\binom{6}{2} = 15$ ways): $7 \\times 15 = 105$.",
+      "steps": [
+        {
+          "title": "Identify what is ordered and what is not",
+          "body": "The lead role is distinguishable, but the two ordinary members are interchangeable. So a panel is an *unordered* set of 3 people together with *one* marked member. This is neither a pure combination (which ignores the lead) nor a pure permutation (which would treat all three seats as different)."
+        },
+        {
+          "title": "Count by choosing the members first",
+          "body": "Number of 3-member sets: $\\binom{7}{3} = \\dfrac{7 \\cdot 6 \\cdot 5}{3 \\cdot 2 \\cdot 1} = 35$.\nFor each set, the lead can be any of its 3 members, so by the multiplication principle the count is $35 \\times 3 = 105$."
+        },
+        {
+          "title": "Cross-check by choosing the lead first",
+          "body": "Choose the lead: 7 ways. Choose the 2 ordinary members from the remaining 6: $\\binom{6}{2} = 15$ ways. Total $= 7 \\times 15 = 105$. The two methods agree, so nothing has been double-counted."
+        },
+        {
+          "title": "Relate to the permutation count",
+          "body": "${}^{7}P_{3} = 7 \\cdot 6 \\cdot 5 = 210$ counts arrangements in which all three seats are different. Each panel appears in it $2! = 2$ times (the two ordinary members can be swapped), so the number of panels is $210 / 2 = 105$."
+        }
+      ],
+      "finalAnswer": "**105**",
+      "teaching": "Counting problems reduce to two building blocks. The **multiplication principle** says that if a task is done in stages, with $m$ ways for the first stage and $n$ ways for the second (whatever happened in the first), the total is $m \\times n$. A **permutation** ${}^{n}P_{r} = \\frac{n!}{(n-r)!}$ counts ordered selections, where every position is different; a **combination** $\\binom{n}{r} = \\frac{n!}{r!\\,(n-r)!}$ counts unordered selections, where only membership matters.\n\nMany real problems sit between the two: some roles are distinguishable and some are not. The clean way to handle them is to break the selection into stages that are each purely ordered or purely unordered, and multiply. Here the panel has one distinguished role (lead) and two interchangeable seats. Choosing the set of three and then the lead gives $\\binom{7}{3} \\times 3$; choosing the lead and then the other two gives $7 \\times \\binom{6}{2}$. Getting the same number, 105, both ways is a strong check that nothing was double-counted.",
+      "shortcut": "Count as if all seats were distinct and divide by the arrangements of the interchangeable seats: ${}^{7}P_{3} / 2! = 210 / 2 = 105$.",
+      "commonTrap": "Answering $210$ (${}^{7}P_{3}$, treating the two ordinary members as distinct seats) or $35$ ($\\binom{7}{3}$, forgetting that choosing the lead creates extra distinct panels)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "105",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nann = range(7)\npanels = {(frozenset(c), lead) for c in combinations(ann, 3) for lead in c}\nprint(len(panels))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-marginal-joint"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (conditional probability read from a joint table) needing one marginal sum and one division; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Conditional probability from a joint probability table via the appropriate marginal.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A courier company classifies each delivery by the weather at dispatch (Dry or Rain) and by its arrival status (On time or Late). The joint probabilities for a randomly chosen delivery are given below.\n\n| Weather | On time | Late |\n|---|---|---|\n| Dry | 0.48 | 0.12 |\n| Rain | 0.16 | 0.24 |\n\nGiven that a randomly chosen delivery arrived Late, the probability that it was dispatched in Rain is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.24$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{3}{5}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{2}{5}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$P(\\text{Late}) = 0.12 + 0.24 = 0.36$ (sum of the Late column).\n$P(\\text{Rain} \\mid \\text{Late}) = \\dfrac{P(\\text{Rain} \\cap \\text{Late})}{P(\\text{Late})} = \\dfrac{0.24}{0.36} = \\dfrac{2}{3}$.",
+      "steps": [
+        {
+          "title": "Write the required quantity",
+          "body": "We need $P(\\text{Rain} \\mid \\text{Late}) = \\dfrac{P(\\text{Rain} \\cap \\text{Late})}{P(\\text{Late})}$. The event that is *given* (Late) goes in the denominator."
+        },
+        {
+          "title": "Marginal of the conditioning event",
+          "body": "The Late column contains the disjoint events Dry∩Late and Rain∩Late, so\n$P(\\text{Late}) = 0.12 + 0.24 = 0.36$."
+        },
+        {
+          "title": "Joint probability",
+          "body": "Read directly from the table: $P(\\text{Rain} \\cap \\text{Late}) = 0.24$."
+        },
+        {
+          "title": "Divide",
+          "body": "$P(\\text{Rain} \\mid \\text{Late}) = \\dfrac{0.24}{0.36} = \\dfrac{2}{3} \\approx 0.667$, which is option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "A joint probability table lists $P(A \\cap B)$ for every combination of the categories of two variables; all the cells together sum to 1. Summing along a row or a column gives a **marginal** probability — for example, the Late column sum is $P(\\text{Late})$ — because the cells in that column are disjoint events that together make up \"Late\".\n\nA **conditional** probability $P(A \\mid B) = \\dfrac{P(A \\cap B)}{P(B)}$ answers the question \"among the outcomes where $B$ happened, what fraction also have $A$?\". Conditioning on $B$ throws away every cell outside $B$ and rescales the remaining cells so that they sum to 1.\n\nHere the information \"the delivery was late\" keeps only the Late column, whose cells are 0.12 (Dry) and 0.24 (Rain). Rescaling by their total 0.36 gives $\\frac{1}{3}$ for Dry and $\\frac{2}{3}$ for Rain. Note that $P(\\text{Rain} \\mid \\text{Late}) = \\frac{2}{3}$ differs from $P(\\text{Late} \\mid \\text{Rain}) = \\frac{3}{5}$: conditional probability is not symmetric.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.24$ is the joint probability $P(\\text{Rain} \\cap \\text{Late})$; it has not been divided by $P(\\text{Late}) = 0.36$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\dfrac{0.24}{0.36} = \\dfrac{2}{3}$: the joint probability divided by the marginal of the conditioning event (Late). Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\dfrac{3}{5} = \\dfrac{0.24}{0.40} = P(\\text{Late} \\mid \\text{Rain})$, the reverse conditional — it divides by the Rain row sum instead of the Late column sum."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\dfrac{2}{5} = 0.16 + 0.24 = P(\\text{Rain})$, the unconditional marginal; it ignores the information that the delivery was late."
+        }
+      ],
+      "shortcut": "Restrict to the Late column and compare its cells: Rain : Dry $= 0.24 : 0.12 = 2 : 1$, so Rain gets $\\frac{2}{2+1} = \\frac{2}{3}$.",
+      "commonTrap": "Dividing by the wrong marginal. Conditioning on Late means restricting to the Late **column** (sum 0.36), not the Rain **row** (sum 0.40); the latter gives the reverse conditional $3/5$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2/3 (option B)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\np = {('Dry','On'):F(48,100),('Dry','Late'):F(12,100),('Rain','On'):F(16,100),('Rain','Late'):F(24,100)}\nassert sum(p.values()) == 1\nlate = p[('Dry','Late')] + p[('Rain','Late')]\nprint(p[('Rain','Late')] / late)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-central-tendency"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — direct computation of three basic summary statistics for nine values followed by a comparison; about 75 seconds.",
+    "estimatedTimeSec": 75,
+    "concept": "Computing and comparing the mean, median and mode of a small data set containing an outlier.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The response times (in milliseconds) of a web server for nine requests are\n\n$$12,\\ 15,\\ 11,\\ 15,\\ 40,\\ 13,\\ 15,\\ 14,\\ 11$$\n\nWhich one of the following correctly orders the mean, median and mode of these nine values?",
+    "options": [
+      {
+        "label": "A",
+        "text": "mode $<$ median $<$ mean"
+      },
+      {
+        "label": "B",
+        "text": "mean $<$ median $<$ mode"
+      },
+      {
+        "label": "C",
+        "text": "mode $<$ mean $<$ median"
+      },
+      {
+        "label": "D",
+        "text": "median $<$ mode $<$ mean"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Sorted: 11, 11, 12, 13, 14, 15, 15, 15, 40. Median = 5th value = 14; mode = 15 (occurs three times); mean = $146/9 \\approx 16.22$.\nHence median $<$ mode $<$ mean.",
+      "steps": [
+        {
+          "title": "Sort the data",
+          "body": "$11,\\ 11,\\ 12,\\ 13,\\ 14,\\ 15,\\ 15,\\ 15,\\ 40$ ($n = 9$)."
+        },
+        {
+          "title": "Median",
+          "body": "For odd $n$ the median is the $\\frac{n+1}{2} = 5$th value of the sorted list: median $= 14$."
+        },
+        {
+          "title": "Mode",
+          "body": "Frequencies: 11 → 2, 12 → 1, 13 → 1, 14 → 1, 15 → 3, 40 → 1. The most frequent value is 15, so mode $= 15$."
+        },
+        {
+          "title": "Mean",
+          "body": "Sum $= 12 + 15 + 11 + 15 + 40 + 13 + 15 + 14 + 11 = 146$, so mean $= \\dfrac{146}{9} \\approx 16.22$. The single large value 40 pulls the mean upward."
+        },
+        {
+          "title": "Order",
+          "body": "$14 < 15 < 16.22$, i.e. median $<$ mode $<$ mean, which is option (D)."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "Mean, median and mode summarise the \"centre\" of data in different ways. The **mean** $\\bar{x} = \\frac{1}{n}\\sum x_i$ uses every value, so a single extreme value can drag it a long way. The **median** is the middle value of the *sorted* data — the $\\frac{n+1}{2}$-th value when $n$ is odd, and the average of the two middle values when $n$ is even — and it barely moves when an extreme value becomes more extreme. The **mode** is the most frequent value.\n\nFor smooth, unimodal, moderately right-skewed distributions the pattern mode $<$ median $<$ mean is common, but it is only a rule of thumb, not a theorem, and it often fails for small or discrete data sets. In this question the outlier 40 raises the mean to about 16.22, while the median (14) and the mode (15) are set by the bulk of the data, and the mode happens to lie above the median. The safe approach in an exam is to compute all three rather than infer their order from the shape.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the rule-of-thumb ordering for a smooth right-skewed distribution, but here the mode (15) exceeds the median (14). It is also what you get if 11 is wrongly taken as the mode."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "mean $<$ median $<$ mode is the left-skew pattern; the outlier 40 is on the right and pulls the mean ($\\approx 16.22$) above both the median and the mode."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This results from taking the middle entry of the *unsorted* list (40) as the median; the median must be read from the sorted list, where it is 14."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Median $= 14$, mode $= 15$, mean $\\approx 16.22$, so median $<$ mode $<$ mean. Correct."
+        }
+      ],
+      "commonTrap": "Applying the rule of thumb \"right skew ⇒ mode $<$ median $<$ mean\" without computing. For small data sets it can fail — here the mode is 15 but the median is only 14. A second trap is reading the median from the unsorted list."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "mean 16.22, median 14, mode 15 → median < mode < mean (option D)",
+      "agreesWithKey": true,
+      "checkCode": "import statistics as st\nx = [12, 15, 11, 15, 40, 13, 15, 14, 11]\nmean, med, mode = st.mean(x), st.median(x), st.mode(x)\nprint(round(mean, 2), med, mode, med < mode < mean)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-random-variables"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a random variable as a function on a small sample space); each statement is a one-line check from the eight equally likely outcomes, about 90 seconds in total.",
+    "estimatedTimeSec": 90,
+    "concept": "A random variable as a function on the sample space and its induced probability mass function.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A fair coin is tossed three times, independently. Let $H$ and $T$ denote the numbers of heads and tails obtained, respectively, and define the random variable $X = H - T$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$X$ takes exactly four distinct values."
+      },
+      {
+        "label": "B",
+        "text": "$P(X = 1) = \\dfrac{3}{8}$"
+      },
+      {
+        "label": "C",
+        "text": "$P(X = 0) = \\dfrac{3}{8}$"
+      },
+      {
+        "label": "D",
+        "text": "$P(X \\le -1) = \\dfrac{3}{8}$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "Since $T = 3 - H$, $X = 2H - 3$ with $H \\in \\{0, 1, 2, 3\\}$ having probabilities $\\frac{1}{8}, \\frac{3}{8}, \\frac{3}{8}, \\frac{1}{8}$. So $X \\in \\{-3, -1, 1, 3\\}$ with the same probabilities.\n(A) and (B) are true; $X$ is never 0, and $P(X \\le -1) = \\frac{1}{2}$.",
+      "steps": [
+        {
+          "title": "Express X through H",
+          "body": "Every toss is a head or a tail, so $T = 3 - H$ and $X = H - (3 - H) = 2H - 3$."
+        },
+        {
+          "title": "Distribution of H",
+          "body": "There are $2^3 = 8$ equally likely outcomes, and $P(H = h) = \\binom{3}{h}/8$, giving $\\frac{1}{8}, \\frac{3}{8}, \\frac{3}{8}, \\frac{1}{8}$ for $h = 0, 1, 2, 3$."
+        },
+        {
+          "title": "Distribution of X",
+          "body": "| $H$ | 0 | 1 | 2 | 3 |\n|---|---|---|---|---|\n| $X = 2H - 3$ | $-3$ | $-1$ | $1$ | $3$ |\n| Probability | $1/8$ | $3/8$ | $3/8$ | $1/8$ |"
+        },
+        {
+          "title": "Check each statement",
+          "body": "(A) The support is $\\{-3, -1, 1, 3\\}$: four values. **True.**\n(B) $P(X = 1) = P(H = 2) = \\frac{3}{8}$. **True.**\n(C) $X = 2H - 3$ is always odd, so $P(X = 0) = 0$. **False.**\n(D) $P(X \\le -1) = P(X = -3) + P(X = -1) = \\frac{1}{8} + \\frac{3}{8} = \\frac{1}{2}$. **False.**"
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "teaching": "A **random variable** is a function that assigns a real number to every outcome of an experiment. Here the sample space has $2^3 = 8$ equally likely outcomes such as HHT, and $X$ maps each outcome to (heads − tails); for example HHT ↦ $2 - 1 = 1$ and TTT ↦ $0 - 3 = -3$.\n\nThe **distribution** of $X$ is found by grouping all outcomes that map to the same value and adding their probabilities: $P(X = x) = P(\\{\\omega : X(\\omega) = x\\})$. The set of values with positive probability is the **support**, and a value outside the support has probability zero.\n\nWriting $X$ in terms of a simpler variable is often the fastest route. Since $T = 3 - H$, we get $X = 2H - 3$, a one-to-one function of the binomial count $H$, so $X$ inherits the probabilities $\\frac{1}{8}, \\frac{3}{8}, \\frac{3}{8}, \\frac{1}{8}$. Parity also matters: $2H - 3$ is always odd, so with an odd number of tosses heads and tails can never balance.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$X = 2H - 3$ with $H \\in \\{0, 1, 2, 3\\}$ gives $X \\in \\{-3, -1, 1, 3\\}$ — exactly four distinct values. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$X = 1 \\iff H = 2$ (two heads, one tail), which happens in $\\binom{3}{2} = 3$ of the 8 outcomes, so $P(X = 1) = \\frac{3}{8}$. Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$X = 0$ would need $H = T$, impossible when the total number of tosses (3) is odd. So $P(X = 0) = 0$, not $\\frac{3}{8}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$X \\le -1$ covers both $X = -1$ (prob. $\\frac{3}{8}$) and $X = -3$ (prob. $\\frac{1}{8}$), so the probability is $\\frac{1}{2}$. The value $\\frac{3}{8}$ comes from forgetting $X = -3$."
+        }
+      ],
+      "commonTrap": "Assuming $X = 0$ is possible (\"as many heads as tails\") — with three tosses $H$ and $T$ can never be equal. Also, counting only $X = -1$ for $P(X \\le -1)$ and forgetting the value $X = -3$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "support {-3,-1,1,3}; P(X=1)=3/8; P(X=0)=0; P(X<=-1)=1/2 → (A), (B)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nfrom fractions import Fraction as F\nouts = [s.count('H') - s.count('T') for s in map(''.join, product('HT', repeat=3))]\nP = lambda cond: F(sum(cond(v) for v in outs), 8)\nprint(sorted(set(outs)), P(lambda v: v == 1), P(lambda v: v == 0), P(lambda v: v <= -1))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-pmf",
+      "ps-marginal-joint"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (normalising a PMF, then applying the definition of conditional probability with an event intersection) with routine arithmetic; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Normalising a probability mass function and computing a conditional probability from it.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The number of retransmissions $X$ needed by a packet on a noisy link has the probability mass function\n\n$$P(X = k) = c\\,(5 - k), \\qquad k \\in \\{1, 2, 3, 4\\},$$\n\nand $P(X = k) = 0$ for all other $k$, where $c$ is a constant. The value of $P(X \\ge 2 \\mid X \\le 3)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{5}{9}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{5}{6}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Normalise: $c(4 + 3 + 2 + 1) = 10c = 1 \\Rightarrow c = 0.1$, so the PMF is $0.4, 0.3, 0.2, 0.1$.\n$P(X \\ge 2 \\mid X \\le 3) = \\dfrac{P(X \\in \\{2, 3\\})}{P(X \\in \\{1, 2, 3\\})} = \\dfrac{0.3 + 0.2}{0.4 + 0.3 + 0.2} = \\dfrac{5}{9}$.",
+      "steps": [
+        {
+          "title": "Find c",
+          "body": "The weights are $4c, 3c, 2c, c$ for $k = 1, 2, 3, 4$. They must sum to 1: $10c = 1 \\Rightarrow c = \\frac{1}{10}$.\nPMF: $P(X{=}1) = 0.4,\\ P(X{=}2) = 0.3,\\ P(X{=}3) = 0.2,\\ P(X{=}4) = 0.1$."
+        },
+        {
+          "title": "Set up the conditional probability",
+          "body": "With $A = \\{X \\ge 2\\}$ and $B = \\{X \\le 3\\}$: $P(A \\mid B) = \\dfrac{P(A \\cap B)}{P(B)}$, where $A \\cap B = \\{2 \\le X \\le 3\\} = \\{2, 3\\}$."
+        },
+        {
+          "title": "Numerator and denominator",
+          "body": "$P(A \\cap B) = 0.3 + 0.2 = 0.5$.\n$P(B) = 0.4 + 0.3 + 0.2 = 0.9$ (equivalently $1 - P(X = 4) = 0.9$)."
+        },
+        {
+          "title": "Divide",
+          "body": "$P(X \\ge 2 \\mid X \\le 3) = \\dfrac{0.5}{0.9} = \\dfrac{5}{9} \\approx 0.556$, which is option (C)."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "A **probability mass function** $p(k) = P(X = k)$ must satisfy two conditions: $p(k) \\ge 0$ for every $k$, and $\\sum_k p(k) = 1$. When a PMF is given up to an unknown constant $c$, the second condition fixes $c$: add the unnormalised weights and take the reciprocal. The probability of any event is then the sum of the PMF over the values in that event.\n\nA **conditional probability** $P(A \\mid B) = P(A \\cap B)/P(B)$ restricts attention to outcomes in $B$. For a discrete variable this means: keep only the values in $B$ and renormalise their probabilities so that they sum to 1. Here $B = \\{X \\le 3\\} = \\{1, 2, 3\\}$ with weights $4 : 3 : 2$, and the part of $A$ inside $B$ is $\\{2, 3\\}$ with weight $3 + 2 = 5$ out of $9$.\n\nNotice that $c$ cancels in any conditional probability; you need its value only for unconditional probabilities such as $P(X = 4) = 0.1$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{1}{2} = P(2 \\le X \\le 3)$ is the probability of the intersection, not yet divided by $P(X \\le 3) = 0.9$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{2}{3} = \\frac{P(X \\ge 2)}{P(X \\le 3)} = \\frac{0.6}{0.9}$ puts the whole event $\\{X \\ge 2\\}$ in the numerator, including $X = 4$, which is impossible once we know $X \\le 3$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\frac{P(X \\in \\{2, 3\\})}{P(X \\le 3)} = \\frac{0.5}{0.9} = \\frac{5}{9}$. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{5}{6} = \\frac{0.5}{0.6} = P(X \\le 3 \\mid X \\ge 2)$: the conditioning has been reversed (dividing by $P(X \\ge 2)$)."
+        }
+      ],
+      "shortcut": "Within $\\{1, 2, 3\\}$ the weights are $4 : 3 : 2$, so $P(X \\in \\{2, 3\\} \\mid X \\le 3) = \\frac{3 + 2}{4 + 3 + 2} = \\frac{5}{9}$ — $c$ cancels and need not be found.",
+      "commonTrap": "Using $P(X \\ge 2) = 0.6$ in the numerator instead of $P(X \\ge 2 \\text{ and } X \\le 3) = 0.5$, which gives $\\frac{2}{3}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "c = 1/10; P(X>=2 | X<=3) = 5/9 (option C)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nraw = {k: 5 - k for k in range(1, 5)}\nc = F(1, sum(raw.values()))\np = {k: c * v for k, v in raw.items()}\nprint(c, sum(p[k] for k in (2, 3)) / sum(p[k] for k in (1, 2, 3)))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-pdf"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (find the normalising constant, then integrate over a sub-interval) with routine polynomial integration; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Normalising a probability density function and computing an interval probability by integration.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The time $X$ (in hours) taken by a batch-processing job is a continuous random variable with probability density function\n\n$$f(x) = \\begin{cases} c\\,x^{2}(3 - x), & 0 \\le x \\le 3,\\\\ 0, & \\text{otherwise,} \\end{cases}$$\n\nwhere $c$ is a constant. The probability that the job finishes within 1 hour, $P(X \\le 1)$, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{1}{9}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{1}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{3}{4}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{8}{9}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$\\int_0^3 (3x^2 - x^3)\\,dx = 27 - \\frac{81}{4} = \\frac{27}{4}$, so $c = \\frac{4}{27}$.\n$P(X \\le 1) = \\frac{4}{27}\\int_0^1 (3x^2 - x^3)\\,dx = \\frac{4}{27} \\cdot \\frac{3}{4} = \\frac{1}{9}$.",
+      "steps": [
+        {
+          "title": "Normalisation condition",
+          "body": "A PDF must integrate to 1: $c\\displaystyle\\int_0^3 (3x^2 - x^3)\\,dx = 1$."
+        },
+        {
+          "title": "Find c",
+          "body": "An antiderivative of $3x^2 - x^3$ is $x^3 - \\dfrac{x^4}{4}$. Evaluating from 0 to 3: $27 - \\dfrac{81}{4} = \\dfrac{27}{4}$.\nHence $c = \\dfrac{4}{27}$."
+        },
+        {
+          "title": "Integrate over [0, 1]",
+          "body": "$P(X \\le 1) = \\dfrac{4}{27}\\left[x^3 - \\dfrac{x^4}{4}\\right]_0^1 = \\dfrac{4}{27}\\left(1 - \\dfrac{1}{4}\\right) = \\dfrac{4}{27} \\cdot \\dfrac{3}{4} = \\dfrac{1}{9} \\approx 0.111$."
+        },
+        {
+          "title": "Sanity check",
+          "body": "$f'(x) \\propto 6x - 3x^2 = 3x(2 - x)$, so the density rises from 0 to a peak at $x = 2$. Little area lies in $[0, 1]$, so an answer well below the uniform value $\\frac{1}{3}$ is expected. The answer is option (A)."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "For a continuous random variable, probability is **area under the density**: $P(a \\le X \\le b) = \\int_a^b f(x)\\,dx$. A valid PDF must be non-negative and enclose total area 1, so when a density is given as $c\\,g(x)$ the constant is $c = 1 / \\int g(x)\\,dx$. Single points carry zero probability, so $P(X \\le 1) = P(X < 1)$. The value $f(x)$ itself is not a probability — it is probability per unit length — so a density may exceed 1 while every probability stays between 0 and 1.\n\nIn this question $g(x) = x^2(3 - x)$ has total area $\\frac{27}{4}$ on $[0, 3]$, giving $c = \\frac{4}{27}$. The density is close to zero for small $x$ and peaks at $x = 2$, so the first hour carries only a small share of the area: $\\frac{4}{27} \\cdot \\frac{3}{4} = \\frac{1}{9}$. Comparing a computed probability with the shape of the curve is a quick way to catch mistakes such as assuming uniformity.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$c = \\frac{4}{27}$ and $\\int_0^1 (3x^2 - x^3)\\,dx = \\frac{3}{4}$, so $P(X \\le 1) = \\frac{1}{9}$. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{1}{3}$ is the length fraction of $[0, 1]$ in $[0, 3]$; it would be right only for a uniform density."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{3}{4} = \\int_0^1 (3x^2 - x^3)\\,dx$ without multiplying by $c = \\frac{4}{27}$; an unnormalised integral is not a probability."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{8}{9} = 1 - \\frac{1}{9} = P(X > 1)$, the complement of the required event."
+        }
+      ],
+      "commonTrap": "Forgetting the normalising constant and reporting $\\int_0^1 (3x^2 - x^3)\\,dx = \\frac{3}{4}$. Always find $c$ first so that the total area is 1."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "c = 4/27; P(X<=1) = 1/9 (option A)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx, c = sp.symbols('x c', positive=True)\ncval = sp.solve(sp.integrate(c * x**2 * (3 - x), (x, 0, 3)) - 1, c)[0]\nprint(cval, sp.integrate(cval * x**2 * (3 - x), (x, 0, 1)))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-clt"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — direct application of one result (the CLT, with standard error σ/√n) and a single computation; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Central limit theorem: the sample mean is approximately normal with mean μ and standard deviation σ/√n.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The latency of a single call to a web API is right-skewed, with mean $120$ ms and standard deviation $24$ ms. Latencies of different calls are independent and identically distributed. Let $\\bar{X}$ denote the average latency of $36$ such calls.\n\nAccording to the central limit theorem, the distribution of $\\bar{X}$ is approximately",
+    "options": [
+      {
+        "label": "A",
+        "text": "normal with mean $120$ ms and standard deviation $24$ ms"
+      },
+      {
+        "label": "B",
+        "text": "normal with mean $120$ ms and standard deviation $16$ ms"
+      },
+      {
+        "label": "C",
+        "text": "normal with mean $120$ ms and standard deviation $4$ ms"
+      },
+      {
+        "label": "D",
+        "text": "normal with mean $120$ ms and standard deviation $\\dfrac{2}{3}$ ms"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "By the CLT, $\\bar{X} \\approx N\\!\\left(\\mu, \\dfrac{\\sigma^2}{n}\\right)$. Mean $= 120$ ms; standard deviation $= \\dfrac{\\sigma}{\\sqrt{n}} = \\dfrac{24}{\\sqrt{36}} = 4$ ms.",
+      "steps": [
+        {
+          "title": "State the CLT",
+          "body": "If $X_1, \\dots, X_n$ are i.i.d. with mean $\\mu$ and finite variance $\\sigma^2$, then for large $n$ the sample mean $\\bar{X}$ is approximately normal with mean $\\mu$ and variance $\\sigma^2 / n$, whatever the shape of the parent distribution."
+        },
+        {
+          "title": "Mean of the average",
+          "body": "$E[\\bar{X}] = \\mu = 120$ ms (exact, by linearity of expectation)."
+        },
+        {
+          "title": "Spread of the average",
+          "body": "$\\mathrm{Var}(\\bar{X}) = \\dfrac{\\sigma^2}{n} = \\dfrac{24^2}{36} = \\dfrac{576}{36} = 16\\ \\text{ms}^2$, so the standard deviation is $\\sqrt{16} = 4$ ms."
+        },
+        {
+          "title": "Conclude",
+          "body": "$\\bar{X}$ is approximately normal with mean 120 ms and standard deviation 4 ms, which is option (C)."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "The **central limit theorem** (CLT) says that if $X_1, \\dots, X_n$ are independent and identically distributed with mean $\\mu$ and finite variance $\\sigma^2$, then the sample mean $\\bar{X}$ is approximately normal for large $n$, with mean $\\mu$ and variance $\\sigma^2 / n$ — whatever the shape of the original distribution.\n\nThe mean and variance parts are in fact exact and come from simple rules: $E[\\bar{X}] = \\mu$ by linearity, and because variances of independent variables add, $\\mathrm{Var}\\left(\\sum X_i\\right) = n\\sigma^2$, so $\\mathrm{Var}(\\bar{X}) = n\\sigma^2 / n^2 = \\sigma^2 / n$. The standard deviation of $\\bar{X}$, called the **standard error**, is therefore $\\sigma / \\sqrt{n}$, not $\\sigma / n$. What the CLT adds is the *shape*: approximately normal.\n\nWith $n = 36$ calls, averaging shrinks the spread by a factor of $\\sqrt{36} = 6$, from 24 ms to 4 ms; the right skew of single latencies does not change the centre or this spread.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "24 ms is the standard deviation of a *single* call; averaging 36 independent calls reduces the spread."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "16 is $\\mathrm{Var}(\\bar{X}) = 576/36$ in ms$^2$ — the variance, not the standard deviation."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\sigma / \\sqrt{n} = 24 / 6 = 4$ ms, with mean unchanged at 120 ms. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{2}{3} = 24 / 36$ divides $\\sigma$ by $n$ instead of by $\\sqrt{n}$."
+        }
+      ],
+      "commonTrap": "Dividing $\\sigma$ by $n$ instead of $\\sqrt{n}$ (giving $\\frac{2}{3}$ ms), or reporting the variance $16$ as the standard deviation."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "mean 120 ms, SD 24/sqrt(36) = 4 ms (option C); simulation with a gamma parent gives SD 4.0",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nmu, sigma, n = 120, 24, 36\nprint(mu, sigma / np.sqrt(n))\n# simulation with a right-skewed (gamma) parent having mean 120, sd 24\nrng = np.random.default_rng(1)\nk = (mu / sigma) ** 2; th = sigma**2 / mu\nmeans = rng.gamma(k, th, size=(200000, n)).mean(axis=1)\nprint(round(means.mean(), 2), round(means.std(), 3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M01-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-01",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-axioms",
+      "ps-sample-space"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (additivity and inclusion–exclusion derived from the axioms) applied in 2–3 steps over the seven Venn regions of three events, with routine but error-prone bookkeeping; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Additivity of probability over disjoint Venn regions (inclusion–exclusion) to find P(exactly one of three events).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "For a randomly chosen subscriber of a streaming service, let $D$, $C$ and $T$ be the events that the subscriber watched a drama, a comedy and a thriller, respectively, in a given week. The following probabilities are known.\n\n| Event | $D$ | $C$ | $T$ | $D \\cap C$ | $D \\cap T$ | $C \\cap T$ | $D \\cap C \\cap T$ |\n|---|---|---|---|---|---|---|---|\n| Probability | 0.45 | 0.40 | 0.30 | 0.20 | 0.15 | 0.10 | 0.05 |\n\nThe probability that the subscriber watched **exactly one** of the three genres in that week is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.39,
+      "max": 0.41
+    },
+    "solution": {
+      "quick": "$P(\\text{exactly one}) = S_1 - 2S_2 + 3S_3$ with $S_1 = 1.15$, $S_2 = 0.45$, $S_3 = 0.05$:\n$1.15 - 0.90 + 0.15 = 0.40$. (Venn regions: $D$ only $0.15$, $C$ only $0.15$, $T$ only $0.10$.)",
+      "steps": [
+        {
+          "title": "Plan: use disjoint Venn regions",
+          "body": "The three events split the sample space into disjoint regions. By the additivity axiom, the probability of \"exactly one\" is the sum of the three \"only\" regions. Fill the regions from the inside out."
+        },
+        {
+          "title": "Exactly-two regions",
+          "body": "Subtract the triple intersection $0.05$ from each pairwise intersection:\n$P(D \\cap C \\cap T^c) = 0.20 - 0.05 = 0.15$, $P(D \\cap T \\cap C^c) = 0.15 - 0.05 = 0.10$, $P(C \\cap T \\cap D^c) = 0.10 - 0.05 = 0.05$."
+        },
+        {
+          "title": "Only-one regions",
+          "body": "$P(D \\text{ only}) = 0.45 - 0.15 - 0.10 - 0.05 = 0.15$\n$P(C \\text{ only}) = 0.40 - 0.15 - 0.05 - 0.05 = 0.15$\n$P(T \\text{ only}) = 0.30 - 0.10 - 0.05 - 0.05 = 0.10$"
+        },
+        {
+          "title": "Add",
+          "body": "$P(\\text{exactly one}) = 0.15 + 0.15 + 0.10 = 0.40$."
+        },
+        {
+          "title": "Cross-check",
+          "body": "With $S_1 = 0.45 + 0.40 + 0.30 = 1.15$, $S_2 = 0.20 + 0.15 + 0.10 = 0.45$ and $S_3 = 0.05$: $S_1 - 2S_2 + 3S_3 = 1.15 - 0.90 + 0.15 = 0.40$. Also $P(D \\cup C \\cup T) = S_1 - S_2 + S_3 = 0.75$, which equals the sum of all seven regions ($0.40 + 0.30 + 0.05$), and every region is non-negative, so the data are consistent."
+        }
+      ],
+      "finalAnswer": "**0.40**",
+      "teaching": "The **axioms** of probability are: $P(E) \\ge 0$ for every event; $P(S) = 1$ for the whole sample space; and probabilities of disjoint events add. Everything else — the complement rule, the union rule, inclusion–exclusion — follows from additivity applied to suitably chosen disjoint pieces.\n\nFor three events, a Venn diagram splits the sample space into eight disjoint regions: seven inside the union and one outside. Any event built from $D$, $C$ and $T$ is a union of some of these regions, so its probability is the sum of their probabilities. The reliable method is to fill the regions from the inside out: the triple intersection first, then each \"exactly two\" region (pairwise intersection minus the triple), and then each \"only one\" region (the single event minus everything else inside it).\n\nA compact formula also exists. If $S_1$, $S_2$, $S_3$ are the sums of the single, pairwise and triple probabilities, then $P(\\text{at least one}) = S_1 - S_2 + S_3$ and $P(\\text{exactly one}) = S_1 - 2S_2 + 3S_3$.",
+      "shortcut": "$P(\\text{exactly one}) = S_1 - 2S_2 + 3S_3$. An outcome in exactly two events is counted $2 - 2 \\cdot 1 = 0$ times, and one in all three is counted $3 - 2 \\cdot 3 + 3 = 0$ times, so only \"exactly one\" outcomes survive.",
+      "commonTrap": "Computing $P(\\text{at least one}) = S_1 - S_2 + S_3 = 0.75$ instead of \"exactly one\", or subtracting each pairwise intersection only once ($S_1 - S_2 = 0.70$): a subscriber in $D \\cap C$ is counted in both $P(D)$ and $P(C)$ and must be removed from both."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.40",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nPD, PC, PT = 0.45, 0.40, 0.30\nPDC, PDT, PCT, PDCT = 0.20, 0.15, 0.10, 0.05\n# Venn regions (all must be >= 0 for the data to be consistent)\nr = {'DCT': PDCT, 'DC': PDC - PDCT, 'DT': PDT - PDCT, 'CT': PCT - PDCT}\nr['D'] = PD - r['DC'] - r['DT'] - PDCT\nr['C'] = PC - r['DC'] - r['CT'] - PDCT\nr['T'] = PT - r['DT'] - r['CT'] - PDCT\nassert all(v >= -1e-12 for v in r.values()) and sum(r.values()) <= 1\nprint(round(r['D'] + r['C'] + r['T'], 4), round((PD+PC+PT) - 2*(PDC+PDT+PCT) + 3*PDCT, 4))",
+      "notes": ""
+    }
+  }
+]

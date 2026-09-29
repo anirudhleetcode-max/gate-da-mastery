@@ -1,0 +1,119 @@
+{
+  "id": "DA2026-S8-Q25",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 25,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-trees"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept with 2-3 routine steps: rebuild a 7-node binary tree from its pre-order and in-order traversals, then derive its post-order and read off the child structure. All four statements follow from the same reconstructed tree, so no level bump applies; about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "You are given the following Pre-order and In-order traversals of a Binary Tree T with nodes `E`, `F`, `G`, `P`, `Q`, `R`, `S`.\n\nPre-order: `P` `Q` `S` `E` `R` `F` `G`\n\nIn-order: `S` `Q` `E` `P` `F` `R` `G`\n\nWhich of the following statements is/are true about the Binary Tree T?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Node `P` is the root of T"
+    },
+    {
+      "label": "B",
+      "text": "The Post-order traversal of T is:\n\n`S` `E` `Q` `F` `G` `R` `P`"
+    },
+    {
+      "label": "C",
+      "text": "Node `Q` has only one child"
+    },
+    {
+      "label": "D",
+      "text": "The left subtree of node `R` contains the node `G`"
+    }
+  ],
+  "officialKeyRaw": "A;B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "Pre-order starts with the root, so the root is P. In-order splits at P into left {S, Q, E} and right {F, R, G}. Recursing gives Q with children S (left) and E (right), and R with children F (left) and G (right).\n\nThe tree is P(Q(S, E), R(F, G)), with post-order S E Q F G R P. So (A) and (B) are true, (C) is false (Q has two children), and (D) is false (G is R's right child). **(A), (B)**",
+    "steps": [
+      {
+        "title": "Reconstruction rule",
+        "body": "For a binary tree with distinct labels:\n\n1. The **first** node of the pre-order sequence is the root.\n2. Find that root in the in-order sequence. Everything to its left forms the left subtree and everything to its right forms the right subtree.\n3. If the left subtree has $k$ nodes, the next $k$ pre-order entries after the root belong to the left subtree and the rest to the right subtree. Recurse on each part."
+      },
+      {
+        "title": "Root and first split",
+        "body": "- Pre-order: **P** Q S E R F G, so the root is **P**.\n- In-order: S Q E | **P** | F R G, so the left subtree is $\\{S, Q, E\\}$ (3 nodes) and the right subtree is $\\{F, R, G\\}$ (3 nodes).\n- Split the rest of the pre-order accordingly. The left part is Q S E (next 3 entries) and the right part is R F G (last 3 entries)."
+      },
+      {
+        "title": "Left and right subtrees",
+        "body": "**Left subtree:** pre-order Q S E, in-order S Q E.\n\n- Root **Q** (first in pre-order). In the in-order, S is left of Q and E is right of Q.\n- So Q has left child **S** and right child **E**.\n\n**Right subtree:** pre-order R F G, in-order F R G.\n\n- Root **R**. In the in-order, F is left of R and G is right of R.\n- So R has left child **F** and right child **G**.\n\nThe reconstructed tree T:\n\n```text\n        P\n      /   \\\n     Q     R\n    / \\   / \\\n   S   E F   G\n```\n\nCheck: the in-order of this tree is S Q E P F R G, which matches the given sequence."
+      },
+      {
+        "title": "Post-order traversal",
+        "body": "Post-order visits left subtree, then right subtree, then the root:\n\n$$\n\\text{post}(T) = \\text{post}(Q\\text{-subtree}) \\;\\|\\; \\text{post}(R\\text{-subtree}) \\;\\|\\; P = (S, E, Q) \\;\\|\\; (F, G, R) \\;\\|\\; P.\n$$\n\nHere $\\|$ denotes concatenation. So the post-order is **S E Q F G R P**."
+      },
+      {
+        "title": "Evaluate each statement",
+        "body": "| Statement | From the tree | Verdict |\n| --- | --- | --- |\n| (A) P is the root | P is first in pre-order | true |\n| (B) Post-order is S E Q F G R P | Computed: S E Q F G R P | true |\n| (C) Q has only one child | Q has two children, S and E | false |\n| (D) Left subtree of R contains G | R's left subtree is only F, and G is its right child | false |\n\n**Answer: (A), (B).**"
+      }
+    ],
+    "finalAnswer": "**(A), (B)**",
+    "teaching": "**The three depth-first traversals.** Each visits the root $N$, its left subtree $L$ and its right subtree $R$, applying the same rule recursively inside each subtree. They differ only in *when* the root is visited:\n\n- **Pre-order:** $N, L, R$. The root comes **first**.\n- **In-order:** $L, N, R$. The root sits **between** its two subtrees.\n- **Post-order:** $L, R, N$. The root comes **last**.\n\n**Why pre-order + in-order pins down the tree.** Pre-order tells you *which* node is the root. In-order then tells you *which nodes go left and which go right*, because everything before the root in in-order lies in its left subtree. The number of nodes on the left tells you how to cut the rest of the pre-order sequence. Applying this recursively fixes every node's position, so with distinct labels the tree is unique. The same works with post-order + in-order (the root is then the *last* post-order entry). Pre-order + post-order alone is not enough in general: if a node has a single child, the two sequences cannot tell whether that child is on the left or the right.\n\n**A useful sanity check.** Once the tree is rebuilt, regenerate the in-order sequence from it and compare it with the given one. For a post-order answer, check that it ends with the root and that the left subtree's nodes form one contiguous block ending with the left child's root.\n\n**Back to this question.** P is the root, and the in-order splits it 3 | 3. Each half splits 1 | 1 again, so T is the perfect binary tree P(Q(S, E), R(F, G)). Reading it off: post-order S E Q F G R P (B true), P is the root (A true), Q has two children (C false), and G is R's right child (D false).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Pre-order visits the root first, and the pre-order sequence begins with P. So P is the root."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Post-order of the rebuilt tree is (S, E, Q) from Q's subtree, then (F, G, R) from R's subtree, then P, giving S E Q F G R P, exactly as stated."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "In the in-order sequence S Q E, S lies left of Q and E lies right of Q. So Q has **two** children, S (left) and E (right)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "In the in-order sequence F R G, G lies to the **right** of R. So G is R's right child, and R's left subtree contains only F."
+      }
+    ],
+    "shortcut": "The in-order splits at P into 3 | 3, and each block of three splits at its pre-order root (Q, then R) into 1 | 1. So T is the perfect tree P(Q(S, E), R(F, G)). For a perfect tree, the post-order is each parent's children followed by the parent: S E Q, F G R, P.",
+    "commonTrap": "Reading parent–child links straight off the pre-order sequence. Seeing \"Q S E\" consecutively, a student may think S is Q's only child and E is S's child, and mark (C). The in-order S Q E shows that S and E sit on opposite sides of Q. Another slip is reversing the pre-order to get a \"post-order\" (G F R E S Q P). Post-order is left–right–root, which is not the reverse of root–left–right."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q25-1.webp",
+    "/pyq/2026/official/Q25-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The node names E, F, G, P, Q, R, S (in the stem list, the two traversal lines and options (A)-(D)) are set in a monospace font in the paper and are transcribed as inline code. The tree name T is in the body serif font and is kept plain. The paper lays out each traversal as widely spaced letters on one line; here the letters are separated by single spaces. In (B), the post-order sequence is on its own indented line in the paper and is kept on its own line. The only embedded image in the region is the page background with the GATE 2026 watermark, and no figure is needed. The second official crop (Q25-2) shows only the header and table border of the next page."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B",
+    "agreesWithKey": true,
+    "checkCode": "pre = list('PQSERFG'); ino = list('SQEPFRG')\ndef build(pre, ino):\n    if not pre: return None\n    r = pre[0]; i = ino.index(r)\n    return (r, build(pre[1:1+i], ino[:i]), build(pre[1+i:], ino[i+1:]))\ndef post(t): return [] if t is None else post(t[1]) + post(t[2]) + [t[0]]\ndef find(t, x):\n    if t is None: return None\n    return t if t[0] == x else (find(t[1], x) or find(t[2], x))\ndef nodes(t): return set() if t is None else {t[0]} | nodes(t[1]) | nodes(t[2])\nT = build(pre, ino); print(T); print('post:', ''.join(post(T)))\nq = find(T, 'Q'); r = find(T, 'R')\nres = dict(A=T[0] == 'P', B=post(T) == list('SEQFGRP'),\n           C=sum(c is not None for c in q[1:]) == 1, D='G' in nodes(r[1]))\nprint(res); assert res == dict(A=True, B=True, C=False, D=False)   # -> A;B",
+    "notes": "Rebuilt from pre-order P Q S E R F G and in-order S Q E P F R G, the tree is P(Q(S, E), R(F, G)), and its in-order S Q E P F R G matches the given one. The post-order is S E Q F G R P. So A (P is the root) and B are true. C is false because Q has two children, S and E. D is false because R's left subtree is only F and G is its right child. This matches official key A;B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

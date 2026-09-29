@@ -1,0 +1,78 @@
+{
+  "id": "DA2025-S5-Q59",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 59,
+  "section": "DA",
+  "subjectId": "co",
+  "topicId": "co-limits-continuity",
+  "subtopicIds": [
+    "co-continuity-differentiability",
+    "co-limits"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it takes one concept (the derivative as a limit of difference quotients, then the mean value theorem) in 2–3 short steps, with a tempting wrong answer from the crude bound |f(1) − f(0)| ≤ 1, about 1.5 minutes for a prepared student.",
+  "estimatedTimeSec": 90,
+  "stem": "Let $f : \\mathbb{R} \\rightarrow \\mathbb{R}$ be such that $|f(x) - f(y)| \\le (x - y)^2$ for all $x, y \\in \\mathbb{R}$. Then $f(1) - f(0) =$ ________ (Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "0 to 0",
+  "answer": {
+    "kind": "NAT",
+    "min": 0,
+    "max": 0
+  },
+  "solution": {
+    "quick": "For $y \\ne x$, dividing by $|x - y|$ gives $\\left|\\dfrac{f(x) - f(y)}{x - y}\\right| \\le |x - y| \\to 0$ as $y \\to x$. So $f'(x) = 0$ for every $x$, which makes $f$ constant (mean value theorem).\n\nHence $f(1) - f(0) = \\mathbf{0}$.",
+    "steps": [
+      {
+        "title": "Rewrite the condition as a difference quotient",
+        "body": "Fix any $x$ and take $y \\ne x$. Then $|x - y| > 0$, and $(x - y)^2 = |x - y|^2$. Dividing both sides of the given inequality by $|x - y|$:\n\n$$\\left|\\frac{f(y) - f(x)}{y - x}\\right| \\le |y - x|.$$\n\nThe left side is the absolute value of the difference quotient whose limit (if it exists) is $f'(x)$."
+      },
+      {
+        "title": "Let y approach x",
+        "body": "As $y \\to x$, the right side $|y - x| \\to 0$. The difference quotient is squeezed between $-|y - x|$ and $|y - x|$, so by the squeeze theorem\n\n$$f'(x) = \\lim_{y \\to x} \\frac{f(y) - f(x)}{y - x} = 0.$$\n\nThis holds at **every** real $x$. So $f$ is differentiable on $\\mathbb{R}$ with $f'(x) = 0$ everywhere."
+      },
+      {
+        "title": "Zero derivative means constant",
+        "body": "$f$ is differentiable on $[0, 1]$, so the mean value theorem gives some $c \\in (0, 1)$ with\n\n$$f(1) - f(0) = f'(c)\\,(1 - 0) = 0 \\cdot 1 = 0.$$\n\n(The same argument on any interval shows that $f$ is constant on all of $\\mathbb{R}$.)"
+      },
+      {
+        "title": "A check without derivatives (telescoping)",
+        "body": "Split $[0, 1]$ into $n$ equal pieces and telescope:\n\n$$f(1) - f(0) = \\sum_{k=1}^{n} \\Big[f\\big(\\tfrac{k}{n}\\big) - f\\big(\\tfrac{k-1}{n}\\big)\\Big].$$\n\nBy the triangle inequality and the given condition, with each step of length $\\tfrac{1}{n}$:\n\n$$|f(1) - f(0)| \\le \\sum_{k=1}^{n} \\Big(\\frac{1}{n}\\Big)^2 = n \\cdot \\frac{1}{n^2} = \\frac{1}{n}.$$\n\nFor $n = 1, 10, 1000$ the bound is $1$, $0.1$, $0.001$. It holds for every $n$, and $\\tfrac{1}{n} \\to 0$, so $|f(1) - f(0)| = 0$."
+      },
+      {
+        "title": "Final answer",
+        "body": "Such functions exist: any constant $f(x) = k$ satisfies $0 \\le (x - y)^2$. Every admissible $f$ is constant, so\n\n$$f(1) - f(0) = 0.$$"
+      }
+    ],
+    "finalAnswer": "**0**",
+    "teaching": "**What the derivative measures.** The derivative $f'(x)$ is the limit of the difference quotient $\\dfrac{f(y) - f(x)}{y - x}$ as $y \\to x$: the slope of the chord between two nearby points, as they merge. Any inequality that bounds $|f(x) - f(y)|$ in terms of $|x - y|$ can be turned into a bound on this quotient by dividing by $|x - y|$.\n\n**Lipschitz versus \"better than Lipschitz\".** A bound of the form $|f(x) - f(y)| \\le K|x - y|$ (a *Lipschitz* condition) only says that chords have slope at most $K$ in size. Many non-constant functions satisfy it, for example $f(x) = Kx$. A bound with a **higher power** of $|x - y|$ is far stronger:\n\n$$|f(x) - f(y)| \\le C\\,|x - y|^{\\alpha}, \\quad \\alpha > 1 \\;\\Longrightarrow\\; \\left|\\frac{f(y) - f(x)}{y - x}\\right| \\le C\\,|y - x|^{\\alpha - 1} \\to 0.$$\n\nEvery chord slope then shrinks to zero as the points approach each other, so $f'(x) = 0$ everywhere.\n\n**From zero derivative to constant.** The mean value theorem says that $f(b) - f(a) = f'(c)(b - a)$ for some $c$ between $a$ and $b$, whenever $f$ is differentiable there. If $f' \\equiv 0$, every such difference is zero, so $f$ is constant.\n\n**An intuition without calculus.** Walk from 0 to 1 in $n$ small steps of size $\\tfrac{1}{n}$. The condition lets $f$ change by at most $\\big(\\tfrac{1}{n}\\big)^2$ in each step, so at most $n \\cdot \\tfrac{1}{n^2} = \\tfrac{1}{n}$ in total. Taking more, smaller steps makes the total allowed change as small as you like. The only possibility is no change at all.\n\n**Back to this question.** With $\\alpha = 2$ and $C = 1$, the condition forces $f$ to be constant, so $f(1) - f(0) = 0$. Plugging in $x = 1, y = 0$ directly only gives $|f(1) - f(0)| \\le 1$, a true but loose bound.",
+    "shortcut": "A bound $|f(x) - f(y)| \\le C|x - y|^{\\alpha}$ with exponent $\\alpha > 1$ forces $f' \\equiv 0$, so $f$ is constant and every difference $f(b) - f(a)$ is $0$.",
+    "commonTrap": "Substituting $x = 1$, $y = 0$ once gives $|f(1) - f(0)| \\le 1$, and then answering $1$ (or \"cannot be determined\"). That single-step bound is not tight. Subdividing $[0, 1]$, or using the derivative, shows the difference must be exactly $0$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q59-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the real numbers as blackboard-bold R, rendered here as $\\mathbb{R}$. The answer blank is an underline in the paper, rendered as ________, followed by '(Answer in integer)'. No figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as Fr\n# Telescoping: split [0,1] into n equal pieces; each piece contributes at most (1/n)^2.\nfor n in [1, 2, 10, 100, 10**6]:\n    bound = n * Fr(1, n)**2\n    print(f'n={n}: |f(1)-f(0)| <= n*(1/n)^2 = {bound}')\n# The only integer value compatible with |f(1)-f(0)| <= 1/n for every n is 0.\n# Sanity: a constant satisfies the hypothesis; f(x)=x and f(x)=x^2 do not.\nimport random\ndef satisfies(f, trials=20000):\n    random.seed(1)\n    for _ in range(trials):\n        x, y = random.uniform(-3, 3), random.uniform(-3, 3)\n        if abs(f(x) - f(y)) > (x - y)**2 + 1e-12: return False, (round(x, 3), round(y, 3))\n    return True, None\nfor name, f in [('f=5', lambda x: 5.0), ('f=x', lambda x: x), ('f=x^2', lambda x: x*x)]:\n    print(name, 'satisfies |f(x)-f(y)|<=(x-y)^2 ?', satisfies(f))\nprint('f(1)-f(0) =', 0)\n",
+    "notes": "Hand solve: dividing by |x - y| gives |(f(x) - f(y))/(x - y)| <= |x - y|, which tends to 0 as y -> x. So f'(x) = 0 for all x, f is constant, and f(1) - f(0) = 0. Telescoping over n equal steps gives |f(1) - f(0)| <= n(1/n)^2 = 1/n for every n, which confirms 0 without derivatives. The Python check prints this 1/n bound for several n, confirms that a constant satisfies the hypothesis, and finds violating pairs for f(x) = x and f(x) = x^2. This agrees with the official key 0 to 0."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

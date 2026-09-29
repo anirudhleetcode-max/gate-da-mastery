@@ -1,0 +1,118 @@
+{
+  "id": "DA2026-S8-Q47",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 47,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-regression",
+  "subtopicIds": [
+    "ml-problem-types"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept (evaluating a binary classifier from its confusion matrix) with 2-3 routine steps: build the 2x2 matrix, then compute accuracy and per-class precision and recall. The four statements all follow from the same matrix, so no level bump applies; about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider that 20 stories of Author X and 10 stories of Author Y were kept together without mentioning the names of the authors. A classifier was then asked to predict the author (X or Y) of each of these stories. Let, out of X’s stories, 6 were classified as that of Y. On the other hand, out of Y’s stories, 2 were classified as that of X.\n\nConsidering X and Y as two classes, which of the following statements is/are true?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Accuracy of the classifier is 11/15."
+    },
+    {
+      "label": "B",
+      "text": "Precision of Class X is higher than the Precision of Class Y."
+    },
+    {
+      "label": "C",
+      "text": "Recall of Class X is higher than the Recall of Class Y."
+    },
+    {
+      "label": "D",
+      "text": "Accuracy of the classifier is 14/15."
+    }
+  ],
+  "officialKeyRaw": "A;B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "Confusion matrix (actual → predicted): X→X 14, X→Y 6, Y→X 2, Y→Y 8.\n\nAccuracy $= \\frac{14 + 8}{30} = \\frac{11}{15}$, so (A) is true and (D) is false. Precision: X $= \\frac{14}{16} = 0.875$ and Y $= \\frac{8}{14} \\approx 0.571$, so (B) is true. Recall: X $= \\frac{14}{20} = 0.7$ and Y $= \\frac{8}{10} = 0.8$, so (C) is false. **(A), (B)**.",
+    "steps": [
+      {
+        "title": "Build the confusion matrix",
+        "body": "Rows are the true author and columns the predicted author.\n\n- X wrote 20 stories and 6 were predicted Y, so $20 - 6 = 14$ were predicted X.\n- Y wrote 10 stories and 2 were predicted X, so $10 - 2 = 8$ were predicted Y.\n\n| Actual \\\\ Predicted | X | Y | Total (actual) |\n| --- | --- | --- | --- |\n| **X** | 14 | 6 | 20 |\n| **Y** | 2 | 8 | 10 |\n| **Total (predicted)** | 16 | 14 | 30 |"
+      },
+      {
+        "title": "Accuracy (options A and D)",
+        "body": "Accuracy is the fraction of all stories classified correctly (the diagonal):\n\n$$\n\\text{Accuracy} = \\frac{14 + 8}{30} = \\frac{22}{30} = \\frac{11}{15} \\approx 0.733.\n$$\n\nSo (A) is **true** and (D), $\\frac{14}{15} = \\frac{28}{30}$, is **false**: that would need 28 correct predictions, but $6 + 2 = 8$ stories were misclassified."
+      },
+      {
+        "title": "Precision of each class (option B)",
+        "body": "Precision of a class $c$ = (correctly predicted $c$) / (all predicted $c$). It is read down the column of the predicted class.\n\n$$\n\\text{Precision}_X = \\frac{14}{14 + 2} = \\frac{14}{16} = \\frac{7}{8} = 0.875, \\qquad \\text{Precision}_Y = \\frac{8}{8 + 6} = \\frac{8}{14} = \\frac{4}{7} \\approx 0.571.\n$$\n\nSince $0.875 > 0.571$, (B) is **true**."
+      },
+      {
+        "title": "Recall of each class (option C)",
+        "body": "Recall of a class $c$ = (correctly predicted $c$) / (all actual $c$). It is read across the row of the actual class.\n\n$$\n\\text{Recall}_X = \\frac{14}{14 + 6} = \\frac{14}{20} = 0.7, \\qquad \\text{Recall}_Y = \\frac{8}{8 + 2} = \\frac{8}{10} = 0.8.\n$$\n\nSince $0.7 < 0.8$, the recall of X is **lower** than that of Y, so (C) is **false**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "| Statement | Computed | Verdict |\n| --- | --- | --- |\n| (A) Accuracy $= 11/15$ | $22/30 = 11/15$ | true |\n| (B) $\\text{Prec}_X > \\text{Prec}_Y$ | $0.875 > 0.571$ | true |\n| (C) $\\text{Rec}_X > \\text{Rec}_Y$ | $0.7 < 0.8$ | false |\n| (D) Accuracy $= 14/15$ | $11/15 \\ne 14/15$ | false |\n\nAnswer → **(A), (B)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B)**",
+    "teaching": "**The confusion matrix.** For a classifier with two classes, tabulate every test item by its *true* class (row) and its *predicted* class (column). The diagonal cells are correct predictions and the off-diagonal cells are errors. Every standard metric is a ratio of cells from this table.\n\n**Accuracy** is the diagonal total divided by the grand total, the overall fraction of correct predictions. It gives one number for the whole classifier and does not depend on which class you call \"positive\".\n\n**Precision and recall are per-class.** Treat one class $c$ as \"positive\":\n\n- **Precision** of $c$ = TP / (TP + FP) = correct $c$ predictions / **all predictions of $c$** (its column). It answers: *when the classifier says $c$, how often is it right?*\n- **Recall** of $c$ = TP / (TP + FN) = correct $c$ predictions / **all true members of $c$** (its row). It answers: *of the real $c$ items, how many did it find?*\n\nWith two classes, the false negatives of X are the false positives of Y and vice versa. So one class can have high precision but low recall while the other has the reverse.\n\n**Connecting to this question.** The classifier makes more mistakes on X's stories (6 of 20 sent to Y) than on Y's (2 of 10 sent to X), so recall is lower for X (0.7) than for Y (0.8). But those 6 wrongly labelled X stories all land in the Y column and dilute Y's precision to $8/14$. Only 2 wrong items land in the X column, so X's precision stays high at $14/16$. Precision and recall ordered the two classes in opposite ways here, which is exactly what options (B) and (C) test.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Correct predictions are $14$ (X) $+ 8$ (Y) $= 22$ out of $30$, so accuracy $= 22/30 = 11/15$."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$\\text{Precision}_X = 14/(14+2) = 0.875$ and $\\text{Precision}_Y = 8/(8+6) \\approx 0.571$. The predicted-Y column contains 6 of X's stories, which drags Y's precision down, so X's precision is higher."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$\\text{Recall}_X = 14/20 = 0.7$ and $\\text{Recall}_Y = 8/10 = 0.8$. X's recall is **lower**, not higher, because 30% of X's stories were missed compared with 20% of Y's."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$14/15 = 28/30$ would mean only 2 errors. That counts only Y's 2 misclassified stories and ignores X's 6. The true accuracy is $22/30 = 11/15$."
+      }
+    ],
+    "shortcut": "For two classes, compare errors directly. Recall: X lost $6/20 = 30\\%$ of its items and Y lost $2/10 = 20\\%$, so $\\text{Recall}_Y > \\text{Recall}_X$. Precision: the predicted-X column has only 2 intruders among 16, while the predicted-Y column has 6 among 14, so $\\text{Precision}_X > \\text{Precision}_Y$. Accuracy is $(30 - 8)/30 = 11/15$.",
+    "commonTrap": "Swapping precision and recall: dividing by the row total (actual class) when computing precision, or by the column total (predicted class) when computing recall. Doing so reverses the verdicts on (B) and (C). Another slip is subtracting only Y's 2 errors, giving $28/30 = 14/15$, which leads to (D)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q47-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the author/class labels X and Y in a sans-serif font; they are transcribed as plain X and Y. The original wording, including \"Let, out of X’s stories, 6 were classified as that of Y.\", is kept verbatim."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\n# confusion matrix, rows = actual author, columns = predicted author\nXX, XY = 20 - 6, 6      # X's 20 stories: 14 predicted X, 6 predicted Y\nYX, YY = 2, 10 - 2      # Y's 10 stories: 2 predicted X, 8 predicted Y\nacc = F(XX + YY, XX + XY + YX + YY)\nprecX, precY = F(XX, XX + YX), F(YY, YY + XY)\nrecX, recY = F(XX, XX + XY), F(YY, YY + YX)\nprint('acc', acc, 'precX', precX, 'precY', precY, 'recX', recX, 'recY', recY)\nres = dict(A=acc == F(11, 15), B=precX > precY, C=recX > recY, D=acc == F(14, 15))\nprint(res); assert res == dict(A=True, B=True, C=False, D=False)   # -> A;B",
+    "notes": "Confusion matrix (actual->predicted): X->X 14, X->Y 6, Y->X 2, Y->Y 8. This gives accuracy 22/30 = 11/15, precision X 14/16 = 0.875 vs Y 8/14 = 0.571, and recall X 14/20 = 0.7 vs Y 8/10 = 0.8. So A and B are true, C and D are false, which matches official key A;B. Classification note: accuracy, precision and recall have no dedicated subtopic in the syllabus taxonomy, so the question is filed under ml-problem-types (official phrase 'regression and classification problems'). That subtopic belongs to topic ml-regression."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

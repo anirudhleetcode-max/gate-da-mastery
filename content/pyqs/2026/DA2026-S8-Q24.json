@@ -1,0 +1,120 @@
+{
+  "id": "DA2026-S8-Q24",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 24,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-propositional"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the definition of entailment and its equivalent implication and refutation forms). Each statement is a direct restatement or the converse, so no option needs separate non-trivial work; about 45 seconds.",
+  "estimatedTimeSec": 45,
+  "stem": "Sentence $X$ is said to entail Sentence $Y$ if whenever $X$ is $\\mathit{TRUE}$, $Y$ also must hold $\\mathit{TRUE}$.\n\nWhich of the following statements is/are correct if $X$ entails $Y$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$X \\Rightarrow Y$"
+    },
+    {
+      "label": "B",
+      "text": "$X \\land \\neg Y$ is $\\mathit{FALSE}$"
+    },
+    {
+      "label": "C",
+      "text": "if $X$ then $Y$"
+    },
+    {
+      "label": "D",
+      "text": "if $Y$ then $X$"
+    }
+  ],
+  "officialKeyRaw": "A;B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "$X \\models Y$ means that every model (truth assignment) making $X$ true also makes $Y$ true. So the only row that falsifies $X \\Rightarrow Y$ ($X$ true, $Y$ false) never occurs. That makes $X \\Rightarrow Y$, read in words as \"if $X$ then $Y$\", true in every model: (A) and (C). Equivalently, $X \\land \\neg Y$ is FALSE in every model: (B).\n\nThe converse \"if $Y$ then $X$\" need not hold, so (D) is wrong. **(A), (B), (C)**",
+    "steps": [
+      {
+        "title": "Entailment in terms of models",
+        "body": "A *model* is an assignment of truth values under which a sentence can be evaluated. Write $M(S)$ for the set of models in which sentence $S$ is TRUE. The definition in the question says\n\n$$\nX \\models Y \\iff \\text{in every model where } X \\text{ is TRUE, } Y \\text{ is TRUE} \\iff M(X) \\subseteq M(Y).\n$$\n\nSo entailment rules out exactly one combination: a model in which $X$ is TRUE and $Y$ is FALSE."
+      },
+      {
+        "title": "Truth table with the forbidden row removed",
+        "body": "| $X$ | $Y$ | $X \\Rightarrow Y$ | $X \\land \\neg Y$ | $Y \\Rightarrow X$ | Possible when $X \\models Y$? |\n| --- | --- | --- | --- | --- | --- |\n| T | T | T | F | T | yes |\n| T | F | F | T | T | **no (ruled out)** |\n| F | T | T | F | **F** | yes |\n| F | F | T | F | T | yes |\n\nLook only at the rows that can occur (rows 1, 3 and 4):\n\n- $X \\Rightarrow Y$ is T in all of them, so it holds in every model (it is *valid*).\n- $X \\land \\neg Y$ is F in all of them, so it is FALSE in every model (it is *unsatisfiable*).\n- $Y \\Rightarrow X$ is F in row 3, which entailment does not exclude."
+      },
+      {
+        "title": "Options (A) and (C): the implication holds",
+        "body": "From the table, $X \\Rightarrow Y$ is TRUE in every model. This is the **deduction theorem**:\n\n$$\nX \\models Y \\iff \\models (X \\Rightarrow Y).\n$$\n\nOption (C), \"if $X$ then $Y$\", is the English reading of the same implication $X \\Rightarrow Y$. Both (A) and (C) are **correct**."
+      },
+      {
+        "title": "Option (B): the refutation form",
+        "body": "$X \\land \\neg Y$ is TRUE exactly when $X$ is TRUE and $Y$ is FALSE, which is the combination that entailment forbids. So $X \\land \\neg Y$ is FALSE in every model (unsatisfiable). Indeed $X \\land \\neg Y \\equiv \\neg(X \\Rightarrow Y)$, the negation of a valid sentence.\n\n$$\nX \\models Y \\iff X \\land \\neg Y \\text{ is unsatisfiable.}\n$$\n\nThis is the principle behind proof by contradiction and resolution refutation. Option (B) is **correct**."
+      },
+      {
+        "title": "Option (D): the converse fails",
+        "body": "Counterexample: take atoms $P, Q$ with $X = P \\land Q$ and $Y = P$.\n\n- Whenever $P \\land Q$ is TRUE, $P$ is TRUE, so $X \\models Y$.\n- In the model $P = \\text{T},\\ Q = \\text{F}$, $Y = P$ is TRUE but $X = P \\land Q$ is FALSE. So \"if $Y$ then $X$\" fails.\n\nEntailment is one-directional. If it held both ways, $X$ and $Y$ would be logically equivalent. Option (D) is **incorrect**.\n\n**Answer: (A), (B), (C).**"
+      }
+    ],
+    "finalAnswer": "**(A), (B), (C)**",
+    "teaching": "**Models and entailment.** In propositional logic, a sentence is built from atoms (such as $P$, $Q$) using connectives $\\neg, \\land, \\lor, \\Rightarrow, \\Leftrightarrow$. A *model* fixes a truth value for each atom, and the sentence then evaluates to TRUE or FALSE. Entailment, $X \\models Y$, is a **relation between sentences**. It says that $Y$ is TRUE in every model in which $X$ is TRUE, i.e. the models of $X$ form a subset of the models of $Y$. Think of $X$ as the stronger claim and $Y$ as the weaker claim that follows from it.\n\n**Implication is a connective inside one sentence.** $X \\Rightarrow Y$ is a single sentence. It is FALSE in exactly one situation ($X$ TRUE, $Y$ FALSE) and TRUE otherwise. The two ideas are linked by the **deduction theorem**: $X \\models Y$ holds exactly when the sentence $X \\Rightarrow Y$ is *valid* (TRUE in every model). In words, it reads \"if $X$ then $Y$\".\n\n**Refutation.** Since $\\neg(X \\Rightarrow Y) \\equiv X \\land \\neg Y$, the statement \"$X \\Rightarrow Y$ is valid\" is the same as \"$X \\land \\neg Y$ is unsatisfiable\". This is how resolution theorem provers and SAT-based checkers test entailment: add the negated goal $\\neg Y$ to the knowledge base $X$ and derive a contradiction.\n\nSo there are three equivalent ways to say the same thing:\n\n$$\nX \\models Y \\iff \\models (X \\Rightarrow Y) \\iff X \\land \\neg Y \\text{ is unsatisfiable.}\n$$\n\n**The converse is a different claim.** $Y \\models X$ would say the models of $Y$ lie inside the models of $X$. Together with $X \\models Y$, that would make $X$ and $Y$ logically equivalent. Inferring $X$ from $Y$ and $X \\Rightarrow Y$ is the fallacy of *affirming the consequent*. For example, \"it is raining and cold\" entails \"it is raining\", but \"it is raining\" does not entail \"it is raining and cold\".\n\n**Back to this question.** (A) and (C) are the implication form, (B) is the refutation form, and (D) is the converse. So (A), (B) and (C) are correct.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Entailment excludes the only row in which $X \\Rightarrow Y$ is FALSE ($X$ TRUE, $Y$ FALSE). So $X \\Rightarrow Y$ holds in every model, as the deduction theorem states."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$X \\land \\neg Y$ would need a model with $X$ TRUE and $Y$ FALSE, and entailment says no such model exists. So $X \\land \\neg Y$ is FALSE (unsatisfiable). This is the refutation form of entailment."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "\"If $X$ then $Y$\" is the English reading of $X \\Rightarrow Y$, which holds whenever $X \\models Y$. It is the definition in the stem restated."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "This is the converse. With $X = P \\land Q$ and $Y = P$ we have $X \\models Y$, but in the model $P = \\text{T}, Q = \\text{F}$, $Y$ is TRUE while $X$ is FALSE. So \"if $Y$ then $X$\" does not follow."
+      }
+    ],
+    "shortcut": "Remember the chain $X \\models Y \\iff \\models (X \\Rightarrow Y) \\iff (X \\land \\neg Y)$ unsatisfiable. Options (A), (B) and (C) are three phrasings of this one fact, and (D) is the converse, which never follows automatically.",
+    "commonTrap": "Treating entailment as equivalence and ticking (D). This is the \"affirming the consequent\" error: $Y$ being TRUE says nothing about $X$. A second slip is rejecting (B) because \"$X \\land \\neg Y$ could be TRUE in some model\". Entailment rules out precisely the models where $X$ is TRUE and $Y$ is FALSE, so no such model exists."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q24-1.webp",
+    "/pyq/2026/official/Q24-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. TRUE, FALSE and the sentence names X and Y are set in italic math in the paper. TRUE and FALSE are transcribed with \\mathit{}. The PDF text layer gives the conjunction in (B) as U+22C0 (n-ary logical AND), while the rendered paper shows a plain wedge, transcribed as \\land. The paper prints a small extra gap before the arrow in (A) (\"X  ⇒ Y\"), and the spacing is normalised here. The second official crop (Q24-2) shows only the header and table border of the next page, and no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B;C",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\n# X, Y range over ALL Boolean functions of 2 atoms (16 each); models = 4 assignments\nM = list(product([0, 1], repeat=2))\nF = list(product([0, 1], repeat=4))          # truth table of a sentence over the 4 models\nent = lambda X, Y: all(Y[i] for i in range(4) if X[i])\nimp = lambda a, b: (not a) or b\nok = dict(A=True, B=True, C=True, D=True); pairs = 0\nfor X, Y in product(F, F):\n    if not ent(X, Y): continue\n    pairs += 1\n    ok['A'] &= all(imp(X[i], Y[i]) for i in range(4))        # X => Y valid\n    ok['B'] &= not any(X[i] and not Y[i] for i in range(4))  # X & ~Y unsatisfiable\n    ok['C'] &= all(imp(X[i], Y[i]) for i in range(4))        # \"if X then Y\"\n    ok['D'] &= all(imp(Y[i], X[i]) for i in range(4))        # converse\nprint(pairs, 'entailing pairs;', ok); assert ok == dict(A=True, B=True, C=True, D=False)  # -> A;B;C\n# explicit counterexample for D: X = P & Q, Y = P, model P=1, Q=0\nP, Q = 1, 0; print('X=P&Q:', P and Q, ' Y=P:', P)",
+    "notes": "X entails Y means M(X) ⊆ M(Y), which rules out only the assignment X=T, Y=F. So X ⇒ Y is valid (deduction theorem), which covers A and C (C is the English reading of the same implication). X ∧ ¬Y is unsatisfiable, which covers B. The converse Y ⇒ X can fail (counterexample X = P ∧ Q, Y = P), so D is false. An exhaustive check over all 16 × 16 pairs of Boolean functions of two atoms (81 entailing pairs) confirms A, B and C always hold and D does not. This matches official key A;B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

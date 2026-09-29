@@ -1,0 +1,124 @@
+{
+  "id": "DA2024-S1-Q28",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 28,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-trees"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: a single concept (rebuilding a tree from traversals), but as an MSQ each of the four options needs its own check, including the less familiar full-tree case for preorder + postorder and a counterexample for inorder alone, which moves it up one level from EASY; about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider the following tree traversals on a full binary tree:\n\n(i) Preorder\n\n(ii) Inorder\n\n(iii) Postorder\n\nWhich of the following traversal options **is/are** sufficient to uniquely reconstruct the full binary tree?",
+  "options": [
+    {
+      "label": "A",
+      "text": "(i) and (ii)"
+    },
+    {
+      "label": "B",
+      "text": "(ii) and (iii)"
+    },
+    {
+      "label": "C",
+      "text": "(i) and (iii)"
+    },
+    {
+      "label": "D",
+      "text": "(ii) only"
+    }
+  ],
+  "officialKeyRaw": "A;B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Preorder + inorder and inorder + postorder rebuild **any** binary tree with distinct labels: pre/post gives the root, and inorder splits the remaining nodes into left and right subtrees. In a **full** binary tree every internal node has exactly two children, so preorder + postorder also works. Inorder alone does not fix the shape (two different 5-node full trees share the inorder $1\\,2\\,3\\,4\\,5$). Answer: **(A), (B), (C)**.",
+    "steps": [
+      {
+        "title": "Definitions and a running example",
+        "body": "A **full binary tree** is one in which every node has either 0 or 2 children. Node labels are taken to be distinct, as is standard for reconstruction questions.\n\n- Preorder: root, left subtree, right subtree.\n- Inorder: left subtree, root, right subtree.\n- Postorder: left subtree, right subtree, root.\n\nRunning example (a full tree with 5 nodes):\n\n```text\n        A\n       / \\\n      B   C\n         / \\\n        D   E\n```\n\nPreorder = A B C D E, Inorder = B A D C E, Postorder = B D E C A."
+      },
+      {
+        "title": "(A) Preorder + inorder: sufficient",
+        "body": "1. The **first** preorder element is the root: A.\n2. Find A in the inorder B **A** D C E. Everything to its left, {B}, is the left subtree (1 node); everything to its right, {D, C, E}, is the right subtree (3 nodes).\n3. Use these sizes to split the rest of the preorder: left = B, right = C D E.\n4. Recurse on the right part: root C (first of C D E); in the inorder D **C** E, the left subtree is {D} and the right is {E}.\n\nEvery choice is forced, so the tree is unique. This works for every binary tree with distinct labels, so in particular for full ones."
+      },
+      {
+        "title": "(B) Inorder + postorder: sufficient",
+        "body": "Same idea, with the root read from the **end** of the postorder.\n\n1. Last postorder element: root A.\n2. Inorder B **A** D C E splits the nodes into {B} (left, 1 node) and {D, C, E} (right, 3 nodes).\n3. Split the postorder B D E C (A removed) by size: left = B, right = D E C.\n4. Recurse: the right part's root is C (last of D E C); inorder D **C** E gives left {D}, right {E}.\n\nAgain every step is forced, for any binary tree with distinct labels."
+      },
+      {
+        "title": "(C) Preorder + postorder: sufficient because the tree is full",
+        "body": "Without inorder we must find the left/right split another way.\n\n1. Root = first of preorder = last of postorder = A.\n2. Because the tree is **full** and A is not a leaf, A has **two** children, so the next preorder element, B, must be the root of the **left** subtree.\n3. In postorder a subtree ends with its own root. B is at position 1 of the postorder **B** D E C A, so the left subtree is {B} (1 node) and the rest, {D, E, C}, is the right subtree.\n4. Recurse on the right subtree: preorder C D E, postorder D E C. Root C; next preorder element D is its left child; D ends the postorder block {D}, so the left subtree is {D} and the right is {E}.\n\nThis recovers the example tree, and the same argument applies at every internal node.\n\n**Why \"full\" matters.** For a general binary tree, preorder A B with postorder B A fits both \"B is the left child of A\" and \"B is the right child of A\". With only one child, the traversals cannot tell which side it is on. A full tree never has a node with exactly one child, so this ambiguity cannot occur."
+      },
+      {
+        "title": "(D) Inorder only: not sufficient",
+        "body": "A single traversal cannot fix the shape. The two full binary trees below both have inorder 1 2 3 4 5:\n\n```text\n   T1                  T2\n    2                   4\n   / \\                 / \\\n  1   4               2   5\n     / \\             / \\\n    3   5           1   3\n```\n\nT1 has preorder 2 1 4 3 5 and T2 has preorder 4 2 1 3 5, so they are different trees with the same inorder. Inorder alone does not uniquely reconstruct a full binary tree."
+      },
+      {
+        "title": "Brute-force confirmation",
+        "body": "A Python check enumerates every full binary tree shape with $n = 1, 3, 5, \\dots, 15$ nodes (up to 429 shapes for $n = 15$). For each option it tests whether any two different trees produce the same traversal data:\n\n| Data | Distinct trees always give distinct data? |\n|---|---|\n| (A) preorder + inorder | yes, for every $n$ |\n| (B) inorder + postorder | yes, for every $n$ |\n| (C) preorder + postorder | yes, for every $n$ |\n| (D) inorder only | no, collisions from $n = 5$ onwards |\n\nIt also confirms that preorder + postorder is **not** enough for general (non-full) binary trees with 2 nodes. The options that are sufficient are **(A), (B), (C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B), (C)**",
+    "teaching": "**What each traversal tells you.** A traversal is a single sequence, while the number of binary tree shapes grows very quickly (the Catalan numbers). One sequence therefore cannot, in general, pin down both the shape and the labels. Pairs of traversals work because they carry complementary information:\n\n- **Preorder** puts the root **first**, and **postorder** puts it **last**. Either one tells you the root of every subtree.\n- **Inorder** puts the root **between** its left and right subtrees. Once you know the root, inorder tells you exactly which nodes lie on the left and which on the right.\n\nSo \"root from preorder or postorder\" + \"left/right split from inorder\" rebuilds the tree recursively. That is why (preorder, inorder) and (inorder, postorder) work for every binary tree with distinct labels.\n\n**Preorder + postorder.** Both give the root, but neither gives the split. The trick is that the element right after the root in preorder is the root of the *first* child subtree, and in postorder that child's subtree ends exactly at that element. This finds the first child's subtree, but not whether that child is a **left** or a **right** child. If a node has only one child, that side cannot be recovered. In a **full** binary tree every internal node has exactly two children, so the first child is always the left one and the reconstruction is unique.\n\n**A single traversal.** Even for full trees, one traversal is not enough once $n \\ge 5$: there are 2 full shapes with 5 nodes (5 with 7 nodes, 14 with 9 nodes, …), and any one traversal can be matched by labelling each shape suitably.\n\n**A note on the word \"full\".** Here it means that every node has 0 or 2 children, the definition the official key is consistent with (it rejects (D)). Some textbooks use \"full binary tree of depth $k$\" for a tree with all $2^k - 1$ nodes present (a *perfect* tree). The shape of such a tree is fixed by $n$, and any single traversal would then suffice.\n\n**Back to this question.** (A) and (B) are the classic results, (C) holds precisely because the tree is full, and (D) fails by the 5-node counterexample.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Preorder gives the root (first element); its position in the inorder splits the remaining nodes into the left and right subtrees, and the subtree sizes split the preorder. Recursing rebuilds any binary tree with distinct labels uniquely, full trees included."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Postorder gives the root (last element); the inorder again splits the rest into left and right subtrees, and the sizes split the postorder. The reconstruction is unique for any binary tree with distinct labels."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "In a full tree every internal node has two children, so the element after the root in preorder is the root of the **left** subtree, and its position in the postorder marks where the left subtree ends. This fixes the split at every level. (For general binary trees this fails: preorder A B, postorder B A fits B as either child.)"
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Inorder alone does not fix the shape. The full trees T1 (root 2, children 1 and 4, where 4 has children 3 and 5) and T2 (root 4, children 2 and 5, where 2 has children 1 and 3) both have inorder 1 2 3 4 5 but are different trees."
+      }
+    ],
+    "shortcut": "Any pair that includes **inorder** works for every binary tree. **Preorder + postorder** works exactly when no node has a single child, which is the definition of a full binary tree. A single traversal never suffices once full trees have 5 or more nodes. So for a full tree: all three pairs, and no single traversal.",
+    "commonTrap": "Remembering the general rule \"preorder + postorder cannot reconstruct a binary tree\" and leaving out (C). That rule fails only because of nodes with a single child, and a full binary tree has none. A second trap is reading \"full\" as \"perfect\" (every level completely filled) and marking (D)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q28-1.webp",
+    "/pyq/2024/official/Q28-2.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper lists the three traversals (i) Preorder, (ii) Inorder, (iii) Postorder as an indented list on separate lines; they are transcribed as separate paragraphs. \"is/are\" is bold in the paper. The second official crop (Q28-2) shows only the top border of the next question's box. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(A), (B), (C)",
+    "agreesWithKey": true,
+    "checkCode": "from functools import lru_cache\n@lru_cache(None)\ndef full(n):  # all full binary tree shapes (each node has 0 or 2 children); shape = (left, right)\n    if n == 1: return ((None, None),)\n    return tuple((l, r) for k in range(1, n - 1, 2) for l in full(k) for r in full(n - 1 - k))\n@lru_cache(None)\ndef anyb(n):  # all binary tree shapes with n nodes\n    if n == 0: return (None,)\n    return tuple((l, r) for k in range(n) for l in anyb(k) for r in anyb(n - 1 - k))\ndef lab(t, order, c):  # label nodes so that traversal `order` reads 0,1,2,...\n    if t is None: return None\n    if order == 'pre': me = next(c); L = lab(t[0], order, c); R = lab(t[1], order, c)\n    elif order == 'in': L = lab(t[0], order, c); me = next(c); R = lab(t[1], order, c)\n    else: L = lab(t[0], order, c); R = lab(t[1], order, c); me = next(c)\n    return (me, L, R)\ndef trav(t, o):\n    if t is None: return ()\n    m, l, r = t\n    return {'pre': (m,) + trav(l, o) + trav(r, o), 'in': trav(l, o) + (m,) + trav(r, o),\n            'post': trav(l, o) + trav(r, o) + (m,)}[o]\ndef unique(shapes, fixed, other):\n    # WLOG relabel so the `fixed` traversal is 0..n-1; the pair then identifies the tree\n    # iff no two shapes give the same `other` traversal (other=None: fixed traversal alone)\n    keys = [trav(lab(s, fixed, iter(range(99))), other) if other else () for s in shapes]\n    return len(set(keys)) == len(keys)\nfor n in range(1, 16, 2):\n    sh = full(n)\n    print(n, len(sh), 'A pre+in', unique(sh, 'in', 'pre'), 'B in+post', unique(sh, 'in', 'post'),\n          'C pre+post', unique(sh, 'pre', 'post'), 'D in only', unique(sh, 'in', None))\nprint('general binary trees, n=2, pre+post unique?', unique(anyb(2), 'pre', 'post'))\nfor s in full(5):  # the two full trees whose inorder is 1..5\n    t = lab(s, 'in', iter(range(99)))\n    print('inorder', [v + 1 for v in trav(t, 'in')], 'preorder', [v + 1 for v in trav(t, 'pre')])",
+    "notes": "Preorder + inorder and inorder + postorder reconstruct any binary tree with distinct labels; preorder + postorder also suffices because in a full binary tree (every node has 0 or 2 children) the element after the root in preorder is always the left child; inorder alone is ambiguous (two 5-node full trees share inorder 1 2 3 4 5). A Python brute force over all full binary tree shapes with n = 1, 3, …, 15 nodes confirms A, B and C are always sufficient and D fails from n = 5, and that preorder + postorder fails for general binary trees (n = 2). The solve assumes distinct node labels and the 0-or-2-children meaning of \"full\"; under the alternative convention where a full tree has every level completely filled, inorder alone would also suffice, and the official key (which excludes D) is consistent with the 0-or-2-children meaning. This agrees with official key A;B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

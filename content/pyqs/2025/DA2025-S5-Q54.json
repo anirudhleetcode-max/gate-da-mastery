@@ -1,0 +1,119 @@
+{
+  "id": "DA2025-S5-Q54",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 54,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-random-variables",
+  "subtopicIds": [
+    "ps-random-variables",
+    "ps-discrete-named"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (the mean and variance of a sample proportion of i.i.d. Bernoulli trials), where each statement follows from direct recall of $E[\\widehat{p}] = p$ and $\\mathrm{Var}(\\widehat{p}) = p(1-p)/n$, taking about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider a coin-toss experiment where the probability of head showing up is $p$. In the $i^{\\text{th}}$ coin toss, let $X_i = 1$ if head appears, and $X_i = 0$ if tail appears. Consider\n\n$$\n\\widehat{p} = \\frac{1}{n} \\sum_{i=1}^{n} X_i\n$$\n\nwhere $n$ is the total number of independent coin tosses.\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$E[\\,\\widehat{p}\\,] = p$"
+    },
+    {
+      "label": "B",
+      "text": "$E[\\,\\widehat{p}\\,] = \\dfrac{p}{n}$"
+    },
+    {
+      "label": "C",
+      "text": "As $n$ increases, variance of $\\widehat{p}$ decreases"
+    },
+    {
+      "label": "D",
+      "text": "Variance of $\\widehat{p}$ does not depend on $n$"
+    }
+  ],
+  "officialKeyRaw": "A;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Each $X_i$ is Bernoulli($p$), so $E[X_i] = p$ and $\\mathrm{Var}(X_i) = p(1-p)$. By linearity, $E[\\widehat{p}] = \\frac{1}{n}\\cdot np = p$, so (A) is true and (B) is false. By independence, $\\mathrm{Var}(\\widehat{p}) = \\frac{1}{n^2}\\cdot n\\,p(1-p) = \\frac{p(1-p)}{n}$, which shrinks as $n$ grows: (C) is true and (D) is false. The answer is **(A), (C)**.",
+    "steps": [
+      {
+        "title": "Model each toss as a Bernoulli random variable",
+        "body": "$X_i$ takes the value $1$ with probability $p$ and $0$ with probability $1-p$, so $X_i \\sim \\text{Bernoulli}(p)$:\n\n$$\nE[X_i] = 1\\cdot p + 0\\cdot(1-p) = p, \\qquad E[X_i^2] = 1^2\\cdot p + 0^2 \\cdot (1-p) = p,\n$$\n\n$$\n\\mathrm{Var}(X_i) = E[X_i^2] - (E[X_i])^2 = p - p^2 = p(1-p).\n$$\n\nThe tosses are independent, so $X_1, \\dots, X_n$ are i.i.d. and $\\widehat{p} = \\frac{1}{n}\\sum_{i=1}^n X_i$ is the fraction of heads."
+      },
+      {
+        "title": "Expectation of the estimator (statements A and B)",
+        "body": "Expectation is linear (this needs no independence):\n\n$$\nE[\\widehat{p}] = E\\left[\\frac{1}{n}\\sum_{i=1}^{n} X_i\\right] = \\frac{1}{n}\\sum_{i=1}^{n} E[X_i] = \\frac{1}{n}\\cdot n p = p.\n$$\n\nSo $\\widehat{p}$ is an **unbiased** estimator of $p$, for every $n$.\n\n- Statement **(A)** $E[\\widehat{p}] = p$ is **true**.\n- Statement **(B)** $E[\\widehat{p}] = p/n$ is **false**: it would hold only for $n = 1$. It comes from dividing by $n$ but forgetting that the sum has $n$ terms, each with mean $p$."
+      },
+      {
+        "title": "Variance of the estimator",
+        "body": "For **independent** random variables the variance of a sum is the sum of the variances, and a constant factor $c$ comes out squared: $\\mathrm{Var}(cY) = c^2\\,\\mathrm{Var}(Y)$. Hence\n\n$$\n\\mathrm{Var}(\\widehat{p}) = \\frac{1}{n^2}\\,\\mathrm{Var}\\left(\\sum_{i=1}^n X_i\\right) = \\frac{1}{n^2}\\sum_{i=1}^n \\mathrm{Var}(X_i) = \\frac{1}{n^2}\\cdot n\\,p(1-p) = \\frac{p(1-p)}{n}.\n$$\n\n(Equivalently, $\\sum X_i \\sim \\text{Binomial}(n, p)$ has variance $np(1-p)$; divide by $n^2$.)"
+      },
+      {
+        "title": "How the variance depends on n (statements C and D)",
+        "body": "$\\mathrm{Var}(\\widehat{p}) = \\dfrac{p(1-p)}{n}$ has $n$ in the denominator. For example, with $p = 0.3$:\n\n| $n$ | $1$ | $2$ | $5$ | $10$ | $100$ |\n| --- | --- | --- | --- | --- | --- |\n| $\\mathrm{Var}(\\widehat{p})$ | $0.21$ | $0.105$ | $0.042$ | $0.021$ | $0.0021$ |\n\n- Statement **(C)** is **true**: as $n$ increases, the variance decreases (for any coin with $0 < p < 1$; for $p = 0$ or $1$ the variance is $0$ for all $n$, a degenerate case with no randomness at all).\n- Statement **(D)** is **false**: the variance is inversely proportional to $n$."
+      },
+      {
+        "title": "Conclusion",
+        "body": "$\\widehat{p}$ is unbiased ($E[\\widehat{p}] = p$) and its variance $p(1-p)/n$ falls as more tosses are made. The correct statements are **(A) and (C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (C)**",
+    "teaching": "**Bernoulli trials.** A random variable that is $1$ with probability $p$ and $0$ otherwise is a Bernoulli($p$) variable. Its mean is $p$ (the probability of the \"1\"), and its variance is $p(1-p)$: largest at $p = 1/2$ (a fair coin is the most unpredictable) and zero when $p$ is $0$ or $1$.\n\n**The sample proportion.** Averaging $n$ such indicators gives $\\widehat{p}$, the fraction of heads. It is the natural estimate of the unknown $p$. Two facts about any sample mean of i.i.d. variables with mean $\\mu$ and variance $\\sigma^2$ are worth memorising:\n\n$$\nE[\\bar{X}] = \\mu, \\qquad \\mathrm{Var}(\\bar{X}) = \\frac{\\sigma^2}{n}.\n$$\n\nThe first comes from **linearity of expectation**: the mean of an average is the average of the means. It holds even without independence. The second needs **independence** (more precisely, zero covariances), because only then is the variance of a sum the sum of the variances. The $1/n^2$ comes from pulling the constant $1/n$ out of the variance, where it gets squared; $n$ equal variances then add up to $n\\sigma^2$, leaving $\\sigma^2/n$.\n\n**Why this matters.** An estimator whose mean equals the true parameter is **unbiased**. An estimator whose variance goes to $0$ as $n \\to \\infty$ becomes more and more concentrated around its mean; together with unbiasedness, this makes it **consistent** (it converges to the true value). This is the law of large numbers in action: the standard deviation of $\\widehat{p}$ is $\\sqrt{p(1-p)/n}$, so quadrupling the number of tosses halves the typical error. The same $\\sigma/\\sqrt{n}$ scaling drives the central limit theorem and the width of confidence intervals.\n\n**Back to this question.** Plug in $\\mu = p$ and $\\sigma^2 = p(1-p)$: $E[\\widehat{p}] = p$ (A true, B false) and $\\mathrm{Var}(\\widehat{p}) = p(1-p)/n$, which decreases with $n$ (C true, D false).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "By linearity, $E[\\widehat{p}] = \\frac{1}{n}\\sum_{i=1}^n E[X_i] = \\frac{1}{n}\\cdot np = p$. The sample proportion is an unbiased estimator of $p$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$E[\\widehat{p}] = p$, not $p/n$. The value $p/n$ would be $E[X_1/n]$, the contribution of a single toss; the sum has $n$ such terms. It coincides with $p$ only when $n = 1$, so the statement is false in general."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$\\mathrm{Var}(\\widehat{p}) = \\dfrac{p(1-p)}{n}$, which decreases as $n$ increases (e.g. $0.21, 0.105, 0.021$ for $n = 1, 2, 10$ when $p = 0.3$)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The variance $p(1-p)/n$ is inversely proportional to $n$, so it clearly depends on $n$. What does not depend on $n$ is the mean, $E[\\widehat{p}] = p$."
+      }
+    ],
+    "shortcut": "Recall the two sample-mean facts $E[\\bar{X}] = \\mu$ and $\\mathrm{Var}(\\bar{X}) = \\sigma^2/n$. With $\\mu = p$ and $\\sigma^2 = p(1-p)$ they give $E[\\widehat{p}] = p$ and $\\mathrm{Var}(\\widehat{p}) = p(1-p)/n$, which settles all four options at once.",
+    "commonTrap": "Treating the $\\frac{1}{n}$ factor as if it scaled the mean down, giving $E[\\widehat{p}] = p/n$ (B). The sum of $n$ tosses has mean $np$, and dividing by $n$ brings it back to $p$. A related slip is writing $\\mathrm{Var}(\\widehat{p}) = p(1-p)$, forgetting that the constant $1/n$ comes out of the variance squared, which would make (D) look true."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q54-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the estimator with a wide hat, rendered here as $\\widehat{p}$, and sets $E[\\,\\widehat{p}\\,]$ with thin spaces inside the brackets. In option (B) the fraction $p/n$ is set as a small stacked fraction. No figure is needed. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;C (E[p-hat] = p, so A true and B false; Var(p-hat) = p(1-p)/n decreases with n, so C true and D false)",
+    "agreesWithKey": true,
+    "checkCode": "import itertools, sympy as sp\np=sp.symbols('p',positive=True)\ndef moments(n):  # exact E and Var of phat = (1/n) sum X_i by enumerating all 2^n outcomes\n    E=V2=0\n    for xs in itertools.product([0,1],repeat=n):\n        pr=sp.prod([p if x else 1-p for x in xs]); ph=sp.Rational(sum(xs),n)\n        E+=pr*ph; V2+=pr*ph**2\n    return sp.simplify(E), sp.factor(sp.simplify(V2-E**2))\nfor n in [1,2,3,5,8]:\n    E,V=moments(n); print(n, 'E =',E, ' Var =',V, ' Var==p(1-p)/n:', sp.simplify(V-p*(1-p)/n)==0)\n# A: E=p for every n (true); B: E=p/n only for n=1 (false in general)\n# C: Var=p(1-p)/n strictly decreases in n for 0<p<1; D: Var depends on n (false)\nprint([float((p*(1-p)/n).subs(p,0.3)) for n in [1,2,5,10,100]])\n",
+    "notes": "Hand solve: X_i ~ Bernoulli(p) i.i.d., so E[p-hat] = p by linearity (A true, B false) and Var(p-hat) = p(1-p)/n by independence (C true, D false). The SymPy check enumerates all 2^n outcomes for n = 1, 2, 3, 5, 8 and confirms E[p-hat] = p and Var(p-hat) = p(1-p)/n exactly. (C) holds strictly for 0 < p < 1; for the degenerate coins p = 0 or 1 the variance is 0 for every n. This agrees with the official key A;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

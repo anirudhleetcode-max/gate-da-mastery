@@ -1,0 +1,112 @@
+{
+  "id": "DA2026-S8-Q19",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 19,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-foundations",
+  "subtopicIds": [
+    "ps-counting",
+    "ps-sample-space"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (complementary counting over subsets) in 2–3 steps (sample space of 2^2026 − 1 non-empty subsets, count the 2^1013 − 1 non-empty all-odd subsets, take the complement), with a likely trap of including the empty set in the denominator; about 1.5 min for a prepared student.",
+  "estimatedTimeSec": 90,
+  "stem": "Let $M$ be a randomly chosen non-empty subset of $S = \\{1,2,3,\\ldots,2026\\}$.\n\nWhich of the following is the probability that the product of all the elements of $M$ is even?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$2^{1013}(2^{1013}-1)/2^{2026}$"
+    },
+    {
+      "label": "B",
+      "text": "$2^{1013}/2^{2026}$"
+    },
+    {
+      "label": "C",
+      "text": "$2^{1013}(2^{1013}-1)/(2^{2026}-1)$"
+    },
+    {
+      "label": "D",
+      "text": "$1/(2^{2026}-1)$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "There are $2^{2026}-1$ equally likely non-empty subsets. The product is odd exactly when $M$ contains only odd numbers; $S$ has $1013$ odd numbers, giving $2^{1013}-1$ such non-empty subsets. So the number of subsets with an even product is $(2^{2026}-1)-(2^{1013}-1) = 2^{1013}(2^{1013}-1)$, and the probability is $2^{1013}(2^{1013}-1)/(2^{2026}-1)$. Answer: **(C)**.",
+    "steps": [
+      {
+        "title": "Sample space",
+        "body": "$S$ has $2026$ elements, so it has $2^{2026}$ subsets. $M$ is non-empty, so the empty set is excluded:\n\n$$\n|\\Omega| = 2^{2026} - 1.\n$$\n\n\"Randomly chosen\" is read in the standard way: each non-empty subset is equally likely."
+      },
+      {
+        "title": "When is the product even?",
+        "body": "A product of integers is even if and only if at least one factor is even (a product of odd numbers is always odd). So\n\n$$\n\\text{product of } M \\text{ is odd} \\iff M \\text{ contains only odd numbers}.\n$$\n\nIt is easier to count this complement."
+      },
+      {
+        "title": "Count the subsets with an odd product",
+        "body": "$S = \\{1,\\ldots,2026\\}$ contains $2026/2 = 1013$ odd numbers ($1,3,\\ldots,2025$) and $1013$ even numbers ($2,4,\\ldots,2026$).\n\nThe non-empty subsets made only of odd numbers are the non-empty subsets of the $1013$ odd numbers:\n\n$$\n2^{1013} - 1.\n$$"
+      },
+      {
+        "title": "Complement and simplify",
+        "body": "Number of non-empty subsets whose product is even:\n\n$$\n(2^{2026}-1) - (2^{1013}-1) = 2^{2026} - 2^{1013} = 2^{1013}\\,(2^{1013}-1).\n$$\n\n(Equivalently: choose a non-empty set of even numbers, $2^{1013}-1$ ways, and any set of odd numbers, $2^{1013}$ ways.) Therefore\n\n$$\nP(\\text{product even}) = \\frac{2^{1013}(2^{1013}-1)}{2^{2026}-1}.\n$$\n\nSince $2^{2026}-1 = (2^{1013}-1)(2^{1013}+1)$, this simplifies to $\\dfrac{2^{1013}}{2^{1013}+1}$, which is extremely close to (but less than) $1$. The expression matches option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** $2^{1013}(2^{1013}-1)/(2^{2026}-1)$",
+    "teaching": "**Counting subsets.** A set with $n$ elements has $2^n$ subsets, because each element is independently either in or out of the subset. Excluding the empty set leaves $2^n - 1$ non-empty subsets. When a subset is \"chosen at random\" without further qualification, each allowed subset is taken to be equally likely, so a probability is simply\n\n$$\nP(E) = \\frac{\\text{number of allowed subsets in } E}{\\text{number of allowed subsets}}.\n$$\n\nThe word *non-empty* changes the denominator from $2^n$ to $2^n - 1$, so read it carefully.\n\n**Complementary counting.** Events of the form \"at least one ...\" are usually easiest through their complement \"none ...\". Here \"the product is even\" means \"at least one element is even\", because $2$ is prime: if $2$ divides a product, it divides one of the factors. The complement is \"every element is odd\".\n\n**Splitting a set by a property.** If $S$ has $a$ elements with a property and $b$ without it, then the subsets that use only the $b$ elements number $2^b$ (including the empty set). The subsets with at least one of the $a$ elements number $2^{a+b} - 2^b = 2^b(2^a - 1)$.\n\n**Back to this question.** $S = \\{1,\\ldots,2026\\}$ has $a = 1013$ even and $b = 1013$ odd numbers. The number of subsets with at least one even element is $2^{1013}(2^{1013}-1)$; none of them is empty, so they all lie in the sample space of $2^{2026}-1$ non-empty subsets. The probability is $\\dfrac{2^{1013}(2^{1013}-1)}{2^{2026}-1}$, option (C), which simplifies to $\\dfrac{2^{1013}}{2^{1013}+1}$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "The numerator $2^{1013}(2^{1013}-1)$ is the correct count, but the denominator $2^{2026}$ counts all subsets, including the empty set. $M$ is non-empty, so the sample space has $2^{2026}-1$ outcomes. The value is numerically very close to (C) but not equal to it."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$2^{1013}/2^{2026} = 2^{-1013}$ is tiny. It is the probability that a uniformly random subset of $S$ (empty set allowed) contains no even number, i.e. roughly the probability of an *odd* product, the complement of what is asked, and it also uses the wrong denominator."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "There are $2^{2026}-1$ non-empty subsets; $2^{1013}-1$ of them contain only odd numbers (odd product), leaving $2^{2026}-2^{1013} = 2^{1013}(2^{1013}-1)$ with an even product. The ratio is exactly this expression, equal to $2^{1013}/(2^{1013}+1)$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$1/(2^{2026}-1)$ is the probability of choosing one particular non-empty subset (for example $M = S$). Very many subsets have an even product, so the probability is close to $1$, not tiny."
+      }
+    ],
+    "shortcut": "Because $M$ is non-empty, the denominator must be $2^{2026}-1$, which leaves only (C) and (D). An even product just needs one even element, which is almost certain, so the probability is close to $1$: (C). Useful identity: $P(\\text{odd}) = \\dfrac{2^{1013}-1}{2^{2026}-1} = \\dfrac{1}{2^{1013}+1}$, so $P(\\text{even}) = \\dfrac{2^{1013}}{2^{1013}+1}$.",
+    "commonTrap": "Using $2^{2026}$ (all subsets, including the empty set) as the denominator, which leads to option (A); the word \"non-empty\" makes the sample space $2^{2026}-1$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q19-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The PDF text layer flattens the exponents (e.g. \"21013(21013 −1)/22026\"); the superscripts were read from the rendered paper image: 2^{1013}, 2^{2026}. The set is written \"S = {1,2,3, … ,2026}\" in the paper and is rendered with \\ldots."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as Fr\nfrom itertools import combinations\nfrom math import prod\ndef brute(n):  # uniform over non-empty subsets of {1..n}\n    subs=[c for k in range(1,n+1) for c in combinations(range(1,n+1),k)]\n    return Fr(sum(prod(c)%2==0 for c in subs), len(subs))\nfor n in [2,4,6,8,10]:\n    h=n//2; assert brute(n)==Fr(2**h*(2**h-1),2**n-1)\nN,h=2026,1013\nC=Fr(2**h*(2**h-1),2**N-1); A=Fr(2**h*(2**h-1),2**N); B=Fr(2**h,2**N); D=Fr(1,2**N-1)\nassert C==Fr(2**h,2**h+1) and len({A,B,C,D})==4\nprint('C =', C==Fr(2**h,2**h+1))  # option C is the exact probability\n",
+    "notes": "Treating M as uniform over the 2^2026 − 1 non-empty subsets: the product is odd iff M contains only odd numbers (2^1013 − 1 non-empty subsets of the 1013 odd numbers), so P(even) = (2^2026 − 2^1013)/(2^2026 − 1) = 2^1013(2^1013 − 1)/(2^2026 − 1) = 2^1013/(2^1013 + 1). The Python check brute-forces the same formula for S = {1..n} with n = 2, 4, 6, 8, 10 using exact fractions, confirms the simplification for n = 2026, and confirms options A, B, C, D are pairwise distinct. This matches the official key (C)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

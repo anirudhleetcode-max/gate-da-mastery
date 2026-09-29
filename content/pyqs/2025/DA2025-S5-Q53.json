@@ -1,0 +1,118 @@
+{
+  "id": "DA2025-S5-Q53",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 53,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-svm"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (the hard-margin SVM) in 2-3 routine steps: locate the boundary x1 + x2 = 1 geometrically, scale to w = (1, 1), b = -1, then read off support vectors, margin and accuracy, with a small trap in the margin convention (2/||w||, not 1/||w||); about 3 minutes.",
+  "estimatedTimeSec": 180,
+  "stem": "Consider designing a linear binary classifier $f(x) = \\operatorname{sign}(w^\\top x + b)$, $x \\in \\mathbb{R}^2$ on the following training data:\n\n$$\n\\text{Class-1: } \\left\\{ \\begin{pmatrix} 2 \\\\ 0 \\end{pmatrix}, \\begin{pmatrix} 0 \\\\ 2 \\end{pmatrix}, \\begin{pmatrix} 2 \\\\ 2 \\end{pmatrix} \\right\\}, \\ \\text{Class-2: } \\left\\{ \\begin{pmatrix} 0 \\\\ 0 \\end{pmatrix} \\right\\}\n$$\n\nHard-margin support vector machine (SVM) formulation is solved to obtain $w$ and $b$. Which of the following options is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$w = \\begin{pmatrix} 4 \\\\ 4 \\end{pmatrix}$ and $b = 1$"
+    },
+    {
+      "label": "B",
+      "text": "The number of support vectors is 3"
+    },
+    {
+      "label": "C",
+      "text": "The margin is $\\sqrt{2}$"
+    },
+    {
+      "label": "D",
+      "text": "Training accuracy is $98\\%$"
+    }
+  ],
+  "officialKeyRaw": "B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Separate the Class-2 point $(0, 0)$ from the Class-1 triangle $(2, 0), (0, 2), (2, 2)$: the nearest triangle point is $(1, 1)$, at distance $\\sqrt{2}$, so the boundary is $x_1 + x_2 = 1$ with canonical $w = (1, 1)^\\top$, $b = -1$. Support vectors $(2, 0), (0, 2), (0, 0)$ give 3; margin $2/\\|w\\| = \\sqrt{2}$; training accuracy $100\\%$. Answer: **(B), (C)**.",
+    "steps": [
+      {
+        "title": "Set up the hard-margin SVM",
+        "body": "Label Class-1 as $y = +1$ and Class-2 as $y = -1$. (The opposite labelling only flips the signs of $w$ and $b$; the support vectors, margin and accuracy are unchanged.) The hard-margin SVM solves\n\n$$\n\\min_{w,\\, b} \\ \\tfrac{1}{2}\\|w\\|^2 \\quad \\text{subject to} \\quad y_i\\,(w^\\top x_i + b) \\ge 1 \\ \\text{ for every training point } i .\n$$\n\nAt the optimum the decision boundary is $w^\\top x + b = 0$, the two supporting hyperplanes are $w^\\top x + b = \\pm 1$, and the margin (the width of the empty band between them) is $\\dfrac{2}{\\|w\\|}$.\n\nThe data are linearly separable (for example the line $x_1 + x_2 = 1$ separates them), so a hard-margin solution exists."
+      },
+      {
+        "title": "Find the maximum-margin boundary geometrically",
+        "body": "For separable data, the maximum-margin boundary is the perpendicular bisector of the shortest segment joining the convex hulls of the two classes.\n\n- Class-2 is the single point $O = (0, 0)$.\n- Class-1's convex hull is the triangle $T$ with vertices $(2, 0)$, $(0, 2)$, $(2, 2)$. Their coordinate sums are $2, 2, 4$, so every point of $T$ satisfies $x_1 + x_2 \\ge 2$, with equality exactly on the edge from $(2, 0)$ to $(0, 2)$.\n- On the line $x_1 + x_2 = 2$, the point closest to the origin is the foot of the perpendicular, $(1, 1)$, which lies on that edge. Its distance from $O$ is $\\sqrt{1^2 + 1^2} = \\sqrt{2}$.\n\nThe perpendicular bisector of the segment from $(0, 0)$ to $(1, 1)$ has normal direction $(1, 1)$ and passes through the midpoint $\\left(\\tfrac12, \\tfrac12\\right)$:\n\n$$\nx_1 + x_2 = 1 .\n$$"
+      },
+      {
+        "title": "Canonical w and b, and the support vectors",
+        "body": "Write $w = (a, a)^\\top$ and choose the scale so that the closest points satisfy $y_i(w^\\top x_i + b) = 1$:\n\n- $(0, 0)$, $y = -1$: $\\ -(0 + b) = 1 \\Rightarrow b = -1$.\n- $(2, 0)$, $y = +1$: $\\ 2a - 1 = 1 \\Rightarrow a = 1$.\n\nSo $w = (1, 1)^\\top$, $b = -1$, and $\\|w\\| = \\sqrt{2}$. Checking every constraint:\n\n| Point | $y$ | $w^\\top x + b$ | $y\\,(w^\\top x + b)$ | On a supporting line? |\n| --- | --- | --- | --- | --- |\n| $(2, 0)$ | $+1$ | $1$ | $1$ | Yes |\n| $(0, 2)$ | $+1$ | $1$ | $1$ | Yes |\n| $(2, 2)$ | $+1$ | $3$ | $3$ | No |\n| $(0, 0)$ | $-1$ | $-1$ | $1$ | Yes |\n\n**Dual check.** The dual solution satisfies $w = \\sum_i \\alpha_i y_i x_i$ and $\\sum_i \\alpha_i y_i = 0$ with $\\alpha_i \\ge 0$, and $\\alpha_i = 0$ for points strictly outside the band, so $\\alpha_{(2,2)} = 0$. Then $w = \\alpha_{(2,0)}(2, 0) + \\alpha_{(0,2)}(0, 2) = (1, 1)$ gives $\\alpha_{(2,0)} = \\alpha_{(0,2)} = \\tfrac12$, and $\\sum_i \\alpha_i y_i = 0$ gives $\\alpha_{(0,0)} = \\tfrac12 + \\tfrac12 = 1$. All three multipliers are strictly positive, so there are exactly **3 support vectors**: $(2, 0)$, $(0, 2)$, $(0, 0)$. **(B) is correct.**"
+      },
+      {
+        "title": "The margin (C)",
+        "body": "$$\n\\text{margin} = \\frac{2}{\\|w\\|} = \\frac{2}{\\sqrt{2}} = \\sqrt{2} .\n$$\n\nGeometrically, this is the distance between the supporting lines $x_1 + x_2 = 0$ (through $(0, 0)$) and $x_1 + x_2 = 2$ (through $(2, 0)$ and $(0, 2)$): $\\dfrac{|2 - 0|}{\\sqrt{1^2 + 1^2}} = \\sqrt{2}$. It equals the distance from $(0, 0)$ to the nearest hull point $(1, 1)$ found in Step 2. **(C) is correct.** (Each support vector is at distance $\\dfrac{1}{\\|w\\|} = \\dfrac{1}{\\sqrt{2}}$ from the decision boundary itself; the margin is the full width of the band.)"
+      },
+      {
+        "title": "Options (A) and (D), and conclusion",
+        "body": "**(A)** With $w = (4, 4)^\\top$ and $b = 1$: $w^\\top x + b = 9, 9, 17$ at the three Class-1 points and $1$ at $(0, 0)$. All four values are positive, so this classifier puts $(0, 0)$ in the same class as the Class-1 points; it does not even separate the data. The SVM solution is $w = (1, 1)^\\top$, $b = -1$ (or $w = (-1, -1)^\\top$, $b = 1$ with the opposite labelling). **(A) is incorrect.**\n\n**(D)** Every hard-margin constraint $y_i(w^\\top x_i + b) \\ge 1 > 0$ says that point $i$ is on its correct side, so the training accuracy is $100\\%$. With only $4$ training points the possible accuracies are $0\\%, 25\\%, 50\\%, 75\\%, 100\\%$, so $98\\%$ is impossible anyway. **(D) is incorrect.**\n\nThe correct options are **(B), (C)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C)**",
+    "teaching": "**Hard-margin SVM in one picture.** A linear classifier $\\operatorname{sign}(w^\\top x + b)$ splits the plane with the line $w^\\top x + b = 0$. When the classes are linearly separable, infinitely many lines separate them. The SVM picks the one that stays **as far as possible from the nearest training points**, because a wide empty corridor around the boundary tolerates noise and generalises better.\n\n**Canonical scaling and the margin.** Multiplying $(w, b)$ by any $c > 0$ gives the same line, so the SVM fixes the scale by requiring $y_i(w^\\top x_i + b) \\ge 1$ for every point, with equality for the closest ones. The corridor is then bounded by the supporting hyperplanes $w^\\top x + b = +1$ and $w^\\top x + b = -1$. The distance between them is $2/\\|w\\|$, and this width is the **margin**; each supporting hyperplane is $1/\\|w\\|$ from the decision boundary. Maximising $2/\\|w\\|$ is the same as\n\n$$\n\\min_{w,\\, b} \\ \\tfrac{1}{2}\\|w\\|^2 \\quad \\text{s.t.} \\quad y_i(w^\\top x_i + b) \\ge 1 \\ \\ \\forall i .\n$$\n\n**Support vectors.** Points lying exactly on a supporting hyperplane, $y_i(w^\\top x_i + b) = 1$, are the support vectors. In the dual, $w = \\sum_i \\alpha_i y_i x_i$ with $\\alpha_i \\ge 0$ and $\\sum_i \\alpha_i y_i = 0$, and complementary slackness makes $\\alpha_i = 0$ for every point strictly outside the corridor. So only support vectors shape the solution: moving any other point, without entering the corridor, changes nothing.\n\n**Geometric shortcut.** For separable data, the hard-margin boundary is the perpendicular bisector of the shortest segment joining the **convex hulls** of the two classes, and the margin equals that segment's length.\n\n**Training accuracy.** Each constraint $y_i(w^\\top x_i + b) \\ge 1 > 0$ says point $i$ is on the correct side, so a hard-margin SVM (which exists only for separable data) always classifies every training point correctly.\n\n**Back to this question.** The Class-2 point $(0, 0)$ is nearest to the Class-1 triangle at $(1, 1)$, at distance $\\sqrt{2}$. The boundary is $x_1 + x_2 = 1$, the canonical parameters are $w = (1, 1)^\\top$ and $b = -1$, the margin is $2/\\sqrt{2} = \\sqrt{2}$, the support vectors are $(0, 0)$, $(2, 0)$ and $(0, 2)$, and training accuracy is $100\\%$. So **(B)** and **(C)** hold.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "With $w = (4, 4)^\\top$, $b = 1$, the score $w^\\top x + b$ is $9, 9, 17$ on the Class-1 points and $1$ on $(0, 0)$: all positive, so $(0, 0)$ is put in the same class as Class-1 and the data are not even separated. The hard-margin solution is $w = (1, 1)^\\top$, $b = -1$ (signs flipped for the opposite labelling)."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "With $w = (1, 1)^\\top$, $b = -1$, the points $(2, 0)$, $(0, 2)$ and $(0, 0)$ satisfy $y_i(w^\\top x_i + b) = 1$ exactly, while $(2, 2)$ gives $3 > 1$. The dual multipliers are $\\tfrac12, \\tfrac12, 1$ for these three points and $0$ for $(2, 2)$, so there are exactly 3 support vectors."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Margin $= \\dfrac{2}{\\|w\\|} = \\dfrac{2}{\\sqrt{2}} = \\sqrt{2}$: the width of the band between the supporting lines $x_1 + x_2 = 0$ and $x_1 + x_2 = 2$, which equals the distance from $(0, 0)$ to the nearest Class-1 hull point $(1, 1)$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "A hard-margin SVM satisfies $y_i(w^\\top x_i + b) \\ge 1 > 0$ for every training point, so training accuracy is $100\\%$. With only $4$ points the achievable accuracies are multiples of $25\\%$, so $98\\%$ is impossible."
+      }
+    ],
+    "shortcut": "One point against a set: the SVM boundary is the perpendicular bisector between $(0, 0)$ and the nearest point $(1, 1)$ of the Class-1 hull, so the margin is $\\|(1, 1)\\| = \\sqrt{2}$. The supporting lines are $x_1 + x_2 = 0$ and $x_1 + x_2 = 2$, which pass through $(0, 0)$, $(2, 0)$ and $(0, 2)$: 3 support vectors. A hard-margin SVM always has $100\\%$ training accuracy.",
+    "commonTrap": "Taking the margin as $1/\\|w\\| = 1/\\sqrt{2}$ (the distance from the boundary to one support vector) and rejecting (C); the margin is the full band width $2/\\|w\\| = \\sqrt{2}$. Another slip is counting $(2, 2)$ as a support vector: it lies on $x_1 + x_2 = 4$, beyond the supporting line $x_1 + x_2 = 2$, and its multiplier is $0$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q53-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The two class sets, centred on their own line in the paper, are set as display math with the column vectors as pmatrix. \"sign\" is upright in the paper and is written as \\operatorname{sign}; \"98%\" in option (D) is set in math mode. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom scipy.optimize import linprog\n# (x, y) positions read off the official figures (grid spacing 1; (i) lower square and all of (iv) are approximate)\nD={'i':  {'circle':[(1,3),(2,3),(1,2)],        'square':[(2,1),(3,1),(2,0.3)]},\n   'ii': {'circle':[(2,2)],                    'square':[(2,3),(1,2),(3,2),(2,1)]},\n   'iii':{'circle':[(1,1),(3,3)],              'square':[(1,3),(3,1)]},\n   'iv': {'circle':[(2,0.5),(3,1.5),(3,0.6)],  'square':[(1,2.2),(1.1,1.2),(2.2,2.6)]}}\ndef separable(c,s):\n    # feasibility LP: find (w1,w2,b) with  w.x+b >= 1 for circles and <= -1 for squares\n    X=np.array(c+s,float); yy=np.array([1]*len(c)+[-1]*len(s))\n    A=-(yy[:,None]*np.hstack([X,np.ones((len(X),1))])); ub=-np.ones(len(X))\n    r=linprog(np.zeros(3),A_ub=A,b_ub=ub,bounds=[(None,None)]*3,method='highs')\n    return r.status==0, (r.x if r.status==0 else None)\nfor k,v in D.items():\n    ok,w=separable(v['circle'],v['square'])\n    print(k,'linearly separable' if ok else 'NOT linearly separable', '' if w is None else 'w=%s'%np.round(w,3))\n# explicit certificates\nprint('(i)  line y=1.5 :', [y-1.5 for x,y in D['i']['circle']], [y-1.5 for x,y in D['i']['square']])\nprint('(iv) line x-y=0.5:', [round(x-y-0.5,2) for x,y in D['iv']['circle']], [round(x-y-0.5,2) for x,y in D['iv']['square']])\nprint('(ii) circle (2,2) = midpoint of squares (1,2),(3,2):', ((1+3)/2,(2+2)/2))\nprint('(iii) diagonals (1,1)-(3,3) and (1,3)-(3,1) both pass through', ((1+3)/2,(1+3)/2), ((1+3)/2,(3+1)/2))\n# robustness of (iv): jitter every point by up to +/-0.3 and re-test\nrng=np.random.default_rng(0); ok_all=True\nfor _ in range(2000):\n    j=lambda P:[(x+rng.uniform(-.3,.3),y+rng.uniform(-.3,.3)) for x,y in P]\n    ok_all&=separable(j(D['iv']['circle']),j(D['iv']['square']))[0]\nprint('(iv) separable under all +/-0.3 jitters:',ok_all)\n",
+    "notes": "Geometric solve: the nearest point of the Class-1 hull to (0, 0) is (1, 1), giving the boundary x1 + x2 = 1, canonical w = (1, 1), b = -1 (Class-1 as +1). SLSQP on the primal reproduces w = (1, 1), b = -1 with functional margins 1, 1, 3, 1 for (2,0), (0,2), (2,2), (0,0): three support vectors, 2/||w|| = 1.41421 = sqrt(2), training accuracy 1.0. The dual gives alpha = (0.5, 0.5, 0, 1), confirming the 3 support vectors. The option-A parameters give a positive score to all four points, so they misclassify (0, 0). The margin in (C) is taken as the full band width 2/||w||, which equals sqrt(2); the one-sided distance 1/||w|| = 1/sqrt(2) is explained in the solution. This gives B;C, matching the official key B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

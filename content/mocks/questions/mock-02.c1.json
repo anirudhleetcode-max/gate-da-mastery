@@ -1,0 +1,718 @@
+[
+  {
+    "id": "M02-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-vector-space"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (dimension equals the number of free coefficients left after independent homogeneous linear conditions) with a one-line count; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 60,
+    "concept": "Dimension of a polynomial vector space cut out by homogeneous linear conditions on the coefficients.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $\\mathcal{P}_6$ denote the real vector space of all polynomials in $x$ with real coefficients and degree at most $6$ (together with the zero polynomial), under the usual addition and scalar multiplication. Consider\n\n$$\nV = \\{\\, p \\in \\mathcal{P}_6 \\;:\\; p(-x) = p(x) \\text{ for all } x \\in \\mathbb{R}, \\text{ and } p(1) = 0 \\,\\}.\n$$\n\n$V$ is a subspace of $\\mathcal{P}_6$. The dimension of $V$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "Even polynomials in $\\mathcal{P}_6$ have the form $a_0 + a_2x^2 + a_4x^4 + a_6x^6$ (4 free coefficients). The condition $p(1) = 0$ adds one more independent equation, $a_0 + a_2 + a_4 + a_6 = 0$, leaving $4 - 1 = 3$ free coefficients.\nA basis is $\\{x^2 - 1,\\ x^4 - 1,\\ x^6 - 1\\}$, so $\\dim V = 3$.",
+      "steps": [
+        {
+          "title": "Work with coefficient vectors",
+          "body": "Every $p \\in \\mathcal{P}_6$ is $p(x) = a_0 + a_1x + a_2x^2 + \\dots + a_6x^6$, so $p \\leftrightarrow (a_0, \\dots, a_6) \\in \\mathbb{R}^7$ and $\\dim \\mathcal{P}_6 = 7$. Both conditions defining $V$ are homogeneous linear equations in these 7 coefficients."
+        },
+        {
+          "title": "Translate the evenness condition",
+          "body": "$p(x) - p(-x) = 2\\,(a_1x + a_3x^3 + a_5x^5)$. This is the zero polynomial for all $x$ exactly when $a_1 = a_3 = a_5 = 0$, which gives **three** independent conditions. What remains is $p(x) = a_0 + a_2x^2 + a_4x^4 + a_6x^6$, with 4 free coefficients."
+        },
+        {
+          "title": "Add the root condition",
+          "body": "$p(1) = a_0 + a_2 + a_4 + a_6 = 0$. It involves only the surviving coefficients and does not follow from evenness, so it is a fourth independent condition: $a_0 = -(a_2 + a_4 + a_6)$."
+        },
+        {
+          "title": "Write down a basis",
+          "body": "Substituting, $p(x) = a_2(x^2 - 1) + a_4(x^4 - 1) + a_6(x^6 - 1)$ with $a_2, a_4, a_6$ free. The three polynomials $x^2 - 1,\\ x^4 - 1,\\ x^6 - 1$ span $V$ and are linearly independent (their leading degrees $2, 4, 6$ are distinct). Hence $\\dim V = 3$, which matches rank–nullity: $7 - 4 = 3$."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "teaching": "The **dimension** of a vector space is the number of vectors in any basis, informally the number of independent \"knobs\" needed to describe every element. For polynomial spaces the knobs are the coefficients: $\\mathcal{P}_n$ has basis $1, x, \\dots, x^n$, so $\\dim \\mathcal{P}_n = n + 1$.\n\nWhen a subspace is carved out by **homogeneous linear conditions** on the coefficients, each *independent* condition removes exactly one knob. This is rank–nullity in disguise: identify $p$ with its coefficient vector in $\\mathbb{R}^{n+1}$. The subspace is then the null space of the constraint matrix, so its dimension is $(n + 1) - \\text{rank}$.\n\nThe real skill is translating each condition correctly. \"Even\" ($p(-x) = p(x)$ for all $x$) is not one condition but one per odd power, three in this question ($a_1 = a_3 = a_5 = 0$). \"Vanishes at $1$\" is one more. With 7 coefficients and 4 independent conditions, $\\dim V = 3$. You can write a basis down directly by solving for one coefficient in terms of the free ones.",
+      "shortcut": "Count free coefficients: $7$ coefficients $-\\ 3$ (odd powers forced to zero) $-\\ 1$ (the equation $p(1) = 0$) $= 3$.",
+      "commonTrap": "Answering $4$ (forgetting $p(1) = 0$), $6$ (using only $p(1) = 0$, i.e. $7 - 1$), or $5$ (counting \"even\" as a single condition). Evenness forces *each* odd-power coefficient to be zero, so it contributes three conditions."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x'); a = sp.symbols('a0:7')\np = sum(a[k]*x**k for k in range(7))\neqs = sp.Poly(sp.expand(p - p.subs(x, -x)), x).coeffs() + [p.subs(x, 1)]\nM = sp.Matrix([[sp.diff(e, ak) for ak in a] for e in eqs])\nprint(7 - M.rank())",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-matrices"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (matrix product and trace, with the cyclic property tr(BA) = tr(AB) as an optional shortcut) and a few multiplications; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Matrix multiplication of non-square matrices and the cyclic property of the trace.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$\nA = \\begin{bmatrix} 2 & -1 & 0 \\\\ 1 & 3 & -2 \\end{bmatrix}, \\qquad B = \\begin{bmatrix} 1 & 4 \\\\ 0 & -2 \\\\ 5 & 1 \\end{bmatrix}.\n$$\n\nThe trace of the $3 \\times 3$ matrix $BA$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": -2,
+      "max": -2
+    },
+    "solution": {
+      "quick": "$\\operatorname{tr}(BA) = \\operatorname{tr}(AB)$, and $AB$ is only $2 \\times 2$. Its diagonal entries are $(AB)_{11} = 2$ and $(AB)_{22} = 4 - 6 - 2 = -4$, so the trace is $2 + (-4) = -2$.",
+      "steps": [
+        {
+          "title": "Check the shapes",
+          "body": "$A$ is $2 \\times 3$ and $B$ is $3 \\times 2$, so $BA$ is $3 \\times 3$ and $AB$ is $2 \\times 2$. Both are square, and $\\operatorname{tr}(BA) = \\operatorname{tr}(AB)$ because both equal $\\sum_{i}\\sum_{k} a_{ik}b_{ki}$."
+        },
+        {
+          "title": "Diagonal of the smaller product $AB$",
+          "body": "$(AB)_{11} = 2 \\cdot 1 + (-1) \\cdot 0 + 0 \\cdot 5 = 2$\n\n$(AB)_{22} = 1 \\cdot 4 + 3 \\cdot (-2) + (-2) \\cdot 1 = 4 - 6 - 2 = -4$\n\n$\\operatorname{tr}(AB) = 2 + (-4) = -2$."
+        },
+        {
+          "title": "Direct check with $BA$",
+          "body": "$$\nBA = \\begin{bmatrix} 1\\cdot2 + 4\\cdot1 & 1\\cdot(-1) + 4\\cdot3 & 1\\cdot0 + 4\\cdot(-2) \\\\ 0\\cdot2 + (-2)\\cdot1 & 0\\cdot(-1) + (-2)\\cdot3 & 0\\cdot0 + (-2)(-2) \\\\ 5\\cdot2 + 1\\cdot1 & 5\\cdot(-1) + 1\\cdot3 & 5\\cdot0 + 1\\cdot(-2) \\end{bmatrix} = \\begin{bmatrix} 6 & 11 & -8 \\\\ -2 & -6 & 4 \\\\ 11 & -2 & -2 \\end{bmatrix}\n$$\n\n$\\operatorname{tr}(BA) = 6 + (-6) + (-2) = -2$, which agrees with Step 2."
+        }
+      ],
+      "finalAnswer": "**-2**",
+      "teaching": "The **trace** of a square matrix is the sum of its diagonal entries. It is defined only for square matrices, but $AB$ and $BA$ are both square whenever $A$ is $m \\times n$ and $B$ is $n \\times m$, even though their sizes differ ($m \\times m$ versus $n \\times n$).\n\nWriting out the diagonal gives the key identity:\n\n$$\n\\operatorname{tr}(AB) = \\sum_{i=1}^{m} \\sum_{k=1}^{n} a_{ik} b_{ki} = \\sum_{k=1}^{n} \\sum_{i=1}^{m} b_{ki} a_{ik} = \\operatorname{tr}(BA).\n$$\n\nBoth traces are the same double sum of products $a_{ik}b_{ki}$; only the order of summation differs. This **cyclic property** extends to longer products, $\\operatorname{tr}(ABC) = \\operatorname{tr}(BCA) = \\operatorname{tr}(CAB)$, but not to arbitrary reorderings.\n\nHere the requested product $BA$ is $3 \\times 3$, while $AB$ is only $2 \\times 2$. Computing just the two diagonal entries of $AB$ gives $-2$ with the least arithmetic, and the full $BA$ confirms it.",
+      "shortcut": "$\\operatorname{tr}(BA) = \\sum_{i,k} a_{ik}b_{ki}$: multiply $A$ entrywise with $B^{\\top} = \\begin{bmatrix} 1 & 0 & 5 \\\\ 4 & -2 & 1 \\end{bmatrix}$ and add all six products: $2 + 0 + 0 + 4 - 6 - 2 = -2$.",
+      "commonTrap": "Assuming that $\\operatorname{tr}(BA)$ and $\\operatorname{tr}(AB)$ must differ because the matrices have different sizes, or making a sign slip in $(AB)_{22} = 4 - 6 - 2$ (for example, taking $(-2) \\cdot 1$ as $+2$ and getting $0$ or $2$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-2 (tr(BA) = tr(AB) = -2)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[2, -1, 0], [1, 3, -2]])\nB = np.array([[1, 4], [0, -2], [5, 1]])\nprint(np.trace(B @ A), np.trace(A @ B))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-systems",
+      "la-nullity"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — every statement is a one-line consequence of a single idea (rank compared with the number of rows and columns, plus rank–nullity); about 1–1.5 minutes in total.",
+    "estimatedTimeSec": 80,
+    "concept": "Existence and uniqueness of solutions of Ax = b from the rank of A (full row rank, rank–nullity).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A system of $4$ linear equations in $6$ unknowns is written as $A\\mathbf{x} = \\mathbf{b}$, where $A$ is a $4 \\times 6$ real matrix with $\\operatorname{rank}(A) = 4$, $\\mathbf{x} \\in \\mathbb{R}^6$ and $\\mathbf{b} \\in \\mathbb{R}^4$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "For every $\\mathbf{b} \\in \\mathbb{R}^4$, the system $A\\mathbf{x} = \\mathbf{b}$ has at least one solution."
+      },
+      {
+        "label": "B",
+        "text": "There exists some $\\mathbf{b} \\in \\mathbb{R}^4$ for which $A\\mathbf{x} = \\mathbf{b}$ has exactly one solution."
+      },
+      {
+        "label": "C",
+        "text": "The set of all solutions of $A\\mathbf{x} = \\mathbf{0}$ is a subspace of $\\mathbb{R}^6$ of dimension $2$."
+      },
+      {
+        "label": "D",
+        "text": "If $\\mathbf{b} \\ne \\mathbf{0}$ and $\\mathbf{x}_1, \\mathbf{x}_2$ are solutions of $A\\mathbf{x} = \\mathbf{b}$, then $\\mathbf{x}_1 + \\mathbf{x}_2$ is also a solution of $A\\mathbf{x} = \\mathbf{b}$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Rank $4$ equals the number of rows, so the columns span $\\mathbb{R}^4$ and every system is consistent (A true). Nullity $= 6 - 4 = 2$, so the homogeneous solution set is a 2-dimensional subspace (C true), and every consistent system has infinitely many solutions (B false). $A(\\mathbf{x}_1 + \\mathbf{x}_2) = 2\\mathbf{b} \\ne \\mathbf{b}$ (D false).",
+      "steps": [
+        {
+          "title": "Existence: the column space",
+          "body": "$A\\mathbf{x}$ is a linear combination of the columns of $A$, so $A\\mathbf{x} = \\mathbf{b}$ is solvable exactly when $\\mathbf{b}$ lies in the column space. $\\operatorname{rank}(A) = 4$ means the column space is a 4-dimensional subspace of $\\mathbb{R}^4$, i.e. all of $\\mathbb{R}^4$. Equivalently, $\\operatorname{rank}[A \\mid \\mathbf{b}] \\le 4 = \\operatorname{rank}(A)$ for every $\\mathbf{b}$. **(A) is true.**"
+        },
+        {
+          "title": "The null space: rank–nullity",
+          "body": "The solution set of $A\\mathbf{x} = \\mathbf{0}$ is the null space $N(A)$, which is always a subspace. By rank–nullity, $\\dim N(A) = n - \\operatorname{rank}(A) = 6 - 4 = 2$. **(C) is true.**"
+        },
+        {
+          "title": "Uniqueness never holds",
+          "body": "If $\\mathbf{x}_p$ solves $A\\mathbf{x} = \\mathbf{b}$, then the complete solution set is $\\{\\mathbf{x}_p + \\mathbf{n} : \\mathbf{n} \\in N(A)\\}$. Since $N(A)$ is 2-dimensional, it contains infinitely many vectors, so every consistent system (and by Step 1 every system) has infinitely many solutions, forming a 2-parameter family. No $\\mathbf{b}$ gives exactly one solution. **(B) is false.**"
+        },
+        {
+          "title": "Sums of solutions of a non-homogeneous system",
+          "body": "$A(\\mathbf{x}_1 + \\mathbf{x}_2) = A\\mathbf{x}_1 + A\\mathbf{x}_2 = \\mathbf{b} + \\mathbf{b} = 2\\mathbf{b}$, and $2\\mathbf{b} \\ne \\mathbf{b}$ because $\\mathbf{b} \\ne \\mathbf{0}$. The solution set of $A\\mathbf{x} = \\mathbf{b}$ is a translate of $N(A)$ (an affine set), not a subspace. It is the *difference* $\\mathbf{x}_1 - \\mathbf{x}_2$ that lies in $N(A)$. **(D) is false.**"
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "teaching": "For an $m \\times n$ matrix $A$ of rank $r$, two facts control the system $A\\mathbf{x} = \\mathbf{b}$.\n\n**Existence** depends on the column space. $A\\mathbf{x}$ is a combination of the columns, so a solution exists exactly when $\\mathbf{b}$ lies in the column space, whose dimension is $r$. If $r = m$ (full row rank), the column space is all of $\\mathbb{R}^m$ and every $\\mathbf{b}$ works.\n\n**Uniqueness** depends on the null space. If $\\mathbf{x}_p$ is one solution, every solution has the form $\\mathbf{x}_p + \\mathbf{n}$ with $A\\mathbf{n} = \\mathbf{0}$. By rank–nullity, $\\dim N(A) = n - r$, so uniqueness needs $n - r = 0$ (full column rank).\n\nHere $m = 4$, $n = 6$ and $r = 4$: the matrix has full row rank but not full column rank. Every system is therefore consistent, with a 2-parameter family of solutions. The homogeneous solution set is a subspace. For $\\mathbf{b} \\ne \\mathbf{0}$, the solution set is a shifted copy of that subspace, which is not closed under addition.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. Rank $4$ equals the number of equations, so the column space is all of $\\mathbb{R}^4$ and every right-hand side is reachable."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. Uniqueness would need $N(A) = \\{\\mathbf{0}\\}$, i.e. rank $6$. With nullity $2$, every consistent system has infinitely many solutions. This option confuses full *row* rank (existence) with full *column* rank (uniqueness)."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. $N(A)$ is always a subspace, and rank–nullity gives $\\dim N(A) = 6 - 4 = 2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $A(\\mathbf{x}_1 + \\mathbf{x}_2) = 2\\mathbf{b} \\ne \\mathbf{b}$. Solutions of a non-homogeneous system form an affine set; only $\\mathbf{x}_1 - \\mathbf{x}_2$ is guaranteed to lie in $N(A)$."
+        }
+      ],
+      "shortcut": "For an $m \\times n$ matrix of rank $r$: $r = m$ means the system is always consistent, and $r = n$ means it has at most one solution. Here $r = m = 4 < n = 6$, so every system is consistent and none has a unique solution. The number of free parameters is $n - r = 2$.",
+      "commonTrap": "Mixing up the two rank conditions: full row rank guarantees *existence*, while full column rank guarantees *uniqueness*. A second trap is treating the solution set of $A\\mathbf{x} = \\mathbf{b}$ with $\\mathbf{b} \\ne \\mathbf{0}$ as if it were closed under addition (option D)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C (rank 4, nullity 2; random b always consistent; second solution differs; x1+x2 fails)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\nA = rng.integers(-5, 6, size=(4, 6)).astype(float)\nr = np.linalg.matrix_rank(A); print('rank', r, 'nullity', 6 - r)\nb = rng.normal(size=4)\nx1 = np.linalg.lstsq(A, b, rcond=None)[0]\nprint('A consistent for random b:', np.allclose(A @ x1, b))\nN = np.linalg.svd(A)[2][r:]            # basis of null space\nx2 = x1 + N.T @ rng.normal(size=6 - r)  # a second, different solution\nprint('B unique?', np.allclose(x1, x2), np.allclose(A @ x2, b))\nprint('D x1+x2 solves Ax=b?', np.allclose(A @ (x1 + x2), b))\nprint('Answer: A, C')",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (eigenvalues of a polynomial in a triangular matrix are the polynomial applied to the diagonal entries) with three one-line evaluations; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Eigenvalues of a triangular matrix and of a polynomial in a matrix: λ is an eigenvalue of A implies f(λ) is an eigenvalue of f(A).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$\nA = \\begin{bmatrix} 2 & 5 & -1 \\\\ 0 & -1 & 4 \\\\ 0 & 0 & 3 \\end{bmatrix}\n$$\n\nand let $B = A^2 - 2A$. The eigenvalues of $B$, listed with algebraic multiplicity, are",
+    "options": [
+      {
+        "label": "A",
+        "text": "$4,\\ 1,\\ 9$"
+      },
+      {
+        "label": "B",
+        "text": "$0,\\ 3,\\ 3$"
+      },
+      {
+        "label": "C",
+        "text": "$2,\\ -1,\\ 7$"
+      },
+      {
+        "label": "D",
+        "text": "$0,\\ -1,\\ 3$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$A$ is upper triangular, so its eigenvalues are $2, -1, 3$. The eigenvalues of $B = f(A)$ with $f(\\lambda) = \\lambda^2 - 2\\lambda$ are $f(2) = 0$, $f(-1) = 3$ and $f(3) = 3$.",
+      "steps": [
+        {
+          "title": "Eigenvalues of $A$",
+          "body": "$A$ is upper triangular, so $\\det(A - \\lambda I) = (2 - \\lambda)(-1 - \\lambda)(3 - \\lambda)$ and the eigenvalues are the diagonal entries $2, -1, 3$."
+        },
+        {
+          "title": "Eigenvalues of a polynomial in $A$",
+          "body": "If $A\\mathbf{v} = \\lambda\\mathbf{v}$, then $A^2\\mathbf{v} = \\lambda^2\\mathbf{v}$, so $B\\mathbf{v} = (A^2 - 2A)\\mathbf{v} = (\\lambda^2 - 2\\lambda)\\mathbf{v}$. The eigenvalues of $B$ are therefore $f(\\lambda) = \\lambda^2 - 2\\lambda = \\lambda(\\lambda - 2)$ evaluated at $2, -1, 3$."
+        },
+        {
+          "title": "Evaluate",
+          "body": "$f(2) = 4 - 4 = 0$\n\n$f(-1) = 1 - 2(-1) = 1 + 2 = 3$\n\n$f(3) = 9 - 6 = 3$\n\nThe eigenvalues of $B$ are $0, 3, 3$."
+        },
+        {
+          "title": "Cross-check",
+          "body": "$B$ is upper triangular (sums and products of upper-triangular matrices stay upper triangular), with diagonal entries $\\lambda_i^2 - 2\\lambda_i = (0, 3, 3)$. So $\\operatorname{tr}(B) = 6 = 0 + 3 + 3$, and $\\det(B) = 0$, which is consistent with $B = A(A - 2I)$ and the singular factor $A - 2I$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "An **eigenvector** $\\mathbf{v} \\ne \\mathbf{0}$ of $A$ satisfies $A\\mathbf{v} = \\lambda\\mathbf{v}$: $A$ only stretches it by the factor $\\lambda$. Applying $A$ again stretches it again, so $A^2\\mathbf{v} = \\lambda^2\\mathbf{v}$, and in general $A^k\\mathbf{v} = \\lambda^k\\mathbf{v}$. Since a matrix polynomial is built from powers, sums and scalar multiples, every polynomial $f$ satisfies\n\n$$\nf(A)\\mathbf{v} = f(\\lambda)\\mathbf{v}.\n$$\n\nIn fact the eigenvalues of $f(A)$, counted with algebraic multiplicity, are exactly $f(\\lambda_1), \\dots, f(\\lambda_n)$.\n\nFor a triangular matrix the eigenvalues are simply the diagonal entries, because $A - \\lambda I$ is also triangular and its determinant is the product of its diagonal entries. Put the two facts together: read $2, -1, 3$ off the diagonal and apply $f(\\lambda) = \\lambda^2 - 2\\lambda$. Two different eigenvalues of $A$ can map to the same eigenvalue of $f(A)$, which is why $3$ appears twice.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. These are $\\lambda^2$ for $\\lambda = 2, -1, 3$, the eigenvalues of $A^2$ alone. The $-2A$ term has been dropped."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. $f(\\lambda) = \\lambda^2 - 2\\lambda$ gives $f(2) = 0$, $f(-1) = 3$ and $f(3) = 3$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. These are $\\lambda^2 - 2$, the eigenvalues of $A^2 - 2I$. This confuses $2A$ with $2I$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This comes from a sign slip at $\\lambda = -1$: the value $-2\\lambda = +2$ was taken as $-2$, giving $1 - 2 = -1$ instead of $1 + 2 = 3$."
+        }
+      ],
+      "shortcut": "For a triangular $A$, $f(A)$ is triangular with diagonal entries $f(a_{ii})$. Apply $f$ to the diagonal and read off the answer.",
+      "commonTrap": "Evaluating $-2\\lambda$ at $\\lambda = -1$ as $-2$ instead of $+2$ (giving option D), or computing the eigenvalues of $A^2$ and forgetting the $-2A$ term (option A)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0, 3, 3 -> (B)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[2, 5, -1], [0, -1, 4], [0, 0, 3]], dtype=float)\nB = A @ A - 2 * A\nprint([float(x) for x in sorted(np.round(np.linalg.eigvals(B).real, 10))])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-determinant"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked ideas (effect of elementary row operations on det, then the scalar-multiple, inverse, transpose and product rules) applied in three short steps; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Determinant under elementary row operations, and the rules det(kM) = kⁿ det M, det(M⁻¹) = 1/det M, det(Mᵀ) = det M, det(XY) = det X · det Y.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $A$ and $B$ be real $3 \\times 3$ matrices with $\\det(A) = 2$ and $\\det(B) = -5$. A matrix $C$ is obtained from $A$ in two steps: first, the first and third rows of $A$ are interchanged; then $4$ times the (new) first row is added to the second row.\n\nThe value of $\\det\\!\\left(3\\,C^{-1}B^{\\top}\\right)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$16.875$"
+      },
+      {
+        "label": "B",
+        "text": "$-67.5$"
+      },
+      {
+        "label": "C",
+        "text": "$67.5$"
+      },
+      {
+        "label": "D",
+        "text": "$7.5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The row interchange flips the sign and the row addition changes nothing, so $\\det(C) = -2$. Then $\\det(3C^{-1}B^{\\top}) = 3^3 \\cdot \\frac{1}{-2} \\cdot (-5) = 27 \\times 2.5 = 67.5$.",
+      "steps": [
+        {
+          "title": "Effect of the row operations",
+          "body": "- Interchanging two rows multiplies the determinant by $-1$, which gives $-2$.\n- Adding a multiple of one row to another row leaves the determinant unchanged, so it stays $-2$.\n\nHence $\\det(C) = -\\det(A) = -2$. In particular $C$ is invertible, so $C^{-1}$ exists."
+        },
+        {
+          "title": "Rules needed for the product",
+          "body": "For $n \\times n$ matrices: $\\det(kM) = k^n\\det(M)$, $\\det(XY) = \\det(X)\\det(Y)$, $\\det(M^{-1}) = \\dfrac{1}{\\det(M)}$ and $\\det(M^{\\top}) = \\det(M)$. Here $n = 3$."
+        },
+        {
+          "title": "Substitute",
+          "body": "$$\n\\det\\!\\left(3\\,C^{-1}B^{\\top}\\right) = 3^3 \\cdot \\det(C^{-1}) \\cdot \\det(B^{\\top}) = 27 \\cdot \\frac{1}{-2} \\cdot (-5) = \\frac{135}{2} = 67.5.\n$$"
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Think of the determinant of a $3 \\times 3$ matrix as the **signed volume** of the box spanned by its rows. Each elementary row operation changes this volume in a predictable way:\n\n- **Interchanging two rows** reverses orientation, so the determinant changes sign.\n- **Adding a multiple of one row to another** is a shear: it tilts the box without changing its volume, so the determinant is unchanged.\n- **Multiplying one row by $k$** stretches one edge, so the determinant is multiplied by $k$.\n\nMultiplying the *whole* matrix by $k$ scales all $n$ rows, so $\\det(kM) = k^n\\det(M)$. The product rule $\\det(XY) = \\det(X)\\det(Y)$ gives $\\det(M^{-1}) = 1/\\det(M)$ (because $MM^{-1} = I$), and transposing does not change the determinant.\n\nIn this question the swap flips the sign of $\\det(A) = 2$, the row addition does nothing, and the remaining factors follow from the rules: $27 \\times \\frac{1}{-2} \\times (-5) = 67.5$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This treats \"add $4 \\times$ row 1 to row 2\" as if it multiplied the determinant by $4$, so $\\det(C) = -8$ and $27 \\cdot \\frac{1}{-8} \\cdot (-5) = 16.875$. Adding a multiple of another row does not change the determinant."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This ignores the sign change from the row interchange, taking $\\det(C) = 2$: $27 \\cdot \\frac{1}{2} \\cdot (-5) = -67.5$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. $\\det(C) = -2$, so $3^3 \\cdot \\frac{1}{-2} \\cdot (-5) = 67.5$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This uses $\\det(3M) = 3\\det(M)$ instead of $3^3\\det(M)$: $3 \\cdot \\frac{1}{-2} \\cdot (-5) = 7.5$."
+        }
+      ],
+      "commonTrap": "Writing $\\det(3M) = 3\\det(M)$. The scalar multiplies every one of the three rows, so the factor is $3^3 = 27$. Another slip is forgetting to invert $\\det(C)$, which gives $27 \\cdot (-2) \\cdot (-5) = 270$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "67.5 -> (C)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.diag([2.0, 1.0, 1.0]); A[0, 1] = 3; A[2, 0] = 1   # det(A) = 2\nB = np.diag([-5.0, 1.0, 1.0]); B[1, 2] = 4              # det(B) = -5\nC = A[[2, 1, 0], :].copy()     # swap rows 1 and 3\nC[1] = C[1] + 4 * C[0]         # add 4 x (new) row 1 to row 2\nprint(round(np.linalg.det(A), 6), round(np.linalg.det(B), 6), round(np.linalg.det(C), 6))\nprint(round(np.linalg.det(3 * np.linalg.inv(C) @ B.T), 6))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-projections",
+      "la-projection-matrix"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (orthogonal projection onto a subspace) applied in 2–3 routine steps (check orthogonality, two coefficients, residual norm) plus a property check on P; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Orthogonal projection onto a subspace with an orthogonal basis; residual orthogonality, distance to a subspace, and properties of projection matrices.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In $\\mathbb{R}^4$ with the standard inner product, let $W = \\operatorname{span}\\{\\mathbf{a}, \\mathbf{b}\\}$, where\n\n$$\n\\mathbf{a} = (1,\\ 1,\\ 0,\\ 1)^{\\top}, \\qquad \\mathbf{b} = (1,\\ -1,\\ 1,\\ 0)^{\\top},\n$$\n\nand let $\\mathbf{v} = (3,\\ 1,\\ 4,\\ 2)^{\\top}$. Let $P$ be the $4 \\times 4$ matrix of the orthogonal projection of $\\mathbb{R}^4$ onto $W$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$P\\mathbf{v} = (4,\\ 0,\\ 2,\\ 2)^{\\top}$"
+      },
+      {
+        "label": "B",
+        "text": "The distance from $\\mathbf{v}$ to the subspace $W$ is $\\sqrt{6}$."
+      },
+      {
+        "label": "C",
+        "text": "$P$ is an orthogonal matrix, that is, $P^{\\top}P = I_4$."
+      },
+      {
+        "label": "D",
+        "text": "The vector $(-1,\\ 1,\\ 2,\\ 0)^{\\top}$ is orthogonal to every vector in $W$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$\\mathbf{a}^{\\top}\\mathbf{b} = 0$, so $P\\mathbf{v} = \\frac{6}{3}\\mathbf{a} + \\frac{6}{3}\\mathbf{b} = (4, 0, 2, 2)^{\\top}$ (A). The residual $(-1, 1, 2, 0)^{\\top}$ is orthogonal to $\\mathbf{a}$ and $\\mathbf{b}$ (D), and its length is $\\sqrt{6}$ (B). $P$ has rank $2$, so $P^{\\top}P = P \\ne I_4$ (C false).",
+      "steps": [
+        {
+          "title": "Check whether the basis is orthogonal",
+          "body": "$\\mathbf{a}^{\\top}\\mathbf{b} = 1 - 1 + 0 + 0 = 0$. Because the basis is orthogonal, the projection is the sum of the one-dimensional projections:\n\n$$\nP\\mathbf{v} = \\frac{\\mathbf{a}^{\\top}\\mathbf{v}}{\\mathbf{a}^{\\top}\\mathbf{a}}\\,\\mathbf{a} + \\frac{\\mathbf{b}^{\\top}\\mathbf{v}}{\\mathbf{b}^{\\top}\\mathbf{b}}\\,\\mathbf{b}.\n$$"
+        },
+        {
+          "title": "Compute the projection",
+          "body": "$\\mathbf{a}^{\\top}\\mathbf{v} = 3 + 1 + 0 + 2 = 6$ and $\\mathbf{a}^{\\top}\\mathbf{a} = 3$, so the coefficient is $2$.\n\n$\\mathbf{b}^{\\top}\\mathbf{v} = 3 - 1 + 4 + 0 = 6$ and $\\mathbf{b}^{\\top}\\mathbf{b} = 3$, so the coefficient is $2$.\n\n$P\\mathbf{v} = 2\\mathbf{a} + 2\\mathbf{b} = (2, 2, 0, 2) + (2, -2, 2, 0) = (4, 0, 2, 2)^{\\top}$. **(A) is true.**"
+        },
+        {
+          "title": "Residual and distance",
+          "body": "$\\mathbf{r} = \\mathbf{v} - P\\mathbf{v} = (-1, 1, 2, 0)^{\\top}$.\n\n$\\mathbf{r}^{\\top}\\mathbf{a} = -1 + 1 + 0 + 0 = 0$ and $\\mathbf{r}^{\\top}\\mathbf{b} = -1 - 1 + 2 + 0 = 0$, so $\\mathbf{r}$ is orthogonal to every $\\alpha\\mathbf{a} + \\beta\\mathbf{b} \\in W$. **(D) is true.**\n\nThe distance from $\\mathbf{v}$ to $W$ is $\\lVert\\mathbf{r}\\rVert = \\sqrt{1 + 1 + 4 + 0} = \\sqrt{6} \\approx 2.449$. **(B) is true.** Pythagoras check: $\\lVert\\mathbf{v}\\rVert^2 = 30 = \\lVert P\\mathbf{v}\\rVert^2 + \\lVert\\mathbf{r}\\rVert^2 = 24 + 6$."
+        },
+        {
+          "title": "Is $P$ an orthogonal matrix?",
+          "body": "An orthogonal projection matrix is symmetric and idempotent, so $P^{\\top}P = P^2 = P$. Since $\\operatorname{rank}(P) = \\dim W = 2 < 4$, $P \\ne I_4$. For example, $P\\mathbf{r} = \\mathbf{0}$ although $\\mathbf{r} \\ne \\mathbf{0}$, so $P$ is not even invertible. **(C) is false.**"
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "teaching": "The **orthogonal projection** of $\\mathbf{v}$ onto a subspace $W$ is the unique vector $\\hat{\\mathbf{v}} \\in W$ whose error $\\mathbf{v} - \\hat{\\mathbf{v}}$ is orthogonal to every vector of $W$. It is also the point of $W$ closest to $\\mathbf{v}$, so $\\lVert\\mathbf{v} - \\hat{\\mathbf{v}}\\rVert$ is the distance from $\\mathbf{v}$ to $W$.\n\nIf $W$ has an **orthogonal** basis $\\mathbf{a}, \\mathbf{b}$, the projection splits into independent one-dimensional pieces, $\\hat{\\mathbf{v}} = \\frac{\\mathbf{a}^{\\top}\\mathbf{v}}{\\mathbf{a}^{\\top}\\mathbf{a}}\\mathbf{a} + \\frac{\\mathbf{b}^{\\top}\\mathbf{v}}{\\mathbf{b}^{\\top}\\mathbf{b}}\\mathbf{b}$. For a general basis (the columns of $M$) you need $P = M(M^{\\top}M)^{-1}M^{\\top}$. With an orthogonal basis, $M^{\\top}M$ is diagonal and this collapses to the simple sum.\n\nEvery orthogonal projection matrix is symmetric and idempotent. Its eigenvalues are only $0$ and $1$, and its trace equals its rank, $\\dim W$. An orthogonal matrix ($Q^{\\top}Q = I$) is quite different: it preserves lengths and is always invertible.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. Since $\\mathbf{a} \\perp \\mathbf{b}$, $P\\mathbf{v} = 2\\mathbf{a} + 2\\mathbf{b} = (4, 0, 2, 2)^{\\top}$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. The residual $(-1, 1, 2, 0)^{\\top}$ has squared length $6$, so the distance is $\\sqrt{6}$. Reporting $6$ would give the squared distance instead."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This confuses \"orthogonal projection\" with \"orthogonal matrix\". Here $P^{\\top}P = P$, which has rank $2$ and cannot equal $I_4$; $P$ is singular."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. Its dot products with $\\mathbf{a}$ and $\\mathbf{b}$ are both $0$, so it is orthogonal to every combination $\\alpha\\mathbf{a} + \\beta\\mathbf{b}$. It is exactly the residual $\\mathbf{v} - P\\mathbf{v}$."
+        }
+      ],
+      "shortcut": "Because $\\mathbf{a} \\perp \\mathbf{b}$, project onto each vector separately and add. Then the squared distance is $\\lVert\\mathbf{v}\\rVert^2 - \\lVert P\\mathbf{v}\\rVert^2 = 30 - 24 = 6$.",
+      "commonTrap": "Adding one-dimensional projections without first checking that the basis vectors are orthogonal. It works here only because $\\mathbf{a}^{\\top}\\mathbf{b} = 0$. Other slips are reporting the squared distance $6$ as the distance, and confusing an orthogonal *projection* matrix with an orthogonal matrix."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D (Pv = (4,0,2,2), dist = sqrt(6) = 2.449, P^T P != I, residual orthogonal to a and b)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\na = np.array([1, 1, 0, 1.]); b = np.array([1, -1, 1, 0.]); v = np.array([3, 1, 4, 2.])\nM = np.column_stack([a, b])\nP = M @ np.linalg.inv(M.T @ M) @ M.T\nr = v - P @ v\nprint('a.b =', a @ b)\nprint('A: Pv =', np.round(P @ v, 10))\nprint('B: dist =', np.linalg.norm(r), 'sqrt6 =', np.sqrt(6))\nprint('C: P^T P = I ?', np.allclose(P.T @ P, np.eye(4)), 'trace', round(np.trace(P), 10))\nprint('D: residual =', np.round(r, 10), 'dots', round(r @ a, 10), round(r @ b, 10))\nprint('Answer: A, B, D')",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-subspaces"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (the three-part subspace test), with each wrong option dismissed by one quick counterexample; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Subspace test (zero vector, closure under addition and scalar multiplication) applied to subsets of the space of 2×2 matrices.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $M_2(\\mathbb{R})$ be the vector space of all $2 \\times 2$ real matrices under the usual matrix addition and multiplication by real scalars. Write a matrix as\n\n$$\nX = \\begin{bmatrix} x_{11} & x_{12} \\\\ x_{21} & x_{22} \\end{bmatrix}.\n$$\n\nWhich one of the following subsets of $M_2(\\mathbb{R})$ is a subspace of $M_2(\\mathbb{R})$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The set of all invertible $2 \\times 2$ real matrices"
+      },
+      {
+        "label": "B",
+        "text": "The set of all $2 \\times 2$ matrices whose four entries are all integers"
+      },
+      {
+        "label": "C",
+        "text": "The set of all $2 \\times 2$ real matrices $X$ with $\\det(X) = 0$"
+      },
+      {
+        "label": "D",
+        "text": "The set of all $2 \\times 2$ real matrices $X$ with $x_{11} + x_{22} = x_{12}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Only (D) is defined by a homogeneous linear equation in the entries ($x_{11} + x_{22} - x_{12} = 0$), so it is closed under linear combinations. (A) misses the zero matrix, (B) fails under scaling by $\\tfrac12$, and (C) fails under addition ($\\operatorname{diag}(1,0) + \\operatorname{diag}(0,1) = I$).",
+      "steps": [
+        {
+          "title": "The subspace test",
+          "body": "A subset $S$ is a subspace when (i) the zero matrix $O \\in S$, (ii) $X, Y \\in S \\Rightarrow X + Y \\in S$, and (iii) $X \\in S,\\ c \\in \\mathbb{R} \\Rightarrow cX \\in S$. One counterexample to any of these is enough to rule a set out."
+        },
+        {
+          "title": "Options (A) and (B)",
+          "body": "(A): $O$ is not invertible, so (i) fails. Closure under addition fails as well: $I + (-I) = O$.\n\n(B): $O$ is in the set and sums of integer matrices are integer matrices, but $\\tfrac12 I = \\begin{bmatrix} 0.5 & 0 \\\\ 0 & 0.5 \\end{bmatrix}$ has non-integer entries, so (iii) fails for the real scalar $c = \\tfrac12$."
+        },
+        {
+          "title": "Option (C)",
+          "body": "$O$ is singular, and $\\det(cX) = c^2\\det(X) = 0$, so (i) and (iii) hold. But $\\begin{bmatrix} 1 & 0 \\\\ 0 & 0 \\end{bmatrix} + \\begin{bmatrix} 0 & 0 \\\\ 0 & 1 \\end{bmatrix} = I$ with $\\det(I) = 1 \\ne 0$, so (ii) fails."
+        },
+        {
+          "title": "Option (D)",
+          "body": "The defining condition is $x_{11} + x_{22} - x_{12} = 0$. If $X$ and $Y$ satisfy it, then for any reals $\\alpha, \\beta$:\n\n$$\n(\\alpha x_{11} + \\beta y_{11}) + (\\alpha x_{22} + \\beta y_{22}) - (\\alpha x_{12} + \\beta y_{12}) = \\alpha \\cdot 0 + \\beta \\cdot 0 = 0.\n$$\n\n$O$ also satisfies it. So (D) is a subspace; it is the null space of a nonzero linear functional on the 4-dimensional space $M_2(\\mathbb{R})$, and so has dimension $3$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A **subspace** of a vector space $V$ is a subset that is itself a vector space under the same operations. The axioms such as associativity and distributivity are inherited from $V$, so only three things need checking: the zero vector belongs to the subset, sums of members stay in it, and every real scalar multiple of a member stays in it.\n\nA reliable pattern: a subset described by **homogeneous linear equations** in the coordinates (here, the matrix entries) is always a subspace. Linear combinations of solutions of such equations are again solutions, because the set is the null space of a linear map.\n\nSubsets described in other ways usually fail, and a single counterexample proves the failure:\n- nonlinear conditions (determinants, products of entries, invertibility);\n- inhomogeneous equations (right-hand side $\\ne 0$);\n- inequalities;\n- coordinates restricted to integers.\n\nIn this question only $x_{11} + x_{22} - x_{12} = 0$ is linear and homogeneous.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. The zero matrix is not invertible, so the set has no zero vector. Also $I + (-I) = O$ leaves the set."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. It is closed under addition, but not under multiplication by arbitrary real scalars: $\\tfrac12 I$ has entries $0.5$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. It contains $O$ and is closed under scaling, but not under addition: $\\operatorname{diag}(1, 0) + \\operatorname{diag}(0, 1) = I$, which is invertible."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. $x_{11} + x_{22} - x_{12} = 0$ is a homogeneous linear condition, so the set contains $O$ and is closed under all linear combinations. It is a 3-dimensional subspace."
+        }
+      ],
+      "shortcut": "Look for the option defined by a homogeneous *linear* equation in the entries. Conditions involving determinants, invertibility or integrality are almost never subspaces.",
+      "commonTrap": "Choosing (C) because the zero matrix is singular and scalar multiples of singular matrices stay singular. Containing $O$ and being closed under scaling is not enough: closure under addition fails."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (counterexamples confirm A, B, C fail; D closed under 1000 random linear combinations)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nfrom fractions import Fraction as F\n# (A) invertible: zero matrix missing\nprint('A zero invertible?', np.linalg.det(np.zeros((2, 2))) != 0)\n# (B) integer entries: 0.5 * I not integer\nprint('B 0.5*I integer?', np.all(np.mod(0.5 * np.eye(2), 1) == 0))\n# (C) det 0: diag(1,0)+diag(0,1)=I\nprint('C sum det =', np.linalg.det(np.diag([1., 0]) + np.diag([0., 1])))\n# (D) a11 + a22 - a12 = 0 is a linear functional -> kernel is a subspace\nf = lambda X: X[0][0] + X[1][1] - X[0][1]\nrng = np.random.default_rng(1); ok = True\nfor _ in range(1000):\n    X = rng.normal(size=(2, 2)); X[0, 1] = X[0, 0] + X[1, 1]\n    Y = rng.normal(size=(2, 2)); Y[0, 1] = Y[0, 0] + Y[1, 1]\n    c, d = rng.normal(size=2)\n    ok &= abs(f(c * X + d * Y)) < 1e-9\nprint('D closed under linear combos:', ok, '; zero in D:', f(np.zeros((2, 2))) == 0)\nprint('Answer: D')",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M02-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-02",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-projection-matrix"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the projection I − uuᵀ/uᵀu onto the orthogonal complement of a line), evaluated with one dot product and one vector subtraction; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Projection matrix onto the orthogonal complement of a line: P = I − uuᵀ/(uᵀu) removes the component along u.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feature-cleaning step removes from every vector in $\\mathbb{R}^3$ its component along the direction $\\mathbf{u} = (2,\\ -1,\\ 2)^{\\top}$ by applying the matrix\n\n$$\nP = I_3 - \\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}.\n$$\n\nFor $\\mathbf{w} = (1,\\ 1,\\ 1)^{\\top}$, the vector $P\\mathbf{w}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\left(\\tfrac{1}{3},\\ \\tfrac{4}{3},\\ \\tfrac{1}{3}\\right)^{\\top}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\left(\\tfrac{5}{3},\\ \\tfrac{2}{3},\\ \\tfrac{5}{3}\\right)^{\\top}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\left(-\\tfrac{1}{3},\\ \\tfrac{5}{3},\\ -\\tfrac{1}{3}\\right)^{\\top}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\left(\\tfrac{2}{3},\\ -\\tfrac{1}{3},\\ \\tfrac{2}{3}\\right)^{\\top}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$P\\mathbf{w} = \\mathbf{w} - \\frac{\\mathbf{u}^{\\top}\\mathbf{w}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\,\\mathbf{u} = (1, 1, 1) - \\frac{3}{9}(2, -1, 2) = \\left(\\frac13, \\frac43, \\frac13\\right)$. Check: $\\mathbf{u}^{\\top}(P\\mathbf{w}) = \\frac23 - \\frac43 + \\frac23 = 0$.",
+      "steps": [
+        {
+          "title": "Recognise the matrix",
+          "body": "$\\dfrac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}$ is the orthogonal projection onto the line through $\\mathbf{u}$. So $P = I - \\dfrac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}$ is the orthogonal projection onto the plane $\\mathbf{u}^{\\perp}$. It satisfies $P^{\\top} = P$, $P^2 = P$ and $P\\mathbf{u} = \\mathbf{0}$."
+        },
+        {
+          "title": "Apply it without forming the $3 \\times 3$ matrix",
+          "body": "$P\\mathbf{w} = \\mathbf{w} - \\dfrac{\\mathbf{u}^{\\top}\\mathbf{w}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\,\\mathbf{u}$, with\n\n$\\mathbf{u}^{\\top}\\mathbf{u} = 4 + 1 + 4 = 9$ and $\\mathbf{u}^{\\top}\\mathbf{w} = 2 - 1 + 2 = 3$,\n\nso the coefficient is $\\dfrac{3}{9} = \\dfrac13$."
+        },
+        {
+          "title": "Subtract",
+          "body": "$P\\mathbf{w} = (1, 1, 1) - \\tfrac13(2, -1, 2) = \\left(1 - \\tfrac23,\\ 1 + \\tfrac13,\\ 1 - \\tfrac23\\right) = \\left(\\tfrac13,\\ \\tfrac43,\\ \\tfrac13\\right)^{\\top}$."
+        },
+        {
+          "title": "Verify",
+          "body": "$\\mathbf{u}^{\\top}(P\\mathbf{w}) = \\tfrac23 - \\tfrac43 + \\tfrac23 = 0$, so the component along $\\mathbf{u}$ has indeed been removed. Also $P\\mathbf{w} + \\tfrac13\\mathbf{u} = \\mathbf{w}$, as expected."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "For a nonzero vector $\\mathbf{u}$, the matrix $\\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}$ sends any $\\mathbf{w}$ to $\\frac{\\mathbf{u}^{\\top}\\mathbf{w}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\,\\mathbf{u}$, the component of $\\mathbf{w}$ along $\\mathbf{u}$. It is the orthogonal projection onto the line through $\\mathbf{u}$.\n\nSubtracting it from the identity keeps everything *except* that component, so $P = I - \\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}$ projects orthogonally onto the plane of vectors perpendicular to $\\mathbf{u}$. Like every orthogonal projection matrix it is symmetric and idempotent; here $P\\mathbf{u} = \\mathbf{0}$ and $\\operatorname{rank}(P) = 2$.\n\nDividing by $\\mathbf{u}^{\\top}\\mathbf{u} = \\lVert\\mathbf{u}\\rVert^2$, not by $\\lVert\\mathbf{u}\\rVert$, is what makes the formula valid for a $\\mathbf{u}$ that is not a unit vector. The related matrix $I - 2\\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}$ *reflects* across the plane instead; it is orthogonal but not idempotent. In data pipelines, this \"remove one direction\" projection strips a nuisance direction (such as a trend or bias direction) from feature vectors.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. $\\mathbf{w} - \\tfrac13\\mathbf{u} = \\left(\\tfrac13, \\tfrac43, \\tfrac13\\right)$, and its dot product with $\\mathbf{u}$ is $0$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This is $\\mathbf{w} + \\tfrac13\\mathbf{u}$: the component along $\\mathbf{u}$ has been added instead of subtracted. Its dot product with $\\mathbf{u}$ is $6 \\ne 0$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This is $\\mathbf{w} - \\tfrac23\\mathbf{u}$, the Householder *reflection* $\\left(I - 2\\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\right)\\mathbf{w}$. It flips the $\\mathbf{u}$-component rather than removing it; its dot product with $\\mathbf{u}$ is $-3$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. This is $\\tfrac13\\mathbf{u} = \\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\mathbf{w}$, the component that is *removed*, not what remains."
+        }
+      ],
+      "shortcut": "Use $P\\mathbf{w} = \\mathbf{w} - \\frac{\\mathbf{u}^{\\top}\\mathbf{w}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\mathbf{u}$, which needs one dot product and no $3 \\times 3$ matrix. Then check $\\mathbf{u}^{\\top}(P\\mathbf{w}) = 0$: this test alone eliminates (B), (C) and (D).",
+      "commonTrap": "Stopping at $\\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\mathbf{w}$ (option D), or dividing by $\\lVert\\mathbf{u}\\rVert = 3$ instead of $\\mathbf{u}^{\\top}\\mathbf{u} = 9$, which gives $\\mathbf{w} - \\mathbf{u} = (-1, 2, -1)^{\\top}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(1/3, 4/3, 1/3) -> (A)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nu = [2, -1, 2]; w = [1, 1, 1]\nuu = sum(x * x for x in u); uw = sum(x * y for x, y in zip(u, w))\nPw = [F(wi) - F(uw, uu) * ui for wi, ui in zip(w, u)]\nprint(uu, uw, [str(t) for t in Pw], 'Pw.u =', sum(p * x for p, x in zip(Pw, u)))",
+      "notes": ""
+    }
+  }
+]

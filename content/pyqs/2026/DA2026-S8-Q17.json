@@ -1,0 +1,112 @@
+{
+  "id": "DA2026-S8-Q17",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 17,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-normalization",
+  "subtopicIds": [
+    "dbw-normal-forms",
+    "dbw-relational-model"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (attribute closure to find candidate keys) applied in 2–3 routine steps (spot that D never appears on a right-hand side, compute the closures of AD, CD, ED and BD, confirm minimality), about 1.5–2 min for a prepared student.",
+  "estimatedTimeSec": 100,
+  "stem": "Let $R(A,B,C,D,E)$ be a relational schema with functional dependency set $F=\\{A \\rightarrow BC,\\ CD \\rightarrow E,\\ E \\rightarrow A\\}$.\n\nWhich of the following statements is correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$AD$, $ED$ and $CD$ are the only candidate keys of $R$."
+    },
+    {
+      "label": "B",
+      "text": "$AD$ and $ED$ are the only candidate keys of $R$."
+    },
+    {
+      "label": "C",
+      "text": "$A$, $E$ and $CD$ are the only candidate keys of $R$."
+    },
+    {
+      "label": "D",
+      "text": "$A$ and $CD$ are the only candidate keys of $R$."
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "$D$ never appears on the right-hand side of any FD, so every key must contain $D$ (this already rules out $A$ and $E$ as keys). Closures: $(AD)^+ = (ED)^+ = (CD)^+ = ABCDE$, while $D^+ = D$ and $(BD)^+ = BD$. So the candidate keys are exactly $AD$, $CD$ and $ED$. Answer: **(A)**.",
+    "steps": [
+      {
+        "title": "Find the attribute that every key must contain",
+        "body": "The right-hand sides of the FDs are $BC$, $E$ and $A$. Attribute $D$ never appears on any right-hand side, so no set of attributes can derive $D$ unless it already contains $D$. Hence **every candidate key contains $D$**.\n\nOn its own, $D^+ = \\{D\\}$ (no FD has $D$ alone as its left side), so $D$ is not a key; we need to add attributes to it.\n\nThis immediately shows that $A$ and $E$ cannot be keys:\n\n- $A^+$: $A \\rightarrow BC$ gives $\\{A,B,C\\}$; no further FD applies ($CD \\rightarrow E$ needs $D$). So $A^+ = \\{A,B,C\\}$.\n- $E^+$: $E \\rightarrow A$ gives $\\{E,A\\}$, then $A \\rightarrow BC$ gives $\\{A,B,C,E\\}$. So $E^+ = \\{A,B,C,E\\}$.\n\nBoth miss $D$."
+      },
+      {
+        "title": "Try $D$ together with one other attribute",
+        "body": "- $(AD)^+$: start $\\{A,D\\}$; $A \\rightarrow BC$ adds $B,C$ giving $\\{A,B,C,D\\}$; now $CD \\rightarrow E$ adds $E$. $(AD)^+ = \\{A,B,C,D,E\\}$ ✓\n- $(ED)^+$: start $\\{E,D\\}$; $E \\rightarrow A$ adds $A$; $A \\rightarrow BC$ adds $B,C$. $(ED)^+ = \\{A,B,C,D,E\\}$ ✓\n- $(CD)^+$: start $\\{C,D\\}$; $CD \\rightarrow E$ adds $E$; $E \\rightarrow A$ adds $A$; $A \\rightarrow BC$ adds $B$. $(CD)^+ = \\{A,B,C,D,E\\}$ ✓\n- $(BD)^+$: start $\\{B,D\\}$; no FD has a left side contained in $\\{B,D\\}$. $(BD)^+ = \\{B,D\\}$ ✗\n\nSo $AD$, $ED$ and $CD$ are superkeys, and $BD$ is not."
+      },
+      {
+        "title": "Check minimality",
+        "body": "Each of $AD$, $ED$, $CD$ is minimal, because its proper subsets are single attributes ($A$, $E$, $C$ or $D$), and none of those is a superkey ($A^+ = ABC$, $E^+ = ABCE$, $C^+ = C$, $D^+ = D$). So all three are **candidate keys**."
+      },
+      {
+        "title": "Rule out any other candidate key",
+        "body": "Any other candidate key would have to contain $D$ and must not contain $A$, $C$ or $E$ (otherwise it would contain one of the keys $AD$, $CD$, $ED$ and not be minimal). The only such sets are $D$ and $BD$, and neither is a superkey.\n\nTherefore the candidate keys of $R$ are **exactly $AD$, $ED$ and $CD$**, which is statement **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**Superkeys and candidate keys.** For a relation schema $R$ with a set of functional dependencies (FDs) $F$, a set of attributes $K$ is a **superkey** if it functionally determines every attribute of $R$, i.e. its closure $K^+$ is all of $R$. A **candidate key** is a *minimal* superkey: removing any attribute from it makes it stop being a superkey.\n\n**Attribute closure.** To compute $X^+$, start with $X$ and repeatedly apply every FD $L \\rightarrow M$ whose left side $L$ is already inside the current set, adding $M$. Stop when nothing new can be added. $X$ is a superkey exactly when $X^+ = R$.\n\n**A fast way to organise the search.** Classify each attribute by where it appears in the FDs:\n\n- appears **only on left sides, or in no FD at all**: it can never be derived, so it is in **every** key;\n- appears **only on right sides**: it is derived from others, so it is in **no** key;\n- appears on **both sides**: it may or may not be in a key; test it.\n\nStart from the attributes that must be in every key, compute their closure, and add the \"both-sides\" attributes one at a time (then two at a time, and so on), keeping only minimal superkeys.\n\n**Back to this question.** $D$ appears in no right-hand side, so $D$ is in every key. $B$ appears only on a right-hand side ($A \\rightarrow BC$), so $B$ is in no key. $A$, $C$ and $E$ appear on both sides. $D^+ = D$ is not enough, but adding any one of $A$, $C$ or $E$ works, because the FDs form a cycle $A \\rightarrow C$, $CD \\rightarrow E$, $E \\rightarrow A$: once $D$ is present, any one of $A$, $C$, $E$ leads to the other two, and $A \\rightarrow B$ supplies $B$. So the candidate keys are $AD$, $CD$ and $ED$, which is statement (A).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$(AD)^+ = (ED)^+ = (CD)^+ = ABCDE$, each is minimal (no single attribute is a key), and every other key would have to contain $D$ but none of $A$, $C$, $E$, leaving only $D$ or $BD$, which are not superkeys. So these three are exactly the candidate keys."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "It misses $CD$: $CD \\rightarrow E$, $E \\rightarrow A$ and $A \\rightarrow BC$ give $(CD)^+ = ABCDE$, and neither $C$ nor $D$ alone is a key, so $CD$ is also a candidate key. The statement's \"only\" makes it false."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$A$ and $E$ are not keys: $A^+ = \\{A,B,C\\}$ and $E^+ = \\{A,B,C,E\\}$, and neither contains $D$, which no FD can derive. (It also omits $AD$ and $ED$.)"
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$A$ is not a key since $A^+ = \\{A,B,C\\}$ lacks $D$ and $E$. The statement also omits the genuine candidate keys $AD$ and $ED$."
+      }
+    ],
+    "shortcut": "An attribute that appears on no right-hand side must be in every key. $D$ is such an attribute, so (C) and (D), which list $A$ as a key, are out at once. Between (A) and (B), check only $CD$: $CD \\rightarrow E \\rightarrow A \\rightarrow BC$ gives everything, so $CD$ is a key and the answer is (A).",
+    "commonTrap": "Treating $A$ or $E$ as a key because each determines many attributes ($E \\rightarrow A \\rightarrow BC$), and forgetting that $D$ can never be derived; or stopping after finding $AD$ and $ED$ and missing that $CD$ is also a key via the chain $CD \\rightarrow E \\rightarrow A \\rightarrow BC$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q17-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the schema R(A,B,C,D,E), the FD set F={A→BC, CD→E, E→A}, the key names (AD, ED, CD, A, E) and R in a monospace font with a bold arrow character; these are rendered here as KaTeX math with \\rightarrow, without change of meaning."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import combinations\nR='ABCDE'; F=[('A','BC'),('CD','E'),('E','A')]\ndef closure(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nsk=[set(c) for k in range(1,6) for c in combinations(R,k) if closure(c)==set(R)]\nck=sorted(''.join(sorted(s)) for s in sk if not any(t<s for t in sk))\nprint(ck)  # ['AD', 'CD', 'DE']\nfor x in ['A','E','D','BD','AD','CD','ED']: print(x, ''.join(sorted(closure(x))))\n",
+    "notes": "D appears on no right-hand side, so it is in every key; (AD)+, (ED)+ and (CD)+ are all ABCDE while D+ = D and (BD)+ = BD, so the candidate keys are exactly AD, CD and ED. The Python check computes attribute closures for all 31 non-empty attribute subsets and keeps the minimal superkeys, giving ['AD', 'CD', 'DE']. This matches the official key (A)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

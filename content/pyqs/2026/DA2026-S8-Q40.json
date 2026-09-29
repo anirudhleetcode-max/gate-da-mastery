@@ -1,0 +1,117 @@
+{
+  "id": "DA2026-S8-Q40",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 40,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-graphs",
+  "subtopicIds": [
+    "pdsa-traversals",
+    "pdsa-graph-theory"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: two directly linked concepts (BFS/DFS as reachability and the effect of reversing edges), with each of the four statements settled by a short argument or a two-vertex counterexample; about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider a directed graph $G = (V, E)$, where $V$ is the finite set of vertices and $E$ is the set of directed edges between the vertices. $G$ may contain cycles but there is no self-loop. Further, $G$ may not be strongly connected.\n\nLet $G^R$ be the graph obtained by reversing the directions of all the edges in $G$ without changing the set of vertices.\n\nAssume that Breadth First Search (BFS) or Depth First Search (DFS) from any given vertex $v$ of a graph visits only the reachable vertices from $v$ in that graph.\n\nWhich of the following statements must always be true, regardless of the structure of $G$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "If $u$ is a reachable vertex in the BFS of $G^R$ from $v$, then $u$ is also a reachable vertex in the DFS of $G$ from $v$."
+    },
+    {
+      "label": "B",
+      "text": "In $G^R$, the BFS traversal from $v$ will visit exactly the same set of vertices as the DFS from $v$ in $G$."
+    },
+    {
+      "label": "C",
+      "text": "The order of vertices visited in the BFS of $G^R$ from $v$ is the reverse of the order of vertices visited in the DFS of $G$ from $v$."
+    },
+    {
+      "label": "D",
+      "text": "If $u$ is a reachable vertex in the DFS of $G$ from $v$, then $v$ is also a reachable vertex in the BFS of $G^R$ from $u$."
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "BFS and DFS from a vertex visit exactly the vertices reachable from it, so only reachability matters. Reversing every edge reverses every path: $v \\leadsto u$ in $G$ $\\iff$ $u \\leadsto v$ in $G^R$.\n\nThat is statement (D). The graph with a single edge between $u$ and $v$ breaks (A), (B) and (C). **(D)**",
+    "steps": [
+      {
+        "title": "Concept: what BFS and DFS visit",
+        "body": "By the stated assumption, BFS or DFS started at a vertex $s$ of a graph $H$ visits exactly the set\n\n$$\n\\mathrm{Reach}_H(s) = \\{\\, x : \\text{there is a directed path } s \\leadsto x \\text{ in } H \\,\\}\n$$\n\n($s$ itself included). BFS and DFS differ only in the **order** of visiting, not in the **set** visited. So \"$u$ is reachable in the BFS/DFS of $H$ from $s$\" just means $u \\in \\mathrm{Reach}_H(s)$."
+      },
+      {
+        "title": "Key fact: reversing edges reverses paths",
+        "body": "Suppose $v = x_0 \\to x_1 \\to \\dots \\to x_k = u$ is a directed path in $G$. In $G^R$ each edge $x_i \\to x_{i+1}$ becomes $x_{i+1} \\to x_i$, so $u = x_k \\to x_{k-1} \\to \\dots \\to x_0 = v$ is a directed path in $G^R$.\n\nThe converse follows the same way because $(G^R)^R = G$. Hence\n\n$$\nu \\in \\mathrm{Reach}_G(v) \\iff v \\in \\mathrm{Reach}_{G^R}(u).\n$$\n\nIn words: BFS/DFS of $G^R$ from $v$ finds the vertices that can **reach** $v$ in $G$ (its ancestors). BFS/DFS of $G$ from $v$ finds the vertices $v$ can reach (its descendants)."
+      },
+      {
+        "title": "Check (D): it is exactly the key fact",
+        "body": "\"$u$ is reachable in the DFS of $G$ from $v$\" means $u \\in \\mathrm{Reach}_G(v)$. By the key fact, $v \\in \\mathrm{Reach}_{G^R}(u)$, so the BFS of $G^R$ from $u$ visits $v$. This holds for **every** directed graph, so (D) must always be true."
+      },
+      {
+        "title": "Eliminate (A), (B), (C) with two-vertex counterexamples",
+        "body": "Take $V = \\{v, u\\}$ with a single edge.\n\n- **(A)** Let $G$ have the edge $u \\to v$, so $G^R$ has $v \\to u$. BFS of $G^R$ from $v$ visits $\\{v, u\\}$, but DFS of $G$ from $v$ visits only $\\{v\\}$ because $v$ has no outgoing edge. So $u$ is reached in $G^R$ but not in $G$, and (A) fails.\n- **(B)** Let $G$ have the edge $v \\to u$. DFS of $G$ from $v$ visits $\\{v, u\\}$. $G^R$ has only $u \\to v$, so BFS of $G^R$ from $v$ visits $\\{v\\}$. The sets differ (descendants $\\ne$ ancestors in general), and (B) fails.\n- **(C)** Both traversals start at $v$, so the BFS order of $G^R$ begins with $v$, while the *reverse* of the DFS order of $G$ ends with $v$. Each vertex appears once, so the two sequences can match only if both consist of $v$ alone. With the edge $v \\to u$: BFS of $G^R$ from $v$ is $(v)$, and the reversed DFS order of $G$ from $v$ is $(u, v)$. They differ, so (C) fails.\n\nA brute-force Python check over every directed graph (no self-loops) on 2, 3 and 4 vertices and every start vertex confirms: only (D) never fails."
+      },
+      {
+        "title": "Conclusion",
+        "body": "Only statement (D) holds regardless of the structure of $G$ → **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Reachability is what traversals compute.** In a directed graph, $u$ is *reachable* from $v$ if there is a directed path $v \\leadsto u$. BFS explores level by level with a queue, and DFS goes deep first with a stack or recursion. Both keep a \"visited\" set and expand every unvisited out-neighbour, so both end up visiting exactly the vertices reachable from the start. BFS and DFS therefore always visit the same **set** from the same start in the same graph. Only the **order** differs, and even the order depends on how neighbours are listed.\n\n**The reverse (transpose) graph.** $G^R$ keeps every vertex and flips every edge $a \\to b$ into $b \\to a$. A walk along edges in $G$ becomes the same walk traced backwards in $G^R$. So:\n\n- Searching $G$ from $v$ answers: *where can $v$ go?* (descendants of $v$).\n- Searching $G^R$ from $v$ answers: *who can come to $v$?* (ancestors of $v$ in $G$).\n\nThese two sets are generally different. For example, in a chain $a \\to b \\to c$ the descendants of $b$ are $\\{b, c\\}$ and its ancestors are $\\{a, b\\}$. They coincide only in special situations, such as when all the vertices involved lie in the same strongly connected component. This is exactly the idea behind Kosaraju's strongly-connected-components algorithm, which searches both $G$ and $G^R$: a vertex lies in the SCC of $v$ iff it is both a descendant and an ancestor of $v$.\n\n**Applying it here.** Swapping the graph ($G \\leftrightarrow G^R$) must go together with swapping the endpoints ($v \\leftrightarrow u$). Statement (D) does both: $u$ reachable from $v$ in $G$ implies $v$ reachable from $u$ in $G^R$. Statements (A) and (B) swap the graph but keep the same start vertex, which turns descendants into ancestors, and (C) makes a claim about visiting order that cannot hold because both orders begin at $v$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "BFS of $G^R$ from $v$ finds the vertices that can reach $v$ in $G$, not those $v$ can reach. Counterexample: $G$ has only $u \\to v$. Then $u$ is reached by BFS of $G^R$ from $v$, but DFS of $G$ from $v$ visits only $v$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "The two sets are the ancestors of $v$ and the descendants of $v$ in $G$, which differ in general. Counterexample: $G$ has only $v \\to u$. DFS of $G$ from $v$ visits $\\{v, u\\}$, while BFS of $G^R$ from $v$ visits $\\{v\\}$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Both traversals start at $v$, so one order begins with $v$ while the other, reversed, ends with $v$. They can agree only when nothing but $v$ is visited. With $G$ having only $v \\to u$, the orders are $(v)$ versus the reversed $(u, v)$. The visited sets can differ too, as in (B)."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "A path $v \\leadsto u$ in $G$ read backwards is a path $u \\leadsto v$ in $G^R$. So whenever DFS of $G$ from $v$ reaches $u$, BFS of $G^R$ from $u$ reaches $v$, for every graph $G$."
+      }
+    ],
+    "shortcut": "With a reversed graph, the graph and the start/end roles must swap **together**: $v \\leadsto u$ in $G$ $\\iff$ $u \\leadsto v$ in $G^R$. Among the reachability statements, only one swaps both, namely (D). BFS vs DFS never changes the visited set, so that wording is a distraction.",
+    "commonTrap": "Assuming that reversing edges does not change what is reachable from $v$ (true for undirected or strongly connected graphs, false in general) leads to choosing (A) or (B). The BFS/DFS wording is also a distraction: the traversal type never changes the visited set, only the order."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q40-1.webp",
+    "/pyq/2026/official/Q40-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the reversed graph as $G^R$ (superscript R), and it is transcribed that way."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "D",
+    "agreesWithKey": true,
+    "checkCode": "from collections import deque\ndef bfs(adj, s):\n    seen, order, q = {s}, [s], deque([s])\n    while q:\n        x = q.popleft()\n        for y in sorted(adj[x]):\n            if y not in seen: seen.add(y); order.append(y); q.append(y)\n    return order\ndef dfs(adj, s):\n    seen, order = set(), []\n    def go(x):\n        seen.add(x); order.append(x)\n        for y in sorted(adj[x]):\n            if y not in seen: go(y)\n    go(s); return order\nok = dict.fromkeys('ABCD', True)\nfor n in (2, 3, 4):                        # every digraph on n vertices, no self-loops\n    V = range(n); pairs = [(a, b) for a in V for b in V if a != b]\n    for mask in range(1 << len(pairs)):\n        E = [p for i, p in enumerate(pairs) if mask >> i & 1]\n        G = {x: [b for a, b in E if a == x] for x in V}\n        GR = {x: [a for a, b in E if b == x] for x in V}\n        for v in V:\n            bR, dG = bfs(GR, v), dfs(G, v)\n            ok['A'] &= all(u in dG for u in bR)\n            ok['B'] &= set(bR) == set(dG)\n            ok['C'] &= bR == dG[::-1]\n            ok['D'] &= all(v in bfs(GR, u) for u in dG)\nprint(ok)   # {'A': False, 'B': False, 'C': False, 'D': True}",
+    "notes": "(D) follows from path reversal: u in Reach_G(v) iff v in Reach_{G^R}(u). Two-vertex counterexamples refute (A), (B) and (C). A brute force over all self-loop-free digraphs on 2 to 4 vertices, with every start vertex, finds counterexamples to (A), (B) and (C) and none to (D). This matches official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,116 @@
+{
+  "id": "DA2025-S5-Q36",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 36,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named",
+    "ps-random-variables"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (standard normal / chi-squared moments) solved by direct recall of Var(chi-squared_1) = 2 or a single moment computation, well under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "Let $Y = Z^2,\\ Z = \\dfrac{X-\\mu}{\\sigma}$, where $X$ is a normal random variable with mean $\\mu$ and variance $\\sigma^2$. The variance of $Y$ is",
+  "options": [
+    {
+      "label": "A",
+      "text": "$1$"
+    },
+    {
+      "label": "B",
+      "text": "$2$"
+    },
+    {
+      "label": "C",
+      "text": "$3$"
+    },
+    {
+      "label": "D",
+      "text": "$4$"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "$Z = \\frac{X-\\mu}{\\sigma}$ is standard normal, so $Y = Z^2 \\sim \\chi^2_1$. Using the moments of $N(0,1)$: $E[Z^2]=1$ and $E[Z^4]=3$, so $\\operatorname{Var}(Y) = E[Z^4] - (E[Z^2])^2 = 3 - 1 = 2$. Answer **(B)**.",
+    "steps": [
+      {
+        "title": "Standardise: identify the distribution of $Z$",
+        "body": "Since $X \\sim N(\\mu, \\sigma^2)$, the linear transformation $Z = \\dfrac{X-\\mu}{\\sigma}$ has\n\n$$E[Z] = \\frac{E[X]-\\mu}{\\sigma} = 0, \\qquad \\operatorname{Var}(Z) = \\frac{\\operatorname{Var}(X)}{\\sigma^2} = \\frac{\\sigma^2}{\\sigma^2} = 1,$$\n\nand a linear function of a normal variable is normal. So $Z \\sim N(0,1)$, whatever the values of $\\mu$ and $\\sigma$."
+      },
+      {
+        "title": "Write the variance of $Y$ in terms of moments of $Z$",
+        "body": "With $Y = Z^2$:\n\n$$\\operatorname{Var}(Y) = E[Y^2] - (E[Y])^2 = E[Z^4] - \\left(E[Z^2]\\right)^2.$$\n\nSo we need the second and fourth moments of a standard normal variable."
+      },
+      {
+        "title": "Second moment $E[Z^2]$",
+        "body": "$E[Z^2] = \\operatorname{Var}(Z) + (E[Z])^2 = 1 + 0^2 = 1.$"
+      },
+      {
+        "title": "Fourth moment $E[Z^4]$",
+        "body": "Integrate by parts with $\\varphi(z) = \\frac{1}{\\sqrt{2\\pi}}e^{-z^2/2}$, using $\\varphi'(z) = -z\\,\\varphi(z)$:\n\n$$E[Z^4] = \\int_{-\\infty}^{\\infty} z^3 \\cdot z\\,\\varphi(z)\\,dz = \\Big[-z^3\\varphi(z)\\Big]_{-\\infty}^{\\infty} + \\int_{-\\infty}^{\\infty} 3z^2\\,\\varphi(z)\\,dz = 0 + 3E[Z^2] = 3.$$\n\n(In general $E[Z^{2k}] = (2k-1)(2k-3)\\cdots 3\\cdot 1$, so $E[Z^4] = 3\\cdot 1 = 3$.)"
+      },
+      {
+        "title": "Compute the variance",
+        "body": "$$\\operatorname{Var}(Y) = E[Z^4] - \\left(E[Z^2]\\right)^2 = 3 - 1^2 = 2.$$\n\nThis matches the known fact that $Y = Z^2 \\sim \\chi^2_1$, and a $\\chi^2_k$ variable has mean $k$ and variance $2k$; with $k = 1$ the variance is $2$. The answer is **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "**Standardisation.** Any normal variable $X \\sim N(\\mu,\\sigma^2)$ can be turned into the *standard* normal by subtracting its mean and dividing by its standard deviation: $Z = (X-\\mu)/\\sigma \\sim N(0,1)$. After this step, $\\mu$ and $\\sigma$ no longer appear. That is why the answer is a pure number and does not depend on the parameters.\n\n**Moments of the standard normal.** The density $\\varphi(z) \\propto e^{-z^2/2}$ is symmetric about $0$, so every odd moment ($E[Z], E[Z^3], \\dots$) is $0$. The even moments follow a neat pattern that comes from integration by parts, using $\\varphi'(z) = -z\\varphi(z)$:\n\n$$E[Z^{n}] = (n-1)\\,E[Z^{n-2}].$$\n\nStarting from $E[Z^0] = 1$, this gives $E[Z^2] = 1$, $E[Z^4] = 3$, $E[Z^6] = 15$, and so on (products of odd numbers).\n\n**Variance of a function of a random variable.** For any $Y$, $\\operatorname{Var}(Y) = E[Y^2] - (E[Y])^2$. When $Y = Z^2$, this needs $E[Z^4]$ and $E[Z^2]$. That is exactly why the fourth moment matters here.\n\n**The chi-squared connection.** A sum of $k$ independent squared standard normals, $Z_1^2 + \\cdots + Z_k^2$, has the chi-squared distribution with $k$ degrees of freedom. Its mean is $k$ (each term has mean $1$) and its variance is $2k$ (each term has variance $3 - 1 = 2$, and variances add under independence). Here there is one term, so $Y \\sim \\chi^2_1$ with mean $1$ and variance $2$.\n\n**Back to the question.** Once you see that $Z$ is standard normal, either route gives the answer quickly. You can use the moment calculation ($3 - 1 = 2$) or recall that $\\operatorname{Var}(\\chi^2_k) = 2k$ with $k = 1$. The answer is $2$, option (B).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$1$ is $E[Y] = E[Z^2]$ (also $\\operatorname{Var}(Z)$), not the variance of $Y$. It is the answer you get if you confuse the mean of $Z^2$ with its variance."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$\\operatorname{Var}(Y) = E[Z^4] - (E[Z^2])^2 = 3 - 1 = 2$, which is also $2k$ for $\\chi^2_k$ with $k = 1$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$3$ is $E[Z^4] = E[Y^2]$, the raw second moment of $Y$. You get it if you forget to subtract $(E[Y])^2 = 1$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$4$ does not come from any correct calculation here. It would be $\\operatorname{Var}(\\chi^2_2)$, the variance for two degrees of freedom, not one."
+      }
+    ],
+    "shortcut": "$Z^2 \\sim \\chi^2_1$ and $\\operatorname{Var}(\\chi^2_k) = 2k$, so $\\operatorname{Var}(Y) = 2$ immediately.",
+    "commonTrap": "Picking $3$ by computing $E[Z^4]$ and forgetting to subtract $(E[Z^2])^2 = 1$. Another trap is picking $1$ because \"$Z$ has variance 1\", which confuses $\\operatorname{Var}(Z)$ with $\\operatorname{Var}(Z^2)$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q36-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B (Var(Y) = 2)",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp, numpy as np\nz = sp.symbols('z', real=True)\nphi = sp.exp(-z**2/2)/sp.sqrt(2*sp.pi)\nEZ2 = sp.integrate(z**2*phi, (z, -sp.oo, sp.oo))\nEZ4 = sp.integrate(z**4*phi, (z, -sp.oo, sp.oo))\nprint('E[Z^2]=', EZ2, 'E[Z^4]=', EZ4, 'Var(Y)=', sp.simplify(EZ4 - EZ2**2))\n# Monte Carlo with arbitrary mu, sigma\nrng = np.random.default_rng(0); mu, s = 3.7, 2.5\nX = rng.normal(mu, s, 2_000_000); Y = ((X-mu)/s)**2\nprint('MC Var(Y) ~', round(Y.var(), 3))",
+    "notes": "Independent solve: Z ~ N(0,1), so Var(Z^2) = E[Z^4] - (E[Z^2])^2 = 3 - 1 = 2, i.e. option (B). This matches the official key B. The sympy exact integration gives Var(Y) = 2, and a Monte Carlo run with arbitrary mu, sigma gives about 2.002."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

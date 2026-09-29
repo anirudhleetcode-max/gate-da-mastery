@@ -1,0 +1,114 @@
+{
+  "id": "DA2024-S1-Q55",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 55,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-storage",
+  "subtopicIds": [
+    "dbw-indexing"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two concepts (classifying each WHERE predicate as range, equality or equi-join, and knowing that a hash index serves only equality while a B+ tree serves both) and applies them to four options in about two minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "An OTT company is maintaining a large disk-based relational database of different movies with the following schema:\n\n$$\n\\texttt{Movie}(\\underline{\\texttt{ID}},\\ \\texttt{CustomerRating})\n$$\n\n$$\n\\texttt{Genre}(\\underline{\\texttt{ID}},\\ \\texttt{Name})\n$$\n\n$$\n\\texttt{Movie\\_Genre}(\\underline{\\texttt{MovieID}},\\ \\underline{\\texttt{GenreID}})\n$$\n\nConsider the following SQL query on the relation database above:\n\n```sql\nSELECT *\nFROM Movie, Genre, Movie_Genre\nWHERE\n     Movie.CustomerRating > 3.4 AND\n     Genre.Name = “Comedy” AND\n     Movie_Genre.MovieID = Movie.ID AND\n     Movie_Genre.GenreID = Genre.ID;\n```\n\nThis SQL query can be sped up using which of the following indexing options?",
+  "options": [
+    {
+      "label": "A",
+      "text": "B$^{+}$ tree on all the attributes."
+    },
+    {
+      "label": "B",
+      "text": "Hash index on `Genre.Name` and B$^{+}$ tree on the remaining attributes."
+    },
+    {
+      "label": "C",
+      "text": "Hash index on `Movie.CustomerRating` and B$^{+}$ tree on the remaining attributes."
+    },
+    {
+      "label": "D",
+      "text": "Hash index on all the attributes."
+    }
+  ],
+  "officialKeyRaw": "A;B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "Classify the WHERE predicates: `Movie.CustomerRating > 3.4` is a **range** predicate, `Genre.Name = “Comedy”` is an **equality** predicate, and the last two are **equi-join** conditions. A B$^{+}$ tree (sorted, linked leaves) serves all three kinds; a hash index serves only equality lookups and probes. (A) and (B) keep a B$^{+}$ tree on `CustomerRating`, so every index they create is usable. (C) and (D) put a hash index on `CustomerRating`, which cannot evaluate `> 3.4`. The answer is **(A), (B)**.",
+    "steps": [
+      {
+        "title": "Classify each predicate in the WHERE clause",
+        "body": "The query joins the three tables and filters them. Each condition needs a different kind of lookup:\n\n| Predicate | Attribute(s) | Kind | What an index must do |\n| --- | --- | --- | --- |\n| `Movie.CustomerRating > 3.4` | `Movie.CustomerRating` | Range | Find **all** ratings above 3.4 |\n| `Genre.Name = “Comedy”` | `Genre.Name` | Equality | Find the rows whose name is exactly “Comedy” |\n| `Movie_Genre.MovieID = Movie.ID` | `Movie_Genre.MovieID`, `Movie.ID` | Equi-join | Given one side's value, find the matching rows on the other side |\n| `Movie_Genre.GenreID = Genre.ID` | `Movie_Genre.GenreID`, `Genre.ID` | Equi-join | Same: an equality probe per value |\n\nThe database is large and disk-based, so the cost that matters is the number of disk blocks read. An index helps a predicate only if it can jump straight to the qualifying rows instead of scanning the whole table."
+      },
+      {
+        "title": "What each index type can do",
+        "body": "**B$^{+}$ tree.** Keys are stored in **sorted order** in the leaves, and the leaves are chained left to right. With a fan-out of hundreds of keys per node, the tree is only a few levels deep even for millions of rows.\n\n- Equality ($= v$): descend from the root to the leaf holding $v$, which takes a handful of block reads.\n- Range ($> v$, $<$, BETWEEN): descend to the position of $v$, then read the leaf chain to the right. Only the qualifying keys are touched.\n- Joins: for each outer tuple, probe the index with its join value (index nested-loop join); the sorted order also makes merge joins possible.\n\n**Hash index.** A hash function $h(k)$ sends each key to a bucket, which gives a direct jump for an exact key.\n\n- Equality: compute $h(v)$ and read that one bucket, which is expected $O(1)$ block reads. This is the best case for hashing.\n- Joins: an equi-join is a sequence of equality probes, so a hash index works well.\n- Range: a hash function **scatters** keys: $3.5$, $3.6$ and $4.9$ land in unrelated buckets, and bucket order says nothing about key order. To find every rating above $3.4$ you must read **every** bucket, which is no better than scanning the table. A hash index cannot serve a range predicate."
+      },
+      {
+        "title": "Match index types to the predicates",
+        "body": "| Attribute | Predicate kind | B$^{+}$ tree usable? | Hash index usable? |\n| --- | --- | :---: | :---: |\n| `Movie.CustomerRating` | Range ($> 3.4$) | Yes | **No** |\n| `Genre.Name` | Equality | Yes | Yes (ideal) |\n| `Movie.ID`, `Movie_Genre.MovieID` | Equi-join | Yes | Yes |\n| `Genre.ID`, `Movie_Genre.GenreID` | Equi-join | Yes | Yes |\n\nThe only attribute where the choice of index type matters is `Movie.CustomerRating`: it **must** get an ordered index (a B$^{+}$ tree). Every other attribute is served by either type."
+      },
+      {
+        "title": "Evaluate the four options",
+        "body": "| Option | Index on `CustomerRating` | Index on `Genre.Name` | Join attributes | Every index usable by its predicate? |\n| --- | --- | --- | --- | --- |\n| (A) B$^{+}$ tree on all | B$^{+}$ tree (range scan) | B$^{+}$ tree | B$^{+}$ trees | **Yes** |\n| (B) Hash on `Genre.Name`, B$^{+}$ tree elsewhere | B$^{+}$ tree (range scan) | Hash (equality) | B$^{+}$ trees | **Yes** |\n| (C) Hash on `CustomerRating`, B$^{+}$ tree elsewhere | Hash: **cannot** evaluate $> 3.4$ | B$^{+}$ tree | B$^{+}$ trees | No |\n| (D) Hash on all | Hash: **cannot** evaluate $> 3.4$ | Hash | Hashes | No |\n\nIn (A) and (B) the optimiser can use every index, for example: look up “Comedy” in the `Genre.Name` index to get the comedy genre ID, probe `Movie_Genre` on `GenreID`, probe `Movie` on `ID`, and use the `CustomerRating` B$^{+}$ tree for the rating filter (or start from a range scan on it). In (C) and (D) the index built on `CustomerRating` is the wrong type for the only predicate on that attribute, so the rating filter still needs a full scan of `Movie`.\n\nThe indexing options that suit this query are **(A), (B)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B)**",
+    "teaching": "**Why indexes exist.** A table stored on disk is a long sequence of blocks. Without an index, answering `WHERE Name = “Comedy”` means reading every block and checking every row. An index is a separate structure that maps attribute values to the locations of the rows holding them, so the query reads only a few blocks. Which predicates an index can answer depends on how it organises the values.\n\n**Hash index.** A hash function turns a key into a bucket number, and the bucket stores pointers to the rows with that key. For an exact-match lookup you compute the hash once and read one bucket, which is about as fast as a lookup gets. But a good hash function deliberately spreads nearby keys into unrelated buckets, so the index keeps no notion of order. For \"all ratings greater than 3.4\" there is no bucket to start from and no way to know where to stop, so every bucket must be read. Hash indexes therefore answer `=` (and equi-joins, which are repeated `=` probes) but not `<`, `>`, `BETWEEN` or `ORDER BY`.\n\n**B$^{+}$ tree index.** A B$^{+}$ tree is a balanced, very wide search tree. Internal nodes guide the search, and all keys sit in the leaves in sorted order, with each leaf linked to the next. An exact lookup walks from the root to a leaf, which takes only a few block reads because the tree is shallow. A range lookup finds the first qualifying key the same way and then walks along the leaf chain, reading only matching entries. So a B$^{+}$ tree handles equality, ranges, sorting and joins. It is the general-purpose index.\n\n**Rule of thumb.** Put a hash index only where every use of the attribute is an equality or an equi-join. Anywhere a range condition appears, use a B$^{+}$ tree.\n\n**Back to this question.** The query has one range predicate (`CustomerRating > 3.4`), one equality predicate (`Name = “Comedy”`) and two equi-joins. The rating attribute must be indexed by a B$^{+}$ tree; the other attributes can use either type. (A) and (B) respect this; (C) and (D) put a hash index on the rating. The answer is **(A), (B)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "A B$^{+}$ tree supports every predicate in the query: a range scan for `CustomerRating > 3.4`, an exact lookup for `Name = “Comedy”`, and equality probes (or merge joins) for the two join conditions. Every index in this option is usable."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "`Genre.Name` appears only in the equality predicate `Name = “Comedy”`, which is exactly what a hash index does best, with expected $O(1)$ lookup. The remaining attributes, including `CustomerRating` with its range predicate, get B$^{+}$ trees. Every index is usable, so the query is sped up."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The hash index is placed on `Movie.CustomerRating`, the one attribute queried with a **range** predicate (`> 3.4`). Hashing destroys key order, so the index cannot locate all ratings above 3.4 without reading every bucket, and the rating filter still needs a full scan of `Movie`. The B$^{+}$ trees on the other attributes could still help the joins, but the index chosen for the rating is the wrong type for this query, and the official key excludes this option."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Hash indexes would serve the equality predicate on `Genre.Name` and the equi-joins, but the hash index on `Movie.CustomerRating` cannot answer the range predicate `CustomerRating > 3.4`. The same defect as (C) makes this option wrong."
+      }
+    ],
+    "shortcut": "Look only at the range predicate `CustomerRating > 3.4`: it needs an ordered index (a B$^{+}$ tree), because hash indexes answer only equality. Both index types handle the equality and equi-join predicates. So reject every option that puts a hash index on `CustomerRating` (C and D) and keep those that leave a B$^{+}$ tree there (A and B).",
+    "commonTrap": "Rejecting (B) on the belief that a hash index is somehow worse than a B$^{+}$ tree. For the pure equality `Genre.Name = “Comedy”` a hash index is ideal. The real restriction is on the **range** predicate, and (B) keeps a B$^{+}$ tree there. The opposite slip is accepting (C) because its B$^{+}$ trees on the join attributes would still help. The question is testing whether each chosen index type suits the predicate on its attribute, and a hash index on `CustomerRating` cannot serve `> 3.4`."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q55-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The three relation schemas are printed in typewriter font with italic attribute names and underlined key attributes (ID in Movie, ID in Genre, and both MovieID and GenreID in Movie_Genre). They are set as display math using \\texttt, with \\underline for the underlined keys; KaTeX has no italic typewriter, so the italics are not reproduced. There is no space between each relation name and its opening parenthesis, as printed. The SQL query is a typewriter block, transcribed as an sql code block with the paper's line breaks; its attribute names are italic in the paper, which a code block cannot show. The four WHERE conditions are indented in the paper by about five character widths (a tab in the PDF text layer) and are indented by five spaces here. The string literal is printed with curly quotes (“Comedy”) and is kept as printed. The paper's wording 'on the relation database above' is kept as printed. In the options, B⁺ is set as B$^{+}$, and the typewriter identifiers Genre.Name and Movie.CustomerRating are shown as inline code. No figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B",
+    "agreesWithKey": true,
+    "checkCode": "import bisect, random\n# What each index type can serve: B+ tree = sorted keys (bisect); hash = dict of buckets\nsupports={'B+':{'eq','range','join'}, 'hash':{'eq','join'}}\npreds={'Movie.CustomerRating':'range',          # > 3.4\n       'Genre.Name':'eq',                        # = \"Comedy\"\n       'Movie_Genre.MovieID':'join','Movie.ID':'join',\n       'Movie_Genre.GenreID':'join','Genre.ID':'join'}\ndef scheme(special=None, kind=None, rest='B+'):\n    return {a:(kind if a==special else rest) for a in preds}\nopts={'A':scheme(),'B':scheme('Genre.Name','hash'),\n      'C':scheme('Movie.CustomerRating','hash'),'D':scheme(rest='hash')}\nfor k,sch in opts.items():\n    unusable=[a for a,t in sch.items() if preds[a] not in supports[t]]\n    print(k,'every index usable by its predicate:',not unusable, unusable)\n# A True, B True, C False ['Movie.CustomerRating'], D False ['Movie.CustomerRating'] -> A;B\n# Demo: range 'rating > 3.4' via sorted index (B+ leaf order) vs hash index\nrandom.seed(1); ratings=[round(random.uniform(0,5),1) for _ in range(10000)]\nsrt=sorted(ratings); i=bisect.bisect_right(srt,3.4)\nhashidx={}\nfor r in ratings: hashidx.setdefault(hash(r)%97,[]).append(r)   # buckets in hash order, not value order\nhits_hash=[r for b in hashidx.values() for r in b if r>3.4]     # must visit every bucket\nprint('sorted index: start at position',i,'and read',len(srt)-i,'keys; hash: visited',\n      sum(len(b) for b in hashidx.values()),'keys; same answer:',len(srt)-i==len(hits_hash))\n",
+    "notes": "A rule check maps each attribute to its predicate kind (range for Movie.CustomerRating, equality for Genre.Name, equi-join for the four ID attributes) and tests whether each option's index type can serve it. B+ trees serve all three kinds, hash indexes only equality and equi-joins. Options A and B pass; C and D fail only because they place a hash index on Movie.CustomerRating, which cannot serve the range predicate > 3.4. A small demonstration contrasts a sorted-index range lookup, which starts at the first key above 3.4, with a hash index, which must visit every bucket. This gives A;B, matching the official key A;B. Reading note: in C and D the remaining indexes could still help the equality and join predicates; the key's answer corresponds to judging each option as a whole scheme in which every index must suit the predicate on its attribute."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

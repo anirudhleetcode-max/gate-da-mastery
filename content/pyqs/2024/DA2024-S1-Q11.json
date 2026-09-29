@@ -1,0 +1,111 @@
+{
+  "id": "DA2024-S1-Q11",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 11,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named",
+    "ps-random-variables"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the mean and variance of two standard named distributions) checked by direct recall in well under a minute.",
+  "estimatedTimeSec": 30,
+  "stem": "Consider the following statements:\n\n(i) The mean and variance of a Poisson random variable are equal.\n\n(ii) For a standard normal random variable, the mean is zero and the variance is one.\n\nWhich **ONE** of the following options is **correct**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Both (i) and (ii) are true"
+    },
+    {
+      "label": "B",
+      "text": "(i) is true and (ii) is false"
+    },
+    {
+      "label": "C",
+      "text": "(ii) is true and (i) is false"
+    },
+    {
+      "label": "D",
+      "text": "Both (i) and (ii) are false"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "If $X \\sim \\text{Poisson}(\\lambda)$, then $E[X] = \\lambda$ and $\\operatorname{Var}(X) = \\lambda$, so (i) is true. The standard normal $Z \\sim N(0, 1)$ is defined to have mean $0$ and variance $1$, so (ii) is true. Both statements hold → **(A)**.",
+    "steps": [
+      {
+        "title": "Recall the Poisson distribution",
+        "body": "A Poisson random variable $X$ with rate $\\lambda > 0$ has PMF\n\n$$\nP(X = k) = \\frac{e^{-\\lambda}\\lambda^k}{k!}, \\qquad k = 0, 1, 2, \\dots\n$$\n\nIts mean is\n\n$$\nE[X] = \\sum_{k=0}^{\\infty} k\\,\\frac{e^{-\\lambda}\\lambda^k}{k!} = \\lambda e^{-\\lambda}\\sum_{k=1}^{\\infty} \\frac{\\lambda^{k-1}}{(k-1)!} = \\lambda e^{-\\lambda} e^{\\lambda} = \\lambda .\n$$"
+      },
+      {
+        "title": "Compute the Poisson variance",
+        "body": "Use the factorial moment $E[X(X-1)]$, which telescopes the same way:\n\n$$\nE[X(X-1)] = \\sum_{k=2}^{\\infty} k(k-1)\\,\\frac{e^{-\\lambda}\\lambda^k}{k!} = \\lambda^2 e^{-\\lambda}\\sum_{k=2}^{\\infty}\\frac{\\lambda^{k-2}}{(k-2)!} = \\lambda^2 .\n$$\n\nSo $E[X^2] = E[X(X-1)] + E[X] = \\lambda^2 + \\lambda$, and\n\n$$\n\\operatorname{Var}(X) = E[X^2] - (E[X])^2 = \\lambda^2 + \\lambda - \\lambda^2 = \\lambda .\n$$\n\nThe mean and the variance are both $\\lambda$, so **statement (i) is true**."
+      },
+      {
+        "title": "Recall the standard normal distribution",
+        "body": "A normal random variable $X \\sim N(\\mu, \\sigma^2)$ has mean $\\mu$ and variance $\\sigma^2$. The **standard** normal is the special case $\\mu = 0$, $\\sigma^2 = 1$, with density\n\n$$\n\\phi(z) = \\frac{1}{\\sqrt{2\\pi}}\\, e^{-z^2/2}.\n$$\n\nThis density is symmetric about $0$, so $E[Z] = 0$, and $\\operatorname{Var}(Z) = E[Z^2] = 1$. This is exactly why standardising, $Z = (X - \\mu)/\\sigma$, gives a variable with mean $0$ and variance $1$. So **statement (ii) is true**."
+      },
+      {
+        "title": "Choose the option",
+        "body": "Both (i) and (ii) are true, which is option **(A)**. A symbolic check with `sympy.stats` returns $E[X] = \\operatorname{Var}(X) = \\lambda$ for the Poisson and $E[Z] = 0$, $\\operatorname{Var}(Z) = 1$ for the standard normal."
+      }
+    ],
+    "finalAnswer": "**(A)** Both (i) and (ii) are true",
+    "teaching": "**Mean and variance: the two numbers that summarise a distribution.** The mean $E[X]$ is the long-run average value of a random variable, and the variance $\\operatorname{Var}(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2$ measures how widely the values spread around that average. For each standard named distribution it is worth knowing both values by heart, because GATE regularly tests them directly.\n\n**Poisson($\\lambda$).** The Poisson distribution counts how many events happen in a fixed interval when events occur independently at a constant average rate $\\lambda$: calls per minute, typos per page, and so on. It is also the limit of a Binomial$(n, p)$ as $n \\to \\infty$ with $np = \\lambda$ fixed. The binomial has mean $np$ and variance $np(1-p)$; as $p \\to 0$ the factor $(1-p) \\to 1$, so both tend to $\\lambda$. That is the intuition for the Poisson's defining property, **mean = variance = $\\lambda$**. In practice, data whose sample variance is much larger than its mean (\"overdispersion\") is a warning sign that a Poisson model does not fit.\n\n**Normal and standard normal.** $N(\\mu, \\sigma^2)$ is parametrised directly by its mean $\\mu$ and variance $\\sigma^2$. The *standard* normal fixes $\\mu = 0$ and $\\sigma^2 = 1$ (so the standard deviation is also 1). Any normal variable can be standardised with $Z = (X - \\mu)/\\sigma$. This is what makes a single $z$-table sufficient for every normal distribution, and it underlies $z$-tests and confidence intervals.\n\nA quick reference for other common distributions:\n\n| Distribution | Mean | Variance |\n| --- | --- | --- |\n| Bernoulli$(p)$ | $p$ | $p(1-p)$ |\n| Binomial$(n, p)$ | $np$ | $np(1-p)$ |\n| Poisson$(\\lambda)$ | $\\lambda$ | $\\lambda$ |\n| Exponential$(\\lambda)$ | $1/\\lambda$ | $1/\\lambda^2$ |\n| Uniform$(a, b)$ | $(a+b)/2$ | $(b-a)^2/12$ |\n| $N(0, 1)$ | $0$ | $1$ |\n\nIn this question, statement (i) is the Poisson's mean = variance property and statement (ii) is the definition of the standard normal. Both are true, giving (A).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "For $X \\sim \\text{Poisson}(\\lambda)$, $E[X] = \\operatorname{Var}(X) = \\lambda$, and for $Z \\sim N(0, 1)$, $E[Z] = 0$ and $\\operatorname{Var}(Z) = 1$. Both statements are true."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Statement (i) is true, but (ii) is not false: mean $0$ and variance $1$ is the very definition of the standard normal distribution."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Statement (ii) is true, but (i) is not false: the Poisson mean and variance are both $\\lambda$. (Mean = variance is a special property of the Poisson, not of distributions in general.)"
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Both statements are standard, correct facts, so it cannot be that both are false."
+      }
+    ],
+    "commonTrap": "Mixing up the Poisson with the exponential distribution. For Exponential$(\\lambda)$ the mean is $1/\\lambda$ and the variance is $1/\\lambda^2$, which are **not** equal in general. Remembering that only the Poisson has mean = variance keeps (i) clearly true."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q11-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. \"ONE\" and \"correct\" are bold in the paper and are kept bold here. The two statements are printed as an indented list labelled (i) and (ii); they are transcribed as separate paragraphs."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(A) Both (i) and (ii) are true",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp\nfrom sympy.stats import Poisson, Normal, E, variance\nlam = sp.symbols('lambda', positive=True)\nX = Poisson('X', lam)\nprint(\"Poisson: E =\", sp.simplify(E(X)), \" Var =\", sp.simplify(variance(X)))   # lambda, lambda\nZ = Normal('Z', 0, 1)\nprint(\"Std normal: E =\", E(Z), \" Var =\", variance(Z))                       # 0, 1",
+    "notes": "The Poisson mean and variance are both lambda (derived via E[X] and E[X(X-1)] and confirmed symbolically with sympy.stats), and the standard normal has mean 0 and variance 1 by definition (also confirmed with sympy.stats). Both statements are true, which agrees with official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

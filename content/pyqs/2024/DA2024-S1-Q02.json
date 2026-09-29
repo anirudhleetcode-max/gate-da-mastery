@@ -1,0 +1,116 @@
+{
+  "id": "DA2024-S1-Q02",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 2,
+  "section": "GA",
+  "subjectId": "ga",
+  "topicId": "ga-spatial",
+  "subtopicIds": [
+    "ga-paper-folding",
+    "ga-logic"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (map colouring) but it needs a careful adjacency analysis of 15 regions plus a lower-bound argument and an explicit colouring, about 2 minutes of work.",
+  "estimatedTimeSec": 120,
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "stem": "The 15 parts of the given figure are to be painted such that no two adjacent parts with shared boundaries (excluding corners) have the same color. The minimum number of colors required is\n\n![Figure: An ellipse enclosing a square. Inside the square is a circle split into three sectors by radii pointing up, lower-left and lower-right. Four lines join the square's corners to the circle, and two lines run from each corner of the square out to the ellipse, giving 15 regions in all.](/pyq/2024/fig/Q02-1.png)",
+  "options": [
+    {
+      "label": "A",
+      "text": "4"
+    },
+    {
+      "label": "B",
+      "text": "3"
+    },
+    {
+      "label": "C",
+      "text": "5"
+    },
+    {
+      "label": "D",
+      "text": "6"
+    }
+  ],
+  "solution": {
+    "quick": "The circle's three sectors all touch each other, so they need 3 colours. The bottom sector is also surrounded by a ring of **5** regions (upper-left sector, left, bottom and right trapezoids, upper-right sector), each touching the next. An odd ring needs 3 colours, and the bottom sector touches all of them, so a 4th colour is forced. A valid 4-colouring exists, so the minimum is **4**, option **(A)**.",
+    "steps": [
+      {
+        "title": "Name the 15 regions",
+        "body": "- **Circle (3):** upper-left sector $U_L$, upper-right sector $U_R$, bottom sector $S$ (the radii point up, lower-left and lower-right).\n- **Between circle and square (4):** trapezoids $T$ (top), $L$ (left), $B$ (bottom), $R$ (right), separated by the four corner-to-circle lines.\n- **Between square and ellipse, on the sides (4):** $O_T, O_L, O_B, O_R$.\n- **Between square and ellipse, at the corners (4):** $C_{TL}, C_{TR}, C_{BL}, C_{BR}$, each cut off by the two lines leaving that corner of the square.\n\nTotal: $3+4+4+4 = 15$ ✓."
+      },
+      {
+        "title": "List the adjacencies (shared edges only)",
+        "body": "- $U_L, U_R, S$ are mutually adjacent (they share radii).\n- $T$ touches $U_L$ and $U_R$ (the top radius ends inside $T$'s arc).\n- $L$ touches $U_L$ **and** $S$. The lower-left radius meets the circle *above* the point where the lower-left diagonal meets it, so $S$'s arc begins inside $L$. Symmetrically, $R$ touches $U_R$ and $S$.\n- $B$ touches only $S$ among the sectors.\n- The trapezoids form a ring: $T\\!-\\!L$, $L\\!-\\!B$, $B\\!-\\!R$, $R\\!-\\!T$.\n- Each side region touches its trapezoid across a side of the square: $O_T\\!-\\!T$, $O_L\\!-\\!L$, $O_B\\!-\\!B$, $O_R\\!-\\!R$.\n- Each corner region touches its two neighbouring side regions, e.g. $C_{TL}$ touches $O_T$ and $O_L$. It meets the square only at a corner point, which does not count."
+      },
+      {
+        "title": "Lower bound: 3 colours are not enough",
+        "body": "Look at the bottom sector $S$ and the regions around it, in cyclic order:\n\n$$U_L - L - B - R - U_R - U_L$$\n\nEach consecutive pair shares an edge, so these **5** regions form an odd ring (a 5-cycle). An odd cycle cannot be coloured with 2 colours, so the ring uses at least 3 colours. $S$ touches every region in the ring, so it needs a colour different from all of them, which is at least a **4th** colour.\n\nThe same conclusion by forcing: give $U_L=1$, $U_R=2$, $S=3$. Then $T$ (touching 1 and 2) must be 3. $L$ (touching $U_L=1$ and $T=3$) must be 2. $R$ (touching $U_R=2$ and $T=3$) must be 1. Now $B$ touches $L=2$, $R=1$ and $S=3$, so no colour from $\\{1,2,3\\}$ is left."
+      },
+      {
+        "title": "Upper bound: an explicit 4-colouring",
+        "body": "| Region | $U_L$ | $U_R$ | $S$ | $T$ | $L$ | $R$ | $B$ | $O_T$ | $O_L$ | $O_R$ | $O_B$ | $C_{TL}$ | $C_{TR}$ | $C_{BL}$ | $C_{BR}$ |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Colour | 1 | 2 | 3 | 3 | 2 | 1 | 4 | 1 | 1 | 2 | 1 | 2 | 3 | 2 | 3 |\n\nCheck the outer ring: $O_T=1$ differs from $T=3$, $C_{TL}=2$ and $C_{TR}=3$. $O_L=1$ differs from $L=2$ and $C_{TL}=C_{BL}=2$. $O_R=2$ differs from $R=1$ and $C_{TR}=C_{BR}=3$. $O_B=1$ differs from $B=4$, $C_{BL}=2$ and $C_{BR}=3$. $O_T$ and $O_L$ may share colour 1 because they meet only at a corner. All 26 adjacent pairs get different colours (confirmed by the Python check), so 4 colours suffice."
+      },
+      {
+        "title": "Conclude",
+        "body": "At least 4 colours are needed (step 3) and 4 are enough (step 4), so the minimum number of colours is **4**, option **(A)**, which matches the official key."
+      }
+    ],
+    "finalAnswer": "**(A)** 4",
+    "teaching": "**Map colouring is graph colouring.** Turn each region into a dot (vertex) and join two dots with a line (edge) when the regions share a stretch of boundary. Regions that meet only at a single point, a 'corner', are **not** joined; the question says so explicitly. The minimum number of colours is then the graph's *chromatic number* $\\chi$.\n\n**Two halves of every such proof.**\n\n1. *Lower bound* ($\\chi \\ge k$): find a structure that forces $k$ colours.\n   - Three mutually touching regions (a triangle) force 3 colours.\n   - A ring with an **odd** number of regions cannot alternate between just two colours, so it needs 3.\n   - A region surrounded by an odd ring (an 'odd wheel') needs a 4th colour, because it touches all of the ring's 3 colours.\n2. *Upper bound* ($\\chi \\le k$): simply exhibit a colouring with $k$ colours and check every adjacent pair.\n\n**The four colour theorem.** Any map drawn in the plane can be coloured with at most 4 colours. So the answer to a 'minimum colours' question about a flat figure is never more than 4. Options 5 and 6 are ruled out before you start, and the real question is whether the answer is 3 or 4.\n\n**Here.** The sectors give a triangle (so at least 3). The decisive detail is that the lower radii of the circle end *inside* the side trapezoids. That makes the bottom sector the hub of an odd wheel: it is ringed by 5 regions ($U_L, L, B, R, U_R$), each touching the next. Hence 4 colours are necessary. The outer ring (side and corner regions) is easy to fill with the colours already in use, because corner regions touch the square only at a point. So 4 colours are also sufficient.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "The bottom sector is surrounded by an odd ring of 5 mutually chained regions, which forces 4 colours, and an explicit 4-colouring of all 15 parts exists. This matches the official key."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "3 colours fail. With the three sectors coloured 1, 2, 3, the top, left and right trapezoids are forced to 3, 2, 1, leaving no colour for the bottom trapezoid."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "5 colours would work but is not the minimum. By the four colour theorem no planar map ever needs more than 4, and here 4 is achieved explicitly."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "6 colours is even further from the minimum; no plane figure needs more than 4 colours."
+      }
+    ],
+    "shortcut": "Use the four colour theorem to rule out 5 and 6, then look for an odd ring around one region. Here the bottom sector is ringed by 5 regions, so the answer is 4, not 3.",
+    "commonTrap": "Assuming 3 colours suffice because the figure looks symmetric. Students often miss that the lower-left and lower-right radii end inside the side trapezoids. That contact makes the bottom sector touch an odd ring of 5 regions and forces a 4th colour. A second slip is treating regions that meet only at a corner point as adjacent."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q02-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The figure is the image embedded in the official paper (extracted unchanged). US spelling 'color(s)' is kept as printed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (4 colours)",
+    "agreesWithKey": true,
+    "checkCode": "# Regions: sectors UL,UR,S; trapezoids T,L,B,R; outer sides OT,OL,OB,OR; outer corners CTL,CTR,CBL,CBR (adjacency read from the figure)\nE=[e.split('-') for e in 'UL-UR UR-S S-UL T-UL T-UR L-UL L-S B-S R-S R-UR T-L L-B B-R R-T OT-T OL-L OB-B OR-R CTL-OT CTL-OL CTR-OT CTR-OR CBL-OL CBL-OB CBR-OB CBR-OR'.split()]\nV=sorted({v for e in E for v in e}); assert len(V)==15\nN={v:{b if a==v else a for a,b in E if v in(a,b)} for v in V}\ndef col(k,c,i=0):\n    if i==len(V): return True\n    for x in range(k):\n        if all(c.get(u)!=x for u in N[V[i]]):\n            c[V[i]]=x\n            if col(k,c,i+1): return True\n            del c[V[i]]\n    return False\nprint(min(k for k in range(1,7) if col(k,{})))  # 4\nc=dict(UL=1,UR=2,S=3,T=3,L=2,R=1,B=4,OT=1,OL=1,OR=2,OB=1,CTL=2,CTR=3,CBL=2,CBR=3)\nprint(all(c[a]!=c[b] for a,b in E))  # True",
+    "notes": "Adjacency graph built from the figure (the lower radii meet the circle above the lower diagonals, so the left and right trapezoids touch the bottom sector). A backtracking search gives chromatic number 4, and the explicit 4-colouring in the solution is verified. This agrees with the official key (A). The lower bound of 4 is robust: even without the side-trapezoid/bottom-sector contacts, the forcing argument still leaves the bottom trapezoid without a colour."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

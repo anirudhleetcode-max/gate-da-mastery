@@ -1,0 +1,119 @@
+{
+  "id": "DA2025-S5-Q57",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 57,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-normalization",
+  "subtopicIds": [
+    "dbw-normal-forms",
+    "dbw-relational-model"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two directly related concepts (attribute closure to find all candidate keys, and the BCNF superkey test) through a few routine closure computations (A+, BC+, B+, C+, E+), taking about 2 minutes for a prepared student.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider a database relation R with attributes ABCDEFG, and having the following functional dependencies:\n\n$$\n\\mathrm{A} \\rightarrow \\mathrm{BCEF} \\qquad\\qquad \\mathrm{E} \\rightarrow \\mathrm{DG} \\qquad\\qquad \\mathrm{BC} \\rightarrow \\mathrm{A}\n$$\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "A is the only candidate key of R"
+    },
+    {
+      "label": "B",
+      "text": "A, BC are the candidate keys of R"
+    },
+    {
+      "label": "C",
+      "text": "A, BC, E are the candidate keys of R"
+    },
+    {
+      "label": "D",
+      "text": "Relation R is not in Boyce-Codd Normal Form (BCNF)"
+    }
+  ],
+  "officialKeyRaw": "B;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "Attribute closures: $A^+ = ABCDEFG$ and $(BC)^+ = ABCDEFG$, while $B^+ = B$ and $C^+ = C$. So $A$ and $BC$ are candidate keys, and no other set is, because $A$ can only be obtained from $BC$. $E^+ = DEG$, so $E$ is not a key, and $E \\rightarrow DG$ has a non-superkey on its left, which breaks BCNF.\n\nCorrect statements: **(B), (D)**.",
+    "steps": [
+      {
+        "title": "Closure of A",
+        "body": "The closure $X^+$ is every attribute that $X$ determines. Start from $X$ and keep firing any FD whose left side is already inside the set.\n\n| Step | FD fired | Closure so far |\n| --- | --- | --- |\n| start | none | $\\{A\\}$ |\n| 1 | $A \\rightarrow BCEF$ | $\\{A, B, C, E, F\\}$ |\n| 2 | $E \\rightarrow DG$ | $\\{A, B, C, D, E, F, G\\}$ |\n\n$A^+$ contains all 7 attributes, so $A$ is a superkey. A single attribute has no smaller proper subset (other than the empty set, which determines nothing), so $A$ is a **candidate key**."
+      },
+      {
+        "title": "Closure of BC and its minimality",
+        "body": "| Step | FD fired | Closure so far |\n| --- | --- | --- |\n| start | none | $\\{B, C\\}$ |\n| 1 | $BC \\rightarrow A$ | $\\{A, B, C\\}$ |\n| 2 | $A \\rightarrow BCEF$ | $\\{A, B, C, E, F\\}$ |\n| 3 | $E \\rightarrow DG$ | $\\{A, B, C, D, E, F, G\\}$ |\n\nSo $BC$ is a superkey. To be a candidate key it must also be **minimal**. No FD has $B$ alone or $C$ alone on its left side, so $B^+ = \\{B\\}$ and $C^+ = \\{C\\}$. Neither proper subset is a superkey, and $BC$ is a **candidate key**."
+      },
+      {
+        "title": "There are no other candidate keys (E is not one)",
+        "body": "$E^+$: fire $E \\rightarrow DG$ to get $\\{D, E, G\\}$. No other FD has its left side inside this set, so $E^+ = \\{D, E, G\\} \\ne R$. $E$ is not even a superkey.\n\nNow take any superkey $K$. It must determine $A$.\n\n- If $A \\in K$, then $K \\supseteq \\{A\\}$.\n- If $A \\notin K$, the only FD with $A$ on its right is $BC \\rightarrow A$, so $K$ must first determine both $B$ and $C$. The only FD producing $B$ or $C$ is $A \\rightarrow BCEF$, which needs $A$ (circular). So $B$ and $C$ must be in $K$ itself, and $K \\supseteq \\{B, C\\}$.\n\nEvery superkey therefore contains $A$ or contains $BC$. A candidate key is a minimal superkey, so the candidate keys are exactly $A$ and $BC$. (A brute-force check of all $2^7 - 1 = 127$ non-empty attribute sets gives the same two keys.)"
+      },
+      {
+        "title": "BCNF test",
+        "body": "$R$ is in BCNF when, for every non-trivial FD $X \\rightarrow Y$ that holds, $X$ is a superkey. Test the given FDs:\n\n| FD | Is the left side a superkey? | BCNF satisfied? |\n| --- | --- | --- |\n| $A \\rightarrow BCEF$ | Yes, $A^+ = R$ | Yes |\n| $E \\rightarrow DG$ | No, $E^+ = \\{D, E, G\\}$ | **No** |\n| $BC \\rightarrow A$ | Yes, $(BC)^+ = R$ | Yes |\n\n$E \\rightarrow DG$ is non-trivial and $E$ is not a superkey, so **R is not in BCNF**. (It is not in 3NF either, since $D$ and $G$ are non-prime attributes. It is in 2NF, because neither $B$ nor $C$ alone determines any other attribute.)"
+      },
+      {
+        "title": "Evaluate the statements",
+        "body": "- (A) says $A$ is the only candidate key. False, because $BC$ is also one.\n- (B) says $A$ and $BC$ are the candidate keys. **True.**\n- (C) adds $E$. False, because $E^+ = \\{D, E, G\\}$.\n- (D) says R is not in BCNF. **True**, because of $E \\rightarrow DG$.\n\nThe correct statements are **(B)** and **(D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (D)**",
+    "teaching": "**Functional dependencies and closure.** An FD $X \\rightarrow Y$ says that any two tuples agreeing on $X$ must also agree on $Y$. From a set of FDs you can derive more, and the practical tool for this is the **attribute closure** $X^+$: begin with $X$, then repeatedly add the right side of any FD whose left side is already contained in the set, until nothing changes. $X \\rightarrow Y$ follows from the FDs exactly when $Y \\subseteq X^+$.\n\n**Superkeys and candidate keys.** $X$ is a *superkey* if $X^+$ is the whole relation. A *candidate key* is a superkey with no redundant attribute: removing any attribute breaks it. To confirm minimality, check that no proper subset has a full closure. A relation can have several candidate keys, and they can differ in size. Here the one-attribute key $A$ and the two-attribute key $BC$ both work, because $A$ and $BC$ determine each other ($A \\rightarrow BC$ and $BC \\rightarrow A$).\n\n**Finding all keys.** Ask which attributes can be *produced* by some FD. An attribute that never appears on any right side must be in every key. An attribute that appears on a right side can be left out only if its producers can be obtained. Here $A$ is produced only by $BC$, and $B, C$ only by $A$, which forces every key to contain $A$ or $BC$.\n\n**BCNF.** A relation is in Boyce–Codd Normal Form if every non-trivial FD has a superkey on its left side. The idea is that every fact the table records should be \"about the key\". $E \\rightarrow DG$ says that $D$ and $G$ depend on $E$, which is not a key. So the same $(E, D, G)$ combination is stored repeatedly, once for every tuple sharing that $E$ value. That redundancy causes update anomalies. Decomposing into $(E, D, G)$ and $(A, B, C, E, F)$ would remove it.\n\n**Back to this question.** Two closures ($A^+$ and $(BC)^+$) and two single-attribute checks ($B^+$, $C^+$) settle the keys. One more closure, $E^+$, shows both that $E$ is not a key and that BCNF fails.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$A$ is a candidate key, but not the only one. $(BC)^+ = \\{A, B, C, D, E, F, G\\}$ through $BC \\rightarrow A$, and neither $B$ nor $C$ alone is a superkey, so $BC$ is also a candidate key."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$A^+ = R$, and $(BC)^+ = R$ with $B^+ = \\{B\\}$ and $C^+ = \\{C\\}$, so both are minimal superkeys. Every superkey must contain $A$ or $BC$ (the only way to obtain $A$ is from $BC$), so there are no other candidate keys."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$E^+ = \\{D, E, G\\}$, which misses $A$, $B$, $C$ and $F$. $E$ is not even a superkey, so it cannot be a candidate key."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$E \\rightarrow DG$ is a non-trivial FD whose left side $E$ is not a superkey ($E^+ = \\{D, E, G\\}$). This violates the BCNF condition, so R is not in BCNF."
+      }
+    ],
+    "shortcut": "Notice that $A \\rightarrow BC$ (inside $A \\rightarrow BCEF$) and $BC \\rightarrow A$, so $A$ and $BC$ are interchangeable. Once $A$ is a key, $BC$ must be one too, provided neither $B$ nor $C$ alone determines anything, which is clear since no FD starts with $B$ or $C$ alone. For BCNF, look for an FD whose left side is not one of the keys and does not contain one: $E \\rightarrow DG$ is the only candidate, and $E^+ = DEG$ confirms the violation.",
+    "commonTrap": "Stopping after finding that $A$ determines everything and ticking (A). $BC \\rightarrow A$ makes $BC$ a second candidate key. The opposite slip is counting $E$ as a key because it appears in the FD list and determines two attributes (option C). $E^+ = \\{D, E, G\\}$ is far from the whole relation."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q57-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the relation name R and the attribute names in upright roman type. The three functional dependencies are printed on one centred line, spaced apart; they are set here as one display-math line with \\mathrm and \\rightarrow, without change of meaning. The options are plain text as in the paper. No figure is needed. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;D (the candidate keys are exactly A and BC; E -> DG has a non-superkey left side, so R is not in BCNF)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import combinations\nU = set('ABCDEFG')\nF = [(set('A'), set('BCEF')), (set('E'), set('DG')), (set('BC'), set('A'))]\ndef closure(X):\n    X = set(X)\n    while True:\n        new = set(X)\n        for l, r in F:\n            if l <= new: new |= r\n        if new == X: return X\n        X = new\nfor s in ['A', 'BC', 'E', 'B', 'C']:\n    print(s + '+ =', ''.join(sorted(closure(s))))\nkeys = []\nfor k in range(1, 8):\n    for c in combinations(sorted(U), k):\n        if closure(c) == U and not any(set(x) <= set(c) for x in keys):\n            keys.append(''.join(c))\nprint('candidate keys:', keys)\nviol = [(''.join(sorted(l)), ''.join(sorted(r))) for l, r in F if not (r <= l) and closure(l) != U]\nprint('BCNF violations (LHS not a superkey):', viol)\nprint('A only key:', keys == ['A'], '| B:', sorted(keys) == ['A', 'BC'],\n      '| C:', sorted(keys) == ['A', 'BC', 'E'], '| D (not BCNF):', bool(viol))\n",
+    "notes": "Hand solve: A+ = ABCDEFG, BC+ = ABCDEFG, B+ = B, C+ = C, E+ = DEG. So A and BC are candidate keys, and every superkey must contain A or BC, because A is produced only by BC -> A and B, C only by A -> BCEF. E is not a key, so (A) and (C) are false and (B) is true. E -> DG violates BCNF, so (D) is true. The Python check computes closures, enumerates all 127 non-empty attribute subsets for minimal superkeys (finding exactly A and BC), and lists the BCNF-violating FD (E -> DG). This agrees with the official key B;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

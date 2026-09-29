@@ -1,0 +1,111 @@
+{
+  "id": "DA2025-S5-Q43",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 43,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-adversarial"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (the alpha-beta cut-off condition) applied to two small game trees with symbolic leaves, including the direction and boundary of each inequality; about 2-2.5 min.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider game trees Tree-1 and Tree-2 as shown. The first level is a MAX agent and the second level is a MIN agent. The value in the square node is the output of the utility function.\n\n![Figure: Two game trees; the top row is labelled MAX and the second row MIN. Tree-1: MAX root A has a left child that is a square leaf with value 2 and a right child that is the MIN node B; B has square leaf children x (left) and 1 (right, attached by a dotted edge). Tree-2: MAX root C has MIN children D and E; D has square leaf children 5 and y; E has a square leaf child 2 on the left and, on the right, a triangle (an unexplored subtree) attached by a dotted edge.](/pyq/2025/fig/Q43-1.png)\n\nFor what ranges of $x$ and $y$, the right child of node $B$ and the right child of node $E$ will be pruned by alpha-beta pruning algorithm?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$x \\in [1, \\infty)$ and $y \\in (-\\infty, 2]$"
+    },
+    {
+      "label": "B",
+      "text": "$x \\in (-\\infty, 2]$ and $y \\in (-\\infty, 5]$"
+    },
+    {
+      "label": "C",
+      "text": "$x \\in (-\\infty, 2]$ and $y \\in [2, \\infty)$"
+    },
+    {
+      "label": "D",
+      "text": "$x \\in [1, \\infty)$ and $y \\in (-\\infty, 5]$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "A MIN node stops exploring as soon as its running value is $\\le \\alpha$, the value MAX already has. Tree-1: $\\alpha = 2$ after the left leaf, and $B$'s first leaf is $x$, so $B$'s right child is pruned iff $x \\le 2$. Tree-2: $\\alpha = \\min(5, y)$ after $D$, and $E$'s first leaf is $2$, so $E$'s right child is pruned iff $\\min(5, y) \\ge 2 \\iff y \\ge 2$. Answer **(C)**.",
+    "steps": [
+      {
+        "title": "The alpha-beta cut-off rule",
+        "body": "Children are searched left to right.\n\n- $\\alpha$ = the best value MAX is already guaranteed on the current path (starts at $-\\infty$).\n- $\\beta$ = the best (lowest) value MIN is already guaranteed on the current path (starts at $+\\infty$).\n\nAt a MIN node, the running value $v$ can only go down as more children are seen. Once $v \\le \\alpha$, MAX above already has an option at least as good, so it will never choose this MIN node: the remaining children are pruned. In the standard algorithm the test is $v \\le \\alpha$ (equivalently $\\alpha \\ge \\beta$), so equality also prunes."
+      },
+      {
+        "title": "Tree-1: when is the right child of $B$ pruned?",
+        "body": "1. $A$ (MAX) looks at its left child, the leaf $2$. Now $A$ is guaranteed at least $2$, so $\\alpha = 2$.\n2. $A$ enters $B$ (MIN) with $\\alpha = 2$, $\\beta = +\\infty$.\n3. $B$ looks at its first leaf $x$: $B$'s running value is $v = x$ (so $B \\le x$).\n4. Prune the right leaf iff $v \\le \\alpha$, i.e. $x \\le 2$.\n\nCheck both sides: with $x = 0$, $B \\le 0 < 2$, so $A$ will pick the leaf $2$ whatever the right leaf is, and it is pruned. With $x = 3$, $B$ could still end up anywhere up to $3 > 2$, so the right leaf must be examined.\n\nRange: $x \\in (-\\infty, 2]$."
+      },
+      {
+        "title": "Tree-2: when is the right child of $E$ pruned?",
+        "body": "1. $C$ (MAX) first explores $D$ (MIN). Inside $D$, $\\alpha = -\\infty$, so nothing can be pruned; both leaves are seen and $D = \\min(5, y)$.\n2. Back at $C$: $\\alpha = \\min(5, y)$.\n3. $C$ enters $E$ (MIN) with $\\alpha = \\min(5, y)$. $E$'s first leaf is $2$, so $E$'s running value is $v = 2$.\n4. Prune the triangle iff $v \\le \\alpha$:\n\n$$2 \\le \\min(5, y) \\iff 2 \\le 5 \\text{ and } 2 \\le y \\iff y \\ge 2.$$\n\nCheck both sides: with $y = 4$, $D = 4$, and $E \\le 2 < 4$, so $C$ prefers $D$ and the triangle is pruned. With $y = 0$, $D = 0$, and $E$ could still be anywhere up to $2 > 0$, so the triangle must be explored.\n\nRange: $y \\in [2, \\infty)$."
+      },
+      {
+        "title": "Match with the options",
+        "body": "Both prunings happen exactly for $x \\in (-\\infty, 2]$ and $y \\in [2, \\infty)$, which is option **(C)**.\n\nEven if a textbook variant used a strict test ($v < \\alpha$), the ranges would be $x < 2$ and $y > 2$: $x$ unbounded below and $y$ unbounded above. Only (C) has that shape, so the choice does not depend on the boundary convention."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Minimax.** In a two-player zero-sum game tree, MAX nodes take the largest child value and MIN nodes the smallest. The value at the root is the best outcome MAX can force against a perfect opponent.\n\n**Why pruning is possible.** Minimax visits every leaf, but many of them cannot affect the root. Suppose MAX already has a move worth $2$. If MAX then starts examining another move, where MIN replies, and MIN's first reply gives $0$, that move is worth *at most* $0$ to MAX (MIN can only push the value lower). MAX will never prefer it to the move worth $2$, so MIN's remaining replies need not be examined.\n\n**Alpha and beta.** Alpha-beta search carries two bounds down the tree:\n\n- $\\alpha$: the value MAX can already guarantee on the path (a lower bound for MAX);\n- $\\beta$: the value MIN can already guarantee on the path (an upper bound for MIN).\n\nAt a MIN node, after each child the running value $v$ (and $\\beta$) can only decrease; as soon as $v \\le \\alpha$ the rest of the children are cut. At a MAX node the mirror rule applies: cut as soon as $v \\ge \\beta$. Pruning never changes the root's minimax value; it only skips work. How much gets pruned depends on the order in which children are visited, which is why these questions fix a left-to-right order.\n\n**Back to this question.** Each tree has exactly one place where a cut can happen: at the second MIN node, after its first leaf. The cut condition is always *first leaf of the MIN node $\\le$ value MAX already holds*. In Tree-1, MAX holds $2$ and the first leaf is $x$, giving $x \\le 2$. In Tree-2, MAX holds $D = \\min(5, y)$ and the first leaf is $2$, giving $\\min(5, y) \\ge 2$, i.e. $y \\ge 2$. Notice the direction flips between the two trees: in Tree-1 the unknown is the MIN node's leaf (smaller helps), in Tree-2 the unknown sets MAX's guarantee (larger helps).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Both ranges point the wrong way. $x = 3$ lies in $[1, \\infty)$, but then $B$'s first leaf $3 > \\alpha = 2$ and no cut happens; $x = 0$ does cause a cut but is excluded. For Tree-2, $y = 0$ lies in $(-\\infty, 2]$, but then $\\alpha = D = 0 < 2$ and $E$'s right child must be explored."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "The $x$ range $(-\\infty, 2]$ is right, but the $y$ range is not. $y = 0$ is included, yet $\\alpha = \\min(5, 0) = 0 < 2$ means no cut at $E$; $y = 6$ is excluded, yet $\\alpha = \\min(5, 6) = 5 \\ge 2$ gives a cut. The leaf value $5$ only caps $D$; it is not the threshold."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Tree-1: cut at $B$ iff $x \\le \\alpha = 2$. Tree-2: cut at $E$ iff $2 \\le \\alpha = \\min(5, y)$, i.e. $y \\ge 2$. So $x \\in (-\\infty, 2]$ and $y \\in [2, \\infty)$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Neither range is right: $x = 3 \\in [1, \\infty)$ gives no cut at $B$, and $y = 0 \\in (-\\infty, 5]$ gives no cut at $E$."
+      }
+    ],
+    "shortcut": "A MIN node's remaining children are pruned iff its first leaf $\\le$ the value MAX already holds. Tree-1: $x \\le 2$. Tree-2: $2 \\le \\min(5, y) \\iff y \\ge 2$. Only (C) has $x$ bounded above by $2$ and $y$ bounded below by $2$.",
+    "commonTrap": "Getting the direction wrong in Tree-2. A smaller $y$ lowers $D$ and so lowers MAX's guarantee $\\alpha$ at $C$, which makes a cut at $E$ *harder*, not easier. Pruning at $E$ needs $\\alpha = \\min(5, y)$ to be at least $E$'s first leaf $2$. Treating the leaf $5$ as the threshold leads to (B) or (D)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q43-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The game-tree diagram is vector art; it was rendered from the official PDF page 23 with the background watermark image removed (drawing and labels unchanged). The right child of B and the right child of E are drawn with dotted edges in the paper, and E's right child is drawn as a triangle."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (x <= 2 and y >= 2)",
+    "agreesWithKey": true,
+    "checkCode": "import math\ndef ab(node, alpha, beta, is_max, pruned):\n    # node = number (leaf) or (name, [children]); leaves pruned -> recorded by name\n    if not isinstance(node, tuple):\n        return node\n    name, kids = node\n    v = -math.inf if is_max else math.inf\n    for i, ch in enumerate(kids):\n        val = ab(ch, alpha, beta, not is_max, pruned)\n        if is_max:\n            v = max(v, val); alpha = max(alpha, v)\n        else:\n            v = min(v, val); beta = min(beta, v)\n        if alpha >= beta:                     # standard cut-off (AIMA: v <= alpha / v >= beta)\n            pruned += [(name, j) for j in range(i + 1, len(kids))]\n            break\n    return v\ndef pruned_tree1(x):\n    p = []; ab(('A', [2, ('B', [x, 1])]), -math.inf, math.inf, True, p); return ('B', 1) in p\ndef pruned_tree2(y, T=1000):   # T = arbitrary value for the unexplored triangle subtree\n    p = []; ab(('C', [('D', [5, y]), ('E', [2, T])]), -math.inf, math.inf, True, p); return ('E', 1) in p\nxs = [-10, 0, 1, 1.5, 1.99, 2, 2.01, 3, 10]\nprint('Tree-1 right child of B pruned:', {x: pruned_tree1(x) for x in xs})\nys = [-10, 0, 1.99, 2, 2.01, 4, 5, 6, 100]\nprint('Tree-2 right child of E pruned:', {y: pruned_tree2(y) for y in ys})\nopts = {'A': ((1, math.inf), (-math.inf, 2)), 'B': ((-math.inf, 2), (-math.inf, 5)),\n        'C': ((-math.inf, 2), (2, math.inf)), 'D': ((1, math.inf), (-math.inf, 5))}\ngrid = [i / 4 for i in range(-40, 41)]\nfor k, ((xl, xh), (yl, yh)) in opts.items():\n    xin = [x for x in grid if xl <= x <= xh]; yin = [y for y in grid if yl <= y <= yh]\n    exact = (all(pruned_tree1(x) for x in xin) and all(pruned_tree1(x) == False for x in grid if x not in xin)\n             and all(pruned_tree2(y) for y in yin) and all(pruned_tree2(y) == False for y in grid if y not in yin))\n    print(k, 'matches exact pruning ranges:', exact)",
+    "notes": "Tree-1: alpha = 2 after the leaf 2, so B's right child is cut iff x <= 2. Tree-2: alpha = min(5, y) after D, and E's first leaf is 2, so E's right child is cut iff min(5, y) >= 2, i.e. y >= 2. This matches official key C. The Python alpha-beta simulation (standard cut-off alpha >= beta) over a grid of x and y values confirms that option C describes the pruning ranges exactly and A, B, D do not. With a strict cut-off test the ranges would lose only their endpoints, and C would still be the only matching option."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,124 @@
+{
+  "id": "DA2026-S8-Q53",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 53,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - two directly linked concepts (sums of squared independent standard normals are chi-square; chi-square with 2 degrees of freedom is the exponential with mean 2) plus the standard sampling result for the sum of squared deviations. Each statement is a quick recall-and-check rather than an independent non-trivial derivation, so no level bump applies; about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Let $X_1, X_2, \\ldots., X_n$ be $n$ independent random variables. Each of the random variables follows $\\mathit{Normal}(\\mu = 0, \\sigma^2 = 1)$ distribution. Define $\\bar{X} = \\frac{1}{n}\\sum_{i=1}^{n} X_i$.\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\sum_{i=1}^{n} X_i^2$ follows Chi-square distribution with $n$ degrees of freedom."
+    },
+    {
+      "label": "B",
+      "text": "$\\sum_{i=1}^{n} (X_i - \\bar{X})^2$ follows Chi-square distribution with $(n-1)$ degrees of freedom."
+    },
+    {
+      "label": "C",
+      "text": "$X_1^2 + X_n^2$ follows exponential distribution with mean 2."
+    },
+    {
+      "label": "D",
+      "text": "$\\left(\\sqrt{n}\\,\\bar{X}\\right)^2$ follows Chi-square distribution with 2 degrees of freedom."
+    }
+  ],
+  "officialKeyRaw": "A;B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Squares of independent $N(0,1)$ variables add up to chi-square with one degree of freedom per term. So (A) $\\sum X_i^2 \\sim \\chi^2_n$, and (C) $X_1^2 + X_n^2 \\sim \\chi^2_2$, which is exactly the exponential with mean 2. Centring at $\\bar{X}$ costs one degree of freedom, so (B) $\\sum (X_i - \\bar{X})^2 \\sim \\chi^2_{n-1}$. But $\\sqrt{n}\\,\\bar{X} \\sim N(0,1)$, so (D) is $\\chi^2_1$, not $\\chi^2_2$. **(A), (B), (C)**.",
+    "steps": [
+      {
+        "title": "The facts needed",
+        "body": "**Chi-square by construction.** If $Z_1, \\ldots, Z_k$ are independent $N(0,1)$ variables, then\n\n$$\nZ_1^2 + Z_2^2 + \\cdots + Z_k^2 \\sim \\chi^2_k,\n$$\n\nwith $k$ degrees of freedom: one for each independent squared standard normal.\n\n**Useful properties of $\\chi^2_k$.**\n\n- pdf: $f_k(x) = \\dfrac{1}{2^{k/2}\\,\\Gamma(k/2)}\\, x^{k/2 - 1} e^{-x/2}$ for $x > 0$;\n- mean $k$ and variance $2k$;\n- moment generating function (MGF) $M_k(t) = (1 - 2t)^{-k/2}$ for $t < \\tfrac{1}{2}$. A single $Z^2$ has MGF $(1-2t)^{-1/2}$, and for independent summands the MGFs multiply.\n\nHere every $X_i$ is already standard normal ($\\mu = 0$, $\\sigma^2 = 1$), so no standardisation is needed."
+      },
+      {
+        "title": "Option (A): sum of all n squares",
+        "body": "$X_1, \\ldots, X_n$ are $n$ independent $N(0,1)$ variables, so by definition\n\n$$\n\\sum_{i=1}^{n} X_i^2 \\sim \\chi^2_n.\n$$\n\nVia MGFs: $\\prod_{i=1}^{n}(1-2t)^{-1/2} = (1-2t)^{-n/2}$, the MGF of $\\chi^2_n$. (A) is **true**."
+      },
+      {
+        "title": "Option (C): two squares give an exponential",
+        "body": "The list $X_1, X_2, \\ldots, X_n$ has at least two variables, so $X_1$ and $X_n$ are two different, independent $N(0,1)$ variables. Hence $X_1^2 + X_n^2 \\sim \\chi^2_2$. Put $k = 2$ in the pdf ($\\Gamma(1) = 1$):\n\n$$\nf_2(x) = \\frac{1}{2^{1}\\,\\Gamma(1)}\\, x^{0}\\, e^{-x/2} = \\frac{1}{2}\\, e^{-x/2}, \\qquad x > 0.\n$$\n\nThis is the exponential density $\\lambda e^{-\\lambda x}$ with rate $\\lambda = \\tfrac{1}{2}$, i.e. **mean $1/\\lambda = 2$**. The MGF agrees: $(1-2t)^{-1}$ is the MGF of an exponential with mean 2. (C) is **true**."
+      },
+      {
+        "title": "Option (B): deviations from the sample mean lose one degree of freedom",
+        "body": "Split the total sum of squares. The cross term vanishes because $\\sum_{i}(X_i - \\bar{X}) = 0$:\n\n$$\n\\sum_{i=1}^{n} X_i^2 = \\sum_{i=1}^{n}(X_i - \\bar{X})^2 + n\\bar{X}^2.\n$$\n\nFor a normal sample, $\\bar{X}$ is independent of the deviations $X_i - \\bar{X}$, so the two pieces on the right are independent. By (A), the left side is $\\chi^2_n$ with MGF $(1-2t)^{-n/2}$, and $n\\bar{X}^2 = (\\sqrt{n}\\,\\bar{X})^2 \\sim \\chi^2_1$ (step 5) with MGF $(1-2t)^{-1/2}$. Independence makes the MGFs multiply:\n\n$$\nM_{\\sum(X_i - \\bar{X})^2}(t) = \\frac{(1-2t)^{-n/2}}{(1-2t)^{-1/2}} = (1-2t)^{-(n-1)/2},\n$$\n\nwhich is the MGF of $\\chi^2_{n-1}$. This is the familiar result $\\dfrac{(n-1)S^2}{\\sigma^2} \\sim \\chi^2_{n-1}$ with $\\sigma^2 = 1$. In matrix form, $\\sum_i (X_i - \\bar{X})^2 = \\mathbf{X}^\\top\\!\\left(I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top\\right)\\mathbf{X}$, a quadratic form in a projection matrix of rank $n - 1$. (B) is **true**."
+      },
+      {
+        "title": "Option (D): the scaled sample mean is one standard normal",
+        "body": "$\\bar{X}$ is a linear combination of independent normals, so it is normal with\n\n$$\nE[\\bar{X}] = 0, \\qquad \\operatorname{Var}(\\bar{X}) = \\frac{1}{n^2}\\sum_{i=1}^{n}\\operatorname{Var}(X_i) = \\frac{n}{n^2} = \\frac{1}{n}.\n$$\n\nTherefore $\\sqrt{n}\\,\\bar{X} \\sim N(0, 1)$, a **single** standard normal, and its square is $\\chi^2_1$, with mean $E\\big[(\\sqrt{n}\\,\\bar{X})^2\\big] = n \\cdot \\tfrac{1}{n} = 1$. A $\\chi^2_2$ variable would have mean 2, so (D) is **false**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "| Option | Statistic | Actual distribution | Mean | Verdict |\n| --- | --- | --- | --- | --- |\n| (A) | $\\sum_{i} X_i^2$ | $\\chi^2_n$ | $n$ | true |\n| (B) | $\\sum_{i}(X_i - \\bar{X})^2$ | $\\chi^2_{n-1}$ | $n - 1$ | true |\n| (C) | $X_1^2 + X_n^2$ | $\\chi^2_2 =$ Exponential (mean 2) | $2$ | true |\n| (D) | $(\\sqrt{n}\\,\\bar{X})^2$ | $\\chi^2_1$, not $\\chi^2_2$ | $1$ | false |\n\nAnswer → **(A), (B), (C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B), (C)**",
+    "teaching": "**Where the chi-square distribution comes from.** Take a standard normal $Z$ and square it. The result $Z^2$ is non-negative, piles up near 0 and has mean $E[Z^2] = \\operatorname{Var}(Z) = 1$. Its distribution is called chi-square with 1 degree of freedom, $\\chi^2_1$. Adding $k$ **independent** such squares gives $\\chi^2_k$. The \"degrees of freedom\" simply count how many independent standard-normal squares are being added, and since each has mean 1, the mean of $\\chi^2_k$ is $k$.\n\n**The chi-square family is a gamma family.** $\\chi^2_k$ is the Gamma distribution with shape $k/2$ and scale 2. For $k = 2$ the shape is 1, and a Gamma with shape 1 is an exponential. So $\\chi^2_2$ **is** the exponential distribution with mean 2 (rate $\\tfrac{1}{2}$), density $\\tfrac{1}{2}e^{-x/2}$. In the plane, $X^2 + Y^2$ for independent standard normals $X, Y$ is the squared distance from the origin, and it is exponential.\n\n**Why centring costs a degree of freedom.** The deviations $X_i - \\bar{X}$ always sum to zero, so only $n - 1$ of them are free. Formally, $\\sum_i X_i^2$ splits into $\\sum_i (X_i - \\bar{X})^2$ plus $n\\bar{X}^2$. For normal data these two pieces are independent, and the second uses up exactly one degree of freedom. So $\\sum_i (X_i - \\bar{X})^2 \\sim \\chi^2_{n-1}$. This is why the sample variance divides by $n - 1$.\n\n**Standardising the mean.** Averaging $n$ independent unit-variance variables shrinks the variance to $1/n$. Multiplying by $\\sqrt{n}$ restores variance 1, so $\\sqrt{n}\\,\\bar{X}$ is again one standard normal, and its square is one $\\chi^2_1$, whatever the value of $n$.\n\n**Connecting to this question.** Count the independent standard-normal squares in each statistic: $n$ in (A); $n$ minus one linear constraint in (B); two in (C), which makes it exponential with mean 2; and just one in (D). That gives $\\chi^2_n$, $\\chi^2_{n-1}$, $\\chi^2_2$ and $\\chi^2_1$, so (A), (B), (C) are correct and (D) is not.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "The $X_i$ are $n$ independent $N(0,1)$ variables, and the sum of their squares is $\\chi^2_n$ by the definition of the chi-square distribution. The MGF is $(1-2t)^{-n/2}$."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$\\sum X_i^2 = \\sum (X_i - \\bar{X})^2 + n\\bar{X}^2$ with independent pieces, where $\\sum X_i^2 \\sim \\chi^2_n$ and $n\\bar{X}^2 \\sim \\chi^2_1$. Dividing the MGFs leaves $(1-2t)^{-(n-1)/2}$, so the sum of squared deviations is $\\chi^2_{n-1}$ (the standard $(n-1)S^2/\\sigma^2$ result with $\\sigma^2 = 1$)."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$X_1$ and $X_n$ are two independent standard normals, so $X_1^2 + X_n^2 \\sim \\chi^2_2$. Its density is $\\frac{1}{2}e^{-x/2}$, the exponential with rate $\\frac{1}{2}$ and mean 2."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$\\bar{X} \\sim N(0, 1/n)$, so $\\sqrt{n}\\,\\bar{X} \\sim N(0,1)$ is a single standard normal and its square is $\\chi^2_1$ (mean 1). A $\\chi^2_2$ variable would have mean 2. The exponent 2 is not the number of degrees of freedom."
+      }
+    ],
+    "shortcut": "Count the independent standard-normal squares and subtract one per linear constraint. (A) has $n$; (B) has $n$ with one constraint, $\\sum (X_i - \\bar{X}) = 0$, so $n - 1$; (C) has 2, and $\\chi^2_2 \\equiv$ Exponential(mean 2); (D) has 1. A quick mean check ($E[\\chi^2_k] = k$) catches (D): $E[(\\sqrt{n}\\,\\bar{X})^2] = n\\operatorname{Var}(\\bar{X}) = 1 \\ne 2$.",
+    "commonTrap": "In (D), reading the outer square as \"2 degrees of freedom\", or forgetting that $\\sqrt{n}\\,\\bar{X}$ is already a single standard normal, so its square is $\\chi^2_1$. In (C), not recognising that $\\chi^2_2$ and the exponential with mean 2 are the same distribution, or confusing \"mean 2\" with \"rate 2\" (mean $\\tfrac{1}{2}$). In (B), assuming centring at $\\bar{X}$ keeps all $n$ degrees of freedom."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q53-1.webp",
+    "/pyq/2026/official/Q53-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the list as 'X_1, X_2, ….., X_n', an ellipsis followed by an extra period (the text layer reads '… . ,'), and this is kept as \\ldots. in the transcription. In options (A) and (C) the paper sets the exponent 2 after the subscript (X_i then superscript 2, X_1 then 2, X_n then 2); these are transcribed as X_i^2, X_1^2 and X_n^2, which is the same expression. 'Normal' is set in italic math as in the paper, and the capitalisation 'Chi-square' and 'exponential' follows the paper. The paper leaves a space before the full stop after the definition of X-bar; the space is not reproduced. The second official crop (Q53-2) shows only the header and a table border of the next page. The only embedded image in this region is the background watermark, so no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B;C",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom scipy import stats\nrng = np.random.default_rng(0)\nn, N = 5, 200_000\nX = rng.standard_normal((N, n))\nXbar = X.mean(axis=1)\nS_A = (X**2).sum(axis=1)                       # sum X_i^2\nS_B = ((X - Xbar[:, None])**2).sum(axis=1)     # sum (X_i - Xbar)^2\nS_C = X[:, 0]**2 + X[:, n-1]**2                # X_1^2 + X_n^2\nS_D = (np.sqrt(n) * Xbar)**2                   # (sqrt(n) Xbar)^2\nks = lambda s, d: stats.kstest(s, d).pvalue\npA = ks(S_A, stats.chi2(n).cdf)\npB = ks(S_B, stats.chi2(n - 1).cdf)\npC = ks(S_C, stats.expon(scale=2).cdf)         # exponential with mean 2\npD2 = ks(S_D, stats.chi2(2).cdf); pD1 = ks(S_D, stats.chi2(1).cdf)\nprint('means', S_A.mean(), S_B.mean(), S_C.mean(), S_D.mean())\nprint('KS p-values A', pA, 'B', pB, 'C', pC, 'D vs chi2(2)', pD2, 'D vs chi2(1)', pD1)\nres = dict(A=bool(pA > 0.01), B=bool(pB > 0.01), C=bool(pC > 0.01), D=bool(pD2 > 0.01))\nprint(res); assert res == dict(A=True, B=True, C=True, D=False) and pD1 > 0.01   # -> A;B;C\n# exact: chi2(2) pdf equals Exp(mean 2) pdf\nx = np.linspace(0.01, 20, 50); assert np.allclose(stats.chi2(2).pdf(x), stats.expon(scale=2).pdf(x))",
+    "notes": "Analytic: (A) chi2_n by definition; (B) sum X_i^2 = sum (X_i - Xbar)^2 + n Xbar^2 with independent pieces, so the MGF ratio (1-2t)^{-n/2} / (1-2t)^{-1/2} gives chi2_{n-1}; (C) chi2_2 has pdf (1/2)e^{-x/2}, which is the exponential with mean 2; (D) sqrt(n) Xbar ~ N(0,1), so its square is chi2_1, not chi2_2. The Monte Carlo check (n = 5, 200000 replicates) with Kolmogorov-Smirnov tests gives p-values of 0.32 for (A) vs chi2_5, 0.65 for (B) vs chi2_4 and 0.21 for (C) vs Exp(mean 2). (D) gives 0.0 vs chi2_2 but 0.92 vs chi2_1, and the sample means are 5.01, 4.01, 2.01 and 1.00. The scipy chi2(2) and expon(scale=2) pdfs coincide. Statement (C) takes X_1 and X_n to be distinct variables (n >= 2), as the list X_1, X_2, ..., X_n in the stem indicates. The independent answer A;B;C matches official key A;B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

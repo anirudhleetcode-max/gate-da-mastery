@@ -1,0 +1,115 @@
+{
+  "id": "DA2025-S5-Q23",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 23,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (the behaviour of Python's built-in list methods) by direct recall, with no computation, well under 1 minute for a prepared student.",
+  "estimatedTimeSec": 30,
+  "stem": "Consider the following Python declarations of two lists.\n\n```python\nA=[1,2,3]\nB=[4,5,6]\n```\n\nWhich one of the following statements results in `A=` $[1, 2, 3, 4, 5, 6]$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "`A.extend(B)`"
+    },
+    {
+      "label": "B",
+      "text": "`A.append(B)`"
+    },
+    {
+      "label": "C",
+      "text": "`A.update(B)`"
+    },
+    {
+      "label": "D",
+      "text": "`A.insert(B)`"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "`A.extend(B)` adds **each element** of `B` to the end of `A` in place, so `A` becomes `[1, 2, 3, 4, 5, 6]`. `A.append(B)` would add the whole list `B` as **one** element, giving `[1, 2, 3, [4, 5, 6]]`. Lists have no `update` method, and `insert` needs an index as well as a value, so (C) and (D) raise errors. Answer: **(A)**.",
+    "steps": [
+      {
+        "title": "Recall what each method does on a list",
+        "body": "| Method | What it does | Arguments |\n| --- | --- | --- |\n| `L.extend(iterable)` | adds every item of `iterable` to the end of `L`, one by one | 1 |\n| `L.append(x)` | adds the object `x` to the end of `L` as a **single** item | 1 |\n| `L.insert(i, x)` | inserts `x` just before position `i` | 2 (index **and** value) |\n| `L.update(...)` | **not a list method**; `update` exists on `dict` and `set` | – |\n\n`extend`, `append` and `insert` change the list **in place** and return `None`."
+      },
+      {
+        "title": "Trace option (A): A.extend(B)",
+        "body": "`extend` iterates over `B = [4, 5, 6]` and appends each element in turn:\n\n$$\n[1,2,3] \\xrightarrow{+4} [1,2,3,4] \\xrightarrow{+5} [1,2,3,4,5] \\xrightarrow{+6} [1,2,3,4,5,6]\n$$\n\nAfter the statement, `A == [1, 2, 3, 4, 5, 6]` and `len(A) == 6`. This is exactly the required result."
+      },
+      {
+        "title": "Trace option (B): A.append(B)",
+        "body": "`append` adds its argument as **one** new element. The argument is the list object `B`, so\n\n```python\nA == [1, 2, 3, [4, 5, 6]]   # len(A) == 4\n```\n\nThe last element is itself a list (`A[3] == [4, 5, 6]`), so this is **not** `[1, 2, 3, 4, 5, 6]`."
+      },
+      {
+        "title": "Options (C) and (D) raise errors",
+        "body": "- `A.update(B)` raises `AttributeError: 'list' object has no attribute 'update'`. Only dictionaries and sets have `update`.\n- `A.insert(B)` raises `TypeError: insert expected 2 arguments, got 1`. `insert` needs a position and a value, e.g. `A.insert(3, B)`, and even that would nest `B` as one element: `[1, 2, 3, [4, 5, 6]]`.\n\nIn both cases the call fails, `A` stays `[1, 2, 3]`, and the program stops unless the exception is handled."
+      },
+      {
+        "title": "Conclude",
+        "body": "Only `A.extend(B)` leaves `A` equal to `[1, 2, 3, 4, 5, 6]`. Running all four options in Python confirms this (see the verification code). Answer: **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)** `A.extend(B)`",
+    "teaching": "**Lists are mutable sequences.** A Python list is an ordered container of *object references*. Its methods change the list in place and return `None`. That is why you write `A.extend(B)` on its own line, not `A = A.extend(B)`, which would set `A` to `None`.\n\n**The ways to grow a list.**\n\n- `A.append(x)` adds **one** item. If `x` is itself a list, you get a nested list: `[1, 2, 3].append([4, 5, 6])` gives `[1, 2, 3, [4, 5, 6]]`.\n- `A.extend(iterable)` adds the **items** of the iterable one by one. It works with any iterable: `A.extend(\"ab\")` adds `'a'` and `'b'`, and `A.extend(range(2))` adds `0` and `1`.\n- `A.insert(i, x)` puts **one** item `x` before index `i`. It always needs both arguments.\n- `A += B` behaves like `A.extend(B)`: it mutates `A` in place.\n- `A = A + B` builds a **new** list and rebinds the name `A`. The final value is the same, but other names that referred to the old list do not see the change.\n\n**Where does `update` come from?** `dict.update(other)` merges key–value pairs, and `set.update(iterable)` adds elements to a set. Lists have no such method, so calling it raises `AttributeError`. GATE likes to include a method name that belongs to a *different* built-in type as a distractor.\n\n**A quick way to decide between `append` and `extend`:** ask how much the length grows. `append` always grows it by exactly 1. `extend(B)` grows it by `len(B)`. Here the target has length 6 = 3 + 3, so the method must add three elements, which is `extend`.\n\n**Back to the question.** Starting from `A = [1, 2, 3]` and `B = [4, 5, 6]`, only `A.extend(B)` produces the flat list `[1, 2, 3, 4, 5, 6]`, so the answer is (A).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "`extend` appends the elements `4`, `5`, `6` of `B` one at a time, so `A` becomes `[1, 2, 3, 4, 5, 6]` (length 6)."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "`append` adds the whole list `B` as a single element, giving the nested list `[1, 2, 3, [4, 5, 6]]` of length 4."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Lists have no `update` method (it belongs to `dict` and `set`), so the call raises `AttributeError` and `A` is unchanged."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "`insert` needs two arguments, a position and a value. `A.insert(B)` raises `TypeError: insert expected 2 arguments, got 1`. Even with an index, it would insert `B` as one nested element."
+      }
+    ],
+    "shortcut": "The length must grow from 3 to 6. `append` and `insert` add exactly one element, and `update` does not exist for lists. Only `extend` adds `len(B) = 3` elements.",
+    "commonTrap": "Choosing `A.append(B)` in the belief that it joins two lists. `append` nests `B` as a single element, `[1, 2, 3, [4, 5, 6]]`. Another slip is to carry over `update` from sets or dictionaries, where `s.update(B)` does add all the elements, but lists do not have this method."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q23-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The two declarations `A=[1,2,3]` and `B=[4,5,6]` are printed in a monospace font on separate lines with no spaces, and are transcribed character for character as a Python code block. In the question sentence the paper sets `A=` in monospace and the list [1, 2, 3, 4, 5, 6] in the math font (with spaces after the commas); this mixed typography is kept as `A=` followed by $[1, 2, 3, 4, 5, 6]$. The options are monospace and are transcribed as inline code. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A",
+    "agreesWithKey": true,
+    "checkCode": "for name, op in [(\"A\", lambda A, B: A.extend(B)), (\"B\", lambda A, B: A.append(B)),\n                 (\"C\", lambda A, B: A.update(B)), (\"D\", lambda A, B: A.insert(B))]:\n    A = [1, 2, 3]\n    B = [4, 5, 6]\n    try:\n        r = op(A, B)\n        print(name, \"A =\", A, \"| return value:\", r, \"| matches:\", A == [1, 2, 3, 4, 5, 6])\n    except Exception as e:\n        print(name, type(e).__name__ + \":\", e)\n",
+    "notes": "Independent solve: list.extend adds each element of B in place, so A.extend(B) gives [1, 2, 3, 4, 5, 6]; append nests B as one element; lists have no update method; insert requires an index and a value. This gives (A), matching the official key A. The Python check (run on Python 3.11) executes each option on fresh copies of A and B: (A) gives [1, 2, 3, 4, 5, 6]; (B) gives [1, 2, 3, [4, 5, 6]]; (C) raises AttributeError: 'list' object has no attribute 'update'; (D) raises TypeError: insert expected 2 arguments, got 1."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,74 @@
+{
+  "id": "DA2026-S8-Q34",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 34,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named",
+    "ps-marginal-joint"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the memoryless property of the exponential distribution) gives P(X > 10 | X > 5) = P(X > 5) = 0.35 by direct recall, well under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "Let $X$ be an exponentially distributed random variable with mean $\\lambda\\,(> 0)$. If $P(X > 5) = 0.35$, then the conditional probability $P(X > 10 \\mid X > 5)$ is ___________ . (Rounded off to **two** decimal places)",
+  "options": [],
+  "officialKeyRaw": "0.34 to 0.36",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.34,
+    "max": 0.36
+  },
+  "solution": {
+    "quick": "The exponential distribution is **memoryless**: $P(X > s + t \\mid X > s) = P(X > t)$. With $s = t = 5$, $P(X > 10 \\mid X > 5) = P(X > 5) = 0.35$. The value of $\\lambda$ is never needed. Answer: **0.35**.",
+    "steps": [
+      {
+        "title": "Survival function of the exponential distribution",
+        "body": "With mean $\\lambda > 0$ (as in the question), the pdf is $f(x) = \\dfrac{1}{\\lambda} e^{-x/\\lambda}$ for $x \\ge 0$, so the survival (tail) function is\n\n$$\nP(X > x) = \\int_x^{\\infty} \\frac{1}{\\lambda} e^{-u/\\lambda}\\, du = e^{-x/\\lambda}, \\qquad x \\ge 0.\n$$"
+      },
+      {
+        "title": "Use the given information",
+        "body": "$$\nP(X > 5) = e^{-5/\\lambda} = 0.35.\n$$\n\n(If desired, $\\lambda = -5 / \\ln 0.35 \\approx 4.763$, but we will not need it.)"
+      },
+      {
+        "title": "Apply the definition of conditional probability",
+        "body": "$$\nP(X > 10 \\mid X > 5) = \\frac{P(\\{X > 10\\} \\cap \\{X > 5\\})}{P(X > 5)} = \\frac{P(X > 10)}{P(X > 5)},\n$$\n\nbecause the event $\\{X > 10\\}$ is contained in $\\{X > 5\\}$, so their intersection is just $\\{X > 10\\}$."
+      },
+      {
+        "title": "Compute",
+        "body": "$$\nP(X > 10) = e^{-10/\\lambda} = \\left(e^{-5/\\lambda}\\right)^2 = 0.35^2 = 0.1225,\n$$\n\n$$\nP(X > 10 \\mid X > 5) = \\frac{0.1225}{0.35} = 0.35.\n$$\n\nEquivalently $\\dfrac{e^{-10/\\lambda}}{e^{-5/\\lambda}} = e^{-5/\\lambda} = P(X > 5)$: this is the memoryless property. Rounded to two decimal places the answer is **0.35**, inside the official key range 0.34 to 0.36."
+      }
+    ],
+    "finalAnswer": "**0.35**",
+    "teaching": "**The exponential distribution** models a waiting time, for example the time until a component fails or until the next customer arrives. With mean $\\lambda$ its pdf is $f(x) = \\frac{1}{\\lambda} e^{-x/\\lambda}$ for $x \\ge 0$. (Many books instead write $f(x) = \\lambda e^{-\\lambda x}$ with $\\lambda$ the *rate*, so the mean is $1/\\lambda$; always check which convention a question uses. This question says the **mean** is $\\lambda$.) Either way, the survival function has the form $P(X > x) = e^{-cx}$ for some constant $c > 0$.\n\n**Memoryless property.** For any $s, t \\ge 0$,\n\n$$\nP(X > s + t \\mid X > s) = \\frac{P(X > s + t)}{P(X > s)} = \\frac{e^{-c(s+t)}}{e^{-cs}} = e^{-ct} = P(X > t).\n$$\n\nIn words: if you have already waited $s$ units and nothing has happened, the chance of waiting at least $t$ **more** units is exactly the same as it was at the start. The process \"does not remember\" how long it has been running; a component with an exponential lifetime does not age. Among continuous distributions, the exponential is the **only** one with this property (the geometric distribution plays the same role for discrete variables).\n\n**Why the parameter drops out.** The conditional probability depends only on the extra waiting time $t$, not on the parameter's value separately. Because $P(X > t)$ is given directly, you never need to solve for the parameter.\n\n**Connection to this question.** Having already survived past 5, surviving past 10 needs 5 more units, so $P(X > 10 \\mid X > 5) = P(X > 5) = 0.35$.",
+    "shortcut": "Memoryless property: $P(X > 5 + 5 \\mid X > 5) = P(X > 5) = 0.35$, with no computation needed.",
+    "commonTrap": "Reporting the **unconditional** probability $P(X > 10) = 0.35^2 = 0.1225 \\approx 0.12$ instead of dividing by $P(X > 5)$. Also avoid answering $1 - 0.35 = 0.65$, or spending time solving for $\\lambda$ (and mixing up the mean and rate conventions), which is unnecessary."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q34-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the parameter as \"mean λ(> 0)\" (λ is the mean, not the rate) and the conditional probability with a vertical bar, rendered here as $P(X > 10 \\mid X > 5)$. 'two' is bold in the rounding instruction and is kept bold."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.35",
+    "agreesWithKey": true,
+    "checkCode": "import math, random\nlam = -5 / math.log(0.35)                  # mean lambda from P(X>5) = exp(-5/lam) = 0.35\nsf = lambda x: math.exp(-x / lam)          # survival function P(X > x)\nans = sf(10) / sf(5)                       # P(X>10 | X>5) = P(X>10)/P(X>5)\nprint(round(lam, 4), round(sf(10), 4), round(ans, 4))   # 4.7627 0.1225 0.35\nrandom.seed(1); xs = [random.expovariate(1/lam) for _ in range(10**6)]\na = sum(x > 5 for x in xs); b = sum(x > 10 for x in xs)\nprint(round(b / a, 3))                     # Monte Carlo ~0.35\nassert abs(ans - 0.35) < 1e-12 and 0.34 <= round(ans, 2) <= 0.36",
+    "notes": "By the memoryless property, P(X > 10 | X > 5) = P(X > 10)/P(X > 5) = e^{-10/λ}/e^{-5/λ} = e^{-5/λ} = P(X > 5) = 0.35, confirmed exactly and by Monte Carlo simulation in the Python check. Lies inside the official key range 0.34 to 0.36."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

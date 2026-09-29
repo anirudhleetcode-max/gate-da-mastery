@@ -1,0 +1,122 @@
+{
+  "id": "DA2026-S8-Q51",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 51,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-sql"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept (SQL aggregation with GROUP BY, derived tables and joins) where each of the four queries needs a short 2-3 step trace. The defects in (B), (C) and (D) are standard ones (a self-join pinned to the primary key, grouping by a key, a derived table missing the join column), so no level bump applies; about 2.5 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider a table `Employee(EmpID, TeamID)`, where the column `EmpID` (ID of an employee) is the primary key. The column `TeamID` denotes the team ID of the team of which the employee is a member. `TeamID` is a NOT NULL column.\n\nWe want to display the size of the team (denoted as `TeamSize`) in which each employee is a member by using SQL. As an example, the desired output for the given `Employee` table is also shown in tabular form.\n\nWhich of the following is/are correct?\n\n`Employee`\n\n| `EmpID` | `TeamID` |\n| :---: | :---: |\n| 1 | 8 |\n| 2 | 8 |\n| 3 | 8 |\n| 4 | 7 |\n| 5 | 7 |\n| 6 | 9 |\n\nOutput\n\n| `EmpID` | `TeamSize` |\n| :---: | :---: |\n| 1 | 3 |\n| 2 | 3 |\n| 3 | 3 |\n| 4 | 2 |\n| 5 | 2 |\n| 6 | 1 |",
+  "options": [
+    {
+      "label": "A",
+      "text": "```sql\nSELECT E.EmpID, B.TeamSize\nFROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS\nTeamSize FROM Employee GROUP BY TeamID) AS B\nWHERE E.TeamID = B.TeamID\n```"
+    },
+    {
+      "label": "B",
+      "text": "```sql\nSELECT A.EmpID, COUNT(B.TeamID) AS TeamSize\nFROM Employee AS A, Employee AS B\nWHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID\nGROUP BY A.EmpID\n```"
+    },
+    {
+      "label": "C",
+      "text": "```sql\nSELECT B.EmpID, B.TeamSize\nFROM (SELECT EmpID, COUNT(TeamID) AS TeamSize\nFROM Employee GROUP BY EmpID) AS B\n```"
+    },
+    {
+      "label": "D",
+      "text": "```sql\nSELECT A.EmpID, B.TeamSize\nFROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM\nEmployee GROUP BY TeamID) AS B\nWHERE A.TeamID = B.TeamID\n```"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A"
+    ]
+  },
+  "solution": {
+    "quick": "Only (A) is correct. It counts rows per `TeamID` in a derived table and joins that back to `Employee` on `TeamID`, so each employee gets their team's size. (B) pairs each employee only with itself (`A.EmpID = B.EmpID` on the primary key) and (C) groups by the primary key, so both output 1 for everyone. (D) fails because its derived table has no `TeamID` column. **(A)**.",
+    "steps": [
+      {
+        "title": "What a correct query must compute",
+        "body": "The size of a team is the number of `Employee` rows that share its `TeamID`. On the sample table:\n\n- team 8 has employees 1, 2, 3, so its size is 3;\n- team 7 has employees 4, 5, so its size is 2;\n- team 9 has only employee 6, so its size is 1.\n\nThe output has **one row per employee**, but the count is a **per-team** quantity. A correct query therefore needs two ingredients:\n\n1. a count of rows grouped by `TeamID`, and\n2. a link back to each employee through `TeamID`, usually a join on `TeamID`.\n\nEach option below is checked against these two requirements and traced on the sample data."
+      },
+      {
+        "title": "Option (A): count per team, then join back on TeamID",
+        "body": "The derived table `B` groups `Employee` by `TeamID` and counts each group:\n\n| `TeamID` | `TeamSize` |\n| :---: | :---: |\n| 8 | 3 |\n| 7 | 2 |\n| 9 | 1 |\n\nThe outer query joins every employee row `E` with the row of `B` that has the same `TeamID` (`WHERE E.TeamID = B.TeamID`). `B` has exactly one row per team, and `TeamID` is never NULL, so each employee matches exactly one row of `B`:\n\n| `E.EmpID` | `E.TeamID` | matched `B.TeamSize` |\n| :---: | :---: | :---: |\n| 1 | 8 | 3 |\n| 2 | 8 | 3 |\n| 3 | 8 | 3 |\n| 4 | 7 | 2 |\n| 5 | 7 | 2 |\n| 6 | 9 | 1 |\n\nProjecting `E.EmpID, B.TeamSize` gives exactly the desired output. The logic is not tied to this sample, so (A) is correct for any instance of the table. (A NULL `TeamID` would never satisfy the equality join, but the NOT NULL constraint rules that out.)"
+      },
+      {
+        "title": "Option (B): the self-join only pairs an employee with itself",
+        "body": "The self-join keeps a pair of rows $(A, B)$ only when `A.TeamID = B.TeamID` **and** `A.EmpID = B.EmpID`. `EmpID` is the primary key, so `A.EmpID = B.EmpID` means $B$ is the *same row* as $A$. The `TeamID` condition then holds automatically and adds nothing.\n\nSo every group in `GROUP BY A.EmpID` contains exactly one joined row, and `COUNT(B.TeamID)` $= 1$ for every employee:\n\n| `EmpID` | `TeamSize` |\n| :---: | :---: |\n| 1 | 1 |\n| 2 | 1 |\n| ⋮ | ⋮ |\n| 6 | 1 |\n\nThis is wrong for employees 1–5. The self-join idea itself is sound: with only `A.TeamID = B.TeamID`, each employee would be paired with all team-mates, including itself, and the count would be the team size. The extra `A.EmpID = B.EmpID` destroys it."
+      },
+      {
+        "title": "Option (C): grouping by the primary key gives groups of size 1",
+        "body": "The derived table groups `Employee` by `EmpID`. `EmpID` is the primary key, so each group is a single row and `COUNT(TeamID)` $= 1$ in every group (`TeamID` is NOT NULL, so that one value is counted).\n\nThe outer query just reads `EmpID` and this count, so the output is `TeamSize` $= 1$ for all six employees. Nothing in the query ever counts rows across different employees of the same team, so (C) is incorrect."
+      },
+      {
+        "title": "Option (D): the derived table has no TeamID column",
+        "body": "The subquery groups by `TeamID` but its `SELECT` list contains only `COUNT(TeamID) AS TeamSize`. A derived table exposes **only the columns in its `SELECT` list**, so `B` has a single column, `TeamSize`, with the values 3, 2, 1 in some order.\n\nThe outer `WHERE A.TeamID = B.TeamID` refers to a column that `B` does not have, so the query is rejected with an error. SQLite, for example, reports `no such column: B.TeamID`. Even if it ran, `B` carries no information about which count belongs to which team, so the counts could not be matched to employees. (D) is incorrect."
+      },
+      {
+        "title": "Conclusion",
+        "body": "| Option | Result on the sample table | Verdict |\n| --- | --- | --- |\n| (A) | $(1,3), (2,3), (3,3), (4,2), (5,2), (6,1)$ | correct |\n| (B) | `TeamSize` $= 1$ for every employee | incorrect |\n| (C) | `TeamSize` $= 1$ for every employee | incorrect |\n| (D) | error: `B.TeamID` does not exist | incorrect |\n\nAnswer → **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**What `GROUP BY` does.** `GROUP BY col` collapses all rows that share a value of `col` into one output row, and an aggregate such as `COUNT(x)` is evaluated once per group. `COUNT(x)` counts the non-NULL values of `x` in the group. After grouping you have **one row per group**, not one row per original record.\n\n**Putting a group total back on every row.** Questions like \"show each employee with the size of their team\" need a per-group number on each individual row. The classic pattern has two stages:\n\n1. Compute the aggregate in a **derived table** (a subquery in `FROM`), keeping the grouping key: `(SELECT TeamID, COUNT(*) AS TeamSize FROM Employee GROUP BY TeamID) AS B`.\n2. **Join** the base table back to it on that key: `WHERE E.TeamID = B.TeamID`.\n\nA self-join is an equivalent route: pair each employee with every employee of the same team (`A.TeamID = B.TeamID`), then `GROUP BY A.EmpID` and count the partners. Modern SQL can also do it with a window function, `COUNT(*) OVER (PARTITION BY TeamID)`.\n\n**Three facts that decide this question.**\n\n- A derived table has exactly the columns listed in its `SELECT`. Grouping by a column does **not** make it visible outside the subquery unless it is also selected.\n- Grouping by a primary key makes every group a single row, so any `COUNT` over it is 1.\n- In a self-join, adding an equality on the primary key (`A.EmpID = B.EmpID`) pairs each row only with itself, which again makes every count 1.\n\n**Connecting to this question.** (A) follows the two-stage pattern exactly. (B) is a self-join spoiled by the primary-key equality, (C) groups by the primary key, and (D) computes the right per-team counts but drops `TeamID`, so it cannot join them back and is not even a valid query. Only (A) produces the desired output.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "The derived table `B` holds one row per team with its count (8→3, 7→2, 9→1). Joining on `E.TeamID = B.TeamID` attaches that count to every employee of the team, which gives exactly the desired output. It works for any data, not just the sample."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "`A.EmpID = B.EmpID` on the primary key makes each row join only with itself, so every group in `GROUP BY A.EmpID` has one row and `COUNT(B.TeamID)` is 1 for everyone. Without that condition this self-join would have been correct."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "`GROUP BY EmpID` groups by the primary key, so each group is one row and `COUNT(TeamID)` is 1. The output shows `TeamSize` 1 for all six employees instead of 3, 3, 3, 2, 2, 1."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The subquery selects only `COUNT(TeamID) AS TeamSize`, so the derived table `B` has no `TeamID` column. `WHERE A.TeamID = B.TeamID` refers to a column that does not exist, so the query fails. Even conceptually, the bare counts cannot be matched to teams."
+      }
+    ],
+    "shortcut": "Ask two questions of each query: (1) Is the count taken over groups keyed by `TeamID`? (2) Is that count linked back to each employee through `TeamID`? (B) and (C) fail (1), because their groups are keyed by the primary key `EmpID` and so every count is 1. (D) passes (1) but fails (2), because it never selects `TeamID`. Only (A) passes both.",
+    "commonTrap": "Choosing (D) because it looks almost identical to (A): it groups by `TeamID` and joins on `TeamID`. But `TeamID` is not in the subquery's `SELECT` list, so `B.TeamID` does not exist. The other trap is (B): self-joining on `TeamID` is a valid technique, but the extra condition `A.EmpID = B.EmpID` limits each employee to matching only itself, so every count is 1."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q51-1.webp",
+    "/pyq/2026/official/Q51-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Identifiers set in the paper's monospace font (Employee(EmpID, TeamID), EmpID, TeamID, TeamSize, Employee) are shown as inline code; 'NOT NULL' is in the text font in the paper and is kept as plain text. In the paper the Employee and Output tables stand side by side below 'Which of the following is/are correct?'. They are transcribed as two GFM tables in the same position, one after the other; the caption 'Employee' is in monospace and 'Output' in the text font, as in the paper. The four SQL options are monospace blocks, transcribed as sql code blocks character for character with the paper's line breaks kept. In (A) and (D) the long FROM clause continues onto a second line (after 'AS' in (A) and after 'FROM' in (D)) at tighter line spacing than the other lines, which suggests a wrap within the table cell; the break is kept as printed, and it does not change the SQL. The second official crop (Q51-2) shows only the header and a table border of the next page. The only embedded image in this region is the background watermark; the tables and code are transcribed as text, so no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A",
+    "agreesWithKey": true,
+    "checkCode": "import sqlite3\ndb = sqlite3.connect(':memory:')\ndb.execute('CREATE TABLE Employee(EmpID INTEGER PRIMARY KEY, TeamID INTEGER NOT NULL)')\ndb.executemany('INSERT INTO Employee VALUES (?,?)', [(1,8),(2,8),(3,8),(4,7),(5,7),(6,9)])\nwant = [(1,3),(2,3),(3,3),(4,2),(5,2),(6,1)]\nQ = {\n 'A': '''SELECT E.EmpID, B.TeamSize\nFROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS\nTeamSize FROM Employee GROUP BY TeamID) AS B\nWHERE E.TeamID = B.TeamID''',\n 'B': '''SELECT A.EmpID, COUNT(B.TeamID) AS TeamSize\nFROM Employee AS A, Employee AS B\nWHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID\nGROUP BY A.EmpID''',\n 'C': '''SELECT B.EmpID, B.TeamSize\nFROM (SELECT EmpID, COUNT(TeamID) AS TeamSize\nFROM Employee GROUP BY EmpID) AS B''',\n 'D': '''SELECT A.EmpID, B.TeamSize\nFROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM\nEmployee GROUP BY TeamID) AS B\nWHERE A.TeamID = B.TeamID''',\n}\nok = {}\nfor k, q in Q.items():\n    try:\n        rows = sorted(db.execute(q).fetchall())\n        ok[k] = rows == want\n        print(k, rows)\n    except sqlite3.Error as e:\n        ok[k] = False\n        print(k, 'ERROR:', e)\nprint(ok)\nassert [k for k in 'ABCD' if ok[k]] == ['A']   # -> A",
+    "notes": "Each query was traced by hand and run in SQLite on the six-row sample table. (A) returns exactly the desired output (1,3),(2,3),(3,3),(4,2),(5,2),(6,1). (B) and (C) return TeamSize 1 for every employee: B's join condition A.EmpID = B.EmpID on the primary key pairs each row only with itself, and C groups by the primary key. (D) is rejected with 'no such column: B.TeamID' because its derived table selects only TeamSize. (A) is also correct in general: a per-TeamID count joined back on TeamID, with the NOT NULL constraint ensuring every employee is matched. The independent answer A matches official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

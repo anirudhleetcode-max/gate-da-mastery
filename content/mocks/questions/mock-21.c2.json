@@ -1,0 +1,759 @@
+[
+  {
+    "id": "M21-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation",
+      "ps-discrete-named"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — needs the law of total variance with a binomial conditional variance, the non-obvious observation that E[S | N] is constant, and avoidance of the tempting plug-in of E[N] into one binomial; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Law of total variance for a random-size binomial count whose conditional mean does not depend on the batch size",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A quality-control station receives batches of items. The batch size $N$ is random with the following distribution.\n\n| $n$ | 2 | 3 | 5 |\n|---|---|---|---|\n| $P(N = n)$ | 0.1 | 0.5 | 0.4 |\n\nSo that two items per batch are inspected on average, each item of a batch of size $n$ is selected for inspection independently with probability $2/n$. Let $S$ be the number of items inspected from a randomly arriving batch.\n\nThe variance $\\mathrm{Var}(S)$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.8,
+      "max": 0.82
+    },
+    "solution": {
+      "quick": "Given $N = n$, $S \\sim \\text{Bin}(n, 2/n)$, so $E[S \\mid N] = 2$ for every $n$ and $\\mathrm{Var}(S \\mid N) = 2(1 - 2/N)$.\nBy the law of total variance, $\\mathrm{Var}(S) = E[\\mathrm{Var}(S \\mid N)] + \\mathrm{Var}(E[S \\mid N]) = E[2 - 4/N] + 0 = \\dfrac{61}{75} \\approx 0.81$.",
+      "steps": [
+        {
+          "title": "Conditional distribution of S",
+          "body": "Given $N = n$, $S$ is the number of successes in $n$ independent Bernoulli$(2/n)$ trials, so $S \\mid N = n \\sim \\text{Bin}(n, 2/n)$:\n$$\nE[S \\mid N = n] = n \\cdot \\frac{2}{n} = 2, \\qquad \\mathrm{Var}(S \\mid N = n) = n \\cdot \\frac{2}{n}\\left(1 - \\frac{2}{n}\\right) = 2 - \\frac{4}{n}.\n$$"
+        },
+        {
+          "title": "Evaluate the conditional variances",
+          "body": "- $n = 2$: $2 - 4/2 = 0$ (both items are always inspected).\n- $n = 3$: $2 - 4/3 = 2/3 \\approx 0.6667$.\n- $n = 5$: $2 - 4/5 = 6/5 = 1.2$."
+        },
+        {
+          "title": "Apply the law of total variance",
+          "body": "$$\n\\mathrm{Var}(S) = E[\\mathrm{Var}(S \\mid N)] + \\mathrm{Var}(E[S \\mid N]).\n$$\nSince $E[S \\mid N] = 2$ is a constant, $\\mathrm{Var}(E[S \\mid N]) = 0$."
+        },
+        {
+          "title": "Average the conditional variances",
+          "body": "$$\nE[\\mathrm{Var}(S \\mid N)] = 0.1(0) + 0.5\\left(\\tfrac{2}{3}\\right) + 0.4\\left(\\tfrac{6}{5}\\right) = 0 + 0.3333 + 0.48 = 0.8133 = \\frac{61}{75}.\n$$\nRounded to two decimal places, $\\mathrm{Var}(S) \\approx 0.81$."
+        }
+      ],
+      "finalAnswer": "**0.81** (accepted range 0.80 to 0.82)",
+      "teaching": "When a random variable is built in two stages (first $N$, then $S$ given $N$), its variance splits into two parts: $\\mathrm{Var}(S) = E[\\mathrm{Var}(S \\mid N)] + \\mathrm{Var}(E[S \\mid N])$. The first term is the average spread *within* each batch size; the second is the spread of the batch-wise means *between* batch sizes.\n\nHere the inspection rule $p = 2/n$ is designed so that every batch size has the same mean, $E[S \\mid N] = 2$. The between-batch term therefore vanishes. The randomness of $N$ still matters, though, because a binomial variance $np(1-p)$ depends on $n$ and $p$ separately: small batches are inspected almost deterministically (for $n = 2$ both items are always chosen), while large batches have more spread.\n\nNote that $S$ is not binomial overall; it is a mixture of binomials. The correct variance averages $2 - 4/N$ over $N$, which involves $E[1/N]$, not $1/E[N]$.",
+      "shortcut": "Because the conditional mean is constant, $\\mathrm{Var}(S) = E[2 - 4/N] = 2 - 4E[1/N]$ with $E[1/N] = 0.1/2 + 0.5/3 + 0.4/5 = 0.29\\overline{6}$, so $\\mathrm{Var}(S) = 2 - 1.18\\overline{6} = 0.81\\overline{3}$.",
+      "commonTrap": "Plugging the average batch size $E[N] = 3.7$ into a single binomial, $3.7 \\cdot \\frac{2}{3.7}\\left(1 - \\frac{2}{3.7}\\right) \\approx 0.92$. This silently replaces $E[1/N]$ by $1/E[N]$, which is wrong (Jensen's inequality). Another slip is adding a non-zero $\\mathrm{Var}(E[S \\mid N])$ term even though $E[S \\mid N]$ is constant."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.8133 (= 61/75), rounds to 0.81",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nfrom math import comb\npN={2:F(1,10),3:F(1,2),5:F(2,5)}\nd={}\nfor n,pn in pN.items():\n    p=F(2,n)\n    for k in range(n+1): d[k]=d.get(k,0)+pn*comb(n,k)*p**k*(1-p)**(n-k)\nm=sum(k*v for k,v in d.items()); v=sum(k*k*w for k,w in d.items())-m*m\nprint(m, v, float(v))  # 2 61/75 0.8133",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one Python concept (a default argument is evaluated once and shared) traced over three calls plus an identity test; 2–3 short steps, about 2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "Mutable default arguments in Python are created once, when the function is defined, and shared across calls",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef tally(word, seen={}):\n    for ch in word:\n        seen[ch] = seen.get(ch, 0) + 1\n    return seen\n\na = tally(\"level\")\nb = tally(\"eel\", {})\nc = tally(\"vee\")\nprint(a[\"e\"], a[\"v\"], b[\"e\"], c is a)\n```\n\nWhich one of the following is the output of the program?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`2 1 2 False`"
+      },
+      {
+        "label": "B",
+        "text": "`6 2 6 True`"
+      },
+      {
+        "label": "C",
+        "text": "`4 2 2 False`"
+      },
+      {
+        "label": "D",
+        "text": "`4 2 2 True`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The default `{}` is created once, when `def` runs, so the first and third calls update the **same** dictionary and both return it. The second call receives its own fresh `{}`.\nShared dict after the calls: `{'l': 2, 'e': 4, 'v': 2}`; `b` is `{'e': 2, 'l': 1}`; `c is a` is `True`. Output: `4 2 2 True`.",
+      "steps": [
+        {
+          "title": "When is the default evaluated?",
+          "body": "The expression `{}` in `seen={}` is evaluated **once**, when the `def` statement executes. Every call that omits `seen` uses that one dictionary object; call it `D`."
+        },
+        {
+          "title": "First call: tally(\"level\")",
+          "body": "The letters l, e, v, e, l are counted into `D`, giving `D = {'l': 2, 'e': 2, 'v': 1}`. The function returns `D`, so `a` refers to `D`."
+        },
+        {
+          "title": "Second call: tally(\"eel\", {})",
+          "body": "A new, separate dictionary is passed explicitly, so `D` is untouched. The new dictionary becomes `{'e': 2, 'l': 1}` and is bound to `b`. Hence `b[\"e\"] = 2`."
+        },
+        {
+          "title": "Third call: tally(\"vee\")",
+          "body": "The default `D` is used again: v goes 1 → 2 and e goes 2 → 3 → 4, so `D = {'l': 2, 'e': 4, 'v': 2}`. The call returns `D`, so `c` and `a` are the same object and `c is a` is `True`."
+        },
+        {
+          "title": "Print",
+          "body": "`a[\"e\"] = 4`, `a[\"v\"] = 2`, `b[\"e\"] = 2`, `c is a` is `True`. The program prints `4 2 2 True`, which is option (D)."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "In Python, a `def` statement is executed like any other statement. When it runs, Python builds a function object and evaluates the default-value expressions **at that moment**, storing the resulting objects in the function (they are visible as `tally.__defaults__`). A call that omits the argument does not rebuild the default; it reuses the stored object.\n\nThis is harmless for immutable defaults such as `0` or `None`. With a mutable default such as a list or dictionary, any in-place change (`seen[ch] = ...`) persists into later calls. Because the function returns that same object, every variable that received it is an alias: `a` and `c` are two names for one dictionary, so `c is a` is `True` and reading `a` after the third call shows the updated counts.\n\nPassing an argument explicitly (`tally(\"eel\", {})`) bypasses the default entirely. The usual fix is `def tally(word, seen=None):` followed by `if seen is None: seen = {}`.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Assumes a fresh empty dictionary on every call, as in many other languages. Then `a` would keep `e = 2, v = 1` and `c` would be a different object. Python evaluates the default only once, so this is wrong."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Assumes the call `tally(\"eel\", {})` also updated the shared dictionary. An explicitly passed argument replaces the default, so the shared dictionary never sees \"eel\"."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The counts are right, but `c` is not a separate copy. `return seen` returns the shared object itself, so `a` and `c` are the same object and `is` gives `True`."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The first and third calls mutate and return the same default dictionary (`e = 4`, `v = 2`); `b` has its own dictionary (`e = 2`); and `c is a` is `True`."
+        }
+      ],
+      "commonTrap": "Assuming that `seen={}` creates a new empty dictionary on each call. That leads to option (A). Even students who know the rule often answer `False` for `c is a`, forgetting that the function returns the shared object itself, not a copy."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4 2 2 True (option D), from running the exact program",
+      "agreesWithKey": true,
+      "checkCode": "def tally(word, seen={}):\n    for ch in word:\n        seen[ch] = seen.get(ch, 0) + 1\n    return seen\n\na = tally(\"level\")\nb = tally(\"eel\", {})\nc = tally(\"vee\")\nprint(a[\"e\"], a[\"v\"], b[\"e\"], c is a)  # 4 2 2 True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-file-organization"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines record size (including a deletion marker), usable block space after the header, the unspanned blocking factor with floor/ceiling and a spanned block count; three separate traps each change the answer; about 3–4 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Blocking factor and block counts for unspanned versus spanned organisation of fixed-length records",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A ride-hailing company stores a relation TRIP as a file of 120,000 fixed-length records. Each record has the following fields.\n\n| Field | Size (bytes) |\n|---|---|\n| trip_id | 8 |\n| driver_id | 6 |\n| pickup_zone | 20 |\n| drop_zone | 20 |\n| fare | 8 |\n| start_time | 10 |\n\nIn addition, every record carries a 1-byte deletion marker. The disk block size is 2048 bytes, of which 48 bytes in every block are reserved for a block header; the rest of each block is available for record data.\n\nConsider two organisations of this file:\n\n- **Unspanned:** every record must lie entirely within one block.\n- **Spanned:** a record may continue from the end of one block into the next block, and no extra space is needed for continuation pointers.\n\nThe number of blocks saved by using the spanned organisation instead of the unspanned organisation is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 65,
+      "max": 65
+    },
+    "solution": {
+      "quick": "Record size $R = 72 + 1 = 73$ bytes; usable space per block $= 2048 - 48 = 2000$ bytes.\nUnspanned: $\\text{bfr} = \\lfloor 2000/73 \\rfloor = 27$, blocks $= \\lceil 120000/27 \\rceil = 4445$. Spanned: $\\lceil 120000 \\times 73 / 2000 \\rceil = 4380$. Saving $= 4445 - 4380 = 65$.",
+      "steps": [
+        {
+          "title": "Record size",
+          "body": "$$\nR = 8 + 6 + 20 + 20 + 8 + 10 + 1 = 73 \\text{ bytes}\n$$\n(the 1-byte deletion marker is part of every stored record)."
+        },
+        {
+          "title": "Usable bytes per block",
+          "body": "$$\nU = 2048 - 48 = 2000 \\text{ bytes per block.}\n$$"
+        },
+        {
+          "title": "Unspanned organisation",
+          "body": "Blocking factor: $\\text{bfr} = \\lfloor 2000/73 \\rfloor = 27$, since $27 \\times 73 = 1971 \\le 2000 < 28 \\times 73 = 2044$. The remaining 29 bytes of each block are wasted.\n$$\nb_{\\text{unspanned}} = \\left\\lceil \\frac{120000}{27} \\right\\rceil = \\lceil 4444.44\\ldots \\rceil = 4445.\n$$"
+        },
+        {
+          "title": "Spanned organisation",
+          "body": "Records are packed back to back across block boundaries, so only the total data volume matters:\n$$\nb_{\\text{spanned}} = \\left\\lceil \\frac{120000 \\times 73}{2000} \\right\\rceil = \\left\\lceil \\frac{8{,}760{,}000}{2000} \\right\\rceil = 4380.\n$$"
+        },
+        {
+          "title": "Blocks saved",
+          "body": "$$\n4445 - 4380 = 65.\n$$"
+        }
+      ],
+      "finalAnswer": "**65**",
+      "teaching": "A file is stored as a sequence of fixed-size disk blocks, and the unit of I/O is a block, not a record. The number of records that fit in one block is the **blocking factor**. Only the part of the block not used by the header can hold records.\n\nIn an **unspanned** organisation a record may not be split across blocks, so $\\text{bfr} = \\lfloor U/R \\rfloor$ and the leftover $U - \\text{bfr}\\cdot R$ bytes in every block are wasted. The number of blocks is $\\lceil r/\\text{bfr} \\rceil$; the ceiling accounts for a partially filled last block.\n\nIn a **spanned** organisation a record that does not fit in the remaining space continues in the next block, so no space is wasted between records and the block count is simply $\\lceil rR/U \\rceil$. The price is that reading one record can require two block accesses, and real systems also need a pointer to the continuation block (assumed free here).\n\nIn this file each unspanned block wastes 29 of 2000 bytes, about 1.5%, which adds up to 65 extra blocks.",
+      "commonTrap": "Three slips each give a different number: ignoring the 48-byte header (using 2048 bytes) gives $4286 - 4278 = 8$; forgetting the deletion marker (72-byte records) gives $4445 - 4320 = 125$; rounding $120000/27$ down to 4444 gives 64."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "65 (unspanned 4445 blocks, spanned 4380 blocks)",
+      "agreesWithKey": true,
+      "checkCode": "from math import ceil\nr=120000; R=8+6+20+20+8+10+1; U=2048-48\nbfr=U//R; un=ceil(r/bfr); sp=ceil(r*R/U)\nprint(R,bfr,un,sp,un-sp)  # 73 27 4445 4380 65",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-conditional-independence"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (reading independencies off a four-node Bayesian network with the chain and collider rules) applied to four short statements; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Chain and collider (v-structure) rules for reading conditional independence from a Bayesian network",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A Bayesian network over four Boolean variables models a web service:\n\n- $L$: the server is under heavy load\n- $F$: a network fault has occurred\n- $T$: the response latency is high\n- $C$: a user files a complaint\n\nThe network has exactly three directed edges: $L \\to T$, $F \\to T$ and $T \\to C$.\n\nWhich one of the following conditional independence statements is guaranteed by the structure of the network, that is, holds for every choice of the conditional probability tables?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$L$ and $F$ are independent when no variable is observed."
+      },
+      {
+        "label": "B",
+        "text": "$L$ and $F$ are conditionally independent given $C$."
+      },
+      {
+        "label": "C",
+        "text": "$L$ and $C$ are independent when no variable is observed."
+      },
+      {
+        "label": "D",
+        "text": "$F$ and $C$ are conditionally independent given $L$."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$T$ is a collider on the only path $L \\to T \\leftarrow F$. With nothing observed the path is blocked, so $L \\perp F$. Observing $C$ (a descendant of $T$) opens it. The chains $L \\to T \\to C$ and $F \\to T \\to C$ are open whenever $T$ is unobserved. Only (A) is guaranteed.",
+      "steps": [
+        {
+          "title": "Factorisation",
+          "body": "$$\nP(L, F, T, C) = P(L)\\,P(F)\\,P(T \\mid L, F)\\,P(C \\mid T).\n$$"
+        },
+        {
+          "title": "L and F with nothing observed",
+          "body": "The only path is $L \\to T \\leftarrow F$, and $T$ is a **collider** (both arrows point into it). A collider blocks the path unless $T$ or one of its descendants is observed. Algebraically, summing out $C$ and then $T$ leaves $P(L, F) = P(L)P(F)$. So (A) holds for every choice of tables."
+        },
+        {
+          "title": "L and F given C",
+          "body": "$C$ is a descendant of the collider $T$. Observing it activates the path $L \\to T \\leftarrow F$ (explaining away): if a complaint is seen and the server was not loaded, a network fault becomes more likely. So (B) is not guaranteed."
+        },
+        {
+          "title": "Paths through the chain T → C",
+          "body": "$L \\to T \\to C$ is a chain with $T$ unobserved, so it is open and $L$, $C$ are dependent in general, which rules out (C). For (D), observing $L$ does not block $F \\to T \\to C$, because $L$ is not on that path and $T$ is still unobserved. So (D) is not guaranteed either."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "A Bayesian network encodes independence through its graph. Along any path between two variables, each middle node plays one of three roles.\n\n- **Chain** $X \\to M \\to Y$ and **fork** $X \\leftarrow M \\to Y$: information flows through $M$ unless $M$ is observed, so observing $M$ blocks the path.\n- **Collider** $X \\to M \\leftarrow Y$: the reverse. The path is blocked when $M$ is unobserved and opens when $M$, or any descendant of $M$, is observed.\n\nTwo variables are guaranteed independent given a set $Z$ if every path between them is blocked (d-separation).\n\nHere the two causes $L$ and $F$ are a priori unrelated, so they are independent. Once we learn something about their common effect, even indirectly through the complaint $C$, they compete to explain it and become dependent. The latency $T$ passes information on to $C$, so neither cause is independent of $C$ unless $T$ itself is observed.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The only path $L \\to T \\leftarrow F$ contains an unobserved collider $T$ with no observed descendant, so it is blocked and $P(L, F) = P(L)P(F)$ for any tables."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$C$ is a descendant of the collider $T$. Conditioning on it opens the path, and $L$, $F$ become dependent (explaining away)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$L \\to T \\to C$ is an open chain when $T$ is unobserved. Heavy load raises latency, which raises the chance of a complaint."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$L$ does not lie on the path $F \\to T \\to C$, so observing it does not block that path. $F$ and $C$ remain dependent given $L$."
+        }
+      ],
+      "commonTrap": "Believing that observing a downstream effect (here $C$) makes its causes independent. For a collider the opposite holds: conditioning on the common effect, or on any of its descendants, makes independent causes dependent."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (a numeric check with random CPTs: only L ⊥ F holds; B, C and D fail)",
+      "agreesWithKey": true,
+      "checkCode": "import itertools,random\nrandom.seed(7)\npL,pF=random.random(),random.random()\npT={(l,f):random.random() for l in(0,1) for f in(0,1)}; pC={t:random.random() for t in(0,1)}\nb=lambda p,x:p if x else 1-p\nJ={k:b(pL,k[0])*b(pF,k[1])*b(pT[k[:2]],k[2])*b(pC[k[2]],k[3]) for k in itertools.product((0,1),repeat=4)}\nV='LFTC'\nP=lambda **kw:sum(p for k,p in J.items() if all(k[V.index(n)]==v for n,v in kw.items()))\ndef ind(X,Y,Z):\n    for zs in itertools.product((0,1),repeat=len(Z)):\n        z=dict(zip(Z,zs))\n        for x,y in itertools.product((0,1),repeat=2):\n            if abs(P(**{X:x,Y:y},**z)*P(**z)-P(**{X:x},**z)*P(**{Y:y},**z))>1e-12: return False\n    return True\nprint(ind('L','F',[]),ind('L','F',['C']),ind('L','C',[]),ind('F','C',['L']))  # True False False False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-nullity",
+      "la-rank"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — find the rank of a 4×5 matrix by spotting row dependencies, then apply rank–nullity to A, Aᵀ and AᵀA and test one null-space vector; routine 2–3 step reasoning, about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Rank–nullity theorem applied to a matrix, its transpose and the Gram matrix AᵀA",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the real matrix\n$$\nA = \\begin{bmatrix} 1 & 2 & 0 & 1 & 3 \\\\ 2 & 4 & 1 & 3 & 7 \\\\ 3 & 6 & 1 & 4 & 10 \\\\ 1 & 2 & 1 & 2 & 4 \\end{bmatrix}.\n$$\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The nullity of $A$ is 3."
+      },
+      {
+        "label": "B",
+        "text": "The nullity of $A^\\top$ is 3."
+      },
+      {
+        "label": "C",
+        "text": "The vector $\\mathbf{x} = (3,\\ 0,\\ 1,\\ 0,\\ -1)^\\top$ lies in the null space of $A$."
+      },
+      {
+        "label": "D",
+        "text": "The nullity of $A^\\top A$ is 3."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Row 3 $=$ Row 1 $+$ Row 2 and Row 4 $=$ Row 2 $-$ Row 1, so $\\operatorname{rank}(A) = 2$.\nnullity$(A) = 5 - 2 = 3$, nullity$(A^\\top) = 4 - 2 = 2$, and $N(A^\\top A) = N(A)$ gives nullity 3. Also $A\\mathbf{x} = 3\\mathbf{a}_1 + \\mathbf{a}_3 - \\mathbf{a}_5 = \\mathbf{0}$. Correct: (A), (C), (D).",
+      "steps": [
+        {
+          "title": "Rank of A",
+          "body": "Check the rows: $R_1 + R_2 = (3, 6, 1, 4, 10) = R_3$ and $R_2 - R_1 = (1, 2, 1, 2, 4) = R_4$. Rows $R_1$ and $R_2$ are not multiples of each other (the third entries are 0 and 1), so $\\operatorname{rank}(A) = 2$."
+        },
+        {
+          "title": "Nullity of A and of its transpose",
+          "body": "Rank–nullity: $\\operatorname{rank} + \\text{nullity} = $ number of columns.\n\n- $A$ is $4 \\times 5$: nullity$(A) = 5 - 2 = 3$. So (A) is correct.\n- $A^\\top$ is $5 \\times 4$ with the same rank 2: nullity$(A^\\top) = 4 - 2 = 2 \\ne 3$. So (B) is false."
+        },
+        {
+          "title": "Test the vector x",
+          "body": "$A\\mathbf{x}$ row by row:\n- Row 1: $3 + 0 + 0 + 0 - 3 = 0$\n- Row 2: $6 + 0 + 1 + 0 - 7 = 0$\n- Row 3: $9 + 0 + 1 + 0 - 10 = 0$\n- Row 4: $3 + 0 + 1 + 0 - 4 = 0$\n\nSo $A\\mathbf{x} = \\mathbf{0}$ (equivalently, column 5 $= 3\\times$column 1 $+$ column 3), and (C) is correct."
+        },
+        {
+          "title": "Null space of AᵀA",
+          "body": "If $A\\mathbf{v} = \\mathbf{0}$ then $A^\\top A\\mathbf{v} = \\mathbf{0}$. Conversely, if $A^\\top A\\mathbf{v} = \\mathbf{0}$ then $\\mathbf{v}^\\top A^\\top A \\mathbf{v} = \\lVert A\\mathbf{v} \\rVert^2 = 0$, so $A\\mathbf{v} = \\mathbf{0}$. Hence $N(A^\\top A) = N(A)$ and nullity$(A^\\top A) = 3$ (the $5 \\times 5$ matrix $A^\\top A$ has rank 2). So (D) is correct."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "teaching": "The **null space** of an $m \\times n$ matrix $A$ is the set of vectors $\\mathbf{x} \\in \\mathbb{R}^n$ with $A\\mathbf{x} = \\mathbf{0}$, and its dimension is the **nullity**. Gaussian elimination turns $A\\mathbf{x} = \\mathbf{0}$ into $r$ pivot equations in $n$ unknowns, which leaves $n - r$ free variables. That is the rank–nullity theorem: $\\operatorname{rank}(A) + \\text{nullity}(A) = n$, the number of **columns**.\n\nRow rank equals column rank, so $A$ and $A^\\top$ have the same rank $r$. Their nullities differ, however, because $A^\\top$ has $m$ columns: nullity$(A^\\top) = m - r$.\n\nThe Gram matrix $A^\\top A$ has exactly the same null space as $A$, because $\\mathbf{x}^\\top A^\\top A\\mathbf{x} = \\lVert A\\mathbf{x}\\rVert^2$. This is why $A^\\top A$ is invertible exactly when the columns of $A$ are independent, which matters for least squares.\n\nIn this question, spotting two row dependencies gives rank 2, and every nullity follows as (number of columns) $- 2$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\operatorname{rank}(A) = 2$ and $A$ has 5 columns, so nullity$(A) = 5 - 2 = 3$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$A^\\top$ has the same rank 2 but only 4 columns, so nullity$(A^\\top) = 4 - 2 = 2$. Assuming $A$ and $A^\\top$ share a nullity is the trap."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Every row gives 0: for example, row 2 gives $2(3) + 1(1) - 7 = 0$. So $A\\mathbf{x} = \\mathbf{0}$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$N(A^\\top A) = N(A)$ because $A^\\top A\\mathbf{v} = \\mathbf{0}$ implies $\\lVert A\\mathbf{v}\\rVert^2 = 0$. The nullity is therefore 3."
+        }
+      ],
+      "shortcut": "Once the rank is known to be 2, every nullity is (number of columns) $- 2$: $A$ has 5 columns → 3; $A^\\top$ has 4 columns → 2; $A^\\top A$ has 5 columns and the same rank → 3.",
+      "commonTrap": "Treating nullity like rank and assuming it is unchanged by transposition. Rank is shared by $A$ and $A^\\top$, but nullity is (number of columns) $-$ rank, so it is 3 for $A$ and 2 for $A^\\top$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D (rank 2; nullities 3, 2, 3; Ax = 0)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nA=sp.Matrix([[1,2,0,1,3],[2,4,1,3,7],[3,6,1,4,10],[1,2,1,2,4]])\nr=A.rank()\nprint(r, 5-r, 4-r, (A*sp.Matrix([3,0,1,0,-1])).T, 5-(A.T*A).rank())  # 2 3 2 [0,0,0,0] 3",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-single-var-optimization",
+      "co-maxima-minima"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one routine closed-interval optimisation (critical points, sign of f′, comparison with the endpoints) with the trap of a stationary point that is not an extremum; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Global extrema on a closed interval: compare critical points with endpoints; a stationary point need not be an extremum",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x) = x^3 e^{-x}$ be defined on the closed interval $[-1, 5]$. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$x = 0$ is a point of local minimum of $f$."
+      },
+      {
+        "label": "B",
+        "text": "The global maximum value of $f$ on $[-1, 5]$ is $27e^{-3}$, attained at $x = 3$."
+      },
+      {
+        "label": "C",
+        "text": "The global minimum of $f$ on $[-1, 5]$ is attained at $x = -1$."
+      },
+      {
+        "label": "D",
+        "text": "The difference between the global maximum value and the global minimum value of $f$ on $[-1, 5]$ is less than 3."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "$f'(x) = x^2(3 - x)e^{-x}$ is $\\ge 0$ on $[-1, 3]$ and $\\le 0$ on $[3, 5]$. So $f$ rises to its maximum $27e^{-3} \\approx 1.344$ at $x = 3$, and $x = 0$ is a flat inflection point, not an extremum.\nThe minimum is at an endpoint: $f(-1) = -e \\approx -2.718 < f(5) \\approx 0.842$. Max $-$ min $\\approx 4.06$. Correct: (B), (C).",
+      "steps": [
+        {
+          "title": "Differentiate and find the critical points",
+          "body": "$$\nf'(x) = 3x^2 e^{-x} - x^3 e^{-x} = x^2(3 - x)e^{-x}.\n$$\n$f'(x) = 0$ at $x = 0$ and $x = 3$, and both lie in $[-1, 5]$."
+        },
+        {
+          "title": "Sign of f′ (first-derivative test)",
+          "body": "Since $x^2 \\ge 0$ and $e^{-x} > 0$, the sign of $f'$ is the sign of $3 - x$, except that $f'(0) = 0$.\n\n- On $(-1, 0)$ and $(0, 3)$: $f' > 0$, so $f$ is increasing.\n- On $(3, 5)$: $f' < 0$, so $f$ is decreasing.\n\nAt $x = 0$ the derivative does not change sign, so $x = 0$ is **not** a local extremum. It is a stationary inflection point, and $f''(0) = 0$ confirms the second-derivative test is inconclusive there. At $x = 3$, $f'$ changes from $+$ to $-$, so $x = 3$ is a local maximum. (A) is false."
+        },
+        {
+          "title": "Evaluate at critical points and endpoints",
+          "body": "| $x$ | $-1$ | $0$ | $3$ | $5$ |\n|---|---|---|---|---|\n| $f(x)$ | $-e \\approx -2.718$ | $0$ | $27e^{-3} \\approx 1.344$ | $125e^{-5} \\approx 0.842$ |\n\nGlobal maximum: $27e^{-3}$ at $x = 3$, so (B) is true. Global minimum: $-e$ at $x = -1$, so (C) is true."
+        },
+        {
+          "title": "Range of values",
+          "body": "$$\n27e^{-3} - (-e) \\approx 1.344 + 2.718 = 4.063 > 3,\n$$\nso (D) is false."
+        }
+      ],
+      "finalAnswer": "**(B), (C)**",
+      "teaching": "A continuous function on a closed interval $[a, b]$ always attains a global maximum and a global minimum (extreme value theorem). Each occurs either at an interior critical point, where $f' = 0$ or $f'$ does not exist, or at an endpoint. The reliable recipe is therefore: find the critical points, evaluate $f$ there and at both endpoints, and compare.\n\nA critical point is not automatically an extremum. The first-derivative test decides: a local maximum needs $f'$ to change from $+$ to $-$, and a local minimum from $-$ to $+$. If $f'$ keeps its sign, as $x^2(3 - x)e^{-x}$ does at $x = 0$, the point is only a flat spot on a rising curve. The second-derivative test fails there because $f''(0) = 0$.\n\nIn this question the negative endpoint matters: $x^3$ is negative for $x < 0$, so $f(-1) = -e$ lies below the stationary value $f(0) = 0$ and is the global minimum.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$f'(x) = x^2(3 - x)e^{-x} > 0$ on both sides of 0, so $f$ keeps increasing through $x = 0$. It is a stationary inflection point, not a minimum: $f(x) = x^3e^{-x} < 0 = f(0)$ for every $x < 0$ close to 0."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$f$ increases on $[-1, 3]$ and decreases on $[3, 5]$, so the maximum is $f(3) = 27e^{-3} \\approx 1.344$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Because $f$ increases then decreases, the minimum is at an endpoint. $f(-1) = -e \\approx -2.718$ is less than $f(5) = 125e^{-5} \\approx 0.842$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Max $-$ min $= 27e^{-3} + e \\approx 4.06$, which is not less than 3. The value $\\approx 1.34$ comes from wrongly taking $f(0) = 0$ as the minimum."
+        }
+      ],
+      "shortcut": "Factor $f' = x^2(3 - x)e^{-x}$: the factor $x^2$ never changes sign, so only $x = 3$ is a turning point (a maximum). The minimum must then be at an endpoint, so compare $f(-1) = -e$ with $f(5) > 0$.",
+      "commonTrap": "Treating every stationary point as an extremum and ignoring the endpoints. A student who takes $x = 0$ as the minimum gets a max $-$ min difference of about 1.34 and wrongly marks both (A) and (D)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C (critical points 0 and 3; f(−1) = −2.718, f(0) = 0, f(3) = 1.344, f(5) = 0.842; max − min = 4.063)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp, math\nx=sp.symbols('x'); f=x**3*sp.exp(-x)\nprint(sp.factor(sp.diff(f,x)), sp.solve(sp.diff(f,x),x))\nv={p:float(f.subs(x,p)) for p in (-1,0,3,5)}; print(v)\nprint(float(sp.diff(f,x).subs(x,-0.1))>0, float(sp.diff(f,x).subs(x,0.1))>0)  # f' > 0 on both sides of 0\nprint(max(v.values())-min(v.values()))  # 4.0625 > 3",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-dim-reduction",
+      "ml-pca"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps (eigen-decomposition of a block-diagonal 3×3 covariance matrix, then projection and reconstruction of one centred point) with routine arithmetic; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "PCA dimensionality reduction: the reconstruction error equals the squared component along the discarded principal direction",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A dataset of 3-dimensional feature vectors has sample mean $\\boldsymbol{\\mu} = (1, 2, -1)^\\top$ and sample covariance matrix\n$$\n\\Sigma = \\begin{bmatrix} 6 & 2 & 0 \\\\ 2 & 3 & 0 \\\\ 0 & 0 & 4 \\end{bmatrix}.\n$$\nThe data are reduced from 3 to 2 dimensions using principal component analysis (PCA). Each vector $\\mathbf{x}$ is represented by its coordinates along the two principal directions with the largest variance, and it is reconstructed as\n$$\n\\hat{\\mathbf{x}} = \\boldsymbol{\\mu} + W W^\\top (\\mathbf{x} - \\boldsymbol{\\mu}),\n$$\nwhere the columns of $W \\in \\mathbb{R}^{3 \\times 2}$ are the corresponding unit-norm eigenvectors of $\\Sigma$.\n\nFor $\\mathbf{x} = (5, 2, 0)^\\top$, the squared reconstruction error $\\lVert \\mathbf{x} - \\hat{\\mathbf{x}} \\rVert^2$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3.19,
+      "max": 3.21
+    },
+    "solution": {
+      "quick": "The eigenvalues of $\\Sigma$ are $7, 4, 2$. PCA keeps the directions for 7 and 4 and discards $\\mathbf{u}_3 = (1, -2, 0)^\\top/\\sqrt{5}$ (eigenvalue 2).\nWith $\\mathbf{x} - \\boldsymbol{\\mu} = (4, 0, 1)^\\top$, the error is $(\\mathbf{u}_3^\\top(\\mathbf{x} - \\boldsymbol{\\mu}))^2 = (4/\\sqrt{5})^2 = 16/5 = 3.20$.",
+      "steps": [
+        {
+          "title": "Eigenvalues of Σ",
+          "body": "$\\Sigma$ is block-diagonal. The upper $2 \\times 2$ block $\\begin{bmatrix} 6 & 2 \\\\ 2 & 3 \\end{bmatrix}$ has trace 9 and determinant $18 - 4 = 14$, so $\\lambda^2 - 9\\lambda + 14 = 0$ gives $\\lambda = 7, 2$. The third coordinate contributes $\\lambda = 4$. In decreasing order: $7, 4, 2$."
+        },
+        {
+          "title": "Eigenvectors: which direction is discarded?",
+          "body": "- $\\lambda = 7$: $(6 - 7)v_1 + 2v_2 = 0$ gives $\\mathbf{u}_1 = (2, 1, 0)^\\top/\\sqrt{5}$.\n- $\\lambda = 4$: $\\mathbf{u}_2 = (0, 0, 1)^\\top$.\n- $\\lambda = 2$: $(6 - 2)v_1 + 2v_2 = 0$ gives $\\mathbf{u}_3 = (1, -2, 0)^\\top/\\sqrt{5}$.\n\n$W = [\\mathbf{u}_1\\ \\mathbf{u}_2]$ keeps the two largest-variance directions; $\\mathbf{u}_3$ is discarded."
+        },
+        {
+          "title": "Centre the point and project",
+          "body": "$\\mathbf{x} - \\boldsymbol{\\mu} = (5 - 1,\\ 2 - 2,\\ 0 - (-1)) = (4, 0, 1)$.\n\nCoordinates: $\\mathbf{u}_1^\\top(\\mathbf{x} - \\boldsymbol{\\mu}) = 8/\\sqrt{5}$ and $\\mathbf{u}_2^\\top(\\mathbf{x} - \\boldsymbol{\\mu}) = 1$.\n\nReconstruction: $\\hat{\\mathbf{x}} - \\boldsymbol{\\mu} = \\frac{8}{\\sqrt{5}} \\cdot \\frac{(2, 1, 0)}{\\sqrt{5}} + 1 \\cdot (0, 0, 1) = (3.2,\\ 1.6,\\ 1)$, so $\\hat{\\mathbf{x}} = (4.2,\\ 3.6,\\ 0)$."
+        },
+        {
+          "title": "Squared error",
+          "body": "$$\n\\mathbf{x} - \\hat{\\mathbf{x}} = (5 - 4.2,\\ 2 - 3.6,\\ 0 - 0) = (0.8,\\ -1.6,\\ 0), \\qquad \\lVert \\mathbf{x} - \\hat{\\mathbf{x}} \\rVert^2 = 0.64 + 2.56 = 3.20.\n$$\nCheck: this equals $(\\mathbf{u}_3^\\top(\\mathbf{x} - \\boldsymbol{\\mu}))^2 = (4/\\sqrt{5})^2 = 16/5$."
+        }
+      ],
+      "finalAnswer": "**3.20** (accepted range 3.19 to 3.21)",
+      "teaching": "PCA finds orthogonal directions along which the centred data vary the most. These are the eigenvectors of the covariance matrix, and each eigenvalue is the variance of the data along its eigenvector. To reduce from $d$ to $k$ dimensions, keep the $k$ eigenvectors with the largest eigenvalues as the columns of $W$ and represent a point by $\\mathbf{z} = W^\\top(\\mathbf{x} - \\boldsymbol{\\mu})$.\n\nMapping back gives $\\hat{\\mathbf{x}} = \\boldsymbol{\\mu} + W\\mathbf{z}$. Because the eigenvectors form an orthonormal basis, $\\mathbf{x} - \\boldsymbol{\\mu}$ splits into a kept part and a discarded part, and the reconstruction error is exactly the squared length of the discarded part, $\\sum_{j > k} (\\mathbf{u}_j^\\top(\\mathbf{x} - \\boldsymbol{\\mu}))^2$. Averaged over the data, this equals the sum of the discarded eigenvalues (here 2).\n\nThe ranking must use the eigenvalues of the whole matrix. The isolated third feature has variance 4, which beats the smaller eigenvalue 2 of the correlated block, so PCA keeps the third axis and drops the direction $(1, -2, 0)/\\sqrt{5}$.",
+      "shortcut": "Skip the reconstruction: the error is the squared coordinate along the discarded eigenvector, $\\left(\\frac{(1, -2, 0)\\cdot(4, 0, 1)}{\\sqrt{5}}\\right)^2 = \\frac{16}{5}$.",
+      "commonTrap": "Keeping the two eigenvectors of the correlated $2 \\times 2$ block (eigenvalues 7 and 2) and dropping the third axis gives an error of $1^2 = 1$. Forgetting to subtract the mean (projecting $\\mathbf{x}$ itself) gives $0.20$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3.2 (= 16/5)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS=np.array([[6,2,0],[2,3,0],[0,0,4]],float); mu=np.array([1,2,-1.]); x=np.array([5,2,0.])\nw,V=np.linalg.eigh(S); W=V[:,np.argsort(w)[::-1][:2]]\nxh=mu+W@W.T@(x-mu)\nprint(sorted(w,reverse=True), xh, np.sum((x-xh)**2))  # [7,4,2] [4.2 3.6 0] 3.2",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named",
+      "ps-marginal-joint"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — three binomial pmf values combined in a conditional probability; routine computation in 2–3 steps, about 2.5 minutes.",
+    "estimatedTimeSec": 160,
+    "concept": "Binomial distribution conditioned on a tail event (count of units kept by dropout)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "During training, a dropout layer with 8 units keeps each unit independently with probability 0.75 and drops it otherwise. Let $K$ be the number of units kept in a particular forward pass.\n\nGiven that at least 6 units are kept, the probability that exactly 7 units are kept is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.38,
+      "max": 0.4
+    },
+    "solution": {
+      "quick": "$K \\sim \\text{Bin}(8, 0.75)$ and $P(K = k) = \\binom{8}{k} 3^k / 4^8$.\n$P(K = 7 \\mid K \\ge 6) = \\dfrac{8 \\cdot 3^7}{28 \\cdot 3^6 + 8 \\cdot 3^7 + 3^8} = \\dfrac{24}{28 + 24 + 9} = \\dfrac{24}{61} \\approx 0.39$.",
+      "steps": [
+        {
+          "title": "Identify the distribution",
+          "body": "Each unit is an independent Bernoulli trial with keep probability $p = 0.75$, so $K \\sim \\text{Bin}(8, 0.75)$:\n$$\nP(K = k) = \\binom{8}{k}(0.75)^k(0.25)^{8-k} = \\binom{8}{k}\\frac{3^k}{4^8}, \\qquad 4^8 = 65536.\n$$"
+        },
+        {
+          "title": "The three pmf values",
+          "body": "- $P(K = 6) = 28 \\times 729 / 65536 = 20412/65536 \\approx 0.3115$\n- $P(K = 7) = 8 \\times 2187 / 65536 = 17496/65536 \\approx 0.2670$\n- $P(K = 8) = 6561/65536 \\approx 0.1001$\n\nSo $P(K \\ge 6) = 44469/65536 \\approx 0.6785$."
+        },
+        {
+          "title": "Condition on K ≥ 6",
+          "body": "The event $\\{K = 7\\}$ is contained in $\\{K \\ge 6\\}$, so\n$$\nP(K = 7 \\mid K \\ge 6) = \\frac{P(K = 7)}{P(K \\ge 6)} = \\frac{17496}{44469} = \\frac{24}{61} \\approx 0.3934.\n$$\n(Dividing the numerator and denominator by $729 = 3^6$ gives $24/61$.)"
+        },
+        {
+          "title": "Round",
+          "body": "Rounded to two decimal places, the probability is $0.39$."
+        }
+      ],
+      "finalAnswer": "**0.39** (accepted range 0.38 to 0.40)",
+      "teaching": "A binomial random variable counts successes in $n$ independent trials that share the same success probability $p$: $P(K = k) = \\binom{n}{k}p^k(1-p)^{n-k}$. Dropout fits this model exactly, since each unit is kept or dropped independently with the same probability, so the number of kept units is $\\text{Bin}(n, p)$ with mean $np = 6$ here.\n\nConditioning on an event $B$ restricts the sample space to $B$ and rescales: for $A \\subseteq B$, $P(A \\mid B) = P(A)/P(B)$. When all the probabilities involved are binomial terms with the same $n$ and $p$, the common factor $4^{-8}$ cancels, and so does $3^6$. What remains is a ratio of simple weights, $28 : 24 : 9$ for $k = 6, 7, 8$.\n\nNotice that $k = 6$ (the mean) carries the largest weight, but conditioning raises the probability of $k = 7$ from about 0.27 to about 0.39, because the lower outcomes have been ruled out.",
+      "shortcut": "Divide each term $\\binom{8}{k}3^k$ by $3^6$: the weights for $k = 6, 7, 8$ are $28, 24, 9$. The answer is $24/(28 + 24 + 9) = 24/61$.",
+      "commonTrap": "Reporting the unconditional probability $P(K = 7) \\approx 0.27$, or swapping the roles of $p$ and $1 - p$ (treating 0.75 as the drop probability), which gives a very different, tiny value."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.3934 (= 24/61), rounds to 0.39",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\nfrom fractions import Fraction as F\npm=lambda k: comb(8,k)*F(3,4)**k*F(1,4)**(8-k)\nr=pm(7)/sum(pm(k) for k in (6,7,8))\nprint(r, float(r))  # 24/61 0.3934",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-informed"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — short A* and greedy best-first traces on a five-node graph plus admissibility/consistency checks; each step is routine, but the counter-intuitive outcome is a likely trap; about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "Effect of an overestimating (inadmissible) heuristic on A* compared with greedy best-first search",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the undirected weighted graph below, with start node $S$ and goal node $G$.\n\n| Edge | Cost |\n|---|---|\n| S – A | 1 |\n| S – B | 3 |\n| A – B | 3 |\n| A – G | 9 |\n| B – C | 2 |\n| C – G | 4 |\n\nA heuristic $h$ is given by the following table.\n\n| Node $n$ | S | A | B | C | G |\n|---|---|---|---|---|---|\n| $h(n)$ | 8 | 8 | 5 | 7 | 0 |\n\nA\\* search (frontier ordered by $f(n) = g(n) + h(n)$) and greedy best-first search (frontier ordered by $h(n)$ alone) are both run as graph searches from $S$. The goal test is applied when a node is selected for expansion, and ties are broken alphabetically.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$h$ is admissible."
+      },
+      {
+        "label": "B",
+        "text": "$h$ is consistent."
+      },
+      {
+        "label": "C",
+        "text": "A\\* returns a least-cost path from $S$ to $G$."
+      },
+      {
+        "label": "D",
+        "text": "Greedy best-first search returns a least-cost path from $S$ to $G$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The true costs to $G$ are $h^*(C) = 4$, $h^*(B) = 6$, $h^*(A) = 9$, $h^*(S) = 9$, and the optimal path is S–B–C–G (cost 9). Since $h(C) = 7 > 4$, $h$ is neither admissible nor consistent.\nA\\* expands S, B, A and then selects G via S–A–G (cost 10), because $f(C) = 12$. Greedy expands S, B, C, G and returns S–B–C–G (cost 9). Only (D) is correct.",
+      "steps": [
+        {
+          "title": "True cost-to-goal h*(n)",
+          "body": "- $C$: $C$–$G$ $= 4$.\n- $B$: $\\min(2 + 4,\\ 3 + 9) = 6$.\n- $A$: $\\min(9,\\ 3 + 6) = 9$.\n- $S$: $\\min(1 + 9,\\ 3 + 6) = 9$.\n\nThe unique least-cost path is S–B–C–G with cost 9."
+        },
+        {
+          "title": "Admissibility and consistency",
+          "body": "Admissible means $h(n) \\le h^*(n)$ for every $n$. Here $h(C) = 7 > h^*(C) = 4$, so $h$ is **not admissible** and (A) is false. The other nodes are fine ($8 \\le 9$, $8 \\le 9$, $5 \\le 6$).\n\nConsistent means $h(n) \\le c(n, n') + h(n')$ for every edge. Edge C–G gives $7 > 4 + 0$, so $h$ is **not consistent** and (B) is false. (With $h(G) = 0$, consistency would imply admissibility anyway.)"
+        },
+        {
+          "title": "A* trace",
+          "body": "| Step | Expand | g | f | Frontier after expansion (f) |\n|---|---|---|---|---|\n| 1 | S | 0 | 8 | A (1 + 8 = 9), B (3 + 5 = 8) |\n| 2 | B | 3 | 8 | A (9), C (5 + 7 = 12); A via B has g = 6 > 1, ignored |\n| 3 | A | 1 | 9 | G (1 + 9 + 0 = 10), C (12) |\n| 4 | G | 10 | 10 | goal selected, stop |\n\nA\\* returns S–A–G with cost 10, not the optimal 9, so (C) is false. The overestimate $h(C) = 7$ pushes $f(C)$ to 12, so C is never expanded."
+        },
+        {
+          "title": "Greedy best-first trace",
+          "body": "- Expand S: frontier A ($h = 8$), B ($h = 5$), so select B.\n- Expand B: frontier A (8), C (7), so select C.\n- Expand C: frontier A (8), G (0), so select G, which is the goal.\n\nGreedy returns S–B–C–G with cost $3 + 2 + 4 = 9$, the least cost. So (D) is correct."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A\\* orders its frontier by $f(n) = g(n) + h(n)$, the cost so far plus an estimate of the cost remaining. Its optimality guarantee rests on the heuristic never **overestimating**: with an admissible $h$, an optimal path is always found before any costlier path to the goal is selected. Consistency, $h(n) \\le c(n, n') + h(n')$ on every edge, is a stronger property that also makes graph search safe without re-expanding nodes.\n\nWhen $h$ overestimates at a node on the optimal path, that node's $f$-value is inflated and A\\* may select the goal through a worse route first, as happens here via $A$.\n\nGreedy best-first search ignores $g$ and has no optimality guarantee. That does not mean it is always suboptimal, though; on this graph the ordering of $h$ values happens to lead it straight along the optimal path. The lesson is that algorithmic guarantees depend on their assumptions, so trace the search rather than relying on 'A\\* is optimal, greedy is not'.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$h(C) = 7$ exceeds the true remaining cost $h^*(C) = 4$ (edge C–G), so $h$ overestimates and is not admissible."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "On edge C–G, $h(C) = 7 > c(C, G) + h(G) = 4$. A consistent $h$ with $h(G) = 0$ would also be admissible, which this $h$ is not."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "A\\* selects G with $g = 10$ via S–A–G while C waits in the frontier with $f = 12$. The optimal cost is 9, so the path returned is not least-cost."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Greedy picks B ($h = 5 < 8$), then C ($h = 7 < 8$), then G, giving S–B–C–G with cost 9, the optimum."
+        }
+      ],
+      "commonTrap": "Marking (C) and rejecting (D) from the slogan 'A\\* is optimal, greedy is not', without checking that the guarantee needs an admissible heuristic. Here $h(C)$ overestimates, and tracing both searches shows the reverse outcome."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (A* returns S-A-G, cost 10; greedy returns S-B-C-G, cost 9 = optimum; h(C)=7 > h*(C)=4)",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nE=[('S','A',1),('A','G',9),('S','B',3),('B','C',2),('C','G',4),('A','B',3)]\nh={'S':8,'A':8,'B':5,'C':7,'G':0}; g={}\nfor u,v,c in E: g.setdefault(u,{})[v]=c; g.setdefault(v,{})[u]=c\ndef dist(t):\n    d={t:0}; q=[(0,t)]\n    while q:\n        du,u=heapq.heappop(q)\n        if du>d[u]: continue\n        for v,c in g[u].items():\n            if du+c<d.get(v,1e9): d[v]=du+c; heapq.heappush(q,(d[v],v))\n    return d\nhs=dist('G')\ndef search(key):\n    fr=[(key(0,'S'),'S',0,'S')]; closed=set()\n    while fr:\n        f,u,gu,p=heapq.heappop(fr)  # ties -> alphabetical\n        if u in closed: continue\n        if u=='G': return gu,p\n        closed.add(u)\n        for v,c in g[u].items():\n            if v not in closed: heapq.heappush(fr,(key(gu+c,v),v,gu+c,p+v))\nprint(hs, [n for n in h if h[n]>hs[n]], [(u,v) for u in g for v in g[u] if h[u]>g[u][v]+h[v]])\nprint('A*',search(lambda G,v:G+h[v]),'greedy',search(lambda G,v:h[v]))  # A* (10,'SAG') greedy (9,'SBCG')",
+      "notes": ""
+    }
+  }
+]

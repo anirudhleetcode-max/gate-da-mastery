@@ -1,0 +1,121 @@
+{
+  "id": "DA2024-S1-Q49",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 49,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-projection-matrix",
+    "la-idempotent-matrix",
+    "la-nullity"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because every statement is a one-step consequence of two standard projection-matrix facts (M² = M, and rank M = dim U so rank–nullity gives nullity 3 − dim U), taking a prepared student a little over a minute.",
+  "estimatedTimeSec": 75,
+  "stem": "Let $\\mathbb{R}$ be the set of real numbers, $U$ be a subspace of $\\mathbb{R}^3$ and $\\boldsymbol{M} \\in \\mathbb{R}^{3 \\times 3}$ be the matrix corresponding to the projection on to the subspace $U$.\n\nWhich of the following statements is/are **TRUE**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "If $U$ is a 1-dimensional subspace of $\\mathbb{R}^3$, then the null space of $\\boldsymbol{M}$ is a 1-dimensional subspace."
+    },
+    {
+      "label": "B",
+      "text": "If $U$ is a 2-dimensional subspace of $\\mathbb{R}^3$, then the null space of $\\boldsymbol{M}$ is a 1-dimensional subspace."
+    },
+    {
+      "label": "C",
+      "text": "$\\boldsymbol{M}^2 = \\boldsymbol{M}$"
+    },
+    {
+      "label": "D",
+      "text": "$\\boldsymbol{M}^3 = \\boldsymbol{M}$"
+    }
+  ],
+  "officialKeyRaw": "B;C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "A projection onto $U$ has range exactly $U$, so $\\operatorname{rank}\\boldsymbol{M} = \\dim U$ and, by rank–nullity, $\\dim N(\\boldsymbol{M}) = 3 - \\dim U$ (for the orthogonal projection, $N(\\boldsymbol{M}) = U^\\perp$). A line $U$ gives a 2-dimensional null space, so (A) is false; a plane gives a 1-dimensional null space, so (B) is true. Projecting twice changes nothing, so $\\boldsymbol{M}^2 = \\boldsymbol{M}$ (C) and hence $\\boldsymbol{M}^3 = \\boldsymbol{M}^2\\boldsymbol{M} = \\boldsymbol{M}$ (D). Answer: **(B), (C), (D)**.",
+    "steps": [
+      {
+        "title": "What the projection matrix does",
+        "body": "$\\boldsymbol{M}$ sends every $\\mathbf{x} \\in \\mathbb{R}^3$ to its projection $\\boldsymbol{M}\\mathbf{x} \\in U$, and leaves vectors already in $U$ unchanged ($\\boldsymbol{M}\\mathbf{u} = \\mathbf{u}$ for $\\mathbf{u} \\in U$). Hence:\n\n- the **range** (column space) of $\\boldsymbol{M}$ is exactly $U$, so $\\operatorname{rank}\\boldsymbol{M} = \\dim U$;\n- for the orthogonal projection, $\\mathbf{x} = \\underbrace{\\boldsymbol{M}\\mathbf{x}}_{\\in U} + \\underbrace{(\\mathbf{x} - \\boldsymbol{M}\\mathbf{x})}_{\\in U^\\perp}$, and $\\boldsymbol{M}\\mathbf{x} = \\mathbf{0}$ exactly when $\\mathbf{x} \\in U^\\perp$, so $N(\\boldsymbol{M}) = U^\\perp$.\n\nIf the columns of $A$ form a basis of $U$, the orthogonal projection matrix is $\\boldsymbol{M} = A(A^\\top A)^{-1}A^\\top$."
+      },
+      {
+        "title": "(A) and (B): dimension of the null space",
+        "body": "By the rank–nullity theorem for a $3 \\times 3$ matrix,\n\n$$\n\\dim N(\\boldsymbol{M}) = 3 - \\operatorname{rank}\\boldsymbol{M} = 3 - \\dim U .\n$$\n\n- **(A)** $\\dim U = 1$: $\\dim N(\\boldsymbol{M}) = 3 - 1 = 2$. The null space is the plane perpendicular to the line $U$, not a line. Example: $U = \\operatorname{span}\\{\\mathbf{e}_1\\}$ gives $\\boldsymbol{M} = \\operatorname{diag}(1, 0, 0)$, whose null space $\\{(0, y, z)^\\top\\}$ is 2-dimensional. (A) is **false**.\n- **(B)** $\\dim U = 2$: $\\dim N(\\boldsymbol{M}) = 3 - 2 = 1$. The null space is the normal line of the plane $U$. Example: $U$ = the $xy$-plane gives $\\boldsymbol{M} = \\operatorname{diag}(1, 1, 0)$, whose null space is $\\operatorname{span}\\{\\mathbf{e}_3\\}$. (B) is **true**."
+      },
+      {
+        "title": "(C) Idempotence: M² = M",
+        "body": "For any $\\mathbf{x}$, the vector $\\boldsymbol{M}\\mathbf{x}$ already lies in $U$, and $\\boldsymbol{M}$ fixes vectors of $U$, so $\\boldsymbol{M}(\\boldsymbol{M}\\mathbf{x}) = \\boldsymbol{M}\\mathbf{x}$ for every $\\mathbf{x}$. Hence $\\boldsymbol{M}^2 = \\boldsymbol{M}$.\n\nAlgebraically, with $\\boldsymbol{M} = A(A^\\top A)^{-1}A^\\top$:\n\n$$\n\\boldsymbol{M}^2 = A(A^\\top A)^{-1}\\underbrace{A^\\top A (A^\\top A)^{-1}}_{= I}A^\\top = A(A^\\top A)^{-1}A^\\top = \\boldsymbol{M}.\n$$\n\n(C) is **true**."
+      },
+      {
+        "title": "(D) Higher powers: M³ = M",
+        "body": "Using (C) twice:\n\n$$\n\\boldsymbol{M}^3 = \\boldsymbol{M}^2\\,\\boldsymbol{M} = \\boldsymbol{M}\\,\\boldsymbol{M} = \\boldsymbol{M}^2 = \\boldsymbol{M}.\n$$\n\nIn general $\\boldsymbol{M}^k = \\boldsymbol{M}$ for every $k \\ge 1$. Equivalently, the eigenvalues of a projection are only $0$ and $1$, and both satisfy $\\lambda^3 = \\lambda$. (D) is **true**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "$\\dim N(\\boldsymbol{M}) = 3 - \\dim U$ makes (A) false (it is 2, not 1) and (B) true, and idempotence gives both $\\boldsymbol{M}^2 = \\boldsymbol{M}$ and $\\boldsymbol{M}^3 = \\boldsymbol{M}$. These facts (rank $\\boldsymbol{M} = \\dim U$ and $\\boldsymbol{M}^2 = \\boldsymbol{M}$) hold for any projection onto $U$, orthogonal or not, so the answer does not depend on that reading. The answer is **(B), (C), (D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C), (D)**",
+    "teaching": "**Projection as a \"shadow\".** Projecting a vector $\\mathbf{x}$ onto a subspace $U$ means splitting it into a part inside $U$ and a leftover part, and keeping only the part inside $U$. For the orthogonal projection the leftover is perpendicular to $U$: $\\mathbf{x} = \\mathbf{u} + \\mathbf{w}$ with $\\mathbf{u} \\in U$ and $\\mathbf{w} \\in U^\\perp$, and $\\boldsymbol{M}\\mathbf{x} = \\mathbf{u}$. Think of the shadow of a stick on the floor when the light is directly overhead.\n\n**Three properties follow immediately.**\n\n1. **Range = $U$.** Every output lies in $U$, and every $\\mathbf{u} \\in U$ is its own projection. So $\\operatorname{rank}\\boldsymbol{M} = \\dim U$.\n2. **Null space = what gets flattened to zero.** Only the purely perpendicular part vanishes, so $N(\\boldsymbol{M}) = U^\\perp$. In $\\mathbb{R}^3$, $\\dim U + \\dim U^\\perp = 3$, which is exactly the rank–nullity theorem $\\operatorname{rank} + \\operatorname{nullity} = 3$.\n3. **Idempotent.** The shadow of a shadow is the same shadow: $\\boldsymbol{M}^2 = \\boldsymbol{M}$, and then every power $\\boldsymbol{M}^k$ ($k \\ge 1$) equals $\\boldsymbol{M}$. The eigenvalues are $1$ (directions in $U$) and $0$ (directions in $U^\\perp$), with $\\operatorname{trace}\\boldsymbol{M} = \\operatorname{rank}\\boldsymbol{M} = \\dim U$. An orthogonal projection is also symmetric, $\\boldsymbol{M}^\\top = \\boldsymbol{M}$.\n\nThe standard formula is $\\boldsymbol{M} = A(A^\\top A)^{-1}A^\\top$, where the columns of $A$ are a basis of $U$; for a unit vector $\\mathbf{a}$ spanning a line, it reduces to $\\boldsymbol{M} = \\mathbf{a}\\mathbf{a}^\\top$.\n\n**Back to this question.** A line $U$ ($\\dim 1$) leaves a 2-dimensional perpendicular plane that is flattened to $\\mathbf{0}$, so (A) is false. A plane $U$ ($\\dim 2$) leaves a 1-dimensional normal line, so (B) is true. Idempotence gives (C), and multiplying once more gives (D). Answer: **(B), (C), (D)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$\\operatorname{rank}\\boldsymbol{M} = \\dim U = 1$, so $\\dim N(\\boldsymbol{M}) = 3 - 1 = 2$: the null space is the plane $U^\\perp$, not a line. E.g. $\\boldsymbol{M} = \\operatorname{diag}(1, 0, 0)$ kills the whole $yz$-plane."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$\\operatorname{rank}\\boldsymbol{M} = \\dim U = 2$, so $\\dim N(\\boldsymbol{M}) = 3 - 2 = 1$: the null space is the normal line $U^\\perp$ of the plane. E.g. $\\boldsymbol{M} = \\operatorname{diag}(1, 1, 0)$ has null space $\\operatorname{span}\\{\\mathbf{e}_3\\}$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$\\boldsymbol{M}\\mathbf{x}$ already lies in $U$ and $\\boldsymbol{M}$ fixes $U$, so $\\boldsymbol{M}(\\boldsymbol{M}\\mathbf{x}) = \\boldsymbol{M}\\mathbf{x}$ for all $\\mathbf{x}$: a projection matrix is idempotent."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$\\boldsymbol{M}^3 = \\boldsymbol{M}^2\\boldsymbol{M} = \\boldsymbol{M}\\boldsymbol{M} = \\boldsymbol{M}$ using (C) twice. Equivalently, the eigenvalues $0$ and $1$ satisfy $\\lambda^3 = \\lambda$."
+      }
+    ],
+    "shortcut": "For a projection onto $U \\subseteq \\mathbb{R}^3$: $\\boldsymbol{M}^k = \\boldsymbol{M}$ for all $k \\ge 1$ (so (C) and (D) are automatic), and $\\dim N(\\boldsymbol{M}) = 3 - \\dim U$ (so a line gives nullity 2 and a plane gives nullity 1).",
+    "commonTrap": "Mixing up the range and the null space in (A): the null space is not $U$ but its complement $U^\\perp$, so its dimension is $3 - \\dim U$, not $\\dim U$. A projection onto a line flattens a whole plane to zero. Some students also reject (D) because only $\\boldsymbol{M}^2 = \\boldsymbol{M}$ is the \"defining\" property, forgetting that it immediately gives $\\boldsymbol{M}^3 = \\boldsymbol{M}$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q49-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The phrase 'projection on to the subspace U' (with 'on to' as two words) is kept as printed. M is bold italic in the paper and is transcribed as \\boldsymbol{M}; the exponents in (C) and (D) (M² and M³) were read from the rendered image, since the PDF text layer flattens them to 'M2' and 'M3'."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C;D",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng=np.random.default_rng(0); r=np.linalg.matrix_rank\nfor k in (1,2):\n    A=rng.standard_normal((3,k))                  # columns span a k-dim subspace U of R^3\n    M=A@np.linalg.inv(A.T@A)@A.T                  # orthogonal projection onto U\n    print(f'dim U={k}: rank M={r(M)}, nullity={3-r(M)}, M^2==M {np.allclose(M@M,M)}, M^3==M {np.allclose(M@M@M,M)}')\n# dim U=1 -> nullity 2 ((A) false); dim U=2 -> nullity 1 ((B) true); M^2=M and M^3=M ((C),(D) true)\n# Oblique (non-orthogonal) projection onto the plane z=0 along (1,1,1): also idempotent, nullity 1\nP=np.array([[1.,0,-1],[0,1,-1],[0,0,0]])\nprint('oblique: rank',r(P),'nullity',3-r(P),'P^2==P',np.allclose(P@P,P),'P^3==P',np.allclose(P@P@P,P))\n",
+    "notes": "For a projection onto U, rank M = dim U and M is idempotent, so nullity = 3 - dim U (2 for a line, 1 for a plane) and M^3 = M^2 M = M. The numpy check builds the orthogonal projection A(A^T A)^{-1}A^T onto random 1- and 2-dimensional subspaces and confirms nullity 2 and 1 respectively, with M^2 = M and M^3 = M in both cases; an oblique projection onto a plane gives the same results, so the answer does not depend on whether the projection is orthogonal. This gives B;C;D, matching the official key B;C;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

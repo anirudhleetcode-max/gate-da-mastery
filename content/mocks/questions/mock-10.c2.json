@@ -1,0 +1,664 @@
+[
+  {
+    "id": "M10-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-correlation-covariance"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (how shifting and rescaling affect covariance and correlation) with a single-step computation; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Correlation is unchanged by shifts and positive rescaling but flips sign when exactly one variable is multiplied by a negative constant",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A café keeps daily records of the maximum temperature $X$ (in °C) and the number of cold drinks sold $Y$. From a long run of records, $\\operatorname{Var}(X) = 4$, $\\operatorname{Var}(Y) = 100$ and $\\operatorname{Cov}(X, Y) = 12$.\n\nThe analyst converts the temperature to degrees Fahrenheit, $U = 1.8X + 32$, and also tracks $V = 500 - 2Y$, the number of paper cups left at closing from an opening stock of 500 cups (each drink uses two cups).\n\nThe correlation coefficient between $U$ and $V$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.6$"
+      },
+      {
+        "label": "B",
+        "text": "$-2.16$"
+      },
+      {
+        "label": "C",
+        "text": "$-0.6$"
+      },
+      {
+        "label": "D",
+        "text": "$-0.03$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$\\rho(X, Y) = \\dfrac{12}{\\sqrt{4}\\,\\sqrt{100}} = \\dfrac{12}{20} = 0.6$.\nFor $U = aX + b$ and $V = cY + d$, $\\rho(U, V) = \\operatorname{sign}(ac)\\,\\rho(X, Y)$. Here $a = 1.8 > 0$ and $c = -2 < 0$, so $\\rho(U, V) = -0.6$.",
+      "steps": [
+        {
+          "title": "Correlation of the original variables",
+          "body": "$\\sigma_X = \\sqrt{4} = 2$ and $\\sigma_Y = \\sqrt{100} = 10$, so\n\n$$\n\\rho(X, Y) = \\frac{\\operatorname{Cov}(X, Y)}{\\sigma_X \\sigma_Y} = \\frac{12}{2 \\times 10} = 0.6\n$$"
+        },
+        {
+          "title": "Covariance of the transformed variables",
+          "body": "Additive constants do not change covariance, and multiplicative constants pull out:\n\n$$\n\\operatorname{Cov}(U, V) = \\operatorname{Cov}(1.8X + 32,\\; -2Y + 500) = (1.8)(-2)\\operatorname{Cov}(X, Y) = -3.6 \\times 12 = -43.2\n$$"
+        },
+        {
+          "title": "Standard deviations of the transformed variables",
+          "body": "$\\sigma_U = |1.8| \\times 2 = 3.6$ and $\\sigma_V = |-2| \\times 10 = 20$. Standard deviations are never negative, so the absolute value of each scale factor is used."
+        },
+        {
+          "title": "Correlation of U and V",
+          "body": "$$\n\\rho(U, V) = \\frac{-43.2}{3.6 \\times 20} = \\frac{-43.2}{72} = -0.6\n$$\n\nThe strength of the linear relationship is unchanged; only its direction flips, because more drinks sold means fewer cups left."
+        }
+      ],
+      "finalAnswer": "**(C)** $-0.6$",
+      "teaching": "Covariance measures how two variables move together, but its value depends on the units: rescaling $X$ by $a$ and $Y$ by $c$ multiplies the covariance by $ac$, while adding constants has no effect because covariance works with deviations from the mean. The correlation coefficient divides the covariance by both standard deviations, $\\rho = \\operatorname{Cov}(X, Y)/(\\sigma_X \\sigma_Y)$, which removes the units and keeps $\\rho$ between $-1$ and $1$.\n\nUnder $U = aX + b$ and $V = cY + d$ the numerator becomes $ac\\,\\operatorname{Cov}(X, Y)$ and the denominator becomes $|a||c|\\,\\sigma_X\\sigma_Y$. The magnitudes cancel and only the sign of $ac$ survives. Converting °C to °F ($a = 1.8$) changes nothing, while counting cups left ($c = -2$) reverses the direction of the relationship. So the correlation of $0.6$ between temperature and sales becomes $-0.6$ between temperature and cups left.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The magnitude is right, but it ignores the negative factor $-2$ in $V$. More drinks sold means fewer cups left, so $U$ and $V$ move in opposite directions."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is $0.6 \\times 1.8 \\times (-2)$, which treats the correlation as if it scaled like the covariance. A correlation can never exceed 1 in magnitude."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\operatorname{Cov}(U, V) = -43.2$, $\\sigma_U = 3.6$ and $\\sigma_V = 20$, so $\\rho(U, V) = -43.2/72 = -0.6$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This comes from dividing by the variances instead of the standard deviations: $12/(4 \\times 100) = 0.03$, with the sign then flipped."
+        }
+      ],
+      "shortcut": "Correlation ignores shifts and positive rescaling. Only the sign of the product of the two scale factors matters: $(+1.8)(-2) < 0$, so the answer is $-\\rho(X, Y) = -0.6$.",
+      "commonTrap": "Applying the scale factors to the correlation itself (giving $-2.16$), or forgetting that the negative coefficient of $Y$ flips the sign (giving $0.6$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "rho(U,V) = -0.6 -> option C [python: -0.6]",
+      "agreesWithKey": true,
+      "checkCode": "import math\nvx,vy,cxy=4,100,12; a,c=1.8,-2\ncov_uv=a*c*cxy; su=abs(a)*math.sqrt(vx); sv=abs(c)*math.sqrt(vy)\nprint(round(cov_uv/(su*sv),4))  # -0.6 -> option C",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — each statement is a short direct trace of a basic sort (or an inversion count) on a five-element array, with no case analysis; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Tracing bubble, selection and insertion sort, and counting insertion-sort shifts as inversions",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The array $[4, 7, 1, 8, 3]$ is to be sorted in ascending order using the standard versions of the following algorithms.\n\n- **Bubble sort:** a pass scans adjacent pairs from left to right and swaps a pair whenever the left element is larger.\n- **Selection sort:** each iteration finds the minimum of the unsorted suffix and swaps it with the first element of that suffix.\n- **Insertion sort:** the $i$-th iteration ($i = 1, 2, \\ldots$) inserts the element at index $i$ (0-based) into the sorted prefix to its left, shifting each larger element one position to the right.\n\nEach statement refers to a separate run that starts from the original array. Which of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "After the first pass of bubble sort, the array is $[4, 1, 7, 3, 8]$."
+      },
+      {
+        "label": "B",
+        "text": "After the first two iterations of selection sort, the array is $[1, 3, 4, 7, 8]$."
+      },
+      {
+        "label": "C",
+        "text": "While sorting the whole array, insertion sort performs exactly 5 one-position shifts in total."
+      },
+      {
+        "label": "D",
+        "text": "After the first two iterations of insertion sort, the array is $[1, 4, 7, 8, 3]$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Bubble pass 1: $[4, 1, 7, 3, 8]$, so A is true. Selection sort swaps, giving $[1, 7, 4, 8, 3] \\to [1, 3, 4, 8, 7]$, not $[1, 3, 4, 7, 8]$, so B is false.\nInsertion-sort shifts equal the number of inversions, which is 5, so C is true. Insertion after two iterations gives $[1, 4, 7, 8, 3]$, so D is true. Answer: A, C, D.",
+      "steps": [
+        {
+          "title": "(A) One pass of bubble sort",
+          "body": "Start with $[4, 7, 1, 8, 3]$.\n\n- $(4, 7)$: no swap.\n- $(7, 1)$: swap, giving $[4, 1, 7, 8, 3]$.\n- $(7, 8)$: no swap.\n- $(8, 3)$: swap, giving $[4, 1, 7, 3, 8]$.\n\nThe largest element 8 has bubbled to the end. **True.**"
+        },
+        {
+          "title": "(B) Two iterations of selection sort",
+          "body": "Iteration 1: the minimum of the whole array is 1 (index 2). Swapping it with index 0 gives $[1, 7, 4, 8, 3]$.\n\nIteration 2: the minimum of the suffix $[7, 4, 8, 3]$ is 3 (index 4). Swapping it with index 1 gives $[1, 3, 4, 8, 7]$.\n\nThe array is $[1, 3, 4, 8, 7]$, not $[1, 3, 4, 7, 8]$. **False.**"
+        },
+        {
+          "title": "(C) Total shifts of insertion sort",
+          "body": "Each one-position shift removes exactly one inversion (a pair $i < j$ with $a_i > a_j$), so the total number of shifts equals the number of inversions.\n\nInversions: $(4, 1)$, $(4, 3)$, $(7, 1)$, $(7, 3)$, $(8, 3)$, which makes 5.\n\nTrace check: inserting 7 needs 0 shifts, 1 needs 2 (it passes 7 and 4), 8 needs 0 and 3 needs 3 (it passes 8, 7 and 4), for a total of $0 + 2 + 0 + 3 = 5$. **True.**"
+        },
+        {
+          "title": "(D) Two iterations of insertion sort",
+          "body": "Iteration 1 inserts 7 into $[4]$, and nothing moves: $[4, 7, 1, 8, 3]$.\n\nIteration 2 inserts 1 into $[4, 7]$. Both 7 and 4 shift right: $[1, 4, 7, 8, 3]$. **True.**"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Statements A, C and D are true, and B is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "teaching": "All three elementary sorts grow a sorted region one element at a time, but each grows it differently.\n\n- **Bubble sort** compares neighbours. After pass $k$, the $k$ largest elements sit in their final places at the right end.\n- **Selection sort** scans the unsorted suffix for its minimum and makes a single **swap**. The swapped-out element can land far away (here 7 jumped to the end), which is why selection sort is not stable and why its intermediate arrays differ from insertion sort's.\n- **Insertion sort** keeps a sorted prefix and slides each new element left past every larger element.\n\nA useful invariant links insertion sort (and bubble sort) to **inversions**: every adjacent move fixes exactly one out-of-order pair. So both perform exactly as many shifts or swaps as the array has inversions: 0 for sorted input and $n(n-1)/2$ for reverse-sorted input. Counting the 5 inversions here settles statement C without a full trace.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The pass swaps $(7, 1)$ and then $(8, 3)$, giving $[4, 1, 7, 3, 8]$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Selection sort swaps: $[1, 7, 4, 8, 3]$ and then $[1, 3, 4, 8, 7]$. The stated $[1, 3, 4, 7, 8]$ is what you get if you wrongly insert the minimum by shifting, as insertion sort does."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Shifts = inversions = 5: $(4,1)$, $(4,3)$, $(7,1)$, $(7,3)$ and $(8,3)$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Inserting 7 changes nothing. Inserting 1 shifts 7 and 4, giving $[1, 4, 7, 8, 3]$."
+        }
+      ],
+      "shortcut": "For statement C, count inversions instead of tracing: the insertion-sort shift count always equals the inversion count.",
+      "commonTrap": "Treating selection sort as if it shifts elements the way insertion sort does. That produces $[1, 3, 4, 7, 8]$ and makes the false statement B look true."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D [python: ['A', 'C', 'D']]",
+      "agreesWithKey": true,
+      "checkCode": "a0=[4,7,1,8,3]\na=a0[:]\nfor j in range(4):\n    if a[j]>a[j+1]: a[j],a[j+1]=a[j+1],a[j]\nA=a==[4,1,7,3,8]\na=a0[:]\nfor i in range(2):\n    m=min(range(i,5),key=lambda k:a[k]); a[i],a[m]=a[m],a[i]\nB=a==[1,3,4,7,8]\ndef ins(a,iters):\n    a=a[:]; s=0\n    for i in range(1,iters+1):\n        key=a[i]; j=i-1\n        while j>=0 and a[j]>key: a[j+1]=a[j]; j-=1; s+=1\n        a[j+1]=key\n    return a,s\nC=ins(a0,4)[1]==5\nD=ins(a0,2)[0]==[1,4,7,8,3]\nprint([k for k,v in zip('ABCD',[A,B,C,D]) if v])  # ['A','C','D']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-clustering-algorithms",
+      "ml-kmeans"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one algorithm (Lloyd's k-means) executed for two assignment-update rounds plus a convergence check, with routine arithmetic; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Executing Lloyd's k-means algorithm to convergence from given initial centroids",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A courier company wants to split six delivery points into two zones using $k$-means clustering with $k = 2$ and Euclidean distance. The coordinates of the points (in km) are given below.\n\n| Point | $P_1$ | $P_2$ | $P_3$ | $P_4$ | $P_5$ | $P_6$ |\n|---|---|---|---|---|---|---|\n| $(x, y)$ | $(1, 1)$ | $(3, 1)$ | $(2, 4)$ | $(7, 4)$ | $(8, 7)$ | $(9, 4)$ |\n\nThe initial centroids are $P_1$ and $P_3$. In each iteration, every point is assigned to its nearest centroid, and each centroid is then recomputed as the mean of the points assigned to it. The algorithm stops when the assignment of points to clusters no longer changes. (No ties arise at any step.)\n\nThe final centroids are",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(2, 1)$ and $(6.5, 4.75)$"
+      },
+      {
+        "label": "B",
+        "text": "$(2, 2)$ and $(8, 5)$"
+      },
+      {
+        "label": "C",
+        "text": "$(2, 1)$ and $(8, 4)$"
+      },
+      {
+        "label": "D",
+        "text": "$(2, 2)$ and $(6.5, 4.75)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Iteration 1 (centroids $(1,1)$ and $(2,4)$) gives clusters $\\{P_1, P_2\\}$ and $\\{P_3, \\ldots, P_6\\}$, with new centroids $(2, 1)$ and $(6.5, 4.75)$.\nIteration 2 moves $P_3$ to cluster 1, giving centroids $(2, 2)$ and $(8, 5)$. Iteration 3 changes nothing, so the final centroids are $(2, 2)$ and $(8, 5)$.",
+      "steps": [
+        {
+          "title": "Iteration 1: assign to $c_1 = (1, 1)$ and $c_2 = (2, 4)$",
+          "body": "Squared distances $(d_1^2, d_2^2)$:\n\n| Point | to $c_1$ | to $c_2$ | Cluster |\n|---|---|---|---|\n| $P_1 (1,1)$ | 0 | 10 | 1 |\n| $P_2 (3,1)$ | 4 | 10 | 1 |\n| $P_3 (2,4)$ | 10 | 0 | 2 |\n| $P_4 (7,4)$ | 45 | 25 | 2 |\n| $P_5 (8,7)$ | 85 | 45 | 2 |\n| $P_6 (9,4)$ | 73 | 49 | 2 |\n\nUpdate: $c_1 = \\text{mean}(P_1, P_2) = (2, 1)$ and $c_2 = \\text{mean}(P_3, P_4, P_5, P_6) = \\left(\\tfrac{26}{4}, \\tfrac{19}{4}\\right) = (6.5, 4.75)$."
+        },
+        {
+          "title": "Iteration 2: reassign to $c_1 = (2, 1)$ and $c_2 = (6.5, 4.75)$",
+          "body": "The key point is $P_3 = (2, 4)$: $d_1^2 = 0 + 9 = 9$ and $d_2^2 = 20.25 + 0.5625 = 20.8125$, so $P_3$ moves to cluster 1.\n\n$P_4 = (7, 4)$ stays in cluster 2: $d_1^2 = 25 + 9 = 34$ and $d_2^2 = 0.25 + 0.5625 = 0.8125$. The other points clearly stay where they are.\n\nUpdate: $c_1 = \\text{mean}(P_1, P_2, P_3) = \\left(\\tfrac{6}{3}, \\tfrac{6}{3}\\right) = (2, 2)$ and $c_2 = \\text{mean}(P_4, P_5, P_6) = \\left(\\tfrac{24}{3}, \\tfrac{15}{3}\\right) = (8, 5)$."
+        },
+        {
+          "title": "Iteration 3: check convergence",
+          "body": "With $c_1 = (2, 2)$ and $c_2 = (8, 5)$:\n\n- $P_3$: $d_1^2 = 4$ and $d_2^2 = 37$, so it stays in cluster 1.\n- $P_2$: $d_1^2 = 2$ and $d_2^2 = 41$, so it stays in cluster 1.\n- $P_4$: $d_1^2 = 29$ and $d_2^2 = 2$, so it stays in cluster 2.\n\nThe assignment is unchanged, so the algorithm stops."
+        },
+        {
+          "title": "Result",
+          "body": "The final clusters are $\\{P_1, P_2, P_3\\}$ and $\\{P_4, P_5, P_6\\}$, with centroids $(2, 2)$ and $(8, 5)$."
+        }
+      ],
+      "finalAnswer": "**(B)** $(2, 2)$ and $(8, 5)$",
+      "teaching": "$k$-means tries to minimise the within-cluster sum of squared distances $\\sum_j \\sum_{x \\in C_j} \\lVert x - \\mu_j \\rVert^2$. Lloyd's algorithm does this by alternating two steps, each of which can only lower (or keep) that objective.\n\n1. **Assignment:** with the centroids fixed, send every point to its nearest centroid.\n2. **Update:** with the clusters fixed, move each centroid to the **mean** of its points, which is the point minimising the squared distances to them.\n\nBecause there are finitely many partitions and the objective never increases, the loop must stop, usually after a few rounds. The result can be only a local optimum, so it depends on the initial centroids.\n\nIn this question, the poor start (two seeds in the same corner) first puts $P_3$ with the far-away group. Once the centroids move, $P_3$ switches sides, and one more round confirms that nothing else changes.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "These are the centroids after only the first iteration. At that point $P_3$ is still in cluster 2, but it switches in iteration 2, so the algorithm has not converged."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "After iteration 2 the clusters are $\\{P_1, P_2, P_3\\}$ and $\\{P_4, P_5, P_6\\}$, with means $(2, 2)$ and $(8, 5)$. Iteration 3 changes nothing."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "These are the coordinate-wise **medians** of the final clusters (the $k$-medians update), not their means."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This moves $P_3$ into cluster 1 but also leaves it in cluster 2 when recomputing $c_2$. Each point belongs to exactly one cluster, so $c_2$ must be the mean of $P_4, P_5, P_6$ only."
+        }
+      ],
+      "commonTrap": "Stopping after the first update (option A). Convergence requires one more assignment pass that changes nothing, and here $P_3$ changes clusters in the second pass."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "final centroids (2, 2) and (8, 5) -> option B [python: [[2.0, 2.0], [8.0, 5.0]]]",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX=np.array([(1,1),(3,1),(2,4),(7,4),(8,7),(9,4)],float); C=X[[0,2]].copy(); lab=None\nwhile True:\n    d=((X[:,None]-C[None])**2).sum(-1); new=d.argmin(1)\n    if lab is not None and (new==lab).all(): break\n    lab=new; C=np.array([X[lab==k].mean(0) for k in range(2)])\nprint(C.tolist())  # [[2,2],[8,5]] -> option B",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-idempotent-matrix"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept: verify $P^2 = P$ with a single 2×2 product, then apply the binomial theorem (or the eigenvalues 0 and 1); about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Powers of I + P for an idempotent matrix P via the binomial theorem",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$\nP = \\begin{bmatrix} 4 & -6 \\\\ 2 & -3 \\end{bmatrix}\n$$\n\nand let $I$ denote the $2 \\times 2$ identity matrix. The matrix $(I + P)^{10}$ is equal to",
+    "options": [
+      {
+        "label": "A",
+        "text": "$I + P$"
+      },
+      {
+        "label": "B",
+        "text": "$I + 10P$"
+      },
+      {
+        "label": "C",
+        "text": "$I + 1024P$"
+      },
+      {
+        "label": "D",
+        "text": "$I + 1023P$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$P^2 = P$, so $P$ is idempotent and $P^k = P$ for all $k \\ge 1$. Since $I$ and $P$ commute,\n$(I + P)^{n} = I + \\left(\\sum_{k=1}^{n} \\binom{n}{k}\\right)P = I + (2^n - 1)P$. For $n = 10$ this is $I + 1023P$.",
+      "steps": [
+        {
+          "title": "Check idempotence",
+          "body": "$$\nP^2 = \\begin{bmatrix} 4 & -6 \\\\ 2 & -3 \\end{bmatrix}\\begin{bmatrix} 4 & -6 \\\\ 2 & -3 \\end{bmatrix} = \\begin{bmatrix} 16 - 12 & -24 + 18 \\\\ 8 - 6 & -12 + 9 \\end{bmatrix} = \\begin{bmatrix} 4 & -6 \\\\ 2 & -3 \\end{bmatrix} = P\n$$\n\nSo $P^k = P$ for every $k \\ge 1$."
+        },
+        {
+          "title": "Expand with the binomial theorem",
+          "body": "$I$ commutes with $P$, so the binomial theorem applies:\n\n$$\n(I + P)^{10} = \\sum_{k=0}^{10} \\binom{10}{k} P^k = I + \\left(\\sum_{k=1}^{10} \\binom{10}{k}\\right) P = I + (2^{10} - 1) P\n$$"
+        },
+        {
+          "title": "Evaluate",
+          "body": "$2^{10} - 1 = 1023$, so $(I + P)^{10} = I + 1023P = \\begin{bmatrix} 4093 & -6138 \\\\ 2046 & -3068 \\end{bmatrix}$."
+        },
+        {
+          "title": "Cross-check with eigenvalues",
+          "body": "$\\operatorname{tr}(P) = 1$ and $\\det(P) = -12 + 12 = 0$, so the eigenvalues of $P$ are $1$ and $0$. Those of $I + P$ are $2$ and $1$, and those of $(I + P)^{10}$ are $1024$ and $1$. The matrix $I + cP$ has eigenvalues $1 + c$ and $1$, which matches only when $c = 1023$."
+        }
+      ],
+      "finalAnswer": "**(D)** $I + 1023P$",
+      "teaching": "A square matrix $P$ is **idempotent** if $P^2 = P$. Applying it once or many times gives the same result. Projection matrices are the standard example: projecting a vector that is already projected does not move it. Two consequences follow immediately. First, $P^k = P$ for every $k \\ge 1$. Second, the only possible eigenvalues are 0 and 1, because $Pv = \\lambda v$ implies $\\lambda v = P^2 v = \\lambda^2 v$.\n\nFor a polynomial in $P$, every power collapses to $P$. Since $I$ commutes with everything, the binomial theorem for $(I + P)^n$ is valid. The constant term is $I$, and every other term is a multiple of $P$ whose coefficients add up to $\\binom{n}{1} + \\cdots + \\binom{n}{n} = 2^n - 1$. So $(I + P)^n = I + (2^n - 1)P$, and a tenth power reduces to one scalar, $1023$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This uses the false rule $(I + P)^{n} = I^{n} + P^{n}$, which drops all the cross terms of the binomial expansion."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$I + nP$ would be correct if $P^2 = 0$ (nilpotent), not if $P^2 = P$. It keeps only the first-order term."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Off by one: the coefficients $\\binom{10}{1} + \\cdots + \\binom{10}{10}$ sum to $2^{10} - 1$, not $2^{10}$. The $k = 0$ term is the separate $I$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$(I + P)^{10} = I + (2^{10} - 1)P = I + 1023P$."
+        }
+      ],
+      "shortcut": "For idempotent $P$, $f(I + P)$ acts as $f(1)$ on the null space of $P$ and as $f(2)$ on its range. So $(I + P)^n = I + (2^n - 1)P$, which gives $1023$ at once.",
+      "commonTrap": "Writing the coefficient as $2^{10} = 1024$ by forgetting that the $k = 0$ term of the expansion is $I$, not a multiple of $P$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(I+P)^10 = I + 1023P -> option D [python: [1023]]",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nP=np.array([[4,-6],[2,-3]]); I=np.eye(2,dtype=int)\nassert (P@P==P).all()\nM=np.linalg.matrix_power(I+P,10)\nprint([c for c in (1,10,1024,1023) if (M==I+c*P).all()])  # [1023] -> option D",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-gaussian-elimination",
+      "la-systems"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one round of Gaussian elimination on a 3×3 augmented matrix followed by the standard consistency test; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Using Gaussian elimination to find when a parametrised linear system has infinitely many solutions",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following system of linear equations in the real unknowns $x$, $y$ and $z$, where $k$ and $m$ are real constants:\n\n$$\n\\begin{aligned}\nx + 2y - z &= 1 \\\\\n3x + 7y - z &= 4 \\\\\n2x + 6y + kz &= m\n\\end{aligned}\n$$\n\nThe system has infinitely many solutions if and only if",
+    "options": [
+      {
+        "label": "A",
+        "text": "$k = -2$ and $m = 2$"
+      },
+      {
+        "label": "B",
+        "text": "$k = 2$ and $m = 3$"
+      },
+      {
+        "label": "C",
+        "text": "$k = 2$ and $m = 4$"
+      },
+      {
+        "label": "D",
+        "text": "$k = 2$, whatever the value of $m$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Elimination with $R_2 - 3R_1$, $R_3 - 2R_1$ and then $R_3 - 2R_2$ leaves the last row as $[\\,0\\;\\;0\\;\\;k - 2 \\mid m - 4\\,]$.\nThere are infinitely many solutions exactly when this row is all zeros: $k = 2$ and $m = 4$.",
+      "steps": [
+        {
+          "title": "Write the augmented matrix",
+          "body": "$$\n\\left[\\begin{array}{ccc|c} 1 & 2 & -1 & 1 \\\\ 3 & 7 & -1 & 4 \\\\ 2 & 6 & k & m \\end{array}\\right]\n$$"
+        },
+        {
+          "title": "Eliminate x below the first pivot",
+          "body": "$R_2 \\leftarrow R_2 - 3R_1$ gives $[\\,0\\;\\;1\\;\\;2 \\mid 1\\,]$.\n\n$R_3 \\leftarrow R_3 - 2R_1$ gives $[\\,0\\;\\;2\\;\\;k + 2 \\mid m - 2\\,]$."
+        },
+        {
+          "title": "Eliminate y below the second pivot",
+          "body": "$R_3 \\leftarrow R_3 - 2R_2$ gives $[\\,0\\;\\;0\\;\\;(k + 2) - 4 \\mid (m - 2) - 2\\,] = [\\,0\\;\\;0\\;\\;k - 2 \\mid m - 4\\,]$."
+        },
+        {
+          "title": "Read off the three cases",
+          "body": "- $k \\ne 2$: three pivots, so the solution is **unique**.\n- $k = 2$ and $m \\ne 4$: the last row reads $0 = m - 4 \\ne 0$, so there is **no solution**.\n- $k = 2$ and $m = 4$: the last row is $0 = 0$, the rank is $2 < 3$ unknowns, and there are **infinitely many solutions** (one free variable)."
+        }
+      ],
+      "finalAnswer": "**(C)** $k = 2$ and $m = 4$",
+      "teaching": "Gaussian elimination turns a system into an equivalent upper-triangular (echelon) form using row operations that do not change the solution set: adding a multiple of one row to another, swapping rows, or scaling a row by a non-zero number. Once the matrix is in echelon form, the whole story is in the last non-trivial row.\n\n- A non-zero pivot in every column means a **unique** solution.\n- A row $[\\,0 \\cdots 0 \\mid c\\,]$ with $c \\ne 0$ means the equations contradict each other: **no solution**.\n- A row that is entirely zero (including the right-hand side) means one equation was redundant. With fewer pivots than unknowns, a free variable remains: **infinitely many** solutions.\n\nEquivalently, compare $\\operatorname{rank}(A)$ with $\\operatorname{rank}([A \\mid b])$ and with the number of unknowns. Here, $k = 2$ removes the third pivot, and $m = 4$ is exactly what keeps the system consistent.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This sets the third row to zero after only the first elimination round ($k + 2 = 0$, $m - 2 = 0$). The $y$-entry of that row is still 2, so the elimination is not finished."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This comes from subtracting $R_2$ only once on the right-hand side, giving $m - 3$ instead of $(m - 2) - 2 = m - 4$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The final row $[\\,0\\;0\\;k - 2 \\mid m - 4\\,]$ vanishes exactly when $k = 2$ and $m = 4$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "A zero pivot alone is not enough. With $k = 2$ and $m \\ne 4$ the last row reads $0 = m - 4 \\ne 0$, so the system has no solution."
+        }
+      ],
+      "commonTrap": "Concluding \"infinitely many\" as soon as the coefficient part of a row becomes zero. The right-hand side of that row must also be zero, otherwise the system is inconsistent."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "k = 2, m = 4 -> option C [python: [2]; ['C']]",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nk,m=sp.symbols('k m')\nA=sp.Matrix([[1,2,-1],[3,7,-1],[2,6,k]]); b=sp.Matrix([1,4,m])\nprint(sp.solve(A.det(),k))  # [2]\ndef ninf(kv,mv):\n    Ab=A.row_join(b).subs({k:kv,m:mv}); return Ab.rank()==A.subs(k,kv).rank()<3\nprint([o for o,(kv,mv) in zip('ABCD',[(-2,2),(2,3),(2,4),(2,7)]) if ninf(kv,mv)])  # ['C']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept: PCA as the eigen-decomposition of a 2×2 covariance matrix, needing one eigenvalue/eigenvector computation; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "First principal component as the top eigenvector of the covariance matrix and its explained-variance ratio",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A dataset has two mean-centred features $x_1$ and $x_2$ (for example, the deviations of daily rainfall and river level from their averages at a gauging station). Its sample covariance matrix is\n\n$$\n\\Sigma = \\begin{bmatrix} 6 & 2 \\\\ 2 & 3 \\end{bmatrix}.\n$$\n\nPrincipal component analysis (PCA) is applied to this data. The unit direction of the first principal component (up to sign) and the fraction of the total variance it explains are, respectively,",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{1}{\\sqrt{5}}(2, 1)$ and $\\dfrac{7}{9}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{1}{\\sqrt{5}}(1, 2)$ and $\\dfrac{7}{9}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{1}{\\sqrt{5}}(1, -2)$ and $\\dfrac{2}{9}$"
+      },
+      {
+        "label": "D",
+        "text": "$(1, 0)$ and $\\dfrac{2}{3}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The eigenvalues of $\\Sigma$ solve $\\lambda^2 - 9\\lambda + 14 = 0$, giving $\\lambda = 7$ and $2$. For $\\lambda = 7$, $-v_1 + 2v_2 = 0$, so $v = (2, 1)/\\sqrt{5}$.\nThe explained fraction is $7/(7 + 2) = 7/9 \\approx 0.78$.",
+      "steps": [
+        {
+          "title": "PCA reduces to an eigenproblem",
+          "body": "For mean-centred data, the first principal component is the unit vector $v$ that maximises the projected variance $v^\\top \\Sigma v$. This is the eigenvector of $\\Sigma$ with the largest eigenvalue, and that eigenvalue is the variance along $v$."
+        },
+        {
+          "title": "Eigenvalues",
+          "body": "$\\operatorname{tr}(\\Sigma) = 9$ and $\\det(\\Sigma) = 18 - 4 = 14$, so\n\n$$\n\\lambda^2 - 9\\lambda + 14 = 0 \\;\\Rightarrow\\; \\lambda = \\frac{9 \\pm \\sqrt{81 - 56}}{2} = \\frac{9 \\pm 5}{2} = 7,\\; 2\n$$"
+        },
+        {
+          "title": "Eigenvector for the largest eigenvalue",
+          "body": "$(\\Sigma - 7I)v = \\begin{bmatrix} -1 & 2 \\\\ 2 & -4 \\end{bmatrix} v = 0$ gives $-v_1 + 2v_2 = 0$, so $v_1 = 2v_2$ and $v = \\dfrac{1}{\\sqrt{5}}(2, 1)$.\n\nCheck: $\\Sigma (2, 1)^\\top = (12 + 2,\\; 4 + 3) = (14, 7) = 7\\,(2, 1)$."
+        },
+        {
+          "title": "Explained variance",
+          "body": "Total variance $= \\operatorname{tr}(\\Sigma) = \\lambda_1 + \\lambda_2 = 9$. The first component explains $7/9 \\approx 0.778$ (about 77.8%)."
+        }
+      ],
+      "finalAnswer": "**(A)** $\\dfrac{1}{\\sqrt{5}}(2, 1)$ and $\\dfrac{7}{9}$",
+      "teaching": "PCA looks for the direction in which the data are most spread out. If $v$ is a unit vector, the variance of the projections $v^\\top x$ is $v^\\top \\Sigma v$. Maximising this subject to $\\lVert v \\rVert = 1$ (with a Lagrange multiplier) gives $\\Sigma v = \\lambda v$. So the principal directions are the eigenvectors of the covariance matrix, and the variance captured along each one is its eigenvalue.\n\nThe total variance, the sum of the diagonal of $\\Sigma$, equals the sum of the eigenvalues. The fraction explained by the $k$-th component is therefore $\\lambda_k / \\sum_j \\lambda_j$.\n\nHere $x_1$ alone has variance 6, but the positive covariance tilts the best direction towards $x_2$. Along $(2, 1)/\\sqrt{5}$ the variance rises to 7, which is more than either original axis gives. The remaining 2 units of variance lie along the orthogonal direction $(1, -2)/\\sqrt{5}$, which PCA would discard first.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The top eigenvalue is 7 with eigenvector $(2, 1)/\\sqrt{5}$, and $7/(7 + 2) = 7/9$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The fraction is right but the vector is wrong: $\\Sigma (1, 2)^\\top = (10, 8)$ is not parallel to $(1, 2)$. It comes from misreading $-v_1 + 2v_2 = 0$ as $v_2 = 2v_1$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is the **second** principal component, the eigenvector of the smallest eigenvalue 2. It is the direction PCA discards first."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This picks the axis with the largest diagonal variance (6 out of 9) and ignores the covariance. The variance along $(2, 1)/\\sqrt{5}$ is 7, which is larger."
+        }
+      ],
+      "shortcut": "For a $2 \\times 2$ covariance matrix, get the eigenvalues from the trace and determinant ($\\lambda^2 - 9\\lambda + 14 = 0$). Then test each candidate direction with a single product $\\Sigma v$.",
+      "commonTrap": "Choosing the original axis with the largest variance, $(1, 0)$, and ignoring the off-diagonal covariance, which rotates the best direction."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "eigenvalues 7, 2; PC1 = (2,1)/sqrt(5); ratio 7/9 = 0.7778 -> option A [python: [2.0, 7.0] [2.0, 1.0] 0.7778]",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS=np.array([[6,2],[2,3]],float); w,V=np.linalg.eigh(S)\nv=V[:,-1]*np.sign(V[0,-1])\nprint(w.round(6).tolist(), (v*np.sqrt(5)).round(6).tolist(), round(w[-1]/w.sum(),4))  # [2,7] [2,1] 0.7778 -> option A",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M10-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-10",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked concepts (attribute closures to find all candidate keys, then the 3NF test applied to each of six FDs) with routine but careful checking; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Testing each functional dependency against the 3NF condition using candidate keys and prime attributes",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E, F)$ with the following set of functional dependencies:\n\n$$\n\\mathcal{F} = \\{\\, AB \\to C,\\;\\; C \\to B,\\;\\; A \\to D,\\;\\; D \\to E,\\;\\; AC \\to F,\\;\\; EF \\to D \\,\\}\n$$\n\nThe number of functional dependencies in $\\mathcal{F}$ that violate the third normal form (3NF) condition for $R$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "$A$ never appears on a right-hand side, and $A^+ = \\{A, D, E\\}$. The candidate keys are $AB$ and $AC$, so the prime attributes are $A$, $B$ and $C$.\nThe FDs $AB \\to C$ and $AC \\to F$ have superkey left sides, and $C \\to B$ has a prime right side, so all three are fine. $A \\to D$, $D \\to E$ and $EF \\to D$ each have a non-superkey left side and a non-prime right side. Answer: **3**.",
+      "steps": [
+        {
+          "title": "3NF condition",
+          "body": "A non-trivial FD $X \\to Y$ (here $Y$ is always a single attribute) satisfies 3NF if **either** $X$ is a superkey of $R$ **or** $Y$ is a prime attribute (a member of some candidate key). It violates 3NF only when both fail."
+        },
+        {
+          "title": "Find the candidate keys",
+          "body": "$A$ appears on no right-hand side, so every key contains $A$. Its closure is $A^+ = \\{A, D, E\\}$ (via $A \\to D$ and $D \\to E$), which is not all of $R$.\n\n- $(AB)^+$: $AB \\to C$ adds $C$; $A \\to D$ and $D \\to E$ add $D, E$; $AC \\to F$ adds $F$. This is all of $R$, so $AB$ is a key.\n- $(AC)^+$: $C \\to B$ adds $B$, $AC \\to F$ adds $F$, and $A \\to D \\to E$ adds $D, E$. This is all of $R$, so $AC$ is a key.\n- $(AD)^+ = \\{A, D, E\\}$, $(AE)^+ = \\{A, D, E\\}$ and $(AF)^+ = \\{A, D, E, F\\}$, so none of these is a key. Every other superkey contains $AB$ or $AC$.\n\nThe candidate keys are $AB$ and $AC$, and the prime attributes are $\\{A, B, C\\}$."
+        },
+        {
+          "title": "Test each FD",
+          "body": "| FD | LHS superkey? | RHS prime? | 3NF? |\n|---|---|---|---|\n| $AB \\to C$ | yes | yes | OK |\n| $C \\to B$ | no ($C^+ = \\{B, C\\}$) | yes | OK |\n| $A \\to D$ | no | no | **violates** |\n| $D \\to E$ | no | no | **violates** |\n| $AC \\to F$ | yes | no | OK |\n| $EF \\to D$ | no ($(EF)^+ = \\{D, E, F\\}$) | no | **violates** |"
+        },
+        {
+          "title": "Count",
+          "body": "Three FDs violate 3NF: $A \\to D$ (a partial dependency on the key $AB$), $D \\to E$ and $EF \\to D$ (transitive dependencies through non-key attributes). For comparison, four FDs violate BCNF, because $C \\to B$ also has a non-superkey left side."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "teaching": "Normal forms restrict which functional dependencies may hold, so that facts are not stored redundantly. BCNF is the strict version: in every non-trivial FD $X \\to Y$, the left side $X$ must be a superkey, meaning it determines the whole tuple. 3NF relaxes this by also allowing $X \\to Y$ when $Y$ is **prime**, that is, part of some candidate key. This relaxation is what guarantees that a dependency-preserving 3NF decomposition always exists.\n\nTesting an FD for 3NF therefore needs all the candidate keys first. The quick route is to put every attribute that never appears on a right-hand side into the key, take its closure, and then extend it minimally. Here that gives the keys $AB$ and $AC$. The FD $C \\to B$ breaks BCNF but is allowed in 3NF because $B$ is prime. The FDs that make $D$ and $E$ depend on part of a key, or on other non-key attributes, are the genuine 3NF violations.",
+      "commonTrap": "Counting $C \\to B$ as a violation (answering 4, the BCNF count) because $C$ is not a superkey, while overlooking that $B$ is prime. Missing the second key $AC$ leads to the same error, since $C$ then looks non-prime."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3 (keys AB, AC) [python: ['AB', 'AC'] 3]",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nR=set('ABCDEF'); F=[('AB','C'),('C','B'),('A','D'),('D','E'),('AC','F'),('EF','D')]\ndef cl(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nkeys=[]\nfor n in range(1,7):\n    for c in combinations(sorted(R),n):\n        if cl(c)==R and not any(set(k)<=set(c) for k in keys): keys.append(c)\nprime=set().union(*map(set,keys))\nprint([''.join(k) for k in keys], sum(1 for l,r in F if not set(r)<=set(l) and cl(l)!=R and not set(r)<=prime))  # ['AB','AC'] 3",
+      "notes": ""
+    }
+  }
+]

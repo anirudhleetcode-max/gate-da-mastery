@@ -1,0 +1,113 @@
+{
+  "id": "DA2026-S8-Q45",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 45,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-inference",
+  "subtopicIds": [
+    "ps-clt",
+    "ps-continuous-named"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "HARD",
+  "difficultyRationale": "Platform-estimated: HARD - needs the non-routine insight that the partial sum is the Poisson($n$) CDF evaluated at its own mean, followed by the central limit theorem (two linked concepts), and carries a likely trap (answering 1.0 by treating the truncated sum as the full exponential series); about 3 minutes.",
+  "estimatedTimeSec": 180,
+  "stem": "Let\n\n$$\nL = \\lim_{n \\to \\infty} \\sum_{k=0}^{n} \\frac{e^{-n} n^k}{k!}\n$$\n\nWhich of the following is the value of $L$?",
+  "options": [
+    {
+      "label": "A",
+      "text": "0.5"
+    },
+    {
+      "label": "B",
+      "text": "1.0"
+    },
+    {
+      "label": "C",
+      "text": "0"
+    },
+    {
+      "label": "D",
+      "text": "$e^{-1}$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Each term $\\frac{e^{-n} n^k}{k!}$ is the Poisson($n$) probability $P(N_n = k)$, so the sum is $P(N_n \\le n)$, the Poisson CDF at its own mean.\n\nWrite $N_n$ as a sum of $n$ i.i.d. Poisson(1) variables (mean 1, variance 1). By the CLT, $P(N_n \\le n) = P\\big(\\tfrac{N_n - n}{\\sqrt{n}} \\le 0\\big) \\to \\Phi(0) = \\tfrac12$. So $L = 0.5$: **(A)**.",
+    "steps": [
+      {
+        "title": "Recognise the terms as Poisson probabilities",
+        "body": "If $N_n \\sim \\text{Poisson}(\\lambda = n)$, its PMF is\n\n$$\nP(N_n = k) = \\frac{e^{-n} n^k}{k!}, \\qquad k = 0, 1, 2, \\dots\n$$\n\nThe summand is exactly this PMF, and the sum stops at $k = n$. Hence\n\n$$\nS_n := \\sum_{k=0}^{n} \\frac{e^{-n} n^k}{k!} = P(N_n \\le n),\n$$\n\nthe Poisson($n$) CDF evaluated at $n$, which is its **mean**. So $L = \\lim_{n\\to\\infty} P(N_n \\le n)$."
+      },
+      {
+        "title": "Write $N_n$ as a sum of i.i.d. variables",
+        "body": "Independent Poisson variables add: if $X_1, \\dots, X_n$ are i.i.d. Poisson(1), then\n\n$$\nX_1 + X_2 + \\cdots + X_n \\sim \\text{Poisson}(1 + 1 + \\cdots + 1) = \\text{Poisson}(n).\n$$\n\nSo $N_n$ has the same distribution as $\\sum_{i=1}^{n} X_i$, where each $X_i$ has $E[X_i] = 1$ and $\\operatorname{Var}(X_i) = 1$. Therefore $E[N_n] = n$ and $\\operatorname{Var}(N_n) = n$."
+      },
+      {
+        "title": "Apply the central limit theorem",
+        "body": "Standardise the event:\n\n$$\nP(N_n \\le n) = P\\!\\left( \\frac{N_n - n}{\\sqrt{n}} \\le \\frac{n - n}{\\sqrt{n}} \\right) = P\\!\\left( Z_n \\le 0 \\right), \\qquad Z_n = \\frac{\\sum_{i=1}^n X_i - n \\cdot 1}{\\sqrt{n} \\cdot 1}.\n$$\n\nBy the CLT, $Z_n$ converges in distribution to $Z \\sim N(0, 1)$. The standard normal CDF $\\Phi$ is continuous at $0$, so\n\n$$\nP(Z_n \\le 0) \\to \\Phi(0) = \\frac{1}{2}.\n$$\n\nWhether the event is $\\le n$ or $< n$ does not matter: the single term $P(N_n = n) = \\frac{e^{-n} n^n}{n!} \\approx \\frac{1}{\\sqrt{2\\pi n}}$ (Stirling) tends to $0$."
+      },
+      {
+        "title": "Numerical sanity check",
+        "body": "Evaluating $S_n$ directly (terms computed in log-space to avoid overflow):\n\n| $n$ | $S_n$ | $S_n - 0.5$ |\n| --- | --- | --- |\n| 1 | 0.735759 | 0.235759 |\n| 10 | 0.583040 | 0.083040 |\n| 100 | 0.526562 | 0.026562 |\n| 1000 | 0.508409 | 0.008409 |\n| 10000 | 0.502660 | 0.002660 |\n| 100000 | 0.500841 | 0.000841 |\n\nThe sum decreases towards $0.5$ from above, and the gap shrinks by about $\\sqrt{10} \\approx 3.16$ for every tenfold increase in $n$, i.e. like $1/\\sqrt{n}$. This is the usual CLT rate. Hence $L = 0.5$, option **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)** 0.5",
+    "teaching": "**The Poisson distribution.** A Poisson($\\lambda$) random variable counts events that occur independently at an average rate $\\lambda$. Its PMF is $P(N = k) = e^{-\\lambda} \\lambda^k / k!$ for $k = 0, 1, 2, \\dots$, and both its mean and its variance equal $\\lambda$. Summing the PMF over **all** $k$ gives $e^{-\\lambda} \\sum_{k \\ge 0} \\lambda^k / k! = e^{-\\lambda} e^{\\lambda} = 1$. Summing only up to some cut-off $m$ gives the CDF $P(N \\le m)$, which is a number strictly between 0 and 1.\n\n**Additivity.** If $X \\sim \\text{Poisson}(a)$ and $Y \\sim \\text{Poisson}(b)$ are independent, then $X + Y \\sim \\text{Poisson}(a + b)$. So a Poisson($n$) variable can be viewed as the total of $n$ independent Poisson(1) counts, one per unit of time.\n\n**Central limit theorem.** For i.i.d. $X_i$ with mean $\\mu$ and finite variance $\\sigma^2$, the standardised sum $\\frac{\\sum X_i - n\\mu}{\\sigma\\sqrt{n}}$ converges in distribution to $N(0,1)$. So for large $n$, $P\\big(\\sum X_i \\le n\\mu + c\\,\\sigma\\sqrt{n}\\big) \\approx \\Phi(c)$.\n\n**Connecting to this question.** The sum is $P(N_n \\le n)$ for $N_n \\sim$ Poisson($n$). The cut-off $n$ is exactly the mean, which corresponds to $c = 0$ standard deviations above the mean. The normal limit is symmetric about 0, so $\\Phi(0) = 1/2$: in the limit, half of the probability lies at or below the mean and half above. The same reasoning shows, for instance, that $\\lim_{n\\to\\infty} \\sum_{k=0}^{n + \\sqrt{n}} e^{-n} n^k / k! = \\Phi(1) \\approx 0.841$. The key is to spot that a limit of sums of this shape is really a probability statement about a sum of i.i.d. variables.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "The sum equals $P(N_n \\le n)$ for $N_n \\sim$ Poisson($n$). By the CLT, $\\frac{N_n - n}{\\sqrt{n}} \\to N(0,1)$, so the probability tends to $\\Phi(0) = 0.5$. Numerically, $S_{10^5} \\approx 0.5008$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "The value 1 would need the **full** series $\\sum_{k=0}^{\\infty} n^k/k! = e^n$. Here the sum is cut off at $k = n$, exactly at the mean, and the upper limit moves together with $n$. The terms with $k > n$ carry about half the probability, so the limit is $\\tfrac12$, not $1$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Each individual term does go to 0 (the largest is about $1/\\sqrt{2\\pi n}$), but the number of terms grows with $n$. Their total is a probability that stays near $0.5$, e.g. $S_{100} \\approx 0.527$, so it does not vanish."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$e^{-1}$ is only the single term $P(N = 0)$ for a Poisson(1) variable. Even at $n = 1$ the sum is $e^{-1}(1 + 1) = 2/e \\approx 0.736$, and as $n$ grows it decreases towards $0.5$, not $e^{-1} \\approx 0.368$."
+      }
+    ],
+    "shortcut": "A sum $\\sum_{k=0}^{n} e^{-n} n^k / k!$ is the Poisson($n$) CDF at its own mean. For any sum of $n$ i.i.d. finite-variance variables, the probability of being at most the mean tends to $\\Phi(0) = \\tfrac12$ by the CLT. So the answer is $0.5$ without any computation.",
+    "commonTrap": "Using $\\sum n^k / k! = e^n$ to conclude that $e^{-n} e^n = 1$ (option B). That identity needs the sum to run to infinity for a **fixed** $n$. Here the sum stops at $k = n$, which is the mean, so roughly half of the Poisson mass (the part with $k > n$) is always excluded."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q45-1.webp",
+    "/pyq/2026/official/Q45-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The limit expression is transcribed from the rendered image (the PDF text layer scrambles the sum's limits). The paper typesets options (A)-(C) as plain numerals and (D) as the math expression e^{-1}. The second official crop (Q45-2) contains only the page header and an empty table border, with no question content."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (L = 0.5)",
+    "agreesWithKey": true,
+    "checkCode": "from math import exp, log, lgamma, sqrt, pi\ndef S(n):  # sum_{k=0}^n e^{-n} n^k/k! = P(Poisson(n) <= n), terms computed in log-space\n    return sum(exp(-n + k*log(n) - lgamma(k+1)) for k in range(n+1))\nfor n in [1, 10, 100, 1000, 10000, 100000]:\n    print(n, round(S(n), 6), 'gap from 0.5:', round(S(n) - 0.5, 6))\n# gap shrinks like 1/sqrt(n) (about 2/(3*sqrt(2*pi*n))), consistent with a CLT limit of 1/2\nprint([round(0.5 + 2/(3*sqrt(2*pi*n)), 6) for n in [100, 10000]])\nassert abs(S(100000) - 0.5) < 1e-3   # -> L = 0.5, option (A)",
+    "notes": "Analytic: the sum is P(N_n <= n) for N_n ~ Poisson(n) = sum of n i.i.d. Poisson(1), so the CLT gives Phi(0) = 1/2. Numeric: direct evaluation gives S_n = 0.5831, 0.5266, 0.5084, 0.5027, 0.5008 for n = 10, 1e2, 1e3, 1e4, 1e5, decreasing to 0.5 with a gap of order 1/sqrt(n). This matches official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

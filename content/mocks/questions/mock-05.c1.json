@@ -1,0 +1,728 @@
+[
+  {
+    "id": "M05-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-er-model"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the standard ER-to-relational mapping rules) applied to five components with a direct count; about a minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "ER-to-relational mapping: minimum number of tables with a multivalued attribute, a many-to-one and a many-to-many relationship.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An ER model for a city bike-sharing service contains the following components.\n\n- Strong entity set **Station** with key `StationID` and a single-valued attribute `Address`.\n- Strong entity set **Bike** with key `BikeID` and a single-valued attribute `Model`.\n- Strong entity set **Rider** with key `RiderID`, a single-valued attribute `Name` and a **multivalued** attribute `PhoneNo`.\n- Relationship set **HomeDock** between Bike and Station, many-to-one from Bike to Station. Every bike has exactly one home station (total participation of Bike), but a station need not be the home station of any bike.\n- Relationship set **Favourite** between Rider and Station, many-to-many, with no descriptive attributes.\n\nThe model is converted into relational tables such that every table is in first normal form, no table ever needs a NULL value, and no fact is stored more than once. Subject to these conditions, tables are merged wherever possible.\n\nThe minimum number of tables required is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 5,
+      "max": 5
+    },
+    "solution": {
+      "quick": "The three strong entity sets give 3 tables. The multivalued `PhoneNo` needs its own table (1NF), and the many-to-many Favourite needs its own table. The many-to-one HomeDock, with total participation on the many side, is absorbed into Bike as a foreign key.\nTotal $= 3 + 1 + 1 = 5$.",
+      "steps": [
+        {
+          "title": "Map the strong entity sets",
+          "body": "Each strong entity set becomes a table containing its single-valued attributes: Station(StationID, Address), Bike(BikeID, Model) and Rider(RiderID, Name). Running count: **3**."
+        },
+        {
+          "title": "Handle the multivalued attribute",
+          "body": "A rider can have several phone numbers, so `PhoneNo` cannot be a column of Rider without breaking first normal form. It gets its own table RiderPhone(RiderID, PhoneNo), keyed by the pair (RiderID, PhoneNo). Running count: **4**."
+        },
+        {
+          "title": "Absorb the many-to-one relationship",
+          "body": "HomeDock is many-to-one from Bike to Station, so each bike is linked to at most one station. The relationship can therefore be stored as a foreign key inside Bike: Bike(BikeID, Model, StationID). Every bike has exactly one home station (total participation), so this column is never NULL. No new table is needed, and the count stays at **4**."
+        },
+        {
+          "title": "Keep the many-to-many relationship separate",
+          "body": "A rider can have many favourite stations and a station can be the favourite of many riders, so neither side can hold the other's key in one atomic column. Favourite becomes Favourite(RiderID, StationID), keyed by the pair. Running count: **5**."
+        },
+        {
+          "title": "Confirm that nothing else can be merged",
+          "body": "Station cannot be folded into Bike. A station that is nobody's home station would be lost (or would need NULLs), and a station's Address would be repeated for every bike docked there. RiderPhone and Favourite cannot be merged into other tables for the reasons above. Minimum number of tables $= 5$."
+        }
+      ],
+      "finalAnswer": "**5**",
+      "teaching": "The ER-to-relational mapping follows a few fixed rules. A strong entity set becomes one table whose columns are its single-valued attributes and whose key is the entity key. A multivalued attribute can hold several values for one entity, but a relational column must hold a single atomic value (first normal form), so the attribute moves to a separate table keyed by (entity key, attribute value).\n\nFor a relationship set, look at the cardinality. In a many-to-one relationship, every entity on the \"many\" side is linked to at most one entity on the \"one\" side, so the \"one\" side's key can be stored as a foreign-key column in the \"many\" side's table. If the many side participates totally, that column is never NULL. A many-to-many relationship always needs its own table, keyed by the combination of the participating keys. Applied here, these rules give Station, Bike (with StationID), Rider, RiderPhone and Favourite: 5 tables.",
+      "commonTrap": "Answering **4** by leaving `PhoneNo` inside Rider (a multivalued column breaks 1NF). The other common wrong answer is **6**, from creating a separate HomeDock table even though a many-to-one relationship with total participation on the many side folds into Bike as a foreign key."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "5",
+      "agreesWithKey": true,
+      "checkCode": "# entity -> list of multivalued attributes\nents = {'Station': [], 'Bike': [], 'Rider': ['PhoneNo']}\n# relationship -> (cardinality, many side participates totally?)\nrels = {'HomeDock': ('M:1', True), 'Favourite': ('M:N', None)}\nn = len(ents) + sum(len(mv) for mv in ents.values())\nfor card, total in rels.values():\n    if card == 'M:N' or (card == 'M:1' and not total):\n        n += 1  # own table; M:1 with total participation folds into the many side\nprint(n)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-relational-algebra"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — direct evaluation of one selection, natural join, projection and set difference on a nine-row instance; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Evaluating a relational algebra expression with selection, natural join, projection and set difference (negation through difference).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An airline's crew database contains the relations **Pilot**(PID, Name) and **Certified**(PID, Aircraft), with the following instances.\n\n**Pilot**\n\n| PID | Name |\n| --- | --- |\n| 1 | Asha |\n| 2 | Ravi |\n| 3 | Meera |\n| 4 | Kabir |\n\n**Certified**\n\n| PID | Aircraft |\n| --- | --- |\n| 1 | A320 |\n| 1 | B737 |\n| 2 | B737 |\n| 3 | A320 |\n| 3 | ATR72 |\n\nConsider the relational algebra expression\n\n$$\n\\pi_{\\text{Name}}(\\text{Pilot}) \\;-\\; \\pi_{\\text{Name}}\\big(\\text{Pilot} \\bowtie \\sigma_{\\text{Aircraft} = \\text{'B737'}}(\\text{Certified})\\big)\n$$\n\nwhere $\\bowtie$ denotes the natural join. The result of this expression is",
+    "options": [
+      {
+        "label": "A",
+        "text": "{Asha, Ravi}"
+      },
+      {
+        "label": "B",
+        "text": "{Meera, Kabir}"
+      },
+      {
+        "label": "C",
+        "text": "{Meera}"
+      },
+      {
+        "label": "D",
+        "text": "{Kabir}"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "The selection keeps the B737 rows (PIDs 1 and 2), so the right operand is {Asha, Ravi}. Subtracting this from all names {Asha, Ravi, Meera, Kabir} leaves **{Meera, Kabir}**, the pilots who are not certified on the B737.",
+      "steps": [
+        {
+          "title": "Apply the selection",
+          "body": "$\\sigma_{\\text{Aircraft} = \\text{'B737'}}(\\text{Certified}) = \\{(1, \\text{B737}),\\ (2, \\text{B737})\\}$."
+        },
+        {
+          "title": "Join with Pilot and project",
+          "body": "The only common attribute is PID, so the natural join matches on PID and gives $\\{(1, \\text{Asha}, \\text{B737}),\\ (2, \\text{Ravi}, \\text{B737})\\}$. Projecting on Name gives the right operand {Asha, Ravi}."
+        },
+        {
+          "title": "Compute the left operand",
+          "body": "$\\pi_{\\text{Name}}(\\text{Pilot}) = \\{\\text{Asha}, \\text{Ravi}, \\text{Meera}, \\text{Kabir}\\}$."
+        },
+        {
+          "title": "Take the set difference",
+          "body": "$\\{\\text{Asha}, \\text{Ravi}, \\text{Meera}, \\text{Kabir}\\} - \\{\\text{Asha}, \\text{Ravi}\\} = \\{\\text{Meera}, \\text{Kabir}\\}$.\nKabir has no Certified row at all, but he is in the left operand and not in the right one, so he stays. The answer is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Every relational algebra operator takes relations and returns a relation, so an expression is evaluated from the inside out. Selection $\\sigma$ keeps the rows that satisfy a condition. Projection $\\pi$ keeps the chosen columns and removes duplicate rows. The natural join $\\bowtie$ pairs rows of two relations that agree on all common attributes (here PID) and keeps each common attribute once. Set difference $R - S$ keeps the tuples of $R$ that do not appear in $S$, and needs $R$ and $S$ to have the same schema.\n\nThe pattern \"all X minus the X that satisfy P\" is the standard way to express negation (\"not certified on the B737\") in relational algebra, because no single operator means \"there is no such row\". The left operand decides which tuples can appear in the result. A pilot with no Certified row at all is still in $\\pi_{\\text{Name}}(\\text{Pilot})$, and so he is kept.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "{Asha, Ravi} is only the right operand, the pilots who **are** certified on the B737. The difference has not been taken."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "All pilot names minus the B737-certified names {Asha, Ravi} gives {Meera, Kabir}."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This drops Kabir on the mistaken belief that a pilot with no Certified tuple cannot appear in the result. The left operand comes from Pilot alone, so Kabir is in it, and he is absent from the right operand."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the result when the selection is ignored. Then $\\pi_{\\text{Name}}(\\text{Pilot} \\bowtie \\text{Certified}) = \\{\\text{Asha}, \\text{Ravi}, \\text{Meera}\\}$, which leaves only the pilot with no certification at all."
+        }
+      ],
+      "commonTrap": "Dropping Kabir because he never appears in Certified. Set difference keeps every tuple of the left operand that is absent from the right operand, whether or not it joins with anything."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "['Kabir', 'Meera']",
+      "agreesWithKey": true,
+      "checkCode": "pilot = {1: 'Asha', 2: 'Ravi', 3: 'Meera', 4: 'Kabir'}\ncert = [(1, 'A320'), (1, 'B737'), (2, 'B737'), (3, 'A320'), (3, 'ATR72')]\nleft = set(pilot.values())\nright = {pilot[p] for p, a in cert if a == 'B737' and p in pilot}\nprint(sorted(left - right))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked concepts (closure-based candidate-key search, then the 2NF/3NF/BCNF tests) with a few routine closures; about two and a half minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Candidate keys from attribute closures, and the 2NF, 3NF and BCNF conditions (including the prime-attribute exemption in 3NF).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E)$ with the set of functional dependencies\n\n$$\nF = \\{\\, AB \\to C,\\;\\; C \\to D,\\;\\; D \\to A,\\;\\; B \\to E \\,\\}\n$$\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$BD$ is a candidate key of $R$."
+      },
+      {
+        "label": "B",
+        "text": "$R$ is in second normal form (2NF)."
+      },
+      {
+        "label": "C",
+        "text": "If the attribute $E$ and the dependency $B \\to E$ are removed, the resulting relation $R'(A, B, C, D)$ with dependencies $\\{AB \\to C,\\ C \\to D,\\ D \\to A\\}$ is in 3NF but not in BCNF."
+      },
+      {
+        "label": "D",
+        "text": "The dependency $C \\to D$ violates the 3NF condition in $R$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "$B$ is on no right-hand side, so it is in every key. The candidate keys are $AB$, $BC$ and $BD$, which makes $A, B, C, D$ prime and $E$ non-prime.\n$B \\to E$ is a partial dependency, so $R$ is not in 2NF. $C \\to D$ is allowed in 3NF because $D$ is prime. $R'$ is in 3NF but $C \\to D$ breaks BCNF. **(A), (C)**",
+      "steps": [
+        {
+          "title": "Find the attribute every key must contain",
+          "body": "$B$ never appears on the right side of any FD, so every candidate key contains $B$. Since $\\{B\\}^+ = \\{B, E\\}$, $B$ alone is not a key."
+        },
+        {
+          "title": "Extend B by one attribute",
+          "body": "- $\\{A,B\\}^+$: $AB \\to C$ adds $C$, $C \\to D$ adds $D$, $B \\to E$ adds $E$, giving $\\{A,B,C,D,E\\}$.\n- $\\{B,C\\}^+$: $C \\to D$, then $D \\to A$, then $B \\to E$, giving all five attributes.\n- $\\{B,D\\}^+$: $D \\to A$, then $AB \\to C$, then $B \\to E$, giving all five attributes.\n- $\\{B,E\\}^+ = \\{B,E\\}$, which is not a key.\n\n$B$ alone is not a key, so $AB$, $BC$ and $BD$ are minimal. The candidate keys are **AB, BC, BD**. The prime attributes are $A, B, C, D$, and the only non-prime attribute is $E$."
+        },
+        {
+          "title": "Statements A and B",
+          "body": "(A) is true because $BD$ is a candidate key.\n2NF forbids a non-prime attribute from depending on a proper subset of a candidate key. But in $B \\to E$, $B$ is a proper subset of the key $AB$ and $E$ is non-prime, so this is a partial dependency. $R$ is **not** in 2NF (and therefore not in 3NF), so (B) is false."
+        },
+        {
+          "title": "Statement D",
+          "body": "3NF allows a non-trivial FD $X \\to Y$ if $X$ is a superkey **or** every attribute of $Y$ is prime. $C$ is not a superkey ($C^+ = \\{C, D, A\\}$), but $D$ is prime because it belongs to the key $BD$. So $C \\to D$ satisfies the 3NF condition, and (D) is false."
+        },
+        {
+          "title": "Statement C",
+          "body": "In $R'(A,B,C,D)$, $B$ is still on no right-hand side and $B^+ = \\{B\\}$. The keys are again $AB$, $BC$ and $BD$, so every attribute is prime. Every FD then has a prime right side, and $R'$ is in 3NF. However, $C \\to D$ has a left side that is not a superkey (and so does $D \\to A$), so $R'$ is not in BCNF. (C) is true."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "teaching": "Normal forms are tested in two stages: first find all the candidate keys, then check each FD against the definitions. To find keys, compute attribute closures $X^+$ by repeatedly applying every FD whose left side is already inside $X$. An attribute that appears on no right-hand side must be in every key, which prunes the search. An attribute is **prime** if it belongs to at least one candidate key.\n\n- **2NF** forbids a non-prime attribute from depending on a proper part of a candidate key.\n- **3NF** requires that, for every non-trivial $X \\to Y$, either $X$ is a superkey or every attribute of $Y$ is prime.\n- **BCNF** drops the \"prime\" exemption: every determinant must be a superkey.\n\nSo an FD such as $C \\to D$ with a prime right side is acceptable in 3NF but still breaks BCNF. Here $B \\to E$ is a partial dependency of the non-prime $E$, which pushes $R$ below 2NF. Removing it leaves a relation that is in 3NF but not in BCNF.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\{B,D\\}^+ = \\{A,B,C,D,E\\}$, and neither $B$ nor $D$ alone is a key, so $BD$ is a candidate key."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$B \\to E$ makes the non-prime attribute $E$ depend on $B$, a proper subset of the key $AB$. This partial dependency violates 2NF."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$R'$ has keys $AB$, $BC$ and $BD$, so every right side ($C$, $D$, $A$) is prime and $R'$ is in 3NF. But $C \\to D$ (and $D \\to A$) has a non-superkey left side, so $R'$ is not in BCNF."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$C$ is not a superkey, but $D$ is prime (part of the key $BD$), so $C \\to D$ satisfies the 3NF condition."
+        }
+      ],
+      "shortcut": "An attribute that is on no right-hand side (here $B$) is in every key. Trying $B$ plus one other attribute finds all three keys $AB$, $BC$ and $BD$ in three closures.",
+      "commonTrap": "Calling $C \\to D$ a transitive dependency that breaks 3NF. The 3NF test exempts any FD whose right side is prime, and $D$ belongs to the candidate key $BD$. You only see this if you find **all** candidate keys, not just $AB$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "['A', 'C']",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\ndef clo(X, F):\n    X = set(X); ch = True\n    while ch:\n        ch = False\n        for l, r in F:\n            if set(l) <= X and not set(r) <= X: X |= set(r); ch = True\n    return X\ndef keys(U, F):\n    sk = [set(c) for k in range(1, len(U)+1) for c in combinations(U, k) if clo(c, F) >= set(U)]\n    return [k for k in sk if not any(o < k for o in sk)]\ndef nf(U, F):  # (2NF, 3NF, BCNF) using every X -> a in the closure\n    K = keys(U, F); P = set().union(*K); r = [True]*3\n    for k in range(1, len(U)+1):\n        for X in combinations(U, k):\n            if clo(X, F) >= set(U): continue\n            for a in clo(X, F) - set(X):\n                r[2] = False\n                if a not in P:\n                    r[1] = False\n                    if any(set(X) < kk for kk in K): r[0] = False\n    return r\nF = [('AB','C'), ('C','D'), ('D','A'), ('B','E')]\nK = keys('ABCDE', F); P = set().union(*K)\nres = {'A': {'B','D'} in K, 'B': nf('ABCDE', F)[0],\n       'C': nf('ABCD', F[:3])[1:] == [True, False],\n       'D': not clo('C', F) >= set('ABCDE') and 'D' not in P}\nprint(sorted(k for k, v in res.items() if v))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-file-organization"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (the blocking factor) with two one-line computations, a floor and then a ceiling; about a minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Blocking factor and number of blocks for fixed-length records in an unspanned file organization.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A weather station writes its readings to a file of 30,000 fixed-length records, each 120 bytes long. The file is stored on disk in blocks of 4096 bytes using an **unspanned** organization (no record is split across two blocks), and the blocks have no header.\n\nThe minimum number of disk blocks needed to store the file is",
+    "options": [
+      {
+        "label": "A",
+        "text": "858"
+      },
+      {
+        "label": "B",
+        "text": "879"
+      },
+      {
+        "label": "C",
+        "text": "882"
+      },
+      {
+        "label": "D",
+        "text": "883"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Blocking factor $= \\lfloor 4096/120 \\rfloor = 34$ records per block.\nBlocks $= \\lceil 30000/34 \\rceil = \\lceil 882.35 \\rceil = 883$.",
+      "steps": [
+        {
+          "title": "Blocking factor",
+          "body": "With unspanned records only whole records fit in a block:\n$$\n\\text{bfr} = \\left\\lfloor \\frac{4096}{120} \\right\\rfloor = \\lfloor 34.13 \\rfloor = 34\n$$\nThe 34 records use $34 \\times 120 = 4080$ bytes, so 16 bytes of every block are wasted."
+        },
+        {
+          "title": "Number of blocks",
+          "body": "$$\n\\left\\lceil \\frac{30000}{34} \\right\\rceil = \\lceil 882.35 \\rceil = 883\n$$\nCheck: 882 full blocks hold $882 \\times 34 = 29{,}988$ records, and the remaining 12 records need one more block."
+        },
+        {
+          "title": "Contrast with a spanned layout",
+          "body": "If records could span blocks, the count would be $\\lceil 30000 \\times 120 / 4096 \\rceil = \\lceil 3{,}600{,}000 / 4096 \\rceil = \\lceil 878.9 \\rceil = 879$. The organization here is unspanned, so the answer is **883**, option **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A file is laid out on disk block by block, because the block is the unit of transfer between disk and main memory. The **blocking factor** (bfr) is the number of whole records that fit in one block. With an unspanned organization a record must lie entirely inside one block, so $\\text{bfr} = \\lfloor B/R \\rfloor$ for block size $B$ and record size $R$, and any space left at the end of each block is wasted.\n\nThe number of blocks for $r$ records is then $\\lceil r/\\text{bfr} \\rceil$. The ceiling is needed because a partly filled last block still occupies a whole block. With a spanned organization a record may continue into the next block, no space is wasted, and the count becomes $\\lceil rR/B \\rceil$. Here $R = 120$ and $B = 4096$ leave 16 unused bytes in every block, which is why the unspanned answer (883) is larger than the spanned one (879).",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This rounds the blocking factor **up** to 35. But 35 records need $35 \\times 120 = 4200$ bytes, which is more than 4096."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the spanned count, total bytes divided by the block size. It ignores the 16 bytes wasted in every block when records cannot be split."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This takes the floor of $30000/34 = 882.35$ instead of the ceiling, which leaves the last 12 records without a block."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\text{bfr} = 34$ and $\\lceil 30000/34 \\rceil = 883$."
+        }
+      ],
+      "commonTrap": "Dividing the total file size by the block size (giving 879). That calculation assumes records can straddle blocks. With unspanned records, take the floor to get bfr first, then the ceiling to get the number of blocks."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "883",
+      "agreesWithKey": true,
+      "checkCode": "import math\nn, rec, blk = 30000, 120, 4096\nbfr = blk // rec\nprint(math.ceil(n / bfr))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-types"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked distinctions (nominal vs ordinal, and interval vs ratio through a true zero) applied to four attributes, each paired with a look-alike trap; about one and a half to two minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Attribute types: nominal, ordinal, interval and ratio scales of measurement.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An air-quality monitoring dataset has the four attributes below.\n\n| Attribute | Description |\n| --- | --- |\n| P | Air temperature, in degrees Celsius |\n| Q | Air-quality category: Good, Satisfactory, Moderate, Poor, Severe |\n| R | Monitoring-station code, such as 4417 or 5102 |\n| S | PM2.5 concentration, in µg/m³ |\n\nWhich option correctly matches each attribute with its scale of measurement? (A scale may apply to more than one attribute.)",
+    "options": [
+      {
+        "label": "A",
+        "text": "P – Interval, Q – Ordinal, R – Nominal, S – Ratio"
+      },
+      {
+        "label": "B",
+        "text": "P – Ratio, Q – Ordinal, R – Nominal, S – Ratio"
+      },
+      {
+        "label": "C",
+        "text": "P – Interval, Q – Nominal, R – Ordinal, S – Ratio"
+      },
+      {
+        "label": "D",
+        "text": "P – Interval, Q – Ordinal, R – Interval, S – Ratio"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Station codes are identifiers (nominal), and the air-quality categories are ordered labels (ordinal). Celsius has equal units but an arbitrary zero (interval), while a concentration of 0 µg/m³ means no particles (ratio). **(A)**",
+      "steps": [
+        {
+          "title": "Recall the four scales",
+          "body": "- **Nominal**: labels; only equal / not equal is meaningful.\n- **Ordinal**: the order is meaningful, but the gaps between levels are not measured.\n- **Interval**: differences in equal units are meaningful, but zero is arbitrary, so ratios are not.\n- **Ratio**: there is a true zero (\"none of the quantity\"), so ratios are meaningful too."
+        },
+        {
+          "title": "Classify the qualitative attributes",
+          "body": "R, the station code, is a number used only as an identifier. Sorting, averaging or subtracting codes means nothing, so R is **nominal**.\nQ, the air-quality category, has a natural order Good < Satisfactory < Moderate < Poor < Severe, but the distance between consecutive categories is not defined. Q is **ordinal**."
+        },
+        {
+          "title": "Classify the quantitative attributes",
+          "body": "P, temperature in °C: a rise of 5 °C means the same everywhere on the scale, but 0 °C is a convention (the freezing point of water), not an absence of heat. 20 °C is not twice as hot as 10 °C, so P is **interval**.\nS, PM2.5 concentration: 0 µg/m³ means no particles, and 60 µg/m³ is exactly twice 30 µg/m³. S is **ratio**."
+        },
+        {
+          "title": "Match",
+          "body": "P – Interval, Q – Ordinal, R – Nominal, S – Ratio, which is option **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "Before choosing a statistic or a transformation, identify each attribute's scale of measurement, because the scale decides which operations make sense.\n\n- **Nominal** values are names or identifiers. You can test equality and count frequencies (mode), nothing more, even when the labels happen to be digits.\n- **Ordinal** values have a meaningful order, so medians and percentiles make sense, but the gap between consecutive levels is undefined.\n- **Interval** values are numeric with equal-sized units, so differences and means are meaningful. The zero point is arbitrary, so \"twice as much\" is not.\n- **Ratio** values also have a true zero that means \"none of the quantity\", so ratios are meaningful as well.\n\nThe quick test for interval versus ratio is whether zero means absence: it does not for Celsius temperature, and it does for a pollutant concentration. For nominal versus ordinal, ask whether sorting the values tells you anything.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Temperature in °C is interval, the category is ordinal, the station code is nominal and the concentration is ratio."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This treats °C as ratio. 0 °C is not the absence of temperature (that is 0 K), so ratios of Celsius readings are meaningless: 20 °C = 293.15 K is not twice 10 °C = 283.15 K."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This swaps nominal and ordinal. The categories have a natural order from Good to Severe, so Q is ordinal. The numeric order of station codes carries no meaning, so R is nominal."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This treats station codes as interval because they are numbers. A difference between codes (5102 − 4417 = 685) means nothing, because codes are identifiers, i.e. nominal."
+        }
+      ],
+      "shortcut": "Ask three questions in turn. Is the order meaningful? No means nominal. Are the differences in equal units? No means ordinal. Does zero mean \"none\"? No means interval; yes means ratio.",
+      "commonTrap": "Deciding the scale from how the values look rather than what they mean. Numeric station codes are still nominal, and Celsius readings, though numeric and with a zero, are only interval-scaled."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check (rule encoding of standard scale definitions)",
+      "independentAnswer": "['A']",
+      "agreesWithKey": true,
+      "checkCode": "# (order meaningful, equal-unit differences, true zero) for each attribute\nprops = {'P': (True, True, False), 'Q': (True, False, False),\n         'R': (False, False, False), 'S': (True, True, True)}\ndef scale(o, d, z):\n    return 'Nominal' if not o else 'Ordinal' if not d else 'Ratio' if z else 'Interval'\ngot = {a: scale(*v) for a, v in props.items()}\nopts = {'A': 'Interval Ordinal Nominal Ratio', 'B': 'Ratio Ordinal Nominal Ratio',\n        'C': 'Interval Nominal Ordinal Ratio', 'D': 'Interval Ordinal Interval Ratio'}\nprint([k for k, v in opts.items() if v.split() == [got[a] for a in 'PQRS']])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-multidimensional-schema"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — each statement is a direct application of the star, snowflake and fact-constellation definitions to a small listed schema; about a minute and a half.",
+    "estimatedTimeSec": 85,
+    "concept": "Multidimensional schemas: star, snowflake and fact constellation (galaxy) schemas.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retail chain's data warehouse consists of the tables below. Every `_key` column in a fact table is a foreign key to the dimension table whose primary key has that name, and `Product.brand_key` is a foreign key to Brand.\n\n| Table | Role | Columns |\n| --- | --- | --- |\n| Sales | fact | date_key, store_key, product_key, units_sold, revenue |\n| Shipments | fact | date_key, warehouse_key, product_key, units_shipped |\n| DateDim | dimension | date_key, day, month, quarter, year |\n| Store | dimension | store_key, city, state |\n| Warehouse | dimension | warehouse_key, city, capacity |\n| Product | dimension | product_key, product_name, brand_key |\n| Brand | dimension | brand_key, brand_name, country |\n\nBoth fact tables reference the same DateDim and Product tables. Which of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Because both fact tables involve dates, the schema must keep two separate copies of DateDim, one for each fact table."
+      },
+      {
+        "label": "B",
+        "text": "The schema is a fact constellation (galaxy) schema."
+      },
+      {
+        "label": "C",
+        "text": "The Product dimension is snowflaked: brand details are normalized out of Product into the separate Brand table."
+      },
+      {
+        "label": "D",
+        "text": "To compute total revenue for each brand country, Sales must be joined with Product, and Product must be joined with Brand."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "There are two fact tables sharing DateDim and Product, so this is a fact constellation, and shared dimensions are stored once. Product → Brand is a normalized dimension hierarchy (snowflake). Revenue is in Sales and country is in Brand, which are connected only through Product. **(B), (C), (D)**",
+      "steps": [
+        {
+          "title": "Recall the three schema types",
+          "body": "- **Star**: one fact table, and each dimension is a single table joined directly to it.\n- **Snowflake**: some dimension tables are normalized into several related tables.\n- **Fact constellation (galaxy)**: several fact tables that share dimension tables."
+        },
+        {
+          "title": "Statements A and B",
+          "body": "There are two fact tables, Sales and Shipments, and they share DateDim and Product. That is the definition of a fact constellation, so (B) is true. Shared (conformed) dimensions are stored **once** and referenced by every fact table that needs them, so (A) is false."
+        },
+        {
+          "title": "Statement C",
+          "body": "Product stores only `brand_key`, and the brand's name and country are in a separate Brand table. Splitting a dimension into a normalized chain Product → Brand is exactly snowflaking, so (C) is true."
+        },
+        {
+          "title": "Statement D",
+          "body": "`revenue` is in Sales and `country` is in Brand. Sales holds only `product_key`, and only Product holds `brand_key`. The join path must therefore be Sales $\\bowtie$ Product $\\bowtie$ Brand, followed by grouping on `country` and summing `revenue`. (D) is true."
+        }
+      ],
+      "finalAnswer": "**(B), (C), (D)**",
+      "teaching": "Multidimensional data models organize a warehouse around **facts** (numeric measures of a business event, such as the revenue from a sale) and **dimensions** (the descriptive contexts, such as when, where and what, by which facts are analyzed). A fact table holds the measures plus a foreign key to each dimension.\n\nIn a **star schema**, every dimension is a single, usually denormalized table joined directly to the fact table, so a query needs one join per dimension. A **snowflake schema** normalizes one or more dimensions into a chain of tables such as Product → Brand. This removes redundancy, such as repeating a brand's country for every product, at the cost of extra joins. A **fact constellation** (galaxy) schema has several fact tables that share dimension tables, and each shared dimension is stored once. One warehouse can be a galaxy and have snowflaked dimensions at the same time, as this one does.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Shared (conformed) dimensions are stored once and referenced by both fact tables. That sharing is what makes the schema a fact constellation, and duplicating DateDim would only create redundancy."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "There are two fact tables (Sales, Shipments) sharing the DateDim and Product dimensions, which is a fact constellation."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Brand attributes live in their own table that is referenced from Product, which is a normalized dimension hierarchy, i.e. a snowflaked dimension."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Sales carries only `product_key`, and only Product carries `brand_key`. Reaching `country` therefore needs Sales ⋈ Product ⋈ Brand."
+        }
+      ],
+      "commonTrap": "Treating the schema labels as mutually exclusive, e.g. thinking that a warehouse with a snowflaked dimension cannot also be a fact constellation. Another trap is thinking that each fact table needs its own copy of a shared dimension."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check (schema graph encoding)",
+      "independentAnswer": "['B', 'C', 'D']",
+      "agreesWithKey": true,
+      "checkCode": "from collections import deque\nfk = {'Sales': ['DateDim', 'Store', 'Product'], 'Shipments': ['DateDim', 'Warehouse', 'Product'],\n      'Product': ['Brand']}\nfacts = ['Sales', 'Shipments']\ncopies_of_datedim = 1                      # one DateDim table listed, referenced by both facts\ngalaxy = len(facts) > 1 and bool(set(fk['Sales']) & set(fk['Shipments']))\nsnowflaked_product = 'Brand' in fk.get('Product', [])\ndef path(a, b):\n    Qu, seen = deque([[a]]), {a}\n    while Qu:\n        p = Qu.popleft()\n        if p[-1] == b: return p\n        for n in fk.get(p[-1], []):\n            if n not in seen: seen.add(n); Qu.append(p + [n])\nres = {'A': copies_of_datedim == 2, 'B': galaxy, 'C': snowflaked_product,\n       'D': path('Sales', 'Brand') == ['Sales', 'Product', 'Brand']}\nprint(sorted(k for k, v in res.items() if v))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-relational-model"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (a superkey is any superset of a candidate key) with a three-term inclusion–exclusion count; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Superkeys versus candidate keys: counting superkeys by inclusion–exclusion.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A cinema stores its bookings in the relation\n\n**Ticket**(TicketNo, Hall, ShowTime, SeatNo, Price, Customer)\n\nThe **only** candidate keys of Ticket are {TicketNo} and {Hall, ShowTime, SeatNo}.\n\nThe number of superkeys of Ticket is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 36,
+      "max": 36
+    },
+    "solution": {
+      "quick": "A superkey is any attribute set that contains a candidate key. By inclusion–exclusion:\n$2^{5}$ (contain TicketNo) $+\\ 2^{3}$ (contain Hall, ShowTime, SeatNo) $-\\ 2^{2}$ (contain both) $= 32 + 8 - 4 = 36$.",
+      "steps": [
+        {
+          "title": "Set up inclusion–exclusion",
+          "body": "Let $S_1$ be the attribute sets containing $K_1 = \\{\\text{TicketNo}\\}$ and $S_2$ the sets containing $K_2 = \\{\\text{Hall}, \\text{ShowTime}, \\text{SeatNo}\\}$. The superkeys are exactly $S_1 \\cup S_2$, so\n$$\n|S_1 \\cup S_2| = |S_1| + |S_2| - |S_1 \\cap S_2|\n$$"
+        },
+        {
+          "title": "Count sets containing TicketNo",
+          "body": "TicketNo is fixed, and each of the other 5 attributes may be in or out: $|S_1| = 2^5 = 32$."
+        },
+        {
+          "title": "Count sets containing Hall, ShowTime, SeatNo",
+          "body": "These 3 are fixed, and the other 3 (TicketNo, Price, Customer) are free: $|S_2| = 2^3 = 8$."
+        },
+        {
+          "title": "Count sets containing both keys",
+          "body": "TicketNo, Hall, ShowTime and SeatNo are fixed, and only Price and Customer are free: $|S_1 \\cap S_2| = 2^2 = 4$."
+        },
+        {
+          "title": "Combine",
+          "body": "$32 + 8 - 4 = \\mathbf{36}$."
+        }
+      ],
+      "finalAnswer": "**36**",
+      "teaching": "In the relational model, a **superkey** is any set of attributes whose values identify a tuple uniquely. A **candidate key** is a minimal superkey: no proper subset of it is still a superkey. Adding attributes to a superkey can never destroy uniqueness, so the superkeys are exactly the attribute sets that contain at least one candidate key.\n\nWith $n$ attributes and one candidate key of size $k$, each of the remaining $n - k$ attributes can be in or out, which gives $2^{n-k}$ superkeys. With two candidate keys, the families of supersets overlap: a set containing both keys is counted in both. Inclusion–exclusion corrects this. Count the sets containing the first key, add those containing the second, and subtract those containing their union. Here the union {TicketNo, Hall, ShowTime, SeatNo} leaves 2 free attributes, so 4 sets would otherwise be double-counted.",
+      "shortcut": "Superkeys $= 2^{\\,n-|K_1|} + 2^{\\,n-|K_2|} - 2^{\\,n-|K_1 \\cup K_2|} = 2^5 + 2^3 - 2^2 = 36$.",
+      "commonTrap": "Adding $32 + 8 = 40$ and forgetting that the 4 sets containing both keys have been counted twice."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "36",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nA = ['TicketNo', 'Hall', 'ShowTime', 'SeatNo', 'Price', 'Customer']\nCK = [{'TicketNo'}, {'Hall', 'ShowTime', 'SeatNo'}]\nprint(sum(1 for k in range(1, len(A)+1) for c in combinations(A, k)\n          if any(ck <= set(c) for ck in CK)))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M05-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-05",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-tuple-calculus"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (reading ∃ and ¬∃ in a tuple relational calculus query) evaluated on a small instance; about a minute and a half.",
+    "estimatedTimeSec": 85,
+    "concept": "Tuple relational calculus: existential and negated existential quantifiers evaluated on an instance.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A streaming platform stores its catalogue in **Show**(sid, title) and user ratings in **Rating**(uid, sid, stars), with the instances below.\n\n**Show**\n\n| sid | title |\n| --- | --- |\n| 1 | Monsoon Diaries |\n| 2 | Code Red |\n| 3 | Deep Field |\n| 4 | Night Market |\n| 5 | Salt Roads |\n\n**Rating**\n\n| uid | sid | stars |\n| --- | --- | --- |\n| u1 | 1 | 5 |\n| u2 | 1 | 3 |\n| u1 | 2 | 5 |\n| u3 | 2 | 1 |\n| u2 | 3 | 4 |\n| u3 | 3 | 2 |\n| u1 | 4 | 5 |\n| u4 | 4 | 5 |\n\nConsider the following tuple relational calculus query, in which the result tuple $t$ has the single attribute title.\n\n$$\n\\begin{aligned}\n\\{\\, t \\mid \\exists s \\in \\text{Show}\\,\\big(\\, & t[\\text{title}] = s[\\text{title}] \\\\\n\\wedge\\; & \\exists r \\in \\text{Rating}\\,\\big(r[\\text{sid}] = s[\\text{sid}] \\wedge r[\\text{stars}] = 5\\big) \\\\\n\\wedge\\; & \\neg \\exists q \\in \\text{Rating}\\,\\big(q[\\text{sid}] = s[\\text{sid}] \\wedge q[\\text{stars}] = 1\\big) \\,\\big) \\,\\}\n\\end{aligned}\n$$\n\nThe result of this query is",
+    "options": [
+      {
+        "label": "A",
+        "text": "{Night Market}"
+      },
+      {
+        "label": "B",
+        "text": "{Monsoon Diaries, Code Red, Night Market}"
+      },
+      {
+        "label": "C",
+        "text": "{Monsoon Diaries, Night Market}"
+      },
+      {
+        "label": "D",
+        "text": "{Monsoon Diaries, Deep Field, Night Market, Salt Roads}"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The query returns titles of shows with **at least one** 5-star rating **and no** 1-star rating. Shows 1, 2 and 4 have a 5-star rating, and show 2 also has a 1-star rating. The result is {Monsoon Diaries, Night Market}. **(C)**",
+      "steps": [
+        {
+          "title": "Translate the query",
+          "body": "For each show $s$, the title is returned when (i) some Rating tuple for $s$ has 5 stars, and (ii) no Rating tuple for $s$ has 1 star. Both conditions must hold for the same $s$."
+        },
+        {
+          "title": "Evaluate condition (i)",
+          "body": "5-star rows: (u1, 1), (u1, 2), (u1, 4), (u4, 4). The shows satisfying (i) are sid $\\in \\{1, 2, 4\\}$."
+        },
+        {
+          "title": "Evaluate condition (ii)",
+          "body": "The only 1-star row is (u3, 2, 1), so only sid 2 fails (ii). The shows satisfying (ii) are sid $\\in \\{1, 3, 4, 5\\}$. Show 5 has no ratings at all, so it satisfies (ii) trivially."
+        },
+        {
+          "title": "Intersect and project",
+          "body": "$\\{1, 2, 4\\} \\cap \\{1, 3, 4, 5\\} = \\{1, 4\\}$, which gives the titles {Monsoon Diaries, Night Market}. An equivalent relational algebra expression is\n$$\n\\pi_{\\text{title}}\\Big(\\text{Show} \\bowtie \\big(\\pi_{\\text{sid}}\\,\\sigma_{\\text{stars}=5}(\\text{Rating}) - \\pi_{\\text{sid}}\\,\\sigma_{\\text{stars}=1}(\\text{Rating})\\big)\\Big)\n$$\nThe answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Tuple relational calculus (TRC) is declarative. A query $\\{t \\mid P(t)\\}$ describes the wanted tuples by a condition $P$ instead of listing steps. Tuple variables range over relations, as in $s \\in \\text{Show}$.\n\n- $\\exists r \\in \\text{Rating}\\,(\\dots)$ is true if **at least one** Rating tuple satisfies the bracketed condition.\n- $\\neg\\exists q \\in \\text{Rating}\\,(\\dots)$ is true if **no** Rating tuple does.\n- Conditions joined by $\\wedge$ must all hold for the same $s$.\n\nSo this query reads: \"titles of shows that have at least one 5-star rating and no 1-star rating\". To evaluate such a query on an instance, find the set of $s$ that satisfies each quantified condition separately, then intersect the sets. A show with no ratings satisfies $\\neg\\exists$ trivially but fails $\\exists$. A show with mixed ratings satisfies $\\exists$ with a single 5-star row, because $\\exists$ is not $\\forall$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This treats $\\exists$ as $\\forall$ (\"every rating is 5 stars\"), which only Night Market meets. Monsoon Diaries needs just one 5-star rating, and it has one (u1)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This ignores the $\\neg\\exists$ clause. Code Red has a 1-star rating from u3, so it is excluded."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Shows 1 and 4 each have a 5-star rating and no 1-star rating, so the result is {Monsoon Diaries, Night Market}."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This uses only the $\\neg\\exists$ clause. Deep Field and Salt Roads have no 5-star rating, so the $\\exists r$ condition fails for them."
+        }
+      ],
+      "commonTrap": "Reading $\\exists r\\,(\\dots \\text{stars} = 5)$ as \"all ratings are 5 stars\", which wrongly drops Monsoon Diaries. Another trap is including Salt Roads, which has no ratings: it trivially satisfies the $\\neg\\exists$ part but fails the $\\exists$ part."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "['Monsoon Diaries', 'Night Market']",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table Show(sid int, title text)')\ncon.execute('create table Rating(uid text, sid int, stars int)')\ncon.executemany('insert into Show values(?,?)', [(1,'Monsoon Diaries'), (2,'Code Red'),\n    (3,'Deep Field'), (4,'Night Market'), (5,'Salt Roads')])\ncon.executemany('insert into Rating values(?,?,?)', [('u1',1,5), ('u2',1,3), ('u1',2,5),\n    ('u3',2,1), ('u2',3,4), ('u3',3,2), ('u1',4,5), ('u4',4,5)])\nq = '''select s.title from Show s\n where exists (select * from Rating r where r.sid = s.sid and r.stars = 5)\n   and not exists (select * from Rating q where q.sid = s.sid and q.stars = 1)\n order by s.sid'''\nprint([row[0] for row in con.execute(q)])",
+      "notes": ""
+    }
+  }
+]

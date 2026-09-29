@@ -1,0 +1,108 @@
+{
+  "id": "DA2026-S8-Q18",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 18,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-warehousing",
+  "subtopicIds": [
+    "dbw-concept-hierarchies",
+    "dbw-multidimensional-schema"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: direct recall of one concept (the OLAP operation that moves to a finer level of a concept hierarchy, here Country to State) with no computation, well under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 40,
+  "stem": "Consider that the visualization of a 3-dimensional data cube is showing *Sales Quantity* for each combination of the attributes *Product Type*, *Month* and *Country*.\n\nFrom this, if we want to further visualize the *Sales Quantity* for each combination of *Product Type*, *Month* and *State*, which of the following OLAP operations should be performed?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Slicing"
+    },
+    {
+      "label": "B",
+      "text": "Dicing"
+    },
+    {
+      "label": "C",
+      "text": "Roll-up"
+    },
+    {
+      "label": "D",
+      "text": "Drill-down"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "The location dimension moves from *Country* to *State*. In the location concept hierarchy State < Country (each country is made up of states), so this goes one level **down** to finer-grained, more detailed data. Moving down a concept hierarchy is a **drill-down**. Answer: **(D)**.",
+    "steps": [
+      {
+        "title": "Identify what changes between the two views",
+        "body": "Before: the cube's dimensions are (*Product Type*, *Month*, *Country*).\n\nAfter: the dimensions are (*Product Type*, *Month*, *State*).\n\n*Product Type* and *Month* are unchanged, and the cube is still 3-dimensional. Only the **level of detail of the location dimension** changes, from Country to State."
+      },
+      {
+        "title": "Place Country and State on the location concept hierarchy",
+        "body": "A location dimension typically has the concept hierarchy\n\n$$\n\\text{street} < \\text{city} < \\text{state} < \\text{country}\n$$\n\nwhere each level groups the values of the level below it. Several states make up one country, so *State* is a **finer** (lower) level than *Country*. Each Country cell of the current cube splits into several State cells, and the *Sales Quantity* of a country is the sum over its states."
+      },
+      {
+        "title": "Name the operation",
+        "body": "- Going **up** a hierarchy (e.g. State → Country), aggregating to coarser data, is a **roll-up**.\n- Going **down** a hierarchy (e.g. Country → State), revealing finer detail, is a **drill-down**.\n- **Slice** and **dice** only *select* part of the cube (fix one dimension's value, or restrict several dimensions to chosen values); they do not change the level of detail.\n\nCountry → State is a move down the location hierarchy, so the required operation is **drill-down**, option **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)** Drill-down",
+    "teaching": "**Data cubes.** In a data warehouse, a *measure* (here *Sales Quantity*) is stored for combinations of *dimensions* (here product, time and location). Each dimension usually has a **concept hierarchy**, a chain of levels from fine to coarse, for example day < month < quarter < year for time, or city < state < country for location. A cube built at a given level of each dimension shows the measure aggregated at that level.\n\n**The basic OLAP operations.**\n\n- **Roll-up (drill-up):** aggregate to a *coarser* level, either by climbing a concept hierarchy (city → state → country) or by removing a dimension. Fewer, larger cells.\n- **Drill-down:** the reverse. Step *down* a concept hierarchy (country → state, or quarter → month) or add a dimension, to see more detail. More, smaller cells. It needs the data to be available at the finer level.\n- **Slice:** fix a single value of one dimension (e.g. Month = January), giving a sub-cube with one fewer dimension.\n- **Dice:** select a sub-cube by restricting two or more dimensions to chosen values (e.g. Month ∈ {Jan, Feb} and Product Type ∈ {TV, Phone}).\n- **Pivot (rotate):** reorient the axes of the view; the data do not change.\n\nA useful test: *did the granularity change?* If yes, it is a roll-up (coarser) or drill-down (finer). If the granularity is unchanged and only part of the cube is kept, it is a slice or dice.\n\n**Back to this question.** The view changes from (Product Type, Month, **Country**) to (Product Type, Month, **State**). The number of dimensions is the same, but the location dimension moves from Country to the finer level State. That is a step down the location hierarchy, i.e. a **drill-down**, option (D).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Slicing fixes a single value of one dimension (e.g. Country = India) and returns a sub-cube with one fewer dimension. It does not change Country into the finer level State."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Dicing selects a sub-cube by restricting two or more dimensions to chosen values. Like slicing, it keeps the same level of detail, so it cannot turn a Country-level view into a State-level view."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Roll-up aggregates to a coarser level, e.g. State → Country. The question asks for the opposite direction, Country → State."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "State lies below Country in the location concept hierarchy (state < country). Moving from Country-level to State-level sales, for the same Product Type and Month, is a step down the hierarchy to finer detail, which is a drill-down."
+      }
+    ],
+    "shortcut": "Finer level of a hierarchy (Country → State → City) = **drill-down**; coarser level (City → State → Country) = **roll-up**. Slice and dice only select values and never change the level of detail.",
+    "commonTrap": "Mixing up the direction of roll-up and drill-down (choosing roll-up), or picking slicing/dicing because a country's view is \"broken into\" states. Slice and dice select part of the cube without changing its granularity, while here the granularity of the location dimension becomes finer."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q18-1.webp",
+    "/pyq/2026/official/Q18-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. \"Sales Quantity\", \"Product Type\", \"Month\", \"Country\" and \"State\" are italic in the paper and are kept italic here. The second official crop (Q18-2) shows only the page header and an empty table border; the whole question appears in the first crop."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "D",
+    "agreesWithKey": true,
+    "notes": "Conceptual item; no computation needed. The view keeps Product Type and Month and changes the location dimension from Country to the finer level State (state < country in the location concept hierarchy), which is a drill-down. This matches the official key (D)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

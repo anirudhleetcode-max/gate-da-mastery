@@ -1,0 +1,112 @@
+{
+  "id": "DA2025-S5-Q40",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 40,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-inference",
+  "subtopicIds": [
+    "ps-clt",
+    "ps-discrete-named"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two concepts directly (mean and variance of a sum of Bernoulli variables, then CLT standardisation) with routine arithmetic, about 2 minutes for a prepared student.",
+  "estimatedTimeSec": 120,
+  "stem": "A random variable $X$ is said to be distributed as $\\mathit{Bernoulli}(\\theta)$, denoted by $X \\sim \\mathit{Bernoulli}(\\theta)$, if\n\n$$\nP(X = 1) = \\theta, \\qquad P(X = 0) = 1 - \\theta\n$$\n\nfor $0 < \\theta < 1$. Let $Y = \\displaystyle\\sum_{i=1}^{300} X_i$, where $X_i \\sim \\mathit{Bernoulli}(\\theta)$, $i = 1, 2, \\ldots, 300$ be independent and identically distributed random variables with $\\theta = 0.25$. The value of $P(60 \\le Y \\le 90)$, after approximation through Central Limit Theorem, is given by\n\n$\\left(\\text{Recall that } \\phi(x) = \\dfrac{1}{\\sqrt{2\\pi}} \\displaystyle\\int_{-\\infty}^{x} e^{-\\frac{t^2}{2}}\\, dt\\right)$",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\phi(2) - \\phi(-2)$"
+    },
+    {
+      "label": "B",
+      "text": "$\\phi(1) - \\phi(-1)$"
+    },
+    {
+      "label": "C",
+      "text": "$\\phi(3) - \\phi(-3)$"
+    },
+    {
+      "label": "D",
+      "text": "$\\phi(90) - \\phi(60)$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "$Y \\sim \\text{Binomial}(300, 0.25)$, so $E[Y] = 75$ and $\\operatorname{Var}(Y) = 300(0.25)(0.75) = 56.25$, which gives $\\sigma_Y = 7.5$. Standardising the endpoints gives $\\frac{60 - 75}{7.5} = -2$ and $\\frac{90 - 75}{7.5} = 2$. By the CLT, $P(60 \\le Y \\le 90) \\approx \\phi(2) - \\phi(-2)$, which is option **(A)**.",
+    "steps": [
+      {
+        "title": "Mean and variance of one Bernoulli variable",
+        "body": "For $X_i \\sim \\mathit{Bernoulli}(\\theta)$:\n\n$$\nE[X_i] = 1\\cdot\\theta + 0\\cdot(1-\\theta) = \\theta = 0.25,\n$$\n\n$$\n\\operatorname{Var}(X_i) = E[X_i^2] - (E[X_i])^2 = \\theta - \\theta^2 = \\theta(1-\\theta) = 0.25 \\times 0.75 = 0.1875.\n$$"
+      },
+      {
+        "title": "Mean and variance of the sum Y",
+        "body": "Expectations always add. Because the $X_i$ are independent, their variances also add:\n\n$$\nE[Y] = 300 \\times 0.25 = 75, \\qquad \\operatorname{Var}(Y) = 300 \\times 0.1875 = 56.25,\n$$\n\n$$\n\\sigma_Y = \\sqrt{56.25} = 7.5.\n$$\n\n(Equivalently, $Y \\sim \\text{Binomial}(n = 300, \\theta = 0.25)$ with $n\\theta = 75$ and $n\\theta(1-\\theta) = 56.25$.)"
+      },
+      {
+        "title": "Apply the Central Limit Theorem",
+        "body": "$Y$ is a sum of $300$ i.i.d. variables with finite variance. By the CLT its standardised form is approximately standard normal:\n\n$$\nZ = \\frac{Y - 75}{7.5} \\approx N(0, 1).\n$$\n\nThe given $\\phi$ is exactly the standard normal CDF: $\\phi(x) = P(Z \\le x)$."
+      },
+      {
+        "title": "Standardise the endpoints",
+        "body": "$$\n\\frac{60 - 75}{7.5} = \\frac{-15}{7.5} = -2, \\qquad \\frac{90 - 75}{7.5} = \\frac{15}{7.5} = 2.\n$$\n\nTherefore\n\n$$\nP(60 \\le Y \\le 90) = P\\!\\left(-2 \\le \\frac{Y - 75}{7.5} \\le 2\\right) \\approx P(-2 \\le Z \\le 2) = \\phi(2) - \\phi(-2) \\approx 0.9545.\n$$\n\n(The exact binomial probability is about $0.9615$. The continuity-corrected version $\\phi(2.067) - \\phi(-2.067) \\approx 0.9612$ is closer, but the options use the plain CLT approximation without continuity correction.)\n\nThe answer is $\\phi(2) - \\phi(-2)$, which is option **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**The Central Limit Theorem (CLT).** Let $X_1, \\ldots, X_n$ be independent and identically distributed with mean $\\mu$ and finite variance $\\sigma^2$. Then their sum $S_n = \\sum X_i$ has mean $n\\mu$ and variance $n\\sigma^2$, and for large $n$\n\n$$\n\\frac{S_n - n\\mu}{\\sigma\\sqrt{n}} \\approx N(0, 1),\n$$\n\nwhatever the shape of the distribution of each $X_i$. This is why a sum of coin-flip style variables, which are very non-normal individually, has an approximately bell-shaped histogram.\n\n**Bernoulli and binomial.** A Bernoulli($\\theta$) variable is an indicator: $1$ with probability $\\theta$, otherwise $0$. It has mean $\\theta$ and variance $\\theta(1-\\theta)$. A sum of $n$ independent Bernoulli($\\theta$) variables counts successes, so it is Binomial($n, \\theta$), with mean $n\\theta$ and variance $n\\theta(1-\\theta)$. The factor $(1-\\theta)$ is essential; dropping it overstates the spread.\n\n**Using the approximation.** To approximate $P(a \\le S_n \\le b)$:\n1. compute the mean $m = n\\mu$ and the standard deviation $s = \\sigma\\sqrt{n}$ (take the square root of the variance);\n2. convert both endpoints to $z$-scores: $z_a = \\frac{a - m}{s}$ and $z_b = \\frac{b - m}{s}$;\n3. the answer is $\\Phi(z_b) - \\Phi(z_a)$, where $\\Phi$ (written $\\phi$ in this question) is the standard normal CDF.\n\nA continuity correction (using $a - 0.5$ and $b + 0.5$ for an integer-valued variable) often improves accuracy. When the options are written in plain $z$-scores, the question intends the uncorrected version.\n\n**Back to this question.** Here $m = 75$ and $s = 7.5$. The bounds $60$ and $90$ lie exactly $15 = 2s$ below and above the mean. The approximation is therefore $\\phi(2) - \\phi(-2) \\approx 0.954$, the familiar \"about 95% within two standard deviations\" rule.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "With $E[Y] = 75$ and $\\sigma_Y = 7.5$, the endpoints $60$ and $90$ standardise to $-2$ and $+2$, so the CLT approximation is $\\phi(2) - \\phi(-2) \\approx 0.9545$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$\\phi(1) - \\phi(-1) \\approx 0.683$ is the probability of $\\mu \\pm 1\\sigma$, the interval $[67.5, 82.5]$, not $[60, 90]$. It would need $\\sigma_Y = 15$, which is not the standard deviation here."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$\\phi(3) - \\phi(-3) \\approx 0.997$ is the probability of $\\mu \\pm 3\\sigma$, the interval $[52.5, 97.5]$. It would need $\\sigma_Y = 5$, but $\\sigma_Y = 7.5$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "This plugs the raw bounds into the standard normal CDF without standardising. $\\phi(90) - \\phi(60)$ is essentially $1 - 1 = 0$, which cannot approximate a probability centred on the mean $75$."
+      }
+    ],
+    "shortcut": "Compute only $n\\theta = 75$ and $\\sqrt{n\\theta(1-\\theta)} = \\sqrt{56.25} = 7.5$. The interval $[60, 90]$ is $75 \\pm 15 = 75 \\pm 2\\sigma$, so the answer is $\\phi(2) - \\phi(-2)$ immediately.",
+    "commonTrap": "There are two slips to avoid. The first is using $\\operatorname{Var}(Y) = n\\theta = 75$ without the $(1-\\theta)$ factor, which gives $\\sigma \\approx 8.66$ and $z \\approx \\pm 1.73$, matching no option. The second is using the variance $56.25$ where the standard deviation $7.5$ belongs. Also, do not plug the raw bounds into $\\phi$ as in option (D); always standardise first."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q40-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes Bernoulli in italic math type, transcribed as $\\mathit{Bernoulli}(\\theta)$. It uses lowercase $\\phi$ for the standard normal CDF, kept as printed. The recall note appears in large parentheses on its own line, as transcribed. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (phi(2) - phi(-2))",
+    "agreesWithKey": true,
+    "checkCode": "import math\nn, th = 300, 0.25\nmu, var = n * th, n * th * (1 - th); sd = math.sqrt(var)\nprint(mu, var, sd)                                  # 75.0 56.25 7.5\nz1, z2 = (60 - mu) / sd, (90 - mu) / sd\nprint(z1, z2)                                       # -2.0 2.0 -> phi(2) - phi(-2)\nPhi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))\nprint('CLT:', Phi(z2) - Phi(z1))                    # ~0.9545\nprint('exact:', sum(math.comb(n, k) * th**k * (1 - th)**(n - k) for k in range(60, 91)))  # ~0.9615\nfor lab, (a, b) in {'A': (2, -2), 'B': (1, -1), 'C': (3, -3), 'D': (90, 60)}.items():\n    print(lab, Phi(a) - Phi(b))",
+    "notes": "E[Y] = 75, Var(Y) = 56.25, SD = 7.5, so the z-scores are exactly -2 and +2. The CLT value is 0.9545; the exact binomial probability is 0.9615 for comparison. Agrees with the official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q23",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 23,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-lda",
+    "ml-naive-bayes",
+    "ml-kmeans"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - direct recall of the standard role of four well-known algorithms (MCMC for sampling, K-Medoid for clustering, LDA for feature extraction, Naive Bayes for classification). Only option (B) has the forced pair T1:A2, so no statement needs separate non-trivial checking; under a minute.",
+  "estimatedTimeSec": 45,
+  "stem": "In the following table, the `Task` column lists a few tasks related to machine learning. The `Algorithm` column lists a few algorithms.\n\nEach entry “`t`” from the `Task` column is to be matched with an appropriate entry “`a`” from the `Algorithm` column such that the task “`t`” can be solved using the algorithm “`a`”. Denote such a match as `t:a`\n\n| `Task` | `Algorithm` |\n| --- | --- |\n| T1 – Clustering | A1 – Markov Chain Monte Carlo |\n| T2 – Classification | A2 – K-Medoid |\n| T3 – Sampling | A3 – Linear Discriminant Analysis |\n| T4 – Feature Extraction | A4 – Naive Bayes |\n\nWhich of the following options is/are the correct matching(s)?",
+  "options": [
+    {
+      "label": "A",
+      "text": "T1:A4, T2:A3, T3:A1, T4:A2"
+    },
+    {
+      "label": "B",
+      "text": "T1:A2, T2:A4, T3:A1, T4:A3"
+    },
+    {
+      "label": "C",
+      "text": "T1:A3, T2:A4, T3:A1, T4:A2"
+    },
+    {
+      "label": "D",
+      "text": "T1:A4, T2:A2, T3:A1, T4:A3"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "K-Medoid is the only clustering (unsupervised) algorithm, so T1:A2. Markov Chain Monte Carlo draws samples from a distribution, so T3:A1. Linear Discriminant Analysis projects data onto class-separating directions, which makes it the feature-extraction method (T4:A3), and that leaves the Naive Bayes classifier for classification (T2:A4).\n\nOnly option (B) contains this matching. **(B)**",
+    "steps": [
+      {
+        "title": "What each algorithm does",
+        "body": "| Algorithm | Kind of method | What it outputs | Task it solves |\n| --- | --- | --- | --- |\n| A1 – Markov Chain Monte Carlo (MCMC) | Sampling method | A Markov chain whose stationary distribution is the target $p(x)$. After burn-in, its states are (correlated) draws from $p(x)$ | T3 – Sampling |\n| A2 – K-Medoid | Unsupervised partitioning | $k$ clusters of unlabeled points, each represented by an actual data point (the medoid) that minimises the total dissimilarity to its members | T1 – Clustering |\n| A3 – Linear Discriminant Analysis (LDA) | Supervised projection (also usable as a classifier) | Directions $\\mathbf{w}$ that maximise between-class scatter relative to within-class scatter. Projecting onto at most $C-1$ of them ($C$ = number of classes) gives new, lower-dimensional features | T4 – Feature Extraction (it can also do T2) |\n| A4 – Naive Bayes | Supervised probabilistic classifier | Class posterior $P(y \\mid \\mathbf{x}) \\propto P(y)\\prod_j P(x_j \\mid y)$ | T2 – Classification |"
+      },
+      {
+        "title": "Fix the forced matches first",
+        "body": "- **Clustering (T1)** groups *unlabeled* data. K-Medoid is the only unsupervised clustering algorithm in the list. Naive Bayes and LDA both need class labels to be trained, and MCMC is a sampling method. So **T1:A2** is forced.\n- **Sampling (T3)**: MCMC is the only sampling algorithm, so **T3:A1**. Every option contains T3:A1, so this pair does not decide anything.\n- That leaves tasks T2 and T4 for algorithms A3 and A4. Naive Bayes only outputs class probabilities and never builds a new feature representation, so it cannot be the feature-extraction method. Hence **T4:A3** (LDA as supervised dimensionality reduction), and then **T2:A4** (Naive Bayes classifies).\n\nThe matching is T1:A2, T2:A4, T3:A1, T4:A3."
+      },
+      {
+        "title": "Check every option pair by pair",
+        "body": "| Option | T1 (Clustering) | T2 (Classification) | T3 (Sampling) | T4 (Feature Extraction) | Verdict |\n| --- | --- | --- | --- | --- | --- |\n| (A) | A4 Naive Bayes ✗ | A3 LDA ✓ | A1 MCMC ✓ | A2 K-Medoid ✗ | wrong |\n| (B) | A2 K-Medoid ✓ | A4 Naive Bayes ✓ | A1 MCMC ✓ | A3 LDA ✓ | **correct** |\n| (C) | A3 LDA ✗ | A4 Naive Bayes ✓ | A1 MCMC ✓ | A2 K-Medoid ✗ | wrong |\n| (D) | A4 Naive Bayes ✗ | A2 K-Medoid ✗ | A1 MCMC ✓ | A3 LDA ✓ | wrong |\n\nEvery option except (B) sends clustering to a supervised method (Naive Bayes or LDA), and (B) is the only option containing T1:A2."
+      },
+      {
+        "title": "Conclusion",
+        "body": "The only fully valid matching is T1:A2, T2:A4, T3:A1, T4:A3, which is option **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "**Four kinds of machine-learning jobs.** Most algorithms in the syllabus fall into a few families, and naming the family is usually enough to match an algorithm to a task.\n\n- **Supervised learning (classification/regression).** The training data carry labels $y$, and the model learns a map $\\mathbf{x} \\to y$. *Naive Bayes* is a generative classifier. It estimates the class prior $P(y)$ and per-feature likelihoods $P(x_j \\mid y)$ from labelled data, assumes the features are conditionally independent given the class, and predicts $\\arg\\max_y P(y)\\prod_j P(x_j \\mid y)$.\n- **Unsupervised learning (clustering).** There are no labels, and the algorithm groups similar points. *K-Medoid* works like $k$-means, but each cluster centre must be an actual data point (the medoid). This makes it usable with any dissimilarity measure and less sensitive to outliers.\n- **Dimensionality reduction / feature extraction.** These methods build a new, smaller set of features from the original ones. PCA does this without labels. *Linear Discriminant Analysis* does it with labels: Fisher's criterion chooses $\\mathbf{w}$ to maximise $J(\\mathbf{w}) = \\dfrac{\\mathbf{w}^\\top S_B \\mathbf{w}}{\\mathbf{w}^\\top S_W \\mathbf{w}}$ (between-class over within-class scatter). For $C$ classes, there are at most $C-1$ useful directions. The projections $\\mathbf{w}^\\top\\mathbf{x}$ are the extracted features, and a simple classifier can then be applied to them. So LDA is both a feature extractor and a classifier.\n- **Sampling / approximate inference.** *Markov Chain Monte Carlo* (e.g. Metropolis–Hastings, Gibbs sampling) builds a Markov chain whose long-run (stationary) distribution is the target distribution. Running the chain produces samples used to approximate expectations and posteriors, for example in Bayesian networks.\n\n**Back to this question.** The labels settle almost everything. Clustering needs an unsupervised method, and K-Medoid is the only one. Sampling needs MCMC. Of the two remaining supervised methods, only LDA constructs new features, so LDA takes feature extraction and Naive Bayes takes classification. That is option (B).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "T2:A3 and T3:A1 are fine (LDA can classify). But T1:A4 is wrong because Naive Bayes is a supervised classifier that needs labels and does not cluster. T4:A2 is also wrong: K-Medoid outputs cluster assignments and medoids, not a new feature representation."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Every pair is valid. K-Medoid clusters (T1:A2), Naive Bayes classifies (T2:A4), MCMC samples (T3:A1), and LDA extracts discriminant features (T4:A3)."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "T1:A3 is wrong because Linear Discriminant Analysis is supervised and needs class labels, so it cannot cluster unlabeled data. T4:A2 is also wrong (K-Medoid is a clustering method, not feature extraction)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The option swaps the clustering and classification methods. T1:A4 uses Naive Bayes (a classifier) for clustering, and T2:A2 uses K-Medoid (a clustering method) for classification. Both pairs are wrong, even though T3:A1 and T4:A3 are fine."
+      }
+    ],
+    "shortcut": "Every option contains T3:A1, so ignore sampling. K-Medoid is the only unsupervised clustering algorithm listed, and T1:A2 appears only in option (B). That settles the answer: **(B)**.",
+    "commonTrap": "Thinking of LDA only as a classifier. A student who does this puts T2:A3 and is then forced to give feature extraction to K-Medoid or Naive Bayes, which leads to option (A). Another slip is reading \"LDA\" as *Latent Dirichlet Allocation*, a topic model sometimes used to group documents, and choosing T1:A3 as in option (C). Here A3 is spelled out as *Linear Discriminant Analysis*, a supervised method."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q23-1.webp",
+    "/pyq/2026/official/Q23-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The words Task and Algorithm (in the text and the table header), the placeholders t and a, and the notation t:a are set in a monospace font in the paper and are transcribed as inline code. As printed, the sentence \"Denote such a match as t:a\" has no final full stop. The table is transcribed as a GFM table, keeping the en dashes in entries such as \"T1 – Clustering\". The only embedded image in the region is the page background with the GATE 2026 watermark, and no figure is needed. The second official crop (Q23-2) shows only the header and table border of the next page."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B",
+    "agreesWithKey": true,
+    "checkCode": "# tasks each algorithm is a standard method for\ncan = {'A1': {'T3'},            # MCMC -> sampling\n       'A2': {'T1'},            # K-Medoid -> clustering\n       'A3': {'T2', 'T4'},      # Linear Discriminant Analysis -> classification, feature extraction\n       'A4': {'T2'}}            # Naive Bayes -> classification\nopts = {'A': 'T1:A4 T2:A3 T3:A1 T4:A2', 'B': 'T1:A2 T2:A4 T3:A1 T4:A3',\n        'C': 'T1:A3 T2:A4 T3:A1 T4:A2', 'D': 'T1:A4 T2:A2 T3:A1 T4:A3'}\nres = {}\nfor k, s in opts.items():\n    pairs = [p.split(':') for p in s.split()]\n    bad = [f'{t}:{a}' for t, a in pairs if t not in can[a]]\n    res[k] = not bad; print(k, 'invalid pairs:', bad)\nprint(res); assert [k for k in res if res[k]] == ['B']   # -> B",
+    "notes": "The standard roles are: MCMC for sampling, K-Medoid for (unsupervised) clustering, Linear Discriminant Analysis for supervised dimensionality reduction / feature extraction (it can also classify), and Naive Bayes for classification. The resulting matching T1:A2, T2:A4, T3:A1, T4:A3 is option B, and B is the only option with T1:A2. Every other option assigns clustering to a supervised method. This matches official key B. Classification note: MCMC belongs to the AI subtopic ai-sampling, which cannot be listed alongside ML subtopics, so the question is filed under ml-classification with ml-lda, ml-naive-bayes and ml-kmeans."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,123 @@
+{
+  "id": "DA2024-S1-Q52",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 52,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-trees"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it uses one concept (node-count bounds of binary trees), but each of the four statements must be checked independently at both extremes (a path and a perfect tree), with a height-convention subtlety, in about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Let $H, I, L$, and $N$ represent height, number of internal nodes, number of leaf nodes, and the total number of nodes respectively in a rooted binary tree.\n\nWhich of the following statements is/are always **TRUE**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$L \\le I + 1$"
+    },
+    {
+      "label": "B",
+      "text": "$H + 1 \\le N \\le 2^{H+1} - 1$"
+    },
+    {
+      "label": "C",
+      "text": "$H \\le I \\le 2^{H} - 1$"
+    },
+    {
+      "label": "D",
+      "text": "$H \\le L \\le 2^{H-1}$"
+    }
+  ],
+  "officialKeyRaw": "A;B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Take height $H$ as the number of edges on the longest root-to-leaf path, so a single node has $H = 0$. For a fixed $H$, the thinnest tree is a path ($N = H + 1$, $I = H$, $L = 1$) and the fullest is the perfect tree ($N = 2^{H+1} - 1$, $I = 2^H - 1$, $L = 2^H$). Every binary tree lies between these, so (B) and (C) hold. The identity $L = n_2 + 1$ gives (A). (D) fails because a path has $L = 1 < H$ and a perfect tree has $L = 2^H > 2^{H-1}$. Answer: **(A), (B), (C)**.",
+    "steps": [
+      {
+        "title": "Fix the conventions",
+        "body": "- **Height $H$**: the number of edges on the longest path from the root to a leaf. A single node has height 0. The paper does not define height, and the official key (A, B, C) is consistent with this standard edge-counting convention (see the last step).\n- **Leaf**: a node with no children. **Internal node**: a node with at least one child. Every node is one or the other, so $N = I + L$.\n- A node at depth $d$ is on **level** $d$. In a binary tree, level $d$ has at most $2^d$ nodes, and levels run from $0$ to $H$."
+      },
+      {
+        "title": "The two extreme trees of height H",
+        "body": "| Tree of height $H$ | $N$ | $I$ | $L$ |\n| --- | --- | --- | --- |\n| Path (every internal node has one child) | $H + 1$ | $H$ | $1$ |\n| Perfect tree (every level full) | $2^{H+1} - 1$ | $2^{H} - 1$ | $2^{H}$ |\n\n**Lower bounds.** The longest root-to-leaf path alone has $H + 1$ nodes, so $N \\ge H + 1$. Its $H$ non-leaf nodes each have a child, so $I \\ge H$. At least one leaf exists, so $L \\ge 1$.\n\n**Upper bounds.** Level $d$ holds at most $2^d$ nodes, so $N \\le \\sum_{d=0}^{H} 2^d = 2^{H+1} - 1$. Internal nodes can only sit on levels $0$ to $H - 1$, because a node on level $H$ with a child would make the height $H + 1$. So $I \\le \\sum_{d=0}^{H-1} 2^d = 2^H - 1$. For leaves, $L \\le 2^H$ follows by combining $L \\le I + 1$ (proved in (A) below) with $I \\le 2^H - 1$."
+      },
+      {
+        "title": "(A) L ≤ I + 1: true",
+        "body": "Let $n_0, n_1, n_2$ be the numbers of nodes with 0, 1 and 2 children, so $L = n_0$ and $I = n_1 + n_2$. Every node except the root has exactly one incoming edge, so the number of edges is\n\n$$N - 1 = n_1 + 2n_2.$$\n\nSubstituting $N = n_0 + n_1 + n_2$ gives $n_0 + n_1 + n_2 - 1 = n_1 + 2n_2$, that is, $n_0 = n_2 + 1$. Therefore\n\n$$L = n_2 + 1 \\le n_1 + n_2 + 1 = I + 1.$$\n\nEquality holds exactly when $n_1 = 0$ (a full binary tree). Check with a single node: $L = 1$, $I = 0$, and $1 \\le 1$ holds."
+      },
+      {
+        "title": "(B) and (C): true",
+        "body": "Both are exactly the bounds from the extreme trees:\n\n- **(B)** $H + 1 \\le N \\le 2^{H+1} - 1$. The path attains the lower bound and the perfect tree attains the upper bound.\n- **(C)** $H \\le I \\le 2^{H} - 1$. The path has $I = H$ and the perfect tree has $I = 2^H - 1$.\n\nSpot checks: for $H = 0$ (one node), (B) reads $1 \\le 1 \\le 1$ and (C) reads $0 \\le 0 \\le 0$. For $H = 2$, $N$ ranges over $3$ to $7$ and $I$ over $2$ to $3$."
+      },
+      {
+        "title": "(D) H ≤ L ≤ 2^(H−1): false",
+        "body": "Both halves fail.\n\n- **Lower bound.** A path with $H = 3$ (4 nodes) has only $L = 1$ leaf, and $3 \\le 1$ is false. A tall, thin tree has few leaves.\n- **Upper bound.** The perfect tree with $H = 2$ has $L = 4$ leaves, but $2^{H-1} = 2$. Even the single node ($H = 0$, $L = 1$) breaks it, since $2^{-1} = 0.5$.\n\nThe correct leaf bounds are $1 \\le L \\le 2^{H}$."
+      },
+      {
+        "title": "Why the height convention matters",
+        "body": "Suppose height were counted in **nodes** instead ($h = H + 1$, so a single node has $h = 1$). A path would then have $N = h$ and $I = h - 1$, so (B)'s lower bound $h + 1 \\le N$ and (C)'s lower bound $h \\le I$ would both fail. The official answer (A), (B), (C) therefore corresponds to the edge-counting definition used above. A brute-force check over every binary tree with up to 11 nodes (82,499 shapes) confirms that A, B and C always hold under this definition and D does not."
+      }
+    ],
+    "finalAnswer": "**(A), (B), (C)**",
+    "teaching": "**Vocabulary.** In a *rooted binary tree* every node has at most two children. A **leaf** has no children, and an **internal node** has at least one, so $N = I + L$. The **depth** of a node is the number of edges from the root to it. The **height** $H$ of the tree is the largest depth, so a lone root has height 0. All nodes of depth $d$ form **level** $d$.\n\n**Why level $d$ has at most $2^d$ nodes.** Level 0 is the root. Each node on level $d$ has at most two children on level $d + 1$, so the maximum doubles at each level: $1, 2, 4, \\dots, 2^d$.\n\n**Bracket everything between two extreme shapes.** For a fixed height $H$:\n\n- The **path** (chain), where each internal node has exactly one child, has the fewest nodes: $N = H + 1$, $I = H$, $L = 1$.\n- The **perfect tree**, with every level full, has the most: $N = 1 + 2 + \\dots + 2^H = 2^{H+1} - 1$, $I = 2^H - 1$ (levels $0$ to $H - 1$) and $L = 2^H$ (level $H$).\n\nEvery binary tree of height $H$ has $N$, $I$ and $L$ within these ranges. So to test a proposed inequality, try it on the path, the perfect tree and the single node.\n\n**The leaf identity.** Count edges in two ways. Every non-root node has exactly one parent edge, so there are $N - 1$ edges. Every node contributes one edge per child, so there are $n_1 + 2n_2$ edges. Equating these gives $n_0 = n_2 + 1$: a binary tree has exactly one more leaf than it has two-child nodes. This yields $L \\le I + 1$, with equality for *full* binary trees, where every internal node has two children.\n\n**Back to this question.** (A) is the leaf identity. (B) and (C) are the path and perfect-tree bounds for $N$ and $I$. (D) gets the leaf bounds wrong on both sides: they are $1 \\le L \\le 2^H$, not $H \\le L \\le 2^{H-1}$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Counting edges gives $N - 1 = n_1 + 2n_2$, which forces $L = n_0 = n_2 + 1 \\le n_1 + n_2 + 1 = I + 1$. Equality holds for full binary trees, so the bound is tight and always true."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "A root-to-leaf path of length $H$ already has $H + 1$ nodes, which the path tree attains. At most $2^d$ nodes fit on level $d$, so $N \\le 2^{H+1} - 1$, which the perfect tree attains."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "The $H$ non-leaf nodes on the longest path are internal, so $I \\ge H$. Internal nodes occupy only levels $0$ to $H - 1$, so $I \\le 2^H - 1$. Both bounds are attained."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "A path of height 3 has $L = 1 < H = 3$, which breaks the lower bound. A perfect tree of height 2 has $L = 4 > 2^{H-1} = 2$, which breaks the upper bound. The true range is $1 \\le L \\le 2^H$."
+      }
+    ],
+    "shortcut": "Test every inequality on three trees: a single node ($H = 0$, $N = 1$, $I = 0$, $L = 1$), a path of height $H$ ($N = H + 1$, $I = H$, $L = 1$) and a perfect tree of height $H$ ($N = 2^{H+1} - 1$, $I = 2^H - 1$, $L = 2^H$). (D) fails on the very first path you try.",
+    "commonTrap": "Assuming a tall tree must have many leaves (the lower bound $H \\le L$) or mixing up $2^{H}$ with $2^{H-1}$ for the maximum number of leaves. Another trap is using a node-counting definition of height, under which (B) and (C) seem to fail. The key corresponds to the standard definition, in which a single node has height 0."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q52-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The exponents in options B, C and D (2^(H+1), 2^H and 2^(H−1)) were read from the rendered crop, because the PDF text layer flattens the superscripts. The paper does not define 'height', and the statement is transcribed as printed. The solution adopts the edge-counting convention (a single node has height 0), which is the convention the official key is consistent with."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B;C",
+    "agreesWithKey": true,
+    "checkCode": "from functools import lru_cache\n# a tree is None (empty) or (left, right); enumerate all non-empty binary tree shapes with n nodes\n@lru_cache(None)\ndef trees(n):\n    if n==0: return (None,)\n    return tuple((l,r) for k in range(n) for l in trees(k) for r in trees(n-1-k))\ndef stats(t):  # returns (H in edges, I, L, N)\n    l,r=t; kids=[c for c in (l,r) if c is not None]\n    if not kids: return (0,0,1,1)\n    s=[stats(c) for c in kids]\n    return (1+max(x[0] for x in s), 1+sum(x[1] for x in s), sum(x[2] for x in s), 1+sum(x[3] for x in s))\nchk={'A':lambda H,I,L,N: L<=I+1,\n     'B':lambda H,I,L,N: H+1<=N<=2**(H+1)-1,\n     'C':lambda H,I,L,N: H<=I<=2**H-1,\n     'D':lambda H,I,L,N: H<=L<=2**(H-1)}\nfails={k:None for k in chk}; cnt=0\nfor n in range(1,12):\n    for t in trees(n):\n        H,I,L,N=stats(t); cnt+=1\n        for k,f in chk.items():\n            if not f(H,I,L,N) and fails[k] is None: fails[k]=(H,I,L,N)\nprint('trees checked:',cnt)\nfor k in chk: print(k,'always true' if fails[k] is None else 'FALSE, counterexample (H,I,L,N)=%s'%(fails[k],))\n# explicit counterexamples for D: path of height 3, perfect tree of height 2\npath3=((((None,None),None),None),None)\nperf2=(((None,None),(None,None)),((None,None),(None,None)))\nfor nm,t in (('path H=3',path3),('perfect H=2',perf2)):\n    H,I,L,N=stats(t); print(nm,(H,I,L,N),'D holds?',chk['D'](H,I,L,N))\n# tightness of bounds\nimport collections\next=collections.defaultdict(lambda:[10**9,-1])\nfor n in range(1,12):\n    for t in trees(n):\n        H,I,L,N=stats(t)\n        for nm,v in (('N',N),('I',I),('L',L)):\n            e=ext[(H,nm)]; e[0]=min(e[0],v); e[1]=max(e[1],v)\nfor H in range(0,4): print('H=%d'%H,{nm:tuple(ext[(H,nm)]) for nm in 'NIL'})\n# with height counted in NODES (h=H+1), statement B would read h+1<=N<=2^(h+1)-1: check\nprint('B under node-count height:',all(stats(t)[0]+2<=stats(t)[3] for n in range(1,6) for t in trees(n)))\n",
+    "notes": "A brute-force enumeration of all 82,499 binary-tree shapes with 1 to 11 nodes, with height measured in edges, finds that A, B and C always hold. D fails at the single node, on a path of height 3 (L = 1 < 3) and on the perfect tree of height 2 (L = 4 > 2). The enumeration also shows that the bounds in B and C are attained, for example N from 3 to 7 and I from 2 to 3 when H = 2. Under a node-counting height, B would fail, so the official key A;B;C corresponds to the edge-counting convention. This matches the official key A;B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

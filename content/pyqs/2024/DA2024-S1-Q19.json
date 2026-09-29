@@ -1,0 +1,116 @@
+{
+  "id": "DA2024-S1-Q19",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 19,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-clustering",
+  "subtopicIds": [
+    "ml-kmeans",
+    "ml-clustering-algorithms"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (k-means clusters are convex nearest-centroid regions) applied in a single step (the answer is the midpoint of the two given members), with no computation, about a minute for a prepared student.",
+  "estimatedTimeSec": 70,
+  "stem": "Euclidean distance based $k$-means clustering algorithm was run on a dataset of 100 points with $k = 3$. If the points $\\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}$ and $\\begin{bmatrix} -1 \\\\ 1 \\end{bmatrix}$ are both part of cluster 3, then which **ONE** of the following points is necessarily also part of cluster 3?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\begin{bmatrix} 0 \\\\ 0 \\end{bmatrix}$"
+    },
+    {
+      "label": "B",
+      "text": "$\\begin{bmatrix} 0 \\\\ 2 \\end{bmatrix}$"
+    },
+    {
+      "label": "C",
+      "text": "$\\begin{bmatrix} 2 \\\\ 0 \\end{bmatrix}$"
+    },
+    {
+      "label": "D",
+      "text": "$\\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix}$"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "When $k$-means stops, every point belongs to the cluster with the nearest centroid. The set of points nearer to $\\mathbf{c}_3$ than to any other centroid is an intersection of half-planes, so it is **convex**. Both $[1, 1]^\\top$ and $[-1, 1]^\\top$ are in it, so their midpoint $[0, 1]^\\top$ must be too. The points $[0, 0]^\\top$, $[0, 2]^\\top$ and $[2, 0]^\\top$ are off that segment and can fall in another cluster → **(D)**.",
+    "steps": [
+      {
+        "title": "What cluster membership means in k-means",
+        "body": "Lloyd's $k$-means algorithm alternates two steps: (1) assign every point to its nearest centroid (Euclidean distance), and (2) move each centroid $\\mathbf{c}_j$ to the mean of its assigned points. It stops when the assignments no longer change. So in the final clustering, with centroids $\\mathbf{c}_1, \\mathbf{c}_2, \\mathbf{c}_3$,\n\n$$\n\\mathbf{x} \\in \\text{cluster } 3 \\iff \\lVert\\mathbf{x} - \\mathbf{c}_3\\rVert \\le \\lVert\\mathbf{x} - \\mathbf{c}_j\\rVert \\quad \\text{for } j = 1, 2 .\n$$"
+      },
+      {
+        "title": "Each condition is a half-plane, so the cluster region is convex",
+        "body": "Square both sides and expand:\n\n$$\n\\lVert\\mathbf{x}\\rVert^2 - 2\\,\\mathbf{c}_3^\\top\\mathbf{x} + \\lVert\\mathbf{c}_3\\rVert^2 \\le \\lVert\\mathbf{x}\\rVert^2 - 2\\,\\mathbf{c}_j^\\top\\mathbf{x} + \\lVert\\mathbf{c}_j\\rVert^2\n\\iff 2(\\mathbf{c}_j - \\mathbf{c}_3)^\\top\\mathbf{x} \\le \\lVert\\mathbf{c}_j\\rVert^2 - \\lVert\\mathbf{c}_3\\rVert^2 .\n$$\n\nThe $\\lVert\\mathbf{x}\\rVert^2$ terms cancel, so each condition is **linear** in $\\mathbf{x}$: a half-plane. Cluster 3's region is the intersection of two half-planes (its Voronoi cell), which is a convex set."
+      },
+      {
+        "title": "Apply convexity to the two given points",
+        "body": "Let $\\mathbf{p} = [1, 1]^\\top$ and $\\mathbf{q} = [-1, 1]^\\top$, and let $\\mathbf{m} = \\tfrac12\\mathbf{p} + \\tfrac12\\mathbf{q} = [0, 1]^\\top$. For each $j$, write $\\mathbf{a}_j = 2(\\mathbf{c}_j - \\mathbf{c}_3)$ and $r_j = \\lVert\\mathbf{c}_j\\rVert^2 - \\lVert\\mathbf{c}_3\\rVert^2$. Both given points satisfy $\\mathbf{a}_j^\\top\\mathbf{p} \\le r_j$ and $\\mathbf{a}_j^\\top\\mathbf{q} \\le r_j$, so\n\n$$\n\\mathbf{a}_j^\\top\\mathbf{m} = \\tfrac12\\,\\mathbf{a}_j^\\top\\mathbf{p} + \\tfrac12\\,\\mathbf{a}_j^\\top\\mathbf{q} \\le \\tfrac12 r_j + \\tfrac12 r_j = r_j .\n$$\n\nSo $[0, 1]^\\top$ is at least as close to $\\mathbf{c}_3$ as to either other centroid, and strictly closer when $\\mathbf{p}$ and $\\mathbf{q}$ are. It is therefore assigned to cluster 3 whatever the centroids are (setting aside exact distance ties, which the question implicitly ignores). The same argument covers every point $[t, 1]^\\top$ with $-1 \\le t \\le 1$ on the segment between them."
+      },
+      {
+        "title": "Show the other options are not forced",
+        "body": "$[0, 0]^\\top$, $[0, 2]^\\top$ and $[2, 0]^\\top$ do not lie on the segment $\\{[t, 1]^\\top : -1 \\le t \\le 1\\}$, so convexity says nothing about them. Converged $100$-point clusterings show each can be outside cluster 3. In each case below, $95$ further points far away (around $[100, 100]^\\top$) form the remaining cluster.\n\n| Option | Cluster 3 (centroid) | Other nearby cluster (centroid) | Option point's distances to $\\mathbf{c}_3$ vs other centroid |\n| --- | --- | --- | --- |\n| (A) $[0, 0]^\\top$ | $[1,1]^\\top, [-1,1]^\\top, [0,2.5]^\\top$ → $[0, 1.5]^\\top$ | $[0,0]^\\top, [0,-1]^\\top$ → $[0, -0.5]^\\top$ | $1.5$ vs $0.5$ |\n| (B) $[0, 2]^\\top$ | $[1,1]^\\top, [-1,1]^\\top, [0,-0.5]^\\top$ → $[0, 0.5]^\\top$ | $[0,2]^\\top, [0,4]^\\top$ → $[0, 3]^\\top$ | $1.5$ vs $1$ |\n| (C) $[2, 0]^\\top$ | $[1,1]^\\top, [-1,1]^\\top, [0,1]^\\top$ → $[0, 1]^\\top$ | $[2,0]^\\top, [4,0]^\\top$ → $[3, 0]^\\top$ | $\\sqrt{5} \\approx 2.24$ vs $1$ |\n\nIn each case every point is nearest to its own cluster's centroid, and each centroid is the mean of its cluster, so the clustering is a fixed point of $k$-means. For example, in case (A) $[1, 1]^\\top$ is at distance $\\sqrt{1 + 0.25} \\approx 1.12$ from $[0, 1.5]^\\top$ but $\\sqrt{1 + 2.25} \\approx 1.80$ from $[0, -0.5]^\\top$. The Python check confirms all three configurations, and a random search over 200,000 centroid triples found no case where $[1,1]^\\top$ and $[-1,1]^\\top$ are in cluster 3 but $[0,1]^\\top$ is not."
+      },
+      {
+        "title": "Conclusion",
+        "body": "Only the midpoint $[0, 1]^\\top$ of the two known members is guaranteed to be in cluster 3 → **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)** $\\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix}$",
+    "teaching": "**How $k$-means carves up space.** $k$-means looks for $k$ centroids $\\mathbf{c}_1, \\ldots, \\mathbf{c}_k$ that minimise the within-cluster sum of squared distances $\\sum_{j}\\sum_{\\mathbf{x} \\in C_j}\\lVert\\mathbf{x} - \\mathbf{c}_j\\rVert^2$. Lloyd's algorithm alternates an *assignment step* (each point goes to its nearest centroid) and an *update step* (each centroid becomes the mean of its points). It stops when no assignment changes, so the final clusters are always \"nearest-centroid\" clusters.\n\n**Nearest-centroid regions are convex.** The boundary between the regions of two centroids $\\mathbf{c}_i$ and $\\mathbf{c}_j$ is the set of points equidistant from them, which is the perpendicular bisector of the segment $\\mathbf{c}_i\\mathbf{c}_j$: a straight line in 2-D, a hyperplane in general. This is because $\\lVert\\mathbf{x} - \\mathbf{c}_i\\rVert^2 - \\lVert\\mathbf{x} - \\mathbf{c}_j\\rVert^2$ is a *linear* function of $\\mathbf{x}$ (the $\\lVert\\mathbf{x}\\rVert^2$ terms cancel). The region belonging to $\\mathbf{c}_i$ is therefore an intersection of half-spaces. This is its **Voronoi cell**, and it is a convex polygon or polyhedron. The whole space is partitioned into $k$ convex cells.\n\n**Consequence.** If two points belong to the same $k$-means cluster, every point on the straight segment between them lies in the same cell, and any data point there is assigned to that cluster. This is also why $k$-means cannot find non-convex shapes such as two interleaved crescents or concentric rings.\n\n**In this question** $[1, 1]^\\top$ and $[-1, 1]^\\top$ are in cluster 3, and $[0, 1]^\\top$ is exactly halfway between them, so it must be in cluster 3 too. The other candidates lie off that segment, and one can place the centroids (consistently with a converged run) so that each of them lands in a different cluster.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$[0, 0]^\\top$ is not on the segment joining $[1, 1]^\\top$ and $[-1, 1]^\\top$. With cluster 3 = $\\{[1,1]^\\top, [-1,1]^\\top, [0,2.5]^\\top\\}$ (centroid $[0, 1.5]^\\top$) and another cluster $\\{[0,0]^\\top, [0,-1]^\\top\\}$ (centroid $[0, -0.5]^\\top$), the point $[0, 0]^\\top$ is at distance $0.5$ from the other centroid versus $1.5$ from $\\mathbf{c}_3$, so it is not in cluster 3."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$[0, 2]^\\top$ lies above the segment. With cluster 3 = $\\{[1,1]^\\top, [-1,1]^\\top, [0,-0.5]^\\top\\}$ (centroid $[0, 0.5]^\\top$) and another cluster $\\{[0,2]^\\top, [0,4]^\\top\\}$ (centroid $[0, 3]^\\top$), the point $[0, 2]^\\top$ is at distance $1$ from $[0, 3]^\\top$ versus $1.5$ from $\\mathbf{c}_3$, so it goes to the other cluster."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$[2, 0]^\\top$ is far off the segment. With $\\mathbf{c}_3 = [0, 1]^\\top$ (cluster $\\{[1,1]^\\top, [-1,1]^\\top, [0,1]^\\top\\}$) and another centroid $[3, 0]^\\top$ (cluster $\\{[2,0]^\\top, [4,0]^\\top\\}$), the point $[2, 0]^\\top$ is at distance $1$ from $[3, 0]^\\top$ versus $\\sqrt{5}$ from $\\mathbf{c}_3$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$[0, 1]^\\top = \\tfrac12[1, 1]^\\top + \\tfrac12[-1, 1]^\\top$ is the midpoint of two members of cluster 3. Nearest-centroid regions are convex (intersections of half-planes), so it is always at least as close to $\\mathbf{c}_3$ as to any other centroid and must be in cluster 3."
+      }
+    ],
+    "shortcut": "$k$-means clusters are convex (Voronoi cells), so any point on the segment between two members of a cluster also belongs to it. $[0, 1]^\\top$ is the midpoint of $[1, 1]^\\top$ and $[-1, 1]^\\top$; no other option lies on that segment.",
+    "commonTrap": "Choosing $[0, 0]^\\top$ or $[0, 2]^\\top$ because each is \"close to both points\": each is at distance $\\sqrt{2}$ from both $[1, 1]^\\top$ and $[-1, 1]^\\top$. Being near cluster members proves nothing, because membership is decided by the distance to the **centroids**, and the centroids can sit where these points are closer to a different centroid. Only points on the segment between the two members are guaranteed, by convexity."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q19-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The column vectors in the stem and options were read from the rendered image, because the PDF text layer splits their entries across lines. The italic k is transcribed as $k$. \"ONE\" is bold in the paper and is kept bold here. The page has no embedded figure other than the GATE 2024 background watermark; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D) [0, 1], the midpoint of [1, 1] and [-1, 1], by convexity of nearest-centroid (Voronoi) regions",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\np, q = np.array([1.,1.]), np.array([-1.,1.])\nopts = {'A':(0,0), 'B':(0,2), 'C':(2,0), 'D':(0,1)}\nnear = lambda x, C: np.linalg.norm(C - x, axis=1).argmin()\n# 1) Random centroid triples: whenever p and q go to centroid index 2 (cluster 3), is each option also there?\nalways = {k: True for k in opts}; hits = 0\nfor _ in range(200000):\n    C = rng.uniform(-4, 4, (3, 2))\n    if near(p, C) == 2 and near(q, C) == 2:\n        hits += 1\n        for k, o in opts.items():\n            if near(np.array(o, float), C) != 2: always[k] = False\nprint(\"configs with p,q in cluster 3:\", hits, \" option always in cluster 3:\", always)   # only D True\n# 2) Explicit 100-point datasets that are converged k-means (Lloyd fixed points) with the option point outside cluster 3\nfar = [(100 + i % 10, 100 + i // 10) for i in range(95)]       # 95 distant points form one cluster\ncases = {'A': [(1,1),(-1,1),(0,2.5), (0,0),(0,-1)],             # cluster-3 mean (0,1.5); other mean (0,-0.5)\n         'B': [(1,1),(-1,1),(0,-0.5), (0,2),(0,4)],             # cluster-3 mean (0,0.5); other mean (0,3)\n         'C': [(1,1),(-1,1),(0,1), (2,0),(4,0)]}                # cluster-3 mean (0,1);   other mean (3,0)\nfor k, pts in cases.items():\n    X = np.array(pts + far, float); lab = np.array([2,2,2,1,1] + [0]*95)\n    C = np.array([X[lab == j].mean(0) for j in range(3)])\n    new = np.array([near(x, C) for x in X])\n    print(k, len(X), \"points; centroids\", C[1:].round(3).tolist(), \"fixed point:\", (new == lab).all(),\n          \"option in cluster 3:\", near(np.array(opts[k], float), C) == 2)",
+    "notes": "Convexity argument: the nearest-centroid conditions are linear in x, so the midpoint [0, 1] of two cluster-3 points is always in cluster 3. The Python check draws 200,000 random centroid triples; in the 35,520 where both given points are nearest to centroid 3, [0, 1] is always nearest to centroid 3 as well, while each of [0, 0], [0, 2] and [2, 0] is nearest to another centroid in some of them. It also builds explicit 100-point datasets that are k-means fixed points (each centroid the mean of its cluster, each point nearest its own centroid) in which [0, 0], [0, 2] and [2, 0] respectively lie outside cluster 3. This agrees with official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

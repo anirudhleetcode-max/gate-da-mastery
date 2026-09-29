@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q15",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 15,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-sorting",
+  "subtopicIds": [
+    "pdsa-divide-conquer"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the average-case analysis of quicksort: a uniformly random pivot rank, averaged over the n possible splits) tested by recognising the right recurrence among standard best/worst/fixed-split forms, about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider that the quick sort algorithm is used to sort an array of $n$ distinct randomly ordered elements. In every call, the pivot is chosen as the first element of the current subarray.\n\nLet $T(n)$ denote the expected time to sort the array. Assume that the time to partition is linear in the size of the current subarray.\n\nWhich of the following recurrence relations correctly represents $T(n)$ in this scenario?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$T(n) = T(1) + T(n - 1) + O(n)$"
+    },
+    {
+      "label": "B",
+      "text": "$T(n) = T\\left(\\frac{n}{4}\\right) + T\\left(\\frac{3n}{4}\\right) + O(n)$"
+    },
+    {
+      "label": "C",
+      "text": "$T(n) = 2T\\left(\\frac{n}{2}\\right) + O(n)$"
+    },
+    {
+      "label": "D",
+      "text": "$T(n) = \\frac{1}{n}\\sum_{k=0}^{n-1}[T(k) + T(n - k - 1)] + O(n)$"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "Because the $n$ distinct elements are in random order, the first element (the pivot) is equally likely to be any of the $n$ ranks. So the left part has size $k$ with probability $\\frac{1}{n}$ for each $k = 0, 1, \\ldots, n-1$, and the right part has size $n-k-1$. Averaging the two recursive costs over $k$ and adding the linear partition cost gives $T(n) = \\frac{1}{n}\\sum_{k=0}^{n-1}[T(k) + T(n-k-1)] + O(n)$, which is **(D)**.",
+    "steps": [
+      {
+        "title": "Cost of one call for a given split",
+        "body": "Quicksort takes the pivot $p$ (here the first element), partitions the subarray so that the elements smaller than $p$ come before it and the larger ones after it, and then recursively sorts the two parts. The pivot lands in its final position and is not sorted again.\n\nIf $p$ is the $(k+1)$-th smallest of the $n$ elements, the left part has $k$ elements and the right part has $n - 1 - k$ elements (together with the pivot this accounts for all $n$). The cost of this call is therefore\n\n$$\n\\underbrace{T(k)}_{\\text{left}} + \\underbrace{T(n-k-1)}_{\\text{right}} + \\underbrace{O(n)}_{\\text{partition}}.\n$$"
+      },
+      {
+        "title": "Distribution of the split size",
+        "body": "The elements are distinct and randomly ordered, so every one of the $n!$ orderings is equally likely. The first element is then equally likely to be the smallest, the 2nd smallest, $\\ldots$, or the largest element:\n\n$$\nP(\\text{left part has } k \\text{ elements}) = \\frac{1}{n}, \\qquad k = 0, 1, \\ldots, n-1.\n$$\n\nPartitioning only compares elements with the pivot, so each part is again a randomly ordered set of distinct elements. This is the standard property used in the average-case analysis. The expected cost of sorting a part of size $m$ is therefore $T(m)$, the same function."
+      },
+      {
+        "title": "Average over the $n$ equally likely splits",
+        "body": "By the law of total expectation, conditioning on the split size $k$:\n\n$$\nT(n) = \\sum_{k=0}^{n-1} \\frac{1}{n}\\,\\big[T(k) + T(n-k-1)\\big] + O(n) = \\frac{1}{n}\\sum_{k=0}^{n-1}\\big[T(k) + T(n-k-1)\\big] + O(n).\n$$\n\nThis is exactly option **(D)**. Because $\\sum_k T(n-k-1) = \\sum_k T(k)$, it is often written as $T(n) = \\frac{2}{n}\\sum_{k=0}^{n-1} T(k) + O(n)$."
+      },
+      {
+        "title": "Why (A), (B) and (C) are not the expected-time recurrence",
+        "body": "Each of them assumes the **same** split in every call, instead of averaging over the random split:\n\n| Option | Split assumed in every call | Solves to | What it describes |\n| --- | --- | --- | --- |\n| (A) | $1$ and $n-1$ | $\\Theta(n^2)$ | a maximally unbalanced, worst-case-type split |\n| (B) | $\\frac{n}{4}$ and $\\frac{3n}{4}$ | $\\Theta(n \\log n)$ | one fixed, fairly balanced split |\n| (C) | $\\frac{n}{2}$ and $\\frac{n}{2}$ | $\\Theta(n \\log n)$ | the best case (pivot is always the median) |\n\nWith a random input, none of these splits happens in every call. For example, the pivot is the median only with probability about $\\frac{1}{n}$. So none of (A)-(C) represents the *expected* time, even though (B) and (C) happen to have the same $\\Theta(n \\log n)$ order as the true answer."
+      },
+      {
+        "title": "Solving (D) for context",
+        "body": "Count the partition cost as exactly $n-1$ comparisons and let $C(n)$ be the expected number of comparisons, so $C(n) = (n-1) + \\frac{2}{n}\\sum_{k=0}^{n-1} C(k)$. Multiply by $n$ and subtract the same identity for $n-1$:\n\n$$\nnC(n) - (n-1)C(n-1) = 2(n-1) + 2C(n-1) \\;\\Rightarrow\\; \\frac{C(n)}{n+1} = \\frac{C(n-1)}{n} + \\frac{2(n-1)}{n(n+1)}.\n$$\n\nSumming this telescoping relation gives $C(n) = 2(n+1)H_n - 4n \\approx 1.39\\, n \\log_2 n$, where $H_n = 1 + \\frac{1}{2} + \\cdots + \\frac{1}{n}$. So the expected time is $\\Theta(n \\log n)$. For small $n$ the values are $C(2) = 1$, $C(3) = \\frac{8}{3}$, $C(4) = \\frac{29}{6}$. These match an exact average over all $n!$ input orders (checked in Python for $n \\le 7$)."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Quicksort in one paragraph.** Pick a pivot, partition the array into the elements smaller than the pivot and those larger than it (linear time), and recursively sort the two parts. How well it performs depends entirely on **where the pivot's rank falls**. A median pivot halves the problem, while the smallest or largest element leaves a part of size $n-1$.\n\n**Three different recurrences for three different questions.**\n\n- *Best case*: the pivot is always the median, so $T(n) = 2T(n/2) + O(n) = \\Theta(n \\log n)$.\n- *Worst case*: the pivot is always an extreme element, which happens for first-element pivots on already sorted input. Then $T(n) = T(n-1) + O(n) = \\Theta(n^2)$.\n- *Expected (average) case*: the split is a **random variable**, so the recurrence must average over all its possible values, weighted by their probabilities.\n\n**Where the $\\frac{1}{n}$ comes from.** With distinct elements in uniformly random order, the first element is equally likely to be any of the $n$ ranks. A deterministic pivot rule (always the first element) applied to a random input therefore behaves exactly like a random pivot applied to any input. Each split $(k,\\; n-1-k)$ has probability $\\frac{1}{n}$, and the expected cost is the probability-weighted average of the costs of the splits:\n\n$$\nT(n) = \\frac{1}{n}\\sum_{k=0}^{n-1}\\big[T(k) + T(n-k-1)\\big] + \\Theta(n).\n$$\n\nIts solution is about $2n \\ln n \\approx 1.39\\, n\\log_2 n$ comparisons, only about 39% more than the perfect-median best case. That is why quicksort is fast on average.\n\n**Back to this question.** The question fixes the pivot rule (first element) and says the input is randomly ordered, and it asks for the **expected** time. Only a recurrence that averages over all $n$ equally likely pivot positions can represent an expectation, and that is option (D). Options (A), (B) and (C) each hard-code one particular split.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "This assumes that every call splits off a single element, a maximally unbalanced split. It solves to $\\Theta(n^2)$ and describes a worst-case-type behaviour, not the expectation over a random pivot rank."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "This assumes that every call splits exactly $\\frac{n}{4} : \\frac{3n}{4}$. That is one particular split pattern, and it gives $\\Theta(n\\log n)$, but the pivot rank is uniform over all $n$ positions, so a single fixed split is not the expected-time recurrence."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "This is the best case, where the pivot is always the median. The asymptotic order $\\Theta(n\\log n)$ happens to match the average case, but the recurrence does not represent the expected time."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "The left part has size $k$ with probability $\\frac{1}{n}$ for $k = 0, \\ldots, n-1$ and the right part has size $n-k-1$. Averaging $T(k) + T(n-k-1)$ over $k$ and adding the linear partition cost gives exactly this recurrence."
+      }
+    ],
+    "shortcut": "\"Expected time\" means the recurrence must average over the random split. Look for the $\\frac{1}{n}\\sum_{k}$ form. A recurrence with one fixed split, such as $n/2 : n/2$, $n/4 : 3n/4$ or $1 : n-1$, describes one specific case and never an expectation.",
+    "commonTrap": "Choosing (C), or (B), because average-case quicksort is $\\Theta(n\\log n)$ and those recurrences also solve to $\\Theta(n\\log n)$. The question asks which recurrence *represents* $T(n)$, not which one has the same asymptotic solution. Only (D) models the random pivot position."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q15-1.webp",
+    "/pyq/2026/official/Q15-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. In (D) the paper sets the fraction and the summation limits in inline (text) style, with the limits beside the summation sign; it is transcribed as inline math. The square brackets in (D) are as printed. The variable n is italic in the stem and is transcribed as $n$. The second official crop (Q15-2) shows only the header and a table border of the next page. The only embedded image on the page is the GATE 2026 background watermark; no figure is needed for this question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D) - the pivot rank is uniform, so each split (k, n-k-1) has probability 1/n; averaging gives T(n) = (1/n) Σ_{k=0}^{n-1} [T(k) + T(n-k-1)] + O(n).",
+    "agreesWithKey": true,
+    "checkCode": "import random\nfrom fractions import Fraction as F\nfrom math import factorial\nfrom itertools import permutations\ndef qs(a):  # quicksort, pivot = first element; returns #comparisons (partition cost = len-1)\n    if len(a) <= 1: return 0\n    p = a[0]; L = [x for x in a[1:] if x < p]; R = [x for x in a[1:] if x > p]\n    return (len(a) - 1) + qs(L) + qs(R)\n# Option (D) with the O(n) term taken as exactly n-1 comparisons\nT = [F(0)] * 11\nfor n in range(1, 11):\n    T[n] = F(n - 1) + F(1, n) * sum(T[k] + T[n - k - 1] for k in range(n))\n# Exact average over all n! input orders for small n\nfor n in range(1, 8):\n    avg = F(sum(qs(list(p)) for p in permutations(range(n))), factorial(n))\n    assert avg == T[n], (n, avg, T[n])\nprint('exact average == recurrence (D) for n=1..7:', [str(T[n]) for n in range(1, 8)])\n# Pivot rank is uniform: left-part size k occurs with prob 1/n\nn = 8; cnt = [0] * n\nfor p in permutations(range(n)): cnt[p[0]] += 1\nprint('left size k=0..7 counts:', cnt, '-> each 1/n')\nrandom.seed(1); n = 2000\nsim = sum(qs(random.sample(range(10**6), n)) for _ in range(200)) / 200\nH = sum(1 / i for i in range(1, n + 1))\nprint('simulated', round(sim), 'closed form 2(n+1)H_n-4n =', round(2 * (n + 1) * H - 4 * n))\nprint('sorted input (worst case):', qs(list(range(300))), '= n(n-1)/2 =', 300 * 299 // 2)",
+    "notes": "Author solve agrees with the official key D. The Python check computes the exact average comparison count of first-element-pivot quicksort over all n! input orders for n = 1..7 and shows that it equals recurrence (D) with the O(n) term taken as n-1 comparisons (0, 1, 8/3, 29/6, 37/5, 103/10, 472/35). It also checks that the pivot rank is uniform, compares a random simulation for n = 2000 with the closed form 2(n+1)H_n - 4n, and confirms the n(n-1)/2 worst case on sorted input."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

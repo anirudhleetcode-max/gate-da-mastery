@@ -1,0 +1,119 @@
+{
+  "id": "DA2025-S5-Q26",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 26,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-uncertainty",
+  "subtopicIds": [
+    "ai-variable-elimination",
+    "ai-sampling"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (exact versus sampling-based inference in Bayesian networks) where each of the four statements is a direct recall check, about 1 min for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Which of the following statements is/are correct in a Bayesian network?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Variable elimination is an approximate inference algorithm"
+    },
+    {
+      "label": "B",
+      "text": "Gibbs sampling is an exact inference algorithm"
+    },
+    {
+      "label": "C",
+      "text": "Variable elimination is used to determine conditional probabilities"
+    },
+    {
+      "label": "D",
+      "text": "Rejection sampling is an approximate inference algorithm"
+    }
+  ],
+  "officialKeyRaw": "C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "Variable elimination is an **exact** inference algorithm whose job is to compute (conditional) probabilities such as $P(X \\mid \\mathbf{e})$, so (A) is false and (C) is true. Rejection sampling and Gibbs sampling are both **approximate**, sampling-based methods, so (B) is false and (D) is true. Answer: **(C), (D)**.",
+    "steps": [
+      {
+        "title": "Concept: what inference means and the two families of algorithms",
+        "body": "In a Bayesian network, *inference* means computing a posterior (conditional) probability $P(X \\mid \\mathbf{e})$ of a query variable $X$ given observed evidence $\\mathbf{e}$, using the factorisation\n\n$$\nP(X_1, \\ldots, X_n) = \\prod_{i=1}^{n} P\\big(X_i \\mid \\mathrm{Parents}(X_i)\\big).\n$$\n\nThe standard algorithms fall into two families:\n\n| Family | Algorithms | Output |\n| --- | --- | --- |\n| Exact | enumeration, **variable elimination** (also junction tree) | the true probability, up to floating-point rounding |\n| Approximate (sampling) | direct/prior sampling, **rejection sampling**, likelihood weighting, **Gibbs sampling** (MCMC) | a random estimate that converges to the true probability as the number of samples grows |\n\nEach statement is checked against this classification."
+      },
+      {
+        "title": "Statements (A) and (C): variable elimination",
+        "body": "Variable elimination (VE) evaluates\n\n$$\nP(X \\mid \\mathbf{e}) = \\alpha\\, P(X, \\mathbf{e}) = \\alpha \\sum_{\\mathbf{y}} \\prod_{i} P\\big(X_i \\mid \\mathrm{Parents}(X_i)\\big),\n$$\n\nwhere $\\mathbf{y}$ ranges over the hidden (non-query, non-evidence) variables and $\\alpha$ normalises over the values of $X$. It pushes each sum inside the product as far as possible, sums out one hidden variable at a time into an intermediate *factor*, and reuses those factors instead of recomputing them. That is only a reordering of the same sums and products that full enumeration performs, so VE uses no randomness and makes no approximation: its answer equals the exact posterior.\n\n- **(A)** says VE is approximate: **false**, VE is an exact algorithm.\n- **(C)** says VE is used to determine conditional probabilities: **true**; computing $P(X \\mid \\mathbf{e})$ is exactly what it is designed for."
+      },
+      {
+        "title": "Statement (D): rejection sampling",
+        "body": "Rejection sampling draws $N$ complete samples from the network's prior by ancestral sampling (sample each variable after its parents, from its CPT), **rejects** every sample that disagrees with the evidence $\\mathbf{e}$, and estimates\n\n$$\n\\hat P(X = x \\mid \\mathbf{e}) = \\frac{\\#\\{\\text{accepted samples with } X = x\\}}{\\#\\{\\text{accepted samples}\\}}.\n$$\n\nThe estimate is a random quantity. It is consistent (it converges to the true value as $N \\to \\infty$), but for any finite $N$ it has sampling error of order $1/\\sqrt{N_{\\text{accepted}}}$. Rejection sampling is therefore an **approximate** inference algorithm: **(D) is true**."
+      },
+      {
+        "title": "Statement (B): Gibbs sampling",
+        "body": "Gibbs sampling is a Markov chain Monte Carlo (MCMC) method. It clamps the evidence variables, starts from an arbitrary assignment of the others, and repeatedly resamples one non-evidence variable at a time from its conditional distribution given its Markov blanket. The chain's stationary distribution is the posterior $P(\\cdot \\mid \\mathbf{e})$, and the query probability is estimated by the fraction of (post burn-in) states with $X = x$. As with rejection sampling, a finite run gives only a random estimate, and in addition successive samples are correlated. Gibbs sampling is **approximate**, not exact: **(B) is false**."
+      },
+      {
+        "title": "Numerical illustration",
+        "body": "Take the classic sprinkler network $C \\to S$, $C \\to R$, $(S, R) \\to W$ (Cloudy, Sprinkler, Rain, WetGrass) with $P(C{=}1) = 0.5$; $P(S{=}1 \\mid C) = 0.1, 0.5$ and $P(R{=}1 \\mid C) = 0.8, 0.2$ for $C = 1, 0$; and $P(W{=}1 \\mid S, R) = 0.99, 0.9, 0.9, 0$ for $(S, R) = (1,1), (1,0), (0,1), (0,0)$. Query $P(C{=}1 \\mid W{=}1)$.\n\n**Variable elimination.** Sum out $R$, then $S$, for each value of $C$:\n\n- $C = 1$: $\\sum_r P(r \\mid C{=}1)\\,P(W{=}1 \\mid S, r) = 0.8(0.99) + 0.2(0.9) = 0.972$ for $S = 1$ and $0.8(0.9) + 0.2(0) = 0.72$ for $S = 0$; then $0.1(0.972) + 0.9(0.72) = 0.7452$; times $P(C{=}1) = 0.5$ gives $f(1) = 0.3726$.\n- $C = 0$: the same sum with $P(R{=}1 \\mid C{=}0) = 0.2$ gives $0.2(0.99) + 0.8(0.9) = 0.918$ and $0.2(0.9) + 0.8(0) = 0.18$; then $0.5(0.918) + 0.5(0.18) = 0.549$; times $0.5$ gives $f(0) = 0.2745$.\n\n$$\nP(C{=}1 \\mid W{=}1) = \\frac{0.3726}{0.3726 + 0.2745} = \\frac{0.3726}{0.6471} \\approx 0.5758,\n$$\n\nidentical to brute-force enumeration of the joint distribution: VE is exact.\n\n**Sampling.** In the Python check, rejection sampling with $N = 100$ gave $0.614$ and $0.581$ for two random seeds, and Gibbs sampling (100 samples after burn-in) gave $0.73$ and $0.52$. With $N = 100\\,000$ they gave $0.5746, 0.5753$ (rejection) and $0.5796, 0.5803$ (Gibbs). The estimates depend on the seed and only approach $0.5758$ as $N$ grows: both methods are approximate."
+      }
+    ],
+    "finalAnswer": "**(C), (D)**",
+    "teaching": "**Why inference is hard.** A Bayesian network stores a joint distribution compactly as a product of local conditional probability tables (CPTs), one per node given its parents. To answer a query $P(X \\mid \\mathbf{e})$ we must sum the joint over every hidden variable. Done naively (enumeration), that sum has a number of terms exponential in the number of hidden variables, and exact inference in general Bayesian networks is NP-hard. So there are two ways forward.\n\n**Exact but smarter: variable elimination.** Most terms in the product mention only a few variables, so a sum over one variable can be pushed inside the product and done once. For example, $\\sum_s \\sum_r P(s \\mid c)P(r \\mid c)P(w \\mid s, r) = \\sum_s P(s \\mid c) \\big[\\sum_r P(r \\mid c)P(w \\mid s, r)\\big]$: the bracket is computed once per $(s, c)$ and stored as a new factor. Eliminating hidden variables one by one in this way gives exactly the same number as enumeration. Only the amount of work changes, and it depends on the elimination order: VE is efficient on sparse networks such as polytrees but can still blow up on densely connected ones. Evidence is handled by fixing the observed variables' values in the factors, and a final normalisation turns $P(X, \\mathbf{e})$ into $P(X \\mid \\mathbf{e})$. That is why VE is described as *used to determine conditional probabilities*.\n\n**Approximate: sampling.** Instead of summing, generate random samples and count.\n\n- *Rejection sampling*: sample from the prior and throw away samples that contradict the evidence. It is simple but wasteful when the evidence is unlikely, since almost everything is rejected.\n- *Likelihood weighting*: fix the evidence and weight each sample by how likely the evidence is.\n- *Gibbs sampling (MCMC)*: walk through states by resampling one variable at a time given its Markov blanket; the long-run frequencies approximate the posterior.\n\nAll sampling methods give estimates with random error that shrinks roughly like $1/\\sqrt{N}$. They are consistent, since they converge to the truth as $N \\to \\infty$, but they are never exact for finite $N$.\n\n**Back to the question.** VE is exact and computes conditional probabilities, so (A) is false and (C) is true. Rejection sampling is approximate, so (D) is true. Gibbs sampling is approximate, not exact, so (B) is false.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Variable elimination is an **exact** inference algorithm. It evaluates the same sums of products as enumeration, just in a cheaper order with cached intermediate factors, so it returns the true $P(X \\mid \\mathbf{e})$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Gibbs sampling is an MCMC method. It gives a random estimate of the posterior that converges only as the number of samples grows, so it is **approximate**, not exact."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "VE computes $P(X, \\mathbf{e})$ by summing out the hidden variables and then normalises to get the conditional (posterior) probability $P(X \\mid \\mathbf{e})$. That is its purpose."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Rejection sampling estimates $P(X \\mid \\mathbf{e})$ from the fraction of evidence-consistent prior samples with $X = x$. The estimate has sampling error for any finite $N$, so it is an **approximate** inference algorithm."
+      }
+    ],
+    "shortcut": "Classify by name: anything called *sampling* (rejection, likelihood weighting, Gibbs/MCMC) is approximate; enumeration and variable elimination are exact. Every inference algorithm exists to compute conditional probabilities $P(X \\mid \\mathbf{e})$, so a statement saying that is true.",
+    "commonTrap": "Assuming that variable elimination must be approximate because it is \"cheaper\" than enumeration. The saving comes from reordering sums and caching factors, not from dropping anything, so the result is exact. The mirror-image slip is to call Gibbs sampling exact because its stationary distribution is exactly the posterior. Convergence in the limit does not make a finite run exact."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q26-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain-text question with no mathematical notation; the options carry no terminal full stops in the paper and none are added."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C, D (variable elimination is exact and computes conditional probabilities; rejection and Gibbs sampling are approximate)",
+    "agreesWithKey": true,
+    "checkCode": "import itertools, random\n# Sprinkler-style BN: C -> S, C -> R, (S,R) -> W. Query P(C=1 | W=1).\npC = 0.5\npS = {1: 0.1, 0: 0.5}; pR = {1: 0.8, 0: 0.2}\npW = {(1, 1): 0.99, (1, 0): 0.9, (0, 1): 0.9, (0, 0): 0.0}\nb = lambda p, v: p if v else 1 - p\ndef joint(c, s, r, w): return b(pC, c) * b(pS[c], s) * b(pR[c], r) * b(pW[(s, r)], w)\n# exact by full enumeration\nnum = sum(joint(1, s, r, 1) for s, r in itertools.product([0, 1], repeat=2))\nden = sum(joint(c, s, r, 1) for c, s, r in itertools.product([0, 1], repeat=3))\nexact = num / den\n# variable elimination: sum out S and R first -> factor f(C) for evidence W=1, then normalise\nf = {c: b(pC, c) * sum(b(pS[c], s) * sum(b(pR[c], r) * pW[(s, r)] for r in (0, 1)) for s in (0, 1)) for c in (0, 1)}\nve = f[1] / (f[0] + f[1])\nprint('enumeration =', exact, ' VE =', ve, ' identical:', abs(exact - ve) < 1e-15)\ndef rejection(N, seed):\n    rnd = random.Random(seed); acc = hit = 0\n    for _ in range(N):\n        c = rnd.random() < pC; s = rnd.random() < pS[c]; r = rnd.random() < pR[c]; w = rnd.random() < pW[(s, r)]\n        if w: acc += 1; hit += c\n    return hit / acc\ndef gibbs(N, seed, burn=1000):\n    rnd = random.Random(seed); st = {'c': 1, 's': 1, 'r': 1}; hit = 0\n    for t in range(N + burn):\n        for v in ('c', 's', 'r'):\n            p1 = joint(*[1 if k == v else st[k] for k in ('c', 's', 'r')], 1)\n            p0 = joint(*[0 if k == v else st[k] for k in ('c', 's', 'r')], 1)\n            st[v] = int(rnd.random() < p1 / (p0 + p1))\n        if t >= burn: hit += st['c']\n    return hit / N\nfor N in (100, 1000, 100000):\n    print(N, 'rejection:', [round(rejection(N, s), 4) for s in (1, 2)], ' gibbs:', [round(gibbs(N, s), 4) for s in (1, 2)])\n",
+    "notes": "Independent solve: variable elimination is exact (A false) and computes conditional/posterior probabilities (C true); rejection sampling is approximate (D true); Gibbs sampling is approximate MCMC, not exact (B false). This gives C;D, matching the official key C;D. The Python check builds the sprinkler network, shows that variable elimination reproduces brute-force enumeration exactly (P(C=1|W=1) = 0.5758), and shows that rejection and Gibbs sampling estimates vary with the seed and only approach that value as the sample size grows (e.g. N=100: rejection 0.614/0.581, Gibbs 0.73/0.52; N=100000: rejection 0.5746/0.5753, Gibbs 0.5796/0.5803)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,113 @@
+{
+  "id": "DA2026-S8-Q07",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 7,
+  "section": "GA",
+  "subjectId": "ga",
+  "topicId": "ga-quant",
+  "subtopicIds": [
+    "ga-stats-prob",
+    "ga-numerical-reasoning"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE — one concept (mean/median/mode of a small data set) applied in 2–3 short steps (fix the sum, fix the order statistics, rule out the tied-mode case), with a likely trap in the (1, 1) case; about 2 minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Five integers are picked from 0 to 20, with possible repetitions, such that their mean is 12, median is 18, and they have a single mode of 20.\n\nIgnoring permutations, the number of ways to pick these five integers is \\_\\_\\_\\_\\_",
+  "options": [
+    {
+      "label": "A",
+      "text": "0"
+    },
+    {
+      "label": "B",
+      "text": "1"
+    },
+    {
+      "label": "C",
+      "text": "2"
+    },
+    {
+      "label": "D",
+      "text": "3"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Sort the numbers as $a \\le b \\le 18 \\le d \\le e$. The mean gives a sum of $60$. A unique mode of $20$ forces $d = e = 20$, so $a + b = 2$. The pair $(1,1)$ creates a second mode, which leaves only $\\{0, 2, 18, 20, 20\\}$. There is **1** way, option **(B)**.",
+    "steps": [
+      {
+        "title": "Translate mean and median into equations",
+        "body": "Write the five integers in non-decreasing order as $a \\le b \\le c \\le d \\le e$, each in $\\{0, 1, \\dots, 20\\}$. \"Ignoring permutations\" means we count **multisets**, so this sorted form is the only one we need.\n\n- Mean $= 12$ $\\Rightarrow$ $a + b + c + d + e = 5 \\times 12 = 60$.\n- Median $= 18$ $\\Rightarrow$ the middle value is $c = 18$.\n\nHence $a + b + d + e = 60 - 18 = 42$, with $a \\le b \\le 18 \\le d \\le e \\le 20$."
+      },
+      {
+        "title": "Use the single mode of 20",
+        "body": "\"A single mode of 20\" means that $20$ occurs **strictly more often** than every other value.\n\n- $20$ cannot be in position $c$ (that would make the median $20$), so $20$ can only occupy positions $d$ and $e$. It therefore appears **at most twice**.\n- If $20$ appeared only once, it could not be the unique mode. Either every value appears once (no unique mode), or some other value appears twice and beats $20$.\n\nSo $20$ appears **exactly twice**: $d = e = 20$. Every other value may then appear **at most once**, because a second value appearing twice would tie with $20$."
+      },
+      {
+        "title": "Solve for the two smallest numbers",
+        "body": "Substitute $d = e = 20$:\n\n$$a + b = 42 - 20 - 20 = 2, \\qquad 0 \\le a \\le b \\le 18.$$\n\nThe non-negative integer pairs with $a \\le b$ and $a + b = 2$ are $(0, 2)$ and $(1, 1)$."
+      },
+      {
+        "title": "Check each candidate against the mode condition",
+        "body": "| Multiset | Sum | Median | Frequencies | Single mode 20? |\n| --- | --- | --- | --- | --- |\n| $\\{0, 2, 18, 20, 20\\}$ | $60$ | $18$ | $20$ twice, others once | ✓ |\n| $\\{1, 1, 18, 20, 20\\}$ | $60$ | $18$ | $1$ twice, $20$ twice | ✗ (bimodal: 1 and 20) |\n\nOnly $\\{0, 2, 18, 20, 20\\}$ satisfies every condition. Its mean is $60/5 = 12$, its median is $18$ and its unique mode is $20$.\n\nThe number of ways is **1**, which is option **(B)**. An exhaustive Python enumeration over all multisets confirms this."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "Mean, median and mode each pin down a different feature of a data set, and puzzles like this one work by turning each into a constraint.\n\n- **Mean** fixes the **total**. With $n$ numbers and mean $\\mu$, the sum is $n\\mu$. It says nothing about how the total is split.\n- **Median** fixes the **middle value** once the data are sorted. For an odd count $n$, it is the $\\frac{n+1}{2}$-th value. Everything before it is $\\le$ it and everything after it is $\\ge$ it.\n- **Mode** is the value that occurs **most often**. A *single* (unique) mode means one value occurs strictly more often than every other value. If two values tie for the highest frequency, the data are *bimodal* and there is no single mode. If every value appears once, no value is a unique mode.\n\n**Standard method:** sort the unknowns, $a \\le b \\le c \\le d \\le e$. Place the median in the middle slot, then place the mode as many times as possible without breaking the median. Use the mean to find what remains for the other slots. Finally, **re-check the mode condition** on every candidate, because the leftover numbers can repeat and create an accidental tie.\n\nIn this question, the median ($18$) blocks $20$ from the middle slot, so $20$ fits only in the top two slots. That forces exactly two 20s. The mean then leaves only $2$ for the two smallest numbers. The last check, which rules out $(1, 1)$ because it ties with the two 20s, is where the answer drops from 2 to 1.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "A valid multiset exists: $\\{0, 2, 18, 20, 20\\}$ has mean $12$, median $18$ and unique mode $20$. The count cannot be 0."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Exactly one multiset, $\\{0, 2, 18, 20, 20\\}$, meets all the conditions. The only other candidate, $\\{1, 1, 18, 20, 20\\}$, is bimodal."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "This counts both $(0, 2)$ and $(1, 1)$ for the two smallest numbers. With $(1, 1)$, the value $1$ appears twice, as often as $20$, so $20$ is no longer a *single* mode."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Reaching 3 requires relaxing the mode condition, e.g. also counting sets such as $\\{0, 3, 18, 19, 20\\}$ (sum 60, median 18, but every value appears once, so there is no unique mode). No such set is valid."
+      }
+    ],
+    "shortcut": "Because the median is 18, the value 20 fits only in the top two slots, so it must fill both: $d = e = 20$. Then $a + b = 60 - 18 - 40 = 2$. Reject $(1, 1)$ because it ties the mode, which leaves the single answer $\\{0, 2, 18, 20, 20\\}$.",
+    "commonTrap": "Accepting $(1, 1, 18, 20, 20)$ and answering **2**. With two 1s and two 20s the data are bimodal, which violates *single* mode of 20."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q07-1.webp",
+    "/pyq/2026/official/Q07-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Official crop Q07-2 shows only the top edge of the next page's table and contains no question content."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B (exactly one multiset: {0, 2, 18, 20, 20})",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import combinations_with_replacement as C\nfrom collections import Counter\ndef single_mode_20(c):\n    m=Counter(c); top=max(m.values())\n    return [v for v in m if m[v]==top]==[20]\ns=[c for c in C(range(21),5) if sum(c)==60 and c[2]==18 and single_mode_20(c)]\nprint(s, len(s))  # [(0, 2, 18, 20, 20)] 1",
+    "notes": "A hand derivation and an exhaustive enumeration of all 5-element multisets from 0–20 both give exactly one multiset, {0, 2, 18, 20, 20}. This agrees with official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

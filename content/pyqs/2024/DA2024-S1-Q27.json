@@ -1,0 +1,111 @@
+{
+  "id": "DA2024-S1-Q27",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 27,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-data-transformation",
+  "subtopicIds": [
+    "dbw-data-transformation"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: a single-step computation with one formula, z = (v − mean)/standard deviation, where the only care needed is to ignore the minimum and maximum; under a minute for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "Let the minimum, maximum, mean and standard deviation values for the attribute *income* of data scientists be ₹46000, ₹170000, ₹96000, and ₹21000, respectively. The $z$-score normalized *income* value of ₹106000 is closest to which **ONE** of the following options?",
+  "options": [
+    {
+      "label": "A",
+      "text": "0.217"
+    },
+    {
+      "label": "B",
+      "text": "0.476"
+    },
+    {
+      "label": "C",
+      "text": "0.623"
+    },
+    {
+      "label": "D",
+      "text": "2.304"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "$z$-score normalization uses only the mean and the standard deviation: $z = \\dfrac{v - \\mu}{\\sigma} = \\dfrac{106000 - 96000}{21000} = \\dfrac{10}{21} \\approx 0.476$, option **(B)**. The minimum and maximum are not needed; they belong to min–max normalization.",
+    "steps": [
+      {
+        "title": "Formula and the values it needs",
+        "body": "$z$-score (zero-mean) normalization maps a value $v$ of attribute $A$ to\n\n$$\nv' = \\frac{v - \\mu_A}{\\sigma_A},\n$$\n\nwhere $\\mu_A$ is the mean and $\\sigma_A$ the standard deviation of $A$. From the stem:\n\n- $v = 106000$\n- $\\mu_A = 96000$\n- $\\sigma_A = 21000$\n\nThe minimum (₹46000) and maximum (₹170000) do not appear in this formula."
+      },
+      {
+        "title": "Substitute and calculate",
+        "body": "$$\nv' = \\frac{106000 - 96000}{21000} = \\frac{10000}{21000} = \\frac{10}{21} = 0.47619\\ldots \\approx 0.476.\n$$\n\nThe rupees cancel, so the normalized value is a pure number. It says that an income of ₹106000 lies $0.476$ standard deviations **above** the mean."
+      },
+      {
+        "title": "Compare with the options",
+        "body": "$|0.476 - 0.47619| \\approx 0.0002$, so the closest option is **(B) 0.476**. The other options are far away: $|0.217 - 0.476| = 0.259$, $|0.623 - 0.476| = 0.147$, $|2.304 - 0.476| = 1.828$."
+      },
+      {
+        "title": "Where the other numbers come from",
+        "body": "Each distractor matches a wrong combination of the given numbers:\n\n| Option | Value | Computation it matches |\n|---|---|---|\n| (A) | 0.217 | $\\dfrac{106000 - 96000}{46000} = 0.2174$: dividing by the minimum instead of $\\sigma$ |\n| (C) | 0.623 | $\\dfrac{106000}{170000} = 0.6235$: dividing the raw value by the maximum, with no mean subtracted |\n| (D) | 2.304 | $\\dfrac{106000}{46000} = 2.3043$: dividing the raw value by the minimum |\n\nMin–max normalization to $[0, 1]$ would give $\\dfrac{106000 - 46000}{170000 - 46000} = \\dfrac{60000}{124000} \\approx 0.484$, which is not one of the options. The question asks for the $z$-score, $0.476$."
+      }
+    ],
+    "finalAnswer": "**(B)** 0.476",
+    "teaching": "**Why normalize?** Attributes measured on different scales (income in lakhs, age in years, rating from 1 to 5) would let the large-valued attribute dominate distance-based methods such as $k$-NN, $k$-means or gradient-based training. Normalization rescales attribute values to a common range. Three standard methods from data preprocessing:\n\n**1. Min–max normalization** maps $[\\min_A, \\max_A]$ linearly onto a new range $[\\text{new\\_min}, \\text{new\\_max}]$:\n\n$$\nv' = \\frac{v - \\min_A}{\\max_A - \\min_A}\\,(\\text{new\\_max} - \\text{new\\_min}) + \\text{new\\_min}.\n$$\n\nIt needs the minimum and maximum, and a single outlier squeezes all the other values together.\n\n**2. $z$-score (zero-mean) normalization** centres by the mean and scales by the standard deviation:\n\n$$\nv' = \\frac{v - \\mu_A}{\\sigma_A}.\n$$\n\nAfter this transformation the attribute has mean 0 and standard deviation 1. A value's $z$-score tells you how many standard deviations it lies above (positive) or below (negative) the mean. It is useful when the true min and max are unknown or when outliers would dominate min–max scaling.\n\n**3. Decimal scaling** divides by a power of ten, $v' = v / 10^j$, where $j$ is the smallest integer that makes $\\max |v'| < 1$.\n\n**Back to this question.** The stem deliberately lists all four summary statistics. The name of the method, \"$z$-score\", tells you which two to use: the mean ₹96000 and the standard deviation ₹21000. The income ₹106000 is ₹10000 above the mean, and ₹10000 is $10/21 \\approx 0.476$ of one standard deviation.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$0.217 \\approx \\dfrac{106000 - 96000}{46000}$: the deviation from the mean is divided by the **minimum** instead of the standard deviation. The $z$-score divides by $\\sigma = 21000$."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "$z = \\dfrac{106000 - 96000}{21000} = \\dfrac{10}{21} = 0.47619\\ldots$, which rounds to $0.476$. This matches the official key."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$0.623 \\approx \\dfrac{106000}{170000}$: the raw value divided by the **maximum**, with no mean subtracted. That is a max-scaling, not a $z$-score."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$2.304 \\approx \\dfrac{106000}{46000}$: the raw value divided by the **minimum**. A $z$-score of 2.304 would mean ₹106000 lies 2.3 standard deviations above the mean, i.e. near $96000 + 2.304 \\times 21000 \\approx 144384$, which is not the case."
+      }
+    ],
+    "shortcut": "Ignore min and max; compute $(v - \\mu)/\\sigma = 10000/21000 = 10/21$. Since $1/21 \\approx 0.0476$, $10/21 \\approx 0.476$.",
+    "commonTrap": "Using the minimum and maximum because they are given, i.e. applying min–max normalization, $\\dfrac{106000 - 46000}{170000 - 46000} \\approx 0.484$, or mixing min/max into the $z$-score formula as in options (A), (C) and (D). A $z$-score needs only the mean and the standard deviation."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q27-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The rupee amounts are written with the ₹ symbol and without thousands separators, exactly as printed (₹46000, ₹170000, ₹96000, ₹21000, ₹106000). The attribute name income is italic in the paper (both occurrences), and the italic z of \"z-score\" is written as $z$. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B) 0.476, since z = (106000 − 96000)/21000 = 10/21 ≈ 0.47619",
+    "agreesWithKey": true,
+    "checkCode": "mn, mx, mean, sd, x = 46000, 170000, 96000, 21000, 106000\nz = (x - mean) / sd\nopts = {'A': 0.217, 'B': 0.476, 'C': 0.623, 'D': 2.304}\nprint('z-score =', round(z, 5), '-> closest', min(opts, key=lambda k: abs(opts[k] - z)))\nprint('min-max =', round((x - mn) / (mx - mn), 5))\nprint('(x-mean)/min =', round((x - mean) / mn, 4), ' x/max =', round(x / mx, 4), ' x/min =', round(x / mn, 4))",
+    "notes": "z = (106000 − 96000)/21000 = 10/21 ≈ 0.47619, closest to option B (0.476). A Python check computes the z-score and the nearest option, and also shows that the distractors match (106000 − 96000)/46000 ≈ 0.2174 (A), 106000/170000 ≈ 0.6235 (C) and 106000/46000 ≈ 2.3043 (D); min–max normalization would give ≈ 0.4839, which is not an option. This agrees with official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q14",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 14,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-predicate"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the standard first-order-logic translation patterns: universal statements use implication, plus the quantifier duality) checked by direct recall across four short statements, well under a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Which of the following statements is **NOT** true?\n\n(The names of the predicates are intuitive.)",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\forall x\\ \\forall y\\ \\mathit{Classmate}(x, y) \\Rightarrow \\mathit{Classmate}(y, x)$"
+    },
+    {
+      "label": "B",
+      "text": "$\\forall x\\ \\mathit{Likes}(x, \\mathit{Icecream}) \\Rightarrow \\neg \\exists x\\ \\neg \\mathit{Likes}(x, \\mathit{Icecream})$"
+    },
+    {
+      "label": "C",
+      "text": "“*Each king is a person*” is equivalent to $\\forall x\\ \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$"
+    },
+    {
+      "label": "D",
+      "text": "“*All humans are mortal*” is equivalent to $\\forall x\\ \\mathit{IsHuman}(x) \\Rightarrow \\mathit{IsMortal}(x)$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "\"Every $P$ is a $Q$\" is written $\\forall x\\ P(x) \\Rightarrow Q(x)$, with an implication, not a conjunction. The formula $\\forall x\\ \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$ says that *everything* in the domain is a king and a person, which is far stronger than \"Each king is a person\", so (C) is false. (A) states that the classmate relation is symmetric, (B) is the quantifier duality $\\forall x\\, P(x) \\equiv \\neg\\exists x\\, \\neg P(x)$, and (D) is the correct translation. The statement that is NOT true is **(C)**.",
+    "steps": [
+      {
+        "title": "What is being asked",
+        "body": "Exactly one of the four statements is false; we must find it. The note \"the names of the predicates are intuitive\" means each predicate carries its everyday meaning: $\\mathit{Classmate}(x, y)$ means \"$x$ is a classmate of $y$\", $\\mathit{Likes}(x, \\mathit{Icecream})$ means \"$x$ likes ice cream\", and so on.\n\nOptions (A) and (B) are formulas that we judge true or false under this meaning. Options (C) and (D) claim that an English sentence is *equivalent* to a formula, so we must check that the formula is a correct translation."
+      },
+      {
+        "title": "(A): the classmate relation is symmetric",
+        "body": "The quantifiers $\\forall x\\ \\forall y$ govern the whole implication (otherwise $x$ and $y$ on the right would be unbound), so (A) reads\n\n$$\n\\forall x\\ \\forall y\\ \\big(\\mathit{Classmate}(x, y) \\Rightarrow \\mathit{Classmate}(y, x)\\big).\n$$\n\nThis says that the relation is **symmetric**. \"Classmate\" means being in the same class, and that is a two-way fact: if $x$ is a classmate of $y$, then $y$ is a classmate of $x$. With the intuitive meaning, (A) is **true**."
+      },
+      {
+        "title": "(B): quantifier duality",
+        "body": "The right-hand side carries its own quantifier $\\exists x$, so (B) is an implication between two complete sentences:\n\n$$\n\\big(\\forall x\\ \\mathit{Likes}(x, \\mathit{Icecream})\\big) \\Rightarrow \\big(\\neg \\exists x\\ \\neg \\mathit{Likes}(x, \\mathit{Icecream})\\big).\n$$\n\nPush the negation through the quantifier (De Morgan's law for quantifiers):\n\n$$\n\\neg \\exists x\\ \\neg \\mathit{Likes}(x, \\mathit{Icecream}) \\;\\equiv\\; \\forall x\\ \\neg\\neg \\mathit{Likes}(x, \\mathit{Icecream}) \\;\\equiv\\; \\forall x\\ \\mathit{Likes}(x, \\mathit{Icecream}).\n$$\n\nSo the right-hand side is logically equivalent to the left-hand side, and an implication of the form $S \\Rightarrow S$ holds in every interpretation. In words: \"everyone likes ice cream\" implies \"there is nobody who does not like ice cream\" (the two sentences are in fact equivalent). (B) is **true**.\n\n(Had the leading $\\forall x$ been read as governing the whole implication, the inner $\\exists x$ would rebind $x$ and the formula would say \"if anyone likes ice cream, then everyone does\", which is not valid. That is not the intended reading: the two sides are the textbook duality pair, and the official key marks (C), not (B), as the false statement.)"
+      },
+      {
+        "title": "(C): a conjunction under a universal quantifier is too strong",
+        "body": "\"Each king is a person\" restricts the claim to kings: *for every $x$, **if** $x$ is a king, **then** $x$ is a person*. The correct translation is\n\n$$\n\\forall x\\ \\mathit{IsKing}(x) \\Rightarrow \\mathit{IsPerson}(x).\n$$\n\nThe formula offered, $\\forall x\\ \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$, instead says that **every object in the domain** is both a king and a person.\n\nCounterexample showing the two are not equivalent. Take a domain with three objects:\n\n| Object | $\\mathit{IsKing}$ | $\\mathit{IsPerson}$ |\n| --- | --- | --- |\n| Richard | true | true |\n| John | false | true |\n| the crown | false | false |\n\n- \"Each king is a person\" is **true** here: the only king, Richard, is a person (for John and the crown the implication holds because its premise is false).\n- $\\forall x\\ \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$ is **false**: John is not a king, and the crown is neither a king nor a person.\n\nOne interpretation where the two differ is enough to show they are not equivalent, so statement (C) is **NOT true**."
+      },
+      {
+        "title": "(D): the correct universal translation, and the answer",
+        "body": "\"All humans are mortal\" means: for every $x$, if $x$ is human then $x$ is mortal, i.e. $\\forall x\\ \\mathit{IsHuman}(x) \\Rightarrow \\mathit{IsMortal}(x)$. This is exactly the formula given, so (D) is **true**.\n\nSummary: (A) true, (B) true, (C) false, (D) true. The statement that is NOT true is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**First-order logic (FOL)** describes a world of *objects* using *predicates* (properties and relations such as $\\mathit{IsKing}(x)$ or $\\mathit{Classmate}(x, y)$) and two quantifiers: $\\forall x$ (\"for every object $x$\") and $\\exists x$ (\"for at least one object $x$\").\n\n**The two translation patterns.** Almost every English sentence with \"all/every/each\" or \"some\" fits one of two templates:\n\n| English | FOL | Connective |\n| --- | --- | --- |\n| Every $P$ is a $Q$ | $\\forall x\\ P(x) \\Rightarrow Q(x)$ | $\\forall$ goes with $\\Rightarrow$ |\n| Some $P$ is a $Q$ | $\\exists x\\ P(x) \\land Q(x)$ | $\\exists$ goes with $\\land$ |\n\nWhy? A universal statement about kings should say nothing about non-kings. The implication $\\mathit{IsKing}(x) \\Rightarrow \\mathit{IsPerson}(x)$ is automatically true for any $x$ that is not a king, so only kings are tested. Writing $\\land$ instead forces *every* object, including crowns, horses and numbers, to be a king and a person. The mirror-image mistake is $\\exists x\\ P(x) \\Rightarrow Q(x)$, which is too weak: it is true as soon as a single non-$P$ object exists.\n\n**Quantifier duality (De Morgan for quantifiers).** \"Not everyone ...\" equals \"someone does not ...\":\n\n$$\n\\forall x\\ P(x) \\equiv \\neg \\exists x\\ \\neg P(x), \\qquad \\exists x\\ P(x) \\equiv \\neg \\forall x\\ \\neg P(x).\n$$\n\n**Properties of relations.** A two-place predicate $R$ is *symmetric* when $\\forall x\\,\\forall y\\ R(x, y) \\Rightarrow R(y, x)$. Being classmates, siblings or married are symmetric; \"parent of\" or \"taller than\" are not.\n\n**Back to this question.** (A) is the symmetry of \"classmate\", which holds by the meaning of the word. (B) is the quantifier duality, so it is valid. (D) follows the $\\forall$-with-$\\Rightarrow$ template exactly. (C) breaks that template by using $\\land$ under $\\forall$, so it claims that everything is a king and a person. That is not equivalent to \"Each king is a person\", so (C) is the statement that is NOT true.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "True under the intuitive meaning, so it is not the answer. The formula states that $\\mathit{Classmate}$ is symmetric: if $x$ is a classmate of $y$, then $y$ is a classmate of $x$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "True, so it is not the answer. By quantifier duality $\\neg\\exists x\\ \\neg \\mathit{Likes}(x, \\mathit{Icecream}) \\equiv \\forall x\\ \\mathit{Likes}(x, \\mathit{Icecream})$, so the implication has the form $S \\Rightarrow S$ and holds in every interpretation."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "This is the statement that is NOT true. \"Each king is a person\" is $\\forall x\\ \\mathit{IsKing}(x) \\Rightarrow \\mathit{IsPerson}(x)$. The conjunction version claims that every object is both a king and a person, and it is false in any world that contains a non-king, such as John or the crown, while the English sentence can still be true there."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "True, so it is not the answer. It is the textbook translation, a universal quantifier paired with implication: $\\forall x\\ \\mathit{IsHuman}(x) \\Rightarrow \\mathit{IsMortal}(x)$."
+      }
+    ],
+    "shortcut": "Remember the pairing rule: $\\forall$ goes with $\\Rightarrow$, and $\\exists$ goes with $\\land$. Any option that renders \"every/each $P$ is $Q$\" as $\\forall x\\ P(x) \\land Q(x)$ is wrong on sight, which here is (C).",
+    "commonTrap": "Rejecting (A) because $\\forall x\\,\\forall y\\ \\mathit{Classmate}(x, y) \\Rightarrow \\mathit{Classmate}(y, x)$ is not a logical tautology. The question says the predicate names are intuitive, so (A) is judged by the real meaning of \"classmate\", and under that meaning it is true. The other trap is reading $\\forall x\\ \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$ as \"kings are persons\": the $\\land$ makes it a claim about every object in the domain."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q14-1.webp",
+    "/pyq/2026/official/Q14-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The predicate and constant names are set in italic math in the paper and are transcribed with \\mathit{...}; the constant is spelled \"Icecream\" as printed. The conjunction in (C) is printed as a large wedge (the PDF text layer gives U+22C0) and is transcribed as \\land. The quoted English sentences in (C) and (D) are italic in the paper. As printed, the formulas in (A) and (B) carry no parentheses, and none are added. The second official crop (Q14-2) shows only the header and a table border of the next page; no figure is needed for this question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(C) - 'Each king is a person' is ∀x IsKing(x) ⇒ IsPerson(x); ∀x IsKing(x) ∧ IsPerson(x) asserts that everything is a king and a person, so they are not equivalent. (A), (B) and (D) are true.",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\n# Brute-force every interpretation of unary predicates over domains of size 1..3.\ndef interps(n, k):  # k unary predicates, each a tuple of n truth values\n    return product(product([False, True], repeat=n), repeat=k)\ncex_C = None; B_valid = True; D_same = True\nfor n in (1, 2, 3):\n    D = range(n)\n    for K, P in interps(n, 2):  # K=IsKing, P=IsPerson (also reused as Human/Mortal)\n        each_king_person = all((not K[x]) or P[x] for x in D)      # forall x K(x) => P(x)\n        option_C = all(K[x] and P[x] for x in D)                   # forall x K(x) and P(x)\n        if each_king_person != option_C and cex_C is None:\n            cex_C = (n, K, P, each_king_person, option_C)\n    for (L,) in interps(n, 1):  # L = Likes(., Icecream)\n        lhs = all(L[x] for x in D); rhs = not any(not L[x] for x in D)\n        B_valid &= ((not lhs) or rhs) and (lhs == rhs)             # (forall L) => (not exists not L), even <=>\nprint('C counterexample (n, King, Person, English, formula):', cex_C)\nprint('B valid in every interpretation (and actually an equivalence):', B_valid)\n# (A) Classmate as intended: x,y share a class -> symmetric by construction\ncls = {'a': {1}, 'b': {1, 2}, 'c': {2}, 'd': {3}}\nclassmate = lambda x, y: x != y and bool(cls[x] & cls[y])\nprint('A symmetric:', all(classmate(y, x) for x in cls for y in cls if classmate(x, y)))",
+    "notes": "Author solve agrees with the official key C. The Python check enumerates every interpretation of two unary predicates over domains of size 1-3. It finds interpretations where 'each king is a person' (∀x K(x)⇒P(x)) and ∀x K(x)∧P(x) differ, so (C) is not an equivalence. It confirms that (∀x L(x)) ⇒ ¬∃x ¬L(x) holds (in fact as an equivalence) in every interpretation, which is (B) read as an implication between the two quantified sentences. It also checks that a same-class classmate relation is symmetric (A). (D) is the standard translation. For (B), the reading used is the implication between two closed sentences; the solution notes that a wide-scope reading of the leading ∀x would not be valid, but that reading is not the intended one."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

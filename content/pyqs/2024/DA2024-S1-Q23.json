@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q23",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 23,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-informed"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (an admissible heuristic satisfies 0 ≤ h(n) ≤ h*(n)) settled by a one-line inequality for (D) and a single numerical counterexample for each other option, well under a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $h_1$and $h_2$ be two admissible heuristics used in $A^*$ search.\n\nWhich **ONE** of the following expressions is always an admissible heuristic?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$h_1 + h_2$"
+    },
+    {
+      "label": "B",
+      "text": "$h_1 \\times h_2$"
+    },
+    {
+      "label": "C",
+      "text": "$h_1/h_2, (h_2 \\ne 0)$"
+    },
+    {
+      "label": "D",
+      "text": "$|h_1 - h_2|$"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "A heuristic $h$ is admissible when $0 \\le h(n) \\le h^*(n)$ at every node $n$, where $h^*(n)$ is the true cheapest cost from $n$ to a goal. For two such heuristics, $0 \\le |h_1 - h_2| \\le \\max(h_1, h_2) \\le h^*(n)$, so $|h_1 - h_2|$ is always admissible: option **(D)**. The sum, product and ratio can overestimate (e.g. $h_1 = h_2 = h^* = 4$ gives $h_1 + h_2 = 8$ and $h_1 h_2 = 16$).",
+    "steps": [
+      {
+        "title": "What admissible means",
+        "body": "Let $h^*(n)$ be the cost of the cheapest path from node $n$ to a goal. A heuristic $h$ is **admissible** if it never overestimates that cost:\n\n$$\n0 \\le h(n) \\le h^*(n) \\quad \\text{for every node } n.\n$$\n\nIn particular $h(\\text{goal}) = 0$, because $h^*(\\text{goal}) = 0$.\n\nSo for our two heuristics we know, at every node $n$,\n\n$$\n0 \\le h_1(n) \\le h^*(n), \\qquad 0 \\le h_2(n) \\le h^*(n).\n$$\n\nThe question asks which combination is **always** admissible, i.e. stays inside $[0, h^*(n)]$ for *every* pair of admissible heuristics and every node. One counterexample is enough to rule an option out; a proof is needed to accept one."
+      },
+      {
+        "title": "Proof that (D) is always admissible",
+        "body": "Fix a node $n$ and suppose, without loss of generality, that $h_1(n) \\ge h_2(n)$. Then\n\n$$\n|h_1(n) - h_2(n)| = h_1(n) - h_2(n) \\le h_1(n) \\le h^*(n),\n$$\n\nwhere the first inequality uses $h_2(n) \\ge 0$ and the second uses admissibility of $h_1$. The case $h_2(n) > h_1(n)$ is symmetric. Also an absolute value is never negative. Together:\n\n$$\n0 \\;\\le\\; |h_1(n) - h_2(n)| \\;\\le\\; \\max\\big(h_1(n), h_2(n)\\big) \\;\\le\\; h^*(n).\n$$\n\nAt a goal node $h_1 = h_2 = 0$, so $|h_1 - h_2| = 0$ there as well. Hence $|h_1 - h_2|$ never overestimates and is admissible for **every** pair of admissible heuristics."
+      },
+      {
+        "title": "Counterexamples for (A) and (B)",
+        "body": "Take a node with $h^*(n) = 4$ and let both heuristics be perfect there: $h_1(n) = h_2(n) = 4$. Both are admissible, since $4 \\le 4$.\n\n- (A) $h_1 + h_2 = 4 + 4 = 8 > 4$: overestimates.\n- (B) $h_1 \\times h_2 = 4 \\times 4 = 16 > 4$: overestimates.\n\nSo neither the sum nor the product is always admissible."
+      },
+      {
+        "title": "Counterexample for (C)",
+        "body": "Take $h^*(n) = 4$, $h_1(n) = 4$ and $h_2(n) = 0.5$. Both are admissible ($4 \\le 4$ and $0.5 \\le 4$) and $h_2 \\ne 0$, yet\n\n$$\n\\frac{h_1}{h_2} = \\frac{4}{0.5} = 8 > 4 .\n$$\n\nDividing by a small (but perfectly admissible) value of $h_2$ blows the estimate up. Note also that every admissible $h_2$ equals $0$ at a goal node, so the ratio cannot even be evaluated there; the paper's side condition $(h_2 \\ne 0)$ only excludes those points, and the ratio still overestimates elsewhere."
+      },
+      {
+        "title": "What goes wrong inside A*",
+        "body": "A tiny graph shows why overestimating matters. Edges: $S \\to G$ with cost $4.5$; $S \\to A$ with cost $1$; $A \\to G$ with cost $2$. The optimal path is $S \\to A \\to G$ with cost $3$, and $h^*(A) = 2$. Use $h(S) = h(G) = 0$ and vary $h(A)$.\n\n| $h_1(A), h_2(A)$ | Option | $h(A)$ | $f(A) = 1 + h(A)$ | A* returns |\n|---|---|---|---|---|\n| $2, 2$ | (A) sum | $4$ | $5 > 4.5$ | $4.5$ (wrong) |\n| $2, 2$ | (B) product | $4$ | $5 > 4.5$ | $4.5$ (wrong) |\n| $2, 0.5$ | (C) ratio | $4$ | $5 > 4.5$ | $4.5$ (wrong) |\n| $2, 2$ / $2, 0.5$ | (D) $\\lvert h_1 - h_2 \\rvert$ | $0$ / $1.5$ | $1$ / $2.5$ | $3$ (optimal) |\n\nWhen $f(A) = 5$ exceeds $f(G) = 4.5$ on the direct edge, A* pops $G$ first and stops with the suboptimal cost $4.5$. With (D), $A$ is expanded first and the optimal cost $3$ is found. The Python check reproduces this table.\n\nThe answer is **(D)** $|h_1 - h_2|$."
+      }
+    ],
+    "finalAnswer": "**(D)** $|h_1 - h_2|$",
+    "teaching": "**A\\* in one line.** A\\* expands nodes in increasing order of $f(n) = g(n) + h(n)$, where $g(n)$ is the cost already paid to reach $n$ and $h(n)$ is a *guess* of the remaining cost to a goal.\n\n**Why admissibility matters.** If $h$ never overestimates ($h(n) \\le h^*(n)$), then $f(n)$ is an optimistic estimate of the cost of the best solution through $n$. When A\\* pops a goal with cost $C$, every node still on the frontier has $f \\ge C$, so no path through it can be cheaper than $C$: the first goal popped (in tree search) is optimal. If $h$ overestimates somewhere, the node on the optimal path can look more expensive than a suboptimal goal, and A\\* may stop too early, exactly as in the small graph in the steps.\n\n**Admissibility is a pointwise bound.** It is a statement about each node separately: $0 \\le h(n) \\le h^*(n)$. So any rule that combines two numbers in $[0, H]$ and is guaranteed to stay in $[0, H]$ preserves admissibility. Useful examples:\n\n- $\\max(h_1, h_2)$: admissible, and at least as informed as either one. This is the standard way to combine heuristics.\n- $\\min(h_1, h_2)$, any weighted average $\\lambda h_1 + (1 - \\lambda) h_2$ with $0 \\le \\lambda \\le 1$, and $c \\cdot h_1$ with $0 \\le c \\le 1$: admissible.\n- $|h_1 - h_2| \\le \\max(h_1, h_2)$: admissible, though usually a *weak* heuristic.\n- $h_1 + h_2$, $h_1 h_2$, $h_1 / h_2$: not admissible in general. (Sums are safe only in special constructions, such as disjoint pattern databases, where each heuristic counts a separate part of the cost.)\n\n**Admissible versus useful.** A heuristic can be admissible yet poor: $h \\equiv 0$ is admissible and turns A\\* into uniform-cost search. Option (D) is the only expression the question can guarantee to be admissible; whether it guides the search well is a separate question that the paper does not ask.\n\n**Back to this question.** With $0 \\le h_1, h_2 \\le h^*$, the difference of two numbers in the same interval cannot leave that interval, so $|h_1 - h_2|$ is always admissible, while the sum, product and ratio can all exceed $h^*$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "With perfect heuristics $h_1 = h_2 = h^* = 4$ (both admissible), $h_1 + h_2 = 8 > 4$. Adding two optimistic estimates of the *same* remaining cost can double-count it, so the sum is not always admissible."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "With $h_1 = h_2 = h^* = 4$, $h_1 \\times h_2 = 16 > 4$. The product grows like the square of the cost once values exceed 1, so it can overestimate."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "With $h^* = 4$, $h_1 = 4$ and $h_2 = 0.5$ (both admissible, $h_2 \\ne 0$), $h_1 / h_2 = 8 > 4$. A small admissible $h_2$ makes the ratio large. It is also undefined at goal nodes, where every admissible $h_2$ is $0$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Since $0 \\le h_1, h_2 \\le h^*$, we get $0 \\le |h_1 - h_2| \\le \\max(h_1, h_2) \\le h^*$ at every node, and it equals $0$ at goals. It never overestimates, so it is always admissible. This matches the official key."
+      }
+    ],
+    "shortcut": "For numbers $a, b \\in [0, H]$: $|a - b| \\le \\max(a, b) \\le H$. To reject the rest, plug in perfect heuristics $h_1 = h_2 = h^*$ with $h^* > 1$ (kills the sum and the product) and a tiny $h_2$ (kills the ratio).",
+    "commonTrap": "Picking (A) on the intuition that \\\"two good heuristics combined give a better one\\\". The safe way to combine admissible heuristics is $\\max(h_1, h_2)$, not their sum. The opposite trap is rejecting (D) because $|h_1 - h_2|$ is a weak, poorly informed heuristic: the question asks only whether it is **admissible**, not whether it is good."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q23-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints no space between \"h₁\" and \"and\" (\"Let h₁and h₂\"); this is kept as printed. A* is typeset as $A^*$ and the side condition of option (C) as \"h₁/h₂, (h₂ ≠ 0)\", as printed. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D) |h₁ − h₂|",
+    "agreesWithKey": true,
+    "checkCode": "import random, heapq\nrandom.seed(0)\n# admissible: 0 <= h(n) <= h*(n). Test each option on random admissible pairs.\nops = {'A': lambda a, b: a + b, 'B': lambda a, b: a * b,\n       'C': lambda a, b: a / b, 'D': lambda a, b: abs(a - b)}\nviol = {k: None for k in ops}\nfor _ in range(100000):\n    hs = random.uniform(0, 10)                              # true cost-to-goal h*(n)\n    h1, h2 = random.uniform(0, hs), random.uniform(1e-9, hs)\n    for k, f in ops.items():\n        if f(h1, h2) > hs + 1e-12 and viol[k] is None:\n            viol[k] = tuple(round(v, 3) for v in (hs, h1, h2, f(h1, h2)))\nprint(viol)                                                 # only D has no counterexample\nassert viol['D'] is None and all(viol[k] for k in 'ABC')\n# A* on a tiny graph: S->G costs 4.5 directly; S->A->G costs 1+2 = 3 (optimal). h*(A) = 2.\nE = {'S': [('A', 1), ('G', 4.5)], 'A': [('G', 2)], 'G': []}\ndef astar(hA):                                              # h(S)=0, h(G)=0 (trivially admissible)\n    h = {'S': 0, 'A': hA, 'G': 0}; pq = [(0, 0, 'S')]\n    while pq:\n        f, g, n = heapq.heappop(pq)\n        if n == 'G': return g\n        for m, c in E[n]: heapq.heappush(pq, (g + c + h[m], g + c, m))\nfor h1A, h2A in [(2, 2), (2, 0.5)]:                         # both admissible at A (<= 2)\n    print((h1A, h2A), {k: (f(h1A, h2A), astar(f(h1A, h2A))) for k, f in ops.items()})",
+    "notes": "Since 0 ≤ h₁(n), h₂(n) ≤ h*(n), |h₁ − h₂| ≤ max(h₁, h₂) ≤ h*(n) at every node, so (D) is always admissible. Counterexamples rule out the rest: h₁ = h₂ = h* = 4 gives 8 for (A) and 16 for (B); h* = 4, h₁ = 4, h₂ = 0.5 gives 8 for (C). A Python random search over 100 000 admissible pairs found overestimates for A, B and C and none for D, and a three-node A* run returns the suboptimal cost 4.5 (instead of 3) under A, B and C but the optimal 3 under D. This agrees with official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

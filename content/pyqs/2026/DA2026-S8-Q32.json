@@ -1,0 +1,77 @@
+{
+  "id": "DA2026-S8-Q32",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 32,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-storage",
+  "subtopicIds": [
+    "dbw-indexing"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (layout of a B+ tree non-leaf node: p node pointers and p - 1 keys) and a single linear inequality 10p + 11(p - 1) <= 4096 solved by taking the floor, about a minute for a prepared student; the only snag is ignoring the distractor Data Record Pointer size.",
+  "estimatedTimeSec": 75,
+  "stem": "In a relational database, a B+ Tree Index is to be constructed for a relation on a key field. In a B+ Tree, a Node Pointer points to a sub-tree and a Data Record Pointer points to a block of database records.\n\nLet, Node size = 4096 bytes, Node Pointer size = 10 bytes, Search Key Field size = 11 bytes and Data Record Pointer size = 12 bytes.\n\nThe maximum number of Node Pointers that can be present in a non-leaf node of the B+ Tree is ________ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "195 to 195",
+  "answer": {
+    "kind": "NAT",
+    "min": 195,
+    "max": 195
+  },
+  "solution": {
+    "quick": "A **non-leaf** node of a B+ tree stores only search keys and Node Pointers (Data Record Pointers live only in the leaves). A node with $p$ Node Pointers holds $p - 1$ keys, so $10p + 11(p - 1) \\le 4096 \\Rightarrow 21p \\le 4107 \\Rightarrow p \\le 195.57$. Hence at most **195** Node Pointers.",
+    "steps": [
+      {
+        "title": "Layout of a non-leaf (internal) node in a B+ tree",
+        "body": "An internal node of a B+ tree with $p$ children looks like\n\n$$\nP_1 \\;\\; K_1 \\;\\; P_2 \\;\\; K_2 \\;\\; \\cdots \\;\\; K_{p-1} \\;\\; P_p\n$$\n\n- $P_1, \\dots, P_p$ are **Node Pointers** (each points to a sub-tree): $p$ of them.\n- $K_1, \\dots, K_{p-1}$ are **search keys** separating the sub-trees: one fewer than the pointers, i.e. $p - 1$.\n\nUnlike a B-tree, a B+ tree keeps **no Data Record Pointers in internal nodes**: every record pointer is stored in a leaf. So the Data Record Pointer size (12 bytes) does **not** enter this calculation; it would be needed only for the leaf-node capacity."
+      },
+      {
+        "title": "Write the capacity constraint",
+        "body": "With Node Pointer size $= 10$ bytes, Search Key size $= 11$ bytes and Node size $= 4096$ bytes, all $p$ pointers and $p - 1$ keys must fit in one node:\n\n$$\n10p + 11(p - 1) \\le 4096.\n$$"
+      },
+      {
+        "title": "Solve the inequality",
+        "body": "$$\n10p + 11p - 11 \\le 4096 \\;\\Longrightarrow\\; 21p \\le 4107 \\;\\Longrightarrow\\; p \\le \\frac{4107}{21} = 195.571\\ldots\n$$\n\nSince $p$ must be an integer, $p_{\\max} = \\lfloor 195.571\\ldots \\rfloor = 195$."
+      },
+      {
+        "title": "Check the boundary",
+        "body": "| $p$ (Node Pointers) | keys $= p - 1$ | bytes used $= 10p + 11(p-1)$ | fits in 4096? |\n| --- | --- | --- | --- |\n| 195 | 194 | $1950 + 2134 = 4084$ | Yes (12 bytes spare) |\n| 196 | 195 | $1960 + 2145 = 4105$ | No (exceeds by 9) |\n\nSo the maximum number of Node Pointers in a non-leaf node is **195**, matching the official key (195 to 195)."
+      },
+      {
+        "title": "For contrast: where the 12-byte record pointer would matter",
+        "body": "A **leaf** node stores $k$ (key, Data Record Pointer) pairs plus one Node Pointer to the next leaf, so $k(11 + 12) + 10 \\le 4096 \\Rightarrow 23k \\le 4086 \\Rightarrow k \\le 177.65$, i.e. at most 177 keys per leaf. That number is **not** what the question asks; it only shows why the record-pointer size was given."
+      }
+    ],
+    "finalAnswer": "**195**",
+    "teaching": "**What a B+ tree index is.** A B+ tree is a balanced, multi-way search tree used to index a file on disk. Each tree node occupies exactly one disk block (here 4096 bytes), because reading one node costs one block access. The more children a node can have (its **fan-out** or **order** $p$), the shallower the tree and the fewer disk reads a lookup needs.\n\n**Two kinds of nodes.**\n\n- **Internal (non-leaf) nodes** are pure \"signposts\". A node with $p$ child pointers holds $p - 1$ keys $K_1 < K_2 < \\dots < K_{p-1}$; pointer $P_i$ leads to the sub-tree whose keys lie between $K_{i-1}$ and $K_i$. They contain **only** keys and Node (tree) pointers.\n- **Leaf nodes** hold the actual index entries: each search key paired with a Data Record Pointer (to the record or the block containing it), plus one extra Node Pointer chaining the leaf to the next leaf, which makes range scans fast.\n\nThis is the defining difference from a **B-tree**, where every node (internal or leaf) stores a record pointer next to each key. Removing record pointers from internal nodes is exactly what gives a B+ tree its larger fan-out.\n\n**How to compute the order.** Write \"everything in the node $\\le$ block size\" and solve for the largest integer:\n\n- Internal: $p \\cdot P + (p - 1) \\cdot K \\le B \\Rightarrow p = \\left\\lfloor \\dfrac{B + K}{P + K} \\right\\rfloor$.\n- Leaf: $k (K + R) + P \\le B \\Rightarrow k = \\left\\lfloor \\dfrac{B - P}{K + R} \\right\\rfloor$.\n\nHere $B$ is the block (node) size, $P$ the Node Pointer size, $K$ the key size and $R$ the Data Record Pointer size.\n\n**Back to this question.** It asks for Node Pointers in a **non-leaf** node, so only $B = 4096$, $P = 10$ and $K = 11$ matter: $p = \\lfloor 4107 / 21 \\rfloor = 195$. The 12-byte Data Record Pointer is deliberately supplied as a distractor (it matters only for leaves).",
+    "shortcut": "For a B+ tree internal node, $p_{\\max} = \\left\\lfloor \\dfrac{\\text{node size} + \\text{key size}}{\\text{pointer size} + \\text{key size}} \\right\\rfloor = \\left\\lfloor \\dfrac{4096 + 11}{10 + 11} \\right\\rfloor = \\lfloor 195.57 \\rfloor = 195.$",
+    "commonTrap": "Using the **B-tree** layout and adding a Data Record Pointer next to every key in the internal node: $10p + (11 + 12)(p - 1) \\le 4096 \\Rightarrow 33p \\le 4119 \\Rightarrow p = 124$. In a B+ tree, record pointers appear only in leaves. Also make sure to report the number of **pointers** (195), not the number of keys (194)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q32-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Wording, capitalisation (\"Node Pointer\", \"Data Record Pointer\", \"Search Key Field size\") and the comma in \"Let, Node size\" are kept exactly as printed. 'integer' is bold in the answer instruction and is kept bold."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "195",
+    "agreesWithKey": true,
+    "checkCode": "B, P, K, R = 4096, 10, 11, 12            # node, node-pointer, key, record-pointer sizes (bytes)\np = max(p for p in range(1, 2000) if p*P + (p-1)*K <= B)   # B+ internal node: p pointers, p-1 keys\nprint(p, p*P + (p-1)*K, (p+1)*P + p*K)   # 195 4084 4105\nassert p == 195 == (B + K) // (P + K)\nbtree = max(p for p in range(1, 2000) if p*P + (p-1)*(K+R) <= B)   # trap: B-tree layout\nleaf = max(k for k in range(1, 2000) if k*(K+R) + P <= B)          # leaf capacity (not asked)\nprint(btree, leaf)                        # 124 177",
+    "notes": "A B+ tree non-leaf node holds p Node Pointers and p - 1 keys only, so 10p + 11(p - 1) <= 4096 gives p <= 195.57, i.e. 195 (195 pointers use 4084 bytes, 196 would need 4105). The Python check confirms this and that the B-tree layout would instead give 124. Matches official key '195 to 195'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

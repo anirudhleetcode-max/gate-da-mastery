@@ -1,0 +1,116 @@
+{
+  "id": "DA2025-S5-Q42",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 42,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-neural-networks",
+  "subtopicIds": [
+    "ml-feedforward",
+    "ml-mlp"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (backpropagation through ReLU units) needing a short forward pass and two chain-rule products; routine computation in about 2 min.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider the neural network shown in the figure with\n\n*inputs*: $u, v$\n\n*weights*: $a, b, c, d, e, f$\n\n*output*: $y$\n\n$R$ denotes the ReLU function, $R(x) = \\max(0, x)$.\n\n![Figure: A feed-forward network. Input nodes u (top) and v (bottom) feed two hidden ReLU nodes R. Edge u to top R has weight a, v to top R has weight b, u to bottom R has weight c, and v to bottom R has weight d. The top R feeds the output ReLU node R with weight e and the bottom R feeds it with weight f; the output node produces y.](/pyq/2025/fig/Q42-1.png)\n\nGiven $u = 2, v = 3,$\n\n$a = 1, b = 1, c = 1, d = -1, e = 4, f = -1,$\n\nwhich one of the following is correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\dfrac{\\partial y}{\\partial a} = 8, \\dfrac{\\partial y}{\\partial f} = 0$"
+    },
+    {
+      "label": "B",
+      "text": "$\\dfrac{\\partial y}{\\partial a} = 1, \\dfrac{\\partial y}{\\partial f} = 0$"
+    },
+    {
+      "label": "C",
+      "text": "$\\dfrac{\\partial y}{\\partial a} = 1, \\dfrac{\\partial y}{\\partial f} = -1$"
+    },
+    {
+      "label": "D",
+      "text": "$\\dfrac{\\partial y}{\\partial a} = 2, \\dfrac{\\partial y}{\\partial f} = -1$"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Forward pass: the top hidden unit gets $au + bv = 5$, so it outputs $5$. The bottom unit gets $cu + dv = -1$, so it outputs $0$ (inactive). The output unit gets $4 \\cdot 5 + (-1)\\cdot 0 = 20 > 0$, so $y = 20$.\n\nBackpropagation: $\\dfrac{\\partial y}{\\partial a} = 1 \\cdot e \\cdot 1 \\cdot u = 4 \\cdot 2 = 8$ and $\\dfrac{\\partial y}{\\partial f} = 1 \\cdot h_2 = 0$. Answer **(A)**.",
+    "steps": [
+      {
+        "title": "Write the network as equations",
+        "body": "From the figure, $a$ and $b$ enter the top hidden unit and $c$ and $d$ enter the bottom hidden unit. Name the pre-activations $z$ and the ReLU outputs $h$:\n\n$$z_1 = au + bv, \\qquad h_1 = R(z_1)$$\n\n$$z_2 = cu + dv, \\qquad h_2 = R(z_2)$$\n\n$$z_3 = e\\,h_1 + f\\,h_2, \\qquad y = R(z_3)$$\n\n(The two crossing edges both carry weight $1$ here, since $b = c = 1$, so reading them the other way round would not change any number below.)"
+      },
+      {
+        "title": "Forward pass with $u = 2$, $v = 3$",
+        "body": "- Top unit: $z_1 = 1\\cdot 2 + 1\\cdot 3 = 5$, so $h_1 = \\max(0, 5) = 5$.\n- Bottom unit: $z_2 = 1\\cdot 2 + (-1)\\cdot 3 = -1$, so $h_2 = \\max(0, -1) = 0$.\n- Output: $z_3 = 4\\cdot 5 + (-1)\\cdot 0 = 20$, so $y = \\max(0, 20) = 20$."
+      },
+      {
+        "title": "ReLU derivatives at this point",
+        "body": "$R'(z) = 1$ for $z > 0$ and $R'(z) = 0$ for $z < 0$. None of the pre-activations is exactly $0$, so every derivative is well defined:\n\n$$R'(z_1) = R'(5) = 1, \\qquad R'(z_2) = R'(-1) = 0, \\qquad R'(z_3) = R'(20) = 1.$$"
+      },
+      {
+        "title": "Chain rule for $\\partial y / \\partial a$",
+        "body": "The weight $a$ affects $y$ only along the path $a \\to z_1 \\to h_1 \\to z_3 \\to y$:\n\n$$\\frac{\\partial y}{\\partial a} = \\underbrace{R'(z_3)}_{1}\\cdot\\underbrace{\\frac{\\partial z_3}{\\partial h_1}}_{e\\,=\\,4}\\cdot\\underbrace{R'(z_1)}_{1}\\cdot\\underbrace{\\frac{\\partial z_1}{\\partial a}}_{u\\,=\\,2} = 1\\cdot 4\\cdot 1\\cdot 2 = 8.$$"
+      },
+      {
+        "title": "Chain rule for $\\partial y / \\partial f$ and conclusion",
+        "body": "The weight $f$ multiplies $h_2$ inside $z_3$, so $\\partial z_3/\\partial f = h_2$:\n\n$$\\frac{\\partial y}{\\partial f} = R'(z_3)\\cdot h_2 = 1 \\cdot 0 = 0.$$\n\nThe bottom unit is switched off ($z_2 = -1 < 0$), so it sends $0$ forward and changing $f$ slightly does not change $y$.\n\nSo $\\dfrac{\\partial y}{\\partial a} = 8$ and $\\dfrac{\\partial y}{\\partial f} = 0$, which is option **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**What a gradient with respect to a weight means.** In a feed-forward network each unit computes a weighted sum of its inputs (the pre-activation $z$) and passes it through an activation function. Training needs $\\partial y/\\partial w$ for every weight $w$: how much the output changes when that one weight is nudged. Backpropagation gets these numbers by applying the chain rule backwards from the output.\n\n**The rule for a single weight.** If $w$ connects a value $x$ into a unit with pre-activation $z = \\dots + w\\,x + \\dots$, then\n\n$$\\frac{\\partial y}{\\partial w} = \\frac{\\partial y}{\\partial z}\\cdot x.$$\n\nThe first factor, the *upstream gradient*, is how sensitive the output is to that unit's pre-activation. The second is simply the value that travels along the weight. The upstream gradient is itself a product of local derivatives along the path to the output: activation derivatives and the weights on the way.\n\n**ReLU acts as a gate.** $R(z) = \\max(0, z)$ has derivative $1$ when $z > 0$ and $0$ when $z < 0$. An active unit passes gradients straight through; an inactive unit blocks them and also outputs $0$. So any weight that *leaves* an inactive unit carries the value $0$ and gets zero gradient, and any weight that *enters* an inactive unit also gets zero gradient, because the gate after it is closed.\n\n**Back to this question.** The forward pass shows which gates are open: the top hidden unit ($z_1 = 5$) and the output unit ($z_3 = 20$) are active, and the bottom unit ($z_2 = -1$) is off. For $a$: upstream gradient at $z_1$ is $R'(z_3)\\cdot e\\cdot R'(z_1) = 4$, and the value on the edge is $u = 2$, giving $8$. For $f$: the value on the edge is $h_2 = 0$, giving $0$. Always do the forward pass first; the gradients cannot be read off without knowing which ReLUs are active.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$\\partial y/\\partial a = R'(20)\\cdot e\\cdot R'(5)\\cdot u = 1\\cdot 4\\cdot 1\\cdot 2 = 8$, and $\\partial y/\\partial f = R'(20)\\cdot h_2 = 1\\cdot 0 = 0$ because the bottom unit's pre-activation is $-1$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$\\partial y/\\partial f = 0$ is right, but $\\partial y/\\partial a = 1$ keeps only the ReLU slopes and drops the factors $e = 4$ and $u = 2$ from the chain rule. The correct value is $8$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Both values are wrong. $\\partial y/\\partial a$ is $8$, not $1$. $\\partial y/\\partial f = -1$ would need the bottom unit to output $-1$, but ReLU clips $z_2 = -1$ to $h_2 = 0$ (the weight $f = -1$ itself is not the gradient)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$\\partial y/\\partial a = 2$ is just $u$; it forgets to multiply by the downstream weight $e = 4$. $\\partial y/\\partial f = -1$ is wrong because the bottom unit outputs $h_2 = 0$."
+      }
+    ],
+    "shortcut": "Gradient of a weight = (upstream gradient at the receiving unit) $\\times$ (value sent along the weight). The value sent along $f$ is $h_2 = R(2 - 3) = 0$, so $\\partial y/\\partial f = 0$, which removes (C) and (D). For $a$ the upstream gradient is $e = 4$ (both ReLUs on the path are active) and the value sent is $u = 2$, so $8$.",
+    "commonTrap": "Using the bottom unit's pre-activation $-1$ (or the weight $f = -1$) instead of its ReLU output $0$, which gives $\\partial y/\\partial f = -1$ as in (C) and (D). The other slip is stopping the chain rule early: forgetting $e = 4$ gives $2$, and forgetting both $e$ and $u$ gives $1$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q42-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The network diagram is vector art; it was rendered from the official PDF page 22 with the background watermark image removed (drawing and labels unchanged). The labels b and c sit on the two crossing edges (v to top R and u to bottom R respectively); since b = c = 1, the answer does not depend on this reading."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (dy/da = 8, dy/df = 0)",
+    "agreesWithKey": true,
+    "checkCode": "R = lambda z: max(0.0, z)\ndef y_of(a, b, c, d, e, f, u=2.0, v=3.0):\n    h1 = R(a*u + b*v)      # top hidden unit: u --a--> , v --b-->\n    h2 = R(c*u + d*v)      # bottom hidden unit: u --c--> , v --d-->\n    return R(e*h1 + f*h2)\nw = dict(a=1., b=1., c=1., d=-1., e=4., f=-1.)\nu, v = 2., 3.\nz1 = w['a']*u + w['b']*v; z2 = w['c']*u + w['d']*v\nh1, h2 = R(z1), R(z2); z3 = w['e']*h1 + w['f']*h2\nprint('z1,h1 =', z1, h1, '| z2,h2 =', z2, h2, '| z3,y =', z3, R(z3))\nd = lambda z: 1.0 if z > 0 else 0.0   # ReLU derivative (away from 0)\nprint('analytic dy/da =', d(z3)*w['e']*d(z1)*u, ' dy/df =', d(z3)*h2)\neps = 1e-6\nfor k in ['a', 'f']:\n    wp = dict(w); wp[k] += eps; wm = dict(w); wm[k] -= eps\n    print('finite-diff dy/d' + k, '=', round((y_of(**wp) - y_of(**wm)) / (2*eps), 6))",
+    "notes": "Forward pass: z1 = 5 (h1 = 5), z2 = -1 (h2 = 0), z3 = 20 (y = 20). Chain rule gives dy/da = 1*4*1*2 = 8 and dy/df = 1*h2 = 0, matching official key A. The Python check reproduces both values analytically and by central finite differences (no pre-activation is at the ReLU kink)."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

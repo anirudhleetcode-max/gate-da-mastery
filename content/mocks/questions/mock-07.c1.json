@@ -1,0 +1,727 @@
+[
+  {
+    "id": "M07-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-uninformed"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a single algorithm (uniform-cost search) traced through six frontier removals with three frontier-cost replacements; routine but step-by-step work of about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Uniform-cost search: expand by lowest path cost g(n), goal-test on removal, and replace frontier entries when a cheaper path is found.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A delivery robot plans a route on the directed road network below. Each edge is labelled with its travel cost. The start state is $S$ and the only goal state is $G$.\n\n| Edge | Cost |\n|---|---|\n| $S \\to A$ | 1 |\n| $S \\to B$ | 4 |\n| $S \\to G$ | 12 |\n| $A \\to C$ | 2 |\n| $A \\to D$ | 5 |\n| $B \\to D$ | 1 |\n| $C \\to G$ | 8 |\n| $D \\to G$ | 3 |\n\nThe robot runs **uniform-cost search** (graph-search version):\n\n- the frontier is a priority queue ordered by the path cost $g(n)$ from $S$;\n- the goal test is applied when a node is **removed** from the frontier for expansion;\n- if a cheaper path is found to a node that is already on the frontier, its frontier entry is replaced by the cheaper path;\n- a node, once expanded, is never expanded again.\n\nWhich option correctly gives the order in which nodes are removed from the frontier (up to and including $G$) **and** the cost of the path returned?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Order $S, A, B, G$; path cost $12$"
+      },
+      {
+        "label": "B",
+        "text": "Order $S, A, C, G$; path cost $11$"
+      },
+      {
+        "label": "C",
+        "text": "Order $S, A, C, B, D, G$; path cost $8$"
+      },
+      {
+        "label": "D",
+        "text": "Order $S, A, C, B, D, G$; path cost $12$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "UCS always removes the frontier node with the smallest $g$: $S(0), A(1), C(3), B(4), D(5), G(8)$.\nAlong the way $G$'s frontier cost drops $12 \\to 11 \\to 8$ and $D$'s drops $6 \\to 5$. The returned path is $S \\to B \\to D \\to G$ with cost $4 + 1 + 3 = 8$, option (C).",
+      "steps": [
+        {
+          "title": "Rule of the algorithm",
+          "body": "UCS keeps a priority queue keyed on $g(n)$, the cost of the best known path from $S$ to $n$. At each step it removes the node with the **smallest** $g$, goal-tests it, and then generates its successors. A newly found cheaper path to a node already on the frontier replaces the old entry."
+        },
+        {
+          "title": "Remove $S$ ($g = 0$)",
+          "body": "Successors: $A$ with $g = 1$, $B$ with $g = 4$, $G$ with $g = 12$.\nFrontier: $\\{A{:}1,\\ B{:}4,\\ G{:}12\\}$. $G$ is only *generated* here, so the search does not stop."
+        },
+        {
+          "title": "Remove $A$ ($g = 1$), then $C$ ($g = 3$)",
+          "body": "Expanding $A$: $C$ gets $1 + 2 = 3$ and $D$ gets $1 + 5 = 6$. Frontier: $\\{C{:}3,\\ B{:}4,\\ D{:}6,\\ G{:}12\\}$.\nExpanding $C$: $G$ via $C$ costs $3 + 8 = 11 < 12$, so $G$'s entry becomes 11. Frontier: $\\{B{:}4,\\ D{:}6,\\ G{:}11\\}$."
+        },
+        {
+          "title": "Remove $B$ ($g = 4$), then $D$ ($g = 5$)",
+          "body": "Expanding $B$: $D$ via $B$ costs $4 + 1 = 5 < 6$, so $D$'s entry becomes 5 (parent $B$). Frontier: $\\{D{:}5,\\ G{:}11\\}$.\nExpanding $D$: $G$ via $D$ costs $5 + 3 = 8 < 11$, so $G$'s entry becomes 8. Frontier: $\\{G{:}8\\}$."
+        },
+        {
+          "title": "Remove $G$ and stop",
+          "body": "$G$ is removed with $g = 8$ and passes the goal test. The removal order is $S, A, C, B, D, G$ and the returned path is $S \\to B \\to D \\to G$ with cost $4 + 1 + 3 = 8$.\nCross-check: the four $S$–$G$ paths cost $12$ (direct), $11$ ($S\\to A\\to C\\to G$), $9$ ($S\\to A\\to D\\to G$) and $8$ ($S\\to B\\to D\\to G$), and UCS returns the cheapest. The answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Uniform-cost search (UCS) is the uninformed strategy for graphs whose step costs are unequal but positive. Breadth-first search expands the shallowest node and depth-first search the deepest, whereas UCS always expands the frontier node with the smallest path cost $g(n)$ from the start. Because costs are positive, $g$ never decreases along a path. So when a node is removed from the priority queue, no cheaper path to it can still be waiting. This is the same argument that makes Dijkstra's algorithm correct, and it makes UCS optimal.\n\nTwo implementation details decide the answer. First, the goal test happens when the goal is **removed**, not when it is first generated: the first path found to $G$ (the direct edge, cost 12) is not the cheapest. Second, when a cheaper path to a node already on the frontier appears, the entry must be replaced. Here $G$'s cost falls $12 \\to 11 \\to 8$ and $D$'s falls $6 \\to 5$ before $G$ is finally removed at cost 8.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the **BFS** order: a FIFO queue ignores costs and removes $G$ right after $A$ and $B$, returning the fewest-edge path $S \\to G$ of cost 12, which is not the cheapest."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is **DFS** with alphabetical successor order: it dives $S \\to A \\to C \\to G$ and returns cost $1 + 2 + 8 = 11$. UCS never follows depth; it always takes the lowest-$g$ node."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Removals happen at $g = 0, 1, 3, 4, 5, 8$, giving $S, A, C, B, D, G$, and the returned path $S \\to B \\to D \\to G$ costs 8. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The order is right, but cost 12 comes from never replacing $G$'s first frontier entry (the direct edge from $S$). UCS replaces it with the cheaper paths it finds (11, then 8), so it returns cost 8."
+        }
+      ],
+      "shortcut": "UCS is optimal for positive step costs, so the returned cost must equal the cheapest $S$–$G$ cost. The candidates are $12, 11, 9, 8$, so the cost is $8$, and only option (C) has cost 8.",
+      "commonTrap": "Stopping as soon as $G$ is *generated* (from $S$, cost 12), or keeping the first frontier entry for a node instead of replacing it with a cheaper one. Both give cost 12 instead of the optimal 8."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: order S,A,C,B,D,G; path S-B-D-G, cost 8",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nE={'S':[('A',1),('B',4),('G',12)],'A':[('C',2),('D',5)],'B':[('D',1)],'C':[('G',8)],'D':[('G',3)],'G':[]}\npq=[(0,'S',['S'])]; best={'S':0}; done=set(); order=[]\nwhile pq:\n    g,n,p=heapq.heappop(pq)\n    if n in done: continue\n    done.add(n); order.append(n)\n    if n=='G': print(order,g,p); break\n    for m,c in E[n]:\n        if m not in done and g+c<best.get(m,1e9):\n            best[m]=g+c; heapq.heappush(pq,(g+c,m,p+[m]))\n# -> ['S','A','C','B','D','G'] 8 ['S','B','D','G']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (rewriting an implication as a disjunction, i.e. the exportation law) with a one-line equivalence check; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Logical equivalence of nested implications: P → (Q → R) ≡ (P ∧ Q) → R (exportation).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A rule-based loan-screening system uses three propositions:\n\n- $P$: the applicant is salaried,\n- $Q$: the applicant's credit score exceeds 750,\n- $R$: the loan is pre-approved.\n\nOne of its rules is $P \\to (Q \\to R)$, that is, \"if the applicant is salaried, then if the credit score exceeds 750, the loan is pre-approved\".\n\nWhich of the following formulas is logically equivalent to this rule?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(P \\to Q) \\to R$"
+      },
+      {
+        "label": "B",
+        "text": "$(P \\land Q) \\to R$"
+      },
+      {
+        "label": "C",
+        "text": "$(P \\lor Q) \\to R$"
+      },
+      {
+        "label": "D",
+        "text": "$(P \\to Q) \\land (Q \\to R)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Using $X \\to Y \\equiv \\neg X \\lor Y$ twice:\n$P \\to (Q \\to R) \\equiv \\neg P \\lor \\neg Q \\lor R \\equiv \\neg(P \\land Q) \\lor R \\equiv (P \\land Q) \\to R$.\nThis is the exportation law, option (B).",
+      "steps": [
+        {
+          "title": "Replace each implication by a disjunction",
+          "body": "$X \\to Y \\equiv \\neg X \\lor Y$. Applying this to the inner and then the outer implication:\n$$P \\to (Q \\to R) \\equiv \\neg P \\lor (\\neg Q \\lor R).$$"
+        },
+        {
+          "title": "Regroup and apply De Morgan",
+          "body": "By associativity of $\\lor$: $(\\neg P \\lor \\neg Q) \\lor R$. By De Morgan, $\\neg P \\lor \\neg Q \\equiv \\neg(P \\land Q)$, so the rule is $\\neg(P \\land Q) \\lor R \\equiv (P \\land Q) \\to R$. This is option (B), the *exportation* law."
+        },
+        {
+          "title": "Eliminate the others with one row each",
+          "body": "The rule is false in exactly one row: $P = \\text{T}, Q = \\text{T}, R = \\text{F}$.\n\n- (A) With $P = Q = R = \\text{F}$ the rule is true (its antecedent $P$ is false), but $(P \\to Q) \\to R = \\text{T} \\to \\text{F} = \\text{F}$.\n- (C) With $P = \\text{F}, Q = \\text{T}, R = \\text{F}$ the rule is true, but $(P \\lor Q) \\to R = \\text{T} \\to \\text{F} = \\text{F}$.\n- (D) In the same row, $(P \\to Q) \\land (Q \\to R) = \\text{T} \\land \\text{F} = \\text{F}$.\n\nEach of (A), (C) and (D) disagrees with the rule in some row, so none of them is equivalent."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only $(P \\land Q) \\to R$ has the same truth value as the rule in all 8 rows. The answer is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "An implication $X \\to Y$ makes a promise that is broken in only one situation: $X$ is true and $Y$ is false. That is why $X \\to Y \\equiv \\neg X \\lor Y$. Two formulas are **logically equivalent** when they have the same truth value in every row of the truth table. An efficient way to compare implication-heavy formulas is to compare their *falsifying* rows.\n\nThe rule $P \\to (Q \\to R)$ fails only when $P$ is true and $Q \\to R$ fails, that is, when $P$ and $Q$ are true and $R$ is false. That is exactly the one falsifying row of $(P \\land Q) \\to R$. In words, \"if salaried, then (if score > 750 then approved)\" says the same as \"if salaried **and** score > 750, then approved\". Nested implications to the right collect their conditions with $\\land$.\n\nImplication is **not associative**, so moving the parentheses to get $(P \\to Q) \\to R$ changes the meaning. Replacing $\\land$ by $\\lor$ makes a stronger rule, and chaining $P \\to Q$ with $Q \\to R$ says something else entirely.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Moves the parentheses as if $\\to$ were associative. With $P = Q = R = \\text{F}$ the rule is true but $(P \\to Q) \\to R$ is false. Not equivalent."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\neg P \\lor \\neg Q \\lor R \\equiv \\neg(P \\land Q) \\lor R \\equiv (P \\land Q) \\to R$. Both formulas are false only when $P = Q = \\text{T}$ and $R = \\text{F}$. Equivalent, so correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Requires pre-approval when *either* condition holds, which is a stronger rule. With $P = \\text{F}, Q = \\text{T}, R = \\text{F}$ the rule is true but this formula is false."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Chains two separate rules. With $P = \\text{F}, Q = \\text{T}, R = \\text{F}$ the rule is true but $Q \\to R$ is false, so this formula is false. Not equivalent."
+        }
+      ],
+      "shortcut": "Find the single row that falsifies the rule ($P = \\text{T}, Q = \\text{T}, R = \\text{F}$) and pick the option whose only falsifying row is the same one.",
+      "commonTrap": "Treating $\\to$ as associative and choosing $(P \\to Q) \\to R$. Regrouping is valid for $\\land$ and $\\lor$ but not for $\\to$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nrule=lambda P,Q,R: imp(P,imp(Q,R))\nopts={'A':lambda P,Q,R: imp(imp(P,Q),R),'B':lambda P,Q,R: imp(P and Q,R),\n      'C':lambda P,Q,R: imp(P or Q,R),'D':lambda P,Q,R: imp(P,Q) and imp(Q,R)}\nprint([k for k,f in opts.items() if all(rule(*t)==f(*t) for t in product([False,True],repeat=3))])  # ['B']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-conditional-independence"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (d-separation) applied to four candidate statements, each needing a path check that separates chain/fork behaviour from collider behaviour; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Reading conditional independences off a Bayesian network with d-separation (chains, forks and colliders).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An IT-operations team models five binary variables with a Bayesian network:\n\n- $O$: server overload\n- $N$: network congestion\n- $S$: slow response\n- $U$: user complaint\n- $T$: packet-loss alarm\n\nThe network has exactly four directed edges: $O \\to S$, $N \\to S$, $S \\to U$ and $N \\to T$.\n\nHere $X \\perp Y \\mid Z$ means \"$X$ is conditionally independent of $Y$ given $Z$\", and $X \\perp Y$ means \"$X$ and $Y$ are (marginally) independent\".\n\nWhich one of the following independence statements is guaranteed by the network structure alone, that is, holds for **every** choice of conditional probability tables?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$O \\perp N \\mid U$"
+      },
+      {
+        "label": "B",
+        "text": "$O \\perp T \\mid S$"
+      },
+      {
+        "label": "C",
+        "text": "$O \\perp T$"
+      },
+      {
+        "label": "D",
+        "text": "$U \\perp T$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The only path from $O$ to $T$ is $O \\to S \\leftarrow N \\to T$, and $S$ is a collider on it.\nWith nothing observed, the collider (and its descendant $U$) is unobserved, so the path is blocked and $O \\perp T$ holds.\nObserving $S$ or $U$ opens the collider, and $U$–$T$ is linked through the open chain/fork $U \\leftarrow S \\leftarrow N \\to T$. The answer is (C).",
+      "steps": [
+        {
+          "title": "d-separation rules",
+          "body": "A path is **blocked** by the evidence if some node on it is\n\n- a chain ($\\to B \\to$) or fork ($\\leftarrow B \\to$) node that **is** observed, or\n- a collider ($\\to B \\leftarrow$) that is **not** observed and has **no** observed descendant.\n\n$X \\perp Y \\mid Z$ is guaranteed exactly when every path between $X$ and $Y$ is blocked by $Z$."
+        },
+        {
+          "title": "List the relevant paths",
+          "body": "$O$'s only neighbour is $S$ and $T$'s only neighbour is $N$. The paths are:\n\n- $O$–$T$: $O \\to S \\leftarrow N \\to T$ ($S$ is a collider, $N$ is a fork).\n- $O$–$N$: $O \\to S \\leftarrow N$ ($S$ is a collider; $U$ is its descendant).\n- $U$–$T$: $U \\leftarrow S \\leftarrow N \\to T$ ($S$ is a chain node, $N$ is a fork)."
+        },
+        {
+          "title": "Check (C) and (B)",
+          "body": "(C) With no evidence, the collider $S$ is unobserved and so is its only descendant $U$. The single $O$–$T$ path is blocked, so $O \\perp T$ is **guaranteed**.\n(B) Observing $S$ *opens* the collider, and the fork $N$ is unobserved, so the path is active. $O \\perp T \\mid S$ is **not** guaranteed."
+        },
+        {
+          "title": "Check (A) and (D)",
+          "body": "(A) $U$ is a descendant of the collider $S$, so observing $U$ opens $O \\to S \\leftarrow N$ (explaining away). **Not** guaranteed.\n(D) With no evidence, the chain node $S$ and the fork $N$ are both unobserved, so $U \\leftarrow S \\leftarrow N \\to T$ is active. **Not** guaranteed."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only $O \\perp T$ holds for every parameterisation. The answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "A Bayesian network encodes independences through its graph, and **d-separation** reads them off using three local patterns. In a **chain** $A \\to B \\to C$ and a **fork** $A \\leftarrow B \\to C$, information flows through $B$ until $B$ is observed; observing $B$ blocks the path. A **collider** $A \\to B \\leftarrow C$ works the other way round. Two independent causes stay independent while their common effect is unknown, but observing the effect, or anything caused by it, makes them dependent. This is **explaining away**: if the response is slow and there is no server overload, network congestion becomes more likely.\n\nHere overload $O$ and the alarm $T$ are connected only through the collider \"slow response\". When nothing is observed, overload tells you nothing about congestion and hence nothing about the alarm, so $O \\perp T$. As soon as $S$ (or its descendant $U$) is observed, the collider opens and the independence is lost. Whenever a question says \"guaranteed by the structure\", check the paths rather than numbers.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$U$ is a descendant of the collider $S$ on $O \\to S \\leftarrow N$. Observing $U$ activates that path (explaining away), so $O$ and $N$ become dependent given $U$. Not guaranteed."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Conditioning on the collider $S$ opens $O \\to S \\leftarrow N \\to T$, and the fork $N$ is unobserved, so the path is active. Not guaranteed."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The only path $O \\to S \\leftarrow N \\to T$ is blocked at the unobserved collider $S$, which has no observed descendant. Holds for every set of CPTs. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$U \\leftarrow S \\leftarrow N \\to T$ passes through the unobserved chain node $S$ and the unobserved fork $N$, so it is active. Learning about a complaint can change the belief about congestion, and hence about the alarm. Not guaranteed."
+        }
+      ],
+      "commonTrap": "Treating the collider like a chain node, and so believing that conditioning on the common effect $S$ (or on its descendant $U$) *blocks* the path. For a collider it is the reverse: observing $S$ or $U$ **opens** the path."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (only O ⊥ T is d-separated)",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\npar={'O':set(),'N':set(),'S':{'O','N'},'U':{'S'},'T':{'N'}}\ndef anc(X):\n    r=set(X); st=list(X)\n    while st:\n        for p in par[st.pop()]:\n            if p not in r: r.add(p); st.append(p)\n    return r\ndef dsep(X,Y,Z):  # ancestral moral graph criterion\n    A=anc(X|Y|Z); adj={n:set() for n in A}\n    for n in A:\n        ps=[p for p in par[n] if p in A]\n        for p in ps: adj[n].add(p); adj[p].add(n)\n        for p,q in itertools.combinations(ps,2): adj[p].add(q); adj[q].add(p)\n    seen=set(X); st=list(X)\n    while st:\n        for m in adj[st.pop()]:\n            if m not in Z and m not in seen: seen.add(m); st.append(m)\n    return not (seen & Y)\nprint(dsep({'O'},{'N'},{'U'}), dsep({'O'},{'T'},{'S'}), dsep({'O'},{'T'},set()), dsep({'U'},{'T'},set()))\n# -> False False True False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-informed"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (admissibility means h(n) never exceeds the true cheapest cost to the goal) plus one small shortest-path computation from C; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Admissible heuristic: h(n) ≤ h*(n), the true cheapest cost from n to the goal.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A* search is to be run from start $S$ to goal $G$ on the **undirected** weighted graph below.\n\n| Edge | Cost |\n|---|---|\n| $S$–$A$ | 3 |\n| $S$–$B$ | 4 |\n| $A$–$C$ | 2 |\n| $B$–$C$ | 1 |\n| $A$–$G$ | 11 |\n| $C$–$D$ | 6 |\n| $C$–$E$ | 2 |\n| $D$–$G$ | 2 |\n| $E$–$G$ | 5 |\n\nThe heuristic values are:\n\n| Node | $S$ | $A$ | $B$ | $C$ | $D$ | $E$ | $G$ |\n|---|---|---|---|---|---|---|---|\n| $h(n)$ | 10 | 8 | 6 | $k$ | 2 | 4 | 0 |\n\nThe largest integer value of $k$ for which the heuristic $h$ is admissible is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 7,
+      "max": 7
+    },
+    "solution": {
+      "quick": "Admissible means $h(n) \\le h^*(n)$ for every node. The given values are already admissible, so the only condition is $k \\le h^*(C)$.\nThe cheapest route from $C$ to $G$ is $C \\to E \\to G$ with cost $2 + 5 = 7$, beating $C \\to D \\to G$ (8) and $C \\to A \\to G$ (13). So the largest $k$ is **7**.",
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "A heuristic is **admissible** if $h(n) \\le h^*(n)$ for every node $n$, where $h^*(n)$ is the cost of the cheapest path from $n$ to the goal. It must never overestimate."
+        },
+        {
+          "title": "True costs to the goal",
+          "body": "Working back from $G$ (Dijkstra from $G$):\n$h^*(D) = 2$, $h^*(E) = 5$, $h^*(C) = \\min(2 + 5,\\ 6 + 2,\\ 2 + 11) = 7$, $h^*(A) = \\min(2 + 7,\\ 11) = 9$, $h^*(B) = 1 + 7 = 8$ and $h^*(S) = \\min(3 + 9,\\ 4 + 8) = 12$."
+        },
+        {
+          "title": "Check the other nodes",
+          "body": "$h(S) = 10 \\le 12$, $h(A) = 8 \\le 9$, $h(B) = 6 \\le 8$, $h(D) = 2 \\le 2$, $h(E) = 4 \\le 5$ and $h(G) = 0$. All hold whatever the value of $k$, so admissibility depends only on node $C$."
+        },
+        {
+          "title": "Condition on $k$",
+          "body": "We need $k \\le h^*(C) = 7$. The largest integer value is $k = \\mathbf{7}$. With $k = 8$, $h$ would overestimate the true cost 7 from $C$."
+        }
+      ],
+      "finalAnswer": "**7**",
+      "teaching": "A* ranks frontier nodes by $f(n) = g(n) + h(n)$: the cost already paid plus an *estimate* of the cost still to go. Its optimality guarantee rests on the estimate being **optimistic**. If $h$ never overestimates the true remaining cost $h^*(n)$, a suboptimal goal can never be removed before the optimal path has been explored. This property is called **admissibility**, and checking it is purely a comparison: compute the true cheapest cost from each node to the goal and make sure $h$ does not exceed it.\n\nA stronger property, **consistency**, requires $h(n) \\le c(n, n') + h(n')$ on every edge. Every consistent heuristic is admissible, but not the other way round. In this graph consistency would force $k$ to be exactly 6, because of the edges $C$–$E$ ($k \\le 2 + 4$) and $A$–$C$ ($8 \\le 2 + k$). The question asks only about admissibility, so the limit is the true cost from $C$, which is 7.",
+      "commonTrap": "Applying the consistency (triangle) condition instead of admissibility, which gives 6. Or following the route through $D$ because $h(D) = 2$ looks closest to the goal, which gives the overestimate 8 (the true cheapest cost from $C$ is 7, via $E$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "7",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nE=[('S','A',3),('S','B',4),('A','C',2),('B','C',1),('A','G',11),('C','D',6),('C','E',2),('D','G',2),('E','G',5)]\nadj={}\nfor u,v,w in E: adj.setdefault(u,[]).append((v,w)); adj.setdefault(v,[]).append((u,w))\nd={'G':0}; pq=[(0,'G')]\nwhile pq:\n    g,n=heapq.heappop(pq)\n    if g>d[n]: continue\n    for m,w in adj[n]:\n        if g+w<d.get(m,1e9): d[m]=g+w; heapq.heappush(pq,(g+w,m))\nh={'S':10,'A':8,'B':6,'D':2,'E':4,'G':0}\nassert all(h[n]<=d[n] for n in h)\nprint(d['C'])  # 7",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (translating a restricted universal with a nested existential); each option is settled by the ∀-with-→ / ∃-with-∧ pattern or one negation step; about 1–1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "First-order translation: ∀ pairs with →, ∃ pairs with ∧; pushing negation through quantifiers.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let the domain be all employees of a company. Define the predicates\n\n- $M(x)$: $x$ is a manager,\n- $R(x, y)$: $x$ reports to $y$.\n\nWhich of the following first-order formulas correctly express the statement below?\n\n> Every employee who is not a manager reports to at least one manager.",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\forall x \\,\\big(\\neg M(x) \\to \\exists y \\,(M(y) \\land R(x, y))\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\forall x \\,\\exists y \\,\\big(\\neg M(x) \\land M(y) \\land R(x, y)\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\neg \\exists x \\,\\big(\\neg M(x) \\land \\forall y \\,(M(y) \\to \\neg R(x, y))\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\forall x \\,\\big(\\neg M(x) \\to \\exists y \\,(M(y) \\to R(x, y))\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "The statement has the form \"for all $x$, if $x$ is a non-manager then there is a manager $y$ with $R(x, y)$\", which is (A).\nOption (C) says \"there is no non-manager who reports to no manager\", which is the same statement written as the absence of a counterexample.\n(B) wrongly forces every employee to be a non-manager, and (D) uses $\\exists$ with $\\to$, which is almost always trivially true. Answer: (A), (C).",
+      "steps": [
+        {
+          "title": "Translate the English directly",
+          "body": "The statement is \"for every $x$: if $\\neg M(x)$, then some $y$ satisfies $M(y) \\land R(x, y)$\".\nThe pattern is: $\\forall$ restricted by a condition uses $\\to$; $\\exists$ restricted by a condition uses $\\land$. This gives exactly (A)."
+        },
+        {
+          "title": "Option (C): push the negation inward",
+          "body": "$\\neg \\exists x\\,(\\neg M(x) \\land \\forall y\\,(M(y) \\to \\neg R(x, y)))$\n$\\equiv \\forall x\\, \\neg(\\neg M(x) \\land \\neg \\exists y\\,(M(y) \\land R(x, y)))$, since $\\forall y\\,(M(y) \\to \\neg R(x,y)) \\equiv \\neg\\exists y\\,(M(y) \\land R(x,y))$,\n$\\equiv \\forall x\\,(\\neg M(x) \\to \\exists y\\,(M(y) \\land R(x, y)))$, using $\\neg(P \\land \\neg Q) \\equiv P \\to Q$.\nThis is identical to (A), so it is **correct**."
+        },
+        {
+          "title": "Option (B): counterexample",
+          "body": "Take employees $e$ (not a manager) and $m$ (a manager) with $R(e, m)$ true. The statement is true. But for $x = m$ the conjunct $\\neg M(m)$ is false, so no $y$ works and (B) is false. (B) effectively claims that *everyone* is a non-manager. **Incorrect.**"
+        },
+        {
+          "title": "Option (D): counterexample",
+          "body": "Take the same two employees but with **no** reporting relations at all. The statement is false ($e$ reports to nobody). In (D), for $x = e$ choose $y = e$: $M(e)$ is false, so $M(e) \\to R(e, e)$ is true and the existential is satisfied. (D) is true here, so it is not equivalent. **Incorrect.**"
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "teaching": "Most translation errors in first-order logic come from pairing a quantifier with the wrong connective. \"Every $P$ is $Q$\" restricts a universal, and the correct form is $\\forall x\\,(P(x) \\to Q(x))$: the implication makes the claim only about the $x$ that satisfy $P$. \"Some $P$ is $Q$\" restricts an existential, and the correct form is $\\exists x\\,(P(x) \\land Q(x))$: we need one object that has *both* properties.\n\nThe mistakes go the other way round. $\\forall x\\,(P(x) \\land Q(x))$ claims that *everything* is $P$. $\\exists x\\,(P(x) \\to Q(x))$ is satisfied by any object that is not $P$, so it is nearly always true. Negation moves through quantifiers by duality: $\\neg\\forall \\equiv \\exists\\neg$ and $\\neg\\exists \\equiv \\forall\\neg$.\n\nIn this question the outer \"every non-manager\" is a restricted universal (use $\\to$) and the inner \"some manager\" is a restricted existential (use $\\land$). That gives (A), and (C) is the same sentence written as \"there is no counterexample\".",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Restricted universal with $\\to$ and restricted existential with $\\land$. This is the direct translation. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Puts $\\neg M(x)$ inside a conjunction under $\\forall x$, so it asserts that every employee is a non-manager who reports to a manager. It is false in any company that has a manager. Incorrect."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Says there is no non-manager $x$ who reports to no manager. Pushing the negation inward gives exactly (A). Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\exists y\\,(M(y) \\to R(x, y))$ is satisfied by any non-manager $y$ (for example $y = x$), so the formula can be true even when a non-manager reports to nobody. Incorrect."
+        }
+      ],
+      "commonTrap": "Using $\\to$ inside the existential, as in (D). $\\exists y\\,(M(y) \\to R(x,y))$ is true as soon as any non-manager exists, so it does not force $x$ to report to a manager."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nok={k:True for k in 'ABCD'}\nfor n in range(1,4):\n    D=range(n); P=[(x,y) for x in D for y in D]\n    for mv in product([0,1],repeat=n):\n        for rv in product([0,1],repeat=n*n):\n            M=dict(zip(D,mv)); R=dict(zip(P,rv))\n            t=all(imp(not M[x],any(M[y] and R[x,y] for y in D)) for x in D)\n            f={'A':t,\n               'B':all(any((not M[x]) and M[y] and R[x,y] for y in D) for x in D),\n               'C':not any((not M[x]) and all(imp(M[y],not R[x,y]) for y in D) for x in D),\n               'D':all(imp(not M[x],any(imp(M[y],R[x,y]) for y in D)) for x in D)}\n            for k in f:\n                if f[k]!=t: ok[k]=False\nprint(sorted(k for k in ok if ok[k]))  # ['A','C']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-variable-elimination"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (how VE multiplies the factors that mention a variable and sums it out) on a four-node chain; each statement is a direct scope check or a basic fact; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Variable elimination: factor scopes depend on the elimination order, but the exact result does not; CPT rows sum to 1.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A Bayesian network over four binary variables is the chain\n$$F \\to C \\to D \\to T$$\nwhere $F$: firmware bug, $C$: app crash, $D$: data loss and $T$: support ticket raised. Its joint distribution is $P(F)\\,P(C \\mid F)\\,P(D \\mid C)\\,P(T \\mid D)$.\n\nExact inference is carried out by **variable elimination** (VE) with **no evidence**. To eliminate a variable, VE multiplies all current factors that mention it and sums it out, which creates one new intermediate factor.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "To compute $P(T)$ with elimination order $F, C, D$, every intermediate factor created is a function of exactly one variable."
+      },
+      {
+        "label": "B",
+        "text": "To compute $P(T)$ with elimination order $D, C, F$, the intermediate factor created when $D$ is eliminated is a function of exactly two variables."
+      },
+      {
+        "label": "C",
+        "text": "The value of $P(T = 1)$ obtained with elimination order $D, C, F$ can differ from the value obtained with elimination order $F, C, D$."
+      },
+      {
+        "label": "D",
+        "text": "To compute $P(C)$, summing $T$ out of the factor $P(T \\mid D)$ gives a factor equal to $1$ for both values of $D$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Order $F, C, D$ creates $f_1(C)$, $f_2(D)$ and $f_3(T)$, all single-variable, so (A) is true.\nEliminating $D$ first multiplies $P(D \\mid C)$ and $P(T \\mid D)$ into $g(C, T)$, which has two variables, so (B) is true.\nVE is exact, so the order changes only the cost, not the value, and (C) is false. Finally $\\sum_t P(t \\mid d) = 1$, so (D) is true. Answer: (A), (B), (D).",
+      "steps": [
+        {
+          "title": "How one elimination step works",
+          "body": "To eliminate $X$: multiply every factor whose scope contains $X$, then sum over $X$. The new factor's scope is the union of those scopes minus $X$."
+        },
+        {
+          "title": "Statement (A): order $F, C, D$",
+          "body": "Eliminate $F$: $f_1(C) = \\sum_f P(f)\\,P(C \\mid f)$.\nEliminate $C$: $f_2(D) = \\sum_c f_1(c)\\,P(D \\mid c)$.\nEliminate $D$: $f_3(T) = \\sum_d f_2(d)\\,P(T \\mid d) = P(T)$.\nEvery intermediate factor has one variable, so (A) is **TRUE**."
+        },
+        {
+          "title": "Statement (B): order $D, C, F$",
+          "body": "The factors mentioning $D$ are $P(D \\mid C)$ and $P(T \\mid D)$. Their product has scope $\\{C, D, T\\}$, and summing out $D$ gives $g_1(C, T) = \\sum_d P(d \\mid C)\\,P(T \\mid d)$, which has two variables. So (B) is **TRUE**. (Continuing, eliminating $C$ gives $g_2(F, T)$ and eliminating $F$ gives $P(T)$.)"
+        },
+        {
+          "title": "Statement (C): does the order change the answer?",
+          "body": "VE only reorders sums and products of the same joint distribution, using commutativity and distributivity. Every order computes exactly $\\sum_{f,c,d} P(f)P(c \\mid f)P(d \\mid c)P(T \\mid d)$. The order affects the **sizes** of the intermediate factors (the cost), never the value. So (C) is **FALSE**."
+        },
+        {
+          "title": "Statement (D): summing out a leaf",
+          "body": "For each value $d$, $P(T \\mid D = d)$ is a probability distribution over $T$, so $\\sum_t P(t \\mid d) = 1$. The resulting factor is the constant 1 for both values of $D$, so (D) is **TRUE**. For a query on $C$, the leaf $T$ (and then $D$) can simply be dropped.\n\nThe correct statements are **(A), (B), (D)**."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "teaching": "Summing the full joint table of a Bayesian network is exponential in the number of variables. Variable elimination avoids this by using the factorisation. Each sum is pushed inward as far as possible, so a variable is summed out using only the factors that mention it. Each elimination replaces those factors by a single new factor over their remaining variables.\n\nThe elimination order controls how big these intermediate factors get. On the chain $F \\to C \\to D \\to T$, eliminating from the root ($F, C, D$) passes a one-variable \"message\" down the chain. Eliminating from the other end ($D$, then $C$, then $F$) ties each eliminated variable's neighbour to $T$, so the intermediate factors $g_1(C, T)$ and $g_2(F, T)$ have two variables. On large networks a bad order can create huge factors, which is why finding a good order matters.\n\nWhat the order can never change is the answer: VE is **exact**, and every order is an algebraic rearrangement of the same sum. Also, a leaf variable that is neither queried nor observed sums out to 1, so it can be removed before starting (and removing it may turn its parent into such a leaf).",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Eliminating from the root creates $f_1(C)$, then $f_2(D)$, then $f_3(T)$. Each has one variable. True."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The factors containing $D$ are $P(D \\mid C)$ and $P(T \\mid D)$. Summing $D$ out of their product leaves $g_1(C, T)$, which has two variables. True."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "VE is exact inference. Different orders rearrange the same sum of products and give identical values; only the computational cost differs. False."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Each row of the CPT $P(T \\mid D)$ sums to 1, so $\\sum_t P(t \\mid d) = 1$ for $d = 0, 1$. True."
+        }
+      ],
+      "commonTrap": "Thinking that a different elimination order gives a different (approximate) answer. The order changes only the factor sizes, and hence the time and memory, never the exact result."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D",
+      "agreesWithKey": true,
+      "checkCode": "import itertools, random\nrandom.seed(7)\ndef cpt(ch,pa=None):\n    if pa is None: p=random.random(); return ((ch,),{(1,):p,(0,):1-p})\n    t={}\n    for v in (0,1): p=random.random(); t[(v,1)]=p; t[(v,0)]=1-p\n    return ((pa,ch),t)\nfs=[cpt('F'),cpt('C','F'),cpt('D','C'),cpt('T','D')]\ndef mult(f,g):\n    sc=tuple(dict.fromkeys(f[0]+g[0])); t={}\n    for v in itertools.product((0,1),repeat=len(sc)):\n        a=dict(zip(sc,v)); t[v]=f[1][tuple(a[x] for x in f[0])]*g[1][tuple(a[x] for x in g[0])]\n    return (sc,t)\ndef sumout(f,x):\n    sc=tuple(y for y in f[0] if y!=x); t={}\n    for v,p in f[1].items():\n        a=dict(zip(f[0],v)); k=tuple(a[y] for y in sc); t[k]=t.get(k,0)+p\n    return (sc,t)\ndef ve(order):\n    cur=list(fs); scopes=[]\n    for x in order:\n        inv=[f for f in cur if x in f[0]]; cur=[f for f in cur if x not in f[0]]\n        p=inv[0]\n        for g in inv[1:]: p=mult(p,g)\n        n=sumout(p,x); scopes.append(n[0]); cur.append(n)\n    return scopes,cur[0][1][(1,)]\nprint(ve('FCD'), ve('DCF'))   # scopes [(C),(D),(T)] vs [(C,T),(F,T),(T)]; same P(T=1)\nprint(sumout(fs[3],'T')[1])  # {(0,):1.0,(1,):1.0}",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-adversarial"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — direct application of the minimax backup rule over three levels of an eight-leaf tree; under a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Minimax value: back up max at MAX nodes and min at MIN nodes from the leaves to the root.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a two-player zero-sum board game, the game tree below is searched to a fixed depth. The root $R$ is a **MAX** node. Its two children $L_1, L_2$ (left to right) are **MIN** nodes. $L_1$ has the MAX children $X_1, X_2$ and $L_2$ has the MAX children $X_3, X_4$. Each $X_i$ has two leaf children, whose utilities (for MAX) are listed below from left to right.\n\n| MAX node | Parent (MIN) | Leaf utilities |\n|---|---|---|\n| $X_1$ | $L_1$ | 7, 1 |\n| $X_2$ | $L_1$ | 9, 4 |\n| $X_3$ | $L_2$ | 2, 10 |\n| $X_4$ | $L_2$ | 6, 3 |\n\nThe minimax value of the root $R$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$3$"
+      },
+      {
+        "label": "B",
+        "text": "$6$"
+      },
+      {
+        "label": "C",
+        "text": "$7$"
+      },
+      {
+        "label": "D",
+        "text": "$10$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "MAX level: $X_1 = 7,\\ X_2 = 9,\\ X_3 = 10,\\ X_4 = 6$.\nMIN level: $L_1 = \\min(7, 9) = 7$ and $L_2 = \\min(10, 6) = 6$.\nRoot (MAX): $\\max(7, 6) = 7$, option (C).",
+      "steps": [
+        {
+          "title": "Back up the MAX nodes $X_1$–$X_4$",
+          "body": "Each $X_i$ takes the maximum of its leaves: $X_1 = \\max(7, 1) = 7$, $X_2 = \\max(9, 4) = 9$, $X_3 = \\max(2, 10) = 10$ and $X_4 = \\max(6, 3) = 6$."
+        },
+        {
+          "title": "Back up the MIN nodes $L_1, L_2$",
+          "body": "Each $L_j$ takes the minimum of its children: $L_1 = \\min(7, 9) = 7$ and $L_2 = \\min(10, 6) = 6$."
+        },
+        {
+          "title": "Back up the root",
+          "body": "The root is MAX: $R = \\max(L_1, L_2) = \\max(7, 6) = 7$. MAX's best first move is towards $L_1$, and against optimal play by MIN the game ends with utility 7 (at the leaf under $X_1$). The answer is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "Minimax models a game between two perfect players. MAX wants the utility to be high and MIN wants it low. The value of a node is the utility that will be reached from it if **both** players play optimally from then on. Leaves have their given utilities. A MAX node takes the **maximum** of its children's values, because MAX chooses the move, and a MIN node takes the **minimum**, because the opponent chooses. Computing the values bottom-up, one level at a time, gives the root's value and MAX's best move.\n\nThe key idea is that MAX cannot simply aim for the largest leaf. Here the 10 under $X_3$ is tempting, but going towards $L_2$ lets MIN steer to $X_4$, where MAX gets only 6. Going towards $L_1$ guarantees 7 whatever MIN does. The minimax value is this guaranteed outcome: the best worst case.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Obtained by swapping the roles (root MIN, then MAX, then MIN): the leaf-pair minima $1, 4, 2, 3$, then maxima $4, 3$, then minimum $3$. The root is MAX, not MIN."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$6 = \\min(L_1, L_2)$. The lower levels are right, but the root is treated as a MIN node. The root is MAX, so it takes $\\max(7, 6)$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$X = (7, 9, 10, 6)$, $L = (7, 6)$ and $R = \\max(7, 6) = 7$. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$10$ is the largest leaf. It assumes MIN cooperates with MAX; with optimal play MIN avoids $X_3$ by choosing $X_4$."
+        }
+      ],
+      "commonTrap": "Heading for the largest leaf (10) or applying max/min at the wrong levels. Always label each level MAX or MIN from the root down before backing up values."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (value 7)",
+      "agreesWithKey": true,
+      "checkCode": "tree=[[[7,1],[9,4]],[[2,10],[6,3]]]\ndef mm(n,is_max):\n    if isinstance(n,int): return n\n    v=[mm(c,not is_max) for c in n]\n    return max(v) if is_max else min(v)\nprint(mm(tree,True))  # 7",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M07-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-07",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (models of a knowledge base) that needs a two-level case split on A and D across 16 assignments, with a likely slip on the second sentence; about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Model counting for a propositional knowledge base by case analysis on the truth assignments.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A home-security controller reasons with four propositions:\n\n- $A$: the system is armed\n- $D$: the door sensor is triggered\n- $M$: motion is detected\n- $S$: the siren sounds\n\nIts knowledge base consists of the following three sentences:\n\n1. $(A \\land D) \\to S$\n2. $S \\to \\big(A \\land (D \\lor M)\\big)$\n3. $A \\lor M$\n\nThe number of truth assignments to $(A, D, M, S)$, out of the 16 possible, that satisfy all three sentences (that is, the number of models of the knowledge base) is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 7,
+      "max": 7
+    },
+    "solution": {
+      "quick": "Split on $A$. If $A = \\text{F}$: sentence 2 forces $S = \\text{F}$, sentence 3 forces $M = \\text{T}$, and $D$ is free, giving 2 models.\nIf $A = \\text{T}, D = \\text{T}$: $S = \\text{T}$ is forced and $M$ is free, giving 2 models.\nIf $A = \\text{T}, D = \\text{F}$: $S = \\text{T}$ needs $M = \\text{T}$, so $(M, S) \\in \\{(\\text{F},\\text{F}), (\\text{T},\\text{F}), (\\text{T},\\text{T})\\}$, giving 3 models.\nTotal $2 + 2 + 3 = \\mathbf{7}$.",
+      "steps": [
+        {
+          "title": "Case $A = \\text{F}$",
+          "body": "Sentence 2: $S$ requires $A$, so $S = \\text{F}$. Sentence 3: $A \\lor M$ forces $M = \\text{T}$. Sentence 1 has a false antecedent and holds automatically. $D$ is unconstrained.\nModels: $(A, D, M, S) = (\\text{F}, \\text{F}, \\text{T}, \\text{F})$ and $(\\text{F}, \\text{T}, \\text{T}, \\text{F})$, so **2**."
+        },
+        {
+          "title": "Case $A = \\text{T}$, $D = \\text{T}$",
+          "body": "Sentence 1: $A \\land D$ is true, so $S = \\text{T}$. Sentence 2: $A \\land (D \\lor M)$ is true, so it holds. Sentence 3 holds since $A = \\text{T}$. $M$ is free.\nModels: $(\\text{T}, \\text{T}, \\text{F}, \\text{T})$ and $(\\text{T}, \\text{T}, \\text{T}, \\text{T})$, so **2**."
+        },
+        {
+          "title": "Case $A = \\text{T}$, $D = \\text{F}$",
+          "body": "Sentence 1 holds (false antecedent) and sentence 3 holds. Sentence 2 becomes $S \\to M$, so the only excluded combination is $S = \\text{T}, M = \\text{F}$.\nModels: $(M, S) = (\\text{F}, \\text{F}), (\\text{T}, \\text{F}), (\\text{T}, \\text{T})$, so **3**."
+        },
+        {
+          "title": "Add the cases",
+          "body": "The cases are disjoint and cover all 16 assignments, so the number of models is $2 + 2 + 3 = \\mathbf{7}$."
+        }
+      ],
+      "finalAnswer": "**7**",
+      "teaching": "In propositional logic a **model** is a truth assignment to all the symbols. A knowledge base (KB) is the conjunction of its sentences, so a model of the KB must make **every** sentence true at once. With $n$ symbols there are $2^n$ assignments, and the models are the rows of the truth table that survive all the sentences. Counting them is the basis of model-checking entailment: $\\text{KB} \\models \\alpha$ exactly when $\\alpha$ is true in every model of the KB.\n\nWriting out 16 rows by hand is slow and error-prone. A faster method is to **split on a variable** that appears in many sentences. Fixing $A$ (and then $D$) makes each implication either automatically true (false antecedent) or a simple forced value. That leaves a few free variables whose combinations can be counted directly, as DPLL-style solvers do. Remember that $X \\to Y$ restricts nothing when $X$ is false, and that $S \\to (A \\land (D \\lor M))$ imposes **two** requirements on a sounding siren.",
+      "commonTrap": "Reading sentence 2 as just $S \\to A$ and dropping the $(D \\lor M)$ part, which gives 8 (the extra assignment $(\\text{T}, \\text{F}, \\text{F}, \\text{T})$ is counted wrongly). Forgetting sentence 3 gives 9."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "7",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nKB=lambda A,D,M,S: imp(A and D,S) and imp(S,A and (D or M)) and (A or M)\nprint(sum(KB(*t) for t in product([False,True],repeat=4)))  # 7",
+      "notes": ""
+    }
+  }
+]

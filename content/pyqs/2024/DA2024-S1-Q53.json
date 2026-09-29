@@ -1,0 +1,124 @@
+{
+  "id": "DA2024-S1-Q53",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 53,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-svm",
+    "ml-mlp"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (linear separability) by visual inspection. The enclosed-point and XOR patterns are standard, and (iv) needs only an oblique line, in about 1–1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider the following figures representing datasets consisting of two-dimensional features with two classes denoted by circles and squares.\n\n**(i)**\n\n![Figure: Dataset (i) on a grid with both axes marked 1 to 3. Circles at (1, 3), (2, 3) and (1, 2). Squares at (2, 1), (3, 1) and at about (2, 0.3), just below (2, 1).](/pyq/2024/fig/Q53-1.png)\n\n**(ii)**\n\n![Figure: Dataset (ii) on a grid with both axes marked 1 to 3. One circle at (2, 2), surrounded by four squares at (2, 3), (1, 2), (3, 2) and (2, 1).](/pyq/2024/fig/Q53-2.png)\n\n**(iii)**\n\n![Figure: Dataset (iii) on a grid with both axes marked 1 to 3. Circles at (1, 1) and (3, 3); squares at (1, 3) and (3, 1).](/pyq/2024/fig/Q53-3.png)\n\n**(iv)**\n\n![Figure: Dataset (iv) on a grid with both axes marked 1 to 3. Squares towards the upper left, at about (1, 2.2), (1, 1.2) and (2.2, 2.6). Circles towards the lower right, at about (2, 0.5), (3, 1.5) and (3, 0.6).](/pyq/2024/fig/Q53-4.png)\n\nWhich of the following is/are **TRUE**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "(i) is linearly separable."
+    },
+    {
+      "label": "B",
+      "text": "(ii) is linearly separable."
+    },
+    {
+      "label": "C",
+      "text": "(iii) is linearly separable."
+    },
+    {
+      "label": "D",
+      "text": "(iv) is linearly separable."
+    }
+  ],
+  "officialKeyRaw": "A;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "A dataset is linearly separable if one straight line has all circles strictly on one side and all squares on the other. (i): the horizontal line $y = 1.5$ works. (iv): the oblique line $y = x - 0.5$ works. (ii): the circle $(2, 2)$ is the midpoint of the squares $(1, 2)$ and $(3, 2)$, so no line can separate it. (iii) is the XOR pattern, which cannot be separated either. Answer: **(A), (D)**.",
+    "steps": [
+      {
+        "title": "What linear separability means",
+        "body": "Two classes in $\\mathbb{R}^2$ are **linearly separable** if there exist $w_1, w_2, b$ such that\n\n$$f(x, y) = w_1 x + w_2 y + b > 0 \\text{ for every circle}, \\qquad f(x, y) < 0 \\text{ for every square}.$$\n\nThe decision boundary $f = 0$ is a straight line, and it may be oblique.\n\n- **To prove separability**, exhibit one such line and check the sign at every point.\n- **To disprove it**, use the fact that $f$ is affine. If a point $p$ is a weighted average of points $q_1, \\dots, q_k$ (non-negative weights summing to 1), then $f(p)$ is the same weighted average of $f(q_1), \\dots, f(q_k)$. So a point that lies inside the convex hull of the other class always gets that class's sign."
+      },
+      {
+        "title": "(i): separable by a horizontal line",
+        "body": "Circles: $(1, 3), (2, 3), (1, 2)$, so every circle has $y \\ge 2$. Squares: $(2, 1), (3, 1)$ and one at about $(2, 0.3)$, so every square has $y \\le 1$ (approximately).\n\nTake $f(x, y) = y - 1.5$. The circles give $1.5, 1.5, 0.5 > 0$ and the squares give about $-0.5, -0.5, -1.2 < 0$. The line $y = 1.5$ separates the classes, so **(i) is linearly separable**."
+      },
+      {
+        "title": "(ii): not separable (the circle is enclosed)",
+        "body": "The single circle is at $(2, 2)$, and the squares are at $(2, 3), (1, 2), (3, 2), (2, 1)$. The circle is the midpoint of two squares:\n\n$$(2, 2) = \\tfrac12 (1, 2) + \\tfrac12 (3, 2) \\;\\Rightarrow\\; f(2, 2) = \\tfrac12 f(1, 2) + \\tfrac12 f(3, 2).$$\n\nIf both squares had $f < 0$, the circle would also have $f < 0$, so no line can put the circle on the other side. (Geometrically, the circle sits inside the diamond formed by the four squares.) **(ii) is not linearly separable.**"
+      },
+      {
+        "title": "(iii): not separable (XOR)",
+        "body": "The circles $(1, 1), (3, 3)$ and the squares $(1, 3), (3, 1)$ occupy opposite corners, which is the XOR pattern. Suppose some $f$ separates them. The two diagonals cross at $(2, 2)$, which is the midpoint of each pair:\n\n$$f(2, 2) = \\tfrac12\\big[f(1, 1) + f(3, 3)\\big] > 0 \\quad\\text{and}\\quad f(2, 2) = \\tfrac12\\big[f(1, 3) + f(3, 1)\\big] < 0,$$\n\nwhich is a contradiction. **(iii) is not linearly separable.**"
+      },
+      {
+        "title": "(iv): separable by an oblique line",
+        "body": "Reading the figure (approximately), the squares are at $(1, 2.2), (1.1, 1.2), (2.2, 2.6)$, towards the upper left. The circles are at $(2, 0.5), (3, 1.5), (3, 0.6)$, towards the lower right.\n\nNo horizontal or vertical line works. The $x$-ranges overlap (a circle at $x = 2$, a square at $x \\approx 2.2$), and so do the $y$-ranges (a square at $y \\approx 1.2$, a circle at $y \\approx 1.5$). An oblique line does work. Take $g(x, y) = x - y - 0.5$, that is, the line $y = x - 0.5$:\n\n| Point | Class | $g = x - y - 0.5$ |\n| --- | --- | --- |\n| $(2, 0.5)$ | circle | $+1.0$ |\n| $(3, 1.5)$ | circle | $+1.0$ |\n| $(3, 0.6)$ | circle | $+1.9$ |\n| $(1, 2.2)$ | square | $-1.7$ |\n| $(1.1, 1.2)$ | square | $-0.6$ |\n| $(2.2, 2.6)$ | square | $-0.9$ |\n\nAll circles are positive and all squares negative, with a gap of at least $0.6$ on each side. The small uncertainty in reading the positions does not affect the conclusion. **(iv) is linearly separable.**"
+      },
+      {
+        "title": "Collect the verdicts",
+        "body": "| Dataset | Separating line | Verdict |\n| --- | --- | --- |\n| (i) | $y = 1.5$ | separable |\n| (ii) | none; the circle is the midpoint of two squares | not separable |\n| (iii) | none; XOR, the diagonals cross | not separable |\n| (iv) | $y = x - 0.5$ | separable |\n\nThe true statements are **(A)** and **(D)**."
+      }
+    ],
+    "finalAnswer": "**(A), (D)**",
+    "teaching": "**Linear classifiers.** In two dimensions, a linear classifier predicts the class from the sign of $f(\\mathbf{x}) = \\mathbf{w}^\\top \\mathbf{x} + b$, and its decision boundary $f = 0$ is a straight line. Perceptrons, logistic regression and linear SVMs all draw boundaries of this form. A dataset is **linearly separable** when some such line puts every point of one class strictly on one side and every point of the other class on the other side. This is exactly when a hard-margin SVM has a solution, and when the perceptron learning rule is guaranteed to converge.\n\n**The convex-hull test.** The *convex hull* of a set of points is the smallest convex polygon containing them, the shape a rubber band would take around them. Two finite classes are linearly separable **if and only if their convex hulls do not intersect**. The reason is that $f$ is affine: at any weighted average of points (non-negative weights summing to 1), $f$ equals the same weighted average of their $f$-values. So if all squares have $f < 0$, every point inside the squares' hull also has $f < 0$, and a circle sitting there can never be positive.\n\n**Two classic obstructions.**\n\n- *Enclosed point*: a point of one class lies inside the region spanned by the other class, like the circle surrounded by four squares in (ii).\n- *XOR*: the two diagonals of a square carry different classes, so their connecting segments cross, as in (iii). XOR is the textbook example of a problem a single perceptron cannot learn. It needs a hidden layer (an MLP) or a non-linear feature such as $(x - 2)(y - 2)$.\n\n**Proving separability** only needs one explicit line, and the line may be **oblique**. Checking only horizontal and vertical lines is a common way to wrongly reject a separable set.\n\n**Back to this question.** (i) splits cleanly with a horizontal line. (iv) splits with a diagonal line, with squares upper-left and circles lower-right. (ii) has an enclosed point and (iii) is XOR, so neither is linearly separable.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "All circles have $y \\ge 2$ and all squares have $y \\le$ about 1, so the horizontal line $y = 1.5$ separates the classes."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "The circle $(2, 2)$ is the midpoint of the squares $(1, 2)$ and $(3, 2)$, and more generally lies inside the diamond of four squares. Any linear $f$ that is negative on both squares is negative at their midpoint, so no line can isolate the circle."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "This is the XOR configuration. The circle diagonal $(1, 1)$–$(3, 3)$ and the square diagonal $(1, 3)$–$(3, 1)$ cross at $(2, 2)$, so $f(2, 2)$ would have to be both positive and negative. Not linearly separable."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "The squares are upper-left and the circles lower-right. The oblique line $y = x - 0.5$ gives $x - y - 0.5 \\ge 1.0$ for every circle and $\\le -0.6$ for every square, so the dataset is linearly separable. No axis-parallel line would work."
+      }
+    ],
+    "shortcut": "Look for a **trapped point**: a point of one class lying on a segment between two points of the other class, or inside their polygon. That settles (ii) and (iii) at once. If no trap exists, sketch a line; remember it can be diagonal.",
+    "commonTrap": "Rejecting (iv) because no horizontal or vertical line separates it, even though separating lines may be oblique. The opposite trap is accepting (ii) because a small circle, or another curve, can fence off the middle point. Such a boundary is non-linear, not a straight line."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q53-1.webp",
+    "/pyq/2024/official/Q53-2.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The four datasets are raster images embedded in the official PDF (page 35). They are copied unchanged as Q53-1.png to Q53-4.png for panels (i) to (iv), and some carry faint traces of the 'GATE 2024' watermark. In the paper the panels form a 2 × 2 grid: (i) top-left, (ii) top-right, (iii) bottom-left, (iv) bottom-right. The labels (i) to (iv) sit outside the embedded images, so they are given as bold text above each figure. The coordinates in the alt text for the lowest square of (i) and for every point of (iv) are approximate readings from the figure; the markers in (iv) are placed off the grid lines. The second official crop (Q53-2) shows only the question table's border continuing onto page 36."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;D",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom scipy.optimize import linprog\n# (x, y) positions read off the official figures (grid spacing 1; (i) lower square and all of (iv) are approximate)\nD={'i':  {'circle':[(1,3),(2,3),(1,2)],        'square':[(2,1),(3,1),(2,0.3)]},\n   'ii': {'circle':[(2,2)],                    'square':[(2,3),(1,2),(3,2),(2,1)]},\n   'iii':{'circle':[(1,1),(3,3)],              'square':[(1,3),(3,1)]},\n   'iv': {'circle':[(2,0.5),(3,1.5),(3,0.6)],  'square':[(1,2.2),(1.1,1.2),(2.2,2.6)]}}\ndef separable(c,s):\n    # feasibility LP: find (w1,w2,b) with  w.x+b >= 1 for circles and <= -1 for squares\n    X=np.array(c+s,float); yy=np.array([1]*len(c)+[-1]*len(s))\n    A=-(yy[:,None]*np.hstack([X,np.ones((len(X),1))])); ub=-np.ones(len(X))\n    r=linprog(np.zeros(3),A_ub=A,b_ub=ub,bounds=[(None,None)]*3,method='highs')\n    return r.status==0, (r.x if r.status==0 else None)\nfor k,v in D.items():\n    ok,w=separable(v['circle'],v['square'])\n    print(k,'linearly separable' if ok else 'NOT linearly separable', '' if w is None else 'w=%s'%np.round(w,3))\n# explicit certificates\nprint('(i)  line y=1.5 :', [y-1.5 for x,y in D['i']['circle']], [y-1.5 for x,y in D['i']['square']])\nprint('(iv) line x-y=0.5:', [round(x-y-0.5,2) for x,y in D['iv']['circle']], [round(x-y-0.5,2) for x,y in D['iv']['square']])\nprint('(ii) circle (2,2) = midpoint of squares (1,2),(3,2):', ((1+3)/2,(2+2)/2))\nprint('(iii) diagonals (1,1)-(3,3) and (1,3)-(3,1) both pass through', ((1+3)/2,(1+3)/2), ((1+3)/2,(3+1)/2))\n# robustness of (iv): jitter every point by up to +/-0.3 and re-test\nrng=np.random.default_rng(0); ok_all=True\nfor _ in range(2000):\n    j=lambda P:[(x+rng.uniform(-.3,.3),y+rng.uniform(-.3,.3)) for x,y in P]\n    ok_all&=separable(j(D['iv']['circle']),j(D['iv']['square']))[0]\nprint('(iv) separable under all +/-0.3 jitters:',ok_all)\n",
+    "notes": "A linear-programming feasibility check (scipy linprog) was run on coordinates read from the figures. It finds (i) and (iv) linearly separable and (ii) and (iii) infeasible, that is, not separable. Explicit certificates: y = 1.5 for (i), x − y = 0.5 for (iv), the circle at the midpoint of two squares for (ii) and crossing diagonals for (iii). Because the coordinates for (iv) are read approximately, the check re-tests (iv) under 2000 random ±0.3 perturbations of every point, and it stays separable in all of them. This matches the official key A;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

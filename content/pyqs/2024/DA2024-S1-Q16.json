@@ -1,0 +1,113 @@
+{
+  "id": "DA2024-S1-Q16",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 16,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-stacks",
+    "pdsa-queues",
+    "pdsa-hash-tables"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: direct recall of three standard data-structure facts (a queue is FIFO, a stack is LIFO, a hash table supports fast lookup) in a single matching step; well under a minute for a prepared student.",
+  "estimatedTimeSec": 30,
+  "stem": "Match the items in **Column 1** with the items in **Column 2** in the following table:\n\n| Column 1 | Column 2 |\n|---|---|\n| (p) First In First Out | (i) Stacks |\n| (q) Lookup Operation | (ii) Queues |\n| (r) Last In First Out | (iii) Hash Tables |",
+  "options": [
+    {
+      "label": "A",
+      "text": "(p) − (ii), (q) − (iii), (r) − (i)"
+    },
+    {
+      "label": "B",
+      "text": "(p) − (ii), (q) − (i), (r) − (iii)"
+    },
+    {
+      "label": "C",
+      "text": "(p) − (i), (q) − (ii), (r) − (iii)"
+    },
+    {
+      "label": "D",
+      "text": "(p) − (i), (q) − (iii), (r) − (ii)"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "First In First Out is the access rule of a **queue** (ii). Last In First Out is the access rule of a **stack** (i). A **hash table** exists to support fast lookup by key, in expected $O(1)$ time (iii). So the matching is (p) − (ii), (q) − (iii), (r) − (i) → **(A)**.",
+    "steps": [
+      {
+        "title": "(p) First In First Out → Queues (ii)",
+        "body": "A **queue** inserts at the rear (*enqueue*) and removes from the front (*dequeue*). The element that has waited longest always leaves first.\n\nExample: enqueue $1, 2, 3$; the first dequeue returns $1$, the element that went in first. This is **FIFO**, so (p) → (ii)."
+      },
+      {
+        "title": "(r) Last In First Out → Stacks (i)",
+        "body": "A **stack** inserts (*push*) and removes (*pop*) at the same end, the top. The most recently inserted element always leaves first.\n\nExample: push $1, 2, 3$; the first pop returns $3$, the element that went in last. This is **LIFO**, so (r) → (i)."
+      },
+      {
+        "title": "(q) Lookup Operation → Hash Tables (iii)",
+        "body": "A **hash table** stores key–value pairs. A hash function $h(k)$ maps each key directly to a bucket index, so **lookup** (search by key), insertion and deletion take **expected $O(1)$** time. The worst case, when many keys collide, is $O(n)$.\n\nStacks and queues expose only one end, so finding an arbitrary element in them needs an $O(n)$ scan. Lookup is the operation hash tables are designed for, so (q) → (iii)."
+      },
+      {
+        "title": "Select the option",
+        "body": "The complete matching is\n\n$$\n\\text{(p)} - \\text{(ii)}, \\quad \\text{(q)} - \\text{(iii)}, \\quad \\text{(r)} - \\text{(i)},\n$$\n\nwhich is exactly option **(A)**.\n\nCheck by elimination: only (A) and (B) pair (p) with (ii). Of these, (B) pairs lookup with stacks, which is wrong, so (A) remains."
+      }
+    ],
+    "finalAnswer": "**(A)** (p) − (ii), (q) − (iii), (r) − (i)",
+    "teaching": "**Abstract data types are defined by their operations.** A data structure is characterised by which element it hands back to you and how quickly it does so.\n\n**Stack (LIFO: Last In, First Out).** Think of a pile of plates: you add to the top and take from the top.\n\n- Operations: `push(x)` and `pop()`, both $O(1)$, plus `peek()` to read the top.\n- Uses: the function-call stack (recursion), undo in editors, matching parentheses, evaluating postfix expressions, iterative DFS.\n- In Python, a `list` with `append()` and `pop()`.\n\n**Queue (FIFO: First In, First Out).** Think of a line at a ticket counter: people join at the back and are served from the front.\n\n- Operations: `enqueue(x)` at the rear and `dequeue()` from the front, both $O(1)$ with a circular array or a linked list.\n- Uses: BFS, CPU and printer scheduling, buffering data streams.\n- In Python, `collections.deque` with `append()` and `popleft()`.\n\n**Hash table (fast lookup).** It stores key–value pairs in an array of buckets. A hash function turns a key into an index, so you jump straight to the right bucket instead of scanning.\n\n- Two keys that land in the same bucket cause a *collision*, which is handled by chaining (a list per bucket) or open addressing (probing for another slot).\n- With a good hash function and a bounded load factor, search, insert and delete take **expected $O(1)$** time.\n- Python's `dict` and `set` are hash tables.\n\n**Back to this question.** FIFO names the queue discipline, LIFO names the stack discipline, and \"lookup\" is the operation hash tables are built for. That gives (p) − (ii), (q) − (iii), (r) − (i), which is option (A).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "FIFO → queues, lookup → hash tables, LIFO → stacks. All three pairs are right."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "(p) − (ii) is right, but this option pairs lookup with stacks and LIFO with hash tables. A stack exposes only its top element, and a hash table has no insertion-order discipline."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "All three pairs are wrong. Stacks are LIFO, not FIFO. Queues are not a lookup structure. Hash tables do not follow LIFO order."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "(q) − (iii) is right, but stacks and queues are swapped. FIFO belongs to queues, and LIFO belongs to stacks."
+      }
+    ],
+    "shortcut": "Fix the most familiar pair first: FIFO = queue, so only (A) and (B) survive. Then lookup = hash table picks (A).",
+    "commonTrap": "Swapping stack and queue, which gives option (D): it gets the hash-table pair right but reverses FIFO and LIFO. A stack of plates is Last In, First Out; a queue at a counter is First In, First Out."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q16-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The boxed two-column match table is transcribed as a GFM table, with each label kept next to its item as in the paper. \"Column 1\" and \"Column 2\" are bold in the stem sentence as in the paper, and the dashes in the options are the minus signs (−) printed in the paper."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(A) (p) − (ii), (q) − (iii), (r) − (i)",
+    "agreesWithKey": true,
+    "checkCode": "from collections import deque\nq = deque()\nfor i in (1, 2, 3): q.append(i)          # enqueue 1, 2, 3\nprint(\"queue removes:\", q.popleft())      # 1 -> First In First Out\ns = []\nfor i in (1, 2, 3): s.append(i)          # push 1, 2, 3\nprint(\"stack removes:\", s.pop())          # 3 -> Last In First Out\nh = {\"apple\": 5, \"kiwi\": 7}               # Python dict = hash table\nprint(\"lookup kiwi:\", h[\"kiwi\"])          # direct lookup by key, expected O(1)\nmatch = {\"p\": \"ii\", \"q\": \"iii\", \"r\": \"i\"} # FIFO-Queues, Lookup-Hash Tables, LIFO-Stacks\nopts = {\"A\": {\"p\": \"ii\", \"q\": \"iii\", \"r\": \"i\"}, \"B\": {\"p\": \"ii\", \"q\": \"i\", \"r\": \"iii\"},\n        \"C\": {\"p\": \"i\", \"q\": \"ii\", \"r\": \"iii\"}, \"D\": {\"p\": \"i\", \"q\": \"iii\", \"r\": \"ii\"}}\nprint(\"matching option:\", [k for k, v in opts.items() if v == match])   # ['A']",
+    "notes": "Standard definitions: a queue is FIFO, a stack is LIFO, and a hash table supports expected O(1) lookup by key. A Python demonstration (deque.popleft returns the first element inserted, list.pop returns the last, dict lookup by key) and a mechanical match against the four options select only A. This agrees with the official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

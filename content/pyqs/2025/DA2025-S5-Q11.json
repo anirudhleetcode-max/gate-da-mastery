@@ -1,0 +1,116 @@
+{
+  "id": "DA2025-S5-Q11",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 11,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-random-variables",
+  "subtopicIds": [
+    "ps-conditional-expectation",
+    "ps-random-variables"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the law of total expectation / tower property) answered by direct recall with no computation, well under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 30,
+  "stem": "Suppose $X$ and $Y$ are random variables. The conditional expectation of $X$ given $Y$ is denoted by $E[X|Y]$. Then $E[E[X|Y]]$ equals",
+  "options": [
+    {
+      "label": "A",
+      "text": "$E[X|Y]$"
+    },
+    {
+      "label": "B",
+      "text": "$\\dfrac{E[X]}{E[Y]}$"
+    },
+    {
+      "label": "C",
+      "text": "$E[X]$"
+    },
+    {
+      "label": "D",
+      "text": "$E[Y]$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "$E[X|Y]$ is itself a random variable: a function $g(Y)$ of $Y$, where $g(y) = E[X|Y=y]$. Averaging these conditional means over the distribution of $Y$ gives back the overall mean of $X$. This is the law of total expectation (the tower property): $E[E[X|Y]] = E[X]$. Answer **(C)**.",
+    "steps": [
+      {
+        "title": "Understand what $E[X|Y]$ is",
+        "body": "For each fixed value $y$, the conditional mean $g(y) = E[X|Y=y]$ is an ordinary number. Before $Y$ is observed, we do not know which $y$ will occur, so\n\n$$E[X|Y] = g(Y)$$\n\nis a **random variable**: a function of $Y$. The outer expectation in $E[E[X|Y]]$ is therefore an average of $g(Y)$ over the distribution of $Y$."
+      },
+      {
+        "title": "Compute the outer expectation (discrete case)",
+        "body": "Using $P(X=x|Y=y)\\,P(Y=y) = P(X=x, Y=y)$:\n\n$$E[g(Y)] = \\sum_y g(y)\\,P(Y=y) = \\sum_y \\Big(\\sum_x x\\,P(X=x|Y=y)\\Big) P(Y=y) = \\sum_y \\sum_x x\\,P(X=x, Y=y).$$\n\nSwap the order of summation and sum the joint pmf over $y$ to get the marginal of $X$:\n\n$$\\sum_x x \\sum_y P(X=x, Y=y) = \\sum_x x\\,P(X=x) = E[X].$$"
+      },
+      {
+        "title": "Same argument for continuous variables",
+        "body": "With densities, $f_{X|Y}(x|y)\\,f_Y(y) = f_{X,Y}(x,y)$, so\n\n$$E[E[X|Y]] = \\int \\Big(\\int x\\,f_{X|Y}(x|y)\\,dx\\Big) f_Y(y)\\,dy = \\int\\!\\!\\int x\\,f_{X,Y}(x,y)\\,dx\\,dy = \\int x\\,f_X(x)\\,dx = E[X].$$\n\nSo the identity holds for any random variables $X, Y$ for which $E[X]$ exists."
+      },
+      {
+        "title": "Check on a small example",
+        "body": "Take this joint pmf:\n\n|  | $Y=0$ | $Y=1$ |\n| --- | --- | --- |\n| $X=1$ | $0.1$ | $0.3$ |\n| $X=3$ | $0.2$ | $0.4$ |\n\n- Marginal of $Y$: $P(Y=0) = 0.3$, $P(Y=1) = 0.7$.\n- Conditional means: $E[X|Y=0] = \\dfrac{1(0.1) + 3(0.2)}{0.3} = \\dfrac{0.7}{0.3} = \\dfrac{7}{3}$ and $E[X|Y=1] = \\dfrac{1(0.3) + 3(0.4)}{0.7} = \\dfrac{1.5}{0.7} = \\dfrac{15}{7}$.\n- Outer average: $E[E[X|Y]] = 0.3 \\cdot \\dfrac{7}{3} + 0.7 \\cdot \\dfrac{15}{7} = 0.7 + 1.5 = 2.2$.\n- Directly: $P(X=1) = 0.4$ and $P(X=3) = 0.6$, so $E[X] = 1(0.4) + 3(0.6) = 2.2$. The two agree.\n\nFor comparison, $E[Y] = 0.7$ and $E[X]/E[Y] = 2.2/0.7 \\approx 3.14$. Both differ from $2.2$, which rules out (B) and (D). (A) is a random variable taking the values $7/3$ or $15/7$, not the constant $2.2$."
+      },
+      {
+        "title": "Conclusion",
+        "body": "$E[E[X|Y]] = E[X]$, which is option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Conditional expectation is a random variable.** $E[X|Y=y]$ answers the question \"if I knew that $Y$ equals $y$, what would I expect $X$ to be on average?\" It gives one number for each possible $y$. Writing $E[X|Y]$ without a specific value means \"plug in the random $Y$\", so the result $g(Y)$ changes from outcome to outcome. It is a random variable, and it depends only on $Y$.\n\n**Law of total expectation (tower property).** If you take the expectation of this random variable, you average the conditional means, weighting each by how likely its $y$ is:\n\n$$E[E[X|Y]] = \\sum_y E[X|Y=y]\\,P(Y=y) = E[X].$$\n\n**Intuition: the average of group averages.** Split a population into groups by the value of $Y$, for example students grouped by class section. $E[X|Y=y]$ is the average mark in section $y$, and $P(Y=y)$ is the fraction of students in that section. If you weight each section's average by its share of students and add them up, you get the overall average mark. Nothing about $Y$ survives the outer averaging; only the mean of $X$ remains.\n\n**Why the other forms fail.** The outer expectation is taken *over* $Y$, but what is being averaged is a mean of $X$, so the result is a mean of $X$, not of $Y$. Ratios such as $E[X]/E[Y]$ never arise from averaging.\n\n**Useful companions.** The same idea gives the law of total variance, $\\operatorname{Var}(X) = E[\\operatorname{Var}(X|Y)] + \\operatorname{Var}(E[X|Y])$, which also appears in GATE questions. It is also the basis for computing $E[X]$ by conditioning on a convenient variable, for example the first step of a random process.\n\n**Back to the question.** $E[E[X|Y]]$ is exactly the \"average of the conditional averages\", so it equals $E[X]$: option (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$E[X|Y]$ is a random variable (a function of $Y$), while $E[E[X|Y]]$ is a constant: the outer expectation averages out $Y$. The two coincide only in special cases where $E[X|Y]$ does not depend on $Y$. In the example above, $E[X|Y]$ takes the values $7/3$ and $15/7$, while $E[E[X|Y]] = 2.2$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "No averaging step produces a ratio of expectations. The expression is undefined when $E[Y] = 0$, and in the example $E[X]/E[Y] = 2.2/0.7 \\approx 3.14 \\ne 2.2$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "This is the law of total expectation: $E[E[X|Y]] = \\sum_y E[X|Y=y]P(Y=y) = \\sum_x x\\,P(X=x) = E[X]$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "The outer expectation is taken over the distribution of $Y$, but the quantity being averaged is the conditional mean of $X$, so the result is a mean of $X$. In the example $E[Y] = 0.7 \\ne 2.2$."
+      }
+    ],
+    "shortcut": "Tower property: the outer expectation cancels the conditioning, so $E[E[X|Y]] = E[X]$.",
+    "commonTrap": "Treating $E[X|Y]$ as a fixed number and picking (A), or picking (D) because \"the outer expectation is over $Y$\". The outer expectation removes $Y$ and leaves the plain mean of $X$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q11-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (E[E[X|Y]] = E[X], law of total expectation)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom fractions import Fraction as F\n# worked example from the solution: X in {1,3}, Y in {0,1}\np = {(1, 0): F(1, 10), (1, 1): F(3, 10), (3, 0): F(2, 10), (3, 1): F(4, 10)}\npY = {y: sum(v for (x, yy), v in p.items() if yy == y) for y in (0, 1)}\ng = {y: sum(x * v for (x, yy), v in p.items() if yy == y) / pY[y] for y in (0, 1)}  # E[X|Y=y]\nEEXY = sum(g[y] * pY[y] for y in (0, 1)); EX = sum(x * v for (x, y), v in p.items()); EY = sum(y * v for (x, y), v in p.items())\nprint('g =', g, ' E[E[X|Y]] =', EEXY, ' E[X] =', EX, ' E[Y] =', EY, ' E[X]/E[Y] =', float(EX / EY))\nassert EEXY == EX == F(11, 5)\n# random joint pmfs\nrng = np.random.default_rng(1)\nfor _ in range(1000):\n    xs, ys = rng.normal(size=4), rng.normal(size=3)\n    P = rng.random((4, 3)); P /= P.sum(); pY = P.sum(axis=0)\n    assert np.isclose(((xs[:, None] * P).sum(axis=0) / pY * pY).sum(), (xs * P.sum(axis=1)).sum())\nprint('tower property holds on 1000 random joint pmfs')",
+    "notes": "Independent solve: E[X|Y] = g(Y) with g(y) = E[X|Y=y]; averaging over Y gives sum_y g(y)P(Y=y) = sum_x x P(X=x) = E[X], i.e. option (C). This matches the official key C. The Python check reproduces the worked example exactly with fractions (E[E[X|Y]] = E[X] = 11/5, while E[Y] = 7/10 and E[X]/E[Y] is about 3.14) and confirms the identity on 1000 random joint pmfs."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

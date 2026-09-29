@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q25",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 25,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-adversarial"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept, direct recall of the definitions of α (best, i.e. highest, value for MAX) and β (best, i.e. lowest, value for MIN) in α–β pruning, answerable in well under a minute.",
+  "estimatedTimeSec": 40,
+  "stem": "Consider the following statement:\n\nIn adversarial search, $\\alpha$– $\\beta$ pruning can be applied to game trees of any depth where $\\alpha$ is the $\\underline{\\;\\textbf{(m)}\\;}$ value choice we have formed so far at any choice point along the path for the MAX player and $\\beta$ is the $\\underline{\\;\\textbf{(n)}\\;}$ value choice we have formed so far at any choice point along the path for the MIN player.\n\nWhich **ONE** of the following choices of **(m)** and **(n)** makes the above statement valid?",
+  "options": [
+    {
+      "label": "A",
+      "text": "**(m)** = highest, **(n)** = highest"
+    },
+    {
+      "label": "B",
+      "text": "**(m)** = lowest, **(n)** = highest"
+    },
+    {
+      "label": "C",
+      "text": "**(m)** = highest, **(n)** = lowest"
+    },
+    {
+      "label": "D",
+      "text": "**(m)** = lowest, **(n)** = lowest"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "In $\\alpha$–$\\beta$ pruning, $\\alpha$ is the value of the **best** choice found so far for MAX along the path, and MAX wants large values, so it is the **highest** value. $\\beta$ is the best choice found so far for MIN, and MIN wants small values, so it is the **lowest** value. Hence (m) = highest, (n) = lowest: option **(C)**.",
+    "steps": [
+      {
+        "title": "Minimax, the computation α–β pruning speeds up",
+        "body": "In a two-player zero-sum game tree, leaf values are utilities for MAX. The **minimax value** of a node is\n\n$$\n\\text{value}(n) = \\begin{cases} \\text{utility}(n) & n \\text{ is a leaf} \\\\ \\max_{c} \\text{value}(c) & n \\text{ is a MAX node} \\\\ \\min_{c} \\text{value}(c) & n \\text{ is a MIN node} \\end{cases}\n$$\n\n$\\alpha$–$\\beta$ pruning returns the **same root value** but skips subtrees that provably cannot change it. To do this it carries two numbers down the current path, $\\alpha$ and $\\beta$."
+      },
+      {
+        "title": "α belongs to MAX, so it is the highest value found",
+        "body": "MAX wants the utility to be as **large** as possible, so the best choice for MAX is the one with the **highest** value.\n\n$\\alpha$ = the value of the best (highest-value) choice found so far at any choice point along the path for MAX. It is a guaranteed **lower bound** on what MAX can achieve: MAX already has an option worth $\\alpha$ somewhere on the path and will never accept less.\n\n$\\alpha$ starts at $-\\infty$ and is only ever raised, at MAX nodes: $\\alpha \\leftarrow \\max(\\alpha, v)$.\n\nSo **(m) = highest**."
+      },
+      {
+        "title": "β belongs to MIN, so it is the lowest value found",
+        "body": "MIN wants the utility to be as **small** as possible, so the best choice for MIN is the one with the **lowest** value.\n\n$\\beta$ = the value of the best (lowest-value) choice found so far at any choice point along the path for MIN. It is a guaranteed **upper bound**: MIN already has an option worth $\\beta$ and will never allow more.\n\n$\\beta$ starts at $+\\infty$ and is only ever lowered, at MIN nodes: $\\beta \\leftarrow \\min(\\beta, v)$.\n\nSo **(n) = lowest**."
+      },
+      {
+        "title": "Why these bounds allow pruning (worked trace)",
+        "body": "The true value of the current node matters only if it lies in the window $(\\alpha, \\beta)$. As soon as $\\alpha \\ge \\beta$ at a node, its remaining children are skipped: the player above has a better alternative elsewhere and will never let play reach this node.\n\nTrace on a MAX root whose three MIN children have leaves $[3, 12, 8]$, $[2, 4, 6]$ and $[14, 5, 2]$:\n\n| MIN child | Leaves examined | Event | Child value | $\\alpha$ at root |\n|---|---|---|---|---|\n| $B$ | $3, 12, 8$ | none | $3$ | $3$ (highest so far) |\n| $C$ | $2$ | $\\beta = 2 \\le \\alpha = 3$: prune $4, 6$ | $\\le 2$ | $3$ |\n| $D$ | $14, 5, 2$ | $\\beta$ falls $14 \\to 5 \\to 2$ (lowest so far) | $2$ | $3$ |\n\nRoot value $= \\max(3, \\le 2, 2) = 3$, the same as full minimax, after examining 7 of the 9 leaves. The pruning at $C$ is valid precisely because $\\alpha$ holds MAX's **highest** option (3) and $\\beta$ holds MIN's **lowest** option (2)."
+      },
+      {
+        "title": "Why the other combinations fail",
+        "body": "If $\\alpha$ tracked the *lowest* value for MAX, or $\\beta$ the *highest* value for MIN, the numbers would no longer be guaranteed bounds on what each player can force, and the cut-off test $\\alpha \\ge \\beta$ would discard subtrees that can change the result.\n\nThe Python check implements the same algorithm with each of the four (m), (n) choices and compares the root value with plain minimax on 2000 random game trees of depth 1 to 5. Only (m) = highest, (n) = lowest agrees on every tree (0 errors, while examining 69 053 of 142 986 leaves); the other three choices give wrong root values on 984 to 1714 of the trees.\n\nThe answer is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** (m) = highest, (n) = lowest",
+    "teaching": "**Game-tree search.** In a two-player, zero-sum, perfect-information game, MAX moves to make the final utility large and MIN moves to make it small. The **minimax** algorithm computes the value of a position by assuming both play optimally: MAX nodes take the maximum of their children, MIN nodes the minimum. Its cost is exponential, $O(b^m)$ for branching factor $b$ and depth $m$.\n\n**The idea behind α–β pruning.** Many branches cannot affect the final decision. Suppose MAX already has a move worth 3. While exploring a second move, MIN reveals a reply worth 2. Then that second move is worth **at most** 2 to MAX, which is worse than the 3 already secured, so MAX will never choose it and the rest of that subtree can be ignored.\n\nTo do this bookkeeping at every depth, the algorithm passes two numbers down the path:\n\n- $\\alpha$: the best value MAX can already guarantee along the path. Best for MAX means **highest**. It starts at $-\\infty$ and only increases.\n- $\\beta$: the best value MIN can already guarantee along the path. Best for MIN means **lowest**. It starts at $+\\infty$ and only decreases.\n\nA node's value is relevant only if it falls strictly between $\\alpha$ and $\\beta$. Once $\\alpha \\ge \\beta$, one of the players will steer play away from this node, so its remaining children are pruned. Because $\\alpha$ and $\\beta$ are carried along the whole path from the root, the method works for game trees of **any depth**, as the question says.\n\n**Key facts.** Pruning never changes the root value; it only saves work. With good move ordering it examines about $O(b^{m/2})$ nodes, which lets the search go roughly twice as deep in the same time.\n\n**Back to this question.** The blanks ask what \"best\" means for each player: for MAX it is the **highest** value found so far ($\\alpha$), and for MIN it is the **lowest** value found so far ($\\beta$). That is option (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "(m) = highest is right for $\\alpha$, but $\\beta$ is MIN's best value, and MIN prefers **low** utilities, so $\\beta$ is the lowest value found so far, not the highest."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Both blanks are reversed: MAX's best choice is the highest value (not the lowest), and MIN's best choice is the lowest value (not the highest)."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$\\alpha$ = best (highest) value found so far for MAX, a lower bound on what MAX can guarantee; $\\beta$ = best (lowest) value found so far for MIN, an upper bound on what MIN will allow. Pruning happens when $\\alpha \\ge \\beta$. This matches the official key."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "(n) = lowest is right for $\\beta$, but $\\alpha$ is MAX's best value, and MAX prefers **high** utilities, so $\\alpha$ is the highest value found so far, not the lowest."
+      }
+    ],
+    "shortcut": "\\\"Best for the player who owns the bound\\\": $\\alpha$ is MAX's, so highest (starts at $-\\infty$, only rises); $\\beta$ is MIN's, so lowest (starts at $+\\infty$, only falls).",
+    "commonTrap": "Confusing \\\"lower bound\\\" with \\\"lowest\\\". $\\alpha$ is a *lower bound* on MAX's achievable value, yet it equals the *highest* value found so far for MAX; similarly $\\beta$ is an *upper bound* but equals the *lowest* value found so far for MIN. Remembering only \\\"$\\alpha$ = lower bound\\\" leads students to pick (m) = lowest."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q25-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the name of the method as \"α– β pruning\" (a dash directly after α followed by a space before β); this is kept as printed. The blanks (m) and (n) are printed in bold and underlined and are typeset as $\\underline{\\;\\textbf{(m)}\\;}$ and $\\underline{\\;\\textbf{(n)}\\;}$; the labels (m) and (n) are also bold in the final sentence of the stem and in every option, as printed. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(C) (m) = highest, (n) = lowest",
+    "agreesWithKey": true,
+    "checkCode": "import random\nrandom.seed(0)\nINF = float('inf')\ndef tree(d, b=3):                                  # random game tree of depth d, branching b\n    return random.randint(0, 20) if d == 0 else [tree(d - 1, b) for _ in range(b)]\ndef minimax(t, is_max):\n    if not isinstance(t, list): return t\n    vals = [minimax(c, not is_max) for c in t]\n    return max(vals) if is_max else min(vals)\ndef ab(t, is_max, a, b, m, n, cnt):\n    # m / n: how alpha (MAX's bound) and beta (MIN's bound) are updated -- 'highest' or 'lowest'\n    if not isinstance(t, list): cnt[0] += 1; return t\n    upd = {'highest': max, 'lowest': min}\n    v = -INF if is_max else INF\n    for c in t:\n        x = ab(c, not is_max, a, b, m, n, cnt)\n        v = max(v, x) if is_max else min(v, x)\n        if is_max: a = upd[m](a, v)\n        else: b = upd[n](b, v)\n        if a >= b: break                           # prune the remaining children\n    return v\ninit = {'highest': -INF, 'lowest': INF}            # neutral starting value for each update rule\nopts = {'A': ('highest', 'highest'), 'B': ('lowest', 'highest'),\n        'C': ('highest', 'lowest'), 'D': ('lowest', 'lowest')}\nfor k, (m, n) in opts.items():\n    random.seed(1); wrong = leaves = total = 0\n    for _ in range(2000):\n        t = tree(random.randint(1, 5)); cnt = [0]\n        wrong += ab(t, True, init[m], init[n], m, n, cnt) != minimax(t, True)\n        leaves += cnt[0]; total += len(str(t).replace('[', '').replace(']', '').split(','))\n    print(k, (m, n), 'wrong root values in 2000 random trees:', wrong, f'leaves visited: {leaves}/{total}')\n    if k == 'C': assert wrong == 0 and leaves < total\n# textbook tree: MAX root over MIN nodes [3,12,8], [2,4,6], [14,5,2]\nt, cnt = [[3, 12, 8], [2, 4, 6], [14, 5, 2]], [0]\nprint('minimax', minimax(t, True), 'alpha-beta (C)', ab(t, True, -INF, INF, 'highest', 'lowest', cnt), 'leaves', cnt[0])",
+    "notes": "α is the value of the best choice found so far for MAX, and MAX maximises, so it is the highest value; β is the best choice found so far for MIN, and MIN minimises, so it is the lowest value. A Python check runs α–β search with each of the four (m), (n) update rules against plain minimax on 2000 random game trees: only (highest, lowest) reproduces the minimax root value on every tree (0 errors, 69 053 of 142 986 leaves examined), while the other three give wrong root values on 984–1714 trees. On the tree with MIN children [3,12,8], [2,4,6], [14,5,2] it returns 3 after examining 7 of 9 leaves. This agrees with official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

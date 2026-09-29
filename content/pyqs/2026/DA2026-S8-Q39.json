@@ -1,0 +1,117 @@
+{
+  "id": "DA2026-S8-Q39",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 39,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python",
+    "pdsa-stacks"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (counting recursive calls) worked through a 2–3 step recurrence or trace, with a likely base-case trap (treating n = 1 as a base case); about 2 minutes for a prepared student.",
+  "estimatedTimeSec": 120,
+  "stem": "A recursive function in Python is given.\n\n```python\ndef mystery(n):\n    if n <= 0:\n        return 1\n    else:\n        return mystery(n-1) + mystery(n-2)\n```\n\nNow, consider the following function call:\n\n```python\nmystery(4)\n```\n\nAssume that a typical runtime stack is used to manage function calls. Each function call is pushed onto the stack and removed only after it finishes execution.\n\nWhich of the following options denotes the total number of function calls (i.e., the total number of stack activations), including the initial call, to compute `mystery(4)`?",
+  "options": [
+    {
+      "label": "A",
+      "text": "5"
+    },
+    {
+      "label": "B",
+      "text": "9"
+    },
+    {
+      "label": "C",
+      "text": "15"
+    },
+    {
+      "label": "D",
+      "text": "17"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "Let $C(n)$ be the number of activations caused by `mystery(n)`. A base call ($n \\le 0$) costs $C(n)=1$; otherwise $C(n) = 1 + C(n-1) + C(n-2)$.\n\nWith $C(0)=C(-1)=1$: $C(1)=3$, $C(2)=5$, $C(3)=9$, $C(4)=1+9+5=15$. **(C)**",
+    "steps": [
+      {
+        "title": "Input: what counts as one activation",
+        "body": "Every invocation of `mystery`, including the base-case ones, is pushed onto the runtime stack once, so it is one activation.\n\nThe base case is `n <= 0`. Calls with $n = 0$ **and** $n = -1$ return `1` immediately. `mystery(1)` is **not** a base case: it calls `mystery(0)` and `mystery(-1)`.\n\nEvery call with $n \\ge 1$ makes exactly two further calls, to $n-1$ and $n-2$."
+      },
+      {
+        "title": "Recurrence for the number of calls",
+        "body": "Let $C(n)$ be the total number of activations (including itself) caused by calling `mystery(n)`:\n\n$$\nC(n) = \\begin{cases} 1, & n \\le 0 \\\\ 1 + C(n-1) + C(n-2), & n \\ge 1 \\end{cases}\n$$\n\nThe leading $1$ counts the call itself. The other two terms count everything its two recursive calls generate."
+      },
+      {
+        "title": "Execution: evaluate bottom-up",
+        "body": "| $n$ | $C(n-1)$ | $C(n-2)$ | $C(n) = 1 + C(n-1) + C(n-2)$ |\n| --- | --- | --- | --- |\n| $-1$ | – | – | $1$ (base) |\n| $0$ | – | – | $1$ (base) |\n| $1$ | $C(0)=1$ | $C(-1)=1$ | $1+1+1 = 3$ |\n| $2$ | $C(1)=3$ | $C(0)=1$ | $1+3+1 = 5$ |\n| $3$ | $C(2)=5$ | $C(1)=3$ | $1+5+3 = 9$ |\n| $4$ | $C(3)=9$ | $C(2)=5$ | $1+9+5 = 15$ |\n\nSo `mystery(4)` causes $C(4) = 15$ activations."
+      },
+      {
+        "title": "Cross-check: tally calls per argument in the recursion tree",
+        "body": "Count how many times each argument appears in the recursion tree of `mystery(4)`:\n\n| argument $n$ | 4 | 3 | 2 | 1 | 0 | −1 |\n| --- | --- | --- | --- | --- | --- | --- |\n| number of calls | 1 | 1 | 2 | 3 | 5 | 3 |\n\nTotal $= 1+1+2+3+5+3 = 15$.\n\nStructural check: the base calls ($n = 0$ and $n = -1$) are the $5 + 3 = 8$ leaves, and the other $1+1+2+3 = 7$ calls are internal nodes with exactly two children each. In a full binary tree, internal nodes $=$ leaves $- 1 = 7$, so the total is $8 + 7 = 15$."
+      },
+      {
+        "title": "Stack view and result",
+        "body": "The stack never holds more than 5 frames at once (`mystery(4)` → `mystery(3)` → `mystery(2)` → `mystery(1)` → `mystery(0)`). That is the **maximum depth**, not the number of activations.\n\nOver the whole computation, $15$ frames are pushed and popped. The function returns $8$, and the number of calls grows exponentially in $n$, like the Fibonacci numbers.\n\nTotal number of function calls $= 15$ → **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** 15",
+    "teaching": "**Recursion and the runtime stack.** Each time a function is called, the runtime pushes an *activation record* (stack frame) holding its parameters, local variables and return address. The frame is popped when the call returns. \"Total activations\" therefore means \"total number of calls ever made\". It is different from the *maximum stack depth*, which is the largest number of frames alive at the same moment.\n\n**Recursion trees.** Draw each call as a node whose children are the calls it makes. For `mystery`, every call with $n \\ge 1$ has exactly two children ($n-1$ and $n-2$), and every call with $n \\le 0$ is a leaf. The number of activations is the number of nodes, and the maximum stack depth is the height of the tree plus one (the longest root-to-leaf chain).\n\n**Counting calls with a recurrence.** To count nodes, write a recurrence that mirrors the code:\n\n$$\nC(n) = 1 + C(n-1) + C(n-2),\\qquad C(n)=1 \\text{ for } n \\le 0.\n$$\n\nThe $1$ is the current call. This is the same shape as the Fibonacci recurrence plus one, which is why naive double recursion takes exponential time.\n\n**Full-binary-tree identity.** When every internal node has exactly two children, internal nodes $=$ leaves $-1$, so total nodes $= 2L - 1$. Here each leaf returns $1$ and each internal node returns the sum of its children, so the value returned by `mystery(n)` *equals* the number of leaves $L$.\n\n**Applying it here.** The base case is `n <= 0`, not `n <= 1`, so `mystery(1)` still recurses into `mystery(0)` and `mystery(-1)`. With $C(0)=C(-1)=1$, the recurrence gives $3, 5, 9, 15$ for $n = 1, 2, 3, 4$. The identity cross-checks this: `mystery(4)` returns $8$, so there are $2\\cdot 8 - 1 = 15$ calls.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "5 is the **maximum stack depth** (`mystery(4)`, `(3)`, `(2)`, `(1)`, `(0)` alive together). It is also the number of distinct arguments $4,3,2,1,0$. The question asks for the total number of activations, which is 15."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "9 is $C(3)$, the count for `mystery(3)`. It is also what you get if you wrongly treat `mystery(1)` as a base case, as in the usual Fibonacci code with `n <= 1` ($C(1)=C(0)=1 \\Rightarrow C(2)=3, C(3)=5, C(4)=9$). Here `n <= 0` is the base case, so `mystery(1)` makes two more calls."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$C(4) = 1 + C(3) + C(2) = 1 + 9 + 5 = 15$. The per-argument tally $1+1+2+3+5+3$ and the full-binary-tree count $2\\cdot 8 - 1$ confirm it."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "17 overcounts. The recursion tree has exactly 8 leaves (base calls) and 7 internal calls, 15 in total. No two extra activations occur."
+      }
+    ],
+    "shortcut": "Every non-base call makes exactly two calls, so the recursion tree is a full binary tree whose leaf count equals the return value. `mystery` gives $1,1,2,3,5,8$ for $n=-1,\\dots,4$, so $L = 8$ and the number of calls is $2L - 1 = 15$.",
+    "commonTrap": "Treating `mystery(1)` as a base case (the familiar Fibonacci base `n <= 1`) and forgetting the three calls with $n = -1$ gives 9. Confusing the maximum stack depth with the total number of activations gives 5."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q39-1.webp",
+    "/pyq/2026/official/Q39-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper indents the code with tab stops: one level for `if`/`else`, two levels for the `return` statements. It is rendered here with 4 spaces per level, keeping the nesting exactly. The standalone call `mystery(4)` is set in monospace on its own line in the paper and is rendered as a code block."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (15 calls)",
+    "agreesWithKey": true,
+    "checkCode": "from collections import Counter\ncalls = Counter()\ndef mystery(n):\n    calls[n] += 1\n    if n <= 0:\n        return 1\n    else:\n        return mystery(n-1) + mystery(n-2)\nv = mystery(4)\nC = {-1: 1, 0: 1}                      # C(n) = number of activations of mystery(n)\nfor n in range(1, 5): C[n] = 1 + C[n-1] + C[n-2]\nprint(v, dict(calls), sum(calls.values()), C)   # 8 {4:1,3:1,2:2,1:3,0:5,-1:3} 15\nassert sum(calls.values()) == C[4] == 2*v - 1 == 15",
+    "notes": "The recurrence C(n) = 1 + C(n-1) + C(n-2) with C(0) = C(-1) = 1, the per-argument call tally and a Python execution with a call counter all give 15 activations. This matches official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

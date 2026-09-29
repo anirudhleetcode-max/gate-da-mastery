@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q41",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 41,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-storage",
+  "subtopicIds": [
+    "dbw-indexing"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (B+ tree insertion) with 2–3 linked steps, a leaf split followed by a cascading non-leaf split that creates a new root, plus a likely trap of stopping before the root split; about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider a B+ Tree where the maximum number of key values in each leaf node is 2 and the maximum number of pointers in each non-leaf node is 3. Let the content of the B+ Tree be as shown in the figure.\n\nWhich of the following options denotes the key value(s) stored in the root node after inserting a key value 3 in the given B+ Tree?\n\n![Figure: A B+ tree with root node holding keys 5 and 8 and three child pointers. The left pointer leads to the leaf with keys 1 and 5, the middle pointer to the leaf with keys 7 and 8, and the right pointer to the leaf with keys 9 and 12. Each leaf key has a dashed downward record pointer, and the leaves are chained left to right by next-leaf pointers, the last one pointing to NULL.](/pyq/2026/fig/Q41-1.png)",
+  "options": [
+    {
+      "label": "A",
+      "text": "5"
+    },
+    {
+      "label": "B",
+      "text": "8"
+    },
+    {
+      "label": "C",
+      "text": "3 and 5"
+    },
+    {
+      "label": "D",
+      "text": "3, 5 and 8"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Key 3 goes to the leaf $(1, 5)$ since $3 \\le 5$. That leaf overflows to $(1, 3, 5)$ and splits, and the separator $3$ is copied up.\n\nThe root would then hold $(3, 5, 8)$ with 4 pointers, more than the limit of 3, so it splits too. Its middle key $5$ moves up into a new root, which holds just **5**. **(A)**",
+    "steps": [
+      {
+        "title": "Read the tree and its limits",
+        "body": "- Leaf capacity: at most **2 keys**.\n- Non-leaf capacity: at most **3 pointers**, hence at most **2 keys**.\n\nThe given tree has root $[\\,5 \\mid 8\\,]$ with three children: leaf $(1, 5)$, leaf $(7, 8)$ and leaf $(9, 12)$, chained $(1,5) \\to (7,8) \\to (9,12) \\to \\text{NULL}$. Every node is already full.\n\nKey $5$ sits in the leaf left of separator $5$, and $8$ in the leaf left of separator $8$. So the figure uses the convention: left child $k \\le 5$, middle child $5 < k \\le 8$, right child $k > 8$."
+      },
+      {
+        "title": "Insert 3 into the correct leaf",
+        "body": "At the root, $3 \\le 5$, so follow the left pointer to leaf $(1, 5)$. Inserting in sorted order gives $(1, 3, 5)$: 3 keys, but a leaf holds at most 2, so the leaf **overflows**."
+      },
+      {
+        "title": "Split the leaf (separator is copied up)",
+        "body": "Split $(1, 3, 5)$ into $(1, 3)$ and $(5)$, with the left leaf getting $\\lceil 3/2 \\rceil = 2$ keys. In a B+ tree every key stays in the leaf level. A **copy** of the separator goes up to the parent. With the figure's \"$\\le$ goes left\" convention the separator is $3$, the largest key of the new left leaf.\n\nLeaf chain now: $(1,3) \\to (5) \\to (7,8) \\to (9,12) \\to \\text{NULL}$."
+      },
+      {
+        "title": "The root overflows and splits (middle key moves up)",
+        "body": "Inserting separator $3$ into the root gives keys $(3, 5, 8)$ with **4** child pointers $\\big[(1,3),\\ (5),\\ (7,8),\\ (9,12)\\big]$. The limit is 3 pointers, so the root must split.\n\nA non-leaf split **moves** (does not copy) the middle key up:\n\n- left non-leaf node: key $3$, children $(1,3), (5)$\n- key moved up: $5$\n- right non-leaf node: key $8$, children $(7,8), (9,12)$\n\nThe old root had no parent, so a **new root** is created containing only $5$, and the height grows by one."
+      },
+      {
+        "title": "Result",
+        "body": "```text\n              [5]\n            /     \\\n         [3]       [8]\n        /   \\     /    \\\n    (1,3)  (5) (7,8)  (9,12)\n```\n\nThe root stores the single key **5**. This does not depend on how the leaf is split: splitting $(1,3,5)$ as $(1)$ and $(3,5)$ sends up separator $1$, the root keys become $(1, 5, 8)$, and the middle key is still $5$.\n\nAnswer → **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)** 5",
+    "teaching": "**What a B+ tree is.** A B+ tree is the standard disk index in databases. All keys and record pointers live in the **leaf** level, which is kept sorted and linked left to right so that range scans are fast. The **non-leaf** (index) nodes hold only separator keys that guide the search. A non-leaf node with $p$ pointers holds $p - 1$ keys, so \"at most 3 pointers\" means at most 2 keys. The tree is always perfectly balanced: every leaf is at the same depth.\n\n**Insertion algorithm.**\n\n1. Search from the root for the leaf where the key belongs, and insert it in sorted order.\n2. If the leaf now exceeds its capacity, split it into two leaves, fix the leaf chain, and **copy** a separator key into the parent. The key is copied because data must remain in the leaves.\n3. If the parent now has too many pointers, split it as well. For a non-leaf split the middle key is **moved** up; it is not kept in either half, because index keys are only signposts.\n4. Splits can cascade upward. If the root splits, a new root with a single key is created, and this is the **only** way a B+ tree grows taller.\n\n**Applying it here.** The whole path is full: the target leaf $(1, 5)$ is full, and the root $[5 \\mid 8]$ already uses all 3 pointers. So inserting $3$ must cascade all the way up. The leaf splits into $(1,3)$ and $(5)$ and sends $3$ up. The root temporarily holds $(3, 5, 8)$ with 4 pointers, so it splits: $3$ stays left, $8$ stays right, and the middle key $5$ becomes the sole key of the new root. Options (C) and (D) describe roots holding more keys than this process leaves there. (D) is the overfull state just before the root split.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "After the leaf split, the root would hold $(3, 5, 8)$ with 4 pointers, which exceeds the limit. It splits, and its middle key $5$ moves up to a new root holding only $5$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "When the overfull node $(3, 5, 8)$ splits, the **middle** key moves up, not the last one. $8$ stays in the right non-leaf node above $(7,8)$ and $(9,12)$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "A non-leaf split sends exactly **one** key (the middle one) up, so the new root has a single key, $5$. Key $3$ stays in the new **left** non-leaf node, above leaves $(1,3)$ and $(5)$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$(3, 5, 8)$ is the root's temporary overfull state: 3 keys need 4 pointers, but a non-leaf node may have at most 3. Choosing this means forgetting to propagate the split upward."
+      }
+    ],
+    "shortcut": "If the target leaf and every node on its path to the root are full, the split cascades to the top and the new root contains exactly one key. That key is the middle of the old root's keys together with the incoming separator. Here $\\{3, 5, 8\\} \\to 5$.",
+    "commonTrap": "Stopping after pushing the separator $3$ into the root (answer $3, 5, 8$) and forgetting that a non-leaf node limited to 3 pointers can hold only 2 keys. The root must split, and only its middle key $5$ ends up in the new root."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q41-1.webp",
+    "/pyq/2026/official/Q41-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The B+ tree figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q41-1.png. The tree cannot be expressed faithfully as a table or text because of its node, record-pointer and leaf-chain layout."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A (root holds 5)",
+    "agreesWithKey": true,
+    "checkCode": "import bisect\nLEAF_MAX, PTR_MAX = 2, 3        # leaf <= 2 keys; non-leaf <= 3 pointers\nclass N:\n    def __init__(s, keys, kids=None): s.keys, s.kids = keys, kids\ndef insert(root, k, left_bias=True):   # convention from figure: child i holds K[i-1] < k <= K[i]\n    def ins(nd):\n        if nd.kids is None:\n            bisect.insort(nd.keys, k)\n            if len(nd.keys) <= LEAF_MAX: return None\n            m = (len(nd.keys) + 1)//2 if left_bias else len(nd.keys)//2\n            L, R = N(nd.keys[:m]), N(nd.keys[m:])\n            return L.keys[-1], L, R    # separator copied up\n        i = bisect.bisect_left(nd.keys, k)\n        r = ins(nd.kids[i])\n        if r is None: return None\n        s, L, R = r\n        nd.keys.insert(i, s); nd.kids[i:i+1] = [L, R]\n        if len(nd.kids) <= PTR_MAX: return None\n        m = len(nd.keys)//2            # middle key moved up\n        return nd.keys[m], N(nd.keys[:m], nd.kids[:m+1]), N(nd.keys[m+1:], nd.kids[m+1:])\n    r = ins(root)\n    return root if r is None else N([r[0]], [r[1], r[2]])\nfor b in (True, False):\n    t = insert(N([5, 8], [N([1, 5]), N([7, 8]), N([9, 12])]), 3, b)\n    print(t.keys, [c.keys for c in t.kids], [[g.keys for g in c.kids] for c in t.kids])\n    assert t.keys == [5]",
+    "notes": "Hand simulation: the leaf (1,5) overflows to (1,3,5) and splits into (1,3) and (5), copying separator 3 up. The root overflows to (3,5,8) with 4 pointers and splits, moving 5 up to a new root. A Python B+ tree simulation, using the figure's 'k <= separator goes left' convention, gives root [5] for both left- and right-biased leaf splits. This matches official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

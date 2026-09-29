@@ -1,0 +1,116 @@
+{
+  "id": "DA2026-S8-Q38",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 38,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-propositional"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept (translating an English conditional into propositional logic) applied over 2-3 steps: deriving the correct formalisation, spotting that (iii) collapses via a tautology, and finding a counterexample for (i); about 2-3 minutes.",
+  "stem": "Assume that a Creative ($C$) person will Succeed ($S$) if the person is also Disciplined ($D$), but will not succeed otherwise. Now, consider the following statements:\n\n(i) $C \\wedge S \\Leftrightarrow D$\n\n(ii) $C \\Rightarrow (S \\Leftrightarrow D)$\n\n(iii) $C \\Leftrightarrow ((D \\Rightarrow S) \\vee \\neg S)$\n\nWhich of the following options is correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Both (i) and (ii) are TRUE"
+    },
+    {
+      "label": "B",
+      "text": "Only (ii) is TRUE"
+    },
+    {
+      "label": "C",
+      "text": "Both (ii) and (iii) are TRUE"
+    },
+    {
+      "label": "D",
+      "text": "Only (iii) is TRUE"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "The sentence says that, for a creative person, success happens exactly when the person is disciplined: $C \\Rightarrow (S \\Leftrightarrow D)$. That is statement (ii). (i) also constrains non-creative people (with $C$ false it forces $\\neg D$). (iii) collapses to just $C$, because $(D \\Rightarrow S) \\vee \\neg S$ is a tautology. Only (ii) is TRUE: **(B)**.",
+    "steps": [
+      {
+        "title": "Translate the English sentence",
+        "body": "The assumption has two parts, both about a **creative** person:\n\n- \"will Succeed if the person is also Disciplined\": $C \\wedge D \\Rightarrow S$, i.e. $C \\Rightarrow (D \\Rightarrow S)$.\n- \"but will not succeed otherwise\" (creative but not disciplined): $C \\wedge \\neg D \\Rightarrow \\neg S$, i.e. $C \\Rightarrow (S \\Rightarrow D)$.\n\nCombining the two under the common antecedent $C$:\n\n$$\nC \\Rightarrow \\big( (D \\Rightarrow S) \\wedge (S \\Rightarrow D) \\big) \\;\\equiv\\; C \\Rightarrow (S \\Leftrightarrow D).\n$$\n\nThe sentence says **nothing** about non-creative people, so when $C$ is false every combination of $S$ and $D$ must be allowed (the implication is vacuously true). We read \"TRUE\" as \"correctly expresses the assumption\" (is logically equivalent to it). Checking instead which statements are *implied by* the assumption gives the same result below."
+      },
+      {
+        "title": "Statement (ii)",
+        "body": "$C \\Rightarrow (S \\Leftrightarrow D)$ is exactly the formula derived in Step 1, so (ii) is **TRUE**."
+      },
+      {
+        "title": "Statement (i): counterexample",
+        "body": "By the usual precedence ($\\wedge$ binds tighter than $\\Leftrightarrow$), (i) reads $(C \\wedge S) \\Leftrightarrow D$.\n\nTake a non-creative, disciplined person: $C = \\text{F}$, $D = \\text{T}$ (any $S$). The assumption holds vacuously because $C$ is false. But in (i), $C \\wedge S = \\text{F}$ while $D = \\text{T}$, so $\\text{F} \\Leftrightarrow \\text{T}$ is **false**.\n\nSo (i) adds an extra claim, \"anyone who is disciplined is creative and succeeds\", that the sentence never made. When $C$ is true, (i) reduces to $S \\Leftrightarrow D$ and agrees with the assumption; it goes wrong only for non-creative people. (Reading it as $C \\wedge (S \\Leftrightarrow D)$ fails too: that is false whenever $C$ is false.) Hence (i) is **not TRUE**."
+      },
+      {
+        "title": "Statement (iii): simplify",
+        "body": "Simplify the right-hand side using $D \\Rightarrow S \\equiv \\neg D \\vee S$:\n\n$$\n(D \\Rightarrow S) \\vee \\neg S \\equiv \\neg D \\vee S \\vee \\neg S \\equiv \\neg D \\vee \\text{T} \\equiv \\text{T}.\n$$\n\nSo (iii) becomes $C \\Leftrightarrow \\text{T} \\equiv C$. It simply asserts that the person is creative and says nothing linking $S$ and $D$. Counterexamples: $C = \\text{F}$ makes the assumption true but (iii) false, and $C = \\text{T}, D = \\text{T}, S = \\text{F}$ makes the assumption false but (iii) true. Hence (iii) is **not TRUE**."
+      },
+      {
+        "title": "Truth-table confirmation",
+        "body": "| $C$ | $S$ | $D$ | Assumption $C \\Rightarrow (S \\Leftrightarrow D)$ | (i) $(C \\wedge S) \\Leftrightarrow D$ | (ii) | (iii) $\\equiv C$ |\n| --- | --- | --- | --- | --- | --- | --- |\n| F | F | F | T | T | T | F |\n| F | F | T | T | **F** | T | **F** |\n| F | T | F | T | T | T | F |\n| F | T | T | T | **F** | T | **F** |\n| T | F | F | T | T | T | T |\n| T | F | T | F | F | F | **T** |\n| T | T | F | F | F | F | **T** |\n| T | T | T | T | T | T | T |\n\nColumn (ii) matches the assumption in all 8 rows. Column (i) differs in 2 rows, and column (iii) differs in 6 rows (all four rows with $C = \\text{F}$, plus two rows where it is true but the assumption is false). Only (ii) is TRUE, so the answer is **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "**Implication.** $P \\Rightarrow Q$ is false only when $P$ is true and $Q$ is false. Equivalently, $P \\Rightarrow Q \\equiv \\neg P \\vee Q$. When $P$ is false the implication is *vacuously true*: a rule about creative people places no restriction on non-creative ones.\n\n**Biconditional.** $P \\Leftrightarrow Q$ (\"if and only if\") is true when $P$ and $Q$ have the same truth value; it equals $(P \\Rightarrow Q) \\wedge (Q \\Rightarrow P)$. An English sentence of the form \"X happens if Y, and not otherwise\" gives both directions, $Y \\Rightarrow X$ and $\\neg Y \\Rightarrow \\neg X$ (i.e. $X \\Rightarrow Y$). So it is a biconditional $X \\Leftrightarrow Y$.\n\n**Scoping a rule to a group.** When a sentence describes only members of some group (here, creative people), the group membership must be the *antecedent* of an implication: $C \\Rightarrow (\\ldots)$. Putting it into a conjunction ($C \\wedge \\ldots$) or one side of a biconditional ($C \\wedge S \\Leftrightarrow D$) wrongly makes claims about everyone.\n\n**Precedence and simplification.** The usual order, from tightest to loosest, is $\\neg$, $\\wedge$, $\\vee$, $\\Rightarrow$, $\\Leftrightarrow$. So $C \\wedge S \\Leftrightarrow D$ means $(C \\wedge S) \\Leftrightarrow D$. Before building a truth table, look for tautologies: $S \\vee \\neg S$ is always true, so any disjunction containing it is always true. That is why (iii) collapses to $C \\Leftrightarrow \\text{T} \\equiv C$.\n\n**Testing a candidate formalisation.** Two formulas express the same statement exactly when they have identical truth tables. With three variables there are only 8 rows, and a single differing row is enough to reject a candidate. Here the row $C = \\text{F}, D = \\text{T}$ rejects both (i) and (iii), leaving (ii) as the only faithful translation.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "(ii) is TRUE but (i) is not. With $C = \\text{F}$ and $D = \\text{T}$ the assumption holds vacuously, yet $(C \\wedge S) \\Leftrightarrow D$ evaluates to $\\text{F} \\Leftrightarrow \\text{T} = \\text{F}$."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "(ii) $C \\Rightarrow (S \\Leftrightarrow D)$ is exactly the translation of the assumption (it matches in all 8 truth-table rows). (i) and (iii) each disagree with the assumption on at least one assignment."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "(iii) is not TRUE: $(D \\Rightarrow S) \\vee \\neg S$ is a tautology, so (iii) reduces to just $C$, which says nothing about success or discipline."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "(iii) reduces to $C$ and does not express the assumption, and (ii) *is* TRUE. So \"Only (iii)\" is wrong on both counts."
+      }
+    ],
+    "shortcut": "Pattern: \"a [group member] does X if Y, and not otherwise\" gives $\\text{Group} \\Rightarrow (X \\Leftrightarrow Y)$. That is (ii) directly. To eliminate the rest, test one row where the rule is vacuous, $C = \\text{F}, D = \\text{T}$: (i) gives $\\text{F} \\Leftrightarrow \\text{T} = \\text{F}$ and (iii) $\\equiv C = \\text{F}$, so both fail at once.",
+    "commonTrap": "Choosing (A) because $C \\wedge S \\Leftrightarrow D$ \"looks like\" the sentence. It does agree with the assumption for creative people, but it also forces every non-creative person to be undisciplined. The group condition $C$ must be the antecedent of an implication, not a conjunct. A second trap is judging (iii) without simplifying it: $(D \\Rightarrow S) \\vee \\neg S$ is always true, so (iii) is just $C$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "estimatedTimeSec": 150,
+  "officialImages": [
+    "/pyq/2026/official/Q38-1.webp",
+    "/pyq/2026/official/Q38-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Statement (i) is printed without parentheses as C ∧ S ⇔ D and is transcribed as printed (standard precedence reads it as (C ∧ S) ⇔ D). The PDF text layer shows a long double arrow (⟺) in (ii), but the rendered paper shows the same ⇔ symbol as in (i) and (iii), so all are transcribed as \\Leftrightarrow. The second official crop (Q38-2) contains only the page header/table border. No figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B) Only (ii) is TRUE",
+    "agreesWithKey": true,
+    "checkCode": "import itertools\nimp=lambda a,b:(not a) or b; iff=lambda a,b:a==b\nspec=lambda C,S,D: imp(C,iff(S,D))  # 'creative => (succeed <=> disciplined)'\nf={'i':lambda C,S,D: iff(C and S,D),'ii':lambda C,S,D: imp(C,iff(S,D)),'iii':lambda C,S,D: iff(C,imp(D,S) or (not S))}\nrows=list(itertools.product([False,True],repeat=3))  # (C,S,D)\nfor k,g in f.items(): print(k,'equiv',all(g(*r)==spec(*r) for r in rows),'entailed',all(g(*r) for r in rows if spec(*r)))\n# i: False False ; ii: True True ; iii: False False  -> only (ii)",
+    "notes": "The assumption formalises as C ⇒ (S ⇔ D). A truth-table check over all 8 assignments shows (ii) is equivalent to it, (i) differs when C=F, D=T, and (iii) reduces to C. The conclusion is the same whether 'TRUE' is read as 'equivalent to the assumption' or 'entailed by the assumption', and it matches the official key B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

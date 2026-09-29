@@ -1,0 +1,74 @@
+{
+  "id": "DA2024-S1-Q57",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 57,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-continuous-named",
+    "ps-random-variables"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it needs one concept (the mean and variance of the exponential distribution, recalled directly) and a single-step equation $5/\\lambda = 1/\\lambda^2$, which a prepared student solves in under a minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $X$ be a random variable exponentially distributed with parameter $\\lambda > 0$. The probability density function of $X$ is given by:\n\n$$\nf_X(x) = \\begin{cases} \\lambda\\, e^{-\\lambda x}, & x \\ge 0 \\\\ 0, & \\textit{otherwise} \\end{cases}\n$$\n\nIf $5E(X) = Var(X)$, where $E(X)$ and $Var(X)$ indicate the expectation and variance of $X$, respectively, the value of $\\lambda$ is ______ (rounded off to **one** decimal place).",
+  "options": [],
+  "officialKeyRaw": "0.2 to 0.2",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.2,
+    "max": 0.2
+  },
+  "solution": {
+    "quick": "For an exponential distribution with rate $\\lambda$, $E(X) = 1/\\lambda$ and $Var(X) = 1/\\lambda^2$. The condition $5E(X) = Var(X)$ becomes $5/\\lambda = 1/\\lambda^2$, so $5\\lambda = 1$ and $\\lambda = 1/5 = 0.2$, i.e. **0.2**.",
+    "steps": [
+      {
+        "title": "Mean of the exponential distribution",
+        "body": "By definition, $E(X) = \\int_0^\\infty x\\,\\lambda e^{-\\lambda x}\\,dx$. Integrate by parts with $u = x$ and $dv = \\lambda e^{-\\lambda x}\\,dx$, so $v = -e^{-\\lambda x}$:\n\n$$\nE(X) = \\Big[-x e^{-\\lambda x}\\Big]_0^\\infty + \\int_0^\\infty e^{-\\lambda x}\\,dx = 0 + \\frac{1}{\\lambda} = \\frac{1}{\\lambda}.\n$$\n\nThe boundary term vanishes because $x e^{-\\lambda x} \\to 0$ as $x \\to \\infty$ (for $\\lambda > 0$) and is $0$ at $x = 0$."
+      },
+      {
+        "title": "Variance of the exponential distribution",
+        "body": "Integrating by parts again (with $u = x^2$):\n\n$$\nE(X^2) = \\int_0^\\infty x^2\\,\\lambda e^{-\\lambda x}\\,dx = \\Big[-x^2 e^{-\\lambda x}\\Big]_0^\\infty + \\int_0^\\infty 2x\\,e^{-\\lambda x}\\,dx = \\frac{2}{\\lambda}\\int_0^\\infty x\\,\\lambda e^{-\\lambda x}\\,dx = \\frac{2}{\\lambda}\\cdot\\frac{1}{\\lambda} = \\frac{2}{\\lambda^2}.\n$$\n\nTherefore\n\n$$\nVar(X) = E(X^2) - [E(X)]^2 = \\frac{2}{\\lambda^2} - \\frac{1}{\\lambda^2} = \\frac{1}{\\lambda^2}.\n$$"
+      },
+      {
+        "title": "Impose the condition 5E(X) = Var(X)",
+        "body": "Substitute both results:\n\n$$\n5\\cdot\\frac{1}{\\lambda} = \\frac{1}{\\lambda^2}.\n$$\n\nSince $\\lambda > 0$, multiply both sides by $\\lambda^2$:\n\n$$\n5\\lambda = 1 \\quad\\Longrightarrow\\quad \\lambda = \\frac{1}{5} = 0.2.\n$$\n\nThis is the only positive solution."
+      },
+      {
+        "title": "Check and round",
+        "body": "With $\\lambda = 0.2$: $E(X) = 1/0.2 = 5$ and $Var(X) = 1/0.04 = 25$. Then $5E(X) = 25 = Var(X)$, as required.\n\nRounded off to one decimal place, $\\lambda = 0.2$."
+      }
+    ],
+    "finalAnswer": "**0.2**",
+    "teaching": "**What the exponential distribution models.** The exponential distribution describes a *waiting time*: how long until the next event when events occur at a constant average rate and independently of one another (the gaps between arrivals of a Poisson process). Its parameter $\\lambda$ is that **rate**, the average number of events per unit time. The density $f_X(x) = \\lambda e^{-\\lambda x}$ for $x \\ge 0$ starts at height $\\lambda$ and decays; a larger rate means events arrive sooner, so the waiting time is shorter.\n\n**Mean and variance.** If events happen at rate $\\lambda$ per unit time, you expect to wait $1/\\lambda$ units for one, so $E(X) = 1/\\lambda$. The integration-by-parts argument in the steps confirms this and also gives $E(X^2) = 2/\\lambda^2$, hence $Var(X) = 1/\\lambda^2$. A distinctive consequence is that the standard deviation equals the mean:\n\n$$\n\\sigma = \\sqrt{Var(X)} = \\frac{1}{\\lambda} = E(X), \\qquad\\text{so}\\qquad Var(X) = [E(X)]^2.\n$$\n\n**Rate versus scale.** Some books write the exponential with a *scale* parameter $\\beta = 1/\\lambda$, as $\\frac{1}{\\beta} e^{-x/\\beta}$; then the mean is $\\beta$ and the variance is $\\beta^2$. Always read the parameterisation off the density given in the question. Here the density is $\\lambda e^{-\\lambda x}$, so $\\lambda$ is the rate and the mean is $1/\\lambda$.\n\n**Other useful facts.** The CDF is $F(x) = 1 - e^{-\\lambda x}$ for $x \\ge 0$, and the distribution is *memoryless*: $P(X > s + t \\mid X > s) = P(X > t)$.\n\n**Back to this question.** The condition $5E(X) = Var(X)$ reads $5\\mu = \\mu^2$ with $\\mu = E(X) = 1/\\lambda$. So $\\mu = 5$: the mean waiting time is 5 units, and the rate is $\\lambda = 1/5 = 0.2$.",
+    "shortcut": "For an exponential, $Var(X) = [E(X)]^2$. So $5\\mu = \\mu^2$ gives $\\mu = 5$, and $\\lambda = 1/\\mu = 0.2$.",
+    "commonTrap": "Confusing rate with scale: taking $E(X) = \\lambda$ and $Var(X) = \\lambda^2$ turns the condition into $5\\lambda = \\lambda^2$ and gives $\\lambda = 5$. The density printed in the question, $\\lambda e^{-\\lambda x}$, uses the rate, so $E(X) = 1/\\lambda$ and the answer is $0.2$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q57-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word 'otherwise' in the density is typeset in italic math in the paper and is rendered with \\textit here; $E(X)$ and $Var(X)$ are kept in the paper's italic-math form. The paper writes '… of $X$ is given by:' with a colon before the displayed density."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.2",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp\nx, lam = sp.symbols('x lambda', positive=True)\nf = lam*sp.exp(-lam*x)\nprint('integral of pdf:', sp.integrate(f, (x, 0, sp.oo)))\nE = sp.integrate(x*f, (x, 0, sp.oo)); E2 = sp.integrate(x**2*f, (x, 0, sp.oo))\nV = sp.simplify(E2 - E**2)\nprint('E =', E, ' Var =', V)\nsol = sp.solve(sp.Eq(5*E, V), lam)\nprint('lambda =', sol, '->', [round(float(s), 1) for s in sol])\n# Monte Carlo sanity check\nimport numpy as np\nX = np.random.default_rng(0).exponential(scale=1/0.2, size=2_000_000)\nprint('MC: 5*mean =', round(5*X.mean(), 2), ' var =', round(X.var(), 2))\n",
+    "notes": "Independent solve: E(X) = 1/λ and Var(X) = 1/λ², so 5/λ = 1/λ² gives λ = 1/5 = 0.2. A sympy symbolic solve returns λ = 1/5, and a Monte Carlo check with λ = 0.2 gives 5·mean ≈ 25 ≈ variance. This agrees with the official key '0.2 to 0.2'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

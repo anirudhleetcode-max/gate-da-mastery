@@ -1,0 +1,113 @@
+{
+  "id": "DA2025-S5-Q37",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 37,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-rank-determinant",
+  "subtopicIds": [
+    "la-rank",
+    "la-determinant",
+    "la-eigen"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: two directly linked concepts (eigenvalues forced by a matrix polynomial, and rank of products) plus quick counterexamples for three options; about 2 min of routine reasoning.",
+  "estimatedTimeSec": 120,
+  "stem": "Let $A \\in \\mathbb{R}^{n\\times n}$ be such that $A^3 = A$. Which one of the following statements is ALWAYS correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$A$ is invertible"
+    },
+    {
+      "label": "B",
+      "text": "Determinant of $A$ is $0$"
+    },
+    {
+      "label": "C",
+      "text": "The sum of the diagonal elements of $A$ is $1$"
+    },
+    {
+      "label": "D",
+      "text": "$A$ and $A^2$ have the same rank"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "Rank never increases when you multiply, so $\\operatorname{rank}(A) = \\operatorname{rank}(A^3) \\le \\operatorname{rank}(A^2) \\le \\operatorname{rank}(A)$. Hence $\\operatorname{rank}(A^2) = \\operatorname{rank}(A)$ always. The matrices $A = 0$ and $A = I$ (both satisfy $A^3 = A$) rule out (A), (B) and (C). Answer **(D)**.",
+    "steps": [
+      {
+        "title": "What $A^3 = A$ says about eigenvalues",
+        "body": "If $A\\mathbf{v} = \\lambda \\mathbf{v}$ with $\\mathbf{v} \\ne \\mathbf{0}$, then $A^3\\mathbf{v} = \\lambda^3\\mathbf{v}$. From $A^3 = A$ we get $\\lambda^3 \\mathbf{v} = \\lambda \\mathbf{v}$, so $\\lambda^3 = \\lambda$, i.e. $\\lambda \\in \\{-1, 0, 1\\}$.\n\nAlso, $A$ satisfies $p(x) = x^3 - x = x(x-1)(x+1)$, a polynomial with **distinct** roots. So the minimal polynomial of $A$ has distinct roots and $A$ is diagonalizable: $A = P\\,\\mathrm{diag}(\\lambda_1,\\dots,\\lambda_n)\\,P^{-1}$ with each $\\lambda_i \\in \\{-1,0,1\\}$. Every choice of these eigenvalues is possible."
+      },
+      {
+        "title": "Test (A), (B), (C) with simple matrices that satisfy $A^3 = A$",
+        "body": "- $A = 0_{n\\times n}$: $0^3 = 0$ ✓. It is **not invertible**, so **(A) fails**.\n- $A = I_n$: $I^3 = I$ ✓. $\\det(I_n) = 1 \\ne 0$, so **(B) fails**. Its trace is $n$, which is not $1$ when $n \\ge 2$, and $A = 0$ has trace $0$, so **(C) fails**.\n\nEach of (A), (B), (C) holds for *some* matrices with $A^3=A$, but not for all of them."
+      },
+      {
+        "title": "Prove (D): $\\operatorname{rank}(A) = \\operatorname{rank}(A^2)$",
+        "body": "Use the rule $\\operatorname{rank}(BC) \\le \\min(\\operatorname{rank} B, \\operatorname{rank} C)$:\n\n$$\\operatorname{rank}(A) = \\operatorname{rank}(A^3) = \\operatorname{rank}(A \\cdot A^2) \\le \\operatorname{rank}(A^2) = \\operatorname{rank}(A\\cdot A) \\le \\operatorname{rank}(A).$$\n\nThe chain starts and ends at $\\operatorname{rank}(A)$, so every inequality is an equality: $\\operatorname{rank}(A^2) = \\operatorname{rank}(A)$."
+      },
+      {
+        "title": "Cross-check with eigenvalues",
+        "body": "With $A = PDP^{-1}$, $D = \\mathrm{diag}(\\lambda_i)$, $\\lambda_i \\in \\{-1,0,1\\}$, we get $A^2 = PD^2P^{-1}$ with $D^2 = \\mathrm{diag}(\\lambda_i^2)$, $\\lambda_i^2 \\in \\{0, 1\\}$.\n\nThe rank of a diagonalizable matrix is the number of non-zero eigenvalues. $\\lambda_i \\ne 0 \\iff \\lambda_i^2 \\ne 0$, so $A$ and $A^2$ have the same number of non-zero eigenvalues and hence the same rank.\n\nFor example, $A = \\mathrm{diag}(1,-1,0)$ has $A^2 = \\mathrm{diag}(1,1,0)$, and both have rank $2$. The answer is **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)**",
+    "teaching": "**Polynomial equations for matrices.** When a matrix satisfies a polynomial equation $p(A) = 0$, each eigenvalue must satisfy the same equation, $p(\\lambda) = 0$. Here $p(x) = x^3 - x$, so the eigenvalues can only be $-1$, $0$ or $1$. The equation does *not* force any particular eigenvalue to appear, though. $A = 0$ (all eigenvalues $0$), $A = I$ (all $1$), $A = -I$ (all $-1$) and every mix in between are allowed. That is why statements about invertibility, determinant or trace cannot be *always* true. Each one depends on which eigenvalues actually occur.\n\n**Diagonalizability.** A matrix is diagonalizable exactly when its minimal polynomial has no repeated roots. Since $A$ satisfies $x(x-1)(x+1)$, whose roots are distinct, $A$ is diagonalizable. For a diagonalizable matrix, the rank equals the number of non-zero eigenvalues, counted with multiplicity.\n\n**Rank under multiplication.** The rank of a product can never exceed the rank of either factor: $\\operatorname{rank}(BC) \\le \\min(\\operatorname{rank}B, \\operatorname{rank}C)$. The column space of $BC$ sits inside the column space of $B$, and its row space sits inside the row space of $C$. So the ranks of the powers $A, A^2, A^3, \\dots$ form a non-increasing sequence.\n\n**Putting it together.** Since $A^3 = A$, the sequence $\\operatorname{rank}(A) \\ge \\operatorname{rank}(A^2) \\ge \\operatorname{rank}(A^3)$ returns to its starting value, so it must be constant. The eigenvalue view explains the same result: squaring maps $-1 \\mapsto 1$, $1 \\mapsto 1$ and $0 \\mapsto 0$. No non-zero eigenvalue becomes zero, so no rank is lost. This makes (D) the only statement that holds for every matrix with $A^3 = A$.\n\n**A general lesson for \"ALWAYS\" questions.** Test each claim on the simplest matrices that satisfy the condition, usually $0$, $I$ and a diagonal matrix. One counterexample removes an option. Then prove the remaining option in general.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$A = 0$ satisfies $A^3 = A$ but is not invertible. More generally, $A$ is invertible only if $0$ is not an eigenvalue, and the condition does not guarantee that. (If $A$ *is* invertible, then $A^2 = I$, but that is a special case.)"
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$A = I$ satisfies $A^3 = A$ with $\\det A = 1 \\ne 0$. The determinant is the product of eigenvalues from $\\{-1,0,1\\}$, so it can be $-1$, $0$ or $1$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "The trace is the sum of the eigenvalues, each from $\\{-1,0,1\\}$. It can be any integer from $-n$ to $n$. For example, $A = 0$ has trace $0$, and $A = I_n$ has trace $n$."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$\\operatorname{rank}(A) = \\operatorname{rank}(A^3) \\le \\operatorname{rank}(A^2) \\le \\operatorname{rank}(A)$ forces equality. Equivalently, squaring the eigenvalues $\\pm 1, 0$ keeps exactly the same number of non-zero ones."
+      }
+    ],
+    "shortcut": "Sandwich the rank: $\\operatorname{rank}A = \\operatorname{rank}A^3 \\le \\operatorname{rank}A^2 \\le \\operatorname{rank}A$. For the other options, $A = 0$ kills (A) and $A = I$ kills (B) and (C). This takes under a minute.",
+    "commonTrap": "Cancelling $A$ in $A^3 = A$ to get $A^2 = I$. That step silently assumes $A$ is invertible, and it leads students to pick (A) or to conclude the eigenvalues are only $\\pm 1$. $A = 0$ and singular idempotent matrices also satisfy $A^3 = A$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q37-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "D (rank(A) = rank(A^2) always)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng = np.random.default_rng(1)\nrk = np.linalg.matrix_rank\nok = True\nfor _ in range(2000):\n    n = rng.integers(1, 7)\n    lam = rng.choice([-1., 0., 1.], size=n)\n    P = rng.normal(size=(n, n))\n    A = P @ np.diag(lam) @ np.linalg.inv(P)\n    assert np.allclose(A @ A @ A, A, atol=1e-6)\n    ok &= rk(A, tol=1e-8) == rk(A @ A, tol=1e-8)\nprint('(D) rank(A)==rank(A^2) in all random cases:', ok)\nZ = np.zeros((2, 2)); I = np.eye(2)\nprint('A=0: A^3=A', np.allclose(Z@Z@Z, Z), '| invertible?', rk(Z) == 2, '-> (A) fails')\nprint('A=I: A^3=A', np.allclose(I@I@I, I), '| det =', np.linalg.det(I), '-> (B) fails; trace =', np.trace(I), '-> (C) fails')",
+    "notes": "Independent solve: rank(A) = rank(A^3) <= rank(A^2) <= rank(A), so (D) always holds. A = 0 and A = I satisfy A^3 = A and are counterexamples to (A), (B) and (C). This matches the official key D. A Python check on 2000 random matrices P diag(lambda) P^-1 with lambda in {-1,0,1} confirmed that rank(A) = rank(A^2) in every case."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

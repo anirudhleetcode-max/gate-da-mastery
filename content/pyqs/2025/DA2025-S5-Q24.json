@@ -1,0 +1,120 @@
+{
+  "id": "DA2025-S5-Q24",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 24,
+  "section": "DA",
+  "subjectId": "co",
+  "topicId": "co-limits-continuity",
+  "subtopicIds": [
+    "co-continuity-differentiability",
+    "co-functions"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two concepts (the algebra of derivatives for (A)-(C) and the hypothesis of the chain rule for (D)), and rejecting (D) needs the insight that composition moves the point of differentiation plus a counterexample, about 1.5-2 minutes for a prepared student.",
+  "estimatedTimeSec": 100,
+  "stem": "Consider two functions $f : \\mathbb{R} \\to \\mathbb{R}$ and $g : \\mathbb{R} \\to (1, \\infty)$. Both functions are differentiable at a point $c$. Which of the following functions is/are ALWAYS differentiable at $c$? The symbol $\\cdot$ denotes product and the symbol $\\circ$ denotes composition of functions.",
+  "options": [
+    {
+      "label": "A",
+      "text": "$f \\pm g$"
+    },
+    {
+      "label": "B",
+      "text": "$f \\cdot g$"
+    },
+    {
+      "label": "C",
+      "text": "$\\dfrac{f}{g}$"
+    },
+    {
+      "label": "D",
+      "text": "$f \\circ g + g \\circ f$"
+    }
+  ],
+  "officialKeyRaw": "A;B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Sums, differences and products of functions differentiable at $c$ are differentiable at $c$. So is the quotient $f/g$, because $g > 1$ never vanishes. The composition $f \\circ g$ needs $f$ to be differentiable at $g(c)$, and $g \\circ f$ needs $g$ to be differentiable at $f(c)$; neither is given. Counterexample: $c = 0$, $f(x) = |x - 2|$, $g(x) = 1 + e^x$. Answer: **(A), (B), (C)**.",
+    "steps": [
+      {
+        "title": "What exactly is given",
+        "body": "- $f$ and $g$ are differentiable at the **single point** $c$: the limits $f'(c) = \\lim_{h \\to 0} \\frac{f(c+h) - f(c)}{h}$ and $g'(c)$ exist. Nothing is said about any other point.\n- Differentiability at $c$ implies continuity at $c$, so $f(c+h) \\to f(c)$ and $g(c+h) \\to g(c)$ as $h \\to 0$.\n- $g$ takes values in $(1, \\infty)$, so $g(x) > 1$ for **every** $x$. In particular $g(x) \\ne 0$ everywhere and $g(c) > 1$.\n\n\"ALWAYS\" means the combination must be differentiable at $c$ for **every** such pair $f, g$. One counterexample rules an option out."
+      },
+      {
+        "title": "(A) f ± g and (B) f · g: always differentiable",
+        "body": "**Sum/difference.** The difference quotient splits:\n\n$$\n\\frac{(f \\pm g)(c+h) - (f \\pm g)(c)}{h} = \\frac{f(c+h) - f(c)}{h} \\pm \\frac{g(c+h) - g(c)}{h} \\;\\longrightarrow\\; f'(c) \\pm g'(c).\n$$\n\n**Product.** Add and subtract $f(c)\\,g(c+h)$:\n\n$$\n\\frac{f(c+h)g(c+h) - f(c)g(c)}{h} = \\frac{f(c+h) - f(c)}{h}\\, g(c+h) + f(c)\\, \\frac{g(c+h) - g(c)}{h}.\n$$\n\nAs $h \\to 0$, $g(c+h) \\to g(c)$ (continuity at $c$), so the limit is $f'(c)\\,g(c) + f(c)\\,g'(c)$.\n\nBoth limits exist, so (A) and (B) are **always** differentiable at $c$."
+      },
+      {
+        "title": "(C) f / g: always differentiable because g never vanishes",
+        "body": "Since $g(x) > 1$ for all $x$, $f/g$ is defined on all of $\\mathbb{R}$. First treat $1/g$:\n\n$$\n\\frac{\\frac{1}{g(c+h)} - \\frac{1}{g(c)}}{h} = -\\,\\frac{g(c+h) - g(c)}{h} \\cdot \\frac{1}{g(c+h)\\,g(c)} \\;\\longrightarrow\\; -\\frac{g'(c)}{g(c)^2},\n$$\n\nwhere $g(c+h)\\,g(c) \\to g(c)^2 > 1$, so there is no division by zero. Then $f/g = f \\cdot (1/g)$ is a product of two functions differentiable at $c$, and by (B)\n\n$$\n\\left(\\frac{f}{g}\\right)'(c) = \\frac{f'(c)\\,g(c) - f(c)\\,g'(c)}{g(c)^2}.\n$$\n\nSo (C) is **always** differentiable at $c$. (This is why the codomain $(1, \\infty)$ is given.)"
+      },
+      {
+        "title": "(D) f ∘ g + g ∘ f: the chain rule needs differentiability at a different point",
+        "body": "The chain rule gives $(f \\circ g)'(c) = f'(g(c))\\,g'(c)$, but it requires $f$ to be differentiable at the point $g(c)$. Since $g(c) > 1$, this is a point we know nothing about, unless it happens to equal $c$. Likewise $(g \\circ f)'(c)$ needs $g$ to be differentiable at $f(c)$.\n\n**Counterexample.** Take $c = 0$, $f(x) = |x - 2|$ and $g(x) = 1 + e^x$.\n\n- $g$ maps $\\mathbb{R}$ into $(1, \\infty)$ and is differentiable everywhere, with $g(0) = 2$ and $g'(0) = 1$.\n- $f$ is differentiable at $0$: near $0$, $f(x) = 2 - x$, so $f'(0) = -1$. Its only kink is at $x = 2 = g(0)$.\n\nNow\n\n$$\n(f \\circ g)(x) = |1 + e^x - 2| = |e^x - 1|.\n$$\n\nIts one-sided derivatives at $0$ are\n\n$$\n\\lim_{h \\to 0^+} \\frac{e^h - 1}{h} = 1, \\qquad \\lim_{h \\to 0^-} \\frac{-(e^h - 1)}{h} = -1,\n$$\n\nwhich differ, so $f \\circ g$ is **not** differentiable at $0$.\n\nNear $0$, $(g \\circ f)(x) = 1 + e^{|x - 2|} = 1 + e^{2 - x}$, which is differentiable at $0$ with derivative $-e^2$.\n\nIf $f \\circ g + g \\circ f$ were differentiable at $0$, then $f \\circ g = (f \\circ g + g \\circ f) - g \\circ f$ would be too, by (A). This is a contradiction. Explicitly, the one-sided derivatives of the sum are $1 - e^2 \\approx -6.389$ from the right and $-1 - e^2 \\approx -8.389$ from the left, which the Python check reproduces numerically.\n\nSo (D) is **not always** differentiable at $c$."
+      },
+      {
+        "title": "Conclude",
+        "body": "(A), (B) and (C) hold for every admissible $f, g$; (D) fails for the pair above. The answer is **(A), (B), (C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (B), (C)**",
+    "teaching": "**Differentiability is a pointwise property.** Saying \"$f$ is differentiable at $c$\" means only that the difference quotient $\\frac{f(c+h) - f(c)}{h}$ has a limit as $h \\to 0$. It tells you nothing about $f$ at any other point: $f$ may have kinks or jumps elsewhere. It does give you continuity at $c$, which is the fact that makes the product and quotient rules work.\n\n**The algebra of derivatives works at the same point.** If $f$ and $g$ are differentiable at $c$, then at that same point $c$:\n\n- $(f \\pm g)'(c) = f'(c) \\pm g'(c)$,\n- $(fg)'(c) = f'(c)g(c) + f(c)g'(c)$,\n- $\\left(\\frac{f}{g}\\right)'(c) = \\frac{f'(c)g(c) - f(c)g'(c)}{g(c)^2}$, **provided $g(c) \\ne 0$**.\n\nEach rule is proved by splitting the difference quotient of the combination into difference quotients of $f$ and $g$ at $c$, so it needs information only at $c$. The quotient rule has the extra condition $g(c) \\ne 0$. In this question it is guaranteed by the codomain $(1, \\infty)$.\n\n**Composition moves the point.** The chain rule says: if $g$ is differentiable at $c$ **and $f$ is differentiable at $g(c)$**, then $(f \\circ g)'(c) = f'(g(c))\\,g'(c)$. The outer function is evaluated at the inner function's value $g(c)$, not at $c$. Knowing that $f$ is differentiable at $c$ is useless unless $g(c) = c$. The same applies to $g \\circ f$, which needs $g$ differentiable at $f(c)$.\n\n**How to build a counterexample.** Put a kink of the outer function exactly at the inner function's value. With $g(0) = 2$, choose $f(x) = |x - 2|$: smooth at $0$ but kinked at $2$. Then $f(g(x)) = |e^x - 1|$ inherits the kink at $x = 0$.\n\n**Back to the question.** (A), (B) and (C) use only the behaviour at $c$, so they are always differentiable. (D) involves compositions, which depend on points other than $c$, so it is not always differentiable.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "The difference quotient of $f \\pm g$ is the sum/difference of those of $f$ and $g$, so the derivative exists and equals $f'(c) \\pm g'(c)$."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Product rule: splitting the difference quotient and using continuity of $g$ at $c$ gives $(fg)'(c) = f'(c)g(c) + f(c)g'(c)$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$g(x) > 1$ for all $x$, so $g(c) \\ne 0$ and the quotient rule applies: $(f/g)'(c) = \\dfrac{f'(c)g(c) - f(c)g'(c)}{g(c)^2}$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$f \\circ g$ needs $f$ differentiable at $g(c)$, and $g \\circ f$ needs $g$ differentiable at $f(c)$; neither is given. With $c = 0$, $f(x) = |x - 2|$, $g(x) = 1 + e^x$: $f \\circ g = |e^x - 1|$ has a kink at $0$, while $g \\circ f$ is smooth there, so the sum is not differentiable at $0$."
+      }
+    ],
+    "shortcut": "Sums, products and quotients (with a non-vanishing denominator) only use the values of $f$ and $g$ at $c$, so they keep differentiability at $c$. A composition evaluates the outer function at a **different** point ($g(c)$ or $f(c)$), about which nothing is given. Mark (A), (B), (C).",
+    "commonTrap": "Marking (D) because \"a composition of differentiable functions is differentiable\". That is true when the outer function is differentiable at the inner function's value, but here $f$ and $g$ are known to be differentiable only at $c$. The opposite slip is rejecting (C) for fear of division by zero, overlooking that $g > 1$ everywhere."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q24-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper hyphenates \"differen-tiable\" across a line break; it is joined as \"differentiable\". The blackboard-bold R (rendered as plain \"R\" in the PDF text layer) is transcribed as $\\mathbb{R}$. Option (C) is printed as a stacked fraction f over g and is transcribed as $\\dfrac{f}{g}$. \"ALWAYS\" is in capitals in the paper and is kept. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B;C",
+    "agreesWithKey": true,
+    "checkCode": "import math\n# f differentiable at c = 0 (kink only at x = 2); g = 1 + e^x maps R -> (1, inf), g(0) = 2\nf = lambda x: abs(x - 2)\ng = lambda x: 1 + math.exp(x)\nc = 0.0\ncands = {\n    \"A f+g\": lambda x: f(x) + g(x),\n    \"A f-g\": lambda x: f(x) - g(x),\n    \"B f*g\": lambda x: f(x) * g(x),\n    \"C f/g\": lambda x: f(x) / g(x),\n    \"D f(g)+g(f)\": lambda x: f(g(x)) + g(f(x)),\n}\nfor k, h in cands.items():\n    for e in (1e-4, 1e-6):\n        R = (h(c + e) - h(c)) / e\n        L = (h(c) - h(c - e)) / e\n        print(f\"{k:12s} eps={e:g}  right={R:+.6f}  left={L:+.6f}  gap={R - L:+.6f}\")\n# exact one-sided derivatives of D at 0: f(g(x)) = |e^x - 1| -> +1 / -1 ; g(f(x)) = 1 + e^(2-x) -> -e^2 both sides\nprint(\"D exact: right =\", 1 - math.e**2, \" left =\", -1 - math.e**2)\n",
+    "notes": "Independent solve: (A), (B), (C) follow from the sum, product and quotient rules, which need only differentiability at c (and g(c) != 0, guaranteed by g > 1). (D) is not always differentiable because the chain rule needs f differentiable at g(c) and g differentiable at f(c). Counterexample c = 0, f(x) = |x - 2|, g(x) = 1 + e^x: f(g(x)) = |e^x - 1| has one-sided derivatives +1 and -1 at 0, while g(f(x)) = 1 + e^(2 - x) near 0 is smooth. This gives A;B;C, matching the official key. The Python check computes one-sided difference quotients at 0 for the same pair: f+g, f-g, f*g and f/g have matching left/right quotients (limits 0, -2, 0, -1, agreeing with the rules), while f(g)+g(f) has right about -6.389 and left about -8.389 (a gap of 2), matching the exact values 1 - e^2 and -1 - e^2."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

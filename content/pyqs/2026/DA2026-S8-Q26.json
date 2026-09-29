@@ -1,0 +1,115 @@
+{
+  "id": "DA2026-S8-Q26",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 26,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-er-relational",
+  "subtopicIds": [
+    "dbw-integrity-constraints",
+    "dbw-relational-model"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the direction of a referential-integrity constraint) applied by direct recall; each option is settled in one step by asking whether it adds references in the referencing relation or removes values from the referenced relation, so no MSQ bump applies; about 1 minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider two relations `r` and `s` defined on the relational schemas `R(A,B)` and `S(E,C)`, respectively. `A` is the primary key of `R` and `E` is a foreign key of `S` referencing `A` in `R`.\n\nWhich of the following operations will **NEVER** violate the foreign key constraint?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Inserting records into relation `r`"
+    },
+    {
+      "label": "B",
+      "text": "Deleting records from relation `s`"
+    },
+    {
+      "label": "C",
+      "text": "Deleting records from relation `r`"
+    },
+    {
+      "label": "D",
+      "text": "Inserting records into relation `s`"
+    }
+  ],
+  "officialKeyRaw": "A;B",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "B"
+    ]
+  },
+  "solution": {
+    "quick": "The foreign key requires every (non-null) `E` value in `s` to appear as an `A` value in `r`. Here `s` is the referencing (child) relation and `r` is the referenced (parent) relation.\n\nThe constraint can break only when `s` gains a new reference or `r` loses a referenced value. Inserting into `r` only adds `A` values, and deleting from `s` only removes references, so neither can violate it. Deleting from `r` can leave orphans, and inserting into `s` can add a dangling reference. **(A), (B)**",
+    "steps": [
+      {
+        "title": "What the foreign key requires",
+        "body": "`E` in `S` references the primary key `A` of `R`. So for every tuple $t_s \\in s$ whose `E` value is not null, there must be a tuple $t_r \\in r$ with $t_r[A] = t_s[E]$. Ignoring nulls, this is the inclusion\n\n$$\n\\pi_E(s) \\subseteq \\pi_A(r).\n$$\n\n- `s` is the **referencing** (child) relation. Its `E` values are the left side.\n- `r` is the **referenced** (parent) relation. Its `A` values are the right side."
+      },
+      {
+        "title": "How each operation changes the two sides",
+        "body": "An inclusion $L \\subseteq R$ stays true if $L$ shrinks or $R$ grows. It can fail only if $L$ grows or $R$ shrinks.\n\n| Operation | Effect on $\\pi_E(s)$ (left) | Effect on $\\pi_A(r)$ (right) | Can the FK break? |\n| --- | --- | --- | --- |\n| Insert into `r` | unchanged | can only grow | no |\n| Delete from `s` | can only shrink | unchanged | no |\n| Delete from `r` | unchanged | can shrink | yes |\n| Insert into `s` | can grow | unchanged | yes |\n\nAn insert into `r` could violate the **primary key** constraint (a duplicate or null `A`), but that is a different constraint. It never breaks the foreign key."
+      },
+      {
+        "title": "Counterexamples for the other two operations",
+        "body": "Start from the legal state $r = \\{(1, 10)\\}$ and $s = \\{(1, 100)\\}$. Here $\\pi_E(s) = \\{1\\} \\subseteq \\{1\\} = \\pi_A(r)$.\n\n- **Delete $(1, 10)$ from `r`.** Now $\\pi_A(r) = \\varnothing$, but `s` still holds $(1, 100)$ with $E = 1$. That tuple refers to a non-existent `A` value, so the constraint is violated.\n- **Insert $(2, 200)$ into `s`.** Now $\\pi_E(s) = \\{1, 2\\}$, but $2 \\notin \\pi_A(r) = \\{1\\}$. The new tuple is a dangling reference, so the constraint is violated.\n\nSo deleting from `r` and inserting into `s` *can* violate the constraint. Referential actions such as `ON DELETE CASCADE` or `SET NULL` are how a DBMS responds to a delete from `r` that would violate it. They do not make that delete inherently safe."
+      },
+      {
+        "title": "Evaluate the options",
+        "body": "| Option | Operation | Can violate the FK? | Verdict |\n| --- | --- | --- | --- |\n| (A) | Insert into `r` | never, it only adds `A` values | correct |\n| (B) | Delete from `s` | never, it only removes references | correct |\n| (C) | Delete from `r` | yes, if some `s` tuple references the deleted `A` | incorrect |\n| (D) | Insert into `s` | yes, if the new `E` value is not in `r` | incorrect |\n\n**Answer: (A), (B).**"
+      }
+    ],
+    "finalAnswer": "**(A), (B)**",
+    "teaching": "**Referential integrity.** A foreign key links two relations. The **referencing** relation (the child, here `s`) holds a column (`E`) whose values must point at existing values of a key (`A`) in the **referenced** relation (the parent, here `r`). Think of `r` as a list of departments and `s` as a list of employees, each carrying a department id. The rule is simple: every employee's department id must be a department that actually exists. A null foreign key value is allowed and is not checked.\n\n**Which operations are risky?** Picture the constraint as \"the set of ids used in the child $\\subseteq$ the set of ids present in the parent\". A subset relation can only be broken in two ways:\n\n1. the child starts using a new id: an **insert into the child**, or an update of its foreign-key column;\n2. the parent loses an id: a **delete from the parent**, or an update of its key column.\n\nThe opposite moves can never hurt. Adding rows to the parent only enlarges the allowed set, and removing rows from the child only removes uses. That is why a DBMS checks the foreign key on child inserts/updates and on parent deletes/updates, but not on parent inserts or child deletes.\n\n**What the DBMS does on a violation.** For a child insert it simply rejects the tuple. For a parent delete, the default is to reject it (`NO ACTION`/`RESTRICT`), unless the schema declares a referential action such as `ON DELETE CASCADE` (also delete the referencing child rows) or `ON DELETE SET NULL`. These actions exist precisely because a parent delete *can* violate the constraint.\n\n**Back to this question.** `r` is the parent and `s` is the child. Inserting into `r` (A) and deleting from `s` (B) are the two always-safe moves. Deleting from `r` (C) can orphan tuples in `s`, and inserting into `s` (D) can introduce an `E` value missing from `r`.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "`r` is the referenced relation. Inserting into it only adds `A` values, so every `E` value that was matched before is still matched. It can at most violate the primary key constraint on `A` (a duplicate), never the foreign key."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "`s` is the referencing relation. Deleting its tuples only removes references. The remaining tuples still point at the same `A` values in `r`, so the constraint cannot break."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Deleting a tuple of `r` whose `A` value is still used as an `E` value in `s` leaves that `s` tuple referring to a non-existent key. With $r = \\{(1, 10)\\}$ and $s = \\{(1, 100)\\}$, deleting $(1, 10)$ violates the constraint."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Inserting a tuple into `s` whose `E` value does not appear in $\\pi_A(r)$ creates a dangling reference. With $r = \\{(1, 10)\\}$, inserting $(2, 200)$ into `s` violates the constraint."
+      }
+    ],
+    "shortcut": "A foreign key can be broken only by the child **gaining** a reference (insert or update in the referencing relation) or the parent **losing** a key value (delete or update in the referenced relation). The other two moves, inserting into the parent and deleting from the child, are always safe. Here the parent is `r` and the child is `s`, so the safe moves are (A) and (B).",
+    "commonTrap": "Getting the direction wrong. Because the foreign key is declared on `S`, a student may think every change to `s` is risky and every change to `r` is safe, and pick (A), (C). Deleting from `r` is exactly what creates orphan tuples in `s`. Another slip is rejecting (A) because an insert into `r` could duplicate an `A` value. That would violate the primary key constraint, not the foreign key constraint."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q26-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The relation names r and s, the schemas R(A,B) and S(E,C), and the attribute/schema names A, E, R and S are set in a monospace font in the paper (the schemas have no space after the comma) and are transcribed as inline code; the same applies to r and s in options (A)-(D). The word NEVER is bold in the paper and is kept bold. No figure is needed; the region contains only the page watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;B",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import combinations, product\nV = [1, 2, 3]                                    # tiny domain for A, B, E, C\nRt = list(product(V, V)); St = list(product(V, V))\ndef subsets(xs, k=2): return [set(c) for n in range(k + 1) for c in combinations(xs, n)]\ndef pk_ok(r): return len({a for a, _ in r}) == len(r)           # A is the key of R\ndef fk_ok(r, s): return {e for e, _ in s} <= {a for a, _ in r}  # every s.E appears in r.A\nstates = [(r, s) for r in subsets(Rt) for s in subsets(St) if pk_ok(r) and fk_ok(r, s)]\nbad = dict(A=False, B=False, C=False, D=False)   # can the operation ever break the FK?\nfor r, s in states:\n    for t in Rt:\n        if t not in r and pk_ok(r | {t}) and not fk_ok(r | {t}, s): bad['A'] = True  # insert into r\n        if t in r and not fk_ok(r - {t}, s): bad['C'] = True                         # delete from r\n    for t in St:\n        if t in s and not fk_ok(r, s - {t}): bad['B'] = True                         # delete from s\n        if t not in s and not fk_ok(r, s | {t}): bad['D'] = True                     # insert into s\nnever = sorted(k for k, v in bad.items() if not v)\nprint(len(states), 'legal states;', bad, '-> NEVER violate:', never)\nassert never == ['A', 'B']   # -> A;B",
+    "notes": "The foreign key is the inclusion pi_E(s) subset of pi_A(r) (s referencing, r referenced). Inserting into r only enlarges the right side and deleting from s only shrinks the left side, so (A) and (B) can never violate it. Deleting from r (orphaned s tuples) and inserting into s (E value absent from r) can, as shown by the counterexamples r = {(1,10)}, s = {(1,100)}. The Python check enumerates every legal state over a 3-value domain (up to 2 tuples per relation) and every single-tuple insert/delete, and finds violations only for C and D. This matches official key A;B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

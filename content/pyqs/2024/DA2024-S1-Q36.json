@@ -1,0 +1,117 @@
+{
+  "id": "DA2024-S1-Q36",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 36,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-random-variables",
+  "subtopicIds": [
+    "ps-conditional-expectation",
+    "ps-random-variables",
+    "ps-independent"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (first-step analysis, i.e. conditioning on the current state to get an expectation) applied in 2–3 steps with a two-equation linear system; routine computation in about 2–3 minutes, with the tempting 1/p² = 4 trap in option B.",
+  "estimatedTimeSec": 150,
+  "stem": "A fair six-sided die (with faces numbered 1, 2, 3, 4, 5, 6) is repeatedly thrown independently.\n\nWhat is the expected number of times the die is thrown until **two** consecutive throws of even numbers are seen?",
+  "options": [
+    {
+      "label": "A",
+      "text": "2"
+    },
+    {
+      "label": "B",
+      "text": "4"
+    },
+    {
+      "label": "C",
+      "text": "6"
+    },
+    {
+      "label": "D",
+      "text": "8"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "Only the parity of each throw matters, and $P(\\text{even}) = \\tfrac{3}{6} = \\tfrac12$. Track the current run of evens (0 or 1) and condition on the next throw: $E_0 = 1 + \\tfrac12 E_1 + \\tfrac12 E_0$ and $E_1 = 1 + \\tfrac12 E_0$. Solving gives $E_1 = 4$ and $E_0 = 6$, so the expected number of throws is $6$ → **(C)**.",
+    "steps": [
+      {
+        "title": "Reduce each throw to a fair Bernoulli trial",
+        "body": "The even faces are $\\{2, 4, 6\\}$, so each throw is even with probability\n\n$$\np = P(\\text{even}) = \\frac{3}{6} = \\frac{1}{2},\n$$\n\nand odd with probability $1 - p = \\tfrac12$, independently of all other throws. Let $N$ be the number of the throw on which the second of two consecutive even throws first appears (so $N$ counts **all** throws, including the last one). We need $E[N]$."
+      },
+      {
+        "title": "Define states by the current run of evens",
+        "body": "What matters at any moment is how many consecutive evens have just been thrown:\n\n- **State $S_0$**: the current run of evens has length 0 (at the start, or just after an odd throw).\n- **State $S_1$**: the last throw was even, but the one before it was not (run length 1).\n- **State $S_2$**: two consecutive evens have been seen, so we stop.\n\nLet $E_0$ and $E_1$ be the expected number of **further** throws needed to reach $S_2$ from $S_0$ and $S_1$. The answer is $E_0$, because we start in $S_0$."
+      },
+      {
+        "title": "Write the first-step equations",
+        "body": "Condition on the outcome of the next throw (law of total expectation). Every step costs one throw.\n\nFrom $S_0$: an even throw ($\\tfrac12$) moves us to $S_1$ and an odd throw ($\\tfrac12$) keeps us in $S_0$:\n\n$$\nE_0 = 1 + \\tfrac12 E_1 + \\tfrac12 E_0 .\n$$\n\nFrom $S_1$: an even throw ($\\tfrac12$) completes the pair (0 further throws) and an odd throw ($\\tfrac12$) breaks the run, sending us back to $S_0$:\n\n$$\nE_1 = 1 + \\tfrac12 \\cdot 0 + \\tfrac12 E_0 .\n$$"
+      },
+      {
+        "title": "Solve the system",
+        "body": "From the first equation, $\\tfrac12 E_0 = 1 + \\tfrac12 E_1$, so $E_0 = 2 + E_1$.\n\nSubstitute $E_1 = 1 + \\tfrac12 E_0$:\n\n$$\nE_0 = 2 + 1 + \\tfrac12 E_0 \\;\\Rightarrow\\; \\tfrac12 E_0 = 3 \\;\\Rightarrow\\; E_0 = 6 .\n$$\n\nThen $E_1 = 1 + \\tfrac12(6) = 4$. Check: $E_0 = 2 + E_1 = 2 + 4 = 6$ ✓.\n\nThis matches the general result $E_0 = \\dfrac{1}{p} + \\dfrac{1}{p^2} = 2 + 4 = 6$. An exact rational computation and a 200 000-trial simulation (mean ≈ 6.00) both confirm it."
+      },
+      {
+        "title": "Conclusion",
+        "body": "The expected number of throws until two consecutive even numbers appear is $E[N] = 6$, which is option **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)** 6",
+    "teaching": "**Waiting for a pattern: first-step analysis.** Many \"expected number of trials until …\" questions cannot be solved by a single geometric distribution, because what happens next depends on what just happened. The standard tool is **first-step analysis**, which is the law of total expectation applied to the first trial:\n\n$$\nE[N] = \\sum_{\\text{outcomes } o} P(o)\\,\\bigl(1 + E[\\text{remaining trials} \\mid o]\\bigr).\n$$\n\nThe recipe:\n\n1. **Identify the memory you need.** For \"two consecutive evens\" you only need to know the length of the current run of evens: 0 or 1. Everything earlier is irrelevant, because an odd throw erases all progress.\n2. **Give each state an unknown**, the expected number of remaining trials from that state ($E_0$, $E_1$). The target state has value 0.\n3. **Write one equation per state**: pay 1 for the next trial, then add the probability-weighted expectations of the states you can move to.\n4. **Solve the linear system.**\n\nThe single-geometric intuition fails here. The event \"two evens in a row\" has probability $\\tfrac14$, but the attempts are not independent, non-overlapping trials: an odd throw right after an even one wastes both throws, and every throw can start a new attempt. The correct result, $\\tfrac1p + \\tfrac1{p^2}$, reflects that you first wait for an even ($\\tfrac1p = 2$ throws on average), and from there you need $E_1 = 4$ more throws on average.\n\nFor $k$ consecutive successes with success probability $p$, the same method gives\n\n$$\nE = \\frac{1}{p} + \\frac{1}{p^2} + \\cdots + \\frac{1}{p^k},\n$$\n\nwhich for $p = \\tfrac12$ is $2^{k+1} - 2$ (2, 6, 14, … for $k = 1, 2, 3$).\n\nIn this question, parity makes the die behave exactly like a fair coin, $k = 2$, and the answer is $2 + 4 = 6$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$2 = 1/p$ is the expected number of throws until the **first** even number. It ignores the requirement that a second even must immediately follow."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$4 = 1/p^2 = 1/(1/4)$ treats \"two consecutive evens\" as a single independent trial with success probability $\\tfrac14$ per throw. It is also $E_1$, the expected number of **remaining** throws once one even has already appeared. Neither is the full expectation from the start."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "First-step analysis gives $E_0 = 1 + \\tfrac12 E_1 + \\tfrac12 E_0$ and $E_1 = 1 + \\tfrac12 E_0$, so $E_0 = 6 = \\tfrac1p + \\tfrac1{p^2}$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$8$ results from splitting the throws into disjoint pairs and waiting for a pair that is \"even, even\" (a geometric wait of $4$ pairs, i.e. $8$ throws). The pattern can start at **any** throw, not only at odd-numbered positions, so the true expectation is smaller: 6."
+      }
+    ],
+    "shortcut": "Expected throws to the first run of $k$ consecutive successes: $\\dfrac1p + \\dfrac1{p^2} + \\cdots + \\dfrac1{p^k}$. With $p = \\tfrac12$ and $k = 2$, this is $2 + 4 = 6$, which is $2^{k+1} - 2$ for a fair \"coin\".",
+    "commonTrap": "Answering $1/p^2 = 4$ (option B) by treating \"two evens in a row\" as one trial with probability $\\tfrac14$. The attempts overlap, and an odd throw after an even wastes throws, so the waiting time is longer: $6$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q36-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word \"two\" is bold in the paper and is kept bold here."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(C) 6",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\nimport random\np = F(1, 2)  # P(even) = |{2,4,6}|/6\n# First-step analysis: E0 = 1 + p*E1 + (1-p)*E0 ; E1 = 1 + p*0 + (1-p)*E0\nE0 = (1 + p) / (1 - (1 - p) - p * (1 - p))   # substitute E1 into E0 and solve\nE1 = 1 + (1 - p) * E0\nprint(\"E0 =\", E0, \"E1 =\", E1, \"closed form 1/p+1/p^2 =\", 1/p + 1/p**2)   # 6, 4, 6\nrandom.seed(1)\ndef trial():\n    n = run = 0\n    while run < 2:\n        n += 1\n        run = run + 1 if random.randint(1, 6) % 2 == 0 else 0\n    return n\nN = 200000\nprint(\"simulated:\", sum(trial() for _ in range(N)) / N)   # ~6.00",
+    "notes": "First-step analysis gives E0 = 6 (E1 = 4), computed exactly with fractions and confirmed by a Monte Carlo simulation (mean ≈ 6.00 over 200000 trials). This agrees with the official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

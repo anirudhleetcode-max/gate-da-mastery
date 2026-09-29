@@ -1,0 +1,112 @@
+{
+  "id": "DA2024-S1-Q12",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 12,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-foundations",
+  "subtopicIds": [
+    "ps-sample-space",
+    "ps-mutually-exclusive"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (recognising that two events are mutually exclusive because heads + tails = 3) settled by a single counting observation in under a minute.",
+  "estimatedTimeSec": 45,
+  "stem": "Three fair coins are tossed independently. $T$ is the event that two or more tosses result in heads. $S$ is the event that two or more tosses result in tails.\n\nWhat is the probability of the event $T \\cap S$ ?",
+  "options": [
+    {
+      "label": "A",
+      "text": "0"
+    },
+    {
+      "label": "B",
+      "text": "0.5"
+    },
+    {
+      "label": "C",
+      "text": "0.25"
+    },
+    {
+      "label": "D",
+      "text": "1"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "With three tosses, (number of heads) + (number of tails) $= 3$. If there are at least 2 heads, there are at most 1 tail, so $T$ and $S$ can never occur together: $T \\cap S = \\varnothing$ and $P(T \\cap S) = 0$ → **(A)**.",
+    "steps": [
+      {
+        "title": "Write down the sample space",
+        "body": "Each toss is H or T, so there are $2^3 = 8$ equally likely outcomes, each with probability $\\tfrac18$:\n\n$$\n\\{HHH,\\; HHT,\\; HTH,\\; THH,\\; HTT,\\; THT,\\; TTH,\\; TTT\\}.\n$$"
+      },
+      {
+        "title": "List the outcomes in each event",
+        "body": "$T$ = two or more heads:\n\n$$\nT = \\{HHH,\\; HHT,\\; HTH,\\; THH\\}, \\qquad P(T) = \\tfrac48 = 0.5 .\n$$\n\n$S$ = two or more tails:\n\n$$\nS = \\{HTT,\\; THT,\\; TTH,\\; TTT\\}, \\qquad P(S) = \\tfrac48 = 0.5 .\n$$"
+      },
+      {
+        "title": "Intersect the events",
+        "body": "No outcome appears in both lists, so $T \\cap S = \\varnothing$.\n\nThe structural reason: if $h$ is the number of heads and $t$ the number of tails, then $h + t = 3$. The event $T \\cap S$ requires $h \\ge 2$ **and** $t \\ge 2$, i.e. $h + t \\ge 4$, which is impossible. So $T$ and $S$ are **mutually exclusive**. In fact they partition the sample space: every outcome has either at least 2 heads or at least 2 tails, never both."
+      },
+      {
+        "title": "Compute the probability",
+        "body": "$$\nP(T \\cap S) = P(\\varnothing) = 0 .\n$$\n\nAs a consistency check, $P(T \\cup S) = P(T) + P(S) - P(T \\cap S) = 0.5 + 0.5 - 0 = 1$, as it must be since $T \\cup S$ is the whole sample space. Enumerating all 8 outcomes in Python gives the same result. The answer is option **(A)**."
+      }
+    ],
+    "finalAnswer": "**(A)** 0",
+    "teaching": "**Intersections, mutual exclusivity and independence.** For events $A$ and $B$, the intersection $A \\cap B$ is the event that **both** occur. Two events are **mutually exclusive** (disjoint) when they cannot occur together, i.e. $A \\cap B = \\varnothing$, and then $P(A \\cap B) = 0$ and $P(A \\cup B) = P(A) + P(B)$.\n\nA reliable way to handle small experiments is to **list the sample space**. Three coin tosses give only $2^3 = 8$ equally likely outcomes, so writing them out takes seconds and removes any doubt. Then the probability of an event is (number of favourable outcomes) / 8.\n\nThe faster way is to look for a **constraint** that links the events. Here every outcome satisfies $h + t = 3$, where $h$ counts heads and $t$ counts tails. Two or more heads forces at most one tail, so \"at least 2 heads\" and \"at least 2 tails\" exclude each other. With an odd number of tosses, one side always holds the majority, so exactly one of $T$ and $S$ occurs on every outcome: they are complementary, $S = T^c$.\n\nDo not confuse mutually exclusive with **independent**. Independence means $P(A \\cap B) = P(A)P(B)$: knowing that one event occurred does not change the probability of the other. Here $P(T)P(S) = 0.5 \\times 0.5 = 0.25$, but $P(T \\cap S) = 0$, so $T$ and $S$ are strongly *dependent*: if $T$ happens, $S$ certainly does not. In general, two events with positive probabilities that are mutually exclusive can never be independent.\n\nIn this question, the constraint $h + t = 3$ makes $T \\cap S$ empty, so the probability is $0$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Since heads + tails $= 3$, at least 2 heads and at least 2 tails would need at least 4 tosses. $T \\cap S = \\varnothing$, so $P(T \\cap S) = 0$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$0.5$ is $P(T)$ (or $P(S)$) on its own, i.e. $\\tfrac48$. It is not the probability that both events occur."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$0.25 = P(T) \\times P(S)$ would hold only if $T$ and $S$ were independent. They are mutually exclusive (and complementary), so they are not independent."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$1$ is $P(T \\cup S)$: every outcome has at least 2 heads **or** at least 2 tails. The question asks for the intersection (**and**), not the union."
+      }
+    ],
+    "shortcut": "With $n = 3$ tosses, \"at least 2 heads\" and \"at least 2 tails\" together need $2 + 2 = 4 > 3$ tosses, so the intersection is empty and the probability is $0$. No enumeration needed.",
+    "commonTrap": "Multiplying $P(T) \\times P(S) = 0.5 \\times 0.5 = 0.25$ (option C), which assumes $T$ and $S$ are independent. They are not; they are mutually exclusive. Another slip is reading $\\cap$ as $\\cup$ and answering $1$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q12-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints a space before the final question mark (\"T ∩ S ?\"); it is kept as printed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(A) 0",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nfrom fractions import Fraction as F\noutcomes = list(product(\"HT\", repeat=3))          # 8 equally likely outcomes\nT = {o for o in outcomes if o.count(\"H\") >= 2}   # two or more heads\nS = {o for o in outcomes if o.count(\"T\") >= 2}   # two or more tails\nprint(\"P(T) =\", F(len(T), 8), \" P(S) =\", F(len(S), 8))   # 1/2, 1/2\nprint(\"T & S =\", T & S, \" P(T & S) =\", F(len(T & S), 8))   # set(), 0",
+    "notes": "Heads + tails = 3, so at least 2 heads and at least 2 tails cannot occur together and T ∩ S is empty. Enumerating all 8 outcomes gives P(T) = P(S) = 1/2 and P(T ∩ S) = 0. This agrees with official key A."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

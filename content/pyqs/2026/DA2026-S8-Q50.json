@@ -1,0 +1,115 @@
+{
+  "id": "DA2026-S8-Q50",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 50,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (each call to outer() creates a fresh list captured by its own closure) and a single four-line trace from which all four statements are read off, so no MSQ level bump applies; about 1-1.5 minutes.",
+  "estimatedTimeSec": 75,
+  "stem": "Consider the given Python program.\n\n```python\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10))    # Line P\nprint(f1(20))    # Line Q\nprint(f2(30))    # Line R\nprint(f1(40))    # Line S\n```\n\nWhich of the following options is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "`f1` and `f2` share the same list `x`"
+    },
+    {
+      "label": "B",
+      "text": "Output of `Line Q` is `[10, 20]`"
+    },
+    {
+      "label": "C",
+      "text": "Output of `Line R` is `[10, 20, 30]`"
+    },
+    {
+      "label": "D",
+      "text": "Output of `Line S` is `[10, 20, 40]`"
+    }
+  ],
+  "officialKeyRaw": "B;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "Every call to `outer()` runs `x = []` again, so `f1` and `f2` are separate closures, each over its **own** list. `f1`'s list grows `[10]` → `[10, 20]` → `[10, 20, 40]`, while `f2`'s list is just `[30]`.\n\nLine Q prints `[10, 20]`, Line R prints `[30]` and Line S prints `[10, 20, 40]`. **(B), (D)**.",
+    "steps": [
+      {
+        "title": "Concept: what a call to outer() returns",
+        "body": "Calling `outer()` executes its body from scratch:\n\n1. `x = []` creates a **new** empty list object in the local scope of that call.\n2. `def inner(val): ...` creates a **new** function object. Its body uses `x`, which is not assigned inside `inner`, so Python resolves `x` in the enclosing scope and `inner` *closes over* that call's `x`.\n3. `return inner` hands back this closure. The list stays alive because the closure refers to it, even though `outer` has returned.\n\n`inner` only *mutates* the list with `x.append(val)` and never rebinds the name `x`, so no `nonlocal` declaration is needed."
+      },
+      {
+        "title": "Two calls give two independent closures",
+        "body": "- `f1 = outer()` produces a closure over a list $L_1$ (initially `[]`).\n- `f2 = outer()` runs the body again and produces a closure over a **different** list $L_2$ (also initially `[]`).\n\nSo `f1` and `f2` do **not** share `x`: statement (A) is false. In CPython, `f1.__closure__[0].cell_contents is f2.__closure__[0].cell_contents` evaluates to `False`."
+      },
+      {
+        "title": "Execution trace",
+        "body": "| Line | Call | List modified | $L_1$ (`f1`'s `x`) after | $L_2$ (`f2`'s `x`) after | Printed |\n| --- | --- | --- | --- | --- | --- |\n| P | `f1(10)` | $L_1$ | `[10]` | `[]` | `[10]` |\n| Q | `f1(20)` | $L_1$ | `[10, 20]` | `[]` | `[10, 20]` |\n| R | `f2(30)` | $L_2$ | `[10, 20]` | `[30]` | `[30]` |\n| S | `f1(40)` | $L_1$ | `[10, 20, 40]` | `[30]` | `[10, 20, 40]` |\n\nEach call returns the list object itself, and `print` shows its contents at that moment."
+      },
+      {
+        "title": "Evaluate each option",
+        "body": "- **(A)** False: each `outer()` call creates its own list, so `f1` and `f2` have separate lists.\n- **(B)** True: Line Q prints `[10, 20]`.\n- **(C)** False: Line R prints `[30]`, not `[10, 20, 30]`.\n- **(D)** True: Line S prints `[10, 20, 40]`, because `f1`'s list still holds 10 and 20 and was not touched by `f2(30)`.\n\nCorrect options: **(B), (D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (D)**",
+    "teaching": "**Nested functions and scopes.** Python looks a name up in the Local, Enclosing, Global and Built-in scopes, in that order (the LEGB rule). When `inner` uses `x`, which it never assigns, Python finds `x` in the enclosing scope, the local scope of `outer`.\n\n**Closures.** A function defined inside another function keeps references to the enclosing variables it uses, even after the outer function has returned. The function together with these captured variables is a **closure**. CPython stores each captured variable in a *cell*, visible through `f.__closure__`.\n\n**Each call makes a new environment.** An enclosing scope is created **per call**. Every time `outer()` runs, it executes `x = []` again, creating a fresh list, and defines a fresh `inner` bound to that list. Closures made by the same factory function are therefore independent, each with private state. This is how counters and accumulators are built in Python without global variables.\n\n**Mutation versus rebinding.** `x.append(val)` changes the list object that `x` already refers to, so it needs no declaration. If `inner` instead did `x = x + [val]` or `x += [val]`, the assignment would make `x` local to `inner` and raise `UnboundLocalError` unless `nonlocal x` were declared.\n\n**Contrast with shared state.** A mutable default argument, as in `def f(val, lst=[])`, is evaluated once, when the `def` statement runs, so every call shares one list. A closure's list is created each time the factory runs, so state is shared only among calls to the **same** closure.\n\n**Applying it here.** `f1` and `f2` come from two separate calls to `outer`, so each owns its own list. `f1`'s list accumulates across the calls to `f1` (10, 20, then 40), while `f2`'s list contains only 30.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Each call to `outer()` executes `x = []` anew, so `f1` and `f2` close over two different list objects. They would share `x` only if both came from the same `outer()` call (for example `f2 = f1`)."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "After Line P, `f1`'s list is `[10]`. Line Q appends 20 to the same list and prints `[10, 20]`."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "`f2` has its own fresh list, so `f2(30)` returns `[30]`. The output `[10, 20, 30]` would require `f2` to share `f1`'s list."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "`f1`'s list still holds `[10, 20]` (Line R changed only `f2`'s list), so appending 40 prints `[10, 20, 40]`."
+      }
+    ],
+    "shortcut": "One list per `outer()` call: group the calls by closure. `f1` receives 10, 20, 40, so its outputs are `[10]`, `[10, 20]`, `[10, 20, 40]`; `f2` receives only 30, so it prints `[30]`.",
+    "commonTrap": "Assuming every function returned by `outer` shares one `x` (as a global or a mutable default argument would), which gives `[10, 20, 30]` at Line R and `[10, 20, 30, 40]` at Line S. The opposite slip is thinking `x = []` runs on every call of `f1`, which would print `[20]` at Line Q; `x = []` runs only when `outer()` itself is called."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q50-1.webp",
+    "/pyq/2026/official/Q50-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed from the monospace block in the paper. The paper indents the body with tab stops (one level for x = [], def inner(val): and return inner; two levels for x.append(val) and return x, about 5.5 character widths per level); it is rendered with 4 spaces per level, which keeps the nesting and does not change the program. The gap before each '# Line' comment (about four character widths in the paper) is rendered as four spaces. In the options, f1, f2, x, 'Line Q/R/S' and the list outputs are set in monospace and are rendered as inline code. The only embedded image in the page region is the background watermark; no figure is needed. The second official crop (Q50-2) shows only the next page's header and a table border."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;D",
+    "agreesWithKey": true,
+    "checkCode": "import io, contextlib\nsrc = '''\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10))    # Line P\nprint(f1(20))    # Line Q\nprint(f2(30))    # Line R\nprint(f1(40))    # Line S\n'''\nbuf = io.StringIO(); g = {}\nwith contextlib.redirect_stdout(buf): exec(src, g)\nP, Q, R, S = buf.getvalue().splitlines(); print(P, Q, R, S, sep=' | ')\nf1, f2 = g['f1'], g['f2']\nshared = f1.__closure__[0].cell_contents is f2.__closure__[0].cell_contents\nres = dict(A=shared, B=Q == '[10, 20]', C=R == '[10, 20, 30]', D=S == '[10, 20, 40]')\nprint(res); assert res == dict(A=False, B=True, C=False, D=True)   # -> B;D",
+    "notes": "Executing the program prints [10], [10, 20], [30], [10, 20, 40] for Lines P, Q, R, S, and the closure cells of f1 and f2 hold different list objects. So (A) and (C) are false and (B) and (D) are true, which matches official key B;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

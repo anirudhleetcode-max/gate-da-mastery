@@ -1,0 +1,78 @@
+{
+  "id": "DA2026-S8-Q31",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 31,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-searching",
+  "subtopicIds": [
+    "pdsa-binary-search"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the worst case of binary search is $\\lfloor \\log_2 n \\rfloor + 1$ three-way comparisons) and a single computation for $n = 1000$, with the only care being that an unsuccessful search can also reach this bound; about a minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Let `A` be a sorted array containing 1000 distinct integers. You perform a recursive binary search on `A` to find an element `y`. Suppose each comparison checks whether the middle element computed during the current recursive step is equal to, less than, or greater than `y`.\n\nThe maximum number of comparisons that may have to be performed if `y` is not an element of `A` is _______ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "10 to 10",
+  "answer": {
+    "kind": "NAT",
+    "min": 10,
+    "max": 10
+  },
+  "solution": {
+    "quick": "Each three-way comparison with the middle element leaves at most $\\lfloor m/2 \\rfloor$ of the $m$ remaining elements. Starting from 1000 the worst-case sizes are $1000 \\to 500 \\to 250 \\to 125 \\to 62 \\to 31 \\to 15 \\to 7 \\to 3 \\to 1 \\to 0$: ten comparisons before the range becomes empty.\n\nEquivalently, $\\lfloor \\log_2 1000 \\rfloor + 1 = 9 + 1 = 10$. **10**",
+    "steps": [
+      {
+        "title": "Model one recursive step",
+        "body": "A recursive call works on a sub-array `A[lo..hi]` of $m = hi - lo + 1$ elements.\n\n- If $m = 0$ the range is empty: the search stops and reports that `y` is absent. **No comparison** is made.\n- Otherwise it computes the middle index and makes **one** three-way comparison of the middle element with `y` (equal / less / greater, as the question defines a comparison).\n- If they are equal the search succeeds. Otherwise it recurses on the half that can still contain `y`.\n\nRemoving the middle element leaves $m - 1$ elements split into halves of sizes $\\lfloor (m-1)/2 \\rfloor$ and $\\lceil (m-1)/2 \\rceil = \\lfloor m/2 \\rfloor$. In the worst case the search continues in the larger half."
+      },
+      {
+        "title": "Recurrence for an unsuccessful search",
+        "body": "Let $C(m)$ be the maximum number of comparisons when `y` is not in a range of $m$ elements. Every non-empty range costs one comparison and the search then continues in a half of size at most $\\lfloor m/2 \\rfloor$; it ends only at an empty range. So\n\n$$\nC(0) = 0, \\qquad C(m) = 1 + C\\!\\left(\\left\\lfloor \\tfrac{m}{2} \\right\\rfloor\\right) \\ (m \\ge 1).\n$$\n\nThe solution is $C(m) = \\lfloor \\log_2 m \\rfloor + 1$, the number of binary digits of $m$."
+      },
+      {
+        "title": "Execution trace for 1000 elements",
+        "body": "| Comparison # | Range size $m$ before it | Larger half left after it |\n| --- | --- | --- |\n| 1 | 1000 | 500 |\n| 2 | 500 | 250 |\n| 3 | 250 | 125 |\n| 4 | 125 | 62 |\n| 5 | 62 | 31 |\n| 6 | 31 | 15 |\n| 7 | 15 | 7 |\n| 8 | 7 | 3 |\n| 9 | 3 | 1 |\n| 10 | 1 | 0 (empty: stop, `y` not found) |\n\nA concrete worst case, with 0-based indices and $mid = \\lfloor (lo + hi)/2 \\rfloor$: take `y` larger than every element. The middle indices probed are 499, 749, 874, 937, 968, 984, 992, 996, 998, 999, which is 10 comparisons, after which the range `A[1000..999]` is empty."
+      },
+      {
+        "title": "Why it can never take more than 10 (decision-tree view)",
+        "body": "The comparisons form a binary decision tree whose 1000 internal nodes are the array elements. Binary search keeps it as balanced as possible. Levels 1 to 9 hold at most $2^9 - 1 = 511$ nodes, so the remaining $1000 - 511 = 489$ nodes sit on level 10. The height is\n\n$$\n\\lfloor \\log_2 1000 \\rfloor + 1 = 9 + 1 = 10 \\quad (2^9 = 512 \\le 1000 < 1024 = 2^{10}).\n$$\n\nAn unsuccessful search walks down one root-to-leaf path and falls into an empty subtree, so it makes at most 10 comparisons. There are 1001 such empty positions (one per gap between consecutive elements, plus both ends). The 489 level-10 nodes supply $2 \\times 489 = 978$ positions reached after 10 comparisons; the other 23 are reached after 9. So 10 comparisons do occur, and 10 is the maximum. The same bound, $\\lceil \\log_2(1000 + 1) \\rceil = 10$, is the usual worst-case formula for an unsuccessful search."
+      },
+      {
+        "title": "Complexity and result",
+        "body": "Each comparison halves the remaining range, so the cost is $O(\\log n)$, and for $n = 1000$ the worst case is exactly **10** comparisons (the Python check agrees for both the floor and the ceiling choice of the middle index)."
+      }
+    ],
+    "finalAnswer": "**10**",
+    "teaching": "**Binary search in one sentence.** In a sorted array, compare the target `y` with the middle element; if it is not equal, `y` can only be in the half on the correct side, so discard the other half and repeat on the remaining half.\n\n**What counts as one comparison.** This question counts a single *three-way* comparison (equal, less, or greater) per recursive step. Some textbook versions do two separate checks per step (first `==`, then `<`), which roughly doubles the count. Always read how the question defines a comparison.\n\n**How fast the range shrinks.** A range of $m$ elements loses its middle element and splits the remaining $m-1$ into two halves; the larger one has $\\lfloor m/2 \\rfloor$ elements. The worst case always takes the larger half, so the number of steps is how many times you can halve $m$ (rounding down) before reaching 0. That count is the number of binary digits of $m$:\n\n$$\nC(m) = \\lfloor \\log_2 m \\rfloor + 1 = \\lceil \\log_2 (m + 1) \\rceil.\n$$\n\n**Successful vs unsuccessful search.** Think of the search as a binary tree: each node is an element compared with `y`. A successful search stops at the node holding `y`; an unsuccessful search goes past a bottom node into an empty branch. The deepest nodes are at level $\\lfloor \\log_2 n \\rfloor + 1$, so both kinds of search have the same worst case. When the last level is only partly filled, as here, some unsuccessful searches stop one comparison sooner (here after 9).\n\n**Back to this question.** $n = 1000$ lies between $2^9 = 512$ and $2^{10} = 1024$, so it has 10 binary digits ($1000 = 1111101000_2$). The maximum number of comparisons when `y` is absent is **10**.",
+    "shortcut": "The worst-case number of three-way comparisons equals the number of bits of $n$. Since $512 \\le 1000 < 1024$, 1000 has 10 bits, so the answer is **10**.",
+    "commonTrap": "Answering **9** by taking $\\lfloor \\log_2 1000 \\rfloor$ and forgetting the $+1$ for the last comparison, or **11** by also charging a comparison for the final empty range. Another trap is answering **20** by counting the \"equal\" and \"less than\" checks separately; the question explicitly counts one three-way comparison per step. Note that $\\lceil \\log_2 1000 \\rceil = 10$ also gives 10 here, but only because 1000 is not a power of 2. The general formula is $\\lfloor \\log_2 n \\rfloor + 1$: for $n = 1024$, $\\lceil \\log_2 n \\rceil$ gives 10 while the true worst case is 11."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q31-1.webp",
+    "/pyq/2026/official/Q31-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array name A and the element y are set in a sans-serif code-style font in the paper (distinct from the serif body text) and are transcribed as inline code. 'integer' is bold in the answer instruction and is kept bold. No figure is needed. The second official crop (Q31-2) shows only the header and table border of the next page."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "10",
+    "agreesWithKey": true,
+    "checkCode": "import math\ndef bs(A, y, lo, hi, mid_of, c=0):             # recursive binary search, counts 3-way comparisons\n    if lo > hi: return c                        # empty range: y absent, no comparison\n    m = mid_of(lo, hi); c += 1                  # one comparison: A[m] ==, <, > y\n    if A[m] == y: return c\n    return bs(A, y, lo, m - 1, mid_of, c) if y < A[m] else bs(A, y, m + 1, hi, mid_of, c)\nn = 1000; A = [2 * k for k in range(n)]         # distinct sorted evens; every odd y is absent\ngaps = range(-1, 2 * n + 1, 2)                  # one absent y per gap (1001 gaps)\nfloor_mid = [bs(A, y, 0, n - 1, lambda l, h: (l + h) // 2) for y in gaps]\nceil_mid = [bs(A, y, 0, n - 1, lambda l, h: (l + h + 1) // 2) for y in gaps]\nprint(max(floor_mid), max(ceil_mid), min(floor_mid), math.floor(math.log2(n)) + 1, math.ceil(math.log2(n + 1)))\nassert max(floor_mid) == max(ceil_mid) == 10    # -> 10 (min is 9)",
+    "notes": "With one three-way comparison per recursive step, the worst-case range sizes are 1000, 500, 250, 125, 62, 31, 15, 7, 3, 1, giving 10 comparisons before the range is empty: floor(log2 1000) + 1 = ceil(log2 1001) = 10. A Python simulation over all 1001 absent-value positions gives a maximum of 10 (978 positions need 10, 23 need 9) for both floor and ceiling middle indices. This matches official key '10 to 10'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

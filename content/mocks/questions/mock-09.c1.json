@@ -1,0 +1,758 @@
+[
+  {
+    "id": "M09-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (translating a negated, nested-quantifier sentence) that needs 2–3 steps of pushing the negation through both quantifiers, with plausible scope and connective traps; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Translating a negated statement with nested quantifiers into first-order logic and moving the negation inward.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following predicates over a domain of objects:\n\n- $M(x)$: $x$ is a machine-learning model\n- $B(y)$: $y$ is a benchmark\n- $E(x, y)$: $x$ has been evaluated on $y$\n\nWhich one of the following first-order logic formulas correctly expresses the statement\n\n> *There is no model that has been evaluated on every benchmark.*",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\forall x\\,\\big(M(x) \\rightarrow \\forall y\\,(B(y) \\rightarrow \\neg E(x,y))\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\exists x\\,\\big(M(x) \\wedge \\exists y\\,(B(y) \\wedge \\neg E(x,y))\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\forall x\\,\\big(M(x) \\rightarrow \\exists y\\,(B(y) \\wedge \\neg E(x,y))\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\forall x\\,\\big(M(x) \\wedge \\exists y\\,(B(y) \\rightarrow \\neg E(x,y))\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Literal translation: $\\neg\\exists x\\,\\big(M(x) \\wedge \\forall y\\,(B(y) \\rightarrow E(x,y))\\big)$.\nPushing $\\neg$ inward flips $\\exists x$ to $\\forall x$ and $\\forall y$ to $\\exists y$, and turns $B(y) \\rightarrow E(x,y)$ into $B(y) \\wedge \\neg E(x,y)$: \"every model misses at least one benchmark\", which is option (C).",
+      "steps": [
+        {
+          "title": "Translate literally",
+          "body": "\"There is no $x$ such that $x$ is a model and $x$ has been evaluated on every benchmark\":\n$$\\neg\\exists x\\,\\big(M(x) \\wedge \\forall y\\,(B(y) \\rightarrow E(x,y))\\big).$$\nThe restricted \"some model\" uses $\\wedge$ under $\\exists$; the restricted \"every benchmark\" uses $\\rightarrow$ under $\\forall$."
+        },
+        {
+          "title": "Move the negation past $\\exists x$",
+          "body": "$\\neg\\exists x\\,\\varphi \\equiv \\forall x\\,\\neg\\varphi$ and $\\neg(M(x) \\wedge \\psi) \\equiv M(x) \\rightarrow \\neg\\psi$, so the formula becomes\n$$\\forall x\\,\\big(M(x) \\rightarrow \\neg\\forall y\\,(B(y) \\rightarrow E(x,y))\\big).$$"
+        },
+        {
+          "title": "Move the negation past $\\forall y$",
+          "body": "$\\neg\\forall y\\,\\chi \\equiv \\exists y\\,\\neg\\chi$ and $\\neg(B(y) \\rightarrow E(x,y)) \\equiv B(y) \\wedge \\neg E(x,y)$, giving\n$$\\forall x\\,\\big(M(x) \\rightarrow \\exists y\\,(B(y) \\wedge \\neg E(x,y))\\big),$$\ni.e. every model has some benchmark it has not been evaluated on. This is option (C)."
+        },
+        {
+          "title": "Rule out the other options with small counter-examples",
+          "body": "- (A): one model $m$, benchmarks $b_1, b_2$, and only $E(m, b_1)$ true. The statement holds ($m$ misses $b_2$), but (A) is false because $m$ was evaluated on $b_1$.\n- (B): models $m_1, m_2$, benchmarks $b_1, b_2$; $m_1$ evaluated on both, $m_2$ only on $b_1$. (B) is true ($m_2$ misses $b_2$), but the statement is false because $m_1$ covers every benchmark.\n- (D): one model $m$, one benchmark $b$, no evaluations. The statement is true, but (D) is false because $M(b)$ is false, and (D) demands $M(x)$ for every $x$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "teaching": "In first-order logic a quantifier ranges over the whole domain, so a restriction such as \"every benchmark\" or \"some model\" must be written with a connective. The rule of thumb: $\\forall$ pairs with $\\rightarrow$ (\"every $y$ that is a benchmark satisfies …\") and $\\exists$ pairs with $\\wedge$ (\"some $x$ is a model and …\"). Swapping them is the classic error: $\\forall x\\,(M(x) \\wedge \\dots)$ claims that everything is a model, while $\\exists y\\,(B(y) \\rightarrow \\dots)$ is made true by any object that is not a benchmark.\n\nNegation moves through quantifiers by De Morgan's laws for quantifiers: $\\neg\\forall x\\,\\varphi \\equiv \\exists x\\,\\neg\\varphi$ and $\\neg\\exists x\\,\\varphi \\equiv \\forall x\\,\\neg\\varphi$. Each time the negation passes a quantifier, that quantifier flips, and the connective beneath it is negated as well: $\\neg(p \\wedge q) \\equiv p \\rightarrow \\neg q$ and $\\neg(p \\rightarrow q) \\equiv p \\wedge \\neg q$. Here two such flips turn \"no model covers all benchmarks\" into \"every model misses some benchmark\".",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Says every model has been evaluated on **no** benchmark, which is far stronger than the statement. The negation was pushed onto $E$ without flipping $\\forall y$ into $\\exists y$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Says only that *some* model misses some benchmark. It can be true while another model covers every benchmark, which the statement forbids: the outer $\\neg\\exists x$ must become $\\forall x$, not $\\exists x$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Every model has at least one benchmark it has not been evaluated on, which is exactly the negation-pushed form of $\\neg\\exists x\\,\\big(M(x) \\wedge \\forall y\\,(B(y) \\rightarrow E(x,y))\\big)$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Uses $\\wedge$ under $\\forall x$, which asserts that every object in the domain is a model, and $\\rightarrow$ under $\\exists y$, which any non-benchmark satisfies. It is false in every domain that contains an object that is not a model (for example, a benchmark)."
+        }
+      ],
+      "commonTrap": "Negating only the innermost predicate (giving (A)) or flipping only the outer quantifier (giving (B)). Every quantifier the negation passes must flip, and the connective beneath it must switch between $\\rightarrow$ and $\\wedge$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (brute-force equivalence check over all interpretations with domain size 1–3)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\ndef interps(n):\n    D = range(n)\n    for M in product([0, 1], repeat=n):\n        for B in product([0, 1], repeat=n):\n            for Ev in product([0, 1], repeat=n * n):\n                yield D, M, B, (lambda x, y, Ev=Ev: Ev[x * n + y])\n# \"There is no model that has been evaluated on every benchmark\"\nref = lambda D, M, B, E: not any(M[x] and all((not B[y]) or E(x, y) for y in D) for x in D)\nopts = {\n    'A': lambda D, M, B, E: all((not M[x]) or all((not B[y]) or not E(x, y) for y in D) for x in D),\n    'B': lambda D, M, B, E: any(M[x] and any(B[y] and not E(x, y) for y in D) for x in D),\n    'C': lambda D, M, B, E: all((not M[x]) or any(B[y] and not E(x, y) for y in D) for x in D),\n    'D': lambda D, M, B, E: all(M[x] and any((not B[y]) or not E(x, y) for y in D) for x in D),\n}\nprint([k for k, f in opts.items() if all(f(*I) == ref(*I) for n in (1, 2, 3) for I in interps(n))])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-divide-conquer"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the merge step of mergesort) checked by a single short trace of nine elements; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Counting element comparisons in the merge step of mergesort.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The merge step of mergesort combines two sorted lists into one sorted list. It repeatedly compares the front elements of the two lists and moves the smaller one to the output. As soon as one list becomes empty, the remaining elements of the other list are copied to the output **without any further comparisons**.\n\nThe merge step is applied to the sorted lists\n\n$$L_1 = [4, 9, 13, 21] \\quad \\text{and} \\quad L_2 = [6, 10, 16, 25, 31].$$\n\nThe number of element comparisons performed is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$8$"
+      },
+      {
+        "label": "B",
+        "text": "$7$"
+      },
+      {
+        "label": "C",
+        "text": "$9$"
+      },
+      {
+        "label": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Tracing the merge, the comparisons output 4, 6, 9, 10, 13, 16, 21.\nAfter the 7th comparison $L_1$ is empty, and 25 and 31 are copied without comparisons. Total: **7**.",
+      "steps": [
+        {
+          "title": "Recall how the merge counts comparisons",
+          "body": "Each comparison moves exactly one element to the output. Comparisons stop the moment either list is empty, so the count equals the number of elements output before one list runs out."
+        },
+        {
+          "title": "Trace the merge",
+          "body": "| # | Compare | Output |\n|---|---|---|\n| 1 | 4 vs 6 | 4 |\n| 2 | 9 vs 6 | 6 |\n| 3 | 9 vs 10 | 9 |\n| 4 | 13 vs 10 | 10 |\n| 5 | 13 vs 16 | 13 |\n| 6 | 21 vs 16 | 16 |\n| 7 | 21 vs 25 | 21 |\n\nAfter comparison 7, $L_1$ is empty."
+        },
+        {
+          "title": "Copy the tail",
+          "body": "The remaining elements 25 and 31 of $L_2$ are appended with no comparisons. Output: $[4, 6, 9, 10, 13, 16, 21, 25, 31]$, after **7** comparisons."
+        },
+        {
+          "title": "Check against the bounds",
+          "body": "For lengths $m = 4$ and $n = 5$, the count must lie between $\\min(m, n) = 4$ (best case) and $m + n - 1 = 8$ (worst case). Equivalently, count $= (m + n) - (\\text{elements copied in the tail}) = 9 - 2 = 7$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Mergesort is the classic divide-and-conquer sort: split the array into two halves, sort each half recursively, then **merge** the two sorted halves. All the real work happens in the merge. Because both inputs are sorted, the smallest remaining element overall must be at the front of one of them, so a single comparison of the two fronts decides the next output element. Every comparison therefore produces exactly one output element, and once one list is exhausted the rest of the other list is already in order and is copied with no comparisons.\n\nSo for lists of sizes $m$ and $n$, comparisons $= m + n - t$, where $t$ is the number of elements copied in the final tail. The best case is $\\min(m, n)$ comparisons (one list lies entirely below the other) and the worst case is $m + n - 1$ (the lists interleave to the very end). Across the $\\log_2 n$ levels of recursion this linear merge cost gives mergesort its $O(n \\log n)$ running time.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$m + n - 1 = 8$ is the **worst-case** count, reached only when the last elements of both lists have to be compared. Here $L_1$ runs out while two elements of $L_2$ remain."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Seven comparisons output 4, 6, 9, 10, 13, 16, 21; then 25 and 31 are copied without comparisons."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$m + n = 9$ counts every element moved to the output, including the two tail elements that are copied without any comparison."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\min(m, n) = 4$ is the **best-case** count, when one list lies entirely below the other. These lists interleave, so more comparisons are needed."
+        }
+      ],
+      "shortcut": "Count $= m + n - t$, where $t$ is the number of elements in one list that exceed the maximum of the other list. Here 25 and 31 exceed $\\max(L_1) = 21$, so $t = 2$ and the count is $9 - 2 = 7$.",
+      "commonTrap": "Quoting the worst-case formula $m + n - 1 = 8$ instead of tracing. The actual count depends on how the lists interleave and stops as soon as one list is empty."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "7",
+      "agreesWithKey": true,
+      "checkCode": "def merge_comparisons(a, b):\n    i = j = c = 0\n    while i < len(a) and j < len(b):\n        c += 1\n        if a[i] <= b[j]:\n            i += 1\n        else:\n            j += 1\n    return c\nprint(merge_comparisons([4, 9, 13, 21], [6, 10, 16, 25, 31]))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-ridge-regression"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the closed-form one-feature ridge estimate) needing two sums and a single substitution; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Closed-form ridge regression estimate for a single feature without an intercept.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A store analyst models weekly sales $y$ (in thousands of units) against advertising spend $x$ (in lakh rupees) with a ridge regression model **without an intercept**, $\\hat{y} = w x$. The coefficient $w$ is chosen to minimise\n\n$$J(w) = \\sum_{i=1}^{3} \\left(y_i - w x_i\\right)^2 + \\lambda w^2, \\qquad \\lambda = 3,$$\n\nfor the following data:\n\n| $i$ | 1 | 2 | 3 |\n|---|---|---|---|\n| $x_i$ | 1 | 2 | 4 |\n| $y_i$ | 3 | 5 | 6 |\n\nThe value of $w$ that minimises $J(w)$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 1.53,
+      "max": 1.55
+    },
+    "solution": {
+      "quick": "Setting $J'(w) = 0$ gives $w = \\dfrac{\\sum x_i y_i}{\\sum x_i^2 + \\lambda}$.\nHere $w = \\dfrac{37}{21 + 3} = \\dfrac{37}{24} \\approx 1.54$.",
+      "steps": [
+        {
+          "title": "Differentiate the objective",
+          "body": "$J'(w) = -2\\sum_i x_i\\,(y_i - w x_i) + 2\\lambda w$. Setting $J'(w) = 0$:\n$$w\\left(\\sum_i x_i^2 + \\lambda\\right) = \\sum_i x_i y_i \\;\\Rightarrow\\; w = \\frac{\\sum_i x_i y_i}{\\sum_i x_i^2 + \\lambda}.$$\nSince $J''(w) = 2\\left(\\sum_i x_i^2 + \\lambda\\right) > 0$, this stationary point is the minimum."
+        },
+        {
+          "title": "Compute the sums",
+          "body": "$\\sum x_i y_i = 1 \\cdot 3 + 2 \\cdot 5 + 4 \\cdot 6 = 3 + 10 + 24 = 37$ and $\\sum x_i^2 = 1 + 4 + 16 = 21$."
+        },
+        {
+          "title": "Substitute",
+          "body": "$w = \\dfrac{37}{21 + 3} = \\dfrac{37}{24} = 1.5417\\ldots \\approx 1.54$."
+        },
+        {
+          "title": "Interpret",
+          "body": "Without the penalty ($\\lambda = 0$), least squares gives $w = 37/21 \\approx 1.76$. The ridge penalty shrinks the coefficient towards 0, from 1.76 to 1.54."
+        }
+      ],
+      "finalAnswer": "**1.54** (accepted range 1.53 to 1.55)",
+      "teaching": "Ordinary least squares chooses the coefficient that minimises the squared prediction error alone. Ridge regression adds a penalty $\\lambda w^2$ on the size of the coefficient, so the fit balances two goals: small error and a small weight. Differentiating the combined objective and setting the derivative to zero gives, for one feature and no intercept, $w = \\sum x_i y_i / (\\sum x_i^2 + \\lambda)$: the penalty simply adds $\\lambda$ to the denominator. In matrix form the same idea reads $\\mathbf{w} = (X^\\top X + \\lambda I)^{-1} X^\\top \\mathbf{y}$.\n\nA larger $\\lambda$ means more shrinkage towards zero: the estimate becomes more stable (lower variance) at the cost of some bias, and with $\\lambda = 0$ ridge reduces to least squares. Here the penalty lowers $w$ from $37/21 \\approx 1.76$ to $37/24 \\approx 1.54$.",
+      "shortcut": "For one feature without an intercept, add $\\lambda$ to $\\sum x_i^2$ in the least-squares formula: $w = 37/(21 + 3)$.",
+      "commonTrap": "Forgetting the penalty (giving $37/21 \\approx 1.76$) or using $\\lambda/2$ or $n\\lambda$ from a differently scaled objective. Always derive from the objective exactly as it is stated."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1.5417 (37/24; closed form and numerical minimisation agree)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nfrom scipy.optimize import minimize_scalar\nx = np.array([1, 2, 4]); y = np.array([3, 5, 6]); lam = 3\nw = (x @ y) / (x @ x + lam)\nw_num = minimize_scalar(lambda w: np.sum((y - w * x) ** 2) + lam * w ** 2).x\nprint(round(w, 4), round(w_num, 4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-svd"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (singular values as square roots of the eigenvalues of $A^\\top A$) with a diagonal $A^\\top A$ and one-line checks for each statement; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Singular values from the eigenvalues of A^T A and AA^T, their relation to rank and the Frobenius norm.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$A = \\begin{bmatrix} 0 & 2 \\\\ 3 & 0 \\\\ 0 & 0 \\end{bmatrix}.$$\n\nWhich of the following statements about the singular value decomposition $A = U \\Sigma V^\\top$ is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The singular values of $A$ are $3$ and $2$."
+      },
+      {
+        "label": "B",
+        "text": "$A$ has three non-zero singular values."
+      },
+      {
+        "label": "C",
+        "text": "The eigenvalues of $AA^\\top$ are $9$, $4$ and $0$."
+      },
+      {
+        "label": "D",
+        "text": "The Frobenius norm of $A$ is $\\|A\\|_F = 5$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "$A^\\top A = \\mathrm{diag}(9, 4)$, so the singular values are $3$ and $2$; $AA^\\top = \\mathrm{diag}(4, 9, 0)$ has eigenvalues $9, 4, 0$.\nRank 2 means only two non-zero singular values, and $\\|A\\|_F = \\sqrt{9 + 4} = \\sqrt{13} \\ne 5$. Correct: (A), (C).",
+      "steps": [
+        {
+          "title": "Compute $A^\\top A$",
+          "body": "$$A^\\top A = \\begin{bmatrix} 0 & 3 & 0 \\\\ 2 & 0 & 0 \\end{bmatrix}\\begin{bmatrix} 0 & 2 \\\\ 3 & 0 \\\\ 0 & 0 \\end{bmatrix} = \\begin{bmatrix} 9 & 0 \\\\ 0 & 4 \\end{bmatrix}.$$\nIts eigenvalues are 9 and 4, so the singular values are $\\sigma_1 = \\sqrt 9 = 3$ and $\\sigma_2 = \\sqrt 4 = 2$. Statement (A) is correct."
+        },
+        {
+          "title": "Compute $AA^\\top$",
+          "body": "$$AA^\\top = \\begin{bmatrix} 4 & 0 & 0 \\\\ 0 & 9 & 0 \\\\ 0 & 0 & 0 \\end{bmatrix},$$\nwith eigenvalues 9, 4 and 0: the same non-zero eigenvalues as $A^\\top A$ plus one extra zero. Statement (C) is correct."
+        },
+        {
+          "title": "Count the non-zero singular values",
+          "body": "The number of non-zero singular values equals $\\operatorname{rank}(A)$. The two columns $(0, 3, 0)^\\top$ and $(2, 0, 0)^\\top$ are independent, so $\\operatorname{rank}(A) = 2$: there are two non-zero singular values, not three. Statement (B) is false."
+        },
+        {
+          "title": "Compute the Frobenius norm",
+          "body": "$\\|A\\|_F = \\sqrt{\\sum_{i,j} a_{ij}^2} = \\sqrt{0 + 4 + 9 + 0 + 0 + 0} = \\sqrt{13} \\approx 3.61$, which equals $\\sqrt{\\sigma_1^2 + \\sigma_2^2}$, not $\\sigma_1 + \\sigma_2 = 5$. Statement (D) is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "teaching": "Every real $m \\times n$ matrix factorises as $A = U\\Sigma V^\\top$, where $U$ ($m \\times m$) and $V$ ($n \\times n$) are orthogonal and $\\Sigma$ is an $m \\times n$ diagonal matrix holding the **singular values** $\\sigma_1 \\ge \\sigma_2 \\ge \\dots \\ge 0$. They are the square roots of the eigenvalues of $A^\\top A$; $AA^\\top$ has the same non-zero eigenvalues, padded with zeros when $m > n$. Singular values are never negative, and the number of non-zero ones equals the rank of $A$, not its number of rows or columns.\n\nTwo norm facts follow directly: the largest singular value is the spectral norm $\\|A\\|_2$, and $\\|A\\|_F^2 = \\sum_{i,j} a_{ij}^2 = \\sum_k \\sigma_k^2$. The sum of the singular values is a different quantity (the nuclear norm). Here $A$ only rescales and permutes coordinates, so its singular values are simply the absolute values of its two non-zero entries.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The eigenvalues of $A^\\top A = \\mathrm{diag}(9, 4)$ are 9 and 4, so $\\sigma_1 = 3$ and $\\sigma_2 = 2$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The number of non-zero singular values equals $\\operatorname{rank}(A) = 2$. The zero third row only adds a zero eigenvalue to $AA^\\top$; a $3 \\times 2$ matrix has at most $\\min(3, 2) = 2$ non-zero singular values."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$AA^\\top = \\mathrm{diag}(4, 9, 0)$, whose eigenvalues are 9, 4 and 0."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\|A\\|_F = \\sqrt{3^2 + 2^2} = \\sqrt{13} \\approx 3.61$. The value 5 is $\\sigma_1 + \\sigma_2$, the nuclear norm, not the Frobenius norm."
+        }
+      ],
+      "commonTrap": "Taking the Frobenius norm to be the sum of the singular values (that is the nuclear norm), or assuming the number of non-zero singular values equals the number of rows."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C (numpy: A True, B False, C True, D False)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[0, 2], [3, 0], [0, 0]], dtype=float)\ns = np.linalg.svd(A, compute_uv=False)\nev = np.sort(np.linalg.eigvalsh(A @ A.T))[::-1]\nprint('A:', np.allclose(s, [3, 2]))\nprint('B:', int(np.sum(s > 1e-12)) == 3)\nprint('C:', np.allclose(ev, [9, 4, 0]))\nprint('D:', np.isclose(np.linalg.norm(A, 'fro'), 5))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Maclaurin series of a product) needing 2–3 steps of multiplying and collecting terms plus the coefficient–derivative link $f^{(k)}(0) = k!\\,c_k$; about 2–2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Maclaurin series of a product by multiplying known series; relating coefficients to derivatives.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x) = e^{x}\\cos(2x)$, and let its Maclaurin series (Taylor series about $x = 0$) be\n\n$$f(x) = \\sum_{k=0}^{\\infty} c_k\\, x^k .$$\n\nLet $P_2(x)$ denote the Taylor polynomial of degree 2 of $f$ about $x = 0$. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$c_2 = -\\dfrac{3}{2}$"
+      },
+      {
+        "label": "B",
+        "text": "$f''(0) = -\\dfrac{3}{2}$"
+      },
+      {
+        "label": "C",
+        "text": "$c_3 = -\\dfrac{11}{6}$"
+      },
+      {
+        "label": "D",
+        "text": "$P_2(0.1) = 1.085$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$e^x = 1 + x + \\tfrac{x^2}{2} + \\tfrac{x^3}{6} + \\dots$ and $\\cos 2x = 1 - 2x^2 + \\dots$. Multiplying: $f(x) = 1 + x - \\tfrac32 x^2 - \\tfrac{11}{6}x^3 + \\dots$.\nSo $c_2 = -\\tfrac32$, $c_3 = -\\tfrac{11}{6}$, $f''(0) = 2!\\,c_2 = -3$ and $P_2(0.1) = 1.085$. Correct: (A), (C), (D).",
+      "steps": [
+        {
+          "title": "Write the two known series",
+          "body": "$$e^x = 1 + x + \\frac{x^2}{2} + \\frac{x^3}{6} + O(x^4), \\qquad \\cos 2x = 1 - \\frac{(2x)^2}{2} + O(x^4) = 1 - 2x^2 + O(x^4).$$\n$\\cos 2x$ has no $x$ or $x^3$ term."
+        },
+        {
+          "title": "Multiply and collect terms up to $x^3$",
+          "body": "- $c_0 = 1 \\cdot 1 = 1$\n- $c_1 = 1 \\cdot 1 = 1$ (from $x \\cdot 1$)\n- $c_2 = \\tfrac12 \\cdot 1 + 1 \\cdot (-2) = -\\tfrac32$ (from $\\tfrac{x^2}{2} \\cdot 1$ and $1 \\cdot (-2x^2)$)\n- $c_3 = \\tfrac16 \\cdot 1 + 1 \\cdot (-2) = -\\tfrac{11}{6}$ (from $\\tfrac{x^3}{6} \\cdot 1$ and $x \\cdot (-2x^2)$)\n\nSo (A) and (C) are correct."
+        },
+        {
+          "title": "Convert a coefficient into a derivative",
+          "body": "$c_k = \\dfrac{f^{(k)}(0)}{k!}$, so $f''(0) = 2!\\,c_2 = 2 \\cdot \\left(-\\tfrac32\\right) = -3$, not $-\\tfrac32$. Directly: $f''(x) = e^x\\left(-3\\cos 2x - 4\\sin 2x\\right)$, so $f''(0) = -3$. (B) is false."
+        },
+        {
+          "title": "Evaluate the quadratic Taylor polynomial",
+          "body": "$P_2(x) = 1 + x - \\tfrac32 x^2$, so $P_2(0.1) = 1 + 0.1 - 1.5 \\times 0.01 = 1.085$. (D) is correct. For comparison, $f(0.1) = e^{0.1}\\cos 0.2 \\approx 1.0831$, so the approximation is close."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "teaching": "A Taylor series rewrites a smooth function near a point $a$ as a power series whose coefficients are its derivatives there: $f(x) = \\sum_k \\frac{f^{(k)}(a)}{k!}(x - a)^k$. About $a = 0$ it is called a Maclaurin series. Truncating after degree $n$ gives the Taylor polynomial $P_n$, which matches $f$ and its first $n$ derivatives at $a$ and approximates $f$ well close to $a$.\n\nDifferentiating a product many times is tedious, but power series can be multiplied like polynomials: the coefficient of $x^k$ in a product is $\\sum_{j=0}^{k} a_j b_{k-j}$. Because a function's Taylor series is unique, the product series is the Taylor series of the product. When a question asks for a derivative rather than a coefficient, remember the factorial link $f^{(k)}(0) = k!\\,c_k$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$c_2 = \\tfrac12 \\cdot 1 + 1 \\cdot (-2) = -\\tfrac32$, from $\\tfrac{x^2}{2} \\cdot 1$ and $1 \\cdot (-2x^2)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$-\\tfrac32$ is the coefficient $c_2$. The derivative is $f''(0) = 2!\\,c_2 = -3$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$c_3 = \\tfrac16 - 2 = -\\tfrac{11}{6}$, from $\\tfrac{x^3}{6} \\cdot 1$ and $x \\cdot (-2x^2)$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$P_2(0.1) = 1 + 0.1 - 1.5 \\times 0.01 = 1.085$."
+        }
+      ],
+      "shortcut": "For a single coefficient, multiply only the pairs of terms whose powers add up to it: for $x^3$, $\\tfrac{x^3}{6} \\cdot 1$ and $x \\cdot (-2x^2)$.",
+      "commonTrap": "Reading the coefficient $c_2 = -\\tfrac32$ as $f''(0)$ (forgetting the $k!$ factor), or expanding $\\cos 2x$ as $1 - x^2 + \\dots$ by not squaring the 2 inside the argument."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D (sympy: A True, B False, C True, D True)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.exp(x) * sp.cos(2 * x)\np = sp.series(f, x, 0, 5).removeO()\nc2, c3 = p.coeff(x, 2), p.coeff(x, 3)\nP2 = 1 + p.coeff(x, 1) * x + c2 * x**2\nprint('A:', c2 == sp.Rational(-3, 2))\nprint('B:', sp.diff(f, x, 2).subs(x, 0) == sp.Rational(-3, 2))\nprint('C:', c3 == sp.Rational(-11, 6))\nprint('D:', P2.subs(x, sp.Rational(1, 10)) == sp.Rational(1085, 1000))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-graph-theory"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (an acyclic graph is a forest with $n - c$ edges) and a one-step subtraction; under a minute.",
+    "estimatedTimeSec": 45,
+    "concept": "Edge count of a forest: n vertices and c trees give n − c edges.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A sensor network is modelled as a simple undirected graph $G$ with 14 nodes. After several links fail, $G$ contains no cycles and has exactly 3 connected components (an isolated node counts as a component).\n\nThe number of edges in $G$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$13$"
+      },
+      {
+        "label": "B",
+        "text": "$12$"
+      },
+      {
+        "label": "C",
+        "text": "$14$"
+      },
+      {
+        "label": "D",
+        "text": "$11$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "A graph with no cycles is a forest: each component is a tree with (its vertices $- 1$) edges.\nSumming over the 3 components gives $14 - 3 = 11$ edges.",
+      "steps": [
+        {
+          "title": "Identify the structure",
+          "body": "No cycles means every connected component is connected and acyclic, i.e. a **tree**. $G$ is a forest of 3 trees."
+        },
+        {
+          "title": "Edges in each tree",
+          "body": "A tree with $n_i$ vertices has exactly $n_i - 1$ edges."
+        },
+        {
+          "title": "Sum over the components",
+          "body": "$$|E| = \\sum_{i=1}^{3} (n_i - 1) = (n_1 + n_2 + n_3) - 3 = 14 - 3 = 11.$$\nThe individual component sizes do not matter."
+        },
+        {
+          "title": "Sanity check",
+          "body": "Components of sizes 1, 5 and 8 give $0 + 4 + 7 = 11$ edges; sizes 4, 4 and 6 give $3 + 3 + 5 = 11$ edges."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "teaching": "A **tree** is a connected graph with no cycles. Build one by adding vertices one at a time: each new vertex needs exactly one edge to join the existing tree (a second edge would close a cycle), so a tree on $n$ vertices has $n - 1$ edges. Removing any edge disconnects a tree, and adding any edge creates a cycle.\n\nAn acyclic graph that may be disconnected is a **forest**, a collection of trees. A component with $n_i$ vertices contributes $n_i - 1$ edges, so a forest with $n$ vertices and $c$ components has exactly $n - c$ edges. More generally, any graph with $n$ vertices and $c$ components has at least $n - c$ edges, with equality exactly when it has no cycles. That is why the number of components alone fixes the edge count here.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$n - 1 = 13$ is the edge count of a single spanning tree; it would require $G$ to be connected, not split into 3 components."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$12$ is an off-by-one slip ($14 - 2$): each of the 3 components loses one edge relative to its vertex count, so subtract 3."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "An acyclic graph on 14 vertices has at most 13 edges; 14 edges would force a cycle."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$14 - 3 = 11$: each of the 3 trees has one edge fewer than it has vertices."
+        }
+      ],
+      "commonTrap": "Applying the single-tree formula $n - 1 = 13$ and ignoring that the graph has 3 components."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "11 (every randomly generated 14-vertex, 3-component forest has 11 edges)",
+      "agreesWithKey": true,
+      "checkCode": "import random\ndef random_forest_edges(n, c):\n    verts = list(range(n)); random.shuffle(verts)\n    cuts = sorted(random.sample(range(1, n), c - 1))\n    groups = [verts[i:j] for i, j in zip([0] + cuts, cuts + [n])]\n    edges = [(g[k], random.choice(g[:k])) for g in groups for k in range(1, len(g))]\n    parent = list(range(n))\n    def find(u):\n        while parent[u] != u:\n            u = parent[u]\n        return u\n    for u, v in edges:\n        ru, rv = find(u), find(v)\n        assert ru != rv  # adding this edge never closes a cycle\n        parent[ru] = rv\n    assert len({find(v) for v in range(n)}) == c\n    return len(edges)\nprint({random_forest_edges(14, 3) for _ in range(2000)})",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-measures"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one weighted-average computation plus recall of the standard distributive/algebraic/holistic categories; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Rolling up AVG from partition-level aggregates; distributive vs algebraic vs holistic measures.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retail data warehouse stores, for one day, the number of transactions and the average transaction amount at each of three stores in a region:\n\n| Store | COUNT (transactions) | AVG amount (₹) |\n|---|---|---|\n| S1 | 40 | 250 |\n| S2 | 10 | 400 |\n| S3 | 50 | 300 |\n\nThe regional manager needs the average transaction amount over all the transactions of the three stores that day. Which one of the following gives the correct value **and** the correct category of the AVG measure?",
+    "options": [
+      {
+        "label": "A",
+        "text": "₹290; AVG is an algebraic measure, computed from the distributive measures SUM and COUNT"
+      },
+      {
+        "label": "B",
+        "text": "₹316.67; AVG is a distributive measure, so the regional value is the mean of the three store averages"
+      },
+      {
+        "label": "C",
+        "text": "₹290; AVG is a distributive measure"
+      },
+      {
+        "label": "D",
+        "text": "₹300; AVG is a holistic measure, so the median of the store-level averages is used"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Regional SUM $= 40(250) + 10(400) + 50(300) = 29000$ and COUNT $= 100$, so AVG $= 290$.\nAVG = SUM/COUNT is an algebraic function of two distributive measures, so AVG is **algebraic**. Answer (A).",
+      "steps": [
+        {
+          "title": "Recover each store's SUM",
+          "body": "SUM = COUNT × AVG: S1: $40 \\times 250 = 10000$; S2: $10 \\times 400 = 4000$; S3: $50 \\times 300 = 15000$."
+        },
+        {
+          "title": "Roll up the distributive measures",
+          "body": "SUM and COUNT are distributive: the regional value is the sum of the store values. Regional SUM $= 10000 + 4000 + 15000 = 29000$; regional COUNT $= 40 + 10 + 50 = 100$."
+        },
+        {
+          "title": "Compute the regional average",
+          "body": "AVG $= 29000 / 100 = 290$."
+        },
+        {
+          "title": "Categorise the measure",
+          "body": "AVG is **not distributive**: applying AVG to the store averages gives $(250 + 400 + 300)/3 \\approx 316.67 \\ne 290$. It is an algebraic function (a quotient) of a bounded number (two) of distributive measures, so it is **algebraic**. It is not holistic: holistic measures such as the median or mode cannot be computed from any bounded-size summary per partition, whereas AVG needs only two numbers per store."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "teaching": "A data cube stores pre-computed aggregates for many groupings, so a warehouse must know which measures can be rolled up from smaller groups. Measures fall into three categories. **Distributive**: applying the function to each partition and then to the partial results gives the same answer as applying it to all the data (COUNT, SUM, MIN, MAX). **Algebraic**: computable by an algebraic function of a bounded number of distributive measures (AVG = SUM/COUNT; variance and standard deviation from COUNT, SUM and the sum of squares). **Holistic**: no bounded-size summary suffices (median, mode, rank).\n\nThe practical consequence: to roll AVG up correctly, store or reconstruct SUM and COUNT per group; never average the averages unless all groups have equal counts. Here the plain mean of averages overweights store S2, which has only 10 transactions.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$29000 / 100 = 290$, and AVG = SUM/COUNT is an algebraic measure built from two distributive measures."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "316.67 is the unweighted mean of the store averages, which gives S2 (10 transactions) the same weight as S3 (50). AVG is not distributive, which is exactly why this shortcut fails."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The value 290 is right but the category is wrong. If AVG were distributive, averaging the three partial averages would give the regional value, but it gives 316.67, not 290."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "300 is the median of the store averages. AVG is not holistic: two numbers per store (SUM and COUNT) are enough to compute it exactly."
+        }
+      ],
+      "commonTrap": "Averaging the three store averages (316.67) instead of weighting them by transaction counts. This is precisely the error that the distributive-versus-algebraic distinction warns against."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (weighted average 290.0; mean of averages 316.67)",
+      "agreesWithKey": true,
+      "checkCode": "stores = {'S1': (40, 250), 'S2': (10, 400), 'S3': (50, 300)}\ntotal = sum(c * a for c, a in stores.values()); count = sum(c for c, _ in stores.values())\nprint(total / count, round(sum(a for _, a in stores.values()) / 3, 2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M09-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-09",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-lda"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the two-class LDA direction $\\Sigma^{-1}(\\mu_1 - \\mu_2)$) with a diagonal covariance, so a single short computation; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Two-class LDA direction with a shared covariance: w proportional to the inverse covariance times the mean difference.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A fault-detection system describes each machine by two features. For the two classes (class 1: faulty, class 2: healthy), the class means and the shared within-class covariance matrix are\n\n$$\\mu_1 = \\begin{bmatrix} 3 \\\\ 1 \\end{bmatrix}, \\qquad \\mu_2 = \\begin{bmatrix} 1 \\\\ 2 \\end{bmatrix}, \\qquad \\Sigma = \\begin{bmatrix} 2 & 0 \\\\ 0 & 0.5 \\end{bmatrix}.$$\n\nLinear discriminant analysis (LDA) classifies a point $\\mathbf{x}$ by comparing $\\mathbf{w}^\\top \\mathbf{x}$ with a threshold. Which one of the following vectors is a positive scalar multiple of the LDA direction $\\mathbf{w}$, where $\\mathbf{w}$ is oriented so that $\\mathbf{w}^\\top \\mu_1 > \\mathbf{w}^\\top \\mu_2$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(2,\\ -1)^\\top$"
+      },
+      {
+        "label": "B",
+        "text": "$(1,\\ -2)^\\top$"
+      },
+      {
+        "label": "C",
+        "text": "$(4,\\ -0.5)^\\top$"
+      },
+      {
+        "label": "D",
+        "text": "$(-1,\\ 2)^\\top$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "With a shared covariance, $\\mathbf{w} \\propto \\Sigma^{-1}(\\mu_1 - \\mu_2) = \\mathrm{diag}(0.5,\\ 2)\\,(2,\\ -1)^\\top = (1,\\ -2)^\\top$.\nCheck: $\\mathbf{w}^\\top\\mu_1 = 1 > \\mathbf{w}^\\top\\mu_2 = -3$. Answer (B).",
+      "steps": [
+        {
+          "title": "State the LDA direction",
+          "body": "With a common covariance $\\Sigma$, the difference of the two LDA discriminant functions is $\\delta_1(\\mathbf{x}) - \\delta_2(\\mathbf{x}) = \\mathbf{x}^\\top \\Sigma^{-1}(\\mu_1 - \\mu_2) + \\text{constant}$, so $\\mathbf{w} \\propto \\Sigma^{-1}(\\mu_1 - \\mu_2)$. Fisher's criterion gives the same direction."
+        },
+        {
+          "title": "Mean difference",
+          "body": "$\\mu_1 - \\mu_2 = (3 - 1,\\ 1 - 2)^\\top = (2,\\ -1)^\\top$."
+        },
+        {
+          "title": "Invert $\\Sigma$",
+          "body": "$\\Sigma$ is diagonal, so $\\Sigma^{-1} = \\mathrm{diag}\\left(\\tfrac{1}{2},\\ \\tfrac{1}{0.5}\\right) = \\mathrm{diag}(0.5,\\ 2)$."
+        },
+        {
+          "title": "Multiply and check the orientation",
+          "body": "$\\mathbf{w} = (0.5 \\times 2,\\ 2 \\times (-1))^\\top = (1,\\ -2)^\\top$. Then $\\mathbf{w}^\\top\\mu_1 = 3 - 2 = 1$ and $\\mathbf{w}^\\top\\mu_2 = 1 - 4 = -3$, so $\\mathbf{w}^\\top\\mu_1 > \\mathbf{w}^\\top\\mu_2$ as required. Option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "teaching": "Linear discriminant analysis models each class as a Gaussian with its own mean but a **common** covariance matrix $\\Sigma$. Because the covariance is shared, the quadratic terms cancel when the two class log-densities are compared, and the decision rule becomes linear: classify by the sign of $\\mathbf{w}^\\top\\mathbf{x} + b$ with $\\mathbf{w} = \\Sigma^{-1}(\\mu_1 - \\mu_2)$. Fisher's view reaches the same direction by maximising the separation of the projected means relative to the projected within-class spread.\n\nThe $\\Sigma^{-1}$ factor matters. A feature with a large variance is noisy, so a mean difference along it is less informative and is down-weighted; a low-variance feature is up-weighted. Here feature 1 has variance 2 and feature 2 only 0.5, so although the raw mean difference is larger along feature 1, the LDA direction leans towards feature 2: $(2, -1)$ becomes $(1, -2)$.",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is just $\\mu_1 - \\mu_2$; it ignores the covariance and would be correct only if $\\Sigma$ were a multiple of the identity matrix."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\Sigma^{-1}(\\mu_1 - \\mu_2) = (0.5 \\times 2,\\ 2 \\times (-1))^\\top = (1,\\ -2)^\\top$, with $\\mathbf{w}^\\top\\mu_1 = 1 > \\mathbf{w}^\\top\\mu_2 = -3$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is $\\Sigma(\\mu_1 - \\mu_2)$: multiplying by $\\Sigma$ instead of $\\Sigma^{-1}$ up-weights the noisy feature instead of down-weighting it."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is $\\Sigma^{-1}(\\mu_2 - \\mu_1)$, a negative multiple of the LDA direction. It gives $\\mathbf{w}^\\top\\mu_1 = -1 < \\mathbf{w}^\\top\\mu_2 = 3$, violating the required orientation."
+        }
+      ],
+      "commonTrap": "Using the raw mean difference $(2, -1)$, or multiplying by $\\Sigma$ instead of $\\Sigma^{-1}$. It is the inverse covariance that rescales each feature by its noise level."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (numpy: w = Sigma^{-1}(mu1 - mu2) = [1, -2]; only option B is a positive multiple)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nmu1 = np.array([3, 1.0]); mu2 = np.array([1, 2.0]); S = np.array([[2, 0], [0, 0.5]])\nw = np.linalg.solve(S, mu1 - mu2)\nprint(w, w @ mu1 > w @ mu2)\nopts = {'A': [2, -1], 'B': [1, -2], 'C': [4, -0.5], 'D': [-1, 2]}\nprint([k for k, v in opts.items() if abs(v[0] * w[1] - v[1] * w[0]) < 1e-12 and np.dot(v, w) > 0])",
+      "notes": ""
+    }
+  }
+]

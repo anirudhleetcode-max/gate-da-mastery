@@ -1,0 +1,115 @@
+{
+  "id": "DA2025-S5-Q17",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 17,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-relational-algebra"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (reading a nested select / natural-join / project expression) translated directly into words, about 1 min for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider the following three relations:\n\n$$\n\\texttt{Car}\\ (\\texttt{model},\\ \\texttt{year},\\ \\underline{\\texttt{serial}},\\ \\texttt{color})\n$$\n\n$$\n\\texttt{Make}\\ (\\texttt{maker},\\ \\underline{\\texttt{model}})\n$$\n\n$$\n\\texttt{Own}\\ (\\underline{\\texttt{owner}},\\ \\underline{\\texttt{serial}})\n$$\n\nA tuple in `Car` represents a specific car of a given `model`, made in a given `year`, with a `serial` number and a `color`. A tuple in `Make` specifies that a `maker` company makes cars of a certain `model`. A tuple in `Own` specifies that an `owner` owns the car with a given `serial` number. Keys are underlined; $(\\underline{\\texttt{owner}},\\ \\underline{\\texttt{serial}})$ together form key for `Own`. ($\\bowtie$ denotes natural join)\n\n$$\n\\pi_{\\texttt{owner}}(\\texttt{Own} \\bowtie (\\sigma_{\\texttt{color}=\\text{“}\\textit{red}\\text{”}}(\\texttt{Car} \\bowtie (\\sigma_{\\texttt{maker}=\\text{“}\\textit{ABC}\\text{”}}\\texttt{Make}))))\n$$\n\nWhich one of the following options describes what the above expression computes?",
+  "options": [
+    {
+      "label": "A",
+      "text": "All owners of a red car, a car made by ABC, or a red car made by ABC"
+    },
+    {
+      "label": "B",
+      "text": "All owners of more than one car, where at least one car is red and made by ABC"
+    },
+    {
+      "label": "C",
+      "text": "All owners of a red car made by ABC"
+    },
+    {
+      "label": "D",
+      "text": "All red cars made by ABC"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "Read the expression from the inside out. $\\sigma_{\\texttt{maker}=\\text{“ABC”}}\\texttt{Make}$ keeps the models made by ABC. Joining with `Car` on `model` keeps only cars of those models, and $\\sigma_{\\texttt{color}=\\text{“red”}}$ keeps the red ones: these are the **red cars made by ABC**. Joining with `Own` on `serial` attaches their owners, and $\\pi_{\\texttt{owner}}$ outputs only the owners. So the expression computes all owners of a red car made by ABC. Answer **(C)**.",
+    "steps": [
+      {
+        "title": "Find the join attributes",
+        "body": "A natural join $R \\bowtie S$ matches tuples on **all attributes with the same name** and keeps one copy of each.\n\n- $\\texttt{Car}(\\texttt{model}, \\texttt{year}, \\texttt{serial}, \\texttt{color})$ and $\\texttt{Make}(\\texttt{maker}, \\texttt{model})$ share only `model`. So $\\texttt{Car} \\bowtie (\\dots\\texttt{Make})$ pairs each car with the maker of its model.\n- That result has the attributes $(\\texttt{model}, \\texttt{year}, \\texttt{serial}, \\texttt{color}, \\texttt{maker})$. It shares only `serial` with $\\texttt{Own}(\\texttt{owner}, \\texttt{serial})$, so $\\texttt{Own} \\bowtie (\\dots)$ pairs each car with the people who own it."
+      },
+      {
+        "title": "Innermost: models made by ABC",
+        "body": "$$\\sigma_{\\texttt{maker}=\\text{“ABC”}}(\\texttt{Make})$$\n\nkeeps only the `Make` tuples whose maker is ABC. The result is the set of models that ABC makes, each written as a tuple $(\\text{ABC}, \\texttt{model})$."
+      },
+      {
+        "title": "Middle: red cars made by ABC",
+        "body": "$\\texttt{Car} \\bowtie \\sigma_{\\texttt{maker}=\\text{“ABC”}}(\\texttt{Make})$ keeps a car only if its `model` appears among ABC's models, so it lists exactly the cars made by ABC (with `maker` = ABC attached).\n\nThen $\\sigma_{\\texttt{color}=\\text{“red”}}(\\cdot)$ keeps only the red ones. A tuple survives only if it passed **both** filters, so the two conditions are combined with AND:\n\n$$\\sigma_{\\texttt{color}=\\text{“red”}}\\big(\\texttt{Car} \\bowtie \\sigma_{\\texttt{maker}=\\text{“ABC”}}(\\texttt{Make})\\big) = \\text{cars that are red } \\textbf{and } \\text{made by ABC}.$$"
+      },
+      {
+        "title": "Outer: attach owners, keep only the owner column",
+        "body": "$\\texttt{Own} \\bowtie (\\dots)$ matches each red ABC car with every `Own` tuple that has the same `serial`. The result has one row per (owner, red ABC car) pair. An owner with no red ABC car contributes no row.\n\n$\\pi_{\\texttt{owner}}$ keeps only the `owner` column and removes duplicates (relational algebra has set semantics). An owner of two red ABC cars therefore appears once.\n\n**Result:** the set of all owners who own at least one red car made by ABC."
+      },
+      {
+        "title": "Check on a small instance",
+        "body": "Let `Make` = {(ABC, m1), (XYZ, m2), (ABC, m3)} and\n\n| `model` | `year` | `serial` | `color` | maker (via `Make`) |\n| --- | --- | --- | --- | --- |\n| m1 | 2020 | 1 | red | ABC |\n| m2 | 2021 | 2 | red | XYZ |\n| m1 | 2022 | 3 | blue | ABC |\n| m3 | 2019 | 4 | red | ABC |\n| m2 | 2018 | 5 | blue | XYZ |\n\nwith `Own` = {(P, 1), (Q, 2), (R, 3), (S, 4), (S, 5), (T, 5)}.\n\n- ABC models: m1, m3. Cars made by ABC: serials 1, 3, 4. Red among them: serials **1, 4**.\n- Owners of serials 1 and 4: **P** and **S**. The expression returns $\\{P, S\\}$.\n\nCompare with the options on this instance:\n\n- (A) owners of a red car *or* an ABC car: $\\{P, Q, R, S\\}$. This is different, because Q (red XYZ car) and R (blue ABC car) are included.\n- (B) owners of more than one car with at least one red ABC car: $\\{S\\}$. This is different, because P owns only one car.\n- (C) owners of a red ABC car: $\\{P, S\\}$. This **matches**.\n- (D) red ABC cars: serials $\\{1, 4\\}$. These are cars, not owners.\n\nThe answer is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**The three operators used here.**\n\n- **Selection** $\\sigma_{\\text{condition}}(R)$ keeps the *rows* of $R$ that satisfy the condition. The columns are unchanged.\n- **Projection** $\\pi_{A_1,\\dots,A_k}(R)$ keeps only the listed *columns*. Because a relation is a set, duplicate rows are removed.\n- **Natural join** $R \\bowtie S$ pairs every tuple of $R$ with every tuple of $S$ that agrees on **all common attribute names**, and keeps one copy of those common attributes. A row of $R$ with no partner in $S$ disappears.\n\n**How to read a nested expression.** Work from the innermost parentheses outward and translate each operator into words. $\\sigma$ means \"keep those that…\", $\\bowtie$ means \"link to the matching rows of…\", and $\\pi$ means \"report only…\". The join attributes come from the schemas. Here `model` links `Car` to `Make`, and `serial` links `Own` to `Car`.\n\n**Why stacked filters mean AND.** A selection applied to the output of another selection (or of a join that already filtered rows) can only remove more rows. So $\\sigma_{c_2}(\\sigma_{c_1}(R)) = \\sigma_{c_1 \\wedge c_2}(R)$. Joining with a *filtered* `Make` works as a filter on `Car` too: a car survives only if its model is an ABC model. An OR (\"red **or** ABC\") would need a union of two separate results, $\\sigma_{\\text{red}}(\\dots) \\cup \\sigma_{\\text{ABC}}(\\dots)$, or a disjunctive condition. Nothing like that appears here.\n\n**What the join with `Own` does.** A natural join is an existence test plus attachment. An owner appears in the result if **at least one** of their cars matches, and owning one such car is enough. Counting (\"more than one car\") would need an aggregation, or a self-join of `Own` with an inequality on `serial`. This expression has neither.\n\n**Back to the question.** Inside out: models by ABC, then cars of those models, then the red ones, then who owns them, then only the names. That is \"all owners of a red car made by ABC\", option (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "The two filters are applied one after the other, so a car must be red **and** made by ABC. The expression never takes a union, so owners of a red non-ABC car, or of a non-red ABC car, are not returned. In the instance above, option (A) would wrongly include Q and R."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Nothing in the expression counts cars. The natural join with `Own` keeps an owner as soon as **one** of their cars is a red ABC car, so an owner of exactly one such car (P in the instance) is in the result. Option (B) would wrongly exclude P."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$\\sigma_{\\text{red}}(\\texttt{Car} \\bowtie \\sigma_{\\text{ABC}}\\texttt{Make})$ gives the red ABC cars. The join with `Own` on `serial` attaches their owners, and $\\pi_{\\texttt{owner}}$ returns the distinct owners. This is exactly \"all owners of a red car made by ABC\"."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "This describes only the inner subexpression $\\sigma_{\\text{red}}(\\texttt{Car} \\bowtie \\sigma_{\\text{ABC}}\\texttt{Make})$. The outer join with `Own` and the projection $\\pi_{\\texttt{owner}}$ turn it into a list of **owners**, not cars."
+      }
+    ],
+    "shortcut": "Read inside out and turn each operator into words: $\\sigma$ = \"which are\", $\\bowtie$ = \"linked to\", $\\pi$ = \"report only\". Stacked selections are ANDed, and the outermost $\\pi$ tells you what kind of object is returned (here, owners).",
+    "commonTrap": "Treating the two selections as an OR and choosing (A). Selections applied in sequence (with a join in between) combine with **AND**, so a car must be both red and made by ABC. The other trap is stopping at the inner subexpression and choosing (D), which ignores the join with `Own` and the final $\\pi_{\\texttt{owner}}$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q17-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The three relation schemas are set as display math using \\texttt, with \\underline for the underlined key attributes as printed: serial in Car, model in Make, and both owner and serial in Own. Relation and attribute names that the paper sets in typewriter font are shown as inline code in the prose. The quoted constants “red” and “ABC” are italic on the paper and are kept italic in the selection subscripts. The paper's wording \"together form key for Own\" (without \"the\") is kept as printed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (all owners of a red car made by ABC)",
+    "agreesWithKey": true,
+    "checkCode": "# Relations as lists of dicts; natural join / select / project on sets of tuples\ndef nat_join(R, S):\n    common = set(R[0]) & set(S[0]) if R and S else set()\n    return [{**r, **s} for r in R for s in S if all(r[a] == s[a] for a in common)]\nsel = lambda R, p: [t for t in R if p(t)]\nproj = lambda R, a: {t[a] for t in R}\nCar = [dict(model='m1', year=2020, serial=1, color='red'),   # ABC, red\n       dict(model='m2', year=2021, serial=2, color='red'),   # XYZ, red\n       dict(model='m1', year=2022, serial=3, color='blue'),  # ABC, blue\n       dict(model='m3', year=2019, serial=4, color='red'),   # ABC, red\n       dict(model='m2', year=2018, serial=5, color='blue')]  # XYZ, blue\nMake = [dict(maker='ABC', model='m1'), dict(maker='XYZ', model='m2'), dict(maker='ABC', model='m3')]\nOwn = [dict(owner='P', serial=1),                              # P: one red ABC car\n       dict(owner='Q', serial=2),                              # Q: red, not ABC\n       dict(owner='R', serial=3),                              # R: ABC, not red\n       dict(owner='S', serial=4), dict(owner='S', serial=5),   # S: red ABC + another car\n       dict(owner='T', serial=5)]                              # T: blue XYZ only\ninner = sel(nat_join(Car, sel(Make, lambda t: t['maker'] == 'ABC')), lambda t: t['color'] == 'red')\nexpr = proj(nat_join(Own, inner), 'owner')\nprint('red ABC cars (serials):', sorted(t['serial'] for t in inner))\nprint('expression result     :', sorted(expr))\nmaker = {m['model']: m['maker'] for m in Make}\ncar = {c['serial']: c for c in Car}\nowns = {}\nfor o in Own: owns.setdefault(o['owner'], []).append(car[o['serial']])\nred = lambda c: c['color'] == 'red'; abc = lambda c: maker[c['model']] == 'ABC'\nA = {o for o, cs in owns.items() if any(red(c) or abc(c) for c in cs)}\nB = {o for o, cs in owns.items() if len(cs) > 1 and any(red(c) and abc(c) for c in cs)}\nC = {o for o, cs in owns.items() if any(red(c) and abc(c) for c in cs)}\nprint('A:', sorted(A), A == expr); print('B:', sorted(B), B == expr); print('C:', sorted(C), C == expr)\nprint('D is a set of cars (serials), not owners:', sorted(t['serial'] for t in inner))",
+    "notes": "Independent solve: reading inside out, sigma_{maker=ABC}(Make) gives ABC's models, joining with Car on model and selecting color=red gives the red ABC cars, joining with Own on serial attaches their owners, and pi_owner returns the distinct owners. This is option (C), matching the official key C. The Python check evaluates the expression on a small instance and compares it with each option's description: the expression gives {P, S}, option A gives {P, Q, R, S}, option B gives {S}, option C gives {P, S}, and option D is a set of car serials rather than owners."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

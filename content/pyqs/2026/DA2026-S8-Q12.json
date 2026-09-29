@@ -1,0 +1,112 @@
+{
+  "id": "DA2026-S8-Q12",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 12,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-model-selection",
+  "subtopicIds": [
+    "ml-cross-validation"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (LOOCV creates one split per available training sample) plus a single subtraction (1000 - 100 = 900) after setting aside the class-count and dimension distractors; under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "Consider that you are training a classifier for a 10-class classification problem. Each input is represented as a 512-dimensional vector. There are 1000 samples, out of which first 100 will be used for testing. Let *Leave-One-Out-Cross-Validation* (LOOCV) be used for selection of the classifier model before testing.\n\nWhich of the following options is the correct number of validation splits that will be generated?",
+  "options": [
+    {
+      "label": "A",
+      "text": "10"
+    },
+    {
+      "label": "B",
+      "text": "512"
+    },
+    {
+      "label": "C",
+      "text": "900"
+    },
+    {
+      "label": "D",
+      "text": "1000"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "The first 100 samples are held out for testing, so model selection may use only $1000 - 100 = 900$ samples. LOOCV on $n$ samples makes $n$ splits (each sample is the validation set exactly once), so it generates **900** splits. The 10 classes and 512 features are irrelevant. Answer: **(C)**.",
+    "steps": [
+      {
+        "title": "Separate the test set from the model-selection data",
+        "body": "Of the $1000$ samples, the first $100$ are reserved for **testing**, i.e. for the final, unbiased evaluation after the model has been chosen. They must not be used while selecting the model. The data available for model selection is therefore\n\n$$\nn = 1000 - 100 = 900 \\text{ samples.}\n$$"
+      },
+      {
+        "title": "How LOOCV splits $n$ samples",
+        "body": "Leave-one-out cross-validation is $k$-fold cross-validation with $k = n$:\n\n- split $i$ ($i = 1, \\dots, n$) validates on the single sample $i$ and trains on the other $n - 1$ samples;\n- every sample is the validation point exactly once.\n\nSo LOOCV on $n$ samples generates exactly $n$ train/validation splits, and the LOOCV error is the average $\\frac{1}{n}\\sum_{i=1}^{n} \\text{err}_i$."
+      },
+      {
+        "title": "Count the splits",
+        "body": "With $n = 900$: $900$ splits, each with $899$ training samples and $1$ validation sample. (If several candidate models are compared, each one is evaluated on these same $900$ splits.)"
+      },
+      {
+        "title": "Discard the distractors",
+        "body": "- $10$ is the number of **classes**, which does not affect how many splits LOOCV creates.\n- $512$ is the **feature dimension**, also irrelevant to the split count.\n- $1000$ would include the $100$ test samples in model selection, which leaks test data.\n\nThe answer is **(C) 900**."
+      }
+    ],
+    "finalAnswer": "**(C)** 900",
+    "teaching": "**Why we split data at all.** A model always looks better on the data it was trained on than on new data. To choose between models (different classifiers, different hyperparameters), we need an estimate of performance on *unseen* data. At the same time, we want a final, untouched **test set** to report how well the chosen model generalises. So the data are split into (i) data used for training and model selection, and (ii) a held-out test set that is used only once, at the end.\n\n**$k$-fold cross-validation.** The model-selection data ($n$ samples) are divided into $k$ roughly equal folds. For each fold in turn, the model is trained on the other $k-1$ folds and validated on that fold. This gives $k$ train/validation splits, and the $k$ validation scores are averaged to score the model.\n\n**Leave-one-out (LOOCV)** is the extreme case $k = n$: each fold holds a single sample. So\n\n- the number of splits equals the number of samples used for model selection, $n$;\n- each split trains on $n-1$ samples, so the estimate has low bias, but it needs $n$ model fits per candidate model, which is expensive;\n- the result is deterministic, since there is only one way to leave out one sample at a time.\n\nThe number of splits depends only on how many samples take part in cross-validation. It does not depend on the number of classes, the number of features, or the classifier.\n\n**Back to this question.** $100$ of the $1000$ samples form the test set and are kept out of model selection, leaving $n = 900$. LOOCV on these $900$ samples produces $900$ validation splits, which is option **(C)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$10$ is the number of classes. The number of LOOCV splits depends on the number of samples used for model selection, not on the number of classes. (It would also be the split count of 10-fold CV, a different method.)"
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$512$ is the dimensionality of each input vector. Feature dimension has no bearing on how many train/validation splits LOOCV creates."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "Model selection uses $1000 - 100 = 900$ samples, and LOOCV leaves out each of them once, giving $900$ splits (each $899$ train / $1$ validation)."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$1000$ counts all samples, including the $100$ reserved for testing. Using test samples during model selection would leak information and bias the final test estimate, so they are excluded."
+      }
+    ],
+    "shortcut": "Number of LOOCV splits = number of samples that take part in cross-validation = total minus held-out test samples: $1000 - 100 = 900$.",
+    "commonTrap": "Choosing **1000** by applying LOOCV to the full dataset and forgetting that the first 100 samples are a held-out test set, or being distracted by the 10 classes / 512 features."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q12-1.webp",
+    "/pyq/2026/official/Q12-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. \"Leave-One-Out-Cross-Validation\" is italic in the paper and the hyphenated line break (\"Cross-/Validation\") is joined. The second official crop (Q12-2) shows only the page header and an empty table border; the whole question appears in the first crop."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C",
+    "agreesWithKey": true,
+    "checkCode": "n_total,n_test=1000,100\ntrain=list(range(n_test,n_total))  # first 100 samples form the test set\nsplits=[([j for j in train if j!=i],[i]) for i in train]  # LOOCV: leave one out\nassert all(len(tr)==len(train)-1 and len(va)==1 for tr,va in splits)\nprint(len(splits))  # 900\n",
+    "notes": "Model selection uses the 1000 - 100 = 900 non-test samples, and LOOCV creates one split per sample, giving 900; this matches the official key (C). The Python check enumerates the LOOCV splits over the 900 non-test samples and counts 900, each with 899 training samples and 1 validation sample."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

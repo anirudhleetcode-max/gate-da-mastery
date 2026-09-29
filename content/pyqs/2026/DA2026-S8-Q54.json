@@ -1,0 +1,119 @@
+{
+  "id": "DA2026-S8-Q54",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 54,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-continuous",
+  "subtopicIds": [
+    "ps-cdf",
+    "ps-pmf"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the defining properties of a CDF, applied to a discrete random variable) where each of the four statements is a direct recall check (non-negative vs positive, monotonicity, jumps at the values taken, right- vs left-continuity). None of the statements needs independent non-trivial work, so the MSQ bump does not apply; about 1 minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $X$ be a discrete valued random variable with cumulative distribution function $F(x)$.\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$F(x)$ is always a positive function."
+    },
+    {
+      "label": "B",
+      "text": "$F(x)$ is a non-decreasing function."
+    },
+    {
+      "label": "C",
+      "text": "$F(x)$ has jump discontinuity."
+    },
+    {
+      "label": "D",
+      "text": "$F(x)$ is a left continuous function."
+    }
+  ],
+  "officialKeyRaw": "B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "For any random variable, $F(x) = P(X \\le x)$ lies in $[0, 1]$, is non-decreasing and is **right**-continuous. For a discrete $X$ it is a step function that jumps by $P(X = a)$ at every value $a$ that $X$ takes. So (B) and (C) hold. (A) fails because $F$ can equal $0$ (it is only non-negative), and (D) fails because $F$ is not continuous from the left at its jumps. **(B), (C)**.",
+    "steps": [
+      {
+        "title": "Definition and the universal properties of a CDF",
+        "body": "The cumulative distribution function of a random variable $X$ is\n\n$$\nF(x) = P(X \\le x), \\qquad x \\in \\mathbb{R}.\n$$\n\nFrom the probability axioms, every CDF (discrete or not) satisfies:\n\n1. **Bounded:** $0 \\le F(x) \\le 1$.\n2. **Non-decreasing:** if $a < b$ then $\\{X \\le a\\} \\subseteq \\{X \\le b\\}$, so $F(a) \\le F(b)$.\n3. **Limits:** $\\lim_{x \\to -\\infty} F(x) = 0$ and $\\lim_{x \\to +\\infty} F(x) = 1$.\n4. **Right-continuous:** $\\lim_{h \\to 0^+} F(a + h) = F(a)$ for every $a$.\n\nThe left limit at a point is $F(a^-) = \\lim_{h \\to 0^+} F(a - h) = P(X < a)$, so the size of the gap at $a$ is\n\n$$\nF(a) - F(a^-) = P(X \\le a) - P(X < a) = P(X = a).\n$$"
+      },
+      {
+        "title": "What the CDF of a discrete random variable looks like",
+        "body": "A discrete $X$ takes values in a finite or countable set $\\{x_1, x_2, \\dots\\}$ with $p(x_i) = P(X = x_i) > 0$ and $\\sum_i p(x_i) = 1$. Its CDF is\n\n$$\nF(x) = \\sum_{x_i \\le x} p(x_i),\n$$\n\na **step function**: flat between consecutive values and jumping up by $p(x_i)$ at each $x_i$.\n\nExample: $X \\sim \\text{Bernoulli}(0.3)$, i.e. $P(X = 0) = 0.7$ and $P(X = 1) = 0.3$:\n\n$$\nF(x) = \\begin{cases} 0, & x < 0 \\\\ 0.7, & 0 \\le x < 1 \\\\ 1, & x \\ge 1 \\end{cases}\n$$\n\nIt jumps by $0.7$ at $x = 0$ and by $0.3$ at $x = 1$. This example is used below to test each statement."
+      },
+      {
+        "title": "Check (A) and (B)",
+        "body": "**(A)** \"Always a positive function\" would need $F(x) > 0$ for every $x$. In the Bernoulli example, $F(x) = 0$ for all $x < 0$. More generally, $F(x) \\to 0$ as $x \\to -\\infty$, and whenever the values of $X$ are bounded below (counts, Bernoulli, binomial, a die, ...), $F(x)$ is exactly $0$ to the left of the smallest value. A CDF is only **non-negative**, so (A) is **incorrect**.\n\n**(B)** Monotonicity (property 2) holds for every CDF: moving $x$ to the right can only add outcomes to the event $\\{X \\le x\\}$. In the example, $F$ goes $0 \\to 0.7 \\to 1$ and never decreases. (B) is **correct**."
+      },
+      {
+        "title": "Check (C) and (D)",
+        "body": "**(C)** Every value $x_i$ that a discrete $X$ takes has $P(X = x_i) > 0$, so\n\n$$\nF(x_i) - F(x_i^-) = p(x_i) > 0 .\n$$\n\nBoth one-sided limits exist but differ, which is exactly a **jump discontinuity** at $x_i$. The probabilities must add up to 1, so there is at least one such value: the CDF of a discrete random variable always has jump discontinuities. In the example, the jumps are at $x = 0$ (size $0.7$) and $x = 1$ (size $0.3$). (C) is **correct**.\n\n**(D)** Left continuity at $a$ would require $F(a^-) = F(a)$, i.e. $P(X = a) = 0$. At every jump point, $F(x_i^-) = F(x_i) - p(x_i) < F(x_i)$. In the example, $F(0^-) = 0$ but $F(0) = 0.7$. From the right, $F(0^+) = 0.7 = F(0)$, so the CDF is **right**-continuous, not left-continuous. (D) is **incorrect**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "| Option | Statement | True for every discrete $X$? |\n| --- | --- | --- |\n| (A) | $F(x)$ always positive | No: $F$ can equal $0$ (only $F \\ge 0$ is guaranteed) |\n| (B) | $F(x)$ non-decreasing | Yes |\n| (C) | $F(x)$ has jump discontinuity | Yes: a jump of size $P(X = x_i)$ at each value $x_i$ |\n| (D) | $F(x)$ left continuous | No: right-continuous, discontinuous from the left at each jump |\n\nAnswer → **(B), (C)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C)**",
+    "teaching": "**What a CDF records.** For any random variable $X$, the cumulative distribution function $F(x) = P(X \\le x)$ answers one question: how much probability lies at or to the left of $x$? As $x$ sweeps from $-\\infty$ to $+\\infty$, $F$ accumulates probability from $0$ up to $1$.\n\n**Why its properties hold.**\n\n- *Range:* $F(x)$ is a probability, so $0 \\le F(x) \\le 1$. It can be exactly $0$ or exactly $1$, so the right word is **non-negative**, not positive.\n- *Non-decreasing:* for $a < b$, the event $\\{X \\le a\\}$ is contained in $\\{X \\le b\\}$.\n- *Limits:* $F(x) \\to 0$ as $x \\to -\\infty$ and $F(x) \\to 1$ as $x \\to +\\infty$.\n- *Right-continuous:* the events $\\{X \\le a + \\tfrac{1}{n}\\}$ shrink down to $\\{X \\le a\\}$, so by continuity of probability $F(a + \\tfrac{1}{n}) \\to F(a)$. From the left, the events $\\{X \\le a - \\tfrac{1}{n}\\}$ grow up to $\\{X < a\\}$, which **excludes** the point $a$, so $F(a^-) = P(X < a)$. The gap $F(a) - F(a^-) = P(X = a)$ is the probability sitting exactly at $a$.\n\n**Discrete vs continuous.** A continuous random variable has $P(X = a) = 0$ for every $a$, so its CDF has no gaps and is continuous from both sides. A discrete random variable puts positive mass $p(x_i)$ on each of its values, so its CDF is a staircase: flat between values and jumping up by $p(x_i)$ at each value. When you draw it, the filled dot sits on the **upper** step, because the \"$\\le$\" in $P(X \\le x)$ includes the point itself; that is right-continuity.\n\n**Connecting to this question.** For a discrete $X$: being non-decreasing (B) is a universal property of CDFs; jumps (C) are exactly what distinguishes a discrete CDF from a continuous one; \"positive\" (A) confuses $\\ge 0$ with $> 0$; and \"left continuous\" (D) gets the side wrong, since at every jump the CDF is discontinuous from the left. The correct statements are **(B), (C)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$F(x)$ is a probability, so it is **non-negative**, not necessarily positive. For $X \\sim \\text{Bernoulli}(0.3)$, $F(x) = 0$ for every $x < 0$. In general $F(x) \\to 0$ as $x \\to -\\infty$, and it equals $0$ to the left of the smallest value when the values of $X$ are bounded below."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "For $a < b$, $\\{X \\le a\\} \\subseteq \\{X \\le b\\}$, so $F(a) \\le F(b)$. This holds for every CDF, discrete or not."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "At each value $x_i$ with $P(X = x_i) > 0$ the CDF jumps: $F(x_i) - F(x_i^-) = P(X = x_i) > 0$. A discrete $X$ has at least one such value, so its step-function CDF always has jump discontinuities."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$F(x) = P(X \\le x)$ is **right**-continuous. From the left, $F(x_i^-) = P(X < x_i) = F(x_i) - P(X = x_i) < F(x_i)$, so at every jump point $F$ is not left-continuous. For Bernoulli$(0.3)$, $F(0^-) = 0 \\ne 0.7 = F(0)$."
+      }
+    ],
+    "shortcut": "Keep the CDF checklist in mind: $0 \\le F \\le 1$, non-decreasing, $F(-\\infty) = 0$, $F(+\\infty) = 1$, **right**-continuous. Discrete ⇒ staircase with jumps; continuous ⇒ no jumps. Any option claiming \"positive\" or \"left continuous\" is out.",
+    "commonTrap": "Picking (D) by mixing up the sides. Because of the \"$\\le$\" in $P(X \\le x)$, the value $F(x_i)$ already includes the jump at $x_i$, so $F$ agrees with the upper step and is continuous from the **right**. (A few texts define the distribution function as $P(X < x)$, which is left-continuous; the official key's verdict matches the standard definition $P(X \\le x)$ used in the question.) The other trap is (A): a CDF is non-negative, and it is exactly $0$ to the left of the smallest value the variable can take."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q54-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain text with italic math X and F(x), transcribed verbatim, including 'discrete valued' without a hyphen and 'has jump discontinuity' without an article. The paper's layout has an empty row between the question text and the options; it carries no content. No figure is needed: the faint background graphic in the crop is the paper's watermark, and no candidate figures were extracted for this region."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as Fr\n# Discrete X: fair die on {1,...,6}; F(x) = P(X <= x)\npmf = {k: Fr(1, 6) for k in range(1, 7)}\nF = lambda x: sum(p for v, p in pmf.items() if v <= x)\neps = Fr(1, 10**9)\n# (A) positive everywhere? F(0) = 0, so no\nA = all(F(x) > 0 for x in [-5, 0, Fr(1, 2), 3])\n# (B) non-decreasing on a fine grid\ngrid = [Fr(k, 10) for k in range(-20, 91)]\nB = all(F(a) <= F(b) for a, b in zip(grid, grid[1:]))\n# (C) jump at every atom: F(a) - F(a-) = P(X = a) > 0\nC = all(F(a) - F(a - eps) == pmf[a] > 0 for a in pmf)\n# (D) left continuous means F(a-) == F(a); fails at atoms\nD = all(F(a - eps) == F(a) for a in pmf)\nright_cont = all(F(a + eps) == F(a) for a in pmf)\nprint(dict(A=A, B=B, C=C, D=D, right_continuous=right_cont))\nassert (A, B, C, D) == (False, True, True, False)   # -> B;C",
+    "notes": "Each statement was checked against the standard properties of F(x) = P(X <= x) and on a concrete discrete variable (a fair die) with exact rational arithmetic. F(0) = 0, so F is not always positive and (A) fails. F is non-decreasing on a fine grid (B holds). At each value a of the die, F(a) - F(a-) = P(X = a) = 1/6 > 0, a jump discontinuity (C holds). The left limit differs from F(a) at every such value while the right limit equals it, so F is right-continuous but not left-continuous (D fails). Independent answer B;C matches official key B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

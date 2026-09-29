@@ -1,0 +1,112 @@
+{
+  "id": "DA2025-S5-Q16",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 16,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-normalization",
+  "subtopicIds": [
+    "dbw-normal-forms",
+    "dbw-relational-algebra"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (what dependency preservation buys in a decomposition) answered by direct recall that lost dependencies must be checked on joined relations, under 1 min for a prepared student.",
+  "estimatedTimeSec": 40,
+  "stem": "If a relational decomposition is not dependency-preserving, which one of the following relational operators will be executed more frequently in order to maintain the dependencies?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Selection"
+    },
+    {
+      "label": "B",
+      "text": "Projection"
+    },
+    {
+      "label": "C",
+      "text": "Join"
+    },
+    {
+      "label": "D",
+      "text": "Set union"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "If a decomposition is not dependency-preserving, some functional dependency $X \\rightarrow Y$ has its attributes split across different relations. It cannot be checked on any single relation. To enforce it on every insert or update, the DBMS must first recombine the relations with a **join** and then check the FD on the result. So joins are executed more often. Answer **(C)**.",
+    "steps": [
+      {
+        "title": "Recall what dependency preservation means",
+        "body": "Let relation $R$ with FD set $F$ be decomposed into $R_1, \\dots, R_n$. Let $F_i$ be the FDs of $F^+$ that use only attributes of $R_i$ (the *projection* of $F$ on $R_i$). The decomposition is **dependency-preserving** if\n\n$$(F_1 \\cup F_2 \\cup \\cdots \\cup F_n)^+ = F^+.$$\n\nWhen this holds, every FD can be enforced by checking each relation **separately**, and no combining of tables is needed."
+      },
+      {
+        "title": "What happens when preservation fails",
+        "body": "If the decomposition is not dependency-preserving, at least one FD $X \\rightarrow Y$ in $F$ is not implied by $\\bigcup_i F_i$. Its attributes $X \\cup Y$ do not all sit in one relation (and it cannot be derived from FDs that do). To check it after an insertion or update, the system must rebuild the tuples over $X \\cup Y$ by **joining** the relations that hold those attributes, and then test the FD on the join result. This must happen on every relevant modification, so the join operator runs much more often."
+      },
+      {
+        "title": "A concrete illustration",
+        "body": "Take $R(A, B, C)$ with $F = \\{AB \\rightarrow C,\\; C \\rightarrow B\\}$ and the (BCNF) decomposition $R_1(A, C)$, $R_2(B, C)$. It is lossless, because $R_1 \\cap R_2 = \\{C\\}$ and $C \\rightarrow B$ makes $C$ a key of $R_2$. The projected FDs are only trivial ones on $R_1$ and $C \\rightarrow B$ on $R_2$, so $AB \\rightarrow C$ is **lost**.\n\nConsider the instances $R_1 = \\{(a_1, c_1), (a_1, c_2)\\}$ and $R_2 = \\{(b_1, c_1), (b_1, c_2)\\}$. Each relation is valid on its own ($C \\rightarrow B$ holds in $R_2$). But\n\n$$R_1 \\bowtie R_2 = \\{(a_1, b_1, c_1),\\ (a_1, b_1, c_2)\\},$$\n\nwhich violates $AB \\rightarrow C$: the same $(a_1, b_1)$ maps to two different $C$ values. The violation shows up **only after the join**."
+      },
+      {
+        "title": "Eliminate the other operators",
+        "body": "- **Selection** ($\\sigma$) filters rows of a single relation. It cannot bring together attributes stored in different relations.\n- **Projection** ($\\pi$) removes attributes. It is how the decomposition is formed ($R_i = \\pi_{R_i}(R)$), but it cannot reconstruct the combined tuples needed to test a cross-relation FD.\n- **Set union** ($\\cup$) needs union-compatible relations (same schema). The decomposed relations have different schemas, and union does not match tuples on common attributes.\n\nOnly the **join** recombines the decomposed relations, so the answer is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Why decompose at all?** A relation that mixes several facts causes redundancy and update, insertion and deletion anomalies. Normalisation splits it into smaller relations (to 3NF or BCNF) using projection. A good decomposition should have two properties.\n\n1. **Lossless join.** Joining the pieces gives back exactly the original relation, with no spurious tuples. Without this, the decomposition loses information.\n2. **Dependency preservation.** Every functional dependency can be checked inside a single piece, so the pieces' own FDs together imply all of $F$.\n\n**Why preservation matters in practice.** An FD is an integrity constraint that the DBMS must re-check whenever data changes. If all of an FD's attributes live in one table, checking it is cheap: look only at that table, usually through an index on the determinant $X$. If the attributes are scattered across tables, no single table \"sees\" the whole dependency. The only way to test it is to reconstruct the combined tuples with a (natural) **join** and look for two tuples that agree on $X$ but differ on $Y$. Joins are among the most expensive relational operations, and here one has to run on every relevant update.\n\n**The BCNF vs 3NF trade-off.** A BCNF decomposition is always lossless but is **not** always dependency-preserving. The classic case is $R(A,B,C)$ with $AB \\rightarrow C$ and $C \\rightarrow B$, where BCNF forces the split $(A,C), (B,C)$ and loses $AB \\rightarrow C$. 3NF synthesis always achieves both properties. That is why designers sometimes accept 3NF, keeping a little redundancy to avoid expensive join-based constraint checks.\n\n**Back to the question.** \"Not dependency-preserving\" means some FD spans several relations. Maintaining that FD requires recombining the relations, and the operator that recombines relations is the join. So join is executed more frequently, option (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Selection $\\sigma$ works on the rows of one relation. A lost dependency involves attributes from several relations, which selection alone cannot combine."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Projection $\\pi$ is what *creates* the decomposed relations. It discards attributes rather than recombining them, so it cannot rebuild the tuples needed to test a cross-relation FD."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "An FD whose attributes are split across relations can only be checked after joining those relations (e.g. $R_1 \\bowtie R_2$ exposes the $AB \\rightarrow C$ violation above). Every update then triggers a join, so joins run more frequently."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Set union requires union-compatible schemas and stacks tuples rather than matching them on common attributes. The decomposed relations have different schemas, so union plays no role in checking dependencies."
+      }
+    ],
+    "shortcut": "A lost FD is one that no single relation can \"see\". Checking it means putting relations back together, and the operator that puts relations back together is the join.",
+    "commonTrap": "Picking **Projection** because decomposition is carried out with projection. The question asks what must be executed to *maintain* (check) the dependencies afterwards, and that requires recombining relations. Another trap is mixing up dependency preservation with the lossless-join property. Both involve joins, but lossless join is about reconstructing $R$ correctly, while dependency preservation is about checking FDs locally without joins."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q16-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper hyphenates \"depen-dencies\" across a line break; it is transcribed as the single word \"dependencies\"."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "C (Join)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import combinations\nF = [({'A','B'}, {'C'}), ({'C'}, {'B'})]          # R(A,B,C): AB->C, C->B\ndef closure(X, fds):\n    X = set(X); ch = True\n    while ch:\n        ch = False\n        for l, r in fds:\n            if l <= X and not r <= X: X |= r; ch = True\n    return X\ndef project(fds, attrs):                           # FDs of F+ that live inside attrs\n    out = []\n    for k in range(1, len(attrs)+1):\n        for L in combinations(sorted(attrs), k):\n            R = (closure(L, fds) & set(attrs)) - set(L)\n            if R: out.append((set(L), R))\n    return out\nR1, R2 = {'A','C'}, {'B','C'}\nG = project(F, R1) + project(F, R2)\nprint('projected FDs:', [(''.join(sorted(l)), ''.join(sorted(r))) for l, r in G])\nprint('AB->C preserved?', {'C'} <= closure({'A','B'}, G))\nprint('lossless? (common attr C is a key of R2):', closure(R1 & R2, F) >= R2)\nr1 = {('a1','c1'), ('a1','c2')}                    # R1(A,C): only trivial FDs to check\nr2 = {('b1','c1'), ('b1','c2')}                    # R2(B,C): C->B holds\nprint('C->B holds in r2:', len({c for b, c in r2}) == len(r2))\njoined = {(a, b, c) for a, c in r1 for b, c2 in r2 if c == c2}   # natural join on C\nab = {}\nfor a, b, c in joined: ab.setdefault((a, b), set()).add(c)\nprint('join:', sorted(joined))\nprint('AB->C violated after join:', any(len(v) > 1 for v in ab.values()))",
+    "notes": "Independent solve: a non-dependency-preserving decomposition leaves some FD whose attributes are spread over several relations, so enforcing it requires joining those relations before checking. Join is therefore executed more frequently, option (C). This matches the official key C. The conceptual answer is illustrated by the Python check on R(A,B,C) with F = {AB->C, C->B} decomposed into (A,C), (B,C). The projected FDs are only C->B, so AB->C is not preserved; the decomposition is lossless; and a legal-looking instance of R1 and R2 violates AB->C only in R1 join R2."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -1,0 +1,119 @@
+{
+  "id": "DA2025-S5-Q55",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 55,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-lda",
+    "ml-problem-types"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it needs one concept (the nearest-class-mean classifier) worked through in 2–3 routine steps (expanding both squared norms, cancelling $\\|x\\|^2$ and reading off $w$ and $b$) and then checking four statements against the result, including the linear-versus-affine wording, in about two minutes.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider a two-class problem in $\\mathbb{R}^d$ with class labels *red* and *green*. Let $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$ be the means of the two classes. Given test sample $x \\in \\mathbb{R}^d$, a classifier calculates the squared Euclidean distance (denoted by $\\| \\cdot \\|^2$) between $x$ and the means of the two classes and assigns the class label that the sample $x$ is closest to. That is, the classifier computes\n\n$$\nf(x) = \\|\\mu_{\\mathit{red}} - x\\|^2 - \\|\\mu_{\\mathit{green}} - x\\|^2\n$$\n\nand assigns the label *red* to $x$ if $f(x) < 0$, and *green* otherwise. Which of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "The sample $x = 0$ is assigned the label *green* if $\\|\\mu_{\\mathit{red}}\\| < \\|\\mu_{\\mathit{green}}\\|$"
+    },
+    {
+      "label": "B",
+      "text": "$f$ is a linear function of $x$"
+    },
+    {
+      "label": "C",
+      "text": "$f(x) = w^\\top x + b$, where $w$ and $b$ are functions of $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$"
+    },
+    {
+      "label": "D",
+      "text": "$f$ is a quadratic polynomial in $x$"
+    }
+  ],
+  "officialKeyRaw": "B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Expand both squared distances: the $\\|x\\|^2$ terms cancel, leaving $f(x) = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})^\\top x + \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$. So $f(x) = w^\\top x + b$ with $w = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})$ and $b = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$: (B) and (C) are true, and (D) is false. At $x = 0$, $f(0) = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 < 0$ when $\\|\\mu_{\\mathit{red}}\\| < \\|\\mu_{\\mathit{green}}\\|$, so $x = 0$ is labelled *red*, not *green*: (A) is false. The answer is **(B), (C)**.",
+    "steps": [
+      {
+        "title": "Expand a squared Euclidean distance",
+        "body": "For any vectors $\\mu, x \\in \\mathbb{R}^d$, using $\\|v\\|^2 = v^\\top v$ and $\\mu^\\top x = x^\\top \\mu$:\n\n$$\n\\|\\mu - x\\|^2 = (\\mu - x)^\\top(\\mu - x) = \\|\\mu\\|^2 - 2\\mu^\\top x + \\|x\\|^2.\n$$\n\nEach distance on its own is a quadratic function of $x$ because of the $\\|x\\|^2 = \\sum_j x_j^2$ term."
+      },
+      {
+        "title": "Subtract the two distances",
+        "body": "Apply the expansion to both class means:\n\n$$\n\\begin{aligned}\nf(x) &= \\left(\\|\\mu_{\\mathit{red}}\\|^2 - 2\\mu_{\\mathit{red}}^\\top x + \\|x\\|^2\\right) - \\left(\\|\\mu_{\\mathit{green}}\\|^2 - 2\\mu_{\\mathit{green}}^\\top x + \\|x\\|^2\\right) \\\\\n&= 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})^\\top x + \\left(\\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2\\right).\n\\end{aligned}\n$$\n\nThe quadratic term $\\|x\\|^2$ appears with coefficient $+1$ in both distances, so it **cancels** in the difference. Every surviving term is either linear in $x$ or constant."
+      },
+      {
+        "title": "Identify w and b (statements B, C and D)",
+        "body": "The result has the form $f(x) = w^\\top x + b$ with\n\n$$\nw = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}}), \\qquad b = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 .\n$$\n\n- **(C) is true**: $w$ and $b$ depend only on the two class means.\n- **(B) is true**: $f$ is a linear function of $x$ in the sense used in machine learning (a linear classifier / linear discriminant $w^\\top x + b$). Strictly, a map with a constant $b$ is *affine*; the key treats this as linear, which is the standard ML usage.\n- **(D) is false**: after cancellation $f$ has degree $1$ in $x$ (degree $0$ if the means coincide). There is no $x_j^2$ or $x_j x_k$ term, so it is not a quadratic polynomial.\n\nThe decision boundary $f(x) = 0$ is therefore a hyperplane: the perpendicular bisector of the segment joining $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$."
+      },
+      {
+        "title": "Classify the origin (statement A)",
+        "body": "Put $x = 0$:\n\n$$\nf(0) = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})^\\top 0 + \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 .\n$$\n\nIf $\\|\\mu_{\\mathit{red}}\\| < \\|\\mu_{\\mathit{green}}\\|$, then $\\|\\mu_{\\mathit{red}}\\|^2 < \\|\\mu_{\\mathit{green}}\\|^2$ (norms are non-negative), so $f(0) < 0$ and the rule assigns **red**. This is just the definition: $\\|\\mu_{\\mathit{red}}\\|$ and $\\|\\mu_{\\mathit{green}}\\|$ are the distances from the origin to the two means, and the origin goes to the nearer one.\n\nFor example, with $d = 2$, $\\mu_{\\mathit{red}} = (1, 0)$ and $\\mu_{\\mathit{green}} = (0, 3)$: $f(0) = 1 - 9 = -8 < 0$, so $x = 0$ is labelled red.\n\nStatement **(A) is false**."
+      },
+      {
+        "title": "Conclusion",
+        "body": "$f(x) = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})^\\top x + \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$ is linear (affine) in $x$ with $w$ and $b$ determined by the class means, so (B) and (C) are true and (D) is false; the origin goes to the nearer mean, red, so (A) is false. The correct statements are **(B) and (C)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C)**",
+    "teaching": "**Nearest-mean (nearest-centroid) classifier.** The simplest way to classify a point is to summarise each class by its mean vector and assign a new point to the class whose mean is closest. With squared Euclidean distance, comparing the two distances is the same as looking at the sign of their difference, which is exactly the $f(x)$ in this question.\n\n**Why the boundary is linear.** Each squared distance $\\|\\mu - x\\|^2 = \\|\\mu\\|^2 - 2\\mu^\\top x + \\|x\\|^2$ contains the quadratic term $\\|x\\|^2$. But that term does not depend on the class, so it is the **same** in both distances and disappears when you subtract. What remains is\n\n$$\nf(x) = w^\\top x + b, \\quad w = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}}), \\quad b = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2.\n$$\n\nThe boundary $f(x) = 0$ is a hyperplane perpendicular to $\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}}$ passing through the midpoint $\\tfrac12(\\mu_{\\mathit{red}} + \\mu_{\\mathit{green}})$, i.e. the perpendicular bisector of the two means. Every point on it is equidistant from the two means.\n\n**Linear versus affine.** In linear algebra, a *linear* map satisfies $f(0) = 0$; a map of the form $w^\\top x + b$ is *affine*. In machine learning, however, \"linear classifier\", \"linear model\" and \"linear decision boundary\" always mean $w^\\top x + b$ with a bias term. GATE follows the ML usage here.\n\n**Connection to LDA.** Linear discriminant analysis with equal class priors and a shared covariance $\\Sigma = \\sigma^2 I$ reduces exactly to this nearest-mean rule. The general principle: a classifier is linear whenever the quadratic part of its score is the same for every class and cancels. When the classes have different covariances (QDA), the quadratic terms no longer cancel and the boundary becomes curved.\n\n**Back to this question.** The cancellation makes $f$ affine (B, C true, D false). At $x = 0$, $f(0) = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$, which is negative when the red mean is nearer the origin, so the origin is labelled red (A false).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$f(0) = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 < 0$ when $\\|\\mu_{\\mathit{red}}\\| < \\|\\mu_{\\mathit{green}}\\|$, so the rule assigns **red** to $x = 0$. The origin simply goes to the nearer mean, and the statement has the label reversed."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "The $\\|x\\|^2$ terms cancel, leaving $f(x) = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})^\\top x + \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$, a linear function of $x$ in the ML sense (a linear discriminant with a bias term; strictly, affine)."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "From the expansion, $f(x) = w^\\top x + b$ with $w = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})$ and $b = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$, both of which are functions of the two class means only."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "Although each squared distance is quadratic in $x$, the quadratic term $\\|x\\|^2$ is identical in both and cancels in the difference. $f$ has degree $1$, so it is not a quadratic polynomial in $x$."
+      }
+    ],
+    "shortcut": "A difference of two squared distances to fixed points is always affine: the $\\|x\\|^2$ terms cancel. So $f(x) = 2(\\mu_2 - \\mu_1)^\\top x + \\|\\mu_1\\|^2 - \\|\\mu_2\\|^2$, and the decision boundary is the perpendicular bisector of the two means. For (A), the origin simply goes to whichever mean is closer to it.",
+    "commonTrap": "Marking (D) because each $\\|\\mu - x\\|^2$ is quadratic in $x$, without noticing that the $\\|x\\|^2$ terms cancel in the difference. A second trap is rejecting (B) on the grounds that $w^\\top x + b$ is affine rather than linear; in the ML sense intended here it counts as a linear function. In (A), misreading the sign convention ($f < 0$ means red) leads to the reversed label."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q55-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the class names red and green in italics in running text (rendered as *red*, *green*) and as italic word subscripts on the means, rendered here as $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$. The paper writes the origin in option (A) as a plain $0$ (not a bold zero vector) and the transpose as $w^\\top$; both are kept as printed. No figure is needed. The watermark on the page is not part of the question."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C (f(x) = 2(mu_green - mu_red)^T x + ||mu_red||^2 - ||mu_green||^2 is affine: B, C true, D false; f(0) < 0 when ||mu_red|| < ||mu_green||, so x = 0 is labelled red: A false)",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp, numpy as np\nd=3\nx=sp.Matrix(sp.symbols('x1:4')); r=sp.Matrix(sp.symbols('r1:4')); g=sp.Matrix(sp.symbols('g1:4'))\nf=sp.expand((r-x).dot(r-x)-(g-x).dot(g-x))\nw=2*(g-r); b=r.dot(r)-g.dot(g)\nprint('f - (w^T x + b) =', sp.simplify(f-(w.dot(x)+b)))           # 0 -> C true, f affine (\"linear\") -> B true\nprint('total degree of f in x:', sp.Poly(f,*x).total_degree())    # 1 -> not quadratic -> D false\n# A: x=0 gives f(0)=||r||^2-||g||^2 <0 when ||r||<||g||  -> label red, not green -> A false\nrng=np.random.default_rng(0); bad=0\nfor _ in range(10000):\n    mr,mg=rng.normal(size=d),rng.normal(size=d)\n    if np.linalg.norm(mr)<np.linalg.norm(mg):\n        f0=np.sum((mr-0)**2)-np.sum((mg-0)**2)\n        bad+= (f0>=0)   # would be green\nprint('cases with ||mu_red||<||mu_green|| where x=0 labelled green:', bad)  # 0\n",
+    "notes": "Hand solve: expanding both squared norms cancels ||x||^2, giving f(x) = w^T x + b with w = 2(mu_green - mu_red) and b = ||mu_red||^2 - ||mu_green||^2, so B and C are true and D is false; f(0) = ||mu_red||^2 - ||mu_green||^2 < 0 under the condition in (A), so x = 0 is labelled red and A is false. The SymPy check (d = 3) confirms f - (w^T x + b) = 0 symbolically and that f has total degree 1 in x; a random NumPy check over 10000 mean pairs finds no case where x = 0 is labelled green when ||mu_red|| < ||mu_green||. Statement (B) is correct in the machine-learning sense of 'linear' (affine, with bias b); the official key marks it correct. This agrees with the official key B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

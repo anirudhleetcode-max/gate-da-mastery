@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q17",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 17,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-svm"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (hard-margin SVM and the definition of support vectors) applied in two or three steps (spot the empty strip between the classes, put the hyperplane in canonical form, check which points lie on the margin) with routine arithmetic, about 1.5–2 minutes.",
+  "estimatedTimeSec": 100,
+  "stem": "Consider the dataset with six datapoints: $\\{(\\boldsymbol{x}_1, \\boldsymbol{y}_1), (\\boldsymbol{x}_2, \\boldsymbol{y}_2), \\ldots, (\\boldsymbol{x}_6, \\boldsymbol{y}_6)\\}$, where $\\boldsymbol{x}_1 = \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix}$, $\\boldsymbol{x}_2 = \\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix}$, $\\boldsymbol{x}_3 = \\begin{bmatrix} 0 \\\\ -1 \\end{bmatrix}$, $\\boldsymbol{x}_4 = \\begin{bmatrix} -1 \\\\ 0 \\end{bmatrix}$, $\\boldsymbol{x}_5 = \\begin{bmatrix} 2 \\\\ 2 \\end{bmatrix}$, $\\boldsymbol{x}_6 = \\begin{bmatrix} -2 \\\\ -2 \\end{bmatrix}$ and the labels are given by $\\boldsymbol{y}_1 = \\boldsymbol{y}_2 = \\boldsymbol{y}_5 = 1$, and $\\boldsymbol{y}_3 = \\boldsymbol{y}_4 = \\boldsymbol{y}_6 = -1$. A hard margin linear support vector machine is trained on the above dataset.\n\nWhich **ONE** of the following sets is a possible set of support vectors?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\{\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_5\\}$"
+    },
+    {
+      "label": "B",
+      "text": "$\\{\\boldsymbol{x}_3, \\boldsymbol{x}_4, \\boldsymbol{x}_5\\}$"
+    },
+    {
+      "label": "C",
+      "text": "$\\{\\boldsymbol{x}_4, \\boldsymbol{x}_5\\}$"
+    },
+    {
+      "label": "D",
+      "text": "$\\{\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4\\}$"
+    }
+  ],
+  "officialKeyRaw": "D",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "D"
+  },
+  "solution": {
+    "quick": "The classes are separated by the lines $u + v = 1$ (through $\\boldsymbol{x}_1, \\boldsymbol{x}_2$) and $u + v = -1$ (through $\\boldsymbol{x}_3, \\boldsymbol{x}_4$), writing a point as $[u, v]^\\top$. The maximum-margin hyperplane is halfway between them: $\\mathbf{w} = [1, 1]^\\top$, $b = 0$, margin $1/\\lVert\\mathbf{w}\\rVert = 1/\\sqrt{2}$. Exactly $\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4$ have $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) = 1$, while $\\boldsymbol{x}_5, \\boldsymbol{x}_6$ have value $4$, so $\\boldsymbol{x}_5$ can never be a support vector. Options A, B and C all contain $\\boldsymbol{x}_5$ → **(D)**.",
+    "steps": [
+      {
+        "title": "Set up the data and the hard-margin SVM",
+        "body": "Write a point as $\\boldsymbol{x} = [u, v]^\\top$.\n\n| Point | $u$ | $v$ | label $y_i$ | $u + v$ |\n| --- | --- | --- | --- | --- |\n| $\\boldsymbol{x}_1$ | $1$ | $0$ | $+1$ | $1$ |\n| $\\boldsymbol{x}_2$ | $0$ | $1$ | $+1$ | $1$ |\n| $\\boldsymbol{x}_5$ | $2$ | $2$ | $+1$ | $4$ |\n| $\\boldsymbol{x}_3$ | $0$ | $-1$ | $-1$ | $-1$ |\n| $\\boldsymbol{x}_4$ | $-1$ | $0$ | $-1$ | $-1$ |\n| $\\boldsymbol{x}_6$ | $-2$ | $-2$ | $-1$ | $-4$ |\n\nThe hard-margin linear SVM solves\n\n$$\n\\min_{\\mathbf{w}, b} \\ \\tfrac{1}{2}\\lVert\\mathbf{w}\\rVert^2 \\quad \\text{subject to} \\quad y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) \\ge 1, \\quad i = 1, \\ldots, 6 .\n$$\n\nThe **support vectors** are the training points that lie on the margin boundaries, $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) = 1$; in the dual these are the only points that can receive a multiplier $\\alpha_i > 0$. A point with $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) > 1$ always has $\\alpha_i = 0$ and is never a support vector."
+      },
+      {
+        "title": "Find the widest empty strip between the classes",
+        "body": "The last column of the table shows that every positive point has $u + v \\ge 1$ and every negative point has $u + v \\le -1$. So the strip $-1 < u + v < 1$ contains no data, and its width is the distance between the parallel lines $u + v = 1$ and $u + v = -1$:\n\n$$\n\\frac{|1 - (-1)|}{\\sqrt{1^2 + 1^2}} = \\frac{2}{\\sqrt{2}} = \\sqrt{2} .\n$$\n\nNo separating hyperplane can do better: the full margin can never exceed the distance between the closest pair of opposite-class points, and $\\lVert\\boldsymbol{x}_1 - \\boldsymbol{x}_3\\rVert = \\lVert[1, 1]^\\top\\rVert = \\sqrt{2}$ (likewise $\\lVert\\boldsymbol{x}_2 - \\boldsymbol{x}_4\\rVert = \\sqrt{2}$). Hence the optimal boundary is the centre line of this strip, $u + v = 0$, with full margin width $\\sqrt{2}$."
+      },
+      {
+        "title": "Write the hyperplane in canonical form",
+        "body": "Scale $u + v = 0$ so that the closest points give exactly $1$: $\\mathbf{w} = [1, 1]^\\top$, $b = 0$. Then $\\lVert\\mathbf{w}\\rVert = \\sqrt{2}$ and the full margin is $2/\\lVert\\mathbf{w}\\rVert = 2/\\sqrt{2} = \\sqrt{2}$, matching Step 2. The functional margins are\n\n| Point | $\\mathbf{w}^\\top\\boldsymbol{x}_i + b$ | $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b)$ | On the margin? |\n| --- | --- | --- | --- |\n| $\\boldsymbol{x}_1$ | $1$ | $1$ | yes |\n| $\\boldsymbol{x}_2$ | $1$ | $1$ | yes |\n| $\\boldsymbol{x}_3$ | $-1$ | $1$ | yes |\n| $\\boldsymbol{x}_4$ | $-1$ | $1$ | yes |\n| $\\boldsymbol{x}_5$ | $4$ | $4$ | no |\n| $\\boldsymbol{x}_6$ | $-4$ | $4$ | no |\n\nAll constraints hold, and exactly $\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4$ lie on the margin. A numerical solve of the primal QP (`scipy` SLSQP) returns the same $\\mathbf{w} = [1, 1]^\\top$, $b = 0$."
+      },
+      {
+        "title": "Confirm optimality with the KKT conditions",
+        "body": "Take $\\alpha_1 = \\alpha_2 = \\alpha_3 = \\alpha_4 = \\tfrac{1}{2}$ and $\\alpha_5 = \\alpha_6 = 0$.\n\n- Stationarity: $\\sum_i \\alpha_i y_i \\boldsymbol{x}_i = \\tfrac{1}{2}\\left([1, 0]^\\top + [0, 1]^\\top\\right) - \\tfrac{1}{2}\\left([0, -1]^\\top + [-1, 0]^\\top\\right) = [\\tfrac12, \\tfrac12]^\\top + [\\tfrac12, \\tfrac12]^\\top = [1, 1]^\\top = \\mathbf{w}$ ✓\n- $\\sum_i \\alpha_i y_i = \\tfrac12 + \\tfrac12 - \\tfrac12 - \\tfrac12 = 0$ ✓\n- $\\alpha_i \\ge 0$, and $\\alpha_i > 0$ only where $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) = 1$ (complementary slackness) ✓\n\nThe problem is a convex QP, so these conditions certify the optimum; $\\mathbf{w}$ is unique because the objective is strictly convex in $\\mathbf{w}$.\n\nThe multipliers themselves are **not** unique: $\\boldsymbol{\\alpha} = (t, 1 - t, t, 1 - t, 0, 0)$ satisfies all the conditions for every $t \\in [0, 1]$, since $\\sum_i \\alpha_i y_i \\boldsymbol{x}_i = [t + (1 - t),\\ (1 - t) + t]^\\top = [1, 1]^\\top$. That is why the question asks for a *possible* set of support vectors. For $0 < t < 1$ all four margin points carry positive weight. $\\alpha_5$ and $\\alpha_6$ are $0$ in every solution, because those points are strictly outside the margin."
+      },
+      {
+        "title": "Check the options",
+        "body": "Every support vector must be one of $\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4$. Options (A) $\\{\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_5\\}$, (B) $\\{\\boldsymbol{x}_3, \\boldsymbol{x}_4, \\boldsymbol{x}_5\\}$ and (C) $\\{\\boldsymbol{x}_4, \\boldsymbol{x}_5\\}$ all contain $\\boldsymbol{x}_5$, whose functional margin is $4 > 1$, so they are impossible. Option (D) $\\{\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4\\}$ is exactly the set of points on the margin → **(D)**."
+      }
+    ],
+    "finalAnswer": "**(D)** $\\{\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4\\}$",
+    "teaching": "**Hard-margin SVM and support vectors.** For linearly separable data with labels $y_i \\in \\{+1, -1\\}$, a linear classifier predicts $\\operatorname{sign}(\\mathbf{w}^\\top\\boldsymbol{x} + b)$. Many hyperplanes separate the data; the SVM picks the one whose closest training points are as far away as possible. The perpendicular distance of a point from the hyperplane is $|\\mathbf{w}^\\top\\boldsymbol{x} + b| / \\lVert\\mathbf{w}\\rVert$. Because $(\\mathbf{w}, b)$ can be rescaled freely, we fix the scale by requiring $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) \\ge 1$ for all points, with equality for the closest ones. The empty strip then has width $2/\\lVert\\mathbf{w}\\rVert$, and maximising it is the same as\n\n$$\n\\min \\tfrac{1}{2}\\lVert\\mathbf{w}\\rVert^2 \\quad \\text{s.t.} \\quad y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) \\ge 1 .\n$$\n\nThe Lagrangian dual gives $\\mathbf{w} = \\sum_i \\alpha_i y_i \\boldsymbol{x}_i$ with $\\alpha_i \\ge 0$ and $\\sum_i \\alpha_i y_i = 0$. Complementary slackness, $\\alpha_i\\,[\\,y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) - 1\\,] = 0$, says that only points lying exactly on the margin, $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) = 1$, can have $\\alpha_i > 0$. These are the **support vectors**. Every other point could be moved (without crossing the margin) or deleted, and the classifier would not change.\n\n**Geometric picture.** For separable data the maximum margin equals the distance between the convex hulls of the two classes, and the optimal hyperplane is the perpendicular bisector of the shortest segment joining them. So look for the closest opposite-class points; points deep inside their own class, like $\\boldsymbol{x}_5 = [2, 2]^\\top$ and $\\boldsymbol{x}_6 = [-2, -2]^\\top$ here, are irrelevant.\n\n**In this question** the nearest parts of the two classes are the parallel edges $\\boldsymbol{x}_1\\boldsymbol{x}_2$ (on $u + v = 1$) and $\\boldsymbol{x}_3\\boldsymbol{x}_4$ (on $u + v = -1$). The boundary is $u + v = 0$, all four of these points sit on the margin, and $\\boldsymbol{x}_5, \\boldsymbol{x}_6$ sit at four times the margin distance. When several margin points are collinear like this, the dual multipliers can be split among them in more than one way, which is why the question speaks of a *possible* set; but no valid choice ever includes $\\boldsymbol{x}_5$ or $\\boldsymbol{x}_6$.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "Contains $\\boldsymbol{x}_5 = [2, 2]^\\top$, whose functional margin is $y_5(\\mathbf{w}^\\top\\boldsymbol{x}_5 + b) = 4 > 1$. It lies strictly outside the margin, so $\\alpha_5 = 0$ in every optimal solution. The set also has no negative-class point, whereas $\\sum_i \\alpha_i y_i = 0$ forces support vectors from both classes."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$\\boldsymbol{x}_3$ and $\\boldsymbol{x}_4$ are genuine margin points, but $\\boldsymbol{x}_5$ is not (functional margin $4$). The positive-side margin points are $\\boldsymbol{x}_1$ and $\\boldsymbol{x}_2$, not $\\boldsymbol{x}_5$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "If $\\boldsymbol{x}_4$ and $\\boldsymbol{x}_5$ were the only support vectors, the boundary would be their perpendicular bisector $3u + 2v = 3.5$ (normal $\\boldsymbol{x}_5 - \\boldsymbol{x}_4 = [3, 2]^\\top$, through the midpoint $[0.5, 1]^\\top$). That line puts the positive points $\\boldsymbol{x}_1$ ($3u + 2v = 3$) and $\\boldsymbol{x}_2$ ($3u + 2v = 2$) on the negative side, so it does not even separate the data. For the true optimum $\\mathbf{w} = [1, 1]^\\top$, $b = 0$, $\\boldsymbol{x}_5$ has functional margin $4$ and cannot be a support vector."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "$\\boldsymbol{x}_1, \\boldsymbol{x}_2, \\boldsymbol{x}_3, \\boldsymbol{x}_4$ are exactly the points with $y_i(\\mathbf{w}^\\top\\boldsymbol{x}_i + b) = 1$ for the optimal $\\mathbf{w} = [1, 1]^\\top$, $b = 0$. The multipliers $\\alpha_1 = \\alpha_2 = \\alpha_3 = \\alpha_4 = \\tfrac12$ satisfy all KKT conditions, so all four are support vectors of a valid optimal solution."
+      }
+    ],
+    "shortcut": "Compute $u + v$ for every point: positives give $1, 1, 4$ and negatives give $-1, -1, -4$. The data are split by the empty strip $-1 < u + v < 1$, and its edges pass through $\\boldsymbol{x}_1, \\boldsymbol{x}_2$ and $\\boldsymbol{x}_3, \\boldsymbol{x}_4$. Any option containing $\\boldsymbol{x}_5$ (value $4$) is out, which leaves only (D).",
+    "commonTrap": "Treating the \"outermost\" points $\\boldsymbol{x}_5, \\boldsymbol{x}_6$ as important because they look like extreme points of the dataset. Support vectors are the points **closest to the decision boundary**, not the extremes of each class. $\\boldsymbol{x}_5 = [2, 2]^\\top$ is the positive point *farthest* from the negative class, so it has no influence on the SVM. A second trap is to assume there must be only two or three support vectors; here four points lie on the margin."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q17-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the data symbols x and y (including their subscripts) in bold italic; they are rendered as \\boldsymbol{x}_i and \\boldsymbol{y}_i. The column vectors were read from the rendered image, because the PDF text layer splits their entries across lines. As printed, there is no comma between the vector for x6 and \"and the labels\". \"ONE\" is bold in the paper and is kept bold here. The page has no embedded figure other than the GATE 2024 background watermark; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(D) {x1, x2, x3, x4}: optimal hyperplane w = [1, 1], b = 0; x1–x4 have functional margin 1, x5 and x6 have 4",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom scipy.optimize import minimize\nX = np.array([[1,0],[0,1],[0,-1],[-1,0],[2,2],[-2,-2]], float)\ny = np.array([1,1,-1,-1,1,-1], float)\n# Primal hard-margin SVM: min 0.5||w||^2  s.t.  y_i (w.x_i + b) >= 1\ncons = [{'type':'ineq','fun':(lambda v,i=i: y[i]*(v[:2]@X[i]+v[2]) - 1)} for i in range(6)]\nv = minimize(lambda v: 0.5*v[:2]@v[:2], x0=[1.,1.,0.], constraints=cons, method='SLSQP').x\nw, b = v[:2], v[2]\nprint(\"w =\", w.round(6), \" b =\", round(b, 6), \" margin 1/||w|| =\", 1/np.linalg.norm(w))\nfm = y*(X@w+b); print(\"functional margins y_i(w.x_i+b):\", fm.round(6))            # [1 1 1 1 4 4]\nprint(\"on margin (=1):\", [f\"x{i+1}\" for i in range(6) if abs(fm[i]-1) < 1e-6])   # x1..x4\n# KKT certificate; the multipliers are not unique: alpha = (t, 1-t, t, 1-t, 0, 0), t in [0,1]\nfor t in (0, .5, 1):\n    a = np.array([t, 1-t, t, 1-t, 0, 0]); print(\"t =\", t, \" sum a_i y_i x_i =\", (a*y)@X, \" sum a_i y_i =\", a@y)\nfor opt, S in {'A':[0,1,4],'B':[2,3,4],'C':[3,4],'D':[0,1,2,3]}.items():\n    print(opt, \"possible SV set:\", all(abs(fm[i]-1) < 1e-6 for i in S))           # only D",
+    "notes": "Solving the primal hard-margin QP with scipy (SLSQP) gives w = [1, 1], b = 0 and margin 1/||w|| = 1/√2. The functional margins are 1, 1, 1, 1, 4, 4, so exactly x1–x4 lie on the margin. The KKT certificate α = (1/2, 1/2, 1/2, 1/2, 0, 0) reproduces w with Σα_i y_i = 0; more generally α = (t, 1−t, t, 1−t, 0, 0) works for any t in [0, 1], so x5 and x6 never carry weight. Options A, B and C contain x5 and are impossible. This agrees with official key D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

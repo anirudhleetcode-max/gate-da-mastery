@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q54",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 54,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-predicate",
+    "ai-propositional"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it links two concepts (translating an \"except\" sentence into a biconditional, and recognising that s1/s2 and s3/s4 are contrapositive pairs), after which a four-row truth table settles all four options in about two to three minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Let $\\mathit{game}(\\mathit{ball}, \\mathit{rugby})$ be true if the ball is used in rugby and false otherwise.\n\nLet $\\mathit{shape}(\\mathit{ball}, \\mathit{round})$ be true if the ball is round and false otherwise.\n\nConsider the following logical sentences:\n\n$s1\\colon\\ \\forall \\mathit{ball}\\ \\neg\\, \\mathit{game}(\\mathit{ball}, \\mathit{rugby}) \\Longrightarrow \\mathit{shape}(\\mathit{ball}, \\mathit{round})$\n\n$s2\\colon\\ \\forall \\mathit{ball}\\ \\neg\\, \\mathit{shape}(\\mathit{ball}, \\mathit{round}) \\Longrightarrow \\mathit{game}(\\mathit{ball}, \\mathit{rugby})$\n\n$s3\\colon\\ \\forall \\mathit{ball}\\ \\mathit{game}(\\mathit{ball}, \\mathit{rugby}) \\Longrightarrow \\neg\\, \\mathit{shape}(\\mathit{ball}, \\mathit{round})$\n\n$s4\\colon\\ \\forall \\mathit{ball}\\ \\mathit{shape}(\\mathit{ball}, \\mathit{round}) \\Longrightarrow \\neg\\, \\mathit{game}(\\mathit{ball}, \\mathit{rugby})$\n\nWhich of the following choices is/are logical representations of the assertion,\n\n“All balls are round except balls used in rugby”?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$s1 \\land s3$"
+    },
+    {
+      "label": "B",
+      "text": "$s1 \\land s2$"
+    },
+    {
+      "label": "C",
+      "text": "$s2 \\land s3$"
+    },
+    {
+      "label": "D",
+      "text": "$s3 \\land s4$"
+    }
+  ],
+  "officialKeyRaw": "A;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Write $G$ for $\\mathit{game}(\\mathit{ball}, \\mathit{rugby})$ and $R$ for $\\mathit{shape}(\\mathit{ball}, \\mathit{round})$. Each pair of sentences is a contrapositive pair: $s1 \\equiv s2 \\equiv \\forall \\mathit{ball}\\,(G \\lor R)$ (\"every non-rugby ball is round\") and $s3 \\equiv s4 \\equiv \\forall \\mathit{ball}\\,(\\neg G \\lor \\neg R)$ (\"no rugby ball is round\"). The assertion needs **both** halves, $R \\Leftrightarrow \\neg G$ for every ball, so it takes one sentence from each pair: $s1 \\land s3$ and $s2 \\land s3$ work, while $s1 \\land s2$ and $s3 \\land s4$ each state only one half. The answer is **(A), (C)**.",
+    "steps": [
+      {
+        "title": "Name the atoms and rewrite each sentence as a disjunction",
+        "body": "For a ball $b$, let $G$ stand for $\\mathit{game}(b, \\mathit{rugby})$ (\"$b$ is used in rugby\") and $R$ for $\\mathit{shape}(b, \\mathit{round})$ (\"$b$ is round\"). In each sentence the quantifier $\\forall \\mathit{ball}$ governs the whole implication, so each sentence says that the implication holds for **every** ball.\n\nUse $p \\Rightarrow q \\equiv \\neg p \\lor q$ on each body:\n\n| Sentence | Implication | Equivalent disjunction | In words |\n| --- | --- | --- | --- |\n| $s1$ | $\\neg G \\Rightarrow R$ | $G \\lor R$ | every ball not used in rugby is round |\n| $s2$ | $\\neg R \\Rightarrow G$ | $R \\lor G$ | every ball that is not round is a rugby ball |\n| $s3$ | $G \\Rightarrow \\neg R$ | $\\neg G \\lor \\neg R$ | no rugby ball is round |\n| $s4$ | $R \\Rightarrow \\neg G$ | $\\neg R \\lor \\neg G$ | no round ball is a rugby ball |\n\nSo $s1 \\equiv s2$ and $s3 \\equiv s4$: in each pair one sentence is the **contrapositive** of the other ($\\neg G \\Rightarrow R$ flips to $\\neg R \\Rightarrow G$). There are really only two different statements here."
+      },
+      {
+        "title": "Translate the assertion",
+        "body": "\"All balls are round except balls used in rugby\" makes two claims:\n\n1. **The rule:** every ball that is not used in rugby is round: $\\forall b\\ (\\neg G \\Rightarrow R)$, which is $s1$.\n2. **The exception:** the balls used in rugby are exactly the ones excluded from being round, so they are not round: $\\forall b\\ (G \\Rightarrow \\neg R)$, which is $s3$.\n\nTogether, for every ball, $R \\Leftrightarrow \\neg G$: a ball is round **if and only if** it is not used in rugby. Equivalently, exactly one of $G$ and $R$ is true for each ball.\n\nBecause $\\forall$ distributes over $\\land$, i.e. $(\\forall b\\ P) \\land (\\forall b\\ Q) \\equiv \\forall b\\ (P \\land Q)$, a conjunction of two of the given sentences is the same as one $\\forall$ over the conjunction of their bodies. So each option can be checked ball by ball with a four-row truth table."
+      },
+      {
+        "title": "Truth table for one ball",
+        "body": "| $G$ (rugby) | $R$ (round) | $s1$, $s2$: $G \\lor R$ | $s3$, $s4$: $\\neg G \\lor \\neg R$ | Assertion: $R \\Leftrightarrow \\neg G$ |\n| :---: | :---: | :---: | :---: | :---: |\n| F | F | F | T | F |\n| F | T | T | T | T |\n| T | F | T | T | T |\n| T | T | T | F | F |\n\n- $G \\lor R$ rules out only the row F, F (a non-rugby ball that is not round).\n- $\\neg G \\lor \\neg R$ rules out only the row T, T (a rugby ball that is round).\n- The assertion rules out **both** of those rows.\n\nSo the assertion equals $(G \\lor R) \\land (\\neg G \\lor \\neg R)$: one sentence from $\\{s1, s2\\}$ **and** one from $\\{s3, s4\\}$."
+      },
+      {
+        "title": "Check each option",
+        "body": "| Option | Reduces to | Rows it rules out | Matches the assertion? |\n| --- | --- | --- | --- |\n| (A) $s1 \\land s3$ | $(G \\lor R) \\land (\\neg G \\lor \\neg R)$ | F,F and T,T | **Yes** |\n| (B) $s1 \\land s2$ | $G \\lor R$ (same sentence twice) | F,F only | No: allows a round rugby ball |\n| (C) $s2 \\land s3$ | $(G \\lor R) \\land (\\neg G \\lor \\neg R)$ | F,F and T,T | **Yes** |\n| (D) $s3 \\land s4$ | $\\neg G \\lor \\neg R$ (same sentence twice) | T,T only | No: allows a non-round ball that is not used in rugby |\n\n(A) and (C) are the same formula, since $s2 \\equiv s1$. (B) and (D) each pair a sentence with its own contrapositive, so each states only one half of the assertion. (The combinations $s1 \\land s4$ and $s2 \\land s4$ would also be correct, but they are not offered.)\n\nThe answer is **(A), (C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (C)**",
+    "teaching": "**Translating English into first-order logic.** A sentence such as \"All $P$ are $Q$\" becomes $\\forall x\\ (P(x) \\Rightarrow Q(x))$: the quantifier says \"for every object\", and the implication restricts the claim to the objects that have property $P$. With one predicate for \"used in rugby\" ($G$) and one for \"round\" ($R$), every English claim in this question is a statement about which of the four combinations of $G$ and $R$ a ball may have.\n\n**Implication and its contrapositive.** $p \\Rightarrow q$ is false only when $p$ is true and $q$ is false, so it is equivalent to $\\neg p \\lor q$. Swapping and negating both sides gives the **contrapositive** $\\neg q \\Rightarrow \\neg p$, which is also $\\neg p \\lor q$: an implication and its contrapositive always say the same thing. Do not confuse it with the **converse** $q \\Rightarrow p$, which says something different. Here $s2$ is the contrapositive of $s1$, and $s4$ is the contrapositive of $s3$, so four sentences carry only two distinct meanings.\n\n**What \"except\" adds.** \"All balls are round except balls used in rugby\" does two things. It states a rule for the non-rugby balls (they are round), and it marks the rugby balls as the exception (they are not round). Together that is a biconditional, $R \\Leftrightarrow \\neg G$: being round and being a rugby ball are mutually exclusive, and together they cover every ball. In disjunction form it is $(G \\lor R) \\land (\\neg G \\lor \\neg R)$, with one clause per half.\n\n**Quantifiers and conjunction.** $\\forall x$ distributes over $\\land$, so two universally quantified sentences joined by $\\land$ can be checked object by object. That reduces the question to a four-row truth table for a single ball.\n\n**Back to this question.** The assertion needs one sentence from each contrapositive pair: one from $\\{s1, s2\\}$ for the rule and one from $\\{s3, s4\\}$ for the exception. $s1 \\land s3$ (A) and $s2 \\land s3$ (C) do that. $s1 \\land s2$ (B) and $s3 \\land s4$ (D) repeat one half twice. The answer is **(A), (C)**.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$s1 \\equiv \\forall \\mathit{ball}\\,(G \\lor R)$ says every non-rugby ball is round, and $s3 \\equiv \\forall \\mathit{ball}\\,(\\neg G \\lor \\neg R)$ says no rugby ball is round. Together they give $R \\Leftrightarrow \\neg G$ for every ball, which is exactly the assertion."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$s2$ is the contrapositive of $s1$, so $s1 \\land s2 \\equiv s1$: it only says that non-rugby balls are round. It allows a round rugby ball ($G = R = \\text{T}$), which the exception clause of the assertion excludes."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$s2$ ($\\neg R \\Rightarrow G$) is equivalent to $s1$, so $s2 \\land s3$ is the same formula as (A): $\\forall \\mathit{ball}\\,[(G \\lor R) \\land (\\neg G \\lor \\neg R)]$, i.e. round if and only if not used in rugby."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$s4$ is the contrapositive of $s3$, so $s3 \\land s4 \\equiv s3$: it only says that no rugby ball is round. It allows a ball that is neither used in rugby nor round ($G = R = \\text{F}$), which contradicts \"all balls are round\" for non-rugby balls."
+      }
+    ],
+    "shortcut": "Spot the contrapositive pairs: $s1 \\equiv s2$ and $s3 \\equiv s4$. A correct representation needs both halves (non-rugby $\\Rightarrow$ round, and rugby $\\Rightarrow$ not round), so it must take one sentence from each pair. (B) and (D) pair a sentence with its own contrapositive and fail; (A) and (C) mix the pairs and work.",
+    "commonTrap": "Choosing (B) because \"all balls are round except rugby balls\" is read only as \"non-rugby balls are round\". $s1$ and $s2$ are contrapositives, not different facts, so (B) is just $s1$ written twice, and it would allow a round rugby ball. The official key (A, C) reads the exception as saying the rugby balls are **not** round, so both halves are needed. A second slip is to treat $s2$ as the converse of $s1$ and conclude that $s1 \\land s2$ is the biconditional; the converse of $\\neg G \\Rightarrow R$ would be $R \\Rightarrow \\neg G$, which is $s4$, not $s2$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q54-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The predicate and argument names (game, shape, ball, rugby, round) are italic in the paper and are set with \\mathit; the labels s1 to s4 are set in math. The paper's long double arrow (⟹) is transcribed as \\Longrightarrow and ¬ as \\neg. As printed, the sentences carry no parentheses around the scope of ∀ball, and none are added (the quantifier is read as governing the whole implication). The quoted assertion is printed centred on its own line after the question sentence and is kept as a separate paragraph with the paper's curly quotes. No figure is needed; the question is entirely text."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;C",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nimp=lambda a,b: (not a) or b\n# per-ball sentences; G = game(ball,rugby), R = shape(ball,round)\ns={1:lambda G,R: imp(not G,R), 2:lambda G,R: imp(not R,G),\n   3:lambda G,R: imp(G,not R), 4:lambda G,R: imp(R,not G)}\nstrong=lambda G,R: R==(not G)          # round exactly when not rugby\nweak=lambda G,R: imp(not G,R)          # only: non-rugby balls are round\nopts={'A':(1,3),'B':(1,2),'C':(2,3),'D':(3,4)}\n# check forall-sentences over every interpretation on domains of 1..3 balls\ndef forall(dom,f): return all(f(G,R) for G,R in dom)\nres={k:{'strong':True,'weak':True} for k in opts}\nfor n in (1,2,3):\n    for dom in product(product([False,True],repeat=2),repeat=n):\n        for k,(i,j) in opts.items():\n            v=forall(dom,s[i]) and forall(dom,s[j])\n            res[k]['strong']&= v==forall(dom,strong)\n            res[k]['weak']&= v==forall(dom,weak)\nfor k in opts: print(k, opts[k], res[k])\nprint('s1==s2:',all(s[1](G,R)==s[2](G,R) for G,R in product([0,1],repeat=2)),\n      's3==s4:',all(s[3](G,R)==s[4](G,R) for G,R in product([0,1],repeat=2)))\n# A {'strong': True}, B {'weak': True}, C {'strong': True}, D neither -> strong reading gives A;C\n",
+    "notes": "A brute-force check over every interpretation of the two predicates on domains of 1 to 3 balls confirms that s1 ≡ s2 and s3 ≡ s4 (contrapositive pairs), that s1 ∧ s3 and s2 ∧ s3 are equivalent to ∀ball (round ⟺ ¬rugby), that s1 ∧ s2 is equivalent only to the weaker ∀ball (¬rugby ⟹ round), and that s3 ∧ s4 matches neither reading. Reading the assertion as \"round exactly when not used in rugby\" gives A;C, matching the official key A;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

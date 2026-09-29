@@ -1,0 +1,112 @@
+{
+  "id": "DA2025-S5-Q12",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 12,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-linear-systems",
+  "subtopicIds": [
+    "la-gaussian-elimination",
+    "la-systems"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (an already-triangular system leaves only back substitution, about n^2 operations) needing direct recall rather than computation, under 1.5 min for a prepared student; the main risk is reflexively choosing the general O(n^3) count.",
+  "estimatedTimeSec": 45,
+  "stem": "The number of additions and multiplications involved in performing Gaussian elimination on any $n \\times n$ upper triangular matrix is of the order",
+  "options": [
+    {
+      "label": "A",
+      "text": "$O(n)$"
+    },
+    {
+      "label": "B",
+      "text": "$O(n^2)$"
+    },
+    {
+      "label": "C",
+      "text": "$O(n^3)$"
+    },
+    {
+      "label": "D",
+      "text": "$O(n^4)$"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Gaussian elimination has two phases: forward elimination (to make the matrix upper triangular) and back substitution. An upper triangular matrix already has zeros below the diagonal, so every elimination multiplier is $0$ and the forward phase needs no arithmetic. Only back substitution remains: $\\frac{n(n-1)}{2}$ multiplications and $\\frac{n(n-1)}{2}$ additions/subtractions (plus $n$ divisions), which is $O(n^2)$. Answer **(B)**.",
+    "steps": [
+      {
+        "title": "Recall the two phases and their cost on a general matrix",
+        "body": "To solve $Ax = b$ by Gaussian elimination:\n\n1. **Forward elimination.** For each pivot column $k = 1, \\dots, n-1$ and each row $i > k$, compute the multiplier $m_{ik} = a_{ik}/a_{kk}$ and update $a_{ij} \\leftarrow a_{ij} - m_{ik}\\,a_{kj}$ for $j = k+1, \\dots, n$ (and $b_i \\leftarrow b_i - m_{ik} b_k$). Pivot $k$ touches about $(n-k)^2$ entries, so the phase costs about $\\sum_{k}(n-k)^2 \\approx \\frac{n^3}{3}$ multiplications and as many subtractions, i.e. $O(n^3)$.\n2. **Back substitution** on the resulting upper triangular system, which costs $O(n^2)$ (counted in Step 3).\n\nThe cubic cost comes entirely from phase 1."
+      },
+      {
+        "title": "Forward elimination on an upper triangular matrix",
+        "body": "If $A = U$ is already upper triangular, then $u_{ik} = 0$ for every $i > k$. Every multiplier is\n\n$$m_{ik} = \\frac{u_{ik}}{u_{kk}} = \\frac{0}{u_{kk}} = 0,$$\n\nso each row update subtracts $0 \\times (\\text{pivot row})$ and changes nothing. The matrix is already in the form that forward elimination is meant to produce, so this phase needs **no** additions or multiplications. (As usual, the diagonal pivots $u_{kk}$ are taken to be non-zero, so the system has a unique solution.)"
+      },
+      {
+        "title": "Count the back-substitution work",
+        "body": "Solve $Ux = b$ from the bottom row upwards:\n\n$$x_n = \\frac{b_n}{u_{nn}}, \\qquad x_i = \\frac{1}{u_{ii}}\\Big(b_i - \\sum_{j=i+1}^{n} u_{ij}\\,x_j\\Big), \\quad i = n-1, \\dots, 1.$$\n\nRow $i$ needs $(n-i)$ multiplications $u_{ij}x_j$, $(n-i)$ subtractions and $1$ division. Summing over $i = 1, \\dots, n$:\n\n- multiplications: $\\sum_{i=1}^{n}(n-i) = 0 + 1 + \\cdots + (n-1) = \\dfrac{n(n-1)}{2}$\n- additions/subtractions: $\\dfrac{n(n-1)}{2}$\n- divisions: $n$\n\nTotal: $n(n-1) + n = n^2$ arithmetic operations. For example, $n = 100$ gives $4950 + 4950 + 100 = 10\\,000 = 100^2$."
+      },
+      {
+        "title": "Order of growth",
+        "body": "The leading term is $\\frac{n^2}{2} + \\frac{n^2}{2} = n^2$, so the work grows like $n^2$: doubling $n$ multiplies it by $4$ ($n = 10 \\to 100$ operations, $n = 20 \\to 400$, $n = 40 \\to 1600$). A general dense matrix would need about $\\frac{2}{3}n^3$ operations, but the triangular structure removes that cubic phase.\n\nThe number of additions and multiplications is therefore of the order $O(n^2)$: option **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)**",
+    "teaching": "**What Gaussian elimination does.** To solve $Ax = b$, Gaussian elimination first uses row operations to turn $A$ into an upper triangular matrix $U$ (all zeros below the diagonal). This is *forward elimination*. It then solves $Ux = c$ from the last equation upwards. This is *back substitution*: the last equation has one unknown, the one above it has two (one already known), and so on.\n\n**Where the $n^3$ comes from.** In forward elimination, each of the roughly $n$ pivots is used to clear up to $n$ rows below it, and each row update touches up to $n$ entries. That is three nested loops of length about $n$, giving about $\\frac{n^3}{3}$ multiply–subtract pairs, or about $\\frac{2}{3}n^3$ operations in all. This is the famous \"Gaussian elimination is cubic\" fact.\n\n**Where the $n^2$ comes from.** Back substitution has only two nested loops. Row $i$ combines the $n-i$ unknowns already found, so the total is $1 + 2 + \\cdots + (n-1) \\approx \\frac{n^2}{2}$ multiplications and the same number of subtractions, about $n^2$ in all.\n\n**Structure changes the cost.** If the matrix is already upper triangular, the expensive phase has nothing to do: every entry it would eliminate is already zero, so every multiplier is $0$. Only the quadratic back-substitution phase remains. This is also why LU decomposition is useful in practice. You pay $O(n^3)$ once to factor $A = LU$, and afterwards each new right-hand side costs only two triangular solves, $O(n^2)$ each.\n\n**Back to the question.** For an $n \\times n$ upper triangular matrix, the additions and multiplications all come from back substitution, $\\frac{n(n-1)}{2}$ of each, so the order is $O(n^2)$: option (B).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$O(n)$ would require a constant amount of work per row. In back substitution, row $i$ uses the $n-i$ unknowns already computed, so the total is $\\frac{n(n-1)}{2}$ multiplications, which is quadratic. Linear cost is only possible for special structures such as diagonal or bidiagonal matrices."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Forward elimination does nothing (all multipliers are $0$), and back substitution needs $\\frac{n(n-1)}{2}$ multiplications and $\\frac{n(n-1)}{2}$ additions/subtractions (plus $n$ divisions), about $n^2$ operations in total."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "$O(n^3)$ is the cost of the forward-elimination phase on a general dense matrix. Here the matrix is already upper triangular, so that phase needs no arithmetic. (Any $O(n^2)$ quantity is formally also $O(n^3)$, but \"of the order\" asks for the tight growth rate, which is $n^2$.)"
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "No standard form of Gaussian elimination costs $O(n^4)$, even for a general dense matrix, where it is $O(n^3)$."
+      }
+    ],
+    "shortcut": "Already triangular means only back substitution is left, which takes about $n^2$ operations. Remember: dense elimination is about $\\frac{2}{3}n^3$ and a triangular solve is about $n^2$.",
+    "commonTrap": "Answering $O(n^3)$ by reflex because \"Gaussian elimination is cubic\", without noticing that the matrix is already upper triangular, so the cubic forward-elimination phase has nothing to do."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q12-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper hyphenates \"elimina-tion\" across a line break; it is joined here as \"elimination\"."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B (O(n^2): forward phase is trivial, back substitution needs n(n-1)/2 multiplications and n(n-1)/2 additions/subtractions)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\ndef gauss_solve_count(U, b):\n    \"\"\"Gaussian elimination (forward phase + back substitution) on Ux=b, counting +/- and * (and /).\"\"\"\n    A = np.hstack([U.astype(float), b.reshape(-1, 1).astype(float)]); n = len(U); ops = {'fwd': 0, 'back': 0}\n    for k in range(n - 1):                      # forward elimination\n        for i in range(k + 1, n):\n            if A[i, k] == 0: continue            # multiplier is 0 -> nothing to do\n            m = A[i, k] / A[k, k]; ops['fwd'] += 1\n            A[i, k:] -= m * A[k, k:]; ops['fwd'] += 2 * (n + 1 - k)\n    x = np.zeros(n)\n    for i in range(n - 1, -1, -1):              # back substitution\n        s = A[i, n]\n        for j in range(i + 1, n):\n            s -= A[i, j] * x[j]; ops['back'] += 2   # one multiply + one subtract\n        x[i] = s / A[i, i]; ops['back'] += 1       # one divide\n    return x, ops\nrng = np.random.default_rng(0); res = []\nfor n in [10, 20, 40, 80, 160]:\n    U = np.triu(rng.random((n, n)) + 1); b = rng.random(n)\n    x, ops = gauss_solve_count(U, b)\n    assert np.allclose(U @ x, b) and ops['back'] == n * n and ops['fwd'] == 0\n    res.append((n, ops['fwd'], ops['back'])); print(n, ops)\nns = np.array([r[0] for r in res]); tot = np.array([r[1] + r[2] for r in res])\nprint('fitted exponent:', np.polyfit(np.log(ns), np.log(tot), 1)[0])",
+    "notes": "Independent solve: on an upper triangular matrix every elimination multiplier is 0, so the forward phase needs no arithmetic. Back substitution needs n(n-1)/2 multiplications, n(n-1)/2 additions/subtractions and n divisions, which is Theta(n^2), i.e. option (B). This matches the official key B. The Python operation counter gives 0 forward-phase operations and exactly n^2 back-substitution operations for n = 10 to 160 (fitted log-log exponent 2.0), and the computed x satisfies Ux = b. The solution assumes non-zero diagonal pivots and counts back substitution as part of the Gaussian-elimination solve; the question text does not spell out either point. If only the reduction phase were counted, no arithmetic would be needed at all."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

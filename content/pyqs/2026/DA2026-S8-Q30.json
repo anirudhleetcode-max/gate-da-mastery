@@ -1,0 +1,73 @@
+{
+  "id": "DA2026-S8-Q30",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 30,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-search",
+  "subtopicIds": [
+    "ai-adversarial"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (minimax back-up) applied directly to a depth-2 tree with nine leaves: three minima and one maximum, about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider the game tree for a two-player turn-taking minimax game as shown in the figure. The value of a terminal node represents the utility of the game state if the game ends there. The numbers written next to the edges denote the strategies.\n\nThere are two players MAX and MIN. At any particular state of the game, MAX prefers to move to a state of maximum value. On the other hand, MIN prefers to move to a state of minimum value.\n\nSuppose MAX starts the game at the root and has three strategies: 1, 2 and 3. Next, MIN plays and also has three strategies: 1, 2 and 3. The game ends there. Both players always take optimal strategies throughout the game.\n\nAt the root, the best strategy for MAX is ___________ . (Answer in **integer**)\n\n![Figure: Game tree with three levels. The root is a MAX node (upward triangle, row labelled MAX) with three outgoing edges labelled 1, 2 and 3 leading to three MIN nodes (downward triangles, row labelled MIN). Each MIN node has three outgoing edges labelled 1, 2 and 3 leading to terminal nodes (upward triangles). Terminal values from left to right: under MAX edge 1 they are 8, 6, -1; under MAX edge 2 they are 1, 5, 7; under MAX edge 3 they are -4, -3, -12.](/pyq/2026/fig/Q30-1.png)",
+  "options": [],
+  "officialKeyRaw": "2 to 2",
+  "answer": {
+    "kind": "NAT",
+    "min": 2,
+    "max": 2
+  },
+  "solution": {
+    "quick": "MIN takes the smallest leaf under each MIN node: $\\min(8, 6, -1) = -1$, $\\min(1, 5, 7) = 1$, $\\min(-4, -3, -12) = -12$.\n\nMAX then takes the largest of these, $\\max(-1, 1, -12) = 1$, which is reached through strategy 2. **2**",
+    "steps": [
+      {
+        "title": "Minimax rule",
+        "body": "Evaluate the tree bottom-up:\n\n- A **terminal** node's value is its utility.\n- A **MIN** node's value is the **minimum** of its children's values, because MIN, playing optimally, moves to the child with the smallest value.\n- A **MAX** node's value is the **maximum** of its children's values.\n\nMAX's best strategy at the root is the edge leading to the child with the largest backed-up value."
+      },
+      {
+        "title": "Back up the values of the MIN nodes",
+        "body": "| MAX strategy | Leaves under the MIN node (MIN strategies 1, 2, 3) | MIN's choice | Backed-up value |\n| --- | --- | --- | --- |\n| 1 | $8, \\ 6, \\ -1$ | strategy 3 | $-1$ |\n| 2 | $1, \\ 5, \\ 7$ | strategy 1 | $1$ |\n| 3 | $-4, \\ -3, \\ -12$ | strategy 3 | $-12$ |"
+      },
+      {
+        "title": "MAX's decision at the root",
+        "body": "$$\n\\text{value(root)} = \\max(-1, \\ 1, \\ -12) = 1.\n$$\n\nThe maximum is achieved only by the middle MIN node, which MAX reaches with **strategy 2**. With optimal play, MAX plays 2, MIN replies with 1, and the game ends at the terminal node of utility 1."
+      },
+      {
+        "title": "Final answer",
+        "body": "The question asks for MAX's best **strategy** (the edge label), not the game value. The best strategy for MAX at the root is **2** (and the resulting game value is 1)."
+      }
+    ],
+    "finalAnswer": "**2**",
+    "teaching": "**What minimax models.** In a two-player, zero-sum, turn-taking game, one player (MAX) wants the final utility to be as large as possible and the other (MIN) wants it as small as possible. \"Optimal play\" means each player assumes the opponent will also play optimally. So MAX cannot hope that MIN will walk into a large leaf; MAX must plan for MIN's best reply.\n\n**The back-up procedure.** Start at the leaves, whose values are given. Move one level up at a time:\n\n- at a MIN node, copy up the **smallest** child value (MIN's best reply);\n- at a MAX node, copy up the **largest** child value (MAX's best move).\n\nThe value at the root is the utility both players can force under optimal play. The best move at a MAX node is the child that achieves this maximum. For a two-level tree (MAX then MIN) this is the *maximin* rule: for each of MAX's moves, find its worst case, then choose the move with the best worst case.\n\n**Why the largest leaf can be misleading.** Strategy 1 contains the largest utility (8), but MIN would never let the game end there; MIN would pick $-1$. Strategy 2 has smaller leaves, but its worst case is still $+1$, the best guarantee available.\n\n**A related idea: alpha-beta pruning.** Scanning left to right, after the first two MIN nodes MAX already has a guaranteed value $\\alpha = 1$. The first leaf of the third MIN node is $-4 < 1$, so that MIN node is worth at most $-4$ to MAX. Its remaining leaves ($-3$ and $-12$) can be pruned without changing the decision.\n\n**Back to this question.** Backed-up MIN values are $-1$, $1$ and $-12$. MAX picks the largest, $1$, via strategy **2**.",
+    "shortcut": "For a MAX-over-MIN tree of depth 2, write the minimum of each leaf group ($-1$, $1$, $-12$) and pick the group with the largest minimum: group 2.",
+    "commonTrap": "Choosing strategy 1 because it contains the largest terminal value (8). That assumes MIN cooperates; an optimal MIN answers strategy 1 with its strategy 3 and holds MAX to $-1$. Another slip is entering the game value **1** instead of the strategy number **2**: the question asks which strategy MAX should play."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q30-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The game-tree figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q30-1.png, placed after the answer line as in the paper. Its terminal values read left to right: 8, 6, -1 | 1, 5, 7 | -4, -3, -12. 'integer' is bold in the answer instruction and is kept bold."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "2",
+    "agreesWithKey": true,
+    "checkCode": "leaves = {1: [8, 6, -1], 2: [1, 5, 7], 3: [-4, -3, -12]}   # MIN strategies 1,2,3 under each MAX strategy\nmin_val = {s: min(v) for s, v in leaves.items()}              # MIN backs up the minimum\nbest = max(min_val, key=min_val.get)                          # MAX picks the largest backed-up value\nprint(min_val, best, min_val[best])                           # {1: -1, 2: 1, 3: -12} 2 1\nassert best == 2 and sorted(min_val.values())[-1] > sorted(min_val.values())[-2]   # unique best",
+    "notes": "The MIN nodes back up min(8, 6, -1) = -1, min(1, 5, 7) = 1 and min(-4, -3, -12) = -12. MAX's maximum, 1, is unique and reached via strategy 2 (confirmed by the Python check). This matches official key '2 to 2'."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

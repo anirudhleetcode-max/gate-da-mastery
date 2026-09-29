@@ -1,0 +1,112 @@
+{
+  "id": "DA2026-S8-Q11",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 11,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-dimensionality-reduction",
+  "subtopicIds": [
+    "ml-pca",
+    "ml-dim-reduction"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (principal components are mutually orthogonal unit eigenvectors of the symmetric covariance matrix) answered by direct recall with no computation, well under 1.5 min for a prepared student.",
+  "estimatedTimeSec": 30,
+  "stem": "For a classification problem, Principal Component Analysis (PCA) has been used to reduce the dimensionality of a feature space from 100 to 10.\n\nWhich of the following options is true about the angle $\\theta$ between the first and the tenth principal components?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$\\theta = 0^\\circ$"
+    },
+    {
+      "label": "B",
+      "text": "$\\theta = 90^\\circ$"
+    },
+    {
+      "label": "C",
+      "text": "$90^\\circ < \\theta \\le 180^\\circ$"
+    },
+    {
+      "label": "D",
+      "text": "$0 < \\theta < 90^\\circ$"
+    }
+  ],
+  "officialKeyRaw": "B",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "B"
+  },
+  "solution": {
+    "quick": "Principal components are eigenvectors of the (symmetric) covariance matrix, and PCA returns them as an **orthonormal** set: every principal component is orthogonal to every other one. Hence $\\mathbf{u}_1^\\top \\mathbf{u}_{10} = 0$, so $\\cos\\theta = 0$ and $\\theta = 90^\\circ$. The numbers 100 and 10 do not matter. Answer: **(B)**.",
+    "steps": [
+      {
+        "title": "What a principal component is",
+        "body": "Let the (mean-centred) data matrix be $X_c \\in \\mathbb{R}^{n \\times 100}$. PCA forms the sample covariance matrix\n\n$$\nS = \\frac{1}{n-1} X_c^\\top X_c \\in \\mathbb{R}^{100 \\times 100}\n$$\n\nand takes its eigenvectors $\\mathbf{u}_1, \\mathbf{u}_2, \\dots$ ordered by decreasing eigenvalue $\\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge 0$. The $k$-th principal component (direction) is the unit vector $\\mathbf{u}_k$, with $\\|\\mathbf{u}_k\\| = 1$. Reducing from 100 to 10 dimensions simply keeps $\\mathbf{u}_1, \\dots, \\mathbf{u}_{10}$."
+      },
+      {
+        "title": "Why distinct principal components are orthogonal",
+        "body": "$S$ is symmetric ($S^\\top = S$). For two eigenvectors with $S\\mathbf{u}_1 = \\lambda_1 \\mathbf{u}_1$ and $S\\mathbf{u}_{10} = \\lambda_{10} \\mathbf{u}_{10}$:\n\n$$\n\\lambda_1\\, \\mathbf{u}_1^\\top \\mathbf{u}_{10} = (S\\mathbf{u}_1)^\\top \\mathbf{u}_{10} = \\mathbf{u}_1^\\top S\\, \\mathbf{u}_{10} = \\lambda_{10}\\, \\mathbf{u}_1^\\top \\mathbf{u}_{10}\n$$\n\nso $(\\lambda_1 - \\lambda_{10})\\, \\mathbf{u}_1^\\top \\mathbf{u}_{10} = 0$. If $\\lambda_1 \\ne \\lambda_{10}$ this forces $\\mathbf{u}_1^\\top \\mathbf{u}_{10} = 0$. If some eigenvalues are equal, the spectral theorem still lets (and PCA always does) choose an orthonormal basis of that eigenspace. Equivalently, PCA is defined sequentially: the $k$-th component maximises variance **subject to being orthogonal to all earlier components**. Either way, $\\mathbf{u}_i^\\top \\mathbf{u}_j = 0$ for all $i \\ne j$."
+      },
+      {
+        "title": "Compute the angle",
+        "body": "For unit vectors, the angle satisfies\n\n$$\n\\cos\\theta = \\frac{\\mathbf{u}_1^\\top \\mathbf{u}_{10}}{\\|\\mathbf{u}_1\\|\\,\\|\\mathbf{u}_{10}\\|} = \\frac{0}{1 \\cdot 1} = 0 \\quad\\Rightarrow\\quad \\theta = 90^\\circ.\n$$\n\nAn eigenvector is only defined up to sign, but replacing $\\mathbf{u}_{10}$ by $-\\mathbf{u}_{10}$ still gives $\\cos\\theta = 0$, so the angle is $90^\\circ$ in every case."
+      },
+      {
+        "title": "Check the distractors and conclude",
+        "body": "The dimensions 100 and 10 only guarantee that a tenth component exists; they do not affect the angle. Any angle other than $90^\\circ$ would mean a non-zero dot product ($0^\\circ$ or $180^\\circ$: the same axis as PC1; acute or obtuse: a partly overlapping direction), which contradicts orthogonality. A numerical check on random correlated 100-dimensional data gives $\\mathbf{u}_1^\\top\\mathbf{u}_{10} \\approx -3\\times10^{-17}$ (zero up to rounding), i.e. $\\theta = 90.0^\\circ$. The answer is **(B)**."
+      }
+    ],
+    "finalAnswer": "**(B)** $\\theta = 90^\\circ$",
+    "teaching": "**What PCA does.** PCA looks for new axes along which the data vary the most. The first principal component $\\mathbf{u}_1$ is the unit direction that maximises the variance of the projected data $\\mathbf{u}^\\top\\mathbf{x}$. That variance equals $\\mathbf{u}^\\top S\\,\\mathbf{u}$, where $S$ is the covariance matrix, and maximising it over unit vectors gives the eigenvector of $S$ with the largest eigenvalue. The second component maximises the variance among all unit directions **orthogonal to** $\\mathbf{u}_1$; the third is orthogonal to both $\\mathbf{u}_1$ and $\\mathbf{u}_2$, and so on. So orthogonality is built into the very definition of PCA.\n\n**Why the algebra agrees.** A covariance matrix is real and symmetric. The spectral theorem says every real symmetric matrix can be written $S = U \\Lambda U^\\top$ with $U$ an **orthogonal** matrix ($U^\\top U = I$) whose columns are eigenvectors. Those columns are exactly the principal components, so any two different columns have dot product $0$ and each has length $1$: they form an orthonormal basis. Keeping only the first $k$ columns (here $k = 10$ out of $100$) just drops some basis vectors; it does not tilt the ones that remain.\n\n**Consequences worth remembering.**\n\n- The angle between any two distinct principal directions is $90^\\circ$.\n- The projected coordinates (scores) along different components are uncorrelated, with variances $\\lambda_1, \\lambda_2, \\dots$\n- Directions from other methods need not be orthogonal: for example, the discriminant directions of multi-class LDA are eigenvectors of the non-symmetric matrix $S_W^{-1}S_B$ and are generally not orthogonal in the usual sense. Orthogonality is special to PCA's symmetric eigenproblem.\n\n**Back to this question.** The first and tenth principal components are two different columns of the orthogonal matrix $U$, so $\\mathbf{u}_1^\\top\\mathbf{u}_{10} = 0$ and the angle between them is exactly $90^\\circ$, which is option **(B)**. The data being used for classification, and the reduction from 100 to 10 dimensions, are context that does not change this.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "$\\theta = 0^\\circ$ would mean $\\mathbf{u}_{10} = \\mathbf{u}_1$ (dot product $1$). The tenth component would then duplicate the first and capture no new variance, which contradicts the orthogonality constraint $\\mathbf{u}_1^\\top\\mathbf{u}_{10} = 0$."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Principal components are mutually orthonormal eigenvectors of the symmetric covariance matrix, so $\\cos\\theta = \\mathbf{u}_1^\\top\\mathbf{u}_{10} = 0$ and $\\theta = 90^\\circ$ exactly."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "An obtuse angle needs a negative dot product, and $\\theta = 180^\\circ$ would mean $\\mathbf{u}_{10} = -\\mathbf{u}_1$, the same axis as PC1. Both contradict $\\mathbf{u}_1^\\top\\mathbf{u}_{10} = 0$. Flipping the sign of an eigenvector does not help: $-\\mathbf{u}_{10}$ is still at $90^\\circ$ to $\\mathbf{u}_1$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "An acute angle $0 < \\theta < 90^\\circ$ means a positive dot product, i.e. the tenth direction partly repeats the first. PCA forbids this: each new component is chosen orthogonal to all previous ones."
+      }
+    ],
+    "shortcut": "Principal components are always mutually orthogonal, so the angle between **any** two distinct principal components is $90^\\circ$; ignore the numbers in the stem.",
+    "commonTrap": "Thinking that the angle depends on how much variance each component explains, or on the reduction from 100 to 10, and picking an acute angle (D). Principal directions are orthogonal by construction, whatever their eigenvalues."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q11-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Option (D) is printed as \"0 < θ < 90°\" (no degree sign on the 0); kept as printed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng=np.random.default_rng(0)\nX=rng.normal(size=(500,100))@rng.normal(size=(100,100))  # correlated 100-D data\nXc=X-X.mean(0)\nw,V=np.linalg.eigh(np.cov(Xc,rowvar=False))\nV=V[:,np.argsort(w)[::-1]][:,:10]  # top-10 principal directions\nc=V[:,0]@V[:,9]\nprint(c, np.degrees(np.arccos(np.clip(c,-1,1))))  # ~-3e-17, 90.0\nprint(np.abs(V.T@V-np.eye(10)).max())  # ~1e-15: the 10 PCs are orthonormal\n",
+    "notes": "Principal components are orthonormal eigenvectors of the symmetric covariance matrix, so the first and tenth are at exactly 90 degrees; this matches the official key (B). The numpy check (PCA on random correlated 100-D data, top 10 components) gives cos(theta) about -3e-17, i.e. 90.0 degrees, and V^T V = I to about 1e-15."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

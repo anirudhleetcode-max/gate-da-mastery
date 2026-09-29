@@ -1,0 +1,120 @@
+{
+  "id": "DA2025-S5-Q56",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 56,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-er-relational",
+  "subtopicIds": [
+    "dbw-integrity-constraints",
+    "dbw-relational-model",
+    "dbw-sql"
+  ],
+  "type": "MSQ",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (what PRIMARY KEY and FOREIGN KEY declarations imply about uniqueness and NULLs), where each statement is settled by direct recall of the constraint semantics, taking about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider the following two relations, named `Customer` and `Person`, in a database:\n\n```sql\nPerson (\n      aadhaar CHAR(12) PRIMARY KEY,\n      name VARCHAR(32));\nCustomer (\n      name VARCHAR(32),\n      email VARCHAR(32) PRIMARY KEY,\n      phone CHAR(10),\n      aadhaar CHAR(12),\n         FOREIGN KEY (aadhaar) REFERENCES Person(aadhaar));\n```\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "`aadhaar` is a candidate key in the `Customer` relation"
+    },
+    {
+      "label": "B",
+      "text": "`phone` can be NULL in the `Customer` relation"
+    },
+    {
+      "label": "C",
+      "text": "`aadhaar` is a candidate key in the `Person` relation"
+    },
+    {
+      "label": "D",
+      "text": "`aadhaar` can be NULL in the `Person` relation"
+    }
+  ],
+  "officialKeyRaw": "B;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "In `Person`, `aadhaar` is the PRIMARY KEY, so it is unique and NOT NULL: it is a candidate key (C true) and cannot be NULL (D false). In `Customer`, `phone` carries no NOT NULL constraint, so it may be NULL (B true). `Customer.aadhaar` is only a FOREIGN KEY, with no UNIQUE or NOT NULL constraint, so several customers may share one `aadhaar` (or have none): it is not a candidate key (A false). The answer is **(B), (C)**.",
+    "steps": [
+      {
+        "title": "List the constraints each relation declares",
+        "body": "| Relation | Attribute | Declared constraint | Unique? | Can be NULL? |\n| --- | --- | --- | --- | --- |\n| `Person` | `aadhaar` | PRIMARY KEY | Yes | No |\n| `Person` | `name` | none | No | Yes |\n| `Customer` | `name` | none | No | Yes |\n| `Customer` | `email` | PRIMARY KEY | Yes | No |\n| `Customer` | `phone` | none | No | Yes |\n| `Customer` | `aadhaar` | FOREIGN KEY → `Person(aadhaar)` | No | Yes |\n\nThe two rules used throughout: a PRIMARY KEY is UNIQUE **and** NOT NULL, and a column with no constraint accepts duplicates and NULLs."
+      },
+      {
+        "title": "The Person relation (statements C and D)",
+        "body": "`aadhaar CHAR(12) PRIMARY KEY` makes `aadhaar` the primary key of `Person`.\n\n- A primary key is, by definition, the candidate key chosen to identify tuples: it is unique and minimal (a single attribute is trivially minimal). So `aadhaar` **is a candidate key** of `Person`. **(C) is true.**\n- The entity integrity constraint forbids NULL in any primary-key attribute (PRIMARY KEY implies NOT NULL in SQL). So `aadhaar` **cannot** be NULL in `Person`. **(D) is false.**"
+      },
+      {
+        "title": "The phone attribute of Customer (statement B)",
+        "body": "`phone CHAR(10)` is declared with a type only, with no NOT NULL, PRIMARY KEY or CHECK constraint. In SQL a column is nullable unless something forbids it, so a customer row may be inserted with `phone` = NULL (a customer who gave no phone number). **(B) is true.**"
+      },
+      {
+        "title": "The aadhaar attribute of Customer (statement A)",
+        "body": "In `Customer`, `aadhaar` appears only in `FOREIGN KEY (aadhaar) REFERENCES Person(aadhaar)`. A foreign key is a **referential** constraint: every non-NULL value of `Customer.aadhaar` must exist in `Person.aadhaar`. It says nothing about uniqueness:\n\n- Two customer rows (two different `email` accounts) may carry the same `aadhaar`, i.e. one person may hold several customer accounts. So `aadhaar` does not uniquely identify a `Customer` tuple.\n- A foreign-key column is also nullable here, since no NOT NULL is declared.\n\nThe only declared key of `Customer` is `email`, so `aadhaar` is **not** a candidate key of `Customer`. **(A) is false.**"
+      },
+      {
+        "title": "Conclusion",
+        "body": "`aadhaar` is a candidate (indeed the primary) key of `Person` and so is never NULL there; `phone` in `Customer` is an unconstrained, nullable column; `Customer.aadhaar` is a non-unique foreign key. The correct statements are **(B) and (C)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C)**",
+    "teaching": "**Superkeys, candidate keys and the primary key.** A *superkey* of a relation is a set of attributes whose values uniquely identify every tuple: no two tuples may agree on all of them. A *candidate key* is a minimal superkey, meaning no attribute can be dropped without losing uniqueness. A relation can have several candidate keys; the designer picks one of them as the *primary key*. Hence every primary key is a candidate key.\n\n**What SQL constraints guarantee.** Keys are properties of all *legal* instances of a relation, and in SQL they are declared through constraints:\n\n- `PRIMARY KEY` = `UNIQUE` + `NOT NULL`. The NOT NULL part is the *entity integrity* rule: a tuple must always be identifiable, so no primary-key attribute may be NULL.\n- `UNIQUE` declares an alternate candidate key (standard SQL still allows NULLs in a UNIQUE column unless NOT NULL is added).\n- `FOREIGN KEY (a) REFERENCES T(k)` is the *referential integrity* rule: each non-NULL value of `a` must appear as a key value in `T`. It is about **existence** in another table, not **uniqueness** in this one. Many rows may point to the same referenced row (a many-to-one relationship).\n- A column with no constraint may hold duplicates and NULLs.\n\n**Reading a schema.** To decide whether an attribute is a candidate key, look for a PRIMARY KEY or UNIQUE declaration on it. To decide whether it can be NULL, look for PRIMARY KEY or NOT NULL. A foreign key alone gives neither.\n\n**Back to this question.** `Person.aadhaar` is the primary key, so it is a candidate key (C) and never NULL (D false). `Customer.phone` has no constraint, so it can be NULL (B). `Customer.aadhaar` is only a foreign key: several customers may reference the same person, so it is not a candidate key of `Customer` (A false). Note the asymmetry the question tests: the same attribute name, `aadhaar`, is a key in the referenced table but not in the referencing one.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "In `Customer`, `aadhaar` is only a FOREIGN KEY referencing `Person(aadhaar)`. No UNIQUE (or NOT NULL) constraint is declared on it, so several customer rows with different `email`s may share the same `aadhaar`. It does not uniquely identify tuples, so it is not a candidate key; `email` is the key of `Customer`."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "`phone CHAR(10)` has no NOT NULL or PRIMARY KEY constraint, so SQL allows it to be NULL."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "`aadhaar` is declared PRIMARY KEY of `Person`. A primary key is unique and minimal, i.e. the chosen candidate key, so `aadhaar` is a candidate key of `Person`."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "A PRIMARY KEY attribute is implicitly NOT NULL (entity integrity). So `aadhaar` can never be NULL in `Person`."
+      }
+    ],
+    "shortcut": "PRIMARY KEY ⇒ candidate key and NOT NULL; FOREIGN KEY ⇒ neither unique nor NOT NULL; an unconstrained column ⇒ nullable. Apply these three rules to each option.",
+    "commonTrap": "Assuming that because `aadhaar` is a key of `Person` (and identifies a person in real life), it must also be a key of `Customer`. A foreign key only requires the value to exist in the referenced table; nothing stops one person from having several customer accounts, so (A) is false."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q56-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The schema is set in a typewriter font in the paper, with a blank line between successive lines; it is transcribed as a single-spaced SQL code block. The paper indents the attribute lines relative to `Person (` and `Customer (`, and the FOREIGN KEY line a few characters further; these visual indents (not significant in SQL) are approximated with 6 and 9 spaces. The paper writes `Person (` with a space before the parenthesis but `Person(aadhaar)` without one; both are kept as printed. Relation and attribute names in the text and options are in typewriter font in the paper (rendered as inline code), while NULL is set in the normal text font (rendered as plain text). The only embedded image in the region is the GATE 2025 / IIT Roorkee watermark, which is not part of the question; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;C (Person.aadhaar is the primary key: a candidate key and NOT NULL, so C true and D false; Customer.phone is unconstrained and nullable, so B true; Customer.aadhaar is only a non-unique foreign key, so A false)",
+    "agreesWithKey": true,
+    "checkCode": "import sqlite3\ndb=sqlite3.connect(':memory:'); db.execute('PRAGMA foreign_keys=ON')\n# WITHOUT ROWID makes SQLite enforce the SQL-standard rule PRIMARY KEY => NOT NULL\ndb.execute('CREATE TABLE Person (aadhaar CHAR(12) PRIMARY KEY, name VARCHAR(32)) WITHOUT ROWID')\ndb.execute('CREATE TABLE Customer (name VARCHAR(32), email VARCHAR(32) PRIMARY KEY, phone CHAR(10), aadhaar CHAR(12), FOREIGN KEY (aadhaar) REFERENCES Person(aadhaar)) WITHOUT ROWID')\ndef tryit(tag,sql,args=()):\n    try: db.execute(sql,args); print(tag,'ACCEPTED')\n    except sqlite3.Error as e: print(tag,'REJECTED:',e)\ntryit('Person p1          ','INSERT INTO Person VALUES (?,?)',('111122223333','Asha'))\ntryit('D: Person NULL key ','INSERT INTO Person VALUES (?,?)',(None,'Ravi'))            # rejected -> D false\ntryit('C: dup Person key  ','INSERT INTO Person VALUES (?,?)',('111122223333','Ravi'))  # rejected -> unique -> C true\ntryit('B: NULL phone      ','INSERT INTO Customer VALUES (?,?,?,?)',('Asha','a@x.in',None,'111122223333'))  # accepted -> B true\ntryit('A: dup aadhaar     ','INSERT INTO Customer VALUES (?,?,?,?)',('Asha','a2@x.in','9876543210','111122223333'))  # accepted -> not unique -> A false\ntryit('A: NULL aadhaar    ','INSERT INTO Customer VALUES (?,?,?,?)',('Bo','b@x.in','9000000000',None))  # accepted\ntryit('FK violation       ','INSERT INTO Customer VALUES (?,?,?,?)',('Cy','c@x.in',None,'999999999999'))  # rejected\nprint(db.execute('SELECT aadhaar,COUNT(*) FROM Customer GROUP BY aadhaar').fetchall())\n",
+    "notes": "Hand solve from SQL constraint semantics: PRIMARY KEY = UNIQUE + NOT NULL, so Person.aadhaar is a candidate key (C) and cannot be NULL (D false); phone has no NOT NULL, so it can be NULL (B); FOREIGN KEY imposes no uniqueness, so Customer.aadhaar is not a candidate key (A false). The SQLite check (with WITHOUT ROWID so that PRIMARY KEY implies NOT NULL as in standard SQL, and foreign keys enabled) rejects a NULL or duplicate Person.aadhaar, accepts a Customer row with NULL phone, and accepts two Customer rows with the same aadhaar and one with a NULL aadhaar. This agrees with the official key B;C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

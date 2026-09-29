@@ -1,0 +1,116 @@
+{
+  "id": "DA2024-S1-Q14",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 14,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-graphs",
+  "subtopicIds": [
+    "pdsa-traversals",
+    "pdsa-shortest-path"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (DFS edge classification in undirected graphs) applied in 2–3 reasoning steps (rule out cross and gray, then decide tree versus back from the colour of v), about 1.5–2 minutes; the loosely stated premise makes tree-versus-back a likely trap.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider performing depth-first search (DFS) on an undirected and unweighted graph $G$ starting at vertex $s$. For any vertex $u$ in $G$, $d[u]$ is the length of the shortest path from $s$ to $u$. Let $(u, v)$ be an edge in $G$ such that $d[u] < d[v]$. If the edge $(u, v)$ is explored first in the direction from $u$ to $v$ during the above DFS, then $(u, v)$ becomes a \\_\\_\\_\\_\\_\\_ edge.",
+  "options": [
+    {
+      "label": "A",
+      "text": "tree"
+    },
+    {
+      "label": "B",
+      "text": "cross"
+    },
+    {
+      "label": "C",
+      "text": "back"
+    },
+    {
+      "label": "D",
+      "text": "gray"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "In DFS of an **undirected** graph every edge is either a **tree** edge or a **back** edge, and *gray* is a vertex colour, not an edge type, so (B) and (D) are out. When $u$ scans $(u,v)$ while $v$ is still undiscovered (white), $(u,v)$ becomes a tree edge. That is the official key's answer, **(A)**.\n\nCaveat: with $d[\\cdot]$ defined as shortest-path length, $v$ can also be a gray ancestor of $u$, which makes $(u,v)$ a back edge (see the 5-vertex counterexample in Step 4). This item is therefore flagged for review.",
+    "steps": [
+      {
+        "title": "How DFS classifies an edge the first time it is scanned",
+        "body": "DFS colours vertices **white** (undiscovered), **gray** (discovered, recursive call still running) and **black** (finished: every incident edge has been scanned). An undirected edge is classified the first time it is scanned, by the colour of its far endpoint.\n\nWhen $u$ scans $(u,v)$, $u$ is gray and is the vertex currently being processed. There are three cases:\n\n- $v$ is **white**: DFS discovers $v$ through this edge, so $(u,v)$ is a **tree edge**.\n- $v$ is **gray**: $v$ is on the recursion stack, i.e. an ancestor of $u$ in the DFS tree, so $(u,v)$ is a **back edge**.\n- $v$ is **black**: impossible here. A black $v$ has already scanned all its incident edges, including $(v,u)$, so the edge would have been explored first from $v$. That contradicts the hypothesis.\n\nSo an undirected edge that is explored first from $u$ to $v$ is either a tree edge or a back edge. This is the standard theorem that DFS on an undirected graph produces only tree and back edges."
+      },
+      {
+        "title": "Eliminate (B) cross and (D) gray",
+        "body": "- A **cross** edge joins two vertices neither of which is an ancestor of the other. By Step 1, the far endpoint of a first-scanned undirected edge is always white or a gray ancestor, so cross edges never occur in undirected DFS. (They do occur in DFS of directed graphs and in BFS.)\n- **Gray** is one of the three vertex colours (white/gray/black) used to run DFS. It is not a type of edge.\n\nThe choice is therefore between (A) tree and (C) back."
+      },
+      {
+        "title": "When the edge is a tree edge: the official answer (A)",
+        "body": "$(u,v)$ becomes a tree edge exactly when $v$ is still **white** at the moment $u$ scans it. Then $u$ becomes the DFS parent of $v$.\n\nBecause $u$ and $v$ are adjacent, $|d[u] - d[v]| \\le 1$. So $d[u] < d[v]$ means $d[v] = d[u] + 1$: $v$ is one step farther from $s$ than $u$. In the simplest case, the path $s - u - v$, DFS reaches $u$ first and discovers $v$ through $(u,v)$, which gives a tree edge.\n\nThe official answer key gives **(A) tree**.\n\nFor comparison, the conclusion is a theorem when the ordering $d[u] < d[v]$ refers to DFS **discovery times** (the order in which DFS first reaches vertices). Suppose $u$ is discovered before $v$ and $u$ scans $(u,v)$ first. If $v$ were already discovered at that moment, it would have been discovered while $u$ was active, so $v$ would be a descendant of $u$. DFS is now processing $u$ itself, so every descendant discovered so far has already finished (black). A black $v$ would have scanned $(v,u)$ first, which is a contradiction. So $v$ is white and $(u,v)$ is a tree edge."
+      },
+      {
+        "title": "Caveat: shortest-path distances alone do not force a tree edge",
+        "body": "With $d[\\cdot]$ defined as in the stem (shortest-path length), a back edge is also possible, because a DFS tree need not follow shortest paths. Take vertices $s, a, u, v, w$ with the six edges $s\\text{–}a$, $a\\text{–}v$, $v\\text{–}w$, $w\\text{–}u$, $u\\text{–}s$, $u\\text{–}v$, and scan the adjacency lists in this order:\n\n| Vertex | Neighbours (scan order) | $d[\\cdot]$ |\n|---|---|---|\n| $s$ | $a, u$ | 0 |\n| $a$ | $s, v$ | 1 |\n| $u$ | $s, w, v$ | 1 |\n| $v$ | $a, w, u$ | 2 |\n| $w$ | $v, u$ | 2 |\n\nDFS from $s$ follows the tree edges $s \\to a \\to v \\to w \\to u$. Note that $v$ goes to $w$ before it looks at $u$. At $u$:\n\n1. $u$ scans $s$, which is gray, so $(u,s)$ is a back edge.\n2. $u$ skips $w$, because that edge was already used as the tree edge $(w,u)$.\n3. $u$ scans $v$. DFS at $v$ is still inside the subtree of $w$, so $v$ has not yet scanned $(v,u)$. The edge $(u,v)$ is therefore explored **first from $u$ to $v$**. Since $v$ is **gray**, $(u,v)$ becomes a **back edge**.\n\nThis happens even though $d[u] = 1 < d[v] = 2$.\n\nA Python check confirms this. It traces this graph and runs 20 000 random small graphs with random adjacency orders. Under the shortest-path definition both tree and back edges occur; under the discovery-time reading only tree edges occur. Five vertices is the minimum for such a counterexample: $v$ must be at distance 2 (so a vertex $a$ lies between $s$ and $v$), and $u$ must hang below $v$ through a different vertex $w$."
+      },
+      {
+        "title": "Conclusion",
+        "body": "Cross and gray are impossible. The official key gives **(A) tree**, which is the outcome whenever $v$ is still undiscovered when $u$ scans the edge.\n\nUnder the literal shortest-path definition of $d[\\cdot]$, (C) back can also occur (Step 4), so the premise does not force a unique answer. The platform keeps the official answer (A) and flags the item for review."
+      }
+    ],
+    "finalAnswer": "**(A)** tree (official key; see the caveat in Step 4)",
+    "teaching": "**DFS edge classification.** Depth-first search goes as deep as possible along each branch before it backtracks. To track its progress it colours every vertex:\n\n- **white**: not yet discovered;\n- **gray**: discovered, and its recursive call is still running (it is on the recursion stack);\n- **black**: finished, meaning every incident edge has been scanned.\n\nAt any moment the gray vertices form one root-to-current path in the DFS tree. Each edge is labelled when it is first scanned, according to the colour of the vertex at the other end:\n\n| Colour of the far end | Edge type |\n|---|---|\n| white | tree edge (DFS discovers that vertex through it) |\n| gray | back edge (it points to an ancestor on the stack) |\n| black | forward or cross edge (**directed graphs only**) |\n\nIn an **undirected** graph the black case never arises on a first scan. A black vertex has already scanned all of its edges, so the edge would have been classified from the other side. Hence undirected DFS produces **only tree and back edges**. Every non-tree edge therefore closes a cycle with the tree path, which is why DFS detects cycles in undirected graphs.\n\n**Distances versus DFS ancestry.** In this question $d[u]$ is a BFS-style shortest-path distance. BFS trees follow shortest paths, but DFS trees generally do not: DFS may reach a vertex close to $s$ through a long detour. Being closer to $s$ therefore does not stop a vertex from having a DFS ancestor that is farther from $s$. That gap is exactly what the counterexample in Step 4 uses.\n\n**Back to this question.** Cross and gray are ruled out immediately. The key's answer, tree, describes the case where $v$ is still white when $u$ first looks at the edge. That case is guaranteed when the ordering $d[u] < d[v]$ refers to discovery times, but shortest-path distances alone do not guarantee it.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "Official key. $(u,v)$ is a tree edge whenever $v$ is still white (undiscovered) when $u$ scans it, as on the path $s - u - v$. The outcome is guaranteed if $d[u] < d[v]$ is read as DFS discovery order. Under the stem's shortest-path definition it is the typical outcome but not the only one (see Step 4)."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "Cross edges never occur in DFS of an undirected graph. The far endpoint of a first-scanned edge is either white (tree) or a gray ancestor (back). Cross edges belong to directed DFS and to BFS."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "Not the official answer. A back edge needs $v$ to be a gray ancestor of $u$ when $u$ scans the edge. Note that under the literal shortest-path definition of $d[\\cdot]$ this can actually happen (the 5-vertex counterexample in Step 4). That is why this item is flagged NEEDS_REVIEW."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "\"Gray\" is a vertex colour in the white/gray/black DFS bookkeeping (discovered but not finished). It is not an edge type."
+      }
+    ],
+    "shortcut": "Undirected DFS produces **only tree and back edges**, so cross and gray can be struck out at once. (Undirected BFS, by contrast, produces only tree and cross edges.)",
+    "commonTrap": "Carrying over BFS or directed-graph vocabulary. *Cross* edges occur in BFS and in directed DFS, but never in undirected DFS, and *gray* is a vertex colour. A subtler trap is assuming that a vertex farther from $s$ cannot be a DFS ancestor of a nearer one: DFS trees do not follow shortest paths."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q14-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The answer blank is written as six escaped underscores, and the italic graph name G in the paper is typeset as $G$."
+  },
+  "answerVerification": {
+    "status": "NEEDS_REVIEW",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "Not uniquely determined by the stated premise: (A) tree and (C) back can both occur, while (B) cross and (D) gray are impossible. (A) is forced only if d[·] is read as DFS discovery time.",
+    "agreesWithKey": false,
+    "checkCode": "from collections import deque\nfrom itertools import combinations, permutations\nimport random\n\ndef bfs(adj, s):\n    d = {s: 0}; q = deque([s])\n    while q:\n        x = q.popleft()\n        for y in adj[x]:\n            if y not in d: d[y] = d[x] + 1; q.append(y)\n    return d\n\ndef dfs_classify(adj, s):\n    # CLRS-style DFS; an undirected edge is classified when first scanned\n    color = {v: 'W' for v in adj}; t = [0]; disc = {}; first = {}; kind = {}\n    def visit(x):\n        color[x] = 'G'; t[0] += 1; disc[x] = t[0]\n        for y in adj[x]:\n            e = frozenset((x, y))\n            if e not in kind:\n                first[e] = (x, y)\n                kind[e] = {'W': 'tree', 'G': 'back', 'B': 'forward/cross'}[color[y]]\n                if color[y] == 'W': visit(y)\n        color[x] = 'B'\n    visit(s)\n    return first, kind, disc\n\n# 1) The explicit counterexample\nadj = {'s': ['a', 'u'], 'a': ['s', 'v'], 'v': ['a', 'w', 'u'], 'w': ['v', 'u'], 'u': ['s', 'w', 'v']}\nd = bfs(adj, 's'); first, kind, disc = dfs_classify(adj, 's')\ne = frozenset(('u', 'v'))\nprint('d =', d)\nprint('edge (u,v): first explored', first[e], '->', kind[e])   # ('u','v') -> back, with d[u]=1 < d[v]=2\n\n# 2) Random search: which classes occur for edges with d[x]<d[y] first explored x->y?\nrandom.seed(0)\nseen_bfs, seen_disc = set(), set()\nfor _ in range(20000):\n    n = random.randint(2, 7); V = list(range(n))\n    E = [p for p in combinations(V, 2) if random.random() < 0.5]\n    adj = {v: [] for v in V}\n    for a, b in E: adj[a].append(b); adj[b].append(a)\n    for v in V: random.shuffle(adj[v])\n    d = bfs(adj, 0); first, kind, disc = dfs_classify(adj, 0)\n    for e, (x, y) in first.items():\n        if d[x] < d[y]: seen_bfs.add(kind[e])\n        if disc[x] < disc[y]: seen_disc.add(kind[e])\nprint('d = shortest-path length :', sorted(seen_bfs))   # ['back', 'tree'] -> not forced\nprint('d = DFS discovery time   :', sorted(seen_disc))  # ['tree'] only",
+    "notes": "The official key is A (tree), and the answer field keeps it. Re-derivation: in undirected DFS, an edge first scanned from u to v is a tree edge if v is white and a back edge if v is gray (an ancestor of u); a black v is impossible. The stem defines d[·] as shortest-path length from s. Under that definition, take the 5-vertex graph with edges s–a, a–v, v–w, w–u, u–s, u–v and adjacency order s:[a,u], a:[s,v], v:[a,w,u], w:[v,u], u:[s,w,v]. It gives d[u]=1 < d[v]=2, and the edge (u,v) is first explored from u while v is gray, so it becomes a back edge. Option C is therefore also attainable, and the premise does not force A. A random search over 20000 small graphs with random adjacency orders finds both tree and back outcomes under the shortest-path definition. If d[·] is taken as DFS discovery time instead, it finds only tree outcomes. A human reviewer should confirm how this item is presented."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

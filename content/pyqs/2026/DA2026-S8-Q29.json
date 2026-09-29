@@ -1,0 +1,72 @@
+{
+  "id": "DA2026-S8-Q29",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 29,
+  "section": "DA",
+  "subjectId": "co",
+  "topicId": "co-optimization",
+  "subtopicIds": [
+    "co-single-var-optimization"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY - one concept (the gradient-descent update rule) and a single-step computation: differentiate $wx$ with respect to $w$ and apply $w - \\eta x$ once; well under 1.5 minutes for a prepared student.",
+  "estimatedTimeSec": 45,
+  "stem": "Consider that for a supervised learning task, the objective function being minimized is $f_w(x) = wx$, where $x \\in \\mathbb{R}$ is the input and $w \\in \\mathbb{R}$ is the parameter. Stochastic Gradient Descent with learning rate of 0.10 is used for parameter updates.\n\nSuppose that at the end of iteration $i$, the value of $w$ becomes 10.00.\n\nLet $x = 10.00$ be the input for iteration $(i + 1)$.\n\nThe value of $w$ at the end of iteration $(i + 1)$ is __________ . (Rounded off to **two** decimal places)",
+  "options": [],
+  "officialKeyRaw": "8.90 to 9.10",
+  "answer": {
+    "kind": "NAT",
+    "min": 8.9,
+    "max": 9.1
+  },
+  "solution": {
+    "quick": "SGD updates $w \\leftarrow w - \\eta \\, \\dfrac{\\partial f_w(x)}{\\partial w}$. For $f_w(x) = wx$ the gradient with respect to $w$ is just $x = 10.00$.\n\nSo $w = 10.00 - 0.10 \\times 10.00 = 9.00$. **9.00**",
+    "steps": [
+      {
+        "title": "SGD update rule",
+        "body": "Stochastic Gradient Descent processes one input per iteration and moves the parameter a small step **against** the gradient of the objective, evaluated at the current parameter value and the current input:\n\n$$\nw^{(i+1)} = w^{(i)} - \\eta \\, \\frac{\\partial f_w(x)}{\\partial w}\\bigg|_{w = w^{(i)}}\n$$\n\nHere $\\eta = 0.10$ (learning rate), $w^{(i)} = 10.00$ (value at the end of iteration $i$) and $x = 10.00$ (the input for iteration $i+1$)."
+      },
+      {
+        "title": "Gradient with respect to the parameter",
+        "body": "The parameter is $w$; the input $x$ is treated as a constant while differentiating:\n\n$$\n\\frac{\\partial f_w(x)}{\\partial w} = \\frac{\\partial (wx)}{\\partial w} = x.\n$$\n\nThe gradient does not depend on $w$ at all. For the input of iteration $i+1$, it equals $x = 10.00$."
+      },
+      {
+        "title": "Substitute and compute",
+        "body": "$$\nw^{(i+1)} = 10.00 - 0.10 \\times 10.00 = 10.00 - 1.00 = 9.00.\n$$\n\nThe step moves $w$ downward because the gradient is positive. That decreases $f_w(x) = wx$ for this input: from $10 \\times 10 = 100$ to $9 \\times 10 = 90$, as a minimisation step should."
+      },
+      {
+        "title": "Final answer",
+        "body": "Rounded off to two decimal places, $w$ at the end of iteration $(i+1)$ is **9.00**. This lies inside the official range 8.90 to 9.10."
+      }
+    ],
+    "finalAnswer": "**9.00**",
+    "teaching": "**Gradient descent in one line.** To minimise a differentiable function of a parameter, move the parameter a little in the direction in which the function decreases fastest. For a single parameter $w$ that direction is the sign opposite to the derivative, so the update is\n\n$$\nw \\leftarrow w - \\eta \\, \\frac{\\partial f}{\\partial w}.\n$$\n\nIf the derivative is positive, increasing $w$ increases $f$, so we decrease $w$; if it is negative we increase $w$. The **learning rate** $\\eta$ scales how far we move in one step.\n\n**Stochastic vs batch.** In supervised learning the objective is usually an average over many training examples. Batch gradient descent uses the gradient of that full average in every step. **Stochastic** gradient descent (SGD) instead uses the gradient computed on a single example (the one \"seen\" in the current iteration). That is why the question gives a specific input $x$ for iteration $(i+1)$: the gradient is evaluated at that input and at the current value of $w$.\n\n**Differentiate with respect to the parameter, not the input.** In $f_w(x) = wx$, $w$ is the variable being learned and $x$ is data. So $\\partial(wx)/\\partial w = x$. (In this question $w$ and $x$ are both 10.00, so the numbers hide this distinction, but the reasoning must still use $x$.)\n\n**A remark on this objective.** $wx$ is linear in $w$, so its gradient $x$ never shrinks as $w$ changes. For a fixed positive input every SGD step lowers $w$ by the same amount $\\eta x$; the function has no minimum to converge to. The question asks only for a single update, which is well defined.\n\n**Back to this question.** Current $w = 10.00$, input $x = 10.00$, $\\eta = 0.10$: the gradient is $10.00$, the step is $0.10 \\times 10.00 = 1.00$, and the new value is $10.00 - 1.00 = 9.00$.",
+    "commonTrap": "Adding the gradient instead of subtracting it (gradient *ascent*), which gives $10.00 + 1.00 = 11.00$. Another slip is using the objective value instead of its derivative, $10.00 - 0.10 \\times (10 \\times 10) = 0.00$. Differentiating with respect to $x$ (giving $w$) happens to produce the same number here because $w = x = 10$, but it is conceptually wrong and fails as soon as the two values differ."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q29-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets $f_w(x) = wx$, $x \\in \\mathbb{R}$, $w \\in \\mathbb{R}$, $i$, $x = 10.00$ and $(i + 1)$ as italic math and these are transcribed as inline LaTeX. The numbers 0.10 and 10.00 in the running text are upright and are kept as plain text. The paper prints no separate 'Note' defining the symbol for the real numbers. 'two' is bold in the rounding instruction and is kept bold. No figure is needed and none is embedded in this region."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "9.00",
+    "agreesWithKey": true,
+    "checkCode": "eta, w, x = 0.10, 10.00, 10.00      # learning rate, w after iteration i, input for iteration i+1\ngrad = x                             # d(w*x)/dw = x (does not depend on w)\nw_new = w - eta * grad               # SGD step: move against the gradient\nprint(round(w_new, 2))               # 9.0\nassert abs(w_new - 9.0) < 1e-12 and 8.90 <= w_new <= 9.10",
+    "notes": "The gradient of $f_w(x) = wx$ with respect to $w$ is $x = 10.00$, so one SGD step gives $w = 10.00 - 0.10 \\times 10.00 = 9.00$ (confirmed by the Python check). This lies inside the official key range 8.90 to 9.10."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

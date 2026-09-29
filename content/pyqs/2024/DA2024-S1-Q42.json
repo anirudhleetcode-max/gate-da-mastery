@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q42",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 42,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-clustering",
+  "subtopicIds": [
+    "ml-hierarchical"
+  ],
+  "type": "MCQ",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (single-linkage agglomerative clustering) over three to four routine merge-and-update steps, then matches the result to a dendrogram, in about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider the table below, where the $(i, j)^{th}$ element of the table is the distance between points $x_i$ and $x_j$. Single linkage clustering is performed on data points, $x_1, x_2, x_3, x_4, x_5$.\n\n|  | $x_1$ | $x_2$ | $x_3$ | $x_4$ | $x_5$ |\n| --- | --- | --- | --- | --- | --- |\n| $x_1$ | 0 | 1 | 4 | 3 | 6 |\n| $x_2$ | 1 | 0 | 3 | 5 | 3 |\n| $x_3$ | 4 | 3 | 0 | 2 | 5 |\n| $x_4$ | 3 | 5 | 2 | 0 | 1 |\n| $x_5$ | 6 | 3 | 5 | 1 | 0 |\n\nWhich **ONE** of the following is the correct representation of the clusters produced?",
+  "options": [
+    {
+      "label": "A",
+      "text": "![Figure: Dendrogram for option (A). x1 and x2 are joined, and x4 and x5 are joined, both at the lowest level; x3 then joins the cluster {x4, x5} at a higher level; finally {x1, x2} and {x3, x4, x5} are joined at the top.](/pyq/2024/fig/Q42-1.png)"
+    },
+    {
+      "label": "B",
+      "text": "![Figure: Dendrogram for option (B). x1 and x2 are joined, and x4 and x5 are joined, both at the lowest level; x3 then joins the cluster {x1, x2} at a higher level; finally {x1, x2, x3} and {x4, x5} are joined at the top.](/pyq/2024/fig/Q42-2.png)"
+    },
+    {
+      "label": "C",
+      "text": "![Figure: Dendrogram for option (C). x1 and x2 are joined, and x3 and x4 are joined, both at the lowest level; x5 then joins the cluster {x3, x4} at a higher level; finally {x1, x2} and {x3, x4, x5} are joined at the top.](/pyq/2024/fig/Q42-3.png)"
+    },
+    {
+      "label": "D",
+      "text": "![Figure: Dendrogram for option (D). x1 and x2 are joined, and x3 and x4 are joined, both at the lowest level; {x1, x2} and {x3, x4} are then joined at a higher level; finally x5 joins {x1, x2, x3, x4} at the top.](/pyq/2024/fig/Q42-4.png)"
+    }
+  ],
+  "officialKeyRaw": "A",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "A"
+  },
+  "solution": {
+    "quick": "Single linkage measures the distance between two clusters by their **closest** pair of points. The two distance-1 pairs merge first: $\\{x_1, x_2\\}$ and $\\{x_4, x_5\\}$. Next, $x_3$ joins $\\{x_4, x_5\\}$ at distance $d(x_3, x_4) = 2$. Finally, the two clusters join at distance 3. The tree is $\\big((x_1, x_2), (x_3, (x_4, x_5))\\big)$, which is dendrogram **(A)**.",
+    "steps": [
+      {
+        "title": "Single-linkage rule",
+        "body": "Agglomerative (bottom-up) clustering starts with every point in its own cluster. It repeatedly merges the two **closest** clusters until only one cluster remains. Under single linkage, the distance between clusters $A$ and $B$ is the distance between their closest members:\n\n$$d(A, B) = \\min_{a \\in A,\\; b \\in B} d(a, b)$$\n\nEach merge becomes a horizontal bar in the dendrogram, drawn at the height of the merge distance."
+      },
+      {
+        "title": "Sort the pairwise distances",
+        "body": "The matrix is symmetric with a zero diagonal, so only the 10 entries above the diagonal matter. In increasing order:\n\n| Pair | $x_1x_2$ | $x_4x_5$ | $x_3x_4$ | $x_1x_4$ | $x_2x_3$ | $x_2x_5$ | $x_1x_3$ | $x_2x_4$ | $x_3x_5$ | $x_1x_5$ |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Distance | 1 | 1 | 2 | 3 | 3 | 3 | 4 | 5 | 5 | 6 |\n\nThe smallest distance, 1, occurs twice: for $(x_1, x_2)$ and for $(x_4, x_5)$. These two pairs share no point, so the tie does not matter. Merging one pair leaves the other pair's distance unchanged at 1, so it is merged next.\n\n**After merges 1 and 2 (height 1):** the clusters are $\\{x_1, x_2\\}$, $\\{x_3\\}$ and $\\{x_4, x_5\\}$."
+      },
+      {
+        "title": "Update the cluster distances and merge again",
+        "body": "Apply the minimum rule to the three current clusters:\n\n- $d(\\{x_1, x_2\\}, \\{x_3\\}) = \\min(d_{13}, d_{23}) = \\min(4, 3) = 3$\n- $d(\\{x_3\\}, \\{x_4, x_5\\}) = \\min(d_{34}, d_{35}) = \\min(2, 5) = 2$\n- $d(\\{x_1, x_2\\}, \\{x_4, x_5\\}) = \\min(d_{14}, d_{15}, d_{24}, d_{25}) = \\min(3, 6, 5, 3) = 3$\n\nThe smallest value is 2, so **merge 3** joins $x_3$ with $\\{x_4, x_5\\}$ at height 2. The clusters are now $\\{x_1, x_2\\}$ and $\\{x_3, x_4, x_5\\}$."
+      },
+      {
+        "title": "Final merge",
+        "body": "$$d(\\{x_1, x_2\\}, \\{x_3, x_4, x_5\\}) = \\min(d_{13}, d_{14}, d_{15}, d_{23}, d_{24}, d_{25}) = \\min(4, 3, 6, 3, 5, 3) = 3$$\n\n**Merge 4** joins the two clusters at height 3.\n\n| Merge | Clusters joined | Height |\n| --- | --- | --- |\n| 1 | $\\{x_1\\}, \\{x_2\\}$ | 1 |\n| 2 | $\\{x_4\\}, \\{x_5\\}$ | 1 |\n| 3 | $\\{x_3\\}, \\{x_4, x_5\\}$ | 2 |\n| 4 | $\\{x_1, x_2\\}, \\{x_3, x_4, x_5\\}$ | 3 |"
+      },
+      {
+        "title": "Match the dendrogram",
+        "body": "The dendrogram must show:\n\n- $x_1$ with $x_2$, and $x_4$ with $x_5$, at the lowest level;\n- $x_3$ attached to the $\\{x_4, x_5\\}$ branch, one level higher;\n- the two groups $\\{x_1, x_2\\}$ and $\\{x_3, x_4, x_5\\}$ joined at the top.\n\nOnly dendrogram **(A)** has this shape."
+      }
+    ],
+    "finalAnswer": "**(A)**",
+    "teaching": "**Hierarchical agglomerative clustering.** You do not fix the number of clusters in advance. You start with $n$ singleton clusters and repeat one operation: find the two closest clusters and merge them. After $n - 1$ merges everything is one cluster. The whole history is drawn as a **dendrogram**, a tree whose leaves are the data points. Each internal bar marks a merge, and its height is the distance at which that merge happened. Cutting the dendrogram horizontally at some height gives a flat clustering.\n\n**Linkage = how far apart two clusters are.** Point-to-point distances are given, but after the first merge you also need cluster-to-cluster distances. The *linkage* criterion defines them:\n\n- **Single linkage** (nearest neighbour): $\\min$ over all cross pairs. One close pair is enough to make two clusters \"close\", which can produce long, chain-like clusters.\n- **Complete linkage** (farthest neighbour): $\\max$ over all cross pairs. This favours compact clusters.\n- **Average linkage**: the mean over all cross pairs.\n\n**Useful fact.** Single linkage is equivalent to Kruskal's minimum-spanning-tree algorithm. Process the edges in increasing order of distance, and every edge that connects two different components is a single-linkage merge at that height.\n\n**Back to this question.** Two disjoint pairs, $(x_1, x_2)$ and $(x_4, x_5)$, are at distance 1, so both form first. The critical decision is where $x_3$ goes. Its nearest point in $\\{x_4, x_5\\}$ is $x_4$ at distance 2. Its nearest point in $\\{x_1, x_2\\}$ is $x_2$ at distance 3. Single linkage uses these minima, so $x_3$ joins $\\{x_4, x_5\\}$. Complete linkage would compare the maxima instead (5 versus 4), send $x_3$ to $\\{x_1, x_2\\}$ and give a different tree. The linkage choice really matters here.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "It has $\\{x_1, x_2\\}$ and $\\{x_4, x_5\\}$ at the lowest level, then $x_3$ joining $\\{x_4, x_5\\}$, then the final merge. This is exactly the single-linkage sequence: merges at heights 1, 1, 2 and 3."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "It attaches $x_3$ to $\\{x_1, x_2\\}$. Under single linkage, $d(x_3, \\{x_4, x_5\\}) = 2 < d(x_3, \\{x_1, x_2\\}) = 3$, so $x_3$ must join $\\{x_4, x_5\\}$. Tree (B) is what **complete** linkage would produce: $\\max(4, 3) = 4 < \\max(2, 5) = 5$."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "It pairs $x_3$ with $x_4$ at the lowest level and adds $x_5$ later. But $d(x_4, x_5) = 1 < d(x_3, x_4) = 2$, so $x_4$ has already merged with $x_5$ before $x_3$ is considered."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "It keeps $x_5$ as a singleton until the very last merge. But $d(x_4, x_5) = 1$ is the smallest distance in the whole table, so $x_5$ must join $x_4$ at the first level. D also wrongly pairs $x_3$ with $x_4$."
+      }
+    ],
+    "shortcut": "Use the Kruskal view of single linkage. Take the edges in increasing order of distance and keep each one that joins two different groups: $x_1x_2$ (1), $x_4x_5$ (1), $x_3x_4$ (2), then any distance-3 edge such as $x_1x_4$ (3). These four edges are the dendrogram (A).",
+    "commonTrap": "Deciding where $x_3$ goes by the wrong measure. Using the **largest** cross distance (complete linkage) sends $x_3$ to $\\{x_1, x_2\\}$ and gives (B). Merging the pair $(x_3, x_4)$ at distance 2 before noticing that $(x_4, x_5)$ is at distance 1 gives (C) or (D)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q42-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The distance table is transcribed as a GFM table, with values checked against both the PDF text layer and the rendered crop; the matrix is symmetric with a zero diagonal. The four option dendrograms are raster images embedded in the official PDF. They are copied unchanged as Q42-1.png to Q42-4.png for options A to D and carry faint traces of the 'GATE 2024' watermark. The alt text describes each tree's merge structure as drawn."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A",
+    "agreesWithKey": true,
+    "checkCode": "D=[[0,1,4,3,6],[1,0,3,5,3],[4,3,0,2,5],[3,5,2,0,1],[6,3,5,1,0]]\nassert all(D[i][j]==D[j][i] for i in range(5) for j in range(5))\nC=[frozenset([i]) for i in range(5)]\ndef dist(a,b): return min(D[i][j] for i in a for j in b)  # single linkage\nwhile len(C)>1:\n    d,a,b=min((dist(a,b),sorted(a),sorted(b)) for k,a in enumerate(C) for b in C[k+1:])\n    a,b=frozenset(a),frozenset(b)\n    print('merge',sorted(x+1 for x in a),sorted(x+1 for x in b),'at',d)\n    C=[c for c in C if c not in (a,b)]+[a|b]\n# expected: {1,2}@1, {4,5}@1, {3}+{4,5}@2, {1,2}+{3,4,5}@3  -> option A\n# complete linkage for comparison (explains distractor B)\nC=[frozenset([i]) for i in range(5)]\ncl=lambda a,b: max(D[i][j] for i in a for j in b)\nwhile len(C)>1:\n    d,a,b=min((cl(a,b),sorted(a),sorted(b)) for k,a in enumerate(C) for b in C[k+1:])\n    a,b=frozenset(a),frozenset(b); print('complete: merge',sorted(x+1 for x in a),sorted(x+1 for x in b),'at',d)\n    C=[c for c in C if c not in (a,b)]+[a|b]\n",
+    "notes": "A pure-Python single-linkage run on the transcribed matrix merges {x1,x2} at 1, {x4,x5} at 1, {x3}+{x4,x5} at 2 and {x1,x2}+{x3,x4,x5} at 3. This is dendrogram A and matches the official key A. The same script with complete linkage gives {x3}+{x1,x2} at 4, which is dendrogram B."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

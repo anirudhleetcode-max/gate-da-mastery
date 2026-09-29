@@ -1,0 +1,77 @@
+{
+  "id": "DA2026-S8-Q55",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 55,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-regression",
+  "subtopicIds": [
+    "ml-ridge-regression"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - two directly linked routine computations (the absolute error of one linear prediction and the ridge penalty lambda * ||w||^2), with a mild trap in the form of the penalty (squared norm, no factor 1/2); about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider that Linear Ridge Regression is being used to learn a prediction function $y_{pred} = w^\\top x$, where $w, x \\in \\mathbb{R}^2$ and Mean Absolute Error (MAE) is used to measure the prediction error. A weight of 0.20 is associated with the regularizer.\n\nAt an intermediate step of the training process, assume that the parameter $w = [-3.00,\\ 4.00]^\\top$. In the next step, for the input $x = [1.00,\\ 2.00]^\\top$, the predicted value of $y$ is noted. Let the relation between $x = [x_1,\\ x_2]^\\top$ and the true value of $y$ be $y_{true} = x_1 + x_2$.\n\nThe value of the overall regularized loss function for this instance is _______ . (Rounded off to **two** decimal places)",
+  "options": [],
+  "officialKeyRaw": "6.90 to 7.10",
+  "answer": {
+    "kind": "NAT",
+    "min": 6.9,
+    "max": 7.1
+  },
+  "solution": {
+    "quick": "Prediction: $y_{pred} = w^\\top x = (-3)(1) + (4)(2) = 5$. Truth: $y_{true} = 1 + 2 = 3$. The MAE on this single instance is $|3 - 5| = 2$. The ridge penalty is $\\lambda\\|w\\|_2^2 = 0.20 \\times (9 + 16) = 5$. Overall regularized loss $= 2 + 5 =$ **7.00**.",
+    "steps": [
+      {
+        "title": "Write down the regularized loss",
+        "body": "Ridge regression adds an $L_2$ (squared-norm) penalty on the weights to the data loss. Here the data loss is the Mean Absolute Error and the weight of the regularizer is $\\lambda = 0.20$, so over $N$ instances\n\n$$\nL(w) = \\underbrace{\\frac{1}{N}\\sum_{i=1}^{N} \\left|y_{true}^{(i)} - y_{pred}^{(i)}\\right|}_{\\text{MAE}} + \\underbrace{\\lambda \\|w\\|_2^2}_{\\text{ridge penalty}}, \\qquad \\|w\\|_2^2 = w_1^2 + w_2^2 .\n$$\n\nThe question asks for the loss on **this one instance**, so $N = 1$ and the MAE is simply the absolute error of that instance."
+      },
+      {
+        "title": "Compute the prediction and the true value",
+        "body": "The prediction is made with the current parameter $w = [-3,\\ 4]^\\top$ on the input $x = [1,\\ 2]^\\top$:\n\n$$\ny_{pred} = w^\\top x = (-3)(1) + (4)(2) = -3 + 8 = 5 .\n$$\n\nThe true relation is $y_{true} = x_1 + x_2$, so\n\n$$\ny_{true} = 1 + 2 = 3 .\n$$"
+      },
+      {
+        "title": "Data term: absolute error",
+        "body": "$$\n\\text{MAE} = |y_{true} - y_{pred}| = |3 - 5| = 2 .\n$$"
+      },
+      {
+        "title": "Regularizer term: ridge penalty",
+        "body": "$$\n\\|w\\|_2^2 = (-3)^2 + 4^2 = 9 + 16 = 25, \\qquad \\lambda \\|w\\|_2^2 = 0.20 \\times 25 = 5 .\n$$\n\nThe penalty depends only on the weights, not on the input or the target."
+      },
+      {
+        "title": "Add the two terms",
+        "body": "$$\nL = \\text{MAE} + \\lambda\\|w\\|_2^2 = 2 + 5 = 7.00 .\n$$\n\nThis lies in the official range 6.90 to 7.10. Answer: **7.00**."
+      }
+    ],
+    "finalAnswer": "**7.00**",
+    "teaching": "**Regularized loss = data fit + penalty.** When we train a model, we minimise a loss that has two parts. The *data term* measures how badly the predictions miss the targets: the Mean Squared Error $\\frac{1}{N}\\sum (y - \\hat y)^2$ in classic linear regression, or, as in this question, the Mean Absolute Error $\\frac{1}{N}\\sum |y - \\hat y|$. The *regularization term* penalises large weights so the model does not overfit.\n\n**Ridge regression** uses the squared Euclidean norm of the weight vector as the penalty:\n\n$$\nL(w) = \\text{data loss}(w) + \\lambda \\|w\\|_2^2 = \\text{data loss}(w) + \\lambda \\sum_j w_j^2 .\n$$\n\nThe hyperparameter $\\lambda \\ge 0$ (the \"weight associated with the regularizer\") sets the trade-off. $\\lambda = 0$ gives the unregularized model, and a larger $\\lambda$ pulls the weights towards $0$: more bias, less variance. (Lasso uses $\\lambda\\sum_j |w_j|$ instead, and some textbooks write the ridge penalty as $\\tfrac{\\lambda}{2}\\|w\\|_2^2$ for tidier gradients; when a question simply says \"a weight of $\\lambda$ is associated with the regularizer\", take the penalty as $\\lambda\\|w\\|_2^2$.)\n\n**Evaluating the loss at one point of training.** At any step, the loss is just a number computed from the current weights: predict with the current $w$, measure the error on the data, compute the penalty from the same $w$ and add them. No gradient step is needed to evaluate it.\n\n**Connecting to this question.** With $w = [-3, 4]^\\top$ and $x = [1, 2]^\\top$, the model predicts $5$ while the truth is $3$, an absolute error of $2$. The weights have squared norm $25$, so the ridge penalty is $0.20 \\times 25 = 5$. The overall regularized loss for this instance is $2 + 5 = 7.00$.",
+    "commonTrap": "Getting the penalty wrong. Using the plain norm $\\|w\\|_2 = 5$ instead of the squared norm $\\|w\\|_2^2 = 25$ gives $2 + 1 = 3$, and inserting a factor $\\tfrac12$ gives $2 + 2.5 = 4.5$; both fall outside the key. Other slips are reporting only the MAE ($2$) and forgetting the penalty, or squaring the error as in MSE ($4 + 5 = 9$) although the question specifies MAE."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q55-1.webp",
+    "/pyq/2026/official/Q55-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes transposes with a superscript italic T (w^T x, [-3.00, 4.00]^T, [1.00, 2.00]^T and [x_1, x_2]^T); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The subscripts in y_pred and y_true are set in italic math in the paper and are transcribed as math subscripts. The wider gap after the comma inside each bracketed vector is rendered with a LaTeX space. In the paper there is no space between '[x_1, x_2]^T' and the following 'and'; normal spacing is used. 'two' in the rounding instruction is bold in the paper and is kept bold. The second official crop (Q55-2) shows only the header and a table border of the next page. No figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "7.00",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nw = np.array([-3.0, 4.0]); x = np.array([1.0, 2.0]); lam = 0.20\ny_pred = w @ x                 # -3 + 8 = 5\ny_true = x[0] + x[1]           # 3\nmae = abs(y_pred - y_true)     # |5 - 3| = 2 (single instance)\nreg = lam * np.sum(w**2)       # 0.2 * 25 = 5  (ridge: lambda * ||w||_2^2)\nloss = mae + reg\nprint(y_pred, y_true, mae, reg, round(loss, 2))\n# other penalty forms, for comparison: lam/2*||w||^2 -> 4.5, lam*||w|| -> 3.0\nprint(mae + lam / 2 * np.sum(w**2), mae + lam * np.linalg.norm(w))\nassert 6.90 <= round(loss, 2) <= 7.10   # -> 7.00",
+    "notes": "Computed by hand and in Python: y_pred = w^T x = -3 + 8 = 5; y_true = 1 + 2 = 3; the MAE on the single instance is |3 - 5| = 2; the ridge penalty is 0.20 * ||w||_2^2 = 0.20 * 25 = 5; the total is 7.00, inside the official range 6.90 to 7.10. The stem does not write out the regularizer formula; the standard ridge penalty lambda * ||w||_2^2 with lambda = 0.20 reproduces the key, while the forms (lambda/2) * ||w||_2^2 (total 4.50) and lambda * ||w||_2 (total 3.00) would fall outside it. Independent answer 7.00 matches the key."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

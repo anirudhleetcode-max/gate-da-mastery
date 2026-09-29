@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q24",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 24,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-uncertainty",
+  "subtopicIds": [
+    "ai-conditional-independence"
+  ],
+  "type": "MCQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (conditional independence read off a Bayesian-network factorisation) applied in 2–3 steps, namely drawing the DAG and classifying each path as a chain, fork or collider, with the collider case as a likely trap; about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider five random variables $U, V, W, X,$ and $Y$ whose joint distribution satisfies:\n\n$$\nP(U, V, W, X, Y) = P(U)P(V)P(W \\mid U, V)P(X \\mid W)P(Y \\mid W)\n$$\n\nWhich **ONE** of the following statements is **FALSE**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$Y$ is conditionally independent of $V$ given $W$"
+    },
+    {
+      "label": "B",
+      "text": "$X$ is conditionally independent of $U$ given $W$"
+    },
+    {
+      "label": "C",
+      "text": "$U$ and $V$ are conditionally independent given $W$"
+    },
+    {
+      "label": "D",
+      "text": "$Y$ and $X$ are conditionally independent given $W$"
+    }
+  ],
+  "officialKeyRaw": "C",
+  "answer": {
+    "kind": "MCQ",
+    "correct": "C"
+  },
+  "solution": {
+    "quick": "The factorisation is the Bayesian network $U \\to W \\leftarrow V$, $W \\to X$, $W \\to Y$. Given $W$, the chains $V \\to W \\to Y$ and $U \\to W \\to X$ and the fork $X \\leftarrow W \\to Y$ are blocked, so (A), (B) and (D) are true. But $W$ is a **collider** on $U \\to W \\leftarrow V$: observing it makes $U$ and $V$ dependent (\"explaining away\"). So (C) is FALSE.",
+    "steps": [
+      {
+        "title": "Read the factorisation as a Bayesian network",
+        "body": "A Bayesian network writes the joint distribution as a product of one factor $P(\\text{node} \\mid \\text{parents})$ per node. Matching each factor:\n\n| Factor | Node | Parents |\n|---|---|---|\n| $P(U)$ | $U$ | none |\n| $P(V)$ | $V$ | none |\n| $P(W \\mid U, V)$ | $W$ | $U, V$ |\n| $P(X \\mid W)$ | $X$ | $W$ |\n| $P(Y \\mid W)$ | $Y$ | $W$ |\n\nSo the directed acyclic graph has the edges\n\n$$\nU \\to W, \\quad V \\to W, \\quad W \\to X, \\quad W \\to Y .\n$$\n\n$W$ is a common **effect** of $U$ and $V$, and a common **cause** of $X$ and $Y$."
+      },
+      {
+        "title": "The three path patterns (d-separation)",
+        "body": "Two variables are conditionally independent given a set $Z$ if every path between them is **blocked** by $Z$. A path through a middle node $B$ is one of three types:\n\n- **Chain** $A \\to B \\to C$: blocked when $B$ is observed.\n- **Fork** $A \\leftarrow B \\to C$: blocked when $B$ is observed.\n- **Collider** $A \\to B \\leftarrow C$: blocked when $B$ is **not** observed (and none of its descendants is). Observing $B$ **opens** the path.\n\nIn this graph every path goes through $W$, and in every statement we condition on $W$ only."
+      },
+      {
+        "title": "Check each statement",
+        "body": "- **(A)** $Y$ and $V$: the only path is $V \\to W \\to Y$, a chain. Observing $W$ blocks it, so $Y \\perp V \\mid W$. **True.**\n- **(B)** $X$ and $U$: the only path is $U \\to W \\to X$, a chain. Blocked by $W$, so $X \\perp U \\mid W$. **True.**\n- **(D)** $Y$ and $X$: the only path is $X \\leftarrow W \\to Y$, a fork. Blocked by $W$, so $Y \\perp X \\mid W$. **True.**\n- **(C)** $U$ and $V$: the only path is $U \\to W \\leftarrow V$, a collider. Observing $W$ **opens** it, so $U$ and $V$ are, in general, **dependent** given $W$. **False.**\n\nSo the FALSE statement is (C)."
+      },
+      {
+        "title": "Algebraic confirmation",
+        "body": "**(D):** summing out $U$ and $V$,\n\n$$\nP(W, X, Y) = \\sum_{U, V} P(U)P(V)P(W \\mid U, V)\\,P(X \\mid W)P(Y \\mid W) = P(W)\\,P(X \\mid W)\\,P(Y \\mid W),\n$$\n\nso $P(X, Y \\mid W) = P(X \\mid W)\\,P(Y \\mid W)$.\n\n**(A):** summing out $X$ (its factor sums to 1) and then $U$, and using $P(U) = P(U \\mid V)$,\n\n$$\nP(V, W, Y) = P(V)\\Big[\\sum_U P(U)\\,P(W \\mid U, V)\\Big] P(Y \\mid W) = P(V)\\,P(W \\mid V)\\,P(Y \\mid W) = P(V, W)\\,P(Y \\mid W),\n$$\n\nso $P(Y \\mid V, W) = P(Y \\mid W)$. **(B)** is the same calculation with $U$ and $V$ swapped and $X$ in place of $Y$.\n\n**(C):** summing out $X$ and $Y$,\n\n$$\nP(U, V \\mid W) = \\frac{P(U)\\,P(V)\\,P(W \\mid U, V)}{P(W)} .\n$$\n\nThe factor $P(W \\mid U, V)$ ties $U$ and $V$ together, so in general this does **not** split into (a function of $U, W$) $\\times$ (a function of $V, W$). Note that $U$ and $V$ **are** independent before conditioning, since summing out $W, X, Y$ leaves $P(U, V) = P(U)P(V)$. The independence is lost only once $W$ is given."
+      },
+      {
+        "title": "A concrete counterexample for (C): explaining away",
+        "body": "Let $U$ and $V$ be independent fair bits and let $W = U \\lor V$ (a valid choice of $P(W \\mid U, V)$; take any $P(X \\mid W)$ and $P(Y \\mid W)$).\n\n- $P(W = 1) = 1 - P(U = 0, V = 0) = 1 - \\tfrac14 = \\tfrac34$.\n- $P(U = 1 \\mid W = 1) = \\dfrac{P(U = 1)}{P(W = 1)} = \\dfrac{1/2}{3/4} = \\dfrac23$ (if $U = 1$ then $W = 1$ for sure).\n- $P(U = 1 \\mid W = 1, V = 1) = P(U = 1) = \\dfrac12$ (once $V = 1$, $W = 1$ tells us nothing more about $U$).\n\nSince $\\tfrac23 \\ne \\tfrac12$, learning $V$ changes our belief about $U$ even though $W$ is known: $U$ and $V$ are **not** conditionally independent given $W$. The Python check also builds random conditional tables for this factorisation and confirms numerically that (A), (B) and (D) hold exactly while (C) fails.\n\nThe answer is **(C)**."
+      }
+    ],
+    "finalAnswer": "**(C)**",
+    "teaching": "**Bayesian networks.** A Bayesian network is a directed acyclic graph together with one conditional table per node, $P(\\text{node} \\mid \\text{parents})$. The joint distribution is the product of these tables. Reading the factorisation backwards gives the graph: every factor $P(A \\mid B, C)$ means arrows $B \\to A$ and $C \\to A$.\n\n**Where independences come from.** The graph encodes conditional independences through **d-separation**. Think of dependence as \"information flowing\" along paths:\n\n- In a **chain** $A \\to B \\to C$, $A$ influences $C$ only through $B$. Once you know $B$, $A$ adds nothing about $C$: observing the middle node blocks the flow.\n- In a **fork** $A \\leftarrow B \\to C$, $A$ and $C$ are correlated only because they share the cause $B$. Knowing $B$ removes that shared source: blocked.\n- In a **collider** $A \\to B \\leftarrow C$, the two causes are independent to begin with. But once you observe their common effect, they compete to explain it. The classic example: a burglary or an earthquake can set off an alarm. On its own, a burglary tells you nothing about earthquakes. If you know the alarm rang and then learn there was a burglary, an earthquake becomes *less* likely, because the burglary already \"explains away\" the alarm. Observing a collider (or any of its descendants) **creates** dependence.\n\n**How to use it in the exam.** For each pair of variables, list the paths between them, find the middle node of each segment, and decide whether it is a chain/fork node (blocked if observed) or a collider (blocked only if it and its descendants are unobserved). If every path is blocked, the pair is conditionally independent.\n\n**Back to this question.** $P(W \\mid U, V)$ makes $W$ a collider for $U$ and $V$, while $W$ is a chain node for $U$–$X$ and $V$–$Y$ and a fork node for $X$–$Y$. Conditioning on $W$ blocks the chains and the fork, making (A), (B) and (D) true, but it opens the collider, so \"$U$ and $V$ are conditionally independent given $W$\" is FALSE.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "This statement is **true**, so it is not the answer. The only path $V \\to W \\to Y$ is a chain, blocked by observing $W$; algebraically $P(Y \\mid V, W) = P(Y \\mid W)$."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "This statement is **true**, so it is not the answer. The only path $U \\to W \\to X$ is a chain, blocked by observing $W$; algebraically $P(X \\mid U, W) = P(X \\mid W)$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "This statement is **false**, so it is the answer. $U \\to W \\leftarrow V$ is a collider; observing $W$ opens the path and makes $U$ and $V$ dependent (explaining away). With $W = U \\lor V$: $P(U = 1 \\mid W = 1) = \\tfrac23$ but $P(U = 1 \\mid W = 1, V = 1) = \\tfrac12$. This matches the official key."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "This statement is **true**, so it is not the answer. $X \\leftarrow W \\to Y$ is a fork; given the common parent $W$, $P(X, Y \\mid W) = P(X \\mid W)\\,P(Y \\mid W)$ directly from the factorisation."
+      }
+    ],
+    "shortcut": "Spot the factor with two parents, $P(W \\mid U, V)$. Its parents $U$ and $V$ are a collider pair: independent marginally, but dependent given $W$. \\\"Two causes are conditionally independent given their common effect\\\" is the classic false statement.",
+    "commonTrap": "Reasoning that because the factorisation contains $P(U)P(V)$, $U$ and $V$ stay independent after conditioning on $W$. Independence does not survive conditioning on a common effect. The mirror-image mistake is thinking $X$ and $Y$ remain dependent given $W$ because they share a parent: they are dependent marginally, but independent once $W$ is known."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q24-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The displayed factorisation is centred on its own line in the paper and is typeset as display math; the conditioning bars are typeset with \\mid. The comma after X in \"U, V, W, X, and Y\" is printed inside the italic math and is kept inside the math span. The page has no figure other than the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(C)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\ndef cpt(*shape):                                  # random conditional table, normalised on last axis\n    t = rng.random(shape); return t / t.sum(-1, keepdims=True)\npU, pV, pW, pX, pY = cpt(2), cpt(2), cpt(2, 2, 2), cpt(2, 2), cpt(2, 2)\n# joint P[u,v,w,x,y] = P(u)P(v)P(w|u,v)P(x|w)P(y|w)\nP = np.einsum('u,v,uvw,wx,wy->uvwxy', pU, pV, pW, pX, pY)\nassert np.isclose(P.sum(), 1)\nax = dict(U=0, V=1, W=2, X=3, Y=4)\ndef ci(a, b, c='W'):                              # is a independent of b given c?  P(a,b|c) == P(a|c)P(b|c)\n    keep = sorted([ax[a], ax[b], ax[c]])\n    M = P.sum(axis=tuple(i for i in range(5) if i not in keep))\n    M = np.moveaxis(M, [keep.index(ax[a]), keep.index(ax[b]), keep.index(ax[c])], [0, 1, 2])   # M[a,b,c]\n    Pc = M.sum((0, 1)); Pab_c = M / Pc; Pa_c = M.sum(1) / Pc; Pb_c = M.sum(0) / Pc\n    return np.allclose(Pab_c, Pa_c[:, None, :] * Pb_c[None, :, :])\nres = {'A: Y _|_ V | W': ci('Y', 'V'), 'B: X _|_ U | W': ci('X', 'U'),\n       'C: U _|_ V | W': ci('U', 'V'), 'D: Y _|_ X | W': ci('Y', 'X')}\nprint(res)                                        # only C fails -> C is the FALSE statement\n# U and V are marginally independent (no conditioning) but become dependent once W is observed\nMUV = P.sum((2, 3, 4)); print('U _|_ V marginally:', np.allclose(MUV, np.outer(MUV.sum(1), MUV.sum(0))))\nassert res == {'A: Y _|_ V | W': True, 'B: X _|_ U | W': True, 'C: U _|_ V | W': False, 'D: Y _|_ X | W': True}\n# explaining away: U, V fair coins, W = U OR V\nfrom fractions import Fraction as F\nJ = {(u, v): F(1, 4) for u in (0, 1) for v in (0, 1)}          # P(u, v); W = u or v\npU1_W1 = sum(p for (u, v), p in J.items() if u and (u or v)) / sum(p for (u, v), p in J.items() if u or v)\npU1_W1V1 = J[(1, 1)] / (J[(0, 1)] + J[(1, 1)])\nprint('P(U=1|W=1) =', pU1_W1, ' P(U=1|W=1,V=1) =', pU1_W1V1)  # 2/3 vs 1/2 -> dependent given W\nassert pU1_W1 == F(2, 3) and pU1_W1V1 == F(1, 2)",
+    "notes": "The factorisation defines the DAG U → W ← V, W → X, W → Y. Given W, the chains V → W → Y and U → W → X and the fork X ← W → Y are blocked, so (A), (B) and (D) hold; W is a collider for U and V, so conditioning on it makes them dependent and (C) is FALSE. A Python check with random binary conditional tables confirms (A), (B) and (D) hold exactly and (C) fails, that U and V are marginally independent, and that with W = U OR V, P(U=1 | W=1) = 2/3 while P(U=1 | W=1, V=1) = 1/2. This agrees with official key C."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}
