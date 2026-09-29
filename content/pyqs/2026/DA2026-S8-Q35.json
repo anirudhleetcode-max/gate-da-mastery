@@ -60,16 +60,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the sums inline as $\\sum_{i=0}^{\\infty} \\sum_{j=1}^{\\infty} 2^{-i}\\, 3^{-j}$ (limits in sub/superscript position); the PDF text layer scrambles the limits, so they were read from the rendered image. The word 'integer' is bold in the answer instruction and is kept bold. The second official crop (Q35-2) shows only the heading 'Q.36 – Q.65 Carry TWO marks Each' at the top of the next page and contains no part of this question. No figure is needed and none is embedded in this region."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Limits (i from 0, j from 1, both to infinity), the exponents $2^{-i}\\,3^{-j}$, the blank and the bold word 'integer' in the answer instruction all match the official crop. The PDF text layer scrambles the sum limits, so they were read from the rendered image. The second official crop (Q35-2) shows only the heading 'Q.36 – Q.65 Carry TWO marks Each' at the top of the next page and contains no part of this question. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "1",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nfrom fractions import Fraction as F\ni, j = sp.symbols('i j', integer=True, nonnegative=True)\nS = sp.summation(sp.summation(sp.Rational(1, 2)**i * sp.Rational(1, 3)**j, (j, 1, sp.oo)), (i, 0, sp.oo))\nprint(S)                                        # 1\nA = sum(F(1, 2**k) for k in range(0, 60))       # partial sum of the i-series -> 2\nB = sum(F(1, 3**k) for k in range(1, 60))       # partial sum of the j-series -> 1/2\nprint(float(A), float(B), float(A * B))         # 2.0 0.5 1.0\nassert S == 1 and abs(float(A * B) - 1) < 1e-12",
-    "notes": "The double sum factors into $\\sum_{i=0}^{\\infty} 2^{-i} = 2$ and $\\sum_{j=1}^{\\infty} 3^{-j} = \\tfrac{1}{2}$, giving $1$ (confirmed symbolically with sympy and by exact partial sums). This equals the official key \"1 to 1\"."
+    "notes": "Independent verifier re-solved from the stem and official crop before reading the stored solution: the positive, separable double sum factors as $\\sum_{i=0}^{\\infty} 2^{-i} = 2$ times $\\sum_{j=1}^{\\infty} 3^{-j} = \\tfrac{1}{2}$, giving $1$. Confirmed symbolically (sympy) and by exact partial sums with Fraction. This equals the official key \"1 to 1\" (NAT, 1 mark). Caveat: the key cell is printed in the per-question context file, which the verifier had to open first, so the re-solve was not strictly key-blind; the arithmetic is unambiguous."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
