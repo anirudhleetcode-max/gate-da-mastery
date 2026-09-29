@@ -52,12 +52,12 @@
       "commonTrap": "Keeping only one term: $0.336$ (treating $S$ as $\\text{Binomial}(2.1, 0.8)$ by plugging in $E[N]$) or $0.3136$ (only the between-group term). Both ignore half of the variability."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.6496",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.6496 (rounds to 0.65)",
       "agreesWithKey": true,
-      "checkCode": "from math import comb\npN = {1: 0.2, 2: 0.5, 3: 0.3}; p = 0.8\npS = {}\nfor n, pn in pN.items():\n    for k in range(n + 1):\n        pS[k] = pS.get(k, 0) + pn * comb(n, k) * p**k * (1 - p)**(n - k)\nm = sum(k * v for k, v in pS.items())\nprint(round(sum(k * k * v for k, v in pS.items()) - m * m, 4))  # 0.6496",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nfrom math import comb\npN = {1: F(1, 5), 2: F(1, 2), 3: F(3, 10)}; p = F(4, 5)\n# exact PMF of S by conditioning on N, then its variance\npS = {}\nfor n, w in pN.items():\n    for k in range(n + 1):\n        pS[k] = pS.get(k, 0) + w * comb(n, k) * p**k * (1 - p)**(n - k)\nm = sum(k * v for k, v in pS.items()); var = sum(v * (k - m)**2 for k, v in pS.items())\n# cross-check: law of total variance\nEN = sum(n * w for n, w in pN.items()); VN = sum(n * n * w for n, w in pN.items()) - EN**2\nltv = p * (1 - p) * EN + p**2 * VN\nprint(sum(pS.values()), float(var), float(ltv), round(float(var), 2))  # 1 0.6496 0.6496 0.65",
+      "notes": "Blind solve by the law of total variance (0.16*E[N] + 0.64*Var(N) = 0.336 + 0.3136 = 0.6496) matched the key. Own Python (exact PMF of S built by conditioning on N, and separately the total-variance formula) gives 0.6496. Audited the stem (independence of tickets and N and the conditional Binomial(n, 0.8) are stated), every step including the PMF cross-check (all four P(S=k) recomputed, sum to 1, E[S] = 1.68, E[S^2] = 3.472), the NAT rounding (stated in the stem; range 0.64 to 0.66 around 0.6496, which rounds to 0.65), the MODERATE label and the subject/topic mapping. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -128,12 +128,12 @@
       "commonTrap": "Counting task 4 as regression because its labels are written as numbers (0–9). The digits are names of classes, not quantities, so the task is 10-class classification and the answer is 4, not 5."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve agrees with key",
       "independentAnswer": "4",
       "agreesWithKey": true,
-      "checkCode": "targets = {1: 'continuous', 2: 'binary', 3: 'continuous', 4: '10-class',\n           5: 'continuous', 6: '4-class', 7: 'continuous', 8: 'binary'}\nprint(sum(v == 'continuous' for v in targets.values()))  # 4",
-      "notes": ""
+      "checkCode": "# Target type of each of the 8 tasks: a numeric quantity -> regression, a finite set of labels -> classification\ntarget = {1: 'numeric', 2: 'label', 3: 'numeric', 4: 'label', 5: 'numeric', 6: 'label', 7: 'numeric', 8: 'label'}\nreg = [t for t, k in target.items() if k == 'numeric']\nprint(reg, len(reg))  # [1, 3, 5, 7] 4",
+      "notes": "Blind classification of the eight targets (numeric: tasks 1, 3, 5, 7; finite label set: tasks 2, 4, 6, 8) gave 4, matching the key. Conceptual item, so the stored check is only a hand tally. Audited: each target type is unambiguous as stated (kWh, rupees, minutes and degrees Celsius are quantities; spam, digit 0-9, blood group and default are class labels), the solution and trap (digits as class names), the EASY label and the topic mapping. No edits required. Exact integer, so the NAT range 4 to 4 is appropriate."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -203,7 +203,7 @@
       ]
     },
     "solution": {
-      "quick": "$g(0) = g(\\sqrt{3}) = 0$, so $g$ is not one-to-one. $h(-x) = \\ln\\big(\\sqrt{x^2+1} - x\\big) = -h(x)$, so $h$ is odd.\nThe periods of $\\sin 2x$ and $\\cos 3x$ are $\\pi$ and $2\\pi/3$, whose least common multiple is $2\\pi$. Finally, $q(\\pm 1) = \\pm 1$, so the range of $q$ is the closed interval $[-1, 1]$. Answer: **B, C**.",
+      "quick": "$g(0) = g(\\sqrt{3}) = 0$, so $g$ is not one-to-one. $h(-x) = \\ln\\big(\\sqrt{x^2+1} - x\\big) = -h(x)$, so $h$ is odd.\nThe periods of $\\sin 2x$ and $\\cos 3x$ are $\\pi$ and $2\\pi/3$, whose least common multiple is $2\\pi$; since the two terms have different frequencies each must repeat on its own, so $2\\pi$ is the fundamental period. Finally, $q(\\pm 1) = \\pm 1$, so the range of $q$ is the closed interval $[-1, 1]$. Answer: **B, C**.",
       "steps": [
         {
           "title": "Statement A: injectivity of g",
@@ -215,7 +215,7 @@
         },
         {
           "title": "Statement C: period of p",
-          "body": "$\\sin 2x$ has period $\\pi$ and $\\cos 3x$ has period $2\\pi/3$. In units of $\\pi/3$ these periods are $3$ and $2$, so their least common multiple is $6 \\cdot \\pi/3 = 2\\pi$, and $p(x + 2\\pi) = p(x)$.\nBecause the two terms have different frequencies (2 and 3), $p(x+T) = p(x)$ for all $x$ forces each term to repeat on its own, so every period of $p$ is a common multiple of $\\pi$ and $2\\pi/3$. No smaller $T$ works. For example, $p(0) = 1$, but $p(\\pi) = 0 + \\cos 3\\pi = -1$ and $p(2\\pi/3) = \\sin(4\\pi/3) + \\cos 2\\pi \\approx 0.134$. The fundamental period is $2\\pi$, so C is true."
+          "body": "$\\sin 2x$ has period $\\pi$ and $\\cos 3x$ has period $2\\pi/3$. In units of $\\pi/3$ these periods are $3$ and $2$, so their least common multiple is $6 \\cdot \\pi/3 = 2\\pi$, and $p(x + 2\\pi) = p(x)$.\nNow show that nothing smaller works. If $p(x+T) = p(x)$ for all $x$, then $\\big[\\sin(2x+2T) - \\sin 2x\\big] + \\big[\\cos(3x+3T) - \\cos 3x\\big] = 0$ for all $x$. Expanding the brackets gives a combination of $\\sin 2x, \\cos 2x, \\sin 3x, \\cos 3x$, which are linearly independent functions, so every coefficient must vanish. That forces $\\cos 2T = 1$ and $\\sin 2T = 0$, i.e. $T \\in \\pi\\mathbb{Z}$, and $\\cos 3T = 1$ and $\\sin 3T = 0$, i.e. $T \\in \\tfrac{2\\pi}{3}\\mathbb{Z}$. A positive number in both sets satisfies $m\\pi = 2n\\pi/3$, i.e. $3m = 2n$, so $m$ is even and $T$ is a multiple of $2\\pi$. The smallest positive period is therefore $2\\pi$. (Sanity check: $p(0) = 1$, but $p(\\pi) = -1$ and $p(2\\pi/3) = \\sin(4\\pi/3) + \\cos 2\\pi \\approx 0.134$, so $\\pi$ and $2\\pi/3$ are not periods.) So C is true."
         },
         {
           "title": "Statement D: range of q",
@@ -238,7 +238,7 @@
         {
           "label": "C",
           "verdict": "correct",
-          "explanation": "True. The periods $\\pi$ and $2\\pi/3$ have least common multiple $2\\pi$. Smaller candidates fail, for example $p(\\pi) = -1 \\ne p(0) = 1$."
+          "explanation": "True. $p(x + 2\\pi) = p(x)$. Because $\\sin 2x$ and $\\cos 3x$ have different frequencies, any period of $p$ must be a period of each term, so it lies in $\\pi\\mathbb{Z} \\cap \\tfrac{2\\pi}{3}\\mathbb{Z} = 2\\pi\\mathbb{Z}$. Hence no positive period is smaller than $2\\pi$ (for example $p(\\pi) = -1 \\ne p(0) = 1$)."
         },
         {
           "label": "D",
@@ -249,12 +249,12 @@
       "commonTrap": "Assuming every cubic is one-to-one (true only for monotonic cubics), and assuming a bounded rational function never reaches its bound, which here would make the range the open interval (−1, 1)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "B, C",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nx = np.linspace(-5, 5, 200001)\ng = lambda t: t**3 - 3*t; A = not np.isclose(g(0.0), g(np.sqrt(3)))  # g(0)=g(sqrt3)=0 -> not injective\nh = lambda t: np.log(t + np.sqrt(t*t + 1)); B = np.max(np.abs(h(x) + h(-x))) < 1e-9\np = lambda t: np.sin(2*t) + np.cos(3*t); t = np.linspace(0, 2*np.pi, 2001)\nTs = np.linspace(0.05, 2*np.pi - 0.05, 20000)\nC = np.max(np.abs(p(t + 2*np.pi) - p(t))) < 1e-9 and min(np.max(np.abs(p(t+T) - p(t))) for T in Ts) > 0.1\nqf = lambda t: 2*t/(1 + t*t); D = not (np.max(np.abs(qf(x))) <= 1 and qf(1.0) == 1 and qf(-1.0) == -1)  # |q|<=1 attained -> [-1,1]\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['B', 'C']",
-      "notes": ""
+      "checkCode": "import numpy as np\nx = np.linspace(-6, 6, 4001)\ng = lambda t: t**3 - 3*t\nh = lambda t: np.log(t + np.sqrt(t*t + 1))\np = lambda t: np.sin(2*t) + np.cos(3*t)\nq = lambda t: 2*t / (1 + t*t)\n# A: injective? g takes the same value at three different inputs -> not injective\nA = len(set(np.round(g(np.array([-np.sqrt(3), 0.0, np.sqrt(3)])), 9))) == 3\n# B: odd?\nB = np.max(np.abs(h(x) + h(-x))) < 1e-9\n# C: 2*pi is a period, and no T in [0.05, 2*pi - 0.05] is (sup-norm of p(x+T) - p(x) stays well above 0)\nTs = np.linspace(0.05, 2*np.pi - 0.05, 20001)\nC = np.max(np.abs(p(x + 2*np.pi) - p(x))) < 1e-9 and min(np.max(np.abs(p(x + T) - p(x))) for T in Ts) > 0.1\n# D: range is the OPEN interval (-1, 1)? it is not, because q(1) = 1 and q(-1) = -1 are attained\nxs = np.linspace(-1000, 1000, 2000001)\nD = np.max(np.abs(q(xs))) < 1 and not (np.isclose(q(1.0), 1) or np.isclose(q(-1.0), -1))\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['B', 'C']",
+      "notes": "Blind solve: A false (g(0) = g(sqrt3) = 0), B true (h is arcsinh, odd), C true (periods pi and 2pi/3 have lcm 2pi and the two different frequencies force each term to repeat separately), D false (q(1) = 1 and q(-1) = -1 are attained, so the range is the closed interval [-1, 1]); this gave B, C, matching the key. Own Python (odd-symmetry check, sup-norm search over candidate periods, attainment of the bounds of q) agrees. Solution fix: Step C, the quick summary and the option C analysis relied on two sample values to claim that no smaller period exists, which does not prove it; they now argue via linear independence of sin 2x, cos 2x, sin 3x, cos 3x, so T must lie in pi*Z and in (2pi/3)*Z, i.e. in 2pi*Z. Stem, options, answer and the HARD label (MSQ with four separate checks and two traps) are unchanged."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -368,12 +368,12 @@
       "commonTrap": "Stopping once the hyperplane x1 + x2 = 4 is found and picking any (w, b) that describes it. The SVM's (w, b) is pinned down by the requirement that the support vectors have functional margin exactly 1."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C: w = (0.5, 0.5), b = -2",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C: w = (1/2, 1/2), b = -2",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom scipy.optimize import minimize\nX = np.array([[3,3],[4,2],[5,5],[1,1],[0,2],[1,-1]], float); y = np.array([1,1,1,-1,-1,-1], float)\ncons = [{'type': 'ineq', 'fun': (lambda z, i=i: y[i]*(X[i] @ z[:2] + z[2]) - 1)} for i in range(6)]\nr = minimize(lambda z: z[0]**2 + z[1]**2, x0=[1, 1, -4], constraints=cons, method='SLSQP')\nprint(np.round(r.x, 4))  # [ 0.5  0.5 -2. ]",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy.optimize import minimize\nX = np.array([[3, 3], [4, 2], [5, 5], [1, 1], [0, 2], [1, -1]], float); y = np.array([1, 1, 1, -1, -1, -1], float)\ncons = [{'type': 'ineq', 'fun': (lambda z, i=i: y[i] * (z[:2] @ X[i] + z[2]) - 1)} for i in range(6)]\nbest = None\nfor s in range(15):  # several random starts of the primal QP: min 0.5*|w|^2 s.t. y_i (w.x_i + b) >= 1\n    r = minimize(lambda z: 0.5 * z[:2] @ z[:2], np.random.RandomState(s).randn(3), constraints=cons, method='SLSQP', options={'ftol': 1e-14, 'maxiter': 500})\n    if r.success and (best is None or r.fun < best.fun): best = r\nw, b = best.x[:2], best.x[2]\nopts = {'A': (np.array([1, 1]), -4), 'B': (np.array([.25, .25]), -1), 'C': (np.array([.5, .5]), -2), 'D': (np.array([1, 1]) / np.sqrt(2), -2*np.sqrt(2))}\nhit = [k for k, (ow, ob) in opts.items() if np.allclose(ow, w, atol=1e-4) and abs(ob - b) < 1e-4]\nprint(np.round(w, 4), round(b, 4), np.round(y * (X @ w + b), 3), hit)  # [0.5 0.5] -2.0 [1. 1. 3. 1. 1. 2.] ['C']",
+      "notes": "Blind solve: the closest opposite-class pair is N1(1,1) and P1(3,3) at distance 2*sqrt2; their bisector x1 + x2 = 4 keeps every point at least sqrt2 away, so it is the maximum-margin hyperplane; canonical scaling gives w = (1/2, 1/2), b = -2, i.e. (C), matching the key. Own Python (primal QP min 0.5|w|^2 s.t. y_i(w.x_i + b) >= 1, SLSQP from 15 random starts) returns w = (0.5, 0.5), b = -2 with functional margins (1, 1, 3, 1, 1, 2), matching only option C. Options A and D describe the same hyperplane but have minimum functional margin 2 and sqrt2 (feasible, not canonical); B has 0.5 and violates the constraints. Distances, the sqrt10 claim for the next-closest pairs, the support vectors P1, P2, N1, N2 and the shortcut were rechecked. The optimum is unique (strictly convex primal). No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -482,12 +482,12 @@
       "commonTrap": "Sorting each BFS level numerically instead of keeping discovery order, which gives 1, 4, 6, 2, 3, 7, 5 (option B)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "1, 4, 6, 2, 7, 3, 5 (D)",
       "agreesWithKey": true,
-      "checkCode": "from collections import deque\nE = [(1,4),(1,6),(2,4),(2,5),(3,5),(3,6),(4,7),(6,7)]\nadj = {v: [] for v in range(1, 8)}\nfor a, b in E: adj[a].append(b); adj[b].append(a)\nseen, q, order = {1}, deque([1]), []\nwhile q:\n    u = q.popleft(); order.append(u)\n    for v in sorted(adj[u]):\n        if v not in seen: seen.add(v); q.append(v)\nprint(order)  # [1, 4, 6, 2, 7, 3, 5]",
-      "notes": ""
+      "checkCode": "from collections import deque\nE = [(1, 4), (1, 6), (2, 4), (2, 5), (3, 5), (3, 6), (4, 7), (6, 7)]\nadj = {v: [] for v in range(1, 8)}\nfor a, b in E: adj[a].append(b); adj[b].append(a)\ndef bfs(rev=False):\n    seen, q, order = {1}, deque([1]), []\n    while q:\n        u = q.popleft(); order.append(u)\n        for v in sorted(adj[u], reverse=rev):\n            if v not in seen: seen.add(v); q.append(v)\n    return order\ndef dfs(u, seen, order):\n    seen.add(u); order.append(u)\n    for v in sorted(adj[u]):\n        if v not in seen: dfs(v, seen, order)\n    return order\nopts = {'A': [1, 4, 2, 5, 3, 6, 7], 'B': [1, 4, 6, 2, 3, 7, 5], 'C': [1, 6, 4, 7, 3, 2, 5], 'D': [1, 4, 6, 2, 7, 3, 5]}\nprint(bfs(), [k for k, s in opts.items() if s == bfs()])  # [1, 4, 6, 2, 7, 3, 5] ['D']\nprint('A is DFS:', dfs(1, set(), []) == opts['A'], '| C is BFS with decreasing neighbour order:', bfs(True) == opts['C'])  # True True",
+      "notes": "Blind BFS trace (queue [4,6], then [6,2,7], [2,7,3], [7,3,5]) gave 1, 4, 6, 2, 7, 3, 5, i.e. (D), matching the key. Own Python BFS agrees, and confirms the distractor analysis: A is exactly the DFS order, B is the layers sorted numerically, C is BFS with neighbours enqueued in decreasing order. The stem states the neighbour-order rule, so the answer is unique. Audited the adjacency lists, queue table, teaching text, EASY label and topic mapping. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -604,12 +604,12 @@
       "commonTrap": "For D, applying (m² − 1)/12 directly to U (giving 8.25), or scaling by 2 instead of 2² (giving 16.5). The spacing of the values enters the variance squared."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C, D",
       "agreesWithKey": true,
-      "checkCode": "from math import comb\nfrom fractions import Fraction as F\nn, p = 10, F(3, 10)\npmf = [comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1)]\nA = sum(k*k*v for k, v in enumerate(pmf)) == F(111, 10)\nB = False  # P(B1+B2=0,1,2) = 1/4, 1/2, 1/4 -> not uniform\nC = max(range(n + 1), key=lambda k: pmf[k]) == 3\nU = range(2, 21, 2); m = F(sum(U), 10); D = sum((u - m)**2 for u in U) / 10 == 33\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['A', 'C', 'D']",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nfrom math import comb\nn, p = 10, F(3, 10)\npmf = [comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1)]\nA = sum(k * k * v for k, v in enumerate(pmf)) == F(111, 10)\nsum_pmf = {}\nfor b1 in (0, 1):\n    for b2 in (0, 1): sum_pmf[b1 + b2] = sum_pmf.get(b1 + b2, 0) + F(1, 4)\nB = len(set(sum_pmf.values())) == 1                       # uniform iff all three probabilities equal\nC = [k for k in range(n + 1) if pmf[k] == max(pmf)] == [3]  # the unique mode is 3\nU = list(range(2, 21, 2)); mu = F(sum(U), len(U)); D = sum((u - mu)**2 for u in U) / len(U) == 33\nprint(sum_pmf, [l for l, v in zip('ABCD', [A, B, C, D]) if v])  # {0: 1/4, 1: 1/2, 2: 1/4} ['A', 'C', 'D']",
+      "notes": "Blind solve: A true (2.1 + 3^2 = 11.1), B false (B1 + B2 ~ Binomial(2, 1/2) with probabilities 1/4, 1/2, 1/4), C true (floor(3.3) = 3, and (n+1)p = 3.3 is not an integer so the mode is unique), D true (Var(U) = 4 * 99/12 = 33); this gave A, C, D, matching the key. Own Python with exact fractions agrees (variance of U computed directly from the ten values, unique argmax of the PMF). Audited the PMF values quoted in Step C, the option analysis, the traps (8.25 and 16.5 for D), the MODERATE label and the topic mapping. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -680,16 +680,16 @@
         }
       ],
       "finalAnswer": "**19**",
-      "teaching": "Three small Python features combine here. **Extended slicing** `seq[start:stop:step]` begins at `start` and jumps by `step`. With `start` omitted it begins at 0, and with `stop` omitted it runs to the end. So `[1::2]` picks the odd positions and `[::2]` the even ones. **`zip`** pairs items position by position and stops as soon as the *shortest* input runs out, so an unmatched extra element is silently ignored. The **conditional expression** `A if cond else B` has the lowest precedence of all operators, so `x * y if x > y else x - y` means `(x * y) if (x > y) else (x - y)`, and the whole value is added by `+=`. Trace each iteration and write the running total. That habit avoids most mistakes in tracing questions.",
+      "teaching": "Three small Python features combine here. **Extended slicing** `seq[start:stop:step]` begins at `start` and jumps by `step`. With `start` omitted it begins at 0, and with `stop` omitted it runs to the end. So `[1::2]` picks the odd positions and `[::2]` the even ones. **`zip`** pairs items position by position and stops as soon as the *shortest* input runs out, so an unmatched extra element is silently ignored. The **conditional expression** `A if cond else B` has very low precedence (lower than arithmetic, comparison and boolean operators; only `lambda` and `:=` bind more loosely), so `x * y if x > y else x - y` means `(x * y) if (x > y) else (x - y)`, and the whole value is added by `+=`. Trace each iteration and write the running total. That habit avoids most mistakes in tracing questions.",
       "commonTrap": "Swapping the two slices (which gives 57) or expecting zip to pair the unmatched 5 with something. zip truncates to the shorter list."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "19",
       "agreesWithKey": true,
-      "checkCode": "data = [3, 8, 9, 6, 4, 2, 5]\na = data[1::2]\nb = data[::2]\nresult = 0\nfor x, y in zip(a, b):\n    result += x * y if x > y else x - y\nprint(result)  # 19",
-      "notes": ""
+      "checkCode": "src = '''\ndata = [3, 8, 9, 6, 4, 2, 5]\na = data[1::2]\nb = data[::2]\nresult = 0\nfor x, y in zip(a, b):\n    result += x * y if x > y else x - y\nprint(a, b, result)\n'''\nexec(src)  # [8, 6, 2] [3, 9, 4, 5] 19",
+      "notes": "Blind trace: a = [8, 6, 2], b = [3, 9, 4, 5], zip truncates to three pairs, contributions 24, -3, -2, total 19, matching the key; executing the program confirms 19 (and the swapped-slice trap gives 57 as stated). Wording fix in the teaching text: it said the conditional expression has 'the lowest precedence of all operators', which is not exact (lambda and := bind more loosely); it now states that precedence is very low, lower than arithmetic, comparison and boolean operators. The answer and the steps are unchanged. Exact integer, so the NAT range 19 to 19 is appropriate."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -764,12 +764,12 @@
       "commonTrap": "Using the bias 0.6 instead of bias² 0.36 (total 1.62), dividing by 3 when computing the variance (total ≈ 1.59), or leaving out the noise term (0.98)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "1.38",
       "agreesWithKey": true,
-      "checkCode": "preds = [5.0, 6.0, 7.2, 5.8]; f = 5.4; s2 = 0.40\nm = sum(preds) / 4\nbias2 = (m - f)**2; var = sum((p - m)**2 for p in preds) / 4\nprint(round(bias2 + var + s2, 4), round(sum((f - p)**2 for p in preds) / 4 + s2, 4))  # 1.38 1.38",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nimport numpy as np\nfh = [F(50, 10), F(60, 10), F(72, 10), F(58, 10)]; f0 = F(54, 10); s2 = F(40, 100)\nmean = sum(fh) / 4\nbias2 = (mean - f0)**2; var = sum((v - mean)**2 for v in fh) / 4\ndirect = sum((f0 - v)**2 for v in fh) / 4 + s2            # E[(f0 - fhat)^2] + sigma^2, no decomposition used\nrng = np.random.RandomState(1); N = 2_000_000\nyy = float(f0) + rng.randn(N) * float(s2)**0.5; pred = np.array([float(v) for v in fh])[rng.randint(0, 4, N)]\nprint(float(bias2), float(var), float(bias2 + var + s2), float(direct), round(float(np.mean((yy - pred)**2)), 2))  # 0.36 0.62 1.38 1.38 1.38",
+      "notes": "Blind solve: mean prediction 6.0, bias^2 = 0.36, population variance (1 + 0 + 1.44 + 0.04)/4 = 0.62, noise 0.40, total 1.38, matching the key. Own Python (exact fractions; the direct computation E[(f0 - fhat)^2] + sigma^2 = 0.98 + 0.40 without using the decomposition; a 2-million-sample Monte Carlo giving 1.38) agrees. The stem makes the four training sets equally likely, so the divisor 4 is unambiguous. The rounding instruction is stated and the range 1.37 to 1.39 surrounds the exact value 1.38. The trap values (1.62, about 1.59, 0.98) were recomputed. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -812,7 +812,7 @@
     "concept": "Behaviour of BFS, iterative deepening and uniform-cost search on a weighted state graph.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "A search problem has start state $S$ and a single goal state $G$. The directed edges and their step costs are:\n\n| Edge | S→A | S→B | A→B | A→C | B→C | B→G | C→G |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| Cost | 1 | 4 | 2 | 6 | 1 | 5 | 2 |\n\nEvery algorithm below starts from $S$, generates the successors of a node in alphabetical order, and applies the goal test when a node is selected for expansion (removed from the frontier). Breadth-first search (BFS) and iterative deepening search (IDS) ignore the step costs. For IDS, the depth limit counts edges from $S$ and takes the values $0, 1, 2, \\ldots$ in turn.\n\nWhich of the following statements is/are TRUE?",
+    "stem": "A search problem has start state $S$ and a single goal state $G$. The directed edges and their step costs are:\n\n| Edge | S→A | S→B | A→B | A→C | B→C | B→G | C→G |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| Cost | 1 | 4 | 2 | 6 | 1 | 5 | 2 |\n\nEvery algorithm below starts from $S$, generates the successors of a node in alphabetical order, and applies the goal test when a node is selected for expansion (removed from the frontier). Breadth-first search (BFS) and iterative deepening search (IDS) ignore the step costs. For IDS, the depth limit counts edges from $S$ and takes the values $0, 1, 2, \\ldots$ in turn; a node at the current depth limit is still removed from the frontier and goal-tested, but its successors are not generated.\n\nWhich of the following statements is/are TRUE?",
     "options": [
       {
         "label": "A",
@@ -854,7 +854,7 @@
         },
         {
           "title": "Trace IDS",
-          "body": "Limit 0: only S, which is not the goal. Limit 1: S, A, B; no goal.\nLimit 2: S→A→B, S→A→C, then S→B→C and S→B→G. G is removed and passes the goal test.\nIDS first succeeds at limit **2**, not 3, so B is false."
+          "body": "Limit 0: only S, which is not the goal. Limit 1: S, A, B; no goal.\nLimit 2: S→A→B, S→A→C, then S→B→C and S→B→G. G (at depth 2, exactly the limit) is removed and passes the goal test; nodes at the limit are goal-tested but not expanded.\nIDS first succeeds at limit **2**, not 3, so B is false."
         }
       ],
       "finalAnswer": "**(D)**",
@@ -868,7 +868,7 @@
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "S→B→G has only 2 edges, so the depth-limited search with limit 2 already removes G from the frontier and succeeds."
+          "explanation": "S→B→G has only 2 edges, so the depth-limited search with limit 2 already removes G from the frontier (a node at the limit is goal-tested, only its expansion is cut off) and succeeds."
         },
         {
           "label": "C",
@@ -884,12 +884,12 @@
       "commonTrap": "Assuming BFS is optimal on a weighted graph, or mistaking the cost of S→B→G for the depth at which IDS succeeds. BFS and IDS minimise the number of edges, not the total cost."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nfrom collections import deque\nG = {'S':[('A',1),('B',4)], 'A':[('B',2),('C',6)], 'B':[('C',1),('G',5)], 'C':[('G',2)], 'G':[]}\ncost = lambda p: sum(dict(G[u])[v] for u, v in zip(p, p[1:]))\nfr, done, order = [(0, 'S', ['S'])], set(), []\nwhile fr:\n    g, u, p = heapq.heappop(fr)\n    if u in done: continue\n    done.add(u); order.append(u)\n    if u == 'G': ucs = p; break\n    for v, c in G[u]: heapq.heappush(fr, (g + c, v, p + [v]))\nq = deque([['S']]); seen = {'S'}\nwhile q:\n    p = q.popleft()\n    if p[-1] == 'G': bfs = p; break\n    for v, _ in sorted(G[p[-1]]):\n        if v not in seen: seen.add(v); q.append(p + [v])\ndef dls(p, L):\n    if p[-1] == 'G': return p\n    if L == 0: return None\n    for v, _ in sorted(G[p[-1]]):\n        r = dls(p + [v], L - 1)\n        if r: return r\nids_L = next(L for L in range(10) if dls(['S'], L))\nA = bfs == ucs; B = ids_L == 3; C = order.index('C') < order.index('B'); D = cost(ucs) == 6\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['D']",
-      "notes": ""
+      "checkCode": "import heapq\nfrom collections import deque\nG = {'S': [('A', 1), ('B', 4)], 'A': [('B', 2), ('C', 6)], 'B': [('C', 1), ('G', 5)], 'C': [('G', 2)], 'G': []}\ncost = lambda p: sum(dict(G[u])[v] for u, v in zip(p, p[1:]))\ndef ucs(graph_search):\n    fr, cnt, done, order = [(0, 0, ['S'])], 1, set(), []\n    while fr:\n        g, _, p = heapq.heappop(fr); u = p[-1]\n        if graph_search and u in done: continue\n        done.add(u); order.append(u)\n        if u == 'G': return p, order\n        for v, c in G[u]: heapq.heappush(fr, (g + c, cnt, p + [v])); cnt += 1\ndef bfs(graph_search):\n    q, seen, order = deque([['S']]), {'S'}, []\n    while q:\n        p = q.popleft(); order.append(p[-1])\n        if p[-1] == 'G': return p\n        for v, _ in sorted(G[p[-1]]):\n            if not graph_search or v not in seen: seen.add(v); q.append(p + [v])\ndef dls(p, L):  # goal test on removal; a node AT the limit is tested but not expanded\n    if p[-1] == 'G': return p\n    if L == 0: return None\n    for v, _ in sorted(G[p[-1]]):\n        r = dls(p + [v], L - 1)\n        if r: return r\nids_L = next(L for L in range(10) if dls(['S'], L))\nfor gs in (True, False):  # graph-search and tree-search versions must agree\n    u, order = ucs(gs); b = bfs(gs)\n    A = b == u; B = ids_L == 3; C = order.index('C') < order.index('B'); D = cost(u) == 6\n    print('graph' if gs else 'tree', u, cost(u), b, cost(b), ids_L, [l for l, v in zip('ABCD', [A, B, C, D]) if v])\n# graph S ['S','A','B','C','G'] 6 ['S','B','G'] 9 2 ['D']  (same line for tree)",
+      "notes": "Blind trace: UCS removes S(0), A(1), B(3), C(4), G(6) and returns S-A-B-C-G with cost 6; BFS returns S-B-G (cost 9); IDS first reaches G at depth limit 2; so only D is true, matching the key. Own Python (graph-search and tree-search versions of UCS and BFS, and an IDS built from depth-limited search) gives the same truth values in both versions. Stem fix: added the convention that a node at the current IDS depth limit is still removed from the frontier and goal-tested (only its successors are not generated). Without it, a reader who goal-tests only nodes that get expanded would find G at limit 3 and judge B true; with the convention stated, IDS succeeds at limit 2 and B is false. The IDS step and the option B analysis were reworded to match. Answer unchanged (D)."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -1009,12 +1009,12 @@
       "commonTrap": "Checking only the usual stack-order rule and forgetting the capacity. Option B is a valid stack permutation, but it needs four elements on the stack at once."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, D",
       "agreesWithKey": true,
-      "checkCode": "def ok(seq, n=5, cap=3):\n    st, nxt, peak = [], 1, 0\n    for x in seq:\n        while (not st or st[-1] != x) and nxt <= n:\n            st.append(nxt); nxt += 1; peak = max(peak, len(st))\n        if st and st[-1] == x: st.pop()\n        else: return False\n    return peak <= cap\nopts = {'A': [3,2,5,4,1], 'B': [4,3,5,2,1], 'C': [1,5,3,4,2], 'D': [2,1,5,4,3]}\nprint([k for k, s in opts.items() if ok(s)])  # ['A', 'D']",
-      "notes": ""
+      "checkCode": "from collections import deque\ndef feasible(seq, n=5, cap=3):\n    # exhaustive search over (next value to push, stack contents, number printed so far); no greedy assumption\n    start = (1, (), 0); seen = {start}; dq = deque([start])\n    while dq:\n        nxt, st, k = dq.popleft()\n        if k == len(seq): return True\n        moves = []\n        if st and st[-1] == seq[k]: moves.append((nxt, st[:-1], k + 1))          # pop = print\n        if nxt <= n and len(st) < cap: moves.append((nxt + 1, st + (nxt,), k))   # push\n        for m in moves:\n            if m not in seen: seen.add(m); dq.append(m)\n    return False\nopts = {'A': [3, 2, 5, 4, 1], 'B': [4, 3, 5, 2, 1], 'C': [1, 5, 3, 4, 2], 'D': [2, 1, 5, 4, 3]}\nprint([k for k, s in opts.items() if feasible(s)], {k: feasible(s, cap=5) for k, s in opts.items()})  # ['A', 'D'] {'A': True, 'B': True, 'C': False, 'D': True}",
+      "notes": "Blind simulation (the push/pop order for a given output is forced): A valid with peak size 3, B needs 4 elements on the stack to print 4 first, C impossible for any capacity (4 sits above 3 after 5 is printed), D valid with peak size 3; this gave A, D, matching the key. Own Python, an exhaustive state-space search that does not assume the greedy strategy, agrees for capacity 3 and, for capacity 5, gives A, B, D possible and C impossible, confirming that B fails only because of the capacity limit. Steps, option analysis, MODERATE label and topic mapping audited. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
