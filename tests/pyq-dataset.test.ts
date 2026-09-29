@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { compileContent } from "@/lib/content/compile";
 import type { ContentBundle, CompiledQuestion, QuestionMeta } from "@/lib/content/types";
-import { buildGroupLookups, buildResults, DEFAULT_FILTERS, parseSearch, rowMatches, type BrowseFilters, type RowFacts } from "@/components/pyq/filters";
+import { buildFilterContext, buildGroupLookups, buildResults, DEFAULT_FILTERS, normalizeFilters, parseSearch, rowMatches, type BrowseFilters, type RowFacts } from "@/components/pyq/filters";
 import { toPaperInfo, toTaxonomy } from "@/components/pyq/data";
 import { loadRawContent } from "../scripts/content/build";
 import { snapshot, type FreezeFile } from "../scripts/content/freeze-pyqs";
@@ -101,6 +101,23 @@ describe("PYQ organisation & filtering (the same pure functions the browser uses
     expect(filterBy({ type: "NAT", marks: "2" }).every((q) => q.type === "NAT" && q.marks === 2)).toBe(true);
     const q36 = filterBy({ year: "2026", q: "Q36" });
     expect(q36.map((q) => q.id)).toEqual(["DA2026-S8-Q36"]);
+  });
+  it("a syllabus phrase alone matches every PYQ tagged with it, across topics", () => {
+    const taxonomy = toTaxonomy(bundle.syllabus.subjects);
+    const ctx = buildFilterContext(taxonomy, bundle.papers.map(toPaperInfo));
+    // Find a phrase that is tagged on at least one PYQ filed under a different topic.
+    const parent = new Map(bundle.syllabus.subjects.flatMap((s) => s.topics.flatMap((t) => t.subtopics.map((st) => [st.id, t.id] as const))));
+    const cross = pyqs.flatMap((q) => q.subtopicIds.filter((st) => parent.get(st) !== q.topicId))[0];
+    expect(cross).toBeTruthy();
+    const f = normalizeFilters({ ...DEFAULT_FILTERS, subtopic: cross }, ctx);
+    expect(f.subtopic).toBe(cross);
+    expect(f.topic).toBe("");
+    const hits = filterBy(f);
+    expect(hits.map((q) => q.id).sort()).toEqual(pyqs.filter((q) => q.subtopicIds.includes(cross)).map((q) => q.id).sort());
+    expect(hits.some((q) => q.topicId !== parent.get(cross))).toBe(true);
+    // With a different topic selected, the phrase is dropped.
+    const other = bundle.syllabus.subjects.flatMap((s) => s.topics).find((t) => t.id !== parent.get(cross))!.id;
+    expect(normalizeFilters({ ...DEFAULT_FILTERS, topic: other, subtopic: cross }, ctx).subtopic).toBe("");
   });
   it("GA questions are exactly Q1–Q10 of each paper", () => {
     const ga = filterBy({ subject: "ga" });

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useMemo } from "react";
-import { wilsonLower } from "@/lib/analytics/stats";
+import { WEAK_TOPIC_DEFAULTS, wilsonLower } from "@/lib/analytics/stats";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -10,9 +10,9 @@ import { pct, plural } from "@/lib/utils";
 import { TabLink } from "../tabNav";
 import { DataStatusNote, topicHref, type PanelProps } from "./common";
 
-/** Same thresholds as weakTopics() in lib/analytics/stats.ts (its defaults). */
-const WEAK_MIN_ATTEMPTS = 3;
-const WEAK_THRESHOLD = 0.7;
+/** The same thresholds weakTopics() uses. */
+const WEAK_MIN_ATTEMPTS = WEAK_TOPIC_DEFAULTS.minAttempts;
+const WEAK_THRESHOLD = WEAK_TOPIC_DEFAULTS.threshold;
 
 export function WeakAreasPanel({ data, model, status }: PanelProps) {
   const s = data.subject;

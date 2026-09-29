@@ -4,6 +4,7 @@
  * ("Your topic mastery", "Platform-estimated").
  */
 import type { AttemptRow, RevisionItemRow } from "@/lib/userdata/db";
+import { toIsoDate } from "@/lib/revision/schedule";
 
 export interface AccuracyStat {
   total: number; // attempts recorded (including unanswered/skipped)
@@ -86,13 +87,18 @@ export interface WeakTopic {
   wilsonLower: number;
 }
 
+/** Default weak-topic rule, exported so the UI explains exactly what is computed. */
+export const WEAK_TOPIC_DEFAULTS = { minAttempts: 3, threshold: 0.7, limit: 5 } as const;
+
 /**
  * Weak topics: topics with at least `minAttempts` scored attempts whose
- * accuracy is below `threshold`, ranked by the Wilson lower bound (so a topic
- * with 1/5 correct ranks as weaker than one with 0/1).
+ * accuracy is below `threshold`, ranked by the Wilson lower bound of the
+ * accuracy (95%), so more evidence of low accuracy ranks a topic as weaker:
+ * 1/6 correct (lower bound ≈ 0.03) ranks above 2/6 (≈ 0.10). Topics with fewer
+ * than `minAttempts` scored attempts are never listed.
  */
 export function weakTopics(rows: Pick<AttemptRow, "topicId" | "status">[], opts: { minAttempts?: number; threshold?: number; limit?: number } = {}): WeakTopic[] {
-  const { minAttempts = 3, threshold = 0.7, limit = 5 } = opts;
+  const { minAttempts, threshold, limit } = { ...WEAK_TOPIC_DEFAULTS, ...opts };
   const by = groupBy(rows.filter((r) => r.status === "correct" || r.status === "incorrect"), (r) => r.topicId);
   const out: WeakTopic[] = [];
   for (const [topicId, rs] of by) {
@@ -123,6 +129,18 @@ export interface Mastery {
 
 export const MASTERY_HALF_LIFE_DAYS = 30;
 export const MASTERY_MIN_ATTEMPTS = 3;
+export const MASTERY_WEIGHTS = { accuracy: 0.6, pyqCoverage: 0.25, revisionHealth: 0.15 } as const;
+
+/** Plain-English explanation of topicMastery(), generated from the constants so it cannot drift. */
+export const MASTERY_EXPLANATION: { title: string; parts: string[]; note: string } = {
+  title: "How “Your topic mastery” is calculated",
+  parts: [
+    `${MASTERY_WEIGHTS.accuracy * 100}% recent accuracy: your correct share of scored attempts, with older attempts counting less (an attempt ${MASTERY_HALF_LIFE_DAYS} days old counts half).`,
+    `${MASTERY_WEIGHTS.pyqCoverage * 100}% PYQ coverage: the share of the topic's official PYQs you have attempted. If the topic has no PYQs, this weight moves to accuracy.`,
+    `${MASTERY_WEIGHTS.revisionHealth * 100}% revision health: the share of the topic's revision items that are not overdue and were last graded "Almost" or "Got it". With no revision items, this weight moves to accuracy.`,
+  ],
+  note: `It needs at least ${MASTERY_MIN_ATTEMPTS} scored attempts; with fewer it shows "Not enough data". Levels: Strong ≥ 85, Proficient ≥ 70, Developing ≥ 40, otherwise Needs work. This is a platform study metric, not an official GATE measure.`,
+};
 
 /**
  * Your topic mastery (0–100) =
@@ -148,7 +166,8 @@ export function topicMastery(input: MasteryInput): Mastery {
   const recentAccuracy = wSum > 0 ? wCorrect / wSum : null;
   const pyqAttempted = new Set(scored.filter((a) => a.origin === "OFFICIAL_PYQ").map((a) => a.questionId)).size;
   const pyqCoverage = input.pyqTotal > 0 ? Math.min(1, pyqAttempted / input.pyqTotal) : null;
-  const today = input.now.toISOString().slice(0, 10);
+  // Local calendar day, like every other day key (revision dates are local days).
+  const today = toIsoDate(input.now);
   const revisionHealth = input.revisionItems.length
     ? input.revisionItems.filter((r) => r.nextReview >= today && (r.confidence === "almost" || r.confidence === "got_it")).length /
       input.revisionItems.length
@@ -157,12 +176,12 @@ export function topicMastery(input: MasteryInput): Mastery {
   if (evidence < MASTERY_MIN_ATTEMPTS || recentAccuracy === null) {
     return { score: null, level: "Not enough data", components: { recentAccuracy, pyqCoverage, revisionHealth }, evidence };
   }
-  let wAcc = 0.6;
+  let wAcc: number = MASTERY_WEIGHTS.accuracy;
   let total = 0;
-  if (pyqCoverage !== null) total += 0.25 * pyqCoverage;
-  else wAcc += 0.25;
-  if (revisionHealth !== null) total += 0.15 * revisionHealth;
-  else wAcc += 0.15;
+  if (pyqCoverage !== null) total += MASTERY_WEIGHTS.pyqCoverage * pyqCoverage;
+  else wAcc += MASTERY_WEIGHTS.pyqCoverage;
+  if (revisionHealth !== null) total += MASTERY_WEIGHTS.revisionHealth * revisionHealth;
+  else wAcc += MASTERY_WEIGHTS.revisionHealth;
   total += wAcc * recentAccuracy;
   const score = Math.round(total * 100);
   return { score, level: masteryLevel(score), components: { recentAccuracy, pyqCoverage, revisionHealth }, evidence };
@@ -181,7 +200,7 @@ export function studyStreak(days: Iterable<string>, today: string): number {
   const prev = (d: string) => {
     const x = new Date(`${d}T12:00:00`);
     x.setDate(x.getDate() - 1);
-    return x.toISOString().slice(0, 10);
+    return toIsoDate(x);
   };
   let cursor = set.has(today) ? today : prev(today);
   let n = 0;
@@ -199,7 +218,7 @@ export function accuracyTrend(rows: Pick<AttemptRow, "status" | "day">[], bucket
     const d = new Date(`${day}T12:00:00`);
     const monday = new Date(d);
     monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-    return monday.toISOString().slice(0, 10);
+    return toIsoDate(monday);
   };
   const by = groupBy(rows.filter((r) => r.status === "correct" || r.status === "incorrect"), (r) => keyOf(r.day));
   return [...by.entries()]

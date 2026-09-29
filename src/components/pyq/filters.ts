@@ -94,7 +94,7 @@ export function buildFilterContext(taxonomy: TaxonomySubject[], papers: PaperInf
   };
 }
 
-/** Drop unknown values and keep subject → topic → subtopic consistent (a topic implies its subject). */
+/** Drop unknown values and keep subject → topic (→ subtopic) consistent (a topic implies its subject). */
 export function normalizeFilters(f: BrowseFilters, ctx: FilterContext): BrowseFilters {
   const out = { ...f };
   if (out.year && !ctx.years.has(out.year)) out.year = "";
@@ -104,9 +104,11 @@ export function normalizeFilters(f: BrowseFilters, ctx: FilterContext): BrowseFi
   }
   if (out.subject && !ctx.subjects.has(out.subject)) out.subject = "";
   if (out.subtopic) {
+    // A syllabus phrase on its own matches every question tagged with it, whichever topic the
+    // question is filed under (many phrases are tested inside neighbouring topics). With a topic
+    // selected, the phrase must belong to that topic.
     const t = ctx.subtopicTopic.get(out.subtopic);
     if (!t || (out.topic && out.topic !== t)) out.subtopic = "";
-    else out.topic = t;
   }
   if (out.topic) {
     const s = ctx.topicSubject.get(out.topic);

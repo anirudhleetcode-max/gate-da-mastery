@@ -41,8 +41,8 @@ function Cell({ label, children, className }: { label: string; children: ReactNo
 }
 
 function Metrics({ pyqs, pyqHref, practice, p, status }: { pyqs: number; pyqHref?: string; practice: number; p?: RowProgress; status: DataStatus }) {
-  // pyqHref only for topics: the PYQ browser filters by the question's topic, so a syllabus-phrase
-  // count (which includes questions filed under other topics) would not match the list it opened.
+  // Topic counts link to ?topic=; phrase counts link to ?subtopic=, which the PYQ browser matches
+  // across topics, so the opened list has exactly the number shown.
   const ready = status === "ready" && p;
   const dash = <span className="text-fg-3">—</span>;
   return (
@@ -368,7 +368,7 @@ function SubjectSection({
                         <p className="text-sm text-fg">{st.name}</p>
                         <p className="text-xs text-fg-3">&ldquo;{st.officialPhrase}&rdquo;</p>
                       </div>
-                      <Metrics pyqs={st.pyqCount} practice={st.practiceCount} p={subtopicProgress.get(st.id)} status={status} />
+                      <Metrics pyqs={st.pyqCount} pyqHref={`/pyqs/browse?subtopic=${st.id}`} practice={st.practiceCount} p={subtopicProgress.get(st.id)} status={status} />
                     </li>
                   ))}
                 </ul>

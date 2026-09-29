@@ -15,7 +15,8 @@ const variants: Record<Variant, string> = {
   success: "bg-success text-white hover:opacity-90 dark:text-[#0e1117]",
 };
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-sm",
+  // 40px touch target on phones, compact from sm up.
+  sm: "h-10 px-3 text-sm sm:h-8",
   md: "h-10 px-4 text-sm",
   lg: "h-12 px-5 text-base",
 };

@@ -6,7 +6,7 @@
 import { useMemo } from "react";
 import type { Catalog } from "@/lib/server/repo";
 import type { AttemptRow, RevisionItemRow } from "@/lib/userdata/db";
-import { useAttempts, useRevisionItems } from "@/lib/userdata/hooks";
+import { useAttempts, useDbQuery, useRevisionItems, useUserData } from "@/lib/userdata/hooks";
 import { accuracyStat, studyStreak, topicMastery, weakTopics, type AccuracyStat, type Mastery, type WeakTopic } from "./stats";
 import { localDay } from "@/lib/userdata/db";
 
@@ -29,7 +29,10 @@ export interface SubjectProgress extends AccuracyStat {
 }
 
 export interface ProgressModel {
+  /** true once the local database has been read (or is known to be unavailable). */
   ready: boolean;
+  /** "loading" until IndexedDB has been read; "unavailable" when storage is blocked. */
+  status: "loading" | "unavailable" | "ready";
   attempts: AttemptRow[];
   overall: AccuracyStat & { questionsSolved: number; pyqDone: number; pyqTotal: number; streak: number; studyDays: number };
   subjects: SubjectProgress[];
@@ -38,7 +41,7 @@ export interface ProgressModel {
   revisionDueToday: number;
 }
 
-export function buildProgressModel(catalog: Catalog, attempts: AttemptRow[], revision: RevisionItemRow[], now: Date): Omit<ProgressModel, "ready"> {
+export function buildProgressModel(catalog: Catalog, attempts: AttemptRow[], revision: RevisionItemRow[], now: Date): Omit<ProgressModel, "ready" | "status"> {
   const scored = attempts.filter((a) => a.status !== "not_scored");
   const pyqIds = new Set(Object.values(catalog.pyqIdsByTopic).flat());
   // "Done" = submitted (correct, incorrect, or a marks-to-all question), same rule as the PYQ pages.
@@ -84,7 +87,14 @@ export function buildProgressModel(catalog: Catalog, attempts: AttemptRow[], rev
 }
 
 export function useProgressModel(catalog: Catalog): ProgressModel {
+  const { ready: dbReady, available } = useUserData();
+  // true once the attempts table has actually been read, so "no attempts yet" is never shown while loading.
+  const loaded = useDbQuery((db) => db.attempts.count().then(() => true), [], false);
   const attempts = useAttempts();
   const revision = useRevisionItems();
-  return useMemo(() => ({ ready: true, ...buildProgressModel(catalog, attempts, revision, new Date()) }), [catalog, attempts, revision]);
+  const status: ProgressModel["status"] = !dbReady ? "loading" : !available ? "unavailable" : loaded ? "ready" : "loading";
+  return useMemo(
+    () => ({ ...buildProgressModel(catalog, attempts, revision, new Date()), ready: status !== "loading", status }),
+    [catalog, attempts, revision, status],
+  );
 }

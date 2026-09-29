@@ -32,7 +32,7 @@ export function ChartFrame({ title, description, legend, table, children, classN
           </figcaption>
           {description ? <p className="mt-0.5 text-sm text-fg-3">{description}</p> : null}
         </div>
-        <button type="button" onClick={() => setShowTable((v) => !v)} aria-pressed={showTable} className="rounded-md border border-border px-2 py-1 text-xs font-medium text-fg-2 hover:bg-surface-2">
+        <button type="button" onClick={() => setShowTable((v) => !v)} aria-pressed={showTable} className="min-h-10 rounded-md border border-border px-3 py-1 text-xs font-medium text-fg-2 hover:bg-surface-2 sm:min-h-0 sm:px-2">
           {showTable ? "Show chart" : "Show table"}
         </button>
       </div>
@@ -122,12 +122,16 @@ export function BarList({ data, max, formatValue = (v) => String(v), height = 22
       {data.map((d) => {
         const w = Math.max(0, Math.min(1, d.value / m));
         return (
-          <li key={d.key} className="grid grid-cols-[minmax(6.5rem,11rem)_1fr] items-center gap-3 text-sm sm:grid-cols-[12rem_1fr]">
+          // Phones: label + value on one row, full-width bar below (a fixed label column would leave ~50px of bar).
+          // From sm up: label | bar | value columns.
+          <li key={d.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 text-sm sm:grid-cols-[minmax(6.5rem,12rem)_minmax(0,1fr)_5rem]">
             <span className="truncate text-fg-2" title={d.label}>
               {d.label}
             </span>
+            <span className="tnum whitespace-nowrap text-right text-fg sm:col-start-3 sm:row-start-1">{d.display ?? formatValue(d.value)}</span>
             <span
-              className="relative flex items-center gap-2"
+              className="relative col-span-2 block sm:col-span-1 sm:col-start-2 sm:row-start-1"
+              style={{ height: Math.min(height, 24) }}
               tabIndex={0}
               onMouseEnter={() => setHover(d.key)}
               onMouseLeave={() => setHover(null)}
@@ -135,13 +139,10 @@ export function BarList({ data, max, formatValue = (v) => String(v), height = 22
               onBlur={() => setHover(null)}
               aria-label={`${d.label}: ${d.display ?? formatValue(d.value)}${d.detail ? `, ${d.detail}` : ""}`}
             >
-              <span className="relative block flex-1" style={{ height }}>
-                <span
-                  className="absolute inset-y-0 left-0 rounded-r-[4px] transition-[width,opacity]"
-                  style={{ width: `${w * 100}%`, background: d.color ?? "var(--series-ps)", maxHeight: 24, opacity: hover && hover !== d.key ? 0.55 : 1 }}
-                />
-              </span>
-              <span className="tnum w-20 shrink-0 whitespace-nowrap text-right text-fg">{d.display ?? formatValue(d.value)}</span>
+              <span
+                className="absolute inset-y-0 left-0 rounded-r-[4px] transition-[width,opacity]"
+                style={{ width: `${w * 100}%`, minWidth: w > 0 ? 2 : 0, background: d.color ?? "var(--series-ps)", opacity: hover && hover !== d.key ? 0.55 : 1 }}
+              />
               {hover === d.key && d.detail ? (
                 <span role="status" className="pointer-events-none absolute -top-8 left-0 z-10 whitespace-nowrap rounded-md border border-border bg-surface px-2 py-1 text-xs text-fg-2 shadow">
                   {d.detail}

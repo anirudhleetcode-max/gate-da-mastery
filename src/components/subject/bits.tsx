@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { ExternalLink, ShieldCheck } from "lucide-react";
 import type { SubjectId } from "@/lib/content/schema";
 import type { Mastery } from "@/lib/analytics/stats";
-import { MASTERY_HALF_LIFE_DAYS, MASTERY_MIN_ATTEMPTS } from "@/lib/analytics/stats";
+import { MASTERY_EXPLANATION, MASTERY_MIN_ATTEMPTS } from "@/lib/analytics/stats";
 import { Badge } from "@/components/ui/Badge";
 import { VerificationBadge } from "@/components/question/badges";
 import { SUBJECT_COLOR } from "@/lib/labels";
@@ -47,22 +47,11 @@ export function MasteryMethod({ className }: { className?: string }) {
         <span className="font-medium text-fg">not an official GATE metric</span> and does not predict marks or rank.
       </p>
       <ul className="list-disc space-y-1 pl-5">
-        <li>
-          <span className="font-medium text-fg">60% recent accuracy</span>: your accuracy in the topic, with each answer weighted by recency (an answer {MASTERY_HALF_LIFE_DAYS} days old counts half as much as
-          one from today).
-        </li>
-        <li>
-          <span className="font-medium text-fg">25% PYQ coverage</span>: the share of the topic&apos;s official PYQs you have attempted. If the topic has no PYQs, this weight moves to accuracy.
-        </li>
-        <li>
-          <span className="font-medium text-fg">15% revision health</span>: the share of the topic&apos;s revision items that are not overdue and were last graded &ldquo;Almost&rdquo; or &ldquo;Got it&rdquo;.
-          With no revision items, this weight moves to accuracy.
-        </li>
+        {MASTERY_EXPLANATION.parts.map((p) => (
+          <li key={p}>{p}</li>
+        ))}
       </ul>
-      <p>
-        At least {MASTERY_MIN_ATTEMPTS} answered questions are needed; with fewer, the topic shows &ldquo;Not enough data&rdquo;. Levels: 85 and above Strong, 70–84 Proficient, 40–69 Developing, below 40
-        Needs work.
-      </p>
+      <p>{MASTERY_EXPLANATION.note}</p>
     </div>
   );
 }
