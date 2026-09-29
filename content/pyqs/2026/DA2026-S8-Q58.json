@@ -18,7 +18,7 @@
   "estimatedTimeSec": 135,
   "stem": "Consider the given Python program.\n\n```python\ndef fun(L, i=0):\n    if i >= len(L)-1:\n        return 0\n    if L[i] > L[i+1]:\n        L[i+1], L[i] = L[i], L[i+1]\n        return 1+fun(L, i+1)\n    else:\n        return fun(L, i+1)\ndata = [5, 3, 4, 1, 2]\ncount = 0\nfor _ in range(len(data)):\n    count += fun(data)\nprint(count)\n```\n\nThe output of the program is __________ . (Answer in **integer**)",
   "options": [],
-  "officialKeyRaw": "8 to 8",
+  "officialKeyRaw": "8  to 8",
   "answer": {
     "kind": "NAT",
     "min": 8,
@@ -56,24 +56,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2026/official/Q58-1.webp",
-    "/pyq/2026/official/Q58-2.webp"
+    "/pyq/2026/official/Q58-1.webp"
   ],
   "sourceIds": [
     "gate2026-da-qp",
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed from the monospace block in the paper. In the paper each indentation level is a wide indent of about 7 character widths, as a tab stop would give (one level for the two if statements, else: and count += fun(data); two levels for the three return statements and the swap line); the PDF text layer shows each level as a separate whitespace-only line, so the exact whitespace characters cannot be recovered. The code is rendered with 4 spaces per level, which keeps the nesting exactly and does not change the program; all other characters match the paper. 'integer' is bold in the answer note, as in the paper, and the space the paper leaves between the answer blank and the full stop is kept. The second official crop (Q58-2) shows only the next page's header and a table border. The region has no embedded figure and none is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The code was compared line by line with the official crop and with the PDF's positioned text (Consolas). In the paper each indentation level is a 36 pt indent (a 0.5-inch tab stop, about 5.5 Consolas character widths): one level for the two if statements, else: and count += fun(data); two levels for the three return statements and the swap line. The PDF text layer shows each level as a separate whitespace-only line, so the exact whitespace characters cannot be recovered; the code is rendered with 4 spaces per level, which keeps the nesting exactly and does not change the program. All other characters match the paper. 'integer' is bold in the answer note, as in the paper, and the space the paper leaves between the answer blank and the full stop is kept. The question ends at the bottom of page 37; the continuation crop of the region on page 38 shows only the page header and a table border (no question content), so only Q58-1 is listed as the official image. The region has no embedded figure and none is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "8",
     "agreesWithKey": true,
     "checkCode": "import io, contextlib\nprog = '''def fun(L, i=0):\n    if i >= len(L)-1:\n        return 0\n    if L[i] > L[i+1]:\n        L[i+1], L[i] = L[i], L[i+1]\n        return 1+fun(L, i+1)\n    else:\n        return fun(L, i+1)\ndata = [5, 3, 4, 1, 2]\ncount = 0\nfor _ in range(len(data)):\n    count += fun(data)\nprint(count)\n'''\nbuf = io.StringIO(); ns = {}\nwith contextlib.redirect_stdout(buf):\n    exec(prog, ns)\nout = buf.getvalue().strip(); print('program prints', out)          # 8\nassert out == '8' and ns['data'] == [1, 2, 3, 4, 5]\n# per-pass trace: swaps returned by each call and the list afterwards\nfun, d = ns['fun'], [5, 3, 4, 1, 2]\npasses = []\nfor _ in range(len(d)):\n    passes.append((fun(d), d[:]))\nprint(passes)   # [(4,[3,4,1,2,5]), (2,[3,1,2,4,5]), (2,[1,2,3,4,5]), (0,..), (0,..)]\nassert [p[0] for p in passes] == [4, 2, 2, 0, 0]\n# swaps of bubble sort = number of inversions of the input\na = [5, 3, 4, 1, 2]\ninv = sum(a[i] > a[j] for i in range(5) for j in range(i + 1, 5))\nprint('inversions', inv); assert inv == 8\n# trap: if each call worked on a fresh copy of [5,3,4,1,2] -> 5 * 4 = 20\nassert sum(fun([5, 3, 4, 1, 2]) for _ in range(5)) == 20\n",
-    "notes": "Executing the transcribed program prints 8. The per-call trace returns 4, 2, 2, 0, 0 swaps, with the list becoming [3, 4, 1, 2, 5], [3, 1, 2, 4, 5] and then [1, 2, 3, 4, 5]; [5, 3, 4, 1, 2] has exactly 8 inversions, which confirms the total. This matches the official key 8 to 8."
+    "notes": "Independent verifier solved the question blind (before reading the key or the stored solution) from the official crop: each call fun(data) is one in-place bubble-sort pass that returns its swap count; the five calls return 4, 2, 2, 0, 0, and the total equals the 8 inversions of [5, 3, 4, 1, 2]. Executing the transcribed program prints 8. The official key cell is printed as '8  to 8' (with an extra space after the first 8, kept verbatim in officialKeyRaw), i.e. exactly 8, which matches."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

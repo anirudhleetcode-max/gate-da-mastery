@@ -10,6 +10,7 @@
   "subtopicIds": [
     "la-quadratic-forms",
     "la-projection-matrix",
+    "la-idempotent-matrix",
     "la-eigen"
   ],
   "type": "NAT",
@@ -60,16 +61,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes transposes with a superscript italic T (in 1 1^T, (1,1,1, ..., 1)^T, x^T Ax and x^T x); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The all-ones vector 1 is bold in the paper and is kept bold, and ℝ is printed as a blackboard-bold R. The fraction 1/n is printed as a small stacked fraction and the paper's parentheses around I_n - (1/n) 1 1^T are kept. The subscript S is printed beneath 'max' and is transcribed as \\max\\limits_{S}. The paper leaves a double space before 'max', a space between 'x^T Ax' and the following comma, and wraps '(Answer in integer)' onto a new line after the answer blank; these are layout only and are not reproduced (the answer note follows the blank on the same line). 'integer' is bold as in the paper, and the space between the answer blank and the full stop is kept. The matrix is the same one defined as M in Q52 of this paper. The region has no embedded figure and none is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the answer blank and '(Answer in integer)' match the official crop and the PDF text layer word for word; the stacked fraction 1/n, the bold all-ones vector, the transposes and the subscript S under max were confirmed on the rendered image. The paper writes transposes with a superscript italic T (in 1 1^T, (1,1,1, ..., 1)^T, x^T Ax and x^T x); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The all-ones vector 1 is bold in the paper and is kept bold, and ℝ is printed as a blackboard-bold R. The fraction 1/n is printed as a small stacked fraction and the paper's parentheses around I_n - (1/n) 1 1^T are kept. The subscript S is printed beneath 'max' and is transcribed as \\max\\limits_{S}. The paper leaves a double space before 'max', a space between 'x^T Ax' and the following comma, and wraps '(Answer in integer)' onto a new line after the answer blank; these are layout only and are not reproduced (the answer note follows the blank on the same line). 'integer' is bold as in the paper, and the space between the answer blank and the full stop is kept. The matrix is the same one defined as M in Q52 of this paper. The region has no embedded figure and none is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "1",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nfor n in range(1, 9):\n    one = np.ones((n, 1))\n    A = np.eye(n) - one @ one.T / n\n    assert np.allclose(A, A.T) and np.allclose(A @ A, A)       # symmetric, idempotent\n    ev = np.linalg.eigvalsh(A)                                  # max of x^T A x on x^T x = 1 is lambda_max\n    print(n, np.round(ev, 12), 'max =', round(ev.max(), 12))\n# n >= 2: eigenvalues 0 (once, eigenvector 1) and 1 (n-1 times) -> max = 1; n = 1 gives A = [0].\nn = 4\nx = np.array([1., -1., 0., 0.]) / np.sqrt(2)                   # unit vector orthogonal to 1\nprint('x^T A x =', x @ (np.eye(n) - np.ones((n, n)) / n) @ x)   # 1.0\n# x^T A x = ||x||^2 - n*xbar^2 = 1 - (sum x)^2/n <= 1, equality iff sum x = 0\nrng = np.random.default_rng(2)\nX = rng.normal(size=(100000, 6)); X /= np.linalg.norm(X, axis=1, keepdims=True)\nq = 1 - X.sum(1)**2 / 6\nprint('sampled max', q.max(), '<= 1:', bool(q.max() <= 1 + 1e-12))\n",
-    "notes": "For n = 1 to 8, numpy confirms that A is symmetric and idempotent, with eigenvalues 0 (once) and 1 (n - 1 times) for every n >= 2, so the maximum of x^T A x over unit vectors (the largest eigenvalue) is 1. The explicit unit vector (1, -1, 0, 0)/sqrt(2) attains 1 for n = 4, and 100,000 random unit vectors in R^6 never exceed 1. This matches the official key 1 to 1. In the degenerate case n = 1, A = [0] and the value would be 0; for every n >= 2 it is 1."
+    "notes": "Re-solved independently from the question text before reading the stored solution: A is the centering matrix (symmetric, idempotent), with eigenvalue 0 on the vector 1 and eigenvalue 1 on the (n - 1)-dimensional subspace sum x_i = 0; the maximum of x^T A x over unit vectors is lambda_max = 1, equivalently x^T A x = 1 - (sum x_i)^2 / n <= 1 with equality when sum x_i = 0. The verifier's own numpy eigenvalue check for n = 1 to 8 and the stored author check code (symmetry/idempotence asserts, explicit maximiser, 100,000 random unit vectors) confirm this. Matches the official key 1 to 1. The value is 1 for every n >= 2; only the degenerate n = 1 (A = [0]) would give 0, which the question implicitly excludes."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

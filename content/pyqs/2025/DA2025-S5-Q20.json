@@ -66,7 +66,7 @@
       }
     ],
     "finalAnswer": "**(A)**",
-    "teaching": "**Linear transformations of a random variable.** If $X = aZ + b$ with constants $a$ and $b$, three facts follow directly from linearity of expectation:\n\n- **Mean shifts by $b$ and scales by $a$:** $E[X] = aE[Z] + b$.\n- **Centring removes $b$:** $X - E[X] = a(Z - E[Z])$, so the constant shift plays no role in any variance or covariance.\n- **Variance scales by $a^2$:** $\\mathrm{Var}(X) = a^2\\,\\mathrm{Var}(Z)$. The square destroys the sign of $a$.\n- **Covariance scales by $a$:** $\\mathrm{Cov}(X, Z) = E[(X - E[X])(Z - E[Z])] = a\\,\\mathrm{Var}(Z)$. This keeps the sign of $a$.\n\nFor a **standard** normal $Z$ (mean $0$, variance $1$) these become very clean: $E[X] = b$, $\\mathrm{Var}(X) = a^2$, $\\mathrm{Cov}(X, Z) = a$. In fact $X \\sim N(b, a^2)$.\n\n**Why three conditions are given.** The distribution of $X$ alone is $N(b, a^2)$, and it is *identical* for $a = 2$ and $a = -2$ (the normal is symmetric, so $-Z$ has the same distribution as $Z$). So no statement about $X$ by itself (its mean, variance or any other moment) can tell the two signs apart. To pin down the sign you need a quantity that involves $X$ **together with** $Z$, such as $E[(X - E[X])Z] = \\mathrm{Cov}(X, Z)$. A negative covariance means $X$ moves opposite to $Z$, so $a < 0$.\n\n**Back to the question.** $E[X] = 1$ gives $b = 1$; the cross moment $-2$ gives $a = -2$; and the variance $4 = (-2)^2$ is a consistency check. The answer is $a = -2,\\ b = 1$, option (A).",
+    "teaching": "**Linear transformations of a random variable.** If $X = aZ + b$ with constants $a$ and $b$, four facts follow directly from linearity of expectation:\n\n- **Mean shifts by $b$ and scales by $a$:** $E[X] = aE[Z] + b$.\n- **Centring removes $b$:** $X - E[X] = a(Z - E[Z])$, so the constant shift plays no role in any variance or covariance.\n- **Variance scales by $a^2$:** $\\mathrm{Var}(X) = a^2\\,\\mathrm{Var}(Z)$. The square destroys the sign of $a$.\n- **Covariance scales by $a$:** $\\mathrm{Cov}(X, Z) = E[(X - E[X])(Z - E[Z])] = a\\,\\mathrm{Var}(Z)$. This keeps the sign of $a$.\n\nFor a **standard** normal $Z$ (mean $0$, variance $1$) these become very clean: $E[X] = b$, $\\mathrm{Var}(X) = a^2$, $\\mathrm{Cov}(X, Z) = a$. In fact $X \\sim N(b, a^2)$.\n\n**Why three conditions are given.** The distribution of $X$ alone is $N(b, a^2)$, and it is *identical* for $a = 2$ and $a = -2$ (the normal is symmetric, so $-Z$ has the same distribution as $Z$). So no statement about $X$ by itself (its mean, variance or any other moment) can tell the two signs apart. To pin down the sign you need a quantity that involves $X$ **together with** $Z$, such as $E[(X - E[X])Z] = \\mathrm{Cov}(X, Z)$. A negative covariance means $X$ moves opposite to $Z$, so $a < 0$.\n\n**Back to the question.** $E[X] = 1$ gives $b = 1$; the cross moment $-2$ gives $a = -2$; and the variance $4 = (-2)^2$ is a consistency check. The answer is $a = -2,\\ b = 1$, option (A).",
     "optionAnalysis": [
       {
         "label": "A",
@@ -90,7 +90,7 @@
       }
     ],
     "shortcut": "For $X = aZ + b$ with $Z \\sim N(0,1)$: $E[X] = b$, $E[(X - E[X])Z] = \\mathrm{Cov}(X, Z) = a$, $\\mathrm{Var}(X) = a^2$. Read off $b = 1$ and $a = -2$ directly.",
-    "commonTrap": "Using only the variance condition $a^2 = 4$ and taking the positive root $a = 2$, which points to option (B) if the mean condition is also mishandled. Another slip is to treat $X$ and $Z$ as independent and write $E[(X - E[X])Z] = E[X - E[X]]\\,E[Z] = 0$. That is wrong because $X$ is a function of $Z$; the cross moment equals $a\\,E[Z^2] = a$."
+    "commonTrap": "Using only the variance condition $a^2 = 4$ and taking the positive root $a = 2$ by habit. The variance cannot fix the sign of $a$; only the cross moment $E[(X - E[X])Z] = a = -2$ does. (Option (B) has the right $|a|$ but the wrong sign of both $a$ and $b$.) Another slip is to treat $X$ and $Z$ as independent and write $E[(X - E[X])Z] = E[X - E[X]]\\,E[Z] = 0$. That is wrong because $X$ is a function of $Z$; the cross moment equals $a\\,E[Z^2] = a$."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -102,16 +102,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The text layer renders the last condition as \"E[(X −E[X])2]\"; the rendering shows the 2 as a superscript, transcribed as $E[(X - E[X])^2]$."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the three displayed conditions, and all four options match the official crop character for character. The text layer renders the last condition as \"E[(X −E[X])2]\"; the rendering shows the 2 as a superscript, transcribed as $E[(X - E[X])^2]$."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (a = -2, b = 1)",
     "agreesWithKey": true,
-    "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\ndef nb_params(X, y):\n    # Bernoulli naive Bayes: prior P(y=1) + P(x_j=1 | y=c) for every class c and attribute j\n    prior = {'P(y=1)': y.mean()}   # P(y=0) = 1 - P(y=1) is not a new parameter\n    cond = {f'P(x{j+1}=1|y={c})': X[y == c, j].mean() for c in (0, 1) for j in range(X.shape[1])}\n    return {**prior, **cond}\nfor K in (3, 4, 5, 10):\n    X = rng.integers(0, 2, size=(200, K)); y = rng.integers(0, 2, size=200)\n    n = len(nb_params(X, y))\n    full_joint = 2 * (2**K - 1) + 1          # no independence assumption\n    opts = {'A': 2**K + 1, 'B': 2*K + 1, 'C': 2**(K+1) + 1, 'D': K**2 + 1}\n    print(K, 'naive Bayes params =', n, '| full joint =', full_joint, '| matching options:', [k for k, v in opts.items() if v == n])",
-    "notes": "Independent solve: E[X] = b = 1; X - E[X] = aZ so E[(X - E[X])Z] = aE[Z^2] = a = -2; E[(X - E[X])^2] = a^2 = 4 is consistent. Hence a = -2, b = 1, option (A), matching the official key A. The Python check solves the three moment equations symbolically (unique solution a = -2, b = 1) and a Monte Carlo simulation with 2 million standard normal draws confirms that only option (A) reproduces all three moments (1, -2, 4)."
+    "checkCode": "import numpy as np, sympy as sp\nfrom sympy.stats import Normal, E\na, b = sp.symbols('a b', real=True)\nZ = Normal('Z', 0, 1); X = a*Z + b\nm = sp.simplify(E(X)); c = sp.simplify(E((X - m)*Z)); v = sp.simplify(E((X - m)**2))\nprint('E[X] =', m, '| E[(X-E[X])Z] =', c, '| E[(X-E[X])^2] =', v)          # b, a, a**2\nprint('solve:', sp.solve([m - 1, c + 2, v - 4], [a, b], dict=True))          # unique: a=-2, b=1\nopts = {'A': (-2, 1), 'B': (2, -1), 'C': (-2, -1), 'D': (1, 1)}\nprint('exact match:', [k for k, (p, q) in opts.items() if (m.subs({a: p, b: q}), c.subs({a: p, b: q}), v.subs({a: p, b: q})) == (1, -2, 4)])\nz = np.random.default_rng(0).standard_normal(2_000_000)                      # Monte Carlo cross-check\nfor k, (p, q) in opts.items():\n    x = p*z + q; mc = (x.mean(), ((x - x.mean())*z).mean(), ((x - x.mean())**2).mean())\n    print(k, np.round(mc, 3), np.allclose(mc, (1, -2, 4), atol=0.02))",
+    "notes": "Blind re-solve (before viewing the key or the stored solution): E[X] = aE[Z] + b = b = 1; X - E[X] = aZ, so E[(X - E[X])Z] = aE[Z^2] = a = -2; E[(X - E[X])^2] = a^2 = 4 is consistent. Hence a = -2, b = 1, option (A), matching official key A. The Python check computes the three moments symbolically with sympy.stats (b, a, a^2), solves the system (unique solution a = -2, b = 1), confirms only option (A) satisfies all three exactly, and cross-checks each option by Monte Carlo with 2,000,000 standard normal draws (only (A) reproduces 1, -2, 4). Verifier note: the previously stored checkCode belonged to a different question (a naive Bayes parameter count) and has been replaced."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

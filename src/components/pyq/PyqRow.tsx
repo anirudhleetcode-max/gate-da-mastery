@@ -42,7 +42,7 @@ export function PyqRow({ meta, topicName, subjectLabel, state, paperText, onNavi
             <OriginBadge origin={meta.origin} />
             <TypeBadge type={meta.type} marks={meta.marks} />
             <DifficultyBadge difficulty={meta.difficulty} />
-            <span className="inline-flex min-w-0 items-center gap-1.5 text-xs text-fg-3">
+            <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 text-xs text-fg-3">
               <span aria-hidden className="h-2 w-2 shrink-0 rounded-full" style={{ background: SUBJECT_COLOR[meta.subjectId] }} />
               <span className="truncate">
                 {subjectLabel} › {topicName}

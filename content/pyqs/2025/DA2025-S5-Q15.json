@@ -84,7 +84,7 @@
       }
     ],
     "shortcut": "Memorise $p \\rightarrow q \\equiv \\neg p \\lor q$, which gives (A) immediately. To double-check the rest, the single row $p = q = \\text{F}$ gives $S_2 = \\text{F}$ but $S_3 = S_4 = \\text{T}$, ruling out (B) and (C). The row $p = q = \\text{T}$ gives $S_1 = \\text{T}$ but $S_4 = \\text{F}$, ruling out (D).",
-    "commonTrap": "Treating $p \\rightarrow q$ as false whenever $p$ is false (confusing implication with $p \\land q$ or with the biconditional). This makes $S_1$ look like $S_2$ or some other formula. Another slip is misreading $\\neg p \\land q$ as $\\neg p \\lor q$, since the two formulas look almost identical."
+    "commonTrap": "Misremembering the implication law. The correct rewrite negates **only the antecedent** and keeps OR: $p \\rightarrow q \\equiv \\neg p \\lor q$. Negating both parts gives $\\neg p \\lor \\neg q$, which is really $p \\rightarrow \\neg q$, and leads to (D). Replacing OR by AND gives $\\neg p \\land q$, which is really $\\neg(q \\rightarrow p)$. That makes $S_1$ look like $S_2$ instead of $S_3$, so (A) looks wrong. A related slip is forgetting that an implication with a false antecedent is (vacuously) true, i.e. reading $p \\rightarrow q$ as $p \\land q$ (column T, F, F, F) or as $p \\leftrightarrow q$ (column T, F, F, T). Then no column in the table matches $S_1$ and the correct option (A) looks wrong. Finally, $S_2 = \\neg p \\land q$ and $S_3 = \\neg p \\lor q$ differ by one symbol, so misreading one as the other makes (B) look correct."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -96,16 +96,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The four statements S1-S4, which the paper prints on one line, are set as a single display-math line in the same order and with the same connectives (S1: p -> q, S2: not p AND q, S3: not p OR q, S4: not p OR not q). The definitions of AND, OR and NOT, the equivalence note, and options (A)-(D) match the paper verbatim."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A (S1 = p -> q is equivalent to S3 = ~p v q)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A (S1 = p -> q is logically equivalent to S3 = ~p v q)",
     "agreesWithKey": true,
     "checkCode": "from itertools import product\nimp = lambda a, b: (not a) or b\nS = {'S1': lambda p, q: imp(p, q), 'S2': lambda p, q: (not p) and q,\n     'S3': lambda p, q: (not p) or q, 'S4': lambda p, q: (not p) or (not q)}\nrows = list(product([True, False], repeat=2))\nfor n, s in S.items(): print(n, [int(s(p, q)) for p, q in rows])\nfor opt, (a, b) in {'A': ('S1', 'S3'), 'B': ('S2', 'S3'), 'C': ('S2', 'S4'), 'D': ('S1', 'S4')}.items():\n    diff = [(p, q) for p, q in rows if S[a](p, q) != S[b](p, q)]\n    print(opt, a, '==', b, ':', not diff, 'differs at (p,q)=', diff)",
-    "notes": "Independent solve: p -> q is false only at (p,q) = (T,F), exactly like ~p v q, so S1 = S3 and option (A) is correct. This matches the official key A. The Python truth table gives the columns S1 = S3 = (T,F,T,T), S2 = (F,F,T,F), S4 = (F,T,T,T) over the rows (T,T),(T,F),(F,T),(F,F). It confirms that B, C and D each fail on two rows."
+    "notes": "Blind re-solve (done before reading the stored solution): p -> q is false only at (p,q) = (T,F), and so is ~p v q, so S1 is equivalent to S3 and option (A) is correct. This agrees with the official key A. The Python truth table over the rows (T,T),(T,F),(F,T),(F,F) gives S1 = S3 = (T,F,T,T), S2 = (F,F,T,F), S4 = (F,T,T,T). Option B fails at (T,T) and (F,F), C at (T,F) and (F,F), and D at (T,T) and (T,F). Exactly one option (A) holds."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

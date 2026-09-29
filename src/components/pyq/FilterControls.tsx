@@ -148,7 +148,7 @@ export function FilterControls({
         ))}
       </FilterSelect>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
         <FilterSelect id={id("type")} label="Question type" value={filters.type} onChange={(e) => onChange({ type: e.target.value as BrowseFilters["type"] })}>
           <option value="">{withCount("Any type", f.type.get("*"))}</option>
           {TYPES.map((t) => (

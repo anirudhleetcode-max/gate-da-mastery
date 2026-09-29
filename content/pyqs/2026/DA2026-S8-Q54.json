@@ -56,7 +56,7 @@
       },
       {
         "title": "Check (A) and (B)",
-        "body": "**(A)** \"Always a positive function\" would need $F(x) > 0$ for every $x$. In the Bernoulli example, $F(x) = 0$ for all $x < 0$. More generally, $F(x) \\to 0$ as $x \\to -\\infty$, and whenever the values of $X$ are bounded below (counts, Bernoulli, binomial, a die, ...), $F(x)$ is exactly $0$ to the left of the smallest value. A CDF is only **non-negative**, so (A) is **incorrect**.\n\n**(B)** Monotonicity (property 2) holds for every CDF: moving $x$ to the right can only add outcomes to the event $\\{X \\le x\\}$. In the example, $F$ goes $0 \\to 0.7 \\to 1$ and never decreases. (B) is **correct**."
+        "body": "**(A)** \"Always a positive function\" would need $F(x) > 0$ for every $x$. In the Bernoulli example, $F(x) = 0$ for all $x < 0$. More generally, $F(x) \\to 0$ as $x \\to -\\infty$, and whenever the values of $X$ are bounded below (counts, Bernoulli, binomial, a die, ...), $F(x)$ is exactly $0$ to the left of the smallest value. (If the values of $X$ are unbounded below, e.g. $P(X = k) > 0$ for every integer $k$, then $F(x) > 0$ everywhere, but the statement claims positivity for *every* discrete $X$, and the Bernoulli example already breaks it.) A CDF is only **non-negative**, so (A) is **incorrect**.\n\n**(B)** Monotonicity (property 2) holds for every CDF: moving $x$ to the right can only add outcomes to the event $\\{X \\le x\\}$. In the example, $F$ goes $0 \\to 0.7 \\to 1$ and never decreases. (B) is **correct**."
       },
       {
         "title": "Check (C) and (D)",
@@ -104,16 +104,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain text with italic math X and F(x), transcribed verbatim, including 'discrete valued' without a hyphen and 'has jump discontinuity' without an article. The paper's layout has an empty row between the question text and the options; it carries no content. No figure is needed: the faint background graphic in the crop is the paper's watermark, and no candidate figures were extracted for this region."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and all four options match the official crop and the PDF text layer word for word, including 'discrete valued' without a hyphen, 'has jump discontinuity' without an article and the option order (A)-(D). The paper's layout has an empty row between the question text and the options; it carries no content. No figure is needed: the faint background graphic in the crop is the paper's watermark, and no candidate figures were extracted for this region."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;C",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as Fr\n# Discrete X: fair die on {1,...,6}; F(x) = P(X <= x)\npmf = {k: Fr(1, 6) for k in range(1, 7)}\nF = lambda x: sum(p for v, p in pmf.items() if v <= x)\neps = Fr(1, 10**9)\n# (A) positive everywhere? F(0) = 0, so no\nA = all(F(x) > 0 for x in [-5, 0, Fr(1, 2), 3])\n# (B) non-decreasing on a fine grid\ngrid = [Fr(k, 10) for k in range(-20, 91)]\nB = all(F(a) <= F(b) for a, b in zip(grid, grid[1:]))\n# (C) jump at every atom: F(a) - F(a-) = P(X = a) > 0\nC = all(F(a) - F(a - eps) == pmf[a] > 0 for a in pmf)\n# (D) left continuous means F(a-) == F(a); fails at atoms\nD = all(F(a - eps) == F(a) for a in pmf)\nright_cont = all(F(a + eps) == F(a) for a in pmf)\nprint(dict(A=A, B=B, C=C, D=D, right_continuous=right_cont))\nassert (A, B, C, D) == (False, True, True, False)   # -> B;C",
-    "notes": "Each statement was checked against the standard properties of F(x) = P(X <= x) and on a concrete discrete variable (a fair die) with exact rational arithmetic. F(0) = 0, so F is not always positive and (A) fails. F is non-decreasing on a fine grid (B holds). At each value a of the die, F(a) - F(a-) = P(X = a) = 1/6 > 0, a jump discontinuity (C holds). The left limit differs from F(a) at every such value while the right limit equals it, so F is right-continuous but not left-continuous (D fails). Independent answer B;C matches official key B;C."
+    "notes": "Independent verifier solved from show-question output and the official crop before reading the key or the stored solution (the context file was read with the key row filtered out). Using F(x) = P(X <= x): (A) fails because F(x) = 0 to the left of the smallest value of any X bounded below (e.g. a die or Bernoulli), so F is only non-negative; (B) holds since {X <= a} is a subset of {X <= b} for a < b; (C) holds since a discrete X has at least one atom with P(X = a) > 0, and F(a) - F(a-) = P(X = a) is a jump; (D) fails because F is right-continuous and F(a-) = P(X < a) < F(a) at every atom. Confirmed with exact Fraction arithmetic on a fair die (checkCode): A False, B True, C True, D False, right-continuous True. Independent answer B;C matches the official key B;C (MSQ, 2 marks)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

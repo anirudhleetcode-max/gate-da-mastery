@@ -104,16 +104,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain-text question with no mathematical notation; the options carry no terminal full stops in the paper and none are added."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and all four options match the official crop word for word; the question is plain text with no mathematical notation, and the options carry no terminal full stops in the paper (none added)."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "C, D (variable elimination is exact and computes conditional probabilities; rejection and Gibbs sampling are approximate)",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
+    "independentAnswer": "C, D",
     "agreesWithKey": true,
     "checkCode": "import itertools, random\n# Sprinkler-style BN: C -> S, C -> R, (S,R) -> W. Query P(C=1 | W=1).\npC = 0.5\npS = {1: 0.1, 0: 0.5}; pR = {1: 0.8, 0: 0.2}\npW = {(1, 1): 0.99, (1, 0): 0.9, (0, 1): 0.9, (0, 0): 0.0}\nb = lambda p, v: p if v else 1 - p\ndef joint(c, s, r, w): return b(pC, c) * b(pS[c], s) * b(pR[c], r) * b(pW[(s, r)], w)\n# exact by full enumeration\nnum = sum(joint(1, s, r, 1) for s, r in itertools.product([0, 1], repeat=2))\nden = sum(joint(c, s, r, 1) for c, s, r in itertools.product([0, 1], repeat=3))\nexact = num / den\n# variable elimination: sum out S and R first -> factor f(C) for evidence W=1, then normalise\nf = {c: b(pC, c) * sum(b(pS[c], s) * sum(b(pR[c], r) * pW[(s, r)] for r in (0, 1)) for s in (0, 1)) for c in (0, 1)}\nve = f[1] / (f[0] + f[1])\nprint('enumeration =', exact, ' VE =', ve, ' identical:', abs(exact - ve) < 1e-15)\ndef rejection(N, seed):\n    rnd = random.Random(seed); acc = hit = 0\n    for _ in range(N):\n        c = rnd.random() < pC; s = rnd.random() < pS[c]; r = rnd.random() < pR[c]; w = rnd.random() < pW[(s, r)]\n        if w: acc += 1; hit += c\n    return hit / acc\ndef gibbs(N, seed, burn=1000):\n    rnd = random.Random(seed); st = {'c': 1, 's': 1, 'r': 1}; hit = 0\n    for t in range(N + burn):\n        for v in ('c', 's', 'r'):\n            p1 = joint(*[1 if k == v else st[k] for k in ('c', 's', 'r')], 1)\n            p0 = joint(*[0 if k == v else st[k] for k in ('c', 's', 'r')], 1)\n            st[v] = int(rnd.random() < p1 / (p0 + p1))\n        if t >= burn: hit += st['c']\n    return hit / N\nfor N in (100, 1000, 100000):\n    print(N, 'rejection:', [round(rejection(N, s), 4) for s in (1, 2)], ' gibbs:', [round(gibbs(N, s), 4) for s in (1, 2)])\n",
-    "notes": "Independent solve: variable elimination is exact (A false) and computes conditional/posterior probabilities (C true); rejection sampling is approximate (D true); Gibbs sampling is approximate MCMC, not exact (B false). This gives C;D, matching the official key C;D. The Python check builds the sprinkler network, shows that variable elimination reproduces brute-force enumeration exactly (P(C=1|W=1) = 0.5758), and shows that rejection and Gibbs sampling estimates vary with the seed and only approach that value as the sample size grows (e.g. N=100: rejection 0.614/0.581, Gibbs 0.73/0.52; N=100000: rejection 0.5746/0.5753, Gibbs 0.5796/0.5803)."
+    "notes": "Independent re-solve from the official question alone, done before reading the stored solution (the official key row was visible in the context file when it was opened, so the re-solve was not strictly key-blind; the reasoning below does not depend on it): variable elimination is an exact inference algorithm (A false) whose purpose is to compute conditional/posterior probabilities P(X | e) (C true); Gibbs sampling is an MCMC method and hence approximate, not exact (B false); rejection sampling is a sampling-based approximate method (D true). Independent answer C;D equals the official key C;D. The verifier re-ran the stored Python check: variable elimination reproduces brute-force enumeration exactly on the sprinkler network (P(C=1|W=1) = 0.5758), while rejection and Gibbs estimates vary with the seed and only approach that value as N grows (N=100: rejection 0.614/0.581, Gibbs 0.73/0.52; N=100000: rejection 0.5746/0.5753, Gibbs 0.5796/0.5803), matching the numbers quoted in the solution. The hand VE computation (f(1)=0.3726, f(0)=0.2745) was also re-derived by hand."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

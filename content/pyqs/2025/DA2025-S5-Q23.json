@@ -100,16 +100,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The two declarations `A=[1,2,3]` and `B=[4,5,6]` are printed in a monospace font on separate lines with no spaces, and are transcribed character for character as a Python code block. In the question sentence the paper sets `A=` in monospace and the list [1, 2, 3, 4, 5, 6] in the math font (with spaces after the commas); this mixed typography is kept as `A=` followed by $[1, 2, 3, 4, 5, 6]$. The options are monospace and are transcribed as inline code. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, code lines and all four options match the official crop character for character. The declarations `A=[1,2,3]` and `B=[4,5,6]` are printed in monospace on separate lines with no spaces and are kept exactly as a Python code block. In the question sentence the paper sets `A=` in monospace and the list [1, 2, 3, 4, 5, 6] in the math font (with spaces after the commas); this mixed typography is kept as `A=` followed by $[1, 2, 3, 4, 5, 6]$. The options are monospace and are transcribed as inline code. The page watermark is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A",
     "agreesWithKey": true,
     "checkCode": "for name, op in [(\"A\", lambda A, B: A.extend(B)), (\"B\", lambda A, B: A.append(B)),\n                 (\"C\", lambda A, B: A.update(B)), (\"D\", lambda A, B: A.insert(B))]:\n    A = [1, 2, 3]\n    B = [4, 5, 6]\n    try:\n        r = op(A, B)\n        print(name, \"A =\", A, \"| return value:\", r, \"| matches:\", A == [1, 2, 3, 4, 5, 6])\n    except Exception as e:\n        print(name, type(e).__name__ + \":\", e)\n",
-    "notes": "Independent solve: list.extend adds each element of B in place, so A.extend(B) gives [1, 2, 3, 4, 5, 6]; append nests B as one element; lists have no update method; insert requires an index and a value. This gives (A), matching the official key A. The Python check (run on Python 3.11) executes each option on fresh copies of A and B: (A) gives [1, 2, 3, 4, 5, 6]; (B) gives [1, 2, 3, [4, 5, 6]]; (C) raises AttributeError: 'list' object has no attribute 'update'; (D) raises TypeError: insert expected 2 arguments, got 1."
+    "notes": "Blind re-solve by an independent verifier: list.extend(B) appends each element of B in place, giving [1, 2, 3, 4, 5, 6]; list.append(B) nests B as one element, giving [1, 2, 3, [4, 5, 6]]; lists have no update method (AttributeError); list.insert needs an index and a value (TypeError with one argument). Answer (A), which agrees with the official key A. The Python check (Python 3.11) runs each option on fresh copies of A and B and reproduces exactly these outcomes. Every solution step, the option analysis and the teaching section were re-checked and are correct."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

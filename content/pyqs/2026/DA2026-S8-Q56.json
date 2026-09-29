@@ -59,16 +59,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain text, transcribed verbatim including the hyphenation 'fully-connected feed-forward multi-layer perceptron'. 'integer' in the answer instruction is bold in the paper and is kept bold. No figure is needed: the faint background graphic in the crop is the paper's watermark, and no candidate figures were extracted for this region."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Wording matches the official crop and the PDF text layer verbatim, including the hyphenation 'fully-connected feed-forward multi-layer perceptron', the layer sizes 30, 4, 3 and 1, the sentence 'Assume that no bias parameters are used.' and the 10-underscore blank. 'integer' in the answer instruction is bold in the paper and is kept bold; the instruction sits on its own line in the paper and is kept on the blank's line per the platform convention. No figure is needed: the faint background graphic in the crop is the paper's watermark, and no candidate figures were extracted for this region."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "135",
     "agreesWithKey": true,
     "checkCode": "layers = [30, 4, 3, 1]              # input, hidden1, hidden2, output\nweights = [a * b for a, b in zip(layers, layers[1:])]   # 120, 12, 3\ntotal = sum(weights)                # no biases\nwith_bias = sum(a * b + b for a, b in zip(layers, layers[1:]))\nprint(weights, total, 'with biases would be', with_bias)\nassert total == 135",
-    "notes": "Weights between consecutive fully-connected layers 30 -> 4 -> 3 -> 1 counted by hand and in Python: 30*4 = 120, 4*3 = 12, 3*1 = 3, total 135 with no biases, as the question states (with biases it would be 143). Independent answer 135 matches official key 135 to 135."
+    "notes": "Independent verifier solved from show-question output and the official crop before reading the key or the stored solution. With no biases the only parameters are the weights between consecutive fully-connected layers 30 -> 4 -> 3 -> 1: 30*4 = 120, 4*3 = 12, 3*1 = 3, total 135 (Python confirms; with biases it would be 143). Independent answer 135 matches the official key 135 to 135 (NAT, 2 marks)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

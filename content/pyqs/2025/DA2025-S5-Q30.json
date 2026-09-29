@@ -100,16 +100,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The text layer flattens the subscripts (\"C1\", \"C2\") and the max/min limits; the rendering shows $C_1$, $C_2$ and $\\max_{x \\in C_1,\\, y \\in C_2}$ / $\\min_{x \\in C_1,\\, y \\in C_2}$ as limits, transcribed as KaTeX. The labels DIS-1 and DIS-2 are printed in bold; they are transcribed with \\textbf in the display math and Markdown bold in the options. The two definitions are aligned at the equals sign as in the paper."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The text layer flattens the subscripts (\"C1\", \"C2\") and the max/min limits; the rendering shows $C_1$, $C_2$ and $\\max_{x \\in C_1,\\, y \\in C_2}$ / $\\min_{x \\in C_1,\\, y \\in C_2}$ with the index set written as limits under the operator, transcribed as KaTeX. The labels DIS-1 and DIS-2 are printed in bold; they are transcribed with \\textbf in the display math and Markdown bold in the options. The two definitions are aligned at the equals sign as in the paper."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "B;D (single linkage = min = DIS-2; complete linkage = max = DIS-1)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "B;D",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\nfrom scipy.spatial.distance import cdist\nrng = np.random.default_rng(1)\nP = rng.normal(size=(12, 2))\ndef agglomerate(P, dis):                          # naive bottom-up clustering with a given set dissimilarity\n    clusters, heights = [[i] for i in range(len(P))], []\n    while len(clusters) > 1:\n        best = min(((dis(cdist(P[a], P[b])), i, j) for i, a in enumerate(clusters) for j, b in enumerate(clusters) if i < j))\n        h, i, j = best; heights.append(h)\n        clusters = [c for k, c in enumerate(clusters) if k not in (i, j)] + [clusters[i] + clusters[j]]\n    return np.array(heights)\nDIS1, DIS2 = np.max, np.min\nfor name, method in (('single', 'single'), ('complete', 'complete')):\n    ref = linkage(P, method=method)[:, 2]\n    print(name, 'linkage matches DIS-1 (max):', np.allclose(agglomerate(P, DIS1), ref),\n          '| matches DIS-2 (min):', np.allclose(agglomerate(P, DIS2), ref))\n",
-    "notes": "Independent solve: single linkage defines the cluster dissimilarity as the minimum cross-pair dissimilarity (DIS-2) and complete linkage as the maximum (DIS-1), so B and D are correct. This gives B;D, matching the official key B;D. The Python check runs a naive agglomerative clustering on 12 random 2-D points with DIS-1 (max) and DIS-2 (min) as the merge criterion and compares the merge heights with scipy.cluster.hierarchy.linkage: single linkage matches DIS-2 only and complete linkage matches DIS-1 only."
+    "notes": "Blind re-solve (done before viewing the key or the stored solution): single linkage defines the cluster dissimilarity as the minimum cross-pair dissimilarity (DIS-2) and complete linkage as the maximum (DIS-1), so B and D are correct and A and C swap the two. This gives B;D, matching the official key B;D. The Python check (re-run by the verifier) performs a naive agglomerative clustering on 12 random 2-D points with DIS-1 (max) and DIS-2 (min) as the merge criterion and compares the merge heights with scipy.cluster.hierarchy.linkage: single linkage matches DIS-2 only and complete linkage matches DIS-1 only."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

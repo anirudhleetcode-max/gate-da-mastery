@@ -47,24 +47,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2026/official/Q60-1.webp",
-    "/pyq/2026/official/Q60-2.webp"
+    "/pyq/2026/official/Q60-1.webp"
   ],
   "sourceIds": [
     "gate2026-da-qp",
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. In the paper the relation name Account (in the first sentence and as the table caption) and the column headers AccNo and Balance are set in monospace; they are shown as inline code. The cell values (A1 to A5, 5000 to 18000) are in the text font and are kept as plain text, centred as printed. The SQL query is a monospace block and is transcribed as an sql code block character for character, keeping the paper's four line breaks. The PDF text layer shows trailing spaces at some line ends; these are dropped, which does not change the SQL. 'integer' is bold in the answer note, as in the paper; the line break before it is only a wrap, and the space the paper leaves between the blank and the full stop is kept. The second official crop (Q60-2) shows only the header and a table border of the next page. The region contains no embedded figure (no candidate images), and none is needed because the table is transcribed as a GFM table."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, table (A1 5000, A2 5000, A3 10000, A4 15000, A5 18000), SQL query and answer note match the official crop and the PDF text layer. In the paper the relation name Account (in the first sentence and as the table caption) and the column headers AccNo and Balance are set in monospace; they are shown as inline code. The cell values are in the text font and are kept as plain text, centred as printed. The SQL query is a monospace block and is transcribed as an sql code block character for character, keeping the paper's four line breaks; trailing spaces that the PDF text layer shows at some line ends are dropped, which does not change the SQL. 'integer' is bold in the answer note, as in the paper; the line break before it is only a wrap, and the space the paper leaves between the blank and the full stop is kept. The question continues onto the next page only as an empty bordered area, so a single official crop (Q60-1) is referenced; a second crop path (Q60-2) that pointed to that blank strip and to a file that does not exist was removed during verification. The region contains no embedded figure, and none is needed because the table is transcribed as a GFM table."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "3",
     "agreesWithKey": true,
     "checkCode": "import sqlite3\nrows = [('A1', 5000), ('A2', 5000), ('A3', 10000), ('A4', 15000), ('A5', 18000)]\ndb = sqlite3.connect(':memory:')\ndb.execute('CREATE TABLE Account (AccNo TEXT, Balance INTEGER)')\ndb.executemany('INSERT INTO Account VALUES (?, ?)', rows)\nq = '''SELECT AccNo FROM Account AS A\nWHERE (SELECT COUNT(*) FROM Account AS B\nWHERE A.Balance < B.Balance) >= (SELECT COUNT(*)\nFROM Account AS C WHERE A.Balance > C.Balance)'''\nout = [r[0] for r in db.execute(q)]\nprint(out, len(out))                      # ['A1', 'A2', 'A3'] 3\n# the same test by hand: (#rows with a larger balance) >= (#rows with a smaller balance)\nfor acc, bal in rows:\n    more = sum(b > bal for _, b in rows); less = sum(b < bal for _, b in rows)\n    print(acc, bal, more, less, more >= less)   # A1/A2: 3,0  A3: 2,2  A4: 1,3  A5: 0,4\nassert out == ['A1', 'A2', 'A3'] and len(out) == 3   # official key 3 to 3\n# contrast: with a strict '>' instead of '>=' the median row A3 (2 vs 2) would drop out\nstrict = [acc for acc, bal in rows if sum(b > bal for _, b in rows) > sum(b < bal for _, b in rows)]\nassert strict == ['A1', 'A2']\n",
-    "notes": "Running the query verbatim in SQLite (Python sqlite3) over the transcribed relation returns A1, A2 and A3, i.e. 3 rows. A hand count of strictly larger and strictly smaller balances for each row gives the same result: A1/A2 3 vs 0, A3 2 vs 2, A4 1 vs 3, A5 0 vs 4. A3 passes only through the equality in >=. This matches the official key 3 to 3."
+    "notes": "Blind re-solve before reading the key or the stored solution: for each row, count strictly larger balances g and strictly smaller balances s; A1 and A2 (5000) give 3 vs 0, A3 (10000) gives 2 vs 2, A4 (15000) gives 1 vs 3 and A5 (18000) gives 0 vs 4, so g >= s holds for A1, A2 and A3, i.e. 3 rows. Running the query verbatim in SQLite (Python sqlite3, checkCode) over the transcribed relation also returns A1, A2, A3. A3 passes only through the equality in >=. Agrees with the official key 3 to 3."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

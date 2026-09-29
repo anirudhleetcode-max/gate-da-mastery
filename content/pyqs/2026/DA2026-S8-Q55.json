@@ -62,16 +62,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes transposes with a superscript italic T (w^T x, [-3.00, 4.00]^T, [1.00, 2.00]^T and [x_1, x_2]^T); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The subscripts in y_pred and y_true are set in italic math in the paper and are transcribed as math subscripts. The wider gap after the comma inside each bracketed vector is rendered with a LaTeX space. In the paper there is no space between '[x_1, x_2]^T' and the following 'and'; normal spacing is used. 'two' in the rounding instruction is bold in the paper and is kept bold. The second official crop (Q55-2) shows only the header and a table border of the next page. No figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. All numbers (0.20, [-3.00, 4.00], [1.00, 2.00]), the relation y_true = x_1 + x_2, the 7-underscore blank and the bold 'two' in the rounding instruction match the official crop. The paper writes transposes with a superscript italic T (w^T x, [-3.00, 4.00]^T, [1.00, 2.00]^T and [x_1, x_2]^T); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The subscripts in y_pred and y_true are set in italic math in the paper and are transcribed as math subscripts. The wider gap after the comma inside each bracketed vector is rendered with a LaTeX space. In the paper there is no space between '[x_1, x_2]^T' and the following 'and'; normal spacing is used. The rounding instruction sits on its own line in the paper; it is kept on the same line as the blank, following the platform-wide convention. The second official crop (Q55-2) shows only the header and a table border of the next page; as with other blank continuation crops, its public file was dropped and the compiler ignores the missing path. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "7.00",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nw = np.array([-3.0, 4.0]); x = np.array([1.0, 2.0]); lam = 0.20\ny_pred = w @ x                 # -3 + 8 = 5\ny_true = x[0] + x[1]           # 3\nmae = abs(y_pred - y_true)     # |5 - 3| = 2 (single instance)\nreg = lam * np.sum(w**2)       # 0.2 * 25 = 5  (ridge: lambda * ||w||_2^2)\nloss = mae + reg\nprint(y_pred, y_true, mae, reg, round(loss, 2))\n# other penalty forms, for comparison: lam/2*||w||^2 -> 4.5, lam*||w|| -> 3.0\nprint(mae + lam / 2 * np.sum(w**2), mae + lam * np.linalg.norm(w))\nassert 6.90 <= round(loss, 2) <= 7.10   # -> 7.00",
-    "notes": "Computed by hand and in Python: y_pred = w^T x = -3 + 8 = 5; y_true = 1 + 2 = 3; the MAE on the single instance is |3 - 5| = 2; the ridge penalty is 0.20 * ||w||_2^2 = 0.20 * 25 = 5; the total is 7.00, inside the official range 6.90 to 7.10. The stem does not write out the regularizer formula; the standard ridge penalty lambda * ||w||_2^2 with lambda = 0.20 reproduces the key, while the forms (lambda/2) * ||w||_2^2 (total 4.50) and lambda * ||w||_2 (total 3.00) would fall outside it. Independent answer 7.00 matches the key."
+    "notes": "Independent verifier solved from show-question output and the official crop before reading the key or the stored solution. y_pred = w^T x = (-3)(1) + (4)(2) = 5; y_true = 1 + 2 = 3; MAE on the single instance = |5 - 3| = 2; ridge penalty lambda * ||w||_2^2 = 0.20 * (9 + 16) = 5; overall regularized loss = 2 + 5 = 7.00. Python (numpy) reproduces 7.0. The stem does not print the regularizer formula; the standard ridge form lambda * ||w||_2^2 was assumed and matches the key, while (lambda/2) * ||w||_2^2 (4.50) and lambda * ||w||_2 (3.00) fall outside it. Independent answer 7.00 lies in the official range 6.90 to 7.10 (NAT, 2 marks)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

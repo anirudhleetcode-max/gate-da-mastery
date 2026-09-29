@@ -63,10 +63,16 @@ export function MockStartPanel({ testId, number, available, durationMinutes, loa
               The {durationMinutes}-minute timer starts as soon as the exam screen opens.
               {taken ? ` You have taken this mock ${taken === 1 ? "once" : `${taken} times`}; a retake is scored as a new attempt.` : ""}
             </p>
-            <ButtonLink href={examHref} variant="primary" size="lg" className="w-full" aria-disabled={ready && !storageOk ? true : undefined}>
-              {taken ? <RotateCcw aria-hidden className="h-5 w-5" /> : <PlayCircle aria-hidden className="h-5 w-5" />}
-              {taken ? `Retake Mock ${number}` : `Start Mock ${number}`}
-            </ButtonLink>
+            {ready && !storageOk ? (
+              <Button variant="primary" size="lg" className="w-full" disabled>
+                {taken ? `Retake Mock ${number}` : `Start Mock ${number}`}
+              </Button>
+            ) : (
+              <ButtonLink href={examHref} variant="primary" size="lg" className="w-full">
+                {taken ? <RotateCcw aria-hidden className="h-5 w-5" /> : <PlayCircle aria-hidden className="h-5 w-5" />}
+                {taken ? `Retake Mock ${number}` : `Start Mock ${number}`}
+              </ButtonLink>
+            )}
           </>
         )}
         {error ? (

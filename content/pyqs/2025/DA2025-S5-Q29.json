@@ -99,16 +99,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array and $x$ are typeset as math in the paper and are transcribed as KaTeX; the options 10, 12, 14, 16 are printed as plain numbers. The paper's line break after \"it takes\" is joined."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The array and $x$ are typeset as math in the paper and are transcribed as KaTeX; the options 10, 12, 14, 16 are printed as plain numbers. The paper's line break after \"it takes\" is joined."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A;C (x = 10 and x = 14 each give exactly two swaps)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A;C",
     "agreesWithKey": true,
     "checkCode": "def insertion_sort_swaps(a):\n    a, swaps = list(a), 0\n    for i in range(1, len(a)):\n        j = i\n        while j > 0 and a[j - 1] > a[j]:          # swap-based insertion sort\n            a[j - 1], a[j] = a[j], a[j - 1]; swaps += 1; j -= 1\n    assert a == sorted(a)\n    return swaps\ninv = lambda a: sum(a[i] > a[j] for i in range(len(a)) for j in range(i + 1, len(a)))\nfor label, x in zip('ABCD', (10, 12, 14, 16)):\n    arr = [1, 3, 5, 7, 9, 11, x, 15, 13]\n    s = insertion_sort_swaps(arr)\n    print(label, x, 'swaps =', s, '| inversions =', inv(arr), '| exactly two:', s == 2)\nprint('integers x in 0..20 giving exactly 2 swaps:', [x for x in range(21) if insertion_sort_swaps([1, 3, 5, 7, 9, 11, x, 15, 13]) == 2])\n",
-    "notes": "Independent solve: insertion-sort swaps equal the number of inversions. Without x the array has one inversion (15, 13), so x must be in exactly one inversion: x = 10 (with 11) and x = 14 (with 13) give 2 swaps, x = 12 gives 1 and x = 16 gives 3. This gives A;C, matching the official key A;C. The Python check runs a swap-based insertion sort on each option's array and reports 2, 1, 2 and 3 swaps for x = 10, 12, 14, 16, equal to the brute-force inversion counts. For information only: over integers 0-20 the values giving exactly two swaps are 9, 10, 14 and 15; 9 and 15 would duplicate a value already in the array and are not among the options."
+    "notes": "Blind re-solve (done before viewing the key or the stored solution): insertion-sort swaps equal the number of inversions. Without x the array has one inversion (15, 13), so x must be in exactly one inversion: x = 10 (with the 11 before it) and x = 14 (with the 13 after it) give 2 swaps, x = 12 gives 1 and x = 16 gives 3. This gives A;C, matching the official key A;C. The Python check runs a swap-based insertion sort on each option's array and reports 2, 1, 2 and 3 swaps for x = 10, 12, 14, 16, equal to the brute-force inversion counts. For information only: over integers 0-20 the values giving exactly two swaps are 9, 10, 14 and 15; 9 and 15 would duplicate a value already in the array and are not among the options."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

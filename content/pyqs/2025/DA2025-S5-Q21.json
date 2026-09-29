@@ -81,7 +81,7 @@
       {
         "label": "D",
         "verdict": "incorrect",
-        "explanation": "$\\ln 0.25 = -\\ln 4 < 0$, and a rate parameter must be positive (the mean $1/\\lambda$ of a waiting time cannot be negative). It comes from writing $\\ln 0.25$ without dividing by $-2$."
+        "explanation": "$\\ln 0.25 = -\\ln 4 < 0$, and a rate parameter must be positive (the mean $1/\\lambda$ of a waiting time cannot be negative). $\\ln 0.25$ is the value of $-2\\lambda$, not $\\lambda$: choosing it means forgetting to divide by $-2$."
       }
     ],
     "shortcut": "$P(X \\ge 2) = 0.25 = (1/2)^2$, so by memorylessness the median is $1$. For an exponential, median $= \\ln 2/\\lambda$, so $\\lambda = \\ln 2$.",
@@ -97,16 +97,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints $E[X] = \\frac{1}{\\lambda}$ as a stacked fraction (the text layer flattens it to \"1 λ\"); transcribed as $\\dfrac{1}{\\lambda}$. The parenthetical \"(ln denotes natural logarithm)\" is on its own line in the paper and is kept that way."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and all four options match the official crop. The paper prints $E[X] = \\frac{1}{\\lambda}$ as a stacked fraction (the text layer flattens it to \"1 λ\"); transcribed as $\\dfrac{1}{\\lambda}$. The parenthetical \"(ln denotes natural logarithm)\" is on its own line in the paper and is kept that way."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (lambda = ln 2)",
     "agreesWithKey": true,
-    "checkCode": "import math, random\nrandom.seed(1)\ndef insert_probes(m, n, trials=20000):\n    # Uniform hashing: each key's probe sequence is a uniformly random permutation of the m slots.\n    # Build a table with n keys, then count the probes needed to insert one more key.\n    tot = 0\n    for _ in range(trials):\n        occ = [False] * m\n        for _ in range(n):\n            for s in random.sample(range(m), m):\n                if not occ[s]: occ[s] = True; break\n        for p, s in enumerate(random.sample(range(m), m), 1):\n            if not occ[s]: tot += p; break\n    return tot / trials\nm = 20\nfor n in (5, 10, 15, 18):\n    a = n / m\n    sim = insert_probes(m, n, 5000)\n    exact = (m + 1) / (m - n + 1)            # exact mean for uniform hashing\n    print(f'alpha={a:.2f} sim={sim:.3f} exact={exact:.3f} | A={math.log(1/(1-a)):.3f} '\n          f'B={1/(1-a):.3f} C={1+a/2:.3f} D={1/(1+a):.3f} | B is upper bound: {sim <= 1/(1-a) + 0.05}')",
-    "notes": "Independent solve: for an exponential with mean 1/lambda, P(X >= 2) = e^{-2 lambda} = 0.25, so lambda = (ln 4)/2 = ln 2, option (A), matching the official key A. The Python check computes lambda = ln(4)/2 = 0.6931 = ln 2 and evaluates P(X >= 2) for each option: ln 2 -> 0.25, ln 4 -> 0.0625, ln 3 -> 0.1111, and ln 0.25 is negative and so not a valid rate."
+    "checkCode": "import math, sympy as sp\nlam, t = sp.symbols('lam t', positive=True)\ntail = sp.integrate(lam*sp.exp(-lam*t), (t, 2, sp.oo))                       # P(X >= 2) for rate lam\nprint('P(X>=2) =', tail, '| mean =', sp.integrate(t*lam*sp.exp(-lam*t), (t, 0, sp.oo)))\nsol = sp.solve(sp.Eq(tail, sp.Rational(1, 4)), lam); print('lambda =', sol, [float(s) for s in sol])\nfor k, v in {'A': math.log(2), 'B': math.log(4), 'C': math.log(3), 'D': math.log(0.25)}.items():\n    print(k, round(v, 4), round(math.exp(-2*v), 4) if v > 0 else 'invalid: rate must be > 0')",
+    "notes": "Blind re-solve (before viewing the key or the stored solution): mean 1/lambda means rate lambda, so P(X >= 2) = e^{-2 lambda} = 0.25, giving 2 lambda = ln 4 and lambda = ln 2, option (A), matching official key A. The Python check integrates the density lambda e^{-lambda t} to get P(X >= 2) = e^{-2 lambda} and mean 1/lambda, solves e^{-2 lambda} = 1/4 (lambda = ln 2 = 0.6931), and evaluates each option: ln 2 -> 0.25, ln 4 -> 0.0625, ln 3 -> 0.1111, ln 0.25 < 0 is not a valid rate. Verifier note: the previously stored checkCode belonged to a different question (open-addressing hash probes) and has been replaced."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

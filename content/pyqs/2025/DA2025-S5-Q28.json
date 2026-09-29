@@ -104,16 +104,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper's transpose superscript is transcribed as $^\\top$, the blackboard-bold R as $\\mathbb{R}^n$, and the identity matrix as $I_n$ (subscript n), following the rendering rather than the text layer, which flattens the super- and subscripts. The paper's line break after \"Which\" is joined."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The transpose superscript is transcribed as $^\\top$, the blackboard-bold R as $\\mathbb{R}^n$ and the identity matrix as $I_n$ (subscript n), following the rendering rather than the text layer, which flattens the super- and subscripts. The paper's line break after \"Which\" is joined."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A, B (eigenvalues of A are 2 once and 1 with multiplicity n-1; A^{-1} = I - xx^T/2 has eigenvalues 1/2 and 1)",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A, B",
     "agreesWithKey": true,
     "checkCode": "import numpy as np, sympy as sp\nrng = np.random.default_rng(0)\nfor n in (1, 2, 5, 50):\n    x = rng.normal(size=n); x /= np.linalg.norm(x)          # x^T x = 1\n    A = np.eye(n) + np.outer(x, x)\n    ev = np.sort(np.linalg.eigvalsh(A)); evinv = np.sort(np.linalg.eigvalsh(np.linalg.inv(A)))\n    print(f'n={n}: rank={np.linalg.matrix_rank(A)}, det={np.linalg.det(A):.6f}, eig(A) in [{ev.min():.6f}, {ev.max():.6f}], '\n          f'eig(A^-1) in [{evinv.min():.6f}, {evinv.max():.6f}], ||A^-1 - (I - xx^T/2)||={np.linalg.norm(np.linalg.inv(A) - (np.eye(n) - np.outer(x, x) / 2)):.1e}')\n# exact symbolic instance: x = (1/3)(1, 2, 2), x^T x = 1\nx = sp.Matrix([1, 2, 2]) / 3; A = sp.eye(3) + x * x.T\nprint('A =', A.tolist(), ' rank =', A.rank(), ' det =', A.det(), ' eig(A) =', A.eigenvals(), ' eig(A^-1) =', A.inv().eigenvals())\nprint('A^-1 == I - x x^T/2 :', sp.simplify(A.inv() - (sp.eye(3) - x * x.T / 2)) == sp.zeros(3))\n",
-    "notes": "Independent solve: Ax = 2x, and Av = v for v orthogonal to x, so the spectrum is {2, 1 (n-1 times)} and det A = 2. A is therefore invertible with rank n (A, B true), 0 is not an eigenvalue (C false), and A^{-1} = I - xx^T/2 has eigenvalues 1/2 and 1, none negative (D false). This gives A;B, matching the official key A;B. The Python check uses random unit x for n = 1, 2, 5, 50 (rank n, det 2, eig(A) in [1, 2], eig(A^-1) in [0.5, 1], A^-1 = I - xx^T/2 to machine precision) and an exact SymPy instance x = (1, 2, 2)/3 (eigenvalues {2: 1, 1: 2}, inverse eigenvalues {1/2: 1, 1: 2})."
+    "notes": "Independent re-solve from the official question alone, done before reading the stored solution (the official key row was visible in the context file when it was opened, so the re-solve was not strictly key-blind; the reasoning below does not depend on it): with x^T x = 1, Ax = x + x(x^T x) = 2x and Av = v for every v orthogonal to x, so the spectrum of A is {2 (once), 1 (n-1 times)}, det A = 2. Hence A is invertible (B true) with rank n (A true), 0 is not an eigenvalue (C false), and A^{-1} has eigenvalues 1/2 and 1, none negative (D false). Independent answer A;B equals the official key A;B. The verifier re-ran the stored Python check: random unit x for n = 1, 2, 5, 50 gives rank n, det 2, eig(A) in [1, 2], eig(A^-1) in [0.5, 1] and A^-1 = I - xx^T/2 to machine precision; the exact SymPy instance x = (1, 2, 2)/3 gives A = (1/9)[[10,2,2],[2,13,4],[2,4,13]], eigenvalues {2: 1, 1: 2} and inverse eigenvalues {1/2: 1, 1: 2}, matching the concrete check in the solution."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

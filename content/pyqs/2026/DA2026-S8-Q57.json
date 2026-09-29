@@ -59,16 +59,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the disease name D in a sans-serif font that differs from the body text; it is rendered as $\\mathsf{D}$ throughout. The percentages (80%, 20%, 10%, 90%, 30%), 'he/she' and the rounding instruction, with 'two' in bold, are kept as printed. The paper leaves a space between the answer blank and the full stop, and this is kept. The region has no embedded figure (candidate figure list is empty) and none is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Every sentence, percentage (80%, 20%, 10%, 90%, 30%), 'he/she' and the rounding instruction (with 'two' in bold) was compared word by word with the official crop. The paper sets the disease name D in a sans-serif font that differs from the body text; it is rendered as $\\mathsf{D}$ throughout. The space the paper leaves between the answer blank and the full stop is kept. The region has no embedded figure and none is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.77 (exact 24/31 = 0.7742)",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\np_D, sens, fpr = F(3, 10), F(8, 10), F(1, 10)   # P(D), P(+|D), P(+|not D)\np_pos = sens*p_D + fpr*(1 - p_D)                 # total probability of a positive test\npost = sens*p_D / p_pos                          # Bayes: P(D|+)\nprint(p_pos, post, float(post), round(float(post), 2))   # 31/100 24/31 0.7741935... 0.77\nassert p_pos == F(31, 100) and post == F(24, 31)\nassert 0.76 <= round(float(post), 2) <= 0.78     # official key 0.76 to 0.78\n# natural-frequency cross-check on 1000 people\nsick_pos, healthy_pos = 1000*0.3*0.8, 1000*0.7*0.1   # 240, 70\nassert abs(sick_pos/(sick_pos + healthy_pos) - float(post)) < 1e-12\n# Monte Carlo sanity check\nimport random\nrandom.seed(0); pos = sick = 0\nfor _ in range(1_000_000):\n    d = random.random() < 0.3\n    t = random.random() < (0.8 if d else 0.1)\n    if t: pos += 1; sick += d\nprint('MC P(D|+) =', round(sick/pos, 4))\n",
-    "notes": "Law of total probability: P(+) = 0.8(0.3) + 0.1(0.7) = 0.31. Bayes: P(D|+) = 0.24/0.31 = 24/31 = 0.7742, which rounds to 0.77. Exact rational arithmetic, a natural-frequency cross-check (240 of 310 positives per 1000 people) and a 1,000,000-trial Monte Carlo simulation (0.7747) agree. 0.77 lies within the official key range 0.76 to 0.78."
+    "notes": "Independent verifier solved the question blind (before reading the key or the stored solution) from the official crop: P(+) = 0.8(0.3) + 0.1(0.7) = 0.31 and P(D|+) = 0.24/0.31 = 24/31 = 0.7742, which rounds to 0.77. Exact rational arithmetic, a natural-frequency cross-check (240 of 310 positives per 1000 people) and a 1,000,000-trial Monte Carlo simulation (seed 0, 0.7747) all agree. 0.77 lies within the official key range 0.76 to 0.78."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

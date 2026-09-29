@@ -58,16 +58,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints the set as {x1, x2, … ., xn}, with an ellipsis followed by a full stop; this is kept as \\ldots. as printed (the same notation as in Q53). The centred equation is transcribed as display math. The paper leaves a slightly wider gap before '= 99'; this is typographic only. The two inline formulas (the definition of x̄ and the requested quantity) use small inline fractions and sums with side limits in the paper, and are rendered as inline \\frac and \\sum. The sentence 'Let us denote x̄ = (1/n) Σ x_i' has no final full stop in the paper; it is kept that way. 'integer' is bold in the answer note, as in the paper, and the space the paper leaves between the blank and the full stop is kept. The region contains no embedded figure (no candidate images), and none is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper prints the set as {x1, x2, …., xn}, with an ellipsis followed by a full stop (confirmed on a zoomed crop); this is kept as \\ldots. as printed. The centred equation (1/2000) Σ_{i=1}^{n} Σ_{j=1}^{n} (x_i − x_j)^2 = 99 is transcribed as display math; the paper leaves a slightly wider gap before '= 99', which is typographic only. The two inline formulas (the definition of x̄ and the requested quantity (1/99) Σ_{i=1}^{n} (x_i − x̄)^2) use small inline fractions and sums with side limits in the paper, and are rendered as inline \\frac and \\sum. The sentence 'Let us denote x̄ = ...' has no final full stop in the paper; it is kept that way. 'integer' is bold in the answer note, as in the paper, and the space the paper leaves between the blank and the full stop is kept. The region contains no embedded figure, and none is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "10",
     "agreesWithKey": true,
     "checkCode": "import numpy as np, sympy as sp\n# identity: sum_i sum_j (x_i - x_j)^2 = 2n * sum_i (x_i - xbar)^2   (symbolic check for n = 5)\nxs = sp.symbols('x1:6'); n = len(xs); xb = sum(xs) / n\nlhs = sum((a - b)**2 for a in xs for b in xs); rhs = 2 * n * sum((a - xb)**2 for a in xs)\nassert sp.expand(lhs - rhs) == 0\n# the question: n = 100, (1/2000) * double sum = 99\nn = 100\ndouble_sum = 99 * 2000                    # 198000\nSS = sp.Rational(double_sum, 2 * n)       # sum (x_i - xbar)^2 = 990\nprint(SS, SS / 99)                        # 990 10\nassert SS == 990 and SS / 99 == 10\n# numeric check on a concrete data set rescaled to satisfy the given condition\nrng = np.random.default_rng(0); x = rng.normal(size=n)\nD = ((x[:, None] - x[None, :])**2).sum(); x = x * np.sqrt(double_sum / D)\nassert np.isclose(((x[:, None] - x[None, :])**2).sum() / 2000, 99)\nprint(((x - x.mean())**2).sum() / 99, np.var(x, ddof=1))   # 10.0 10.0 (sample variance, divisor n-1 = 99)\nassert np.isclose(((x - x.mean())**2).sum() / 99, 10)\n",
-    "notes": "The identity sum_i sum_j (x_i - x_j)^2 = 2n sum_i (x_i - xbar)^2 was checked symbolically with sympy (n = 5). A numeric check on a random data set of size 100, rescaled so that (1/2000) times the double sum equals 99, also passes. Both give sum_i (x_i - xbar)^2 = 990 and the requested value 990/99 = 10, the sample variance. This matches the official key 10 to 10."
+    "notes": "Blind re-solve before reading the stored solution: centring gives sum_i sum_j (x_i - x_j)^2 = 2n sum_i (x_i - xbar)^2, so the double sum 99 x 2000 = 198000 equals 200 S, S = 990 and S/99 = 10 (the sample variance). The identity is checked symbolically with sympy (n = 5), and a random data set of size 100 rescaled to satisfy the given condition gives (1/99) sum (x_i - xbar)^2 = 10.0 numerically (checkCode). Agrees with the official key 10 to 10."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
