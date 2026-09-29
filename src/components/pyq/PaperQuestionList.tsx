@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import type { QuestionMeta } from "@/lib/content/types";
 import { useQuestionStatuses } from "@/lib/userdata/hooks";
 import { SUBJECT_SHORT } from "@/lib/labels";
-import { formatMarks, plural } from "@/lib/utils";
+import { plural } from "@/lib/utils";
 import { BookmarkButton } from "@/components/userdata/BookmarkButton";
-import { pyqTitle } from "./data";
+import { marksLabel, pyqTitle } from "./data";
 import { PyqRow } from "./PyqRow";
 import { isAttempted, pyqState } from "./status";
 import { useStoreNavList } from "./useNavList";
@@ -61,7 +61,7 @@ export function PaperQuestionList({ sections }: { sections: PaperSection[] }) {
                 {s.title}
               </h3>
               <p className="tnum text-xs text-fg-3">
-                {plural(s.rows.length, "question")} loaded · {formatMarks(marks)} marks
+                {plural(s.rows.length, "question")} loaded · {marksLabel(marks)}
               </p>
             </div>
             {s.rows.length ? (

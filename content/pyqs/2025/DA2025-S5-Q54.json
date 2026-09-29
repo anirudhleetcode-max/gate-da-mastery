@@ -104,16 +104,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the estimator with a wide hat, rendered here as $\\widehat{p}$, and sets $E[\\,\\widehat{p}\\,]$ with thin spaces inside the brackets. In option (B) the fraction $p/n$ is set as a small stacked fraction. No figure is needed. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, display formula and all four options match the official crop character for character (superscript th in $i^{\\text{th}}$, wide hat $\\widehat{p}$, sum limits $i=1$ to $n$, option order A-D). The thin spaces inside $E[\\,\\widehat{p}\\,]$ and the \\dfrac in option (B) only mirror the paper's typesetting. No figure is needed; the GATE 2025 / IIT Roorkee watermark is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A;C (E[p-hat] = p, so A true and B false; Var(p-hat) = p(1-p)/n decreases with n, so C true and D false)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A;C",
     "agreesWithKey": true,
-    "checkCode": "import itertools, sympy as sp\np=sp.symbols('p',positive=True)\ndef moments(n):  # exact E and Var of phat = (1/n) sum X_i by enumerating all 2^n outcomes\n    E=V2=0\n    for xs in itertools.product([0,1],repeat=n):\n        pr=sp.prod([p if x else 1-p for x in xs]); ph=sp.Rational(sum(xs),n)\n        E+=pr*ph; V2+=pr*ph**2\n    return sp.simplify(E), sp.factor(sp.simplify(V2-E**2))\nfor n in [1,2,3,5,8]:\n    E,V=moments(n); print(n, 'E =',E, ' Var =',V, ' Var==p(1-p)/n:', sp.simplify(V-p*(1-p)/n)==0)\n# A: E=p for every n (true); B: E=p/n only for n=1 (false in general)\n# C: Var=p(1-p)/n strictly decreases in n for 0<p<1; D: Var depends on n (false)\nprint([float((p*(1-p)/n).subs(p,0.3)) for n in [1,2,5,10,100]])\n",
-    "notes": "Hand solve: X_i ~ Bernoulli(p) i.i.d., so E[p-hat] = p by linearity (A true, B false) and Var(p-hat) = p(1-p)/n by independence (C true, D false). The SymPy check enumerates all 2^n outcomes for n = 1, 2, 3, 5, 8 and confirms E[p-hat] = p and Var(p-hat) = p(1-p)/n exactly. (C) holds strictly for 0 < p < 1; for the degenerate coins p = 0 or 1 the variance is 0 for every n. This agrees with the official key A;C."
+    "checkCode": "import itertools, sympy as sp\np=sp.symbols('p')\nfor n in [1,2,3,4,6]:\n    E=V2=0\n    for xs in itertools.product([0,1],repeat=n):\n        pr=sp.prod([p if x else 1-p for x in xs]); ph=sp.Rational(sum(xs),n)\n        E+=pr*ph; V2+=pr*ph**2\n    E=sp.expand(E); V=sp.factor(sp.expand(V2-E**2))\n    print(n,'E=',E,'Var=',V,'A:',sp.simplify(E-p)==0,'B:',sp.simplify(E-p/n)==0,'Var-p(1-p)/n==0:',sp.simplify(V-p*(1-p)/n)==0)\n# C: d/dn [p(1-p)/n] = -p(1-p)/n^2 < 0 for 0<p<1 -> decreasing; D false\nn_=sp.symbols('n',positive=True); print(sp.diff(p*(1-p)/n_,n_))\n",
+    "notes": "Independent solve: X_i i.i.d. Bernoulli(p), so E[p-hat] = (1/n)(np) = p by linearity (A true; B = p/n holds only for n = 1, so false) and Var(p-hat) = (1/n^2)(n p(1-p)) = p(1-p)/n by independence, which decreases in n (C true, D false). The SymPy check enumerates all 2^n outcomes for n = 1, 2, 3, 4, 6 and confirms E[p-hat] = p and Var(p-hat) = p(1-p)/n exactly; dVar/dn = -p(1-p)/n^2 < 0 for 0 < p < 1. (C) is strict for 0 < p < 1; for the degenerate coins p = 0 or 1 the variance is 0 for all n. Agrees with the official key A;C."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

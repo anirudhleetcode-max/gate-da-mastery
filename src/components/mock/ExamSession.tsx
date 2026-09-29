@@ -348,10 +348,15 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
               Mock {test.number}
               <span className="hidden font-normal text-fg-2 md:inline"> · {test.title.replace(/^Mock\s+\d+\s*:\s*/i, "")}</span>
             </h1>
-            <p className="truncate text-xs text-fg-3">
+            <p className="hidden truncate text-xs text-fg-3 sm:block">
               <span className="tnum">{answered}</span> of <span className="tnum">{total}</span> answered · <span className="tnum">{total - answered}</span> remaining
               {demo ? <Badge tone="warning" className="ml-2">DEMO DATA</Badge> : null}
             </p>
+            {demo ? (
+              <Badge tone="warning" className="sm:hidden">
+                DEMO DATA
+              </Badge>
+            ) : null}
           </div>
           <ExamTimer remainingMs={attempt.remainingMs} durationMs={attempt.durationMs} />
           <Button variant="primary" className="h-10 shrink-0 px-3 sm:px-4" onClick={() => setConfirmOpen(true)}>
@@ -388,11 +393,14 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
               })}
             </nav>
           ) : (
-            <p className="truncate text-sm text-fg-3">
+            <p className="hidden truncate text-sm text-fg-3 sm:block">
               {test.negativeMarking ? "GATE marking: wrong MCQ −1/3 or −2/3; no negative marking for MSQ and NAT" : "No negative marking in this mock"}
             </p>
           )}
-          <Button size="sm" className="ml-auto h-9 shrink-0 lg:hidden" onClick={() => setPaletteOpen(true)} aria-haspopup="dialog">
+          <p className={cn("tnum shrink-0 text-sm text-fg-2 sm:hidden", multiSection && "hidden")}>
+            <span className="font-semibold text-fg">{answered}</span>/{total} answered · {total - answered} left
+          </p>
+          <Button size="sm" className="ml-auto h-9 shrink-0 lg:hidden" onClick={() => setPaletteOpen(true)} aria-haspopup="dialog" aria-label={`Question palette, ${answered} of ${total} answered`}>
             <LayoutGrid aria-hidden className="h-4 w-4" /> Palette
           </Button>
         </div>
@@ -460,9 +468,9 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
           {/* ---------------------------------------------------- actions */}
           <nav aria-label="Question actions" className="shrink-0 border-t border-border bg-surface px-2 py-2 sm:px-4">
             <div className="mx-auto grid max-w-5xl grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
-              <Button className="h-11 px-2 sm:px-4" onClick={() => act({ type: "markAndNext" })}>
+              <Button className="h-11 whitespace-normal px-2 text-center leading-tight sm:px-4" onClick={() => act({ type: "markAndNext" })}>
                 <Flag aria-hidden className="h-4 w-4 shrink-0" />
-                <span className="truncate">Mark for review &amp; next</span>
+                Mark for review &amp; next
               </Button>
               <Button className="h-11 px-2 sm:px-4" onClick={() => act({ type: "clear" })} disabled={!qs?.response && !qs?.confidence}>
                 <Eraser aria-hidden className="h-4 w-4 shrink-0" />
@@ -511,6 +519,18 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
                 </nav>
               ) : null}
               <QuestionPalette order={order} indices={paletteIndices} questions={attempt.questions} currentIndex={index} onSelect={selectFromPalette} title={paletteTitle} />
+            </div>
+            <div className="shrink-0 border-t border-border p-4">
+              <Button
+                variant="primary"
+                className="h-11 w-full"
+                onClick={() => {
+                  setPaletteOpen(false);
+                  setConfirmOpen(true);
+                }}
+              >
+                Submit test
+              </Button>
             </div>
           </Sheet.Content>
         </Sheet.Portal>
@@ -570,8 +590,8 @@ function ConfidencePicker({ value, onChange }: { value: Confidence | undefined; 
 
 function CenterPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-bg px-4 py-10">
+    <main className="flex min-h-dvh items-center justify-center bg-bg px-4 py-10">
       <div className="w-full max-w-lg rounded-[var(--radius)] border border-border bg-surface p-6 shadow-[var(--shadow)]">{children}</div>
-    </div>
+    </main>
   );
 }

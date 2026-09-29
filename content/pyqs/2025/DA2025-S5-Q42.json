@@ -101,16 +101,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The network diagram is vector art; it was rendered from the official PDF page 22 with the background watermark image removed (drawing and labels unchanged). The labels b and c sit on the two crossing edges (v to top R and u to bottom R respectively); since b = c = 1, the answer does not depend on this reading."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the given values (including the signs of d = -1 and f = -1) and all four options match the official crop; the text layer flattens the partial-derivative fractions, which the rendering shows as \\partial y / \\partial a and \\partial y / \\partial f, transcribed with \\dfrac. The words inputs, weights and output are italic in the paper and kept italic. The network diagram is vector art rendered from the official PDF page 22 with the background watermark removed; the figure file was checked against the crop (nodes, arrows and the labels a-f are unchanged). The labels b and c sit on the two crossing edges (b on v to top R, c on u to bottom R); since b = c = 1 the answer is the same under either reading, which the check code confirms."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (dy/da = 8, dy/df = 0)",
     "agreesWithKey": true,
-    "checkCode": "R = lambda z: max(0.0, z)\ndef y_of(a, b, c, d, e, f, u=2.0, v=3.0):\n    h1 = R(a*u + b*v)      # top hidden unit: u --a--> , v --b-->\n    h2 = R(c*u + d*v)      # bottom hidden unit: u --c--> , v --d-->\n    return R(e*h1 + f*h2)\nw = dict(a=1., b=1., c=1., d=-1., e=4., f=-1.)\nu, v = 2., 3.\nz1 = w['a']*u + w['b']*v; z2 = w['c']*u + w['d']*v\nh1, h2 = R(z1), R(z2); z3 = w['e']*h1 + w['f']*h2\nprint('z1,h1 =', z1, h1, '| z2,h2 =', z2, h2, '| z3,y =', z3, R(z3))\nd = lambda z: 1.0 if z > 0 else 0.0   # ReLU derivative (away from 0)\nprint('analytic dy/da =', d(z3)*w['e']*d(z1)*u, ' dy/df =', d(z3)*h2)\neps = 1e-6\nfor k in ['a', 'f']:\n    wp = dict(w); wp[k] += eps; wm = dict(w); wm[k] -= eps\n    print('finite-diff dy/d' + k, '=', round((y_of(**wp) - y_of(**wm)) / (2*eps), 6))",
-    "notes": "Forward pass: z1 = 5 (h1 = 5), z2 = -1 (h2 = 0), z3 = 20 (y = 20). Chain rule gives dy/da = 1*4*1*2 = 8 and dy/df = 1*h2 = 0, matching official key A. The Python check reproduces both values analytically and by central finite differences (no pre-activation is at the ReLU kink)."
+    "checkCode": "R = lambda z: max(0.0, z)\ndef y_of(a, b, c, d, e, f, u=2.0, v=3.0):\n    h1 = R(a*u + b*v)      # top hidden unit: u --a--> , v --b-->\n    h2 = R(c*u + d*v)      # bottom hidden unit: u --c--> , v --d-->\n    return R(e*h1 + f*h2)\nw = dict(a=1., b=1., c=1., d=-1., e=4., f=-1.)\nu, v = 2., 3.\nz1 = w['a']*u + w['b']*v; z2 = w['c']*u + w['d']*v\nh1, h2 = R(z1), R(z2); z3 = w['e']*h1 + w['f']*h2\nprint('z1,h1 =', z1, h1, '| z2,h2 =', z2, h2, '| z3,y =', z3, R(z3))\nd = lambda z: 1.0 if z > 0 else 0.0   # ReLU derivative (away from 0)\nprint('analytic dy/da =', d(z3)*w['e']*d(z1)*u, ' dy/df =', d(z3)*h2)\neps = 1e-6\nfor k in ['a', 'f']:\n    wp = dict(w); wp[k] += eps; wm = dict(w); wm[k] -= eps\n    print('finite-diff dy/d' + k, '=', round((y_of(**wp) - y_of(**wm)) / (2*eps), 6))\n# robustness: swap the reading of the crossing edges (b: u->bottom R, c: v->top R)\ny_alt = lambda a, b, c, d, e, f, u=2.0, v=3.0: R(e*R(a*u + c*v) + f*R(b*u + d*v))\nfor k in ['a', 'f']:\n    wp = dict(w); wp[k] += eps; wm = dict(w); wm[k] -= eps\n    print('swapped-reading dy/d' + k, '=', round((y_alt(**wp) - y_alt(**wm)) / (2*eps), 6))",
+    "notes": "Blind re-solve (done before viewing the key or the stored solution): forward pass z1 = au + bv = 5 (h1 = 5), z2 = cu + dv = 2 - 3 = -1 (h2 = 0), z3 = e*h1 + f*h2 = 20 (y = 20, output unit active). Chain rule: dy/da = R'(z3) * e * R'(z1) * u = 1*4*1*2 = 8 and dy/df = R'(z3) * h2 = 0. This is option (A), matching official key A. No pre-activation lies at the ReLU kink, so the derivatives are well defined. The Python check (re-run by the verifier) reproduces both values analytically and by central finite differences, and also under the swapped reading of the crossing edges b and c (same result because b = c = 1)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

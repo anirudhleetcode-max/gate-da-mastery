@@ -94,24 +94,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q10-1.webp",
-    "/pyq/2024/official/Q10-2.webp"
+    "/pyq/2024/official/Q10-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Stem and options are text only (no figure in the paper). The second official crop (Q10-2) shows only the next page's section header (\"Q.11 – Q.35 Carry ONE mark Each\") and contains no Q.10 content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and options are text only (no figure in the paper) and match the paper and its text layer word for word, including the spelling 'Visualize'. The officialImages list was corrected to the single existing crop Q10-1 (a second entry, Q10-2, pointed to a non-existent file that would only have shown the next page's section header 'Q.11 – Q.35 Carry ONE mark Each')."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (rhombus)",
     "agreesWithKey": true,
-    "checkCode": "import math\n# bicone: base radius R in plane z=0, apexes at (0,0,+h) and (0,0,-h). A plane through both apexes contains the axis;\n# in-plane coords (t, z): cone 1 section 0<=z<=h(1-|t|/R), cone 2 section -h(1-|t|/R)<=z<=0 -> |t|/R + |z|/h <= 1\nfor R, h in [(3.0, 4.0), (1.0, 1.0), (2.0, 5.0)]:\n    V = [(R, 0), (0, h), (-R, 0), (0, -h)]\n    sides = [math.dist(V[i], V[(i+1) % 4]) for i in range(4)]\n    assert all(abs(s - math.hypot(R, h)) < 1e-12 for s in sides)  # 4 equal sides = slant height\n    print(R, h, sides, 'diagonals', 2*R, 2*h)  # rhombus (a square when R == h)",
-    "notes": "The axial section of the double cone is |t|/R + |z|/h <= 1. Its four sides each equal the slant height sqrt(R^2 + h^2), so it is a rhombus (a square when R = h). This matches the official key A."
+    "checkCode": "import numpy as np\nfrom scipy.spatial import ConvexHull\nR, h = 3.0, 4.0  # base radius and height of each cone; common base in z = 0, apexes (0,0,+-h)\ninside = lambda p: np.hypot(p[..., 0], p[..., 1]) <= R*(1 - np.abs(p[..., 2])/h)  # double cone\nfor th in np.random.default_rng(0).uniform(0, np.pi, 3):  # any plane through both apexes contains the z-axis\n    e1, e2 = np.array([np.cos(th), np.sin(th), 0.0]), np.array([0.0, 0.0, 1.0])\n    t, z = np.meshgrid(np.linspace(-4, 4, 801), np.linspace(-5, 5, 1001))\n    P = t[..., None]*e1 + z[..., None]*e2; m = inside(P)\n    pts = np.c_[t[m], z[m]]; H = ConvexHull(pts); X = pts[H.vertices]\n    print(round(H.volume, 3), 2*R*h, X[:, 0].min(), X[:, 0].max(), X[:, 1].min(), X[:, 1].max())\n# area 24 = 2Rh with extreme points (+-R,0),(0,+-h): the section is the rhombus |t|/R + |z|/h <= 1\nV = [(R, 0), (0, h), (-R, 0), (0, -h)]\nprint([float(np.hypot(V[i][0]-V[(i+1)%4][0], V[i][1]-V[(i+1)%4][1])) for i in range(4)], np.hypot(R, h))  # 4 equal sides = slant height 5",
+    "notes": "Blind solve: both apexes lie on the common axis, so a plane through them contains the axis and cuts each cone in an isosceles triangle on a common base diameter; together they form a quadrilateral with four equal sides (each the slant height sqrt(R^2 + h^2)) whose diagonals 2R and 2h are perpendicular bisectors of each other, i.e. a rhombus (a square when R = h). A numerical section of the double cone by several axial planes gives a convex region of area 2Rh with extreme points (+-R, 0) and (0, +-h), i.e. exactly the rhombus |t|/R + |z|/h <= 1. Agrees with the official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

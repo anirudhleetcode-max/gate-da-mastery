@@ -101,16 +101,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The official table (blank top-left header cell) is transcribed as a GFM table."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The official table (blank top-left header cell) is transcribed as a GFM table; every rupee amount (₹10,000, ₹20,000, ₹15,000), the ₹500 difference, the 15% rate and the option values match the paper."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B (10%)",
     "agreesWithKey": true,
-    "checkCode": "from fractions import Fraction as F\ndef totals(rA):\n    rB = rC = F(15, 100)\n    p1 = 10000*(1+rA) + 20000*(1+rB) + 20000*(1+rC)\n    p2 = 20000*(1+rA) + 15000*(1+rB) + 15000*(1+rC)\n    return p1, p2\nfor pct in ['7.5', '10', '15', '20']:\n    p1, p2 = totals(F(pct)/100)\n    print(pct, float(p1), float(p2), float(p1 - p2))  # only 10% gives P1 - P2 = 500\n# (56000 + 10000 r) - (54500 + 20000 r) = 500  ->  r = 1000/10000\nassert F(56000 - 54500 - 500, 20000 - 10000) == F(1, 10)",
-    "notes": "Solving (56000 + 10000r) - (54500 + 20000r) = 500 gives r = 0.10. Plugging in every option confirms that only 10% yields a ₹500 difference, which matches the official key B."
+    "checkCode": "import sympy as sp\nr = sp.symbols('r'); g = sp.Rational(15, 100)  # B and C return 15%\nT1 = 10000*(1 + r) + 20000*(1 + g) + 20000*(1 + g)\nT2 = 20000*(1 + r) + 15000*(1 + g) + 15000*(1 + g)\nsol = sp.solve(sp.Eq(T1 - T2, 500), r)[0]\nprint(sol, sp.expand(T1), sp.expand(T2))  # 1/10, 10000*r + 56000, 20000*r + 54500\nfor pct in ['7.5', '10', '15', '20']:\n    v = sp.Rational(pct)/100; print(pct, T1.subs(r, v), T2.subs(r, v), (T1 - T2).subs(r, v))  # only 10% -> 500\n# 'returns only' reading gives the same r because both principals are 50000\nassert sp.solve(sp.Eq((T1 - 50000) - (T2 - 50000), 500), r)[0] == sol == sp.Rational(1, 10)",
+    "notes": "Blind solve: T1 = 10000(1+r) + 40000(1.15) = 56000 + 10000r and T2 = 20000(1+r) + 30000(1.15) = 54500 + 20000r; T1 - T2 = 1500 - 10000r = 500 gives r = 0.10 = 10%. Substituting every option confirms only 10% gives a ₹500 difference (7.5% -> 750, 15% -> 0, 20% -> -500). Because both persons invest ₹50,000, the result is the same whether \"total amount\" means principal plus returns or returns only. Agrees with the official key B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

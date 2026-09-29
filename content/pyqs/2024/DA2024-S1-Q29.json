@@ -1,0 +1,115 @@
+{
+  "id": "DA2024-S1-Q29",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 29,
+  "section": "DA",
+  "subjectId": "ai",
+  "topicId": "ai-logic",
+  "subtopicIds": [
+    "ai-propositional"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: a single concept (an implication is false only when its antecedent is true and its consequent false), and each of the four statements is settled by evaluating the consequent at the one assignment that makes its conjunctive antecedent true, so the four checks are routine rather than non-trivial and the MSQ bump does not apply; about 1 minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $x$ and $y$ be two propositions. Which of the following statements **is a tautology /are tautologies**?",
+  "options": [
+    {
+      "label": "A",
+      "text": "$(\\neg x \\wedge y) \\implies (y \\implies x)$"
+    },
+    {
+      "label": "B",
+      "text": "$(x \\wedge \\neg y) \\implies (\\neg x \\implies y)$"
+    },
+    {
+      "label": "C",
+      "text": "$(\\neg x \\wedge y) \\implies (\\neg x \\implies y)$"
+    },
+    {
+      "label": "D",
+      "text": "$(x \\wedge \\neg y) \\implies (y \\implies x)$"
+    }
+  ],
+  "officialKeyRaw": "B;C;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "An implication $P \\implies Q$ fails only when $P$ is true and $Q$ is false. Each antecedent here is true at exactly **one** assignment, so evaluate the consequent there: for (A) at $x = F,\\ y = T$ we get $y \\implies x = T \\implies F = F$, so (A) fails; for (B), (C), (D) the consequent is true at that assignment, so they are tautologies. Answer: **(B), (C), (D)**.",
+    "steps": [
+      {
+        "title": "Concept: when does an implication fail?",
+        "body": "A formula is a **tautology** if it is true under every assignment of truth values to its variables.\n\nThe implication $P \\implies Q$ is logically equivalent to $\\neg P \\vee Q$, so it is false in exactly one case: $P$ true and $Q$ false.\n\nIn every option the antecedent $P$ is a conjunction of two literals ($\\neg x \\wedge y$ or $x \\wedge \\neg y$), which is true at **exactly one** of the four assignments. Therefore\n\n$$\nP \\implies Q \\text{ is a tautology} \\iff Q \\text{ is true at the single assignment that makes } P \\text{ true.}\n$$\n\n- $\\neg x \\wedge y$ is true only at $x = F,\\ y = T$.\n- $x \\wedge \\neg y$ is true only at $x = T,\\ y = F$.\n\nThe two consequents are $y \\implies x \\equiv \\neg y \\vee x$ and $\\neg x \\implies y \\equiv x \\vee y$."
+      },
+      {
+        "title": "Check each option at its critical assignment",
+        "body": "| Option | Antecedent true only at | Consequent | Value of consequent there | Tautology? |\n|---|---|---|---|---|\n| (A) | $x = F,\\ y = T$ | $y \\implies x$ | $T \\implies F = F$ | **No** |\n| (B) | $x = T,\\ y = F$ | $\\neg x \\implies y$ | $F \\implies F = T$ | Yes |\n| (C) | $x = F,\\ y = T$ | $\\neg x \\implies y$ | $T \\implies T = T$ | Yes |\n| (D) | $x = T,\\ y = F$ | $y \\implies x$ | $F \\implies T = T$ | Yes |\n\nAt every other assignment the antecedent is false, and an implication with a false antecedent is true, so (B), (C) and (D) are true everywhere. (A) is false at $x = F,\\ y = T$, so it is not a tautology."
+      },
+      {
+        "title": "Full truth table (confirmation)",
+        "body": "| $x$ | $y$ | $\\neg x \\wedge y$ | $x \\wedge \\neg y$ | $y \\implies x$ | $\\neg x \\implies y$ | (A) | (B) | (C) | (D) |\n|---|---|---|---|---|---|---|---|---|---|\n| T | T | F | F | T | T | T | T | T | T |\n| T | F | F | T | T | T | T | T | T | T |\n| F | T | T | F | F | T | **F** | T | T | T |\n| F | F | F | F | T | F | T | T | T | T |\n\nColumns (B), (C) and (D) are all T; column (A) has an F in the third row. A Python enumeration of the four assignments gives the same result."
+      },
+      {
+        "title": "Algebraic confirmation",
+        "body": "Using $P \\implies Q \\equiv \\neg P \\vee Q$ and De Morgan's law:\n\n- (A): $\\neg(\\neg x \\wedge y) \\vee (\\neg y \\vee x) = (x \\vee \\neg y) \\vee (\\neg y \\vee x) = x \\vee \\neg y$, which is false at $x = F,\\ y = T$. **Not** a tautology.\n- (B): $\\neg(x \\wedge \\neg y) \\vee (x \\vee y) = \\neg x \\vee y \\vee x \\vee y$, which contains $x \\vee \\neg x$, so it is always true.\n- (C): $\\neg(\\neg x \\wedge y) \\vee (x \\vee y) = x \\vee \\neg y \\vee x \\vee y$, which contains $y \\vee \\neg y$, so it is always true.\n- (D): $\\neg(x \\wedge \\neg y) \\vee (\\neg y \\vee x) = \\neg x \\vee y \\vee \\neg y \\vee x$, which contains $x \\vee \\neg x$, so it is always true.\n\nThe tautologies are **(B), (C), (D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (C), (D)**",
+    "teaching": "**Propositions and connectives.** A proposition is a statement that is either true (T) or false (F). Compound formulas are built with connectives such as $\\neg$ (not), $\\wedge$ (and), $\\vee$ (or) and $\\implies$ (implies). A formula over $n$ variables has $2^n$ possible assignments; a **tautology** is true under all of them, a **contradiction** under none, and anything else is **contingent**.\n\n**The implication.** $P \\implies Q$ is a promise: \"whenever $P$ holds, $Q$ holds\". The promise is broken only when $P$ is true and $Q$ is false; in every other case it is kept, including when $P$ is false (\"vacuously true\"). That is why $P \\implies Q \\equiv \\neg P \\vee Q$. Its truth table is\n\n| $P$ | $Q$ | $P \\implies Q$ |\n|---|---|---|\n| T | T | T |\n| T | F | F |\n| F | T | T |\n| F | F | T |\n\nNote that $y \\implies x$ and $x \\implies y$ are different formulas (one is the **converse** of the other); only the **contrapositive** $\\neg x \\implies \\neg y$ is equivalent to $y \\implies x$.\n\n**Testing $P \\implies Q$ for tautology.** $P \\implies Q$ is a tautology exactly when every assignment that makes $P$ true also makes $Q$ true, i.e. when $P$ logically entails $Q$. So you never need the whole truth table: list only the rows where $P$ is true and check $Q$ there. When $P$ is a conjunction of literals over all the variables, there is only one such row.\n\n**Back to this question.** The antecedents $\\neg x \\wedge y$ and $x \\wedge \\neg y$ each pin down one assignment. The consequent $y \\implies x$ (equivalently $x \\vee \\neg y$) is true whenever $x$ is true or $y$ is false, so it is entailed by $x \\wedge \\neg y$ (D) but contradicted by $\\neg x \\wedge y$ (A). The consequent $\\neg x \\implies y$ (equivalently $x \\vee y$) is true whenever at least one of $x, y$ is true, which both antecedents guarantee, so (B) and (C) are tautologies.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "The antecedent $\\neg x \\wedge y$ is true only at $x = F,\\ y = T$. There the consequent is $y \\implies x = T \\implies F = F$, so the whole formula is $T \\implies F = F$. It simplifies to $x \\vee \\neg y$, which is not a tautology."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "The antecedent $x \\wedge \\neg y$ is true only at $x = T,\\ y = F$. There the consequent is $\\neg x \\implies y = F \\implies F = T$. The formula is true at that assignment and vacuously true at the other three, so it is a tautology."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "The antecedent $\\neg x \\wedge y$ is true only at $x = F,\\ y = T$. There the consequent is $\\neg x \\implies y = T \\implies T = T$. The formula is never false, so it is a tautology (the antecedent's $y$ already makes $x \\vee y$ true)."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "The antecedent $x \\wedge \\neg y$ is true only at $x = T,\\ y = F$. There the consequent is $y \\implies x = F \\implies T = T$. The formula is never false, so it is a tautology (the antecedent's $x$ already makes $x \\vee \\neg y$ true)."
+      }
+    ],
+    "shortcut": "Rewrite the consequents as disjunctions: $y \\implies x \\equiv x \\vee \\neg y$ and $\\neg x \\implies y \\equiv x \\vee y$. The implication is a tautology exactly when one of the antecedent's literals appears in the consequent's disjunction: $x$ is in $x \\vee y$ (B), $y$ is in $x \\vee y$ (C), $x$ (and $\\neg y$) is in $x \\vee \\neg y$ (D). For (A), neither $\\neg x$ nor $y$ appears in $x \\vee \\neg y$; both literals falsify it.",
+    "commonTrap": "Misreading $y \\implies x$ as its converse $x \\implies y$. With that misreading (A) looks like a tautology (at $x = F$, $x \\implies y$ is vacuously true) and (D) looks like it fails (at $x = T,\\ y = F$, $x \\implies y$ is false), giving the wrong set (A), (B), (C) instead of (B), (C), (D)."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q29-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The phrase 'is a tautology /are tautologies' is bold in the paper and the question mark is not; the line breaks after 'tautology', and the PDF text layer has a space there, so the text is kept as printed with a space before '/are'. The paper's long double arrow ⟹ is written as \\implies, ¬ as \\neg and ∧ as \\wedge. The paper leaves a small typesetting gap before the closing parenthesis of each antecedent, e.g. '(¬x ∧ y )'; this spacing is not reproduced. No figure is needed; the page has only text and the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "(B), (C), (D)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nimp = lambda p, q: (not p) or q\nopts = {'A': lambda x, y: imp((not x) and y, imp(y, x)),\n        'B': lambda x, y: imp(x and (not y), imp(not x, y)),\n        'C': lambda x, y: imp((not x) and y, imp(not x, y)),\n        'D': lambda x, y: imp(x and (not y), imp(y, x))}\nfor k, f in opts.items():\n    rows = [(x, y, f(x, y)) for x, y in product([True, False], repeat=2)]\n    print(k, 'tautology' if all(r[2] for r in rows) else 'NOT tautology', [(int(x), int(y), int(v)) for x, y, v in rows])\nprint('tautologies:', [k for k, f in opts.items() if all(f(x, y) for x, y in product([True, False], repeat=2))])",
+    "notes": "Each antecedent is a conjunction of two literals and is true at exactly one assignment; evaluating the consequent there shows (A) is false at x = F, y = T (y ⇒ x = T ⇒ F), while (B), (C) and (D) are true at their critical assignments and hence at all four. A Python enumeration of all four assignments confirms that exactly B, C and D are tautologies. This agrees with the official key B;C;D."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

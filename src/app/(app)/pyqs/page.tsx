@@ -9,8 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { VerificationBadge } from "@/components/question/badges";
 import { PyqSubjectCards, type SubjectPyqSummary } from "@/components/pyq/PyqSubjectCards";
 import { PaperTimeline, type TimelinePaper } from "@/components/pyq/PaperTimeline";
-import { DA_FIRST_YEAR, sortPapersNewestFirst, toTaxonomy } from "@/components/pyq/data";
-import { formatMarks } from "@/lib/utils";
+import { DA_FIRST_YEAR, marksLabel, sortPapersNewestFirst, toTaxonomy } from "@/components/pyq/data";
 
 export const metadata: Metadata = {
   title: "GATE DA Previous Year Questions",
@@ -102,7 +101,7 @@ export default function PyqsPage() {
                 </>
               ) : null}
             </p>
-            <p className="tnum mt-1 text-sm text-fg-3">{formatMarks(pyqs.reduce((a, q) => a + q.marks, 0))} marks in total</p>
+            <p className="tnum mt-1 text-sm text-fg-3">{marksLabel(pyqs.reduce((a, q) => a + q.marks, 0))} in total</p>
           </div>
           <div>
             <p className="flex items-center gap-1.5 text-sm font-medium text-fg">
@@ -110,12 +109,12 @@ export default function PyqsPage() {
             </p>
             <ul className="mt-2 space-y-1.5">
               {STATUSES.map((s) => (
-                <li key={s} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm">
-                  <span className="w-40 shrink-0">
+                <li key={s} className="flex items-baseline gap-3 text-sm">
+                  <span className="tnum w-9 shrink-0 text-right font-semibold text-fg">{counts[s]}</span>
+                  <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
                     <VerificationBadge status={s} />
+                    <span className="text-fg-3">{STATUS_HELP[s]}</span>
                   </span>
-                  <span className="tnum font-semibold text-fg">{counts[s]}</span>
-                  <span className="text-fg-3">{STATUS_HELP[s]}</span>
                 </li>
               ))}
             </ul>

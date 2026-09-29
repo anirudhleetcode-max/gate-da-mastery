@@ -4,7 +4,7 @@
  */
 import type { ExamPaper, Subject, SubjectId } from "@/lib/content/schema";
 import { SLOT_LABEL } from "@/lib/labels";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatMarks } from "@/lib/utils";
 
 export interface PaperInfo {
   id: string;
@@ -78,3 +78,8 @@ export const GA_LAST_QUESTION = 10;
 
 /** The DA paper was introduced in GATE 2024; no DA paper exists before it. */
 export const DA_FIRST_YEAR = 2024;
+
+/** "1 mark", "2 marks", "1.5 marks" */
+export function marksLabel(n: number): string {
+  return `${formatMarks(n)} ${n === 1 ? "mark" : "marks"}`;
+}

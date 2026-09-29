@@ -101,16 +101,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The stem (Y = Z^2, Z = (X - mu)/sigma, X normal with mean mu and variance sigma^2) and the options 1, 2, 3, 4 in that order match the official crop exactly; the paper has no typos here."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "B (Var(Y) = 2)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "B (Var(Y) = E[Z^4] - (E[Z^2])^2 = 3 - 1 = 2)",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp, numpy as np\nz = sp.symbols('z', real=True)\nphi = sp.exp(-z**2/2)/sp.sqrt(2*sp.pi)\nEZ2 = sp.integrate(z**2*phi, (z, -sp.oo, sp.oo))\nEZ4 = sp.integrate(z**4*phi, (z, -sp.oo, sp.oo))\nprint('E[Z^2]=', EZ2, 'E[Z^4]=', EZ4, 'Var(Y)=', sp.simplify(EZ4 - EZ2**2))\n# Monte Carlo with arbitrary mu, sigma\nrng = np.random.default_rng(0); mu, s = 3.7, 2.5\nX = rng.normal(mu, s, 2_000_000); Y = ((X-mu)/s)**2\nprint('MC Var(Y) ~', round(Y.var(), 3))",
-    "notes": "Independent solve: Z ~ N(0,1), so Var(Z^2) = E[Z^4] - (E[Z^2])^2 = 3 - 1 = 2, i.e. option (B). This matches the official key B. The sympy exact integration gives Var(Y) = 2, and a Monte Carlo run with arbitrary mu, sigma gives about 2.002."
+    "notes": "Independent verifier solved blind before reading the key: Z ~ N(0,1), Y = Z^2 ~ chi-squared(1), Var(Y) = E[Z^4] - (E[Z^2])^2 = 3 - 1 = 2, option (B). Official key: B. Agreement. The stored sympy exact integration (Var = 2) and Monte Carlo with arbitrary mu, sigma (about 2.002) were re-run and confirm. Every solution step, option analysis (incl. Var(chi^2_2) = 4 for option D) and the teaching section were audited and are correct."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

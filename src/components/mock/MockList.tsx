@@ -121,13 +121,33 @@ export function MockList({ tiers }: { tiers: TierGroup[] }) {
                 {avail} of {t.mocks.length} available
               </p>
             </div>
-            <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {t.mocks.map((m) => (
-                <li key={m.id} className="min-w-0">
-                  <MockCard m={m} user={byTest.get(m.id)} />
-                </li>
-              ))}
-            </ul>
+            {avail ? (
+              <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {t.mocks
+                  .filter((m) => m.available)
+                  .map((m) => (
+                    <li key={m.id} className="min-w-0">
+                      <MockCard m={m} user={byTest.get(m.id)} />
+                    </li>
+                  ))}
+              </ul>
+            ) : null}
+            {avail < t.mocks.length ? (
+              <div className={avail ? "mt-4" : undefined}>
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-fg-3">
+                  <Lock aria-hidden className="h-3 w-3" /> Not yet available ({t.mocks.length - avail})
+                </h3>
+                <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+                  {t.mocks
+                    .filter((m) => !m.available)
+                    .map((m) => (
+                      <li key={m.id} className="min-w-0">
+                        <PendingTile m={m} />
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            ) : null}
           </section>
         );
       })}
@@ -135,28 +155,29 @@ export function MockList({ tiers }: { tiers: TierGroup[] }) {
   );
 }
 
+/** Compact, non-interactive tile for a mock whose paper is not complete yet. */
+function PendingTile({ m }: { m: MockSummary }) {
+  const focus = m.shortTitle.split(" — ")[1];
+  return (
+    <div className="h-full rounded-lg border border-dashed border-border-strong bg-surface-2/60 px-3 py-2 text-fg-3" title={`${m.title}: not yet available`}>
+      <p className="text-sm font-medium text-fg-2">
+        Mock {m.number}
+        <span className="sr-only">: {m.shortTitle}, not yet available</span>
+      </p>
+      {focus ? (
+        <p aria-hidden className="truncate text-xs">
+          {focus}
+        </p>
+      ) : null}
+      <p aria-hidden className="tnum text-xs">
+        {m.questionCount} Q · {formatMinutes(m.durationMinutes)}
+      </p>
+    </div>
+  );
+}
+
 function MockCard({ m, user }: { m: MockSummary; user?: MockUserSummary }) {
   const titleId = `mock-card-${m.id}`;
-  if (!m.available) {
-    return (
-      <article aria-labelledby={titleId} className="flex h-full flex-col rounded-[var(--radius)] border border-dashed border-border-strong bg-surface-2/60 px-4 py-3 text-fg-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-xs font-medium uppercase tracking-wide">Mock {m.number}</p>
-            <h3 id={titleId} className="truncate font-medium text-fg-2" title={m.shortTitle}>
-              {m.shortTitle}
-            </h3>
-          </div>
-          <Badge tone="outline" className="shrink-0">
-            <Lock aria-hidden className="h-3 w-3" /> Not yet available
-          </Badge>
-        </div>
-        <p className="mt-2 text-xs">
-          {m.questionCount} questions{m.totalMarks !== null ? ` · ${m.totalMarks} marks` : ""} · {formatMinutes(m.durationMinutes)}
-        </p>
-      </article>
-    );
-  }
   const inProgress = user?.inProgress;
   const taken = user?.submitted.length ?? 0;
   const best = user?.best?.result;

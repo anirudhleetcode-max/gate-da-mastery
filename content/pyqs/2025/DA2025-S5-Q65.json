@@ -1,0 +1,74 @@
+{
+  "id": "DA2025-S5-Q65",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 65,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-graphs",
+  "subtopicIds": [
+    "pdsa-traversals",
+    "pdsa-graph-theory"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (DFS discovery order under a given adjacency order) in 2–3 steps: write the adjacency lists, see that DFS runs down the +2 chain to 100 and then discovers the odd vertices while backtracking, and count, taking about 2 minutes once the pattern is spotted.",
+  "estimatedTimeSec": 120,
+  "stem": "Consider a directed graph $G = (V, E)$, where $V = \\{0, 1, 2, \\ldots, 100\\}$ and $E = \\{(i, j) : 0 < j - i \\le 2, \\text{ for all } i, j \\in V\\}$. Suppose the adjacency list of each vertex is in *decreasing* order of vertex number, and depth-first search (DFS) is performed at vertex $0$. The number of vertices that will be discovered after vertex 50 is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ (Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "75 to 75",
+  "answer": {
+    "kind": "NAT",
+    "min": 75,
+    "max": 75
+  },
+  "solution": {
+    "quick": "Vertex $i$ has out-neighbours $i+2, i+1$, listed in that order. DFS from $0$ therefore always takes the $+2$ edge first and discovers $0, 2, 4, \\ldots, 100$. Vertex $100$ is a dead end, so while backtracking the odd vertices are discovered one at a time: $99, 97, \\ldots, 1$. After $50$ come $52, \\ldots, 100$ ($25$ vertices) and all $50$ odd vertices: **75**.",
+    "steps": [
+      {
+        "title": "Build the adjacency lists",
+        "body": "$(i, j) \\in E$ exactly when $j - i \\in \\{1, 2\\}$, i.e. $j = i + 1$ or $j = i + 2$ (as long as $j \\le 100$). With each list in decreasing order of vertex number:\n\n$$\n\\text{Adj}[i] = [\\,i+2,\\; i+1\\,] \\quad (0 \\le i \\le 98), \\qquad \\text{Adj}[99] = [\\,100\\,], \\qquad \\text{Adj}[100] = [\\;].\n$$\n\nEvery edge goes from a smaller to a larger vertex, so the graph is acyclic, and every vertex is reachable from $0$ (by $+1$ steps). Hence DFS from $0$ discovers all $101$ vertices."
+      },
+      {
+        "title": "Descend along the +2 edges",
+        "body": "DFS($u$) marks $u$ as discovered and then scans $\\text{Adj}[u]$ in order, recursing into each neighbour that is still undiscovered.\n\nFrom $0$ the first neighbour is $2$; from $2$ it is $4$; and so on. Each first neighbour $i + 2$ is new, so DFS goes straight down\n\n$$\n0 \\to 2 \\to 4 \\to \\cdots \\to 48 \\to 50 \\to 52 \\to \\cdots \\to 98 \\to 100 .\n$$\n\nThese $51$ even vertices are discovered first, in increasing order. Vertex $50$ is the $\\frac{50}{2} + 1 = 26$-th vertex discovered, and the recursion stack now holds $0, 2, \\ldots, 98, 100$."
+      },
+      {
+        "title": "Backtrack and pick up the odd vertices",
+        "body": "- $100$ has no out-neighbours, so it finishes and DFS returns to $98$.\n- $98$'s second neighbour $99$ is undiscovered, so $99$ is discovered. $\\text{Adj}[99] = [100]$ is already discovered, so $99$ finishes.\n- Back at $96$: its second neighbour $97$ is new and is discovered; $\\text{Adj}[97] = [99, 98]$ are both already discovered, so $97$ finishes.\n\nThe same thing happens at every even vertex $2k \\le 96$ on the way back: its second neighbour $2k+1$ is new, while both out-neighbours $2k+3$ and $2k+2$ of $2k+1$ were discovered earlier (all odd vertices above $2k+1$ were found on the way back, all even vertices on the way down), so each odd vertex is a leaf of the DFS tree. The last one is $1$, discovered from $0$.\n\nComplete discovery order:\n\n$$\n0, 2, 4, \\ldots, 98, 100, \\; 99, 97, 95, \\ldots, 3, 1 .\n$$"
+      },
+      {
+        "title": "Count the vertices discovered after 50",
+        "body": "- Even vertices after $50$: $52, 54, \\ldots, 100$, which is $\\frac{100 - 52}{2} + 1 = 25$ vertices.\n- Odd vertices: $99, 97, \\ldots, 1$, which is all $50$ of them (every one is discovered after $100$, hence after $50$), including $1, 3, \\ldots, 49$ even though they are numerically smaller than $50$.\n\n$$\n25 + 50 = 75 .\n$$\n\nCheck: $101$ vertices in total, minus the $26$ vertices $0, 2, \\ldots, 50$ discovered up to and including $50$, leaves $101 - 26 = 75$."
+      }
+    ],
+    "finalAnswer": "**75**",
+    "teaching": "**Depth-first search.** DFS explores a graph by always going as deep as possible before backing up. In its standard recursive form:\n\n```text\nDFS(u):\n    mark u as discovered\n    for each v in Adj[u], in list order:\n        if v is not discovered:\n            DFS(v)\n    mark u as finished\n```\n\nA vertex is *discovered* the moment DFS first reaches it and *finished* when all its out-neighbours have been explored. The recursion stack always holds the current path from the start vertex; when a vertex has no undiscovered neighbour left, DFS **backtracks** to the vertex below it on the stack and continues scanning that vertex's list where it left off.\n\n**Why the adjacency order matters.** DFS is deterministic only once the order of every adjacency list is fixed: at each vertex the *first* undiscovered neighbour in the list is explored first. Changing the order can completely change the discovery sequence, the DFS tree, and any count such as \"how many vertices are discovered after $v$\". Always write the lists out in the stated order before tracing.\n\n**Tracing strategy for structured graphs.** For a large but regular graph, trace the first few moves to find the pattern, then argue about the whole graph. Ask: which way does DFS go first? When does it get stuck? What does it find on the way back?\n\n**Back to this question.** The edges are $i \\to i+1$ and $i \\to i+2$. In decreasing order, the jump $i \\to i+2$ is tried first, so DFS sprints through the even vertices $0, 2, \\ldots, 100$. Only when it backtracks does each even vertex $2k$ try its second edge $2k \\to 2k+1$, which discovers the odd vertices in the order $99, 97, \\ldots, 1$. So after $50$ come the $25$ even vertices $52, \\ldots, 100$ and all $50$ odd vertices: $75$ in total. (With *increasing* order DFS would go $0, 1, 2, \\ldots, 100$ and the answer would be $50$, which shows how decisive the list order is.)",
+    "shortcut": "With decreasing adjacency order, DFS takes the largest jump first: it discovers all even vertices $0, 2, \\ldots, 100$ and only then the odd ones on the way back. Only $0, 2, \\ldots, 50$ ($26$ vertices) are discovered no later than $50$, so the answer is $101 - 26 = 75$.",
+    "commonTrap": "Reading the adjacency order as increasing, or simulating DFS with an explicit stack that pushes the neighbours in list order (so $i+1$ ends up on top and is popped first): both give the discovery order $0, 1, 2, \\ldots, 100$ and the wrong answer $50$. Another slip is counting only the even vertices $52, \\ldots, 100$ ($25$) and forgetting that all $50$ odd vertices, including $1, 3, \\ldots, 49$, are discovered later, during backtracking."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q65-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. G = (V, E), the vertex set and the edge set are typeset in math mode in the paper and are transcribed as KaTeX; the paper's '. . .' is written as \\ldots, the minus sign in j − i as '-', and 'for all' is upright text inside the math, as printed. 'decreasing' is italic in the paper (rendered with emphasis). The hyphenated line break in 'per-formed' is joined as 'performed'. The 0 in 'vertex 0' is set in the math font and the 50 in 'vertex 50' in the text font, and this is kept. In the paper the answer blank and '(Answer in integer)' wrap to the next line with no space between them; they are joined here, with the blank rendered as escaped underscores. The region contains no embedded image and no figure is needed."
+  },
+  "answerVerification": {
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "75",
+    "agreesWithKey": true,
+    "checkCode": "import sys\nsys.setrecursionlimit(10000)\nV=range(101)\ndef adj(rev):\n    return {i:sorted([j for j in V if 0<j-i<=2], reverse=rev) for i in V}\ndef rec_dfs(A):\n    order=[]; seen=set()\n    def dfs(u):\n        seen.add(u); order.append(u)\n        for v in A[u]:\n            if v not in seen: dfs(v)\n    dfs(0); return order\ndef after50(order): return len(order)-order.index(50)-1\no=rec_dfs(adj(True))\nprint('decreasing lists, recursive DFS:', o[:4], '...', o[49:54], '...', o[-3:], '-> after 50:', after50(o))\n# trap checks from commonTrap\nprint('increasing lists, recursive DFS -> after 50:', after50(rec_dfs(adj(False))))\nA=adj(True); st=[0]; seen=set(); o2=[]\nwhile st:\n    u=st.pop()\n    if u in seen: continue\n    seen.add(u); o2.append(u)\n    for v in A[u]:\n        if v not in seen: st.append(v)\nprint('explicit stack pushing lists in order -> after 50:', after50(o2))\n",
+    "notes": "Independent re-solve by the verifier: E contains exactly the edges i -> i+1 and i -> i+2, so Adj[i] = [i+2, i+1] in decreasing order. Recursive DFS from 0 follows the +2 edges and discovers 0, 2, ..., 100 first (50 is the 26th vertex discovered); on backtracking each even vertex 2k discovers 2k+1 as a leaf, giving 99, 97, ..., 1. All 101 vertices are discovered, so 101 - 26 = 75 come after 50 (the 25 evens 52..100 plus all 50 odd vertices). The verifier's Python check builds the graph from the definition and prints 75 for the stated order; it also confirms the commonTrap claims (increasing lists, or an explicit stack that pushes each list in order, both give 50). This matches the official key 75 to 75. Process note: the key row was visible in the context file read at the start of the check, but the answer here was derived from the question alone by hand and confirmed by running code, before the stored solution was read."
+  },
+  "solutionStatus": "VERIFIED"
+}

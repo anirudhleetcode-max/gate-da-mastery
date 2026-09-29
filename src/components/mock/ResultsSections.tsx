@@ -23,12 +23,14 @@ import {
   type ReviewFilter,
   type ScoredQuestion,
 } from "@/lib/mock/analysis";
-import { formatSeconds, signedMarks } from "@/lib/mock/format";
+import { formatSeconds, signedMarks, stemSnippetHtml } from "@/lib/mock/format";
 import { DIFFICULTY_LABEL, SUBJECT_ABBR, SUBJECT_COLOR, SUBJECT_ORDER, SUBJECT_SHORT } from "@/lib/labels";
 import { BarList, ChartFrame, GroupedColumns } from "@/components/charts/Charts";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Segmented } from "@/components/ui/Segmented";
+import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
+import { RichHtml } from "@/components/ui/RichHtml";
 import { formatMarks, pct, cn } from "@/lib/utils";
 import { ReviewQuestion, StatusIcon } from "./ReviewQuestion";
 
@@ -468,7 +470,16 @@ export function QuestionReview({
       <SectionHeading id="review-h" title="Question review">
         Your response against the correct answer, with the full solution. Mock questions also open on their own page for concepts, formulas and similar questions.
       </SectionHeading>
-      <div className="mb-3 overflow-x-auto pb-1">
+      <div className="mb-3 sm:hidden">
+        <Select label="Show questions" id="review-filter-mobile" value={filter} onChange={(e) => onFilter(e.target.value as ReviewFilter)}>
+          {FILTERS.map((f) => (
+            <option key={f} value={f}>
+              {REVIEW_FILTER_LABEL[f]} ({counts[f]})
+            </option>
+          ))}
+        </Select>
+      </div>
+      <div className="mb-3 hidden sm:block">
         <Segmented label="Filter questions" value={filter} onChange={onFilter} options={FILTERS.map((f) => ({ value: f, label: `${REVIEW_FILTER_LABEL[f]} (${counts[f]})` }))} />
       </div>
       <p className="sr-only" role="status">
@@ -507,7 +518,7 @@ export function QuestionReview({
                           </span>
                         ) : null}
                       </span>
-                      <span className="mt-0.5 line-clamp-2 block text-sm text-fg-2">{q.preview}</span>
+                      <RichHtml as="span" html={stemSnippetHtml(q.html.stem)} className="mt-0.5 line-clamp-2 text-sm! leading-snug! text-fg-2! [&_.katex]:text-[1em]!" />
                     </span>
                     <span className={cn("tnum shrink-0 pt-0.5 text-sm font-semibold", i.awarded > 0 ? "text-success" : i.awarded < 0 ? "text-danger" : "text-fg-3")}>{signedMarks(i.awarded)}</span>
                     <ChevronDown aria-hidden className={cn("mt-0.5 h-4 w-4 shrink-0 text-fg-3 transition-transform", open && "rotate-180")} />

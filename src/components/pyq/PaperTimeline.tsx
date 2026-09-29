@@ -38,7 +38,7 @@ export function PaperTimeline({ papers, firstYear }: { papers: TimelinePaper[]; 
                 <div className="min-w-0">
                   <h3 id={`paper-${p.id}`} className="flex flex-wrap items-baseline gap-x-2.5">
                     <span className="tnum text-2xl font-semibold tracking-tight text-fg">{p.year}</span>
-                    <span className="text-sm font-medium text-fg-2">GATE {p.year} · DA · Session {p.session}</span>
+                    <span className="text-sm font-medium text-fg-2">GATE DA · Session {p.session}</span>
                   </h3>
                   <p className="text-sm text-fg-3">{p.paperName}</p>
                 </div>

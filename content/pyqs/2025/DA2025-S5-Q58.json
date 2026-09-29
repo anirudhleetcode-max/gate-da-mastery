@@ -92,7 +92,7 @@
         "explanation": "With the edge $(g, h)$, the edge $(e, g)$ would give the 2-edge path $e - g - h$, contradicting $d(e, h) = 3$ from the shortest path $e - f - g - h$. So $(e, g)$ is not an edge of $G$."
       }
     ],
-    "shortcut": "Label BFS layers from the endpoints of the given paths. From $a$: $b$ is in layer 1, while $d$ and $h$ are in layer 3. From $h$: $g$ is in layer 1 and $e$ is in layer 3. An edge can never join layers that differ by 2 or more, so $(b, d)$, $(b, h)$ and $(e, g)$ are impossible. $(b, g)$ joins layers 1 and 2 from $a$, and layers 2 and 1 from $h$, so nothing forbids it.",
+    "shortcut": "Label BFS layers from the endpoints of the given paths. From $a$: $b$ is in layer 1, while $d$ and $h$ are in layer 3. From $h$: $g$ is in layer 1 and $e$ is in layer 3. An edge can never join layers that differ by 2 or more, so $(b, d)$, $(b, h)$ and $(e, g)$ are impossible. $(b, g)$ joins layers 1 and 2 from $a$, layers 2 and 1 from $h$, and layers 3 and 2 from $e$, so no layer jump forbids it; the drawn graph plus $(b, g)$ keeps all three distances at 3, which confirms it is possible.",
     "commonTrap": "Marking $(b, g)$ as \"not an edge\" because it is not in the picture, or because $a - b - g - h$ would compete with the given $a - f - c - h$. The figure shows only a subset of the edges, and a shortest path need not be unique, so a second path of the same length 3 is allowed. The other slip is missing $(b, h)$: $b$ and $h$ do not lie on a common given path, so you only see the contradiction by going through the edge $(a, b)$."
   },
   "conceptIds": [],
@@ -105,16 +105,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The graph is vector art. It was rendered from the official PDF page 31 at 250 dpi with the background watermark image removed; the drawing and labels are unchanged. It shows vertices a, b, c, d (top row) and e, f, g, h (bottom row) with edges (a,b), (b,c), (c,d), (e,f), (f,g), (g,h), (a,f), (f,c) and (c,h). The paper's wording 'A subset of the vertices and edges of G are shown below' and 'NOT the edges' is kept verbatim. The paths are written with minus signs in the paper (a − b − c − d) and are kept as $a - b - c - d$."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and options (A)-(D) match the official crop, including option order and the wording 'A subset of the vertices and edges of G are shown below' and 'NOT the edges', kept verbatim. The graph is vector art; the figure file was rendered from the official PDF page 31 at 250 dpi with the background watermark image removed, and it was compared with the official crop: vertices a, b, c, d (top row) and e, f, g, h (bottom row) with edges (a,b), (b,c), (c,d), (e,f), (f,g), (g,h), (a,f), (f,c) and (c,h), matching the paper. The paths are written with minus signs in the paper (a − b − c − d) and are kept as $a - b - c - d$."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A;C;D ((b,d), (b,h) and (e,g) would each create a 2-edge path between a pair whose given shortest path has 3 edges; (b,g) is consistent with all three given shortest paths)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A;C;D",
     "agreesWithKey": true,
     "checkCode": "from collections import deque\nshown = [('a','b'),('b','c'),('c','d'),('a','f'),('f','c'),('c','h'),('e','f'),('f','g'),('g','h')]\ndef dist(E, s, t):\n    adj = {}\n    for u, v in E:\n        adj.setdefault(u, set()).add(v); adj.setdefault(v, set()).add(u)\n    D = {s: 0}; q = deque([s])\n    while q:\n        u = q.popleft()\n        for w in adj.get(u, ()):\n            if w not in D: D[w] = D[u] + 1; q.append(w)\n    return D.get(t)\n# given shortest paths, each of length 3\ngiven = [('a','d'), ('e','h'), ('a','h')]\nprint('shown graph distances:', [(s, t, dist(shown, s, t)) for s, t in given])\nfor lab, e in zip('ABCD', [('b','d'), ('b','g'), ('b','h'), ('e','g')]):\n    d = [dist(shown + [e], s, t) for s, t in given]\n    ok = all(x == 3 for x in d)\n    print(lab, e, 'distances with edge added:', d,\n          '-> consistent (could be an edge)' if ok else '-> contradicts a given shortest path (NOT an edge)')\n",
-    "notes": "Hand solve: the given shortest paths fix d(a,d) = d(e,h) = d(a,h) = 3. The edge (b,d) would give a-b-d, (b,h) would give a-b-h and (e,g) would give e-g-h, each of length 2, so all three are impossible. The drawn graph plus (b,g) keeps all three distances at 3, so (b,g) is possible. The Python BFS check adds each option edge to the drawn graph and recomputes the three distances: (2,3,3) for (b,d), (3,3,3) for (b,g), (3,3,2) for (b,h) and (3,2,3) for (e,g). This agrees with the official key A;C;D."
+    "notes": "Blind re-solve (before reading the key or the stored solution): the given shortest paths fix d(a,d) = d(e,h) = d(a,h) = 3. With the drawn edge (a,b), an edge (b,d) would give a-b-d and an edge (b,h) would give a-b-h; with the drawn edge (g,h), an edge (e,g) would give e-g-h; each is a 2-edge path, so these three cannot be edges. The drawn graph plus (b,g) keeps all three distances at 3 (a-b-g-h only ties a-f-c-h), so (b,g) cannot be ruled out. A separate Python BFS check (adding each option edge to the drawn graph) gave distances (2,3,3), (3,3,3), (3,3,2), (3,2,3) for (b,d), (b,g), (b,h), (e,g); the stored checkCode was re-run with the same result. This agrees with the official key A;C;D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -65,7 +65,7 @@
       }
     ],
     "finalAnswer": "**(A)** 4",
-    "teaching": "**Map colouring is graph colouring.** Turn each region into a dot (vertex) and join two dots with a line (edge) when the regions share a stretch of boundary. Regions that meet only at a single point, a 'corner', are **not** joined; the question says so explicitly. The minimum number of colours is then the graph's *chromatic number* $\\chi$.\n\n**Two halves of every such proof.**\n\n1. *Lower bound* ($\\chi \\ge k$): find a structure that forces $k$ colours.\n   - Three mutually touching regions (a triangle) force 3 colours.\n   - A ring with an **odd** number of regions cannot alternate between just two colours, so it needs 3.\n   - A region surrounded by an odd ring (an 'odd wheel') needs a 4th colour, because it touches all of the ring's 3 colours.\n2. *Upper bound* ($\\chi \\le k$): simply exhibit a colouring with $k$ colours and check every adjacent pair.\n\n**The four colour theorem.** Any map drawn in the plane can be coloured with at most 4 colours. So the answer to a 'minimum colours' question about a flat figure is never more than 4. Options 5 and 6 are ruled out before you start, and the real question is whether the answer is 3 or 4.\n\n**Here.** The sectors give a triangle (so at least 3). The decisive detail is that the lower radii of the circle end *inside* the side trapezoids. That makes the bottom sector the hub of an odd wheel: it is ringed by 5 regions ($U_L, L, B, R, U_R$), each touching the next. Hence 4 colours are necessary. The outer ring (side and corner regions) is easy to fill with the colours already in use, because corner regions touch the square only at a point. So 4 colours are also sufficient.",
+    "teaching": "**Map colouring is graph colouring.** Turn each region into a dot (vertex) and join two dots with a line (edge) when the regions share a stretch of boundary. Regions that meet only at a single point, a 'corner', are **not** joined; the question says so explicitly. The minimum number of colours is then the graph's *chromatic number* $\\chi$.\n\n**Two halves of every such proof.**\n\n1. *Lower bound* ($\\chi \\ge k$): find a structure that forces $k$ colours.\n   - Three mutually touching regions (a triangle) force 3 colours.\n   - A ring with an **odd** number of regions cannot alternate between just two colours, so it needs 3.\n   - A region surrounded by an odd ring (an 'odd wheel') needs a 4th colour, because it touches all of the ring's 3 colours.\n2. *Upper bound* ($\\chi \\le k$): simply exhibit a colouring with $k$ colours and check every adjacent pair.\n\n**The four colour theorem.** Any map drawn in the plane can be coloured with at most 4 colours. So the answer to a 'minimum colours' question about a flat figure is never more than 4. Options 5 and 6 are ruled out before you start, and the real question is whether the answer is 3 or 4.\n\n**Here.** The sectors give a triangle (so at least 3). The lower radii of the circle end *inside* the left and right trapezoids, so the bottom sector touches both upper sectors and the left, bottom and right trapezoids. Those 5 neighbours ($U_L, L, B, R, U_R$) form a ring, each touching the next, so the bottom sector is the hub of an odd wheel and 4 colours are necessary. The answer does not hinge on that fine detail: the colour-forcing argument in step 3 never uses the contacts between the bottom sector and the side trapezoids, and it still leaves the bottom trapezoid with no colour. The outer ring (side and corner regions) is easy to fill with the colours already in use, because corner regions touch the square only at a point. So 4 colours are also sufficient.",
     "optionAnalysis": [
       {
         "label": "A",
@@ -80,7 +80,7 @@
       {
         "label": "C",
         "verdict": "incorrect",
-        "explanation": "5 colours would work but is not the minimum. By the four colour theorem no planar map ever needs more than 4, and here 4 is achieved explicitly."
+        "explanation": "5 colours would work but is not the minimum. By the four colour theorem no planar map ever needs more than 4, and here 4 is achieved explicitly. 5 is what you get if you wrongly treat the five regions meeting at a corner of the square as mutually adjacent; the question excludes corner contacts."
       },
       {
         "label": "D",
@@ -89,7 +89,7 @@
       }
     ],
     "shortcut": "Use the four colour theorem to rule out 5 and 6, then look for an odd ring around one region. Here the bottom sector is ringed by 5 regions, so the answer is 4, not 3.",
-    "commonTrap": "Assuming 3 colours suffice because the figure looks symmetric. Students often miss that the lower-left and lower-right radii end inside the side trapezoids. That contact makes the bottom sector touch an odd ring of 5 regions and forces a 4th colour. A second slip is treating regions that meet only at a corner point as adjacent."
+    "commonTrap": "Assuming 3 colours suffice because the circle has only three sectors and the figure looks symmetric. Colour the seven inner regions one by one (the three sectors, then the top, left and right trapezoids) and the bottom trapezoid is left with no colour, so a 4th is unavoidable. The opposite slip is treating regions that meet only at a corner point as adjacent. Five regions meet at each corner of the square (two trapezoids, two side regions and a corner region), so that misreading would wrongly push the count to 5 (option C)."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -101,16 +101,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The figure is the image embedded in the official paper (extracted unchanged). US spelling 'color(s)' is kept as printed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The figure is the image embedded in the official paper (extracted unchanged) and matches the rendered page: 3 sectors, 4 trapezoids, 4 side regions and 4 corner regions (15 parts); the lower radii meet the circle at points distinct from the lower corner-to-circle lines. US spelling 'color(s)' is kept as printed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (4 colours)",
     "agreesWithKey": true,
-    "checkCode": "# Regions: sectors UL,UR,S; trapezoids T,L,B,R; outer sides OT,OL,OB,OR; outer corners CTL,CTR,CBL,CBR (adjacency read from the figure)\nE=[e.split('-') for e in 'UL-UR UR-S S-UL T-UL T-UR L-UL L-S B-S R-S R-UR T-L L-B B-R R-T OT-T OL-L OB-B OR-R CTL-OT CTL-OL CTR-OT CTR-OR CBL-OL CBL-OB CBR-OB CBR-OR'.split()]\nV=sorted({v for e in E for v in e}); assert len(V)==15\nN={v:{b if a==v else a for a,b in E if v in(a,b)} for v in V}\ndef col(k,c,i=0):\n    if i==len(V): return True\n    for x in range(k):\n        if all(c.get(u)!=x for u in N[V[i]]):\n            c[V[i]]=x\n            if col(k,c,i+1): return True\n            del c[V[i]]\n    return False\nprint(min(k for k in range(1,7) if col(k,{})))  # 4\nc=dict(UL=1,UR=2,S=3,T=3,L=2,R=1,B=4,OT=1,OL=1,OR=2,OB=1,CTL=2,CTR=3,CBL=2,CBR=3)\nprint(all(c[a]!=c[b] for a,b in E))  # True",
-    "notes": "Adjacency graph built from the figure (the lower radii meet the circle above the lower diagonals, so the left and right trapezoids touch the bottom sector). A backtracking search gives chromatic number 4, and the explicit 4-colouring in the solution is verified. This agrees with the official key (A). The lower bound of 4 is robust: even without the side-trapezoid/bottom-sector contacts, the forcing argument still leaves the bottom trapezoid without a colour."
+    "checkCode": "import itertools\n# regions: sectors UL,UR,S; trapezoids T,L,B,R; side regions OT,OL,OB,OR; corner regions CTL,CTR,CBL,CBR\nE=[e.split('-') for e in 'UL-UR UR-S S-UL T-UL T-UR L-UL L-S B-S R-S R-UR T-L L-B B-R R-T OT-T OL-L OB-B OR-R CTL-OT CTL-OL CTR-OT CTR-OR CBL-OL CBL-OB CBR-OB CBR-OR'.split()]\ndef chi(E):\n    V=sorted({v for e in E for v in e}); N={v:{b if a==v else a for a,b in E if v in(a,b)} for v in V}\n    def col(k,c,i=0):\n        if i==len(V): return True\n        for x in range(k):\n            if all(c.get(u)!=x for u in N[V[i]]):\n                c[V[i]]=x\n                if col(k,c,i+1): return True\n                del c[V[i]]\n        return False\n    return min(k for k in range(1,8) if col(k,{}))\nprint(len(E), chi(E))  # 26 4\nprint(chi([e for e in E if set(e) not in ({'L','S'},{'R','S'})]))  # 4 even without side-trapezoid/bottom-sector contacts\nc=dict(UL=1,UR=2,S=3,T=3,L=2,R=1,B=4,OT=1,OL=1,OR=2,OB=1,CTL=2,CTR=3,CBL=2,CBR=3)\nprint(all(c[a]!=c[b] for a,b in E))  # True: the solution's colouring is valid\nG={'TL':'T L OT OL CTL','TR':'T R OT OR CTR','BL':'B L OB OL CBL','BR':'B R OB OR CBR'}\nE3=E+[list(p) for g in G.values() for p in itertools.combinations(g.split(),2)]\nprint(chi(E3))  # 5 if corner-point contacts were (wrongly) counted",
+    "notes": "Blind solve from the official figure (zoomed to confirm that the lower radii meet the circle above the lower corner-to-circle lines): the 15-region adjacency graph has 26 edges and chromatic number 4, which agrees with the official key (A). The result is robust: it stays 4 even if the bottom-sector/side-trapezoid contacts are ignored. Counting corner-point contacts (excluded by the question) would give 5."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

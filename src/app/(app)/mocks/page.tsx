@@ -5,6 +5,7 @@ import { TIER_LABEL, TIER_RANGE } from "@/lib/labels";
 import { TIER_EXPLANATION, TIER_ORDER, toSummary } from "@/lib/mock/structure";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ButtonLink } from "@/components/ui/Button";
 import { MockLabel } from "@/components/mock/MockLabel";
 import { MockList, type TierGroup } from "@/components/mock/MockList";
 
@@ -37,10 +38,10 @@ export default function MocksPage() {
       {tiers.length ? (
         <>
           <nav aria-label="Mock tiers" className="mb-8">
-            <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
               {tiers.map((t, i) => (
                 <li key={t.tier}>
-                  <Link href={`#tier-${t.tier.toLowerCase()}`} className="flex h-full flex-col rounded-[var(--radius)] border border-border bg-surface px-3 py-2.5 hover:border-border-strong hover:bg-surface-2">
+                  <Link href={`#tier-${t.tier.toLowerCase()}`} className="flex h-full min-h-11 flex-col rounded-[var(--radius)] border border-border bg-surface px-3 py-2 hover:border-border-strong hover:bg-surface-2">
                     <span className="text-xs font-medium text-fg-3">
                       Step {i + 1} · {t.range}
                     </span>
@@ -53,8 +54,15 @@ export default function MocksPage() {
           <MockList tiers={tiers} />
         </>
       ) : (
-        <EmptyState title="No mock tests are published yet">
-          The mock-test definitions have not been loaded into this build. Meanwhile, practise official questions from the PYQ section.
+        <EmptyState
+          title="No mock tests are published yet"
+          action={
+            <ButtonLink href="/pyqs" variant="primary">
+              Practise official PYQs
+            </ButtonLink>
+          }
+        >
+          The mock-test definitions are not in this build yet. Meanwhile, practise official questions from previous GATE DA papers.
         </EmptyState>
       )}
     </>

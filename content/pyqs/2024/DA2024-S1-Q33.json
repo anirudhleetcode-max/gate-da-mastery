@@ -1,0 +1,74 @@
+{
+  "id": "DA2024-S1-Q33",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 33,
+  "section": "DA",
+  "subjectId": "co",
+  "topicId": "co-limits-continuity",
+  "subtopicIds": [
+    "co-continuity-differentiability",
+    "co-functions"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it needs one concept, the sigmoid derivative identity f'(x) = f(x)(1 − f(x)) (or a single chain-rule differentiation), followed by one multiplication 0.4 × 0.6, well within 1.5 minutes for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "Let $f:\\mathbb{R} \\to \\mathbb{R}$ be the function $f(x) = \\frac{1}{1+e^{-x}}$.\n\nThe value of the derivative of $f$ at $x$ where $f(x) = 0.4$ is ______ (rounded off to **two** decimal places).\n\n**Note**: $\\mathbb{R}$ denotes the set of real numbers.",
+  "options": [],
+  "officialKeyRaw": "0.24 to 0.24",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.24,
+    "max": 0.24
+  },
+  "solution": {
+    "quick": "$f$ is the logistic (sigmoid) function, whose derivative satisfies $f'(x) = f(x)\\,\\big(1 - f(x)\\big)$. At the point where $f(x) = 0.4$ the slope is $0.4 \\times 0.6 = 0.24$, so the answer is **0.24**.",
+    "steps": [
+      {
+        "title": "Formula: differentiate with the chain rule",
+        "body": "Write $f(x) = (1 + e^{-x})^{-1}$. By the chain rule,\n\n$$f'(x) = -(1+e^{-x})^{-2} \\cdot \\frac{d}{dx}\\left(1 + e^{-x}\\right) = -(1+e^{-x})^{-2} \\cdot \\left(-e^{-x}\\right) = \\frac{e^{-x}}{(1+e^{-x})^2}.$$"
+      },
+      {
+        "title": "Simplify: express the derivative through $f$ itself",
+        "body": "Split the fraction into two factors:\n\n$$f'(x) = \\frac{1}{1+e^{-x}} \\cdot \\frac{e^{-x}}{1+e^{-x}}.$$\n\nThe first factor is $f(x)$. The second is\n\n$$\\frac{e^{-x}}{1+e^{-x}} = \\frac{(1+e^{-x}) - 1}{1+e^{-x}} = 1 - \\frac{1}{1+e^{-x}} = 1 - f(x).$$\n\nHence\n\n$$f'(x) = f(x)\\,\\big(1 - f(x)\\big).$$"
+      },
+      {
+        "title": "Substitute $f(x) = 0.4$",
+        "body": "$$f'(x) = 0.4 \\times (1 - 0.4) = 0.4 \\times 0.6 = 0.24.$$\n\nWe never needed the value of $x$ itself."
+      },
+      {
+        "title": "Cross-check by finding $x$ explicitly",
+        "body": "$$\\frac{1}{1+e^{-x}} = 0.4 \\;\\Rightarrow\\; 1 + e^{-x} = 2.5 \\;\\Rightarrow\\; e^{-x} = 1.5 \\;\\Rightarrow\\; x = -\\ln 1.5 = \\ln\\tfrac{2}{3} \\approx -0.4055.$$\n\nSubstituting into the derivative from Step 1:\n\n$$f'(x) = \\frac{e^{-x}}{(1+e^{-x})^2} = \\frac{1.5}{2.5^2} = \\frac{1.5}{6.25} = 0.24.$$\n\nA symbolic check with sympy gives exactly $\\tfrac{6}{25} = 0.24$, and a central-difference estimate at $x = \\ln(2/3)$ also gives $0.24$. Rounded to two decimal places, the answer is **0.24**."
+      }
+    ],
+    "finalAnswer": "**0.24**",
+    "teaching": "**The logistic (sigmoid) function.** $\\sigma(x) = \\frac{1}{1+e^{-x}}$ maps every real number into the open interval $(0, 1)$. It tends to 0 as $x \\to -\\infty$, equals $0.5$ at $x = 0$ and tends to 1 as $x \\to \\infty$. Logistic regression uses it to turn a linear score $\\mathbf{w}^\\top \\mathbf{x} + b$ into a probability, and neural networks use it as an activation function.\n\n**Why its derivative is so neat.** The chain rule gives $\\sigma'(x) = \\frac{e^{-x}}{(1+e^{-x})^2}$. Splitting this into two factors,\n\n$$\\sigma'(x) = \\underbrace{\\frac{1}{1+e^{-x}}}_{\\sigma(x)} \\cdot \\underbrace{\\frac{e^{-x}}{1+e^{-x}}}_{1-\\sigma(x)} = \\sigma(x)\\,\\big(1-\\sigma(x)\\big).$$\n\nThe slope at any point therefore depends only on the **output** value $p = \\sigma(x)$ there, not directly on $x$. This is why backpropagation through a sigmoid unit needs only its stored activation.\n\n**Consequences worth remembering.**\n\n- $\\sigma'(x) = p(1-p)$ is largest when $p = 0.5$ (at $x = 0$), where it equals $0.25$.\n- Outputs $p$ and $1 - p$ give the same slope; for example, $p = 0.4$ and $p = 0.6$ both give $0.24$. This reflects the symmetry $\\sigma(-x) = 1 - \\sigma(x)$.\n- When $p$ is close to 0 or 1, the slope is close to 0. This is the \"vanishing gradient\" of saturated sigmoid units.\n- The same expression $p(1-p)$ is the variance of a Bernoulli($p$) variable, and it is the weight that appears in the Hessian of the logistic-regression loss.\n\n**Back to this question.** We are told the output is $f(x) = 0.4$, so the slope is $0.4 \\times (1 - 0.4) = 0.24$. There is no need to find $x$, although doing so ($x = \\ln(2/3)$) gives the same value.",
+    "shortcut": "Memorise $\\sigma' = \\sigma(1 - \\sigma)$. With $\\sigma = 0.4$ the answer is $0.4 \\times 0.6 = 0.24$ immediately, without solving for $x$.",
+    "commonTrap": "Slips in the chain rule: dropping the square in the denominator gives $\\frac{e^{-x}}{1+e^{-x}} = 1 - f(x) = 0.6$, and losing the minus sign from $\\frac{d}{dx}e^{-x} = -e^{-x}$ gives $-0.24$. Another misreading is to evaluate the derivative at $x = 0.4$ instead of at the point where $f(x) = 0.4$. Here that happens to give $\\sigma(0.4)\\,(1 - \\sigma(0.4)) \\approx 0.5987 \\times 0.4013 \\approx 0.2403$, which also rounds to 0.24, so the slip goes unpunished in this question but would not in general."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q33-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The function is typeset in the paper as a stacked fraction f(x) = 1 over 1+e^{−x} (the PDF text layer flattens it to '1 / 1+𝑒−𝑥'); it is transcribed as \\frac{1}{1+e^{-x}}, and the period after the formula is kept. The ℝ symbols are set as \\mathbb{R}. The rounding instruction '(rounded off to two decimal places)' starts a new line in the paper and is joined to the sentence here; 'two' and 'Note' are bold in the paper and kept bold. The answer blank is rendered as underscores. No figure is needed; the crop contains only text and part of the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.24",
+    "agreesWithKey": true,
+    "checkCode": "import sympy as sp, math\nx = sp.symbols('x', real=True)\nf = 1/(1 + sp.exp(-x))\nfp = sp.diff(f, x)                                          # e^{-x}/(1+e^{-x})^2\nassert sp.simplify((fp - f*(1 - f)).rewrite(sp.exp)) == 0   # f' = f(1-f)\nx0 = sp.log(sp.Rational(2, 3))                              # f(x0)=0.4 <=> e^{-x0}=3/2\nassert sp.simplify(f.subs(x, x0) - sp.Rational(2, 5)) == 0\nval = sp.nsimplify(sp.simplify(fp.subs(x, x0)))\nprint('x0 =', x0, '=', float(x0), \" f'(x0) =\", val, '=', float(val))   # 6/25 = 0.24\ns = lambda t: 1/(1 + math.exp(-t)); h = 1e-6; t0 = float(x0)\nprint('central difference ~', round((s(t0+h) - s(t0-h))/(2*h), 6))    # 0.24\nprint('trap check: derivative at x=0.4 ~', round(s(0.4)*(1 - s(0.4)), 4))  # 0.2403 (different point)\n",
+    "notes": "Differentiating gives f'(x) = e^{−x}/(1+e^{−x})^2 = f(x)(1 − f(x)), so at f(x) = 0.4 the derivative is 0.4 × 0.6 = 0.24. Solving f(x) = 0.4 gives x = ln(2/3) ≈ −0.4055, and sympy evaluates f'(ln(2/3)) = 6/25 = 0.24 exactly; a central-difference estimate agrees. This agrees with the official key 0.24 to 0.24."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

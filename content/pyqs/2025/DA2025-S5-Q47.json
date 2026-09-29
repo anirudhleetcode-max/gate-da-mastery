@@ -95,16 +95,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed character for character: all quotes, `-` and `|` are ASCII in the PDF text layer. The paper typesets the set braces in a math font; they are the ordinary `{` and `}` characters. The paper indents the code by layout position rather than with literal space characters (the text layer contains no leading spaces; the `if` lines sit about 3.4 and the assignment lines about 5.7 monospace character widths right of `while`). The nesting is rendered here with standard 4- and 8-space indentation, which keeps the printed structure (both `if` statements inside the `while` body, each assignment inside its `if`). The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Caveats: the code is transcribed character for character; all quotes, `-` and `|` are ASCII in the PDF text layer, and the set braces, which the paper sets in a math font (CMSY10), are the ordinary `{` and `}`. The paper indents the code by layout position, not with literal spaces: the text layer has no leading spaces, and the `if` lines sit about 3.4 and the assignment lines about 5.7 monospace character widths to the right of `while` (independently re-measured from the PDF glyph positions). The nesting is rendered here with standard 4- and 8-space indentation. This keeps the printed structure (both `if` statements inside the `while` body, each assignment inside its `if`) and the Python semantics. The watermark on the page is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B (final A={'other'}, B={'this'}, C={'that'})",
     "agreesWithKey": true,
-    "checkCode": "A={\"this\",\"that\"}\nB={\"that\",\"other\"}\nC={\"other\",\"this\"}\nwhile \"other\" in C:\n    if \"this\" in A:\n        A,B,C=A-B,B-C,C-A\n    if \"that\" in B:\n        A,B,C=C|A,A|B,B|C\n    print(A, B, C)\nprint(\"final:\", A, B, C)\nprint([n for n, s in ((\"A\", A), (\"B\", B), (\"C\", C)) if \"this\" in s])   # ['B']\n",
-    "notes": "Hand trace: the loop runs twice. Iteration 1 applies both updates; in iteration 2 only the first applies. The final state is A={'other'}, B={'this'}, C={'that'}. Running the transcribed code in Python 3 (with a print added per iteration) gives the same final state, and only B contains \"this\". This agrees with the official key B."
+    "checkCode": "A={\"this\",\"that\"}\nB={\"that\",\"other\"}\nC={\"other\",\"this\"}\nwhile \"other\" in C:\n    if \"this\" in A:\n        A,B,C=A-B,B-C,C-A\n    if \"that\" in B:\n        A,B,C=C|A,A|B,B|C\n    print(A, B, C)\nprint([n for n, s in zip(\"ABC\", (A, B, C)) if \"this\" in s])   # ['B']\n# trap check: sequential (non-simultaneous) assignment never terminates\nA,B,C={\"this\",\"that\"},{\"that\",\"other\"},{\"other\",\"this\"}\nfor it in range(5):\n    if \"other\" not in C: break\n    if \"this\" in A: A=A-B; B=B-C; C=C-A\n    if \"that\" in B: A=C|A; B=A|B; C=B|C\nprint(it, A, B, C)   # 4 set() set() {'other','that','this'}: still looping\n",
+    "notes": "Blind hand trace (before seeing the key): iteration 1 applies both updates (A={'this'}, B={'that'}, C={'other'}, then A={'other','this'}, B={'this','that'}, C={'that','other'}); iteration 2 applies only the first update (A={'other'}, B={'this'}, C={'that'}); the loop then exits because 'other' is not in C. Only B contains \"this\", option B. Running the transcribed code in Python 3 gives the same final state. A second run with the tuple assignments split into sequential statements confirms the commonTrap claim that such a misreading never terminates. Agrees with the official key B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

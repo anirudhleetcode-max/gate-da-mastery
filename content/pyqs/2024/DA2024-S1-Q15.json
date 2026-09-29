@@ -65,7 +65,7 @@
       }
     ],
     "finalAnswer": "**(A)** local minimum",
-    "teaching": "**Stationary points and curvature.** The first derivative $f'(x)$ is the slope of the graph. At a minimum or maximum inside the domain the graph is momentarily flat, so $f'(x^*) = 0$. The converse fails: $f(x) = x^3$ has $f'(0) = 0$, but $x = 0$ is neither a minimum nor a maximum. A zero slope only tells you where to look.\n\nThe second derivative $f''(x)$ measures how the slope changes, i.e. the **curvature**:\n\n- $f''(x^*) > 0$: the slope is increasing, and the graph bends upward like a cup ($\\cup$). Just left of $x^*$ the slope is negative (going down), just right of it the slope is positive (going up). So $x^*$ is the bottom of a local valley.\n- $f''(x^*) < 0$: the graph bends downward like a cap ($\\cap$), giving a local peak.\n- $f''(x^*) = 0$: no conclusion. $x^4$ (minimum), $-x^4$ (maximum) and $x^3$ (neither) all have $f' = f'' = 0$ at $0$.\n\n**Local versus global.** A *local* minimum only beats its immediate neighbours. A *global* minimum beats every point of the domain. Derivatives at a single point describe the function near that point only, so the test can never certify a global property. Global conclusions need a global condition. The standard one is **convexity**: if $f''(x) \\ge 0$ for **all** $x$, then every stationary point is a global minimum.\n\n**Why it matters in data science.** Training a model means minimising a loss function. Gradient descent stops where the gradient is zero. In several dimensions the Hessian takes the role of $f''$: a positive definite Hessian means a local minimum. Only convex losses (for example least squares or logistic regression) guarantee that this local minimum is the global one.\n\n**Back to this question.** $f'(x^*) = 0$ and $f''(x^*) > 0$ is exactly the cup-shaped case, so $f$ *necessarily* has a local minimum at $x^*$. Nothing forces it to be global, as $x^3 - 3x$ shows.",
+    "teaching": "**Stationary points and curvature.** The first derivative $f'(x)$ is the slope of the graph. At a minimum or maximum inside the domain the graph is momentarily flat, so $f'(x^*) = 0$. The converse fails: $f(x) = x^3$ has $f'(0) = 0$, but $x = 0$ is neither a minimum nor a maximum. A zero slope only tells you where to look.\n\nThe second derivative $f''(x)$ measures how the slope changes, i.e. the **curvature**:\n\n- $f''(x^*) > 0$: the slope is increasing, and the graph bends upward like a cup ($\\cup$). Just left of $x^*$ the slope is negative (going down), just right of it the slope is positive (going up). So $x^*$ is the bottom of a local valley.\n- $f''(x^*) < 0$: the graph bends downward like a cap ($\\cap$), giving a local peak.\n- $f''(x^*) = 0$: no conclusion. $x^4$ (minimum), $-x^4$ (maximum) and $x^3$ (neither) all have $f' = f'' = 0$ at $0$.\n\n**Local versus global.** A *local* minimum only beats its immediate neighbours. A *global* minimum beats every point of the domain. Derivatives at a single point describe the function near that point only, so the test can never certify a global property. Global conclusions need a global condition. The standard one is **convexity**: if $f''(x) \\ge 0$ for **all** $x$, then every stationary point is a global minimum.\n\n**Why it matters in data science.** Training a model means minimising a loss function. Gradient descent stops where the gradient is zero. In several dimensions the Hessian takes the role of $f''$: a positive definite Hessian means a local minimum. Convex losses (for example least squares or logistic regression) guarantee that such a local minimum is also the global one; for non-convex losses, such as those of neural networks, there is no such guarantee.\n\n**Back to this question.** $f'(x^*) = 0$ and $f''(x^*) > 0$ is exactly the cup-shaped case, so $f$ *necessarily* has a local minimum at $x^*$. Nothing forces it to be global, as $x^3 - 3x$ shows.",
     "optionAnalysis": [
       {
         "label": "A",
@@ -80,7 +80,7 @@
       {
         "label": "C",
         "verdict": "incorrect",
-        "explanation": "A local maximum corresponds to $f''(x^*) < 0$. Here $f(x) > f(x^*)$ for all $x \\ne x^*$ near $x^*$, so $x^*$ cannot be a local maximum."
+        "explanation": "The second-derivative test gives a local maximum when $f''(x^*) < 0$, not $> 0$. Here $f(x) > f(x^*)$ for all $x \\ne x^*$ near $x^*$, so $x^*$ cannot be a local maximum."
       },
       {
         "label": "D",
@@ -101,16 +101,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The answer blank is written as six escaped underscores. The note about ℝ is kept verbatim, with \"Note\" in bold as in the paper."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The answer blank is written as six escaped underscores. The note about ℝ is kept verbatim, with \"Note\" in bold as in the paper."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(A) local minimum",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = x**3 - 3*x                      # twice differentiable on R\nf1, f2 = sp.diff(f, x), sp.diff(f, x, 2)\nprint(\"critical points:\", sp.solve(f1, x))               # [-1, 1]\nprint(\"f'(1) =\", f1.subs(x, 1), \" f''(1) =\", f2.subs(x, 1))  # 0, 6 > 0\nh = sp.Rational(1, 100)\nprint(\"f(1-h)-f(1) =\", f.subs(x, 1-h) - f.subs(x, 1), \" f(1+h)-f(1) =\", f.subs(x, 1+h) - f.subs(x, 1))  # both > 0 -> local min\nprint(\"f(1) =\", f.subs(x, 1), \" f(-3) =\", f.subs(x, -3))   # -2 vs -18 -> not a global min\nprint(\"limit x->-oo:\", sp.limit(f, x, -sp.oo))             # -oo -> no global min at all",
-    "notes": "The second-derivative test (proved from the limit definition of f'' plus the mean value theorem) gives a strict local minimum. A sympy check on f(x)=x^3-3x at x*=1 confirms f'(1)=0, f''(1)=6>0 and f(1±0.01)>f(1) (local minimum). It also gives f(-3)=-18<f(1)=-2 and f→-∞ as x→-∞, so the minimum need not be global. This agrees with the official key A."
+    "notes": "Verifier solved blind before reading the key: f'(x*)=0 and f''(x*)>0 is the second-derivative test, which guarantees a strict local minimum; global minimum is not guaranteed and maxima are excluded. Re-checked the Step 2 proof (limit definition of f'' plus the mean value theorem) line by line. The sympy check on f(x)=x^3-3x at x*=1 confirms f'(1)=0, f''(1)=6>0, f(1±0.01)>f(1) (local minimum), f(-3)=-18<f(1)=-2 and f→-∞ as x→-∞, so the minimum need not be global. Agrees with the official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

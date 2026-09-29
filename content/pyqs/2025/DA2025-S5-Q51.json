@@ -105,16 +105,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Option (A) reads \"f has a local minima\" in the paper (the article \"a\" with the plural \"minima\"); it is kept verbatim. The text layer renders the inequality in (B) as \"x̸ = y\"; the paper rendering shows $x \\ne y$. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Option (A) reads \"f has a local minima\" in the paper (the article \"a\" with the plural \"minima\"); it is kept verbatim. The text layer renders the inequality in (B) as \"x̸ = y\"; the paper rendering shows $x \\ne y$. The watermark on the page is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;C;D",
     "agreesWithKey": true,
-    "checkCode": "from itertools import permutations\nE=[('P','Q'),('R','Q'),('Q','S'),('Q','V'),('S','U'),('V','T')]\nopts={'A':'PQRSTUV','B':'PRQVSUT','C':'PQRSVUT','D':'PRQSVTU'}\ndef bad(o):\n    pos={v:i for i,v in enumerate(o)}\n    return [f'{u}->{v}' for u,v in E if pos[u]>pos[v]]\nfor k,o in opts.items():\n    assert sorted(o)==sorted('PQRSTUV')\n    b=bad(o); print(k,' '.join(o),'VALID' if not b else 'INVALID, violated: '+', '.join(b))\nallv=[p for p in permutations('PQRSTUV') if not bad(p)]\nprint('number of topological orders:',len(allv))  # 2 (P,R order) * C(4,2)=6 interleavings of S-U and V-T -> 12\n",
-    "notes": "Proof: f'' > 0 makes f' strictly increasing (mean value theorem), so f' has at most one zero; by Fermat's theorem every local minimum is a zero of f', giving (B), (D) and hence (C). f(x) = e^x (f'' = e^x > 0, f' = e^x never zero) refutes (A). The Python check confirms numerically, for six functions with f'' > 0 on [-10, 10] (e^x, ln(1+e^x), x^2, x^4+x^2+x, e^x - x, sqrt(1+x^2)), that f' is strictly increasing, changes sign at most once, and that f has at most one local minimum (none for e^x and ln(1+e^x)); sympy confirms f' = e^x has no real zero. This gives B;C;D, matching the official key B;C;D."
+    "checkCode": "import numpy as np, sympy as sp\nx=sp.symbols('x',real=True)\nfs={'e^x':sp.exp(x),'ln(1+e^x)':sp.log(1+sp.exp(x)),'x^2':x**2,'x^4+x^2+x':x**4+x**2+x,'e^x+e^-x':sp.exp(x)+sp.exp(-x)}\nt=np.linspace(-10,10,200001)\nfor k,f in fs.items():\n    d1=sp.lambdify(x,sp.diff(f,x))(t); d2=sp.lambdify(x,sp.diff(f,x,2))(t); v=sp.lambdify(x,f)(t)\n    assert np.all(d2>0)                                  # hypothesis f''>0 holds\n    inc=np.all(np.diff(d1)>0)                            # f' strictly increasing -> (B)\n    zc=np.sum(np.diff((d1>=0).astype(int))!=0)           # crossings of f' through 0\n    lm=np.sum((v[1:-1]<v[:-2])&(v[1:-1]<v[2:]))          # interior local minima on grid -> (C),(D)\n    print(f'{k:12s} f\\' incr:{inc}  zeros of f\\':{zc}  local minima:{lm}')\nprint('e^x critical points:',sp.solveset(sp.diff(sp.exp(x),x),x,sp.S.Reals))  # EmptySet -> (A) not always true\n",
+    "notes": "Blind re-solve (done before viewing the key or the stored solution): f'' > 0 makes f' strictly increasing (mean value theorem), so f' has at most one zero, giving (B); by Fermat's theorem every local minimum of the differentiable f is a zero of f', so there is at most one local minimum (D) and hence at most one global minimum (C); f(x) = e^x has f'' = e^x > 0 but f' = e^x never vanishes, so no local minimum exists and (A) is not always true. This gives B;C;D, matching the official key B;C;D. The Python check (written and run by the verifier) samples five functions with f'' > 0 (e^x, ln(1+e^x), x^2, x^4+x^2+x, e^x+e^-x) on [-10, 10] and confirms that f' is strictly increasing, crosses 0 at most once, and that f has at most one local minimum (none for e^x and ln(1+e^x)); sympy confirms f' = e^x has no real zero. The checkCode previously stored in this file belonged to an unrelated question (a topological-sort check) and has been replaced."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

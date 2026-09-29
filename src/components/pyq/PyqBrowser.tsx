@@ -5,12 +5,12 @@ import type { QuestionMeta } from "@/lib/content/types";
 import { useBookmarkKeys, useQuestionStatuses } from "@/lib/userdata/hooks";
 import { bookmarkKey } from "@/lib/userdata/ops";
 import { DIFFICULTY_LABEL, SUBJECT_SHORT } from "@/lib/labels";
-import { formatDate, formatMarks } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BookmarkButton } from "@/components/userdata/BookmarkButton";
-import { pyqTitle, slotName, type PaperInfo, type TaxonomySubject } from "./data";
+import { marksLabel, pyqTitle, slotName, type PaperInfo, type TaxonomySubject } from "./data";
 import {
   DEFAULT_FILTERS,
   FILTER_KEYS,
@@ -248,7 +248,7 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
             <p role="status" aria-live="polite" className="text-sm text-fg-2">
               <span className="tnum font-semibold text-fg">{filtered.length}</span> of <span className="tnum">{rows.length}</span> questions
-              <span className="text-fg-3"> · {formatMarks(marks)} marks</span>
+              <span className="text-fg-3"> · {marksLabel(marks)}</span>
             </p>
             <div className="flex items-center gap-2">
               <label htmlFor="pyq-sort" className="text-sm text-fg-3">

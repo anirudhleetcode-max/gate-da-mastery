@@ -60,7 +60,7 @@
       },
       {
         "title": "BCNF test",
-        "body": "$R$ is in BCNF when, for every non-trivial FD $X \\rightarrow Y$ that holds, $X$ is a superkey. Test the given FDs:\n\n| FD | Is the left side a superkey? | BCNF satisfied? |\n| --- | --- | --- |\n| $A \\rightarrow BCEF$ | Yes, $A^+ = R$ | Yes |\n| $E \\rightarrow DG$ | No, $E^+ = \\{D, E, G\\}$ | **No** |\n| $BC \\rightarrow A$ | Yes, $(BC)^+ = R$ | Yes |\n\n$E \\rightarrow DG$ is non-trivial and $E$ is not a superkey, so **R is not in BCNF**. (It is not in 3NF either, since $D$ and $G$ are non-prime attributes. It is in 2NF, because neither $B$ nor $C$ alone determines any other attribute.)"
+        "body": "$R$ is in BCNF when, for every non-trivial FD $X \\rightarrow Y$ that holds, $X$ is a superkey. Test the given FDs:\n\n| FD | Is the left side a superkey? | BCNF satisfied? |\n| --- | --- | --- |\n| $A \\rightarrow BCEF$ | Yes, $A^+ = R$ | Yes |\n| $E \\rightarrow DG$ | No, $E^+ = \\{D, E, G\\}$ | **No** |\n| $BC \\rightarrow A$ | Yes, $(BC)^+ = R$ | Yes |\n\n$E \\rightarrow DG$ is non-trivial and $E$ is not a superkey, so **R is not in BCNF**. (It is not in 3NF either: the prime attributes are only $A$, $B$, $C$, so in $E \\rightarrow DG$ the left side is not a superkey and $D$, $G$ are non-prime. It is in 2NF: the only composite candidate key is $BC$, and $B^+ = \\{B\\}$, $C^+ = \\{C\\}$, so no non-prime attribute depends on part of a key.)"
       },
       {
         "title": "Evaluate the statements",
@@ -104,16 +104,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the relation name R and the attribute names in upright roman type. The three functional dependencies are printed on one centred line, spaced apart; they are set here as one display-math line with \\mathrm and \\rightarrow, without change of meaning. The options are plain text as in the paper. No figure is needed. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the three functional dependencies (A → BCEF, E → DG, BC → A) and options (A)-(D) match the official crop, including option order and the wording 'Boyce-Codd Normal Form (BCNF)'. The paper sets the relation name R and the attribute names in upright roman type, and prints the three FDs on one centred line spaced apart; they are set here as one display-math line with \\mathrm and \\rightarrow, without change of meaning. No figure is needed. The watermark on the page is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "B;D (the candidate keys are exactly A and BC; E -> DG has a non-superkey left side, so R is not in BCNF)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "B;D",
     "agreesWithKey": true,
     "checkCode": "from itertools import combinations\nU = set('ABCDEFG')\nF = [(set('A'), set('BCEF')), (set('E'), set('DG')), (set('BC'), set('A'))]\ndef closure(X):\n    X = set(X)\n    while True:\n        new = set(X)\n        for l, r in F:\n            if l <= new: new |= r\n        if new == X: return X\n        X = new\nfor s in ['A', 'BC', 'E', 'B', 'C']:\n    print(s + '+ =', ''.join(sorted(closure(s))))\nkeys = []\nfor k in range(1, 8):\n    for c in combinations(sorted(U), k):\n        if closure(c) == U and not any(set(x) <= set(c) for x in keys):\n            keys.append(''.join(c))\nprint('candidate keys:', keys)\nviol = [(''.join(sorted(l)), ''.join(sorted(r))) for l, r in F if not (r <= l) and closure(l) != U]\nprint('BCNF violations (LHS not a superkey):', viol)\nprint('A only key:', keys == ['A'], '| B:', sorted(keys) == ['A', 'BC'],\n      '| C:', sorted(keys) == ['A', 'BC', 'E'], '| D (not BCNF):', bool(viol))\n",
-    "notes": "Hand solve: A+ = ABCDEFG, BC+ = ABCDEFG, B+ = B, C+ = C, E+ = DEG. So A and BC are candidate keys, and every superkey must contain A or BC, because A is produced only by BC -> A and B, C only by A -> BCEF. E is not a key, so (A) and (C) are false and (B) is true. E -> DG violates BCNF, so (D) is true. The Python check computes closures, enumerates all 127 non-empty attribute subsets for minimal superkeys (finding exactly A and BC), and lists the BCNF-violating FD (E -> DG). This agrees with the official key B;D."
+    "notes": "Blind re-solve (before reading the key or the stored solution): A+ = ABCDEFG and (BC)+ = ABCDEFG, with B+ = B and C+ = C, so A and BC are candidate keys; A is produced only by BC -> A and B, C only by A -> BCEF, so every superkey contains A or BC and there are no other keys. E+ = DEG, so E is not a key and E -> DG violates BCNF. Hence (B) and (D) are correct, (A) and (C) are false. A separate Python brute force over all 127 non-empty attribute subsets returned candidate keys ['A', 'BC'] and the single BCNF violation E -> DG. The stored checkCode (author's, equivalent and more verbose) was re-run and gives the same output. This agrees with the official key B;D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

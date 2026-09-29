@@ -62,7 +62,7 @@
       }
     ],
     "finalAnswer": "**(A)**",
-    "teaching": "**What a Gram matrix is.** Given vectors $x_1, \\dots, x_n$, their Gram matrix collects every pairwise dot product: $A_{ij} = x_i^\\top x_j$. If you place the vectors as columns of a matrix $X$, the Gram matrix is simply $A = X^\\top X$. Gram matrices appear everywhere in data science. The normal equations of least squares use $X^\\top X$, kernel methods use a matrix of inner products, and the covariance matrix is (up to scaling) $X^\\top X$ of centred data.\n\n**Why $X^\\top X$ is always positive semidefinite.** For any vector $z$,\n\n$$z^\\top X^\\top X z = (Xz)^\\top(Xz) = \\|Xz\\|^2,$$\n\na squared length, which can never be negative. It can be zero only if $Xz = 0$, which means some non-trivial combination of the columns of $X$ vanishes. That is exactly linear *dependence*.\n\n**Independence turns semidefinite into definite.** When the columns are linearly independent, $Xz = 0$ forces $z = 0$, so $z^\\top A z > 0$ for every non-zero $z$. The matrix is then *positive definite*. A positive definite matrix has all eigenvalues strictly positive, since $A v = \\lambda v$ gives $\\lambda\\|v\\|^2 = v^\\top A v > 0$. So:\n- its determinant (the product of the eigenvalues) is positive, so it is invertible;\n- being symmetric, its singular values are the absolute values of its eigenvalues, so none is zero;\n- no non-zero $z$ makes the quadratic form vanish.\n\n**The key equivalence.** For a Gram matrix, \"vectors linearly independent\" $\\iff$ \"Gram matrix positive definite\" $\\iff$ \"Gram matrix invertible\". The determinant $\\det(X^\\top X) = (\\det X)^2$ is the squared volume of the parallelepiped spanned by the vectors. It is non-zero exactly when the vectors are independent.\n\n**Back to the question.** Options (B), (C) and (D) all describe a *singular* matrix; each is equivalent to $A$ being non-invertible. Only (A) is consistent with positive definiteness, so (A) is correct.",
+    "teaching": "**What a Gram matrix is.** Given vectors $x_1, \\dots, x_n$, their Gram matrix collects every pairwise dot product: $A_{ij} = x_i^\\top x_j$. If you place the vectors as columns of a matrix $X$, the Gram matrix is simply $A = X^\\top X$. Gram matrices appear everywhere in data science. The normal equations of least squares use $X^\\top X$, kernel methods use a matrix of inner products, and the covariance matrix is (up to scaling) $X^\\top X$ of centred data.\n\n**Why $X^\\top X$ is always positive semidefinite.** For any vector $z$,\n\n$$z^\\top X^\\top X z = (Xz)^\\top(Xz) = \\|Xz\\|^2,$$\n\na squared length, which can never be negative. It can be zero only if $Xz = 0$, which means some non-trivial combination of the columns of $X$ vanishes. That is exactly linear *dependence*.\n\n**Independence turns semidefinite into definite.** When the columns are linearly independent, $Xz = 0$ forces $z = 0$, so $z^\\top A z > 0$ for every non-zero $z$. The matrix is then *positive definite*. A positive definite matrix has all eigenvalues strictly positive, since $A v = \\lambda v$ gives $\\lambda\\|v\\|^2 = v^\\top A v > 0$. So:\n- its determinant (the product of the eigenvalues) is positive, so it is invertible;\n- being symmetric, its singular values are the absolute values of its eigenvalues, so none is zero;\n- no non-zero $z$ makes the quadratic form vanish.\n\n**The key equivalence.** For a Gram matrix, \"vectors linearly independent\" $\\iff$ \"Gram matrix positive definite\" $\\iff$ \"Gram matrix invertible\". The determinant $\\det(X^\\top X) = (\\det X)^2$ is the squared volume of the parallelepiped spanned by the vectors. It is non-zero exactly when the vectors are independent.\n\n**Back to the question.** Because a Gram matrix is always positive semidefinite, options (B), (C) and (D) each amount to saying that $A$ is *singular*. For (B) and (C) this holds for any square matrix. For (D) it uses semidefiniteness: if $z^\\top A z = \\|Xz\\|^2 = 0$ then $Xz = 0$, so $Az = X^\\top X z = 0$ and $A$ has a non-trivial null vector. (For a general, indefinite matrix, $z^\\top A z = 0$ with $z \\ne 0$ does **not** imply singularity; for example, $\\mathrm{diag}(1,-1)$ with $z = (1,1)^\\top$.) With independent vectors $A$ is positive definite, so only (A) is correct.",
     "optionAnalysis": [
       {
         "label": "A",
@@ -85,8 +85,8 @@
         "explanation": "$z^\\top A z = \\|Xz\\|^2$, which is $0$ only when $Xz = 0$, i.e. $z = 0$ (by independence). So no **non-zero** $z$ gives $z^\\top A z = 0$."
       }
     ],
-    "shortcut": "Recognise $A = X^\\top X$ (Gram matrix). Independent columns make $A$ positive definite. Then (B), (C) and (D) are all ways of saying \"$A$ is singular\", so only (A) survives.",
-    "commonTrap": "Mixing this up with the *outer-product* sum $\\sum_i x_i x_i^\\top$ or with a rank-one matrix $xx^\\top$ (which is singular for $n \\ge 2$) and choosing (C). Another trap is thinking \"$z^\\top A z = 0$ for some $z$\" is true because $z = 0$ works; the option explicitly requires $z$ to be **non-zero**."
+    "shortcut": "Recognise $A = X^\\top X$ (Gram matrix). Independent columns make $A$ positive definite. For such a semidefinite matrix, (B), (C) and (D) are all ways of saying \"$A$ is singular\", so only (A) survives.",
+    "commonTrap": "Treating $A$ as if it were a single outer product $xx^\\top$ (rank one, hence singular for $n \\ge 2$) and choosing (C). Here each entry is a dot product $x_i^\\top x_j$, and $A = X^\\top X$ has full rank $n$ because the $x_i$ are independent. Another trap is thinking \"$z^\\top A z = 0$ for some $z$\" is true because $z = 0$ works; the option explicitly requires $z$ to be **non-zero**."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -98,16 +98,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Set {x_1, ..., x_n}, the entry definition A_ij = x_i^T x_j with range 1 <= i, j <= n, and all four options match the official crop exactly (the GATE 2025 / IIT Roorkee watermark overlaps the stem but does not obscure any symbol)."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A (A is the positive definite Gram matrix X^T X)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A (A = X^T X is the Gram matrix of independent vectors, hence positive definite and invertible)",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nrng = np.random.default_rng(2)\nfor _ in range(1000):\n    n = rng.integers(1, 8)\n    X = rng.normal(size=(n, n))            # columns x_1..x_n\n    if abs(np.linalg.det(X)) < 1e-6: continue   # keep linearly independent sets only\n    A = X.T @ X                              # A_ij = x_i^T x_j\n    ev = np.linalg.eigvalsh(A); sv = np.linalg.svd(A, compute_uv=False)\n    assert ev.min() > 0 and sv.min() > 0     # PD => invertible, 0 not a singular value\n    assert np.isclose(np.linalg.det(A), np.linalg.det(X)**2)   # det A = det(X)^2 > 0\n    z = rng.normal(size=n); assert z @ A @ z > 0               # z^T A z = ||Xz||^2 > 0\nprint('Gram matrix of LI vectors: always positive definite -> (A) only')",
-    "notes": "Independent solve: A = X^T X with X = [x_1 ... x_n] invertible, so z^T A z = ||Xz||^2 > 0 for z != 0. A is positive definite and invertible, with det A = (det X)^2 > 0 and no zero singular value. This matches the official key A. A Python check on random linearly independent sets confirmed positive eigenvalues and singular values, det A = det(X)^2 and z^T A z > 0."
+    "notes": "Independent verifier solved blind before reading the key: with X = [x_1 ... x_n] invertible, A = X^T X and z^T A z = ||Xz||^2 > 0 for z != 0, so A is positive definite and invertible, det A = (det X)^2 > 0, all singular values > 0. Hence (A) only. Official key: A. Agreement. The stored random-matrix check was re-run and passes. Verifier audit fixed two inaccuracies: the teaching/shortcut claim that (D) is equivalent to singularity now states it relies on A being positive semidefinite, and the common-trap text no longer cites the outer-product sum sum_i x_i x_i^T (= X X^T, which is also invertible here) as a route to (C)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

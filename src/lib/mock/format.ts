@@ -38,3 +38,29 @@ export function signedMarks(x: number): string {
   const abs = Number.isInteger(Math.abs(r)) ? String(Math.abs(r)) : Math.abs(r).toFixed(2);
   return `${r > 0 ? "+" : "−"}${abs}`;
 }
+
+/**
+ * A short, inline HTML snippet of a question stem for collapsed list rows.
+ * Top-level blocks are kept in document order: paragraphs as they are, short
+ * display formulas as inline math, and anything bulky (matrices, tables, code,
+ * lists) as an ellipsis, so the clamped snippet never silently skips a part
+ * of the sentence. The input is trusted build-time HTML (rendered with RichHtml).
+ */
+export function stemSnippetHtml(stemHtml: string, maxChars = 240): string {
+  const BLOCK = /<p>([\s\S]*?)<\/p>|<div class="math-tex" data-display="true">([\s\S]*?)<\/div>|<(table|pre|ul|ol|div)\b[\s\S]*?<\/\3>/g;
+  const parts: string[] = [];
+  let length = 0;
+  for (const m of stemHtml.matchAll(BLOCK)) {
+    if (length >= maxChars) break;
+    if (m[1] !== undefined) {
+      parts.push(m[1]);
+      length += m[1].replace(/<[^>]+>/g, "").length;
+    } else if (m[2] !== undefined && m[2].length <= 60 && !/\\begin|\\\\/.test(m[2])) {
+      parts.push(`<span class="math-tex" data-display="false">${m[2]}</span>`);
+      length += m[2].length;
+    } else if (parts[parts.length - 1] !== "…") {
+      parts.push("…");
+    }
+  }
+  return parts.length ? parts.join(" ") : stemHtml.replace(/data-display="true"/g, 'data-display="false"');
+}

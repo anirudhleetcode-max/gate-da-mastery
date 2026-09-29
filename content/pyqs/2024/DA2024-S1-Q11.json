@@ -53,11 +53,11 @@
       },
       {
         "title": "Recall the standard normal distribution",
-        "body": "A normal random variable $X \\sim N(\\mu, \\sigma^2)$ has mean $\\mu$ and variance $\\sigma^2$. The **standard** normal is the special case $\\mu = 0$, $\\sigma^2 = 1$, with density\n\n$$\n\\phi(z) = \\frac{1}{\\sqrt{2\\pi}}\\, e^{-z^2/2}.\n$$\n\nThis density is symmetric about $0$, so $E[Z] = 0$, and $\\operatorname{Var}(Z) = E[Z^2] = 1$. This is exactly why standardising, $Z = (X - \\mu)/\\sigma$, gives a variable with mean $0$ and variance $1$. So **statement (ii) is true**."
+        "body": "A normal random variable $X \\sim N(\\mu, \\sigma^2)$ has mean $\\mu$ and variance $\\sigma^2$. The **standard** normal is the special case $\\mu = 0$, $\\sigma^2 = 1$, with density\n\n$$\n\\phi(z) = \\frac{1}{\\sqrt{2\\pi}}\\, e^{-z^2/2}.\n$$\n\n**Mean.** $\\phi$ is symmetric about $0$, so $z\\,\\phi(z)$ is an odd function, and its integral over the whole line (which converges because $\\phi$ decays like $e^{-z^2/2}$) is zero:\n\n$$\nE[Z] = \\int_{-\\infty}^{\\infty} z\\,\\phi(z)\\,dz = 0 .\n$$\n\n**Variance.** Differentiating the density gives $\\phi'(z) = -z\\,\\phi(z)$. Integrate by parts with $u = z$ and $dv = z\\,\\phi(z)\\,dz$, so $v = -\\phi(z)$:\n\n$$\nE[Z^2] = \\int_{-\\infty}^{\\infty} z \\cdot z\\,\\phi(z)\\,dz = \\Big[-z\\,\\phi(z)\\Big]_{-\\infty}^{\\infty} + \\int_{-\\infty}^{\\infty} \\phi(z)\\,dz = 0 + 1 = 1 .\n$$\n\nHence $\\operatorname{Var}(Z) = E[Z^2] - (E[Z])^2 = 1 - 0 = 1$. This is also why standardising works: for $Z = (X - \\mu)/\\sigma$, $E[Z] = (E[X] - \\mu)/\\sigma = 0$ and $\\operatorname{Var}(Z) = \\operatorname{Var}(X)/\\sigma^2 = 1$. So **statement (ii) is true**."
       },
       {
         "title": "Choose the option",
-        "body": "Both (i) and (ii) are true, which is option **(A)**. A symbolic check with `sympy.stats` returns $E[X] = \\operatorname{Var}(X) = \\lambda$ for the Poisson and $E[Z] = 0$, $\\operatorname{Var}(Z) = 1$ for the standard normal."
+        "body": "Both (i) and (ii) are true, which is option **(A)**. A symbolic check in `sympy` (summing the Poisson PMF series and integrating the $N(0,1)$ density directly, and cross-checking with `sympy.stats`) returns $E[X] = \\operatorname{Var}(X) = \\lambda$ for the Poisson and $E[Z] = 0$, $\\operatorname{Var}(Z) = 1$ for the standard normal."
       }
     ],
     "finalAnswer": "**(A)** Both (i) and (ii) are true",
@@ -84,7 +84,7 @@
         "explanation": "Both statements are standard, correct facts, so it cannot be that both are false."
       }
     ],
-    "commonTrap": "Mixing up the Poisson with the exponential distribution. For Exponential$(\\lambda)$ the mean is $1/\\lambda$ and the variance is $1/\\lambda^2$, which are **not** equal in general. Remembering that only the Poisson has mean = variance keeps (i) clearly true."
+    "commonTrap": "Mixing up the Poisson with the exponential distribution. For Exponential$(\\lambda)$ the mean is $1/\\lambda$ and the variance is $1/\\lambda^2$, which are **not** equal in general (only at $\\lambda = 1$). Among the syllabus's named distributions, the Poisson is the one whose mean equals its variance for **every** value of its parameter, which keeps (i) clearly true."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -96,16 +96,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. \"ONE\" and \"correct\" are bold in the paper and are kept bold here. The two statements are printed as an indented list labelled (i) and (ii); they are transcribed as separate paragraphs."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. \"ONE\" and \"correct\" are bold in the paper and are kept bold here. The two statements are printed as an indented list labelled (i) and (ii); they are transcribed as separate paragraphs with the same wording."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(A) Both (i) and (ii) are true",
     "agreesWithKey": true,
-    "checkCode": "import sympy as sp\nfrom sympy.stats import Poisson, Normal, E, variance\nlam = sp.symbols('lambda', positive=True)\nX = Poisson('X', lam)\nprint(\"Poisson: E =\", sp.simplify(E(X)), \" Var =\", sp.simplify(variance(X)))   # lambda, lambda\nZ = Normal('Z', 0, 1)\nprint(\"Std normal: E =\", E(Z), \" Var =\", variance(Z))                       # 0, 1",
-    "notes": "The Poisson mean and variance are both lambda (derived via E[X] and E[X(X-1)] and confirmed symbolically with sympy.stats), and the standard normal has mean 0 and variance 1 by definition (also confirmed with sympy.stats). Both statements are true, which agrees with official key A."
+    "checkCode": "import sympy as sp\nfrom sympy.stats import Poisson, Normal, E, variance\nlam = sp.symbols('lambda', positive=True); k = sp.symbols('k', integer=True, nonnegative=True); z = sp.symbols('z', real=True)\nX = Poisson('X', lam); Z = Normal('Z', 0, 1)\nprint(\"sympy.stats:\", sp.simplify(E(X)), sp.simplify(variance(X)), E(Z), variance(Z))  # lambda lambda 0 1\npmf = sp.exp(-lam)*lam**k/sp.factorial(k)                     # Poisson PMF\nm1 = sp.simplify(sp.summation(k*pmf, (k, 0, sp.oo)))\nm2 = sp.simplify(sp.summation(k**2*pmf, (k, 0, sp.oo)))\nprint(\"Poisson from PMF: E =\", m1, \" Var =\", sp.simplify(m2 - m1**2))   # lambda lambda\nphi = sp.exp(-z**2/2)/sp.sqrt(2*sp.pi)                         # N(0,1) PDF\nEZ = sp.integrate(z*phi, (z, -sp.oo, sp.oo)); EZ2 = sp.integrate(z**2*phi, (z, -sp.oo, sp.oo))\nprint(\"Std normal from PDF: E =\", EZ, \" Var =\", EZ2 - EZ**2)            # 0 1",
+    "notes": "Blind re-solve before viewing the key: a Poisson(lambda) variable has E[X] = Var(X) = lambda, so (i) is true; the standard normal N(0,1) has mean 0 and variance 1 by definition, so (ii) is true. The answer is (A). Confirmed in sympy both from first principles (summing the Poisson PMF series, integrating the N(0,1) density) and via sympy.stats. This agrees with official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

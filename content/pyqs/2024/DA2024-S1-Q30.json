@@ -1,0 +1,77 @@
+{
+  "id": "DA2024-S1-Q30",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2024-S1",
+  "year": 2024,
+  "questionNumber": 30,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-sorting",
+  "subtopicIds": [
+    "pdsa-divide-conquer"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (in-place partitioning around the last element) on an already-sorted 5-element array, where the single observation that every pivot is the maximum of its subarray and already in place gives 0 directly; the only care needed is not to count the do-nothing self-swaps of the textbook Lomuto code, so about 1 minute.",
+  "estimatedTimeSec": 60,
+  "stem": "Consider sorting the following array of integers in ascending order using an in-place Quicksort algorithm that uses the last element as the pivot.\n\n$$\n\\begin{array}{|c|c|c|c|c|}\n\\hline\n60 & 70 & 80 & 90 & 100 \\\\\n\\hline\n\\end{array}\n$$\n\nThe minimum number of swaps performed during this Quicksort is ______.",
+  "options": [],
+  "officialKeyRaw": "0 to 0",
+  "answer": {
+    "kind": "NAT",
+    "min": 0,
+    "max": 0
+  },
+  "solution": {
+    "quick": "The array is already sorted, so in every partition the last element (the pivot) is the **largest** element of its subarray: every other element is already on the correct (left) side and the pivot is already at its final position. No element ever needs to move, so the minimum number of swaps is **0**. (The textbook Lomuto code executes swap statements that exchange an element with itself; these change nothing and need not be performed.)",
+    "steps": [
+      {
+        "title": "Input and the partition step",
+        "body": "Input: $A = [60, 70, 80, 90, 100]$ (indices $0$ to $4$), to be sorted in ascending order in place, pivot = last element of the current subarray.\n\nQuicksort partitions the subarray around the pivot so that smaller elements end up on its left and larger ones on its right, then recurses on the two sides. The standard in-place partition with the last element as pivot (Lomuto's scheme, as in CLRS) is:\n\n```text\nPARTITION(A, lo, hi):\n    pivot = A[hi]\n    i = lo - 1\n    for j = lo to hi - 1:\n        if A[j] <= pivot:\n            i = i + 1\n            swap A[i] and A[j]\n    swap A[i+1] and A[hi]\n    return i + 1\n```\n\nA swap does useful work only when it moves an element across the boundary between the \"$\\le$ pivot\" and \"$>$ pivot\" regions, or moves the pivot from the end to its final index $i + 1$."
+      },
+      {
+        "title": "Execution trace on the sorted array",
+        "body": "Because the array is sorted, each pivot is the maximum of its subarray, so every other element is smaller and already lies to its left, and the pivot's final index is the last index, where it already is.\n\n| Call | Subarray | Pivot | Elements smaller than pivot | Pivot's final index | Elements on the wrong side |\n|---|---|---|---|---|---|\n| 1 | $[60, 70, 80, 90, 100]$ | 100 | 4 | 4 (already there) | none |\n| 2 | $[60, 70, 80, 90]$ | 90 | 3 | 3 (already there) | none |\n| 3 | $[60, 70, 80]$ | 80 | 2 | 2 (already there) | none |\n| 4 | $[60, 70]$ | 70 | 1 | 1 (already there) | none |\n| – | $[60]$ | – | base case, nothing to do | – | – |\n\nEvery right-hand subarray is empty. At no point is any element out of place, so the array never has to change: the number of swaps that actually exchange two different elements is $0$."
+      },
+      {
+        "title": "Why the textbook code still \"swaps\"",
+        "body": "In the Lomuto code above, every $A[j]$ is smaller than the pivot, so $i$ is incremented at every step and always equals $j$. Each `swap A[i] and A[j]` therefore swaps an element **with itself**, and the final `swap A[i+1] and A[hi]` has $i + 1 = hi$, again a self-swap. Executed literally, the swap statement runs $5 + 4 + 3 + 2 = 14$ times, but none of these changes the array.\n\nAn implementation that performs a swap only when it is needed (for example, guarding it with `if i != j`, or a two-pointer scheme that swaps only a larger element found on the left with a smaller element found on the right) performs **no** swaps on this input. The question asks for the **minimum** number of swaps, which is therefore $0$."
+      },
+      {
+        "title": "Complexity note: few swaps, many comparisons",
+        "body": "The partitions have sizes $5, 4, 3, 2$ and make $4 + 3 + 2 + 1 = 10 = \\dfrac{n(n-1)}{2}$ comparisons for $n = 5$. Sorted input with a last-element pivot is quicksort's **worst case** for running time ($\\Theta(n^2)$ comparisons, recursion depth $n - 1$), even though it needs no data movement at all."
+      },
+      {
+        "title": "Result",
+        "body": "A Python simulation of three in-place last-element-pivot partition schemes confirms that the array is never changed: CLRS Lomuto executes 14 swap statements, all self-swaps, while the variant that skips self-swaps and the two-pointer variant execute 0. All three make 10 comparisons.\n\nMinimum number of swaps $= 0$."
+      }
+    ],
+    "finalAnswer": "**0**",
+    "teaching": "**Quicksort in one paragraph.** Quicksort is a divide-and-conquer sort. It picks a **pivot**, **partitions** the array so that elements smaller than the pivot come before it and larger ones after it (the pivot then sits at its final sorted position), and recursively sorts the two sides. There is no merge step: once every subarray is partitioned, the whole array is sorted.\n\n**In-place partitioning.** \"In-place\" means the algorithm rearranges the elements inside the array itself, using only a constant amount of extra memory. The only way it moves data is by **swapping** two positions. A swap is needed only when an element is on the wrong side of the pivot's eventual position, or to move the pivot into that position. If nothing is out of place, no swap is required.\n\n**Pivot choice matters.** With the last element as pivot, the pivot's final index is determined by how many elements are smaller than it. For a sorted array the last element is the maximum, so its final index is the last index, where it already is, and all other elements are already on its left. The next call sees the same situation one element shorter, and so on.\n\n**Swaps versus comparisons.** Counting swaps and counting comparisons are different questions. On sorted input, a last-element-pivot quicksort makes the most comparisons possible ($n(n-1)/2$, the $\\Theta(n^2)$ worst case) because each partition peels off only one element. But it needs the fewest swaps possible, zero, because nothing is ever out of place.\n\n**Self-swaps.** Many textbook codes, including CLRS's Lomuto partition, call `swap` unconditionally and so sometimes \"swap\" an element with itself. That operation leaves the array unchanged; it is not a necessary data movement. When a question asks for the **minimum** number of swaps, such no-op swaps are not counted.\n\n**Back to this question.** $[60, 70, 80, 90, 100]$ is already in ascending order, so every pivot (100, 90, 80, 70 in turn) is already in place with all smaller elements to its left. The minimum number of swaps is $0$.",
+    "shortcut": "For an already-sorted array with the last element as pivot, every pivot is the maximum of its subarray and already sits at its final position, so no element ever needs to move: the minimum number of swaps is 0 without any tracing.",
+    "commonTrap": "Tracing the CLRS Lomuto code literally and counting every executed swap statement (14 here: 5 + 4 + 3 + 2). Each of those swaps an element with itself and changes nothing; the question asks for the minimum. A second trap is mixing up swaps with comparisons: sorted input is the worst case for comparisons (10 here), not for swaps."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2024/official/Q30-1.webp"
+  ],
+  "sourceIds": [
+    "gate2024-da-qp",
+    "gate2024-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array is printed as a row of five bordered cells (60, 70, 80, 90, 100) centred below the first sentence; it is transcribed as a KaTeX array with vertical rules and \\hline. 'Quicksort' is capitalised in both places, as printed. The answer blank is printed as an underscore line and is kept as ______. No figure is needed; the page has only text, the boxed array and the GATE 2024 background watermark."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0",
+    "agreesWithKey": true,
+    "checkCode": "# In-place quicksort, pivot = last element, on the sorted array; count swaps under three partition schemes\ndef quicksort(a, partition):\n    st = {'swap_calls': 0, 'changing_swaps': 0, 'comparisons': 0}\n    def swap(i, j):\n        st['swap_calls'] += 1\n        if a[i] != a[j]: st['changing_swaps'] += 1   # a swap that actually changes the array\n        a[i], a[j] = a[j], a[i]\n    def less(u, v, strict=False):\n        st['comparisons'] += 1\n        return u < v if strict else u <= v\n    def qs(lo, hi):\n        if lo < hi:\n            p = partition(a, lo, hi, swap, less)\n            qs(lo, p - 1); qs(p + 1, hi)\n    qs(0, len(a) - 1)\n    return st\ndef lomuto(a, lo, hi, swap, less):          # CLRS PARTITION\n    x, i = a[hi], lo - 1\n    for j in range(lo, hi):\n        if less(a[j], x):\n            i += 1; swap(i, j)\n    swap(i + 1, hi); return i + 1\ndef lomuto_skip(a, lo, hi, swap, less):     # same, but never swaps an element with itself\n    x, i = a[hi], lo - 1\n    for j in range(lo, hi):\n        if less(a[j], x):\n            i += 1\n            if i != j: swap(i, j)\n    if i + 1 != hi: swap(i + 1, hi)\n    return i + 1\ndef two_pointer(a, lo, hi, swap, less):     # swaps only a (larger-on-left, smaller-on-right) pair\n    x, i, j = a[hi], lo, hi - 1\n    while True:\n        while i <= j and less(a[i], x, True): i += 1\n        while j >= i and less(x, a[j], True): j -= 1\n        if i >= j: break\n        swap(i, j); i += 1; j -= 1\n    if i != hi: swap(i, hi)\n    return i\nimport random; random.seed(0)\nfor name, part in [('Lomuto (CLRS)', lomuto), ('Lomuto, skip self-swaps', lomuto_skip), ('two-pointer', two_pointer)]:\n    for _ in range(2000):                   # sanity: each scheme really sorts\n        r = [random.randint(0, 9) for _ in range(random.randint(0, 12))]; s = r[:]; quicksort(s, part); assert s == sorted(r)\n    a = [60, 70, 80, 90, 100]\n    st = quicksort(a, part)\n    print(f'{name:24s} -> {a}  swap statements={st[\"swap_calls\"]:2d}  array-changing swaps={st[\"changing_swaps\"]}  comparisons={st[\"comparisons\"]}')\n# Lomuto (CLRS): 14 swap statements, all self-swaps (0 change the array); the other two schemes: 0 swaps. Minimum = 0",
+    "notes": "On the sorted input every pivot (100, 90, 80, 70) is the maximum of its subarray and already at its final index, so no element is ever out of place and no swap is necessary. A Python simulation of three in-place last-element-pivot partition schemes (each first tested to sort 2000 random arrays correctly) shows the array is never changed: CLRS Lomuto executes 14 swap statements, all self-swaps (i = j or i + 1 = hi), while the variant that skips self-swaps and a two-pointer variant execute 0; all make 10 comparisons. The minimum number of swaps is 0. This agrees with the official key 0 to 0."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

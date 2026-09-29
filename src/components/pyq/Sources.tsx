@@ -128,9 +128,9 @@ export function ScheduleVerification({ status, notes, sources, defaultOpen = fal
       </summary>
       <p className="mt-2 text-fg-2">{notes}</p>
       {sources.length ? (
-        <ul className="mt-2 space-y-1.5">
+        <ul className="mt-3 space-y-2 border-t border-border pt-2">
           {sources.map((s) => (
-            <li key={s.id} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+            <li key={s.id} className="text-xs">
               {s.url ? (
                 <a href={s.url} target="_blank" rel="noopener noreferrer" className="font-medium text-accent-text hover:underline">
                   {s.name}
@@ -139,8 +139,10 @@ export function ScheduleVerification({ status, notes, sources, defaultOpen = fal
               ) : (
                 <span className="font-medium text-fg-2">{s.name}</span>
               )}
-              <span className="text-fg-3">{s.type === "SECONDARY" ? "Secondary source" : "Official source"}</span>
-              {isStatus(s.verificationStatus) ? <VerificationBadge status={s.verificationStatus} /> : null}
+              <span className="mt-0.5 flex flex-wrap items-center gap-2">
+                <span className="text-fg-3">{s.type === "SECONDARY" ? "Secondary source" : "Official source"}</span>
+                {isStatus(s.verificationStatus) ? <VerificationBadge status={s.verificationStatus} /> : null}
+              </span>
             </li>
           ))}
         </ul>

@@ -97,16 +97,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes Bernoulli in italic math type, transcribed as $\\mathit{Bernoulli}(\\theta)$. It uses lowercase $\\phi$ for the standard normal CDF, kept as printed. The recall note appears in large parentheses on its own line, as transcribed. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Caveats: the paper sets Bernoulli in italic math type (transcribed as $\\mathit{Bernoulli}(\\theta)$) and uses lowercase $\\phi$ for the standard normal CDF, both kept as printed. The recall note sits in large parentheses on its own line. The GATE 2025 / IIT Roorkee watermark is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (phi(2) - phi(-2))",
     "agreesWithKey": true,
     "checkCode": "import math\nn, th = 300, 0.25\nmu, var = n * th, n * th * (1 - th); sd = math.sqrt(var)\nprint(mu, var, sd)                                  # 75.0 56.25 7.5\nz1, z2 = (60 - mu) / sd, (90 - mu) / sd\nprint(z1, z2)                                       # -2.0 2.0 -> phi(2) - phi(-2)\nPhi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))\nprint('CLT:', Phi(z2) - Phi(z1))                    # ~0.9545\nprint('exact:', sum(math.comb(n, k) * th**k * (1 - th)**(n - k) for k in range(60, 91)))  # ~0.9615\nfor lab, (a, b) in {'A': (2, -2), 'B': (1, -1), 'C': (3, -3), 'D': (90, 60)}.items():\n    print(lab, Phi(a) - Phi(b))",
-    "notes": "E[Y] = 75, Var(Y) = 56.25, SD = 7.5, so the z-scores are exactly -2 and +2. The CLT value is 0.9545; the exact binomial probability is 0.9615 for comparison. Agrees with the official key A."
+    "notes": "Blind re-solve (before viewing the key or the stored solution): Y ~ Binomial(300, 0.25), E[Y] = 75, Var(Y) = 56.25, SD = 7.5, so the endpoints 60 and 90 standardise to exactly -2 and +2, giving phi(2) - phi(-2). The CLT value is 0.9545; the exact binomial probability is 0.9615 and the continuity-corrected value 0.9612, for comparison only (no option uses continuity correction). Agrees with the official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

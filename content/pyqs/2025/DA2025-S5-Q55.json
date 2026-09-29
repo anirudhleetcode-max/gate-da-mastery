@@ -56,7 +56,7 @@
       },
       {
         "title": "Identify w and b (statements B, C and D)",
-        "body": "The result has the form $f(x) = w^\\top x + b$ with\n\n$$\nw = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}}), \\qquad b = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 .\n$$\n\n- **(C) is true**: $w$ and $b$ depend only on the two class means.\n- **(B) is true**: $f$ is a linear function of $x$ in the sense used in machine learning (a linear classifier / linear discriminant $w^\\top x + b$). Strictly, a map with a constant $b$ is *affine*; the key treats this as linear, which is the standard ML usage.\n- **(D) is false**: after cancellation $f$ has degree $1$ in $x$ (degree $0$ if the means coincide). There is no $x_j^2$ or $x_j x_k$ term, so it is not a quadratic polynomial.\n\nThe decision boundary $f(x) = 0$ is therefore a hyperplane: the perpendicular bisector of the segment joining $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$."
+        "body": "The result has the form $f(x) = w^\\top x + b$ with\n\n$$\nw = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}}), \\qquad b = \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2 .\n$$\n\n- **(C) is true**: $w$ and $b$ depend only on the two class means.\n- **(B) is true**: $f$ is a linear function of $x$ in the sense used in machine learning (a linear classifier / linear discriminant $w^\\top x + b$). Strictly, a map with a constant $b$ is *affine*; the key treats this as linear, which is the standard ML usage.\n- **(D) is false**: after cancellation $f$ has degree $1$ in $x$ (if the two means coincide, $w = 0$ and $b = 0$, so $f \\equiv 0$). There is no $x_j^2$ or $x_j x_k$ term, so it is not a quadratic polynomial.\n\nThe decision boundary $f(x) = 0$ is therefore a hyperplane: the perpendicular bisector of the segment joining $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$."
       },
       {
         "title": "Classify the origin (statement A)",
@@ -88,7 +88,7 @@
       {
         "label": "D",
         "verdict": "incorrect",
-        "explanation": "Although each squared distance is quadratic in $x$, the quadratic term $\\|x\\|^2$ is identical in both and cancels in the difference. $f$ has degree $1$, so it is not a quadratic polynomial in $x$."
+        "explanation": "Although each squared distance is quadratic in $x$, the quadratic term $\\|x\\|^2$ is identical in both and cancels in the difference. $f(x) = 2(\\mu_{\\mathit{green}} - \\mu_{\\mathit{red}})^\\top x + \\|\\mu_{\\mathit{red}}\\|^2 - \\|\\mu_{\\mathit{green}}\\|^2$ has degree $1$ (no $x_j^2$ or $x_j x_k$ terms), so it is not a quadratic polynomial in $x$."
       }
     ],
     "shortcut": "A difference of two squared distances to fixed points is always affine: the $\\|x\\|^2$ terms cancel. So $f(x) = 2(\\mu_2 - \\mu_1)^\\top x + \\|\\mu_1\\|^2 - \\|\\mu_2\\|^2$, and the decision boundary is the perpendicular bisector of the two means. For (A), the origin simply goes to whichever mean is closer to it.",
@@ -104,16 +104,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the class names red and green in italics in running text (rendered as *red*, *green*) and as italic word subscripts on the means, rendered here as $\\mu_{\\mathit{red}}$ and $\\mu_{\\mathit{green}}$. The paper writes the origin in option (A) as a plain $0$ (not a bold zero vector) and the transpose as $w^\\top$; both are kept as printed. No figure is needed. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, displayed $f(x)$ and all four options match the official crop (including $\\| \\cdot \\|^2$, the sign convention \"red if $f(x) < 0$\", the strict inequality in option (A) and $w^\\top x + b$ in option (C)). The paper sets red/green in italics and as italic word subscripts on $\\mu$ (rendered as $\\mu_{\\mathit{red}}$, $\\mu_{\\mathit{green}}$); the origin in (A) is a plain $0$ as printed. No figure is needed; the watermark is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "B;C (f(x) = 2(mu_green - mu_red)^T x + ||mu_red||^2 - ||mu_green||^2 is affine: B, C true, D false; f(0) < 0 when ||mu_red|| < ||mu_green||, so x = 0 is labelled red: A false)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "B;C",
     "agreesWithKey": true,
-    "checkCode": "import sympy as sp, numpy as np\nd=3\nx=sp.Matrix(sp.symbols('x1:4')); r=sp.Matrix(sp.symbols('r1:4')); g=sp.Matrix(sp.symbols('g1:4'))\nf=sp.expand((r-x).dot(r-x)-(g-x).dot(g-x))\nw=2*(g-r); b=r.dot(r)-g.dot(g)\nprint('f - (w^T x + b) =', sp.simplify(f-(w.dot(x)+b)))           # 0 -> C true, f affine (\"linear\") -> B true\nprint('total degree of f in x:', sp.Poly(f,*x).total_degree())    # 1 -> not quadratic -> D false\n# A: x=0 gives f(0)=||r||^2-||g||^2 <0 when ||r||<||g||  -> label red, not green -> A false\nrng=np.random.default_rng(0); bad=0\nfor _ in range(10000):\n    mr,mg=rng.normal(size=d),rng.normal(size=d)\n    if np.linalg.norm(mr)<np.linalg.norm(mg):\n        f0=np.sum((mr-0)**2)-np.sum((mg-0)**2)\n        bad+= (f0>=0)   # would be green\nprint('cases with ||mu_red||<||mu_green|| where x=0 labelled green:', bad)  # 0\n",
-    "notes": "Hand solve: expanding both squared norms cancels ||x||^2, giving f(x) = w^T x + b with w = 2(mu_green - mu_red) and b = ||mu_red||^2 - ||mu_green||^2, so B and C are true and D is false; f(0) = ||mu_red||^2 - ||mu_green||^2 < 0 under the condition in (A), so x = 0 is labelled red and A is false. The SymPy check (d = 3) confirms f - (w^T x + b) = 0 symbolically and that f has total degree 1 in x; a random NumPy check over 10000 mean pairs finds no case where x = 0 is labelled green when ||mu_red|| < ||mu_green||. Statement (B) is correct in the machine-learning sense of 'linear' (affine, with bias b); the official key marks it correct. This agrees with the official key B;C."
+    "checkCode": "import sympy as sp, numpy as np\nd=4; x=sp.Matrix(sp.symbols(f'x1:{d+1}')); r=sp.Matrix(sp.symbols(f'r1:{d+1}')); g=sp.Matrix(sp.symbols(f'g1:{d+1}'))\nf=sp.expand((r-x).dot(r-x)-(g-x).dot(g-x))\nw=2*(g-r); b=sp.expand(r.dot(r)-g.dot(g))\nprint('C: f-(w.x+b) =',sp.simplify(f-(w.dot(x)+b)))            # 0\nprint('B/D: degree in x =',sp.Poly(f,*x).total_degree())          # 1 -> affine, not quadratic\nprint('f(0) =',f.subs({xi:0 for xi in x}))                        # ||r||^2-||g||^2\nrng=np.random.default_rng(1); green=0; n=0\nfor _ in range(20000):\n    mr,mg=rng.normal(size=d),rng.normal(size=d)\n    if np.linalg.norm(mr)<np.linalg.norm(mg):\n        n+=1; green+=(mr@mr-mg@mg)>=0\nprint('A: cases with ||mr||<||mg||:',n,' labelled green:',green)  # 0 -> A false\n",
+    "notes": "Independent solve: ||mu - x||^2 = ||mu||^2 - 2 mu^T x + ||x||^2; the ||x||^2 terms cancel in the difference, so f(x) = 2(mu_green - mu_red)^T x + ||mu_red||^2 - ||mu_green||^2 = w^T x + b (C true; B true in the usual ML sense of a linear function/discriminant, strictly affine; D false since the degree is 1). f(0) = ||mu_red||^2 - ||mu_green||^2 < 0 when ||mu_red|| < ||mu_green||, so x = 0 is labelled red, not green (A false). SymPy (d = 4) confirms f - (w^T x + b) = 0 and total degree 1; a NumPy check over about 10000 random mean pairs with ||mu_red|| < ||mu_green|| finds no case where x = 0 is labelled green. Agrees with the official key B;C."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

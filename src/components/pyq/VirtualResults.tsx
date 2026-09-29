@@ -9,7 +9,8 @@ import { useCallback, useState, useSyncExternalStore, type ReactNode } from "rea
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { QuestionMeta } from "@/lib/content/types";
 import { SUBJECT_COLOR } from "@/lib/labels";
-import { cn, formatMarks, plural } from "@/lib/utils";
+import { cn, plural } from "@/lib/utils";
+import { marksLabel } from "./data";
 import type { ResultGroup, ResultItem } from "./filters";
 
 /** Height of the app's sticky top bar (h-14). */
@@ -38,7 +39,7 @@ export function GroupHeader({ group, overlay = false }: { group: ResultGroup; ov
       </div>
       <div className="tnum shrink-0 text-right text-xs leading-4 text-fg-3">
         <div className="font-medium text-fg-2">{plural(group.count, "question")}</div>
-        <div>{formatMarks(group.marks)} marks</div>
+        <div>{marksLabel(group.marks)}</div>
       </div>
     </div>
   );

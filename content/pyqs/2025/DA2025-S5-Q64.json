@@ -1,0 +1,73 @@
+{
+  "id": "DA2025-S5-Q64",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 64,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-data-structures",
+  "subtopicIds": [
+    "pdsa-stacks"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it is a single concept (LIFO stack behaviour) that needs a 12-iteration trace across two flag-controlled phases, with easy-to-miss details (8 is popped and added in the iteration that pushes it, and the extra pop after an odd value discards the even element beneath), taking about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider the following pseudocode.\n\n```text\nCreate empty stack S\nSet x=0, flag=0, sum=0\nPush x onto S\nwhile (S is not empty){\n   if (flag equals 0){\n     Set x = x+1\n     Push x onto S}\n   if (x equals 8):\n     Set flag=1\n   if (flag equals 1){\n     x = Pop(S)\n     if (x is odd):\n       Pop(S)\n     Set sum = sum + x}\n }\n Output sum\n```\n\nThe value of `sum` output by a program executing the above pseudocode is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ (Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "24 to 24",
+  "answer": {
+    "kind": "NAT",
+    "min": 24,
+    "max": 24
+  },
+  "solution": {
+    "quick": "While `flag` is $0$ the loop pushes $1, 2, \\ldots, 8$ on top of the initial $0$. In the iteration that pushes $8$, `flag` becomes $1$ and $8$ is popped at once, so `sum` $= 8$. From then on each iteration pops an odd value ($7, 5, 3, 1$), throws away the even value beneath it, and adds only the odd value: `sum` $= 8 + 7 + 5 + 3 + 1 =$ **24**.",
+    "steps": [
+      {
+        "title": "Read the loop body",
+        "body": "Every iteration of `while (S is not empty)` runs three tests, in this order:\n\n1. `if (flag equals 0)`: increment `x` and push it.\n2. `if (x equals 8)`: set `flag=1`. This is the only statement that changes `flag`, and nothing ever resets it to $0$.\n3. `if (flag equals 1)`: pop the top into `x`; if that `x` is odd, pop **one more** element (its value is discarded, not stored); then `Set sum = sum + x`.\n\n`Set sum = sum + x}` is at the same level as `if (x is odd):`, not inside it, so it runs after **every** pop into `x`, odd or even, and it adds the value held in `x` (the first popped value), never the discarded one."
+      },
+      {
+        "title": "Phase 1: filling the stack (iterations 1–8)",
+        "body": "Start: `S` $= [0]$ (bottom → top), `x` $=0$, `flag` $=0$, `sum` $=0$.\n\n- Iterations 1–7: `flag` is $0$, so `x` becomes $1, 2, \\ldots, 7$ and each is pushed; `x` $\\ne 8$ and `flag` stays $0$, so nothing is popped. After iteration 7, `S` $= [0, 1, 2, 3, 4, 5, 6, 7]$.\n- Iteration 8: `x` $= 8$ is pushed, `S` $= [0, 1, \\ldots, 8]$. Now `x equals 8`, so `flag` $= 1$, and the third test fires **in the same iteration**: `x = Pop(S)` $= 8$ (even, no extra pop), `sum` $= 0 + 8 = 8$. `S` $= [0, 1, \\ldots, 7]$."
+      },
+      {
+        "title": "Phase 2: popping in pairs (iterations 9–12)",
+        "body": "With `flag` $=1$ nothing is pushed any more. In iteration 9, `x` still holds $8$ when the second test runs, so `Set flag=1` executes again, which changes nothing.\n\n| Iteration | `x = Pop(S)` | Odd? Extra `Pop(S)` discards | `sum` | `S` afterwards (bottom → top) |\n| :---: | :---: | :---: | :---: | :--- |\n| 8 | $8$ | no | $8$ | $0, 1, 2, 3, 4, 5, 6, 7$ |\n| 9 | $7$ | yes, discards $6$ | $8 + 7 = 15$ | $0, 1, 2, 3, 4, 5$ |\n| 10 | $5$ | yes, discards $4$ | $15 + 5 = 20$ | $0, 1, 2, 3$ |\n| 11 | $3$ | yes, discards $2$ | $20 + 3 = 23$ | $0, 1$ |\n| 12 | $1$ | yes, discards $0$ | $23 + 1 = 24$ | empty |\n\nEvery pop happens on a non-empty stack, so the pseudocode is well defined throughout."
+      },
+      {
+        "title": "Loop exit and output",
+        "body": "After iteration 12 the stack is empty, the `while` condition fails, and the program executes `Output sum`:\n\n$$\n\\text{sum} = 8 + 7 + 5 + 3 + 1 = 24 .\n$$"
+      }
+    ],
+    "finalAnswer": "**24**",
+    "teaching": "**What a stack is.** A stack is a Last-In-First-Out (LIFO) container with two basic operations: `Push` places an element on top, and `Pop` removes and returns the element currently on top. Whatever was pushed most recently comes off first, so a stack filled with $0, 1, 2, \\ldots, 8$ in that order empties as $8, 7, 6, \\ldots, 0$. A `Pop` whose result is not assigned (like the bare `Pop(S)` here) still removes the element; its value is simply thrown away.\n\n**Tracing loops with flags.** Many pseudocode questions use a *flag* to switch a loop between modes. The reliable method is to:\n\n1. List the state variables (`S`, `x`, `flag`, `sum`) and write their values after every iteration.\n2. Execute the `if` tests **in the order written** within each iteration. A test that appears later in the body sees the changes made by earlier tests in the same iteration, which is exactly why $8$ is pushed, sets the flag, and is popped all in one iteration here.\n3. Note which statements belong to which block. In indentation-style pseudocode (`if … :` followed by an indented line), only the indented lines are conditional; a line at the outer level runs unconditionally.\n4. Stop when the loop condition fails and read off the output.\n\n**Recognising phases.** Once you see that the flag can only go from $0$ to $1$, the loop splits into a *filling* phase and an *emptying* phase, so you do not need to simulate blindly. In the emptying phase, look at what each iteration removes: here it removes either one element (an even top) or two elements (an odd top and the even element under it).\n\n**Back to this question.** Filling stops when $8$ is pushed, and $8$ is immediately popped and added. The remaining stack $0, 1, \\ldots, 7$ comes off in pairs $(7,6), (5,4), (3,2), (1,0)$ with only the odd member added, giving $8 + 7 + 5 + 3 + 1 = 24$.",
+    "shortcut": "After the push of $8$ the stack is $0, 1, \\ldots, 8$ and `flag` is $1$. The top $8$ is added on its own; the rest comes off in pairs (odd on top, even beneath), and only the odd member of each pair is added: $8 + (7 + 5 + 3 + 1) = 8 + 16 = 24$.",
+    "commonTrap": "Adding every element that leaves the stack ($0 + 1 + \\cdots + 8 = 36$), as if the bare `Pop(S)` also fed into `sum`; treating `Set sum = sum + x` as part of the `if (x is odd)` block and dropping the initial $8$ (giving $16$); or assuming the second `Pop(S)` overwrites `x`, which would add the discarded evens instead ($8 + 6 + 4 + 2 + 0 = 20$). Also note that the `if (x equals 8)` test comes *after* the push in the same iteration, so $8$ is popped in the very iteration in which it is pushed."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q64-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The verifier compared every pseudocode line with the rendering (wording, spacing inside lines such as `Set x = x+1`, `Set flag=1`, `x = Pop(S)`, `Set sum = sum + x}`, and the position of each brace). The braces { and } are typeset in a math font in the paper and are the ordinary brace characters, attached without a space as printed (e.g. `empty){`, `onto S}`, `sum + x}`). The rendering shows a blank line between successive lines, which is dropped. The paper places lines by layout position rather than literal spaces: measured from the left edge of `Create`, the three nesting levels sit about 2.7, 5.0 and 7.4 monospace character widths in, and the closing } of the while loop and `Output sum` about 1 character width in. These are rendered as 3, 5, 7 and 1 leading spaces respectively, which keeps the printed structure (in particular `Set sum = sum + x}` is at the same level as `if (x is odd):`, not inside it, and only `Pop(S)` is indented under it). `sum` in the final sentence is in the typewriter font in the paper (rendered as inline code). In the paper '(Answer in integer)' wraps to the next line; it is joined here, and the answer blank is rendered as escaped underscores. The only embedded image in the region is the GATE 2025 / IIT Roorkee watermark, which is not part of the question; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "24",
+    "agreesWithKey": true,
+    "checkCode": "S=[]; x=0; flag=0; total=0\nS.append(x)\nit=0\nwhile S:\n    it+=1\n    if flag==0:\n        x=x+1; S.append(x)\n    if x==8:\n        flag=1\n    if flag==1:\n        x=S.pop()\n        if x%2==1:\n            d=S.pop()\n        total=total+x\n        print(f'iter {it}: popped x={x}' + (f', discarded {d}' if x%2==1 else '') + f', sum={total}, S={S}')\nprint('sum =', total)\n",
+    "notes": "Independent re-solve by the verifier: iterations 1-8 push 1..8 on top of the initial 0; in iteration 8 the test x equals 8 sets flag = 1 and the flag-1 block pops 8 in the same iteration (even, sum = 8). Iterations 9-12 pop 7, 5, 3, 1, each odd, so the bare Pop(S) discards 6, 4, 2, 0, and sum becomes 15, 20, 23, 24; the stack is then empty and the loop ends. The verifier's own simulation and the stored check code (re-run) both give sum = 24, matching the official key 24 to 24. Process note: the key row was visible in the context file read at the start of the check, but the answer here was derived from the question alone by hand and confirmed by running code, before the stored solution was read."
+  },
+  "solutionStatus": "VERIFIED"
+}

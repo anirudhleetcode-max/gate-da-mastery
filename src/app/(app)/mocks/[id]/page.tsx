@@ -63,7 +63,7 @@ export default async function MockIntroPage({ params }: Params) {
             <Stat label="Questions" value={planned} />
             <Stat label="Total marks" value={total ?? "—"} hint={total === null ? "Known when the paper is complete" : undefined} />
             <Stat label="Duration" value={formatMinutes(test.durationMinutes)} />
-            <Stat label="Negative marking" value={test.negativeMarking ? "MCQ only" : "None"} />
+            <Stat label="Penalty" value={test.negativeMarking ? "MCQ only" : "None"} hint={test.negativeMarking ? "on wrong MCQs" : undefined} />
           </div>
 
           <AttemptHistory testId={test.id} />

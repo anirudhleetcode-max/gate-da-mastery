@@ -59,16 +59,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The numbers 5 and 10 and the symbols n, S_n, S_100 and E[S_100] are set in math mode as on the paper; the subscripts are read from the rendering (the PDF text layer flattens them to 'Sn', 'S100'). The answer blank is rendered as escaped underscores. The GATE 2025 / IIT Roorkee watermark behind the text is not part of the question; no figure is involved."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the blank and the instruction '(Round off to one decimal place)' match the official crop word for word; the subscripts in S_n, S_{100} and E[S_{100}] were checked against the rendering (the PDF text layer flattens them). The GATE 2025 / IIT Roorkee watermark is not part of the question; no figure is involved."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "66.7 (S_100 ~ Binomial(100, 2/3), so E[S_100] = 200/3 = 66.666…)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "66.7 (E[S_100] = 100 × 10/15 = 200/3 = 66.666…)",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\nfrom math import comb\nimport random\np = F(10, 15)                                                        # P(black) on every draw (with replacement)\nn = 100\nE_lin = n * p                                                        # linearity: 100 indicator expectations\nE_pmf = sum(k * comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1))   # from the Binomial(100, 2/3) pmf\nprint('p =', p, '| E[S_100] =', E_lin, '=', float(E_lin), '| pmf agrees:', E_pmf == E_lin)\nprint('rounded to one decimal place:', round(float(E_lin), 1))\nrandom.seed(1)\nbag = ['W'] * 5 + ['B'] * 10\nsims = [sum(random.choice(bag) == 'B' for _ in range(n)) for _ in range(100000)]\nprint('simulated mean of S_100:', sum(sims) / len(sims))\n",
-    "notes": "Hand solve: with replacement each draw is black with probability 10/15 = 2/3, independently, so S_100 ~ Binomial(100, 2/3) and E[S_100] = 100 × 2/3 = 200/3 = 66.666…, i.e. 66.7 to one decimal place. The Python check computes the mean exactly both by linearity (100 × 2/3) and from the Binomial(100, 2/3) pmf with fractions (both 200/3), and a 100 000-run simulation of the bag gives a mean of about 66.66. The value 66.67 lies inside the official key range 66.6 to 66.7."
+    "notes": "Solved blind before the key was opened: with replacement each draw is black with probability 10/15 = 2/3 independently, so S_100 ~ Binomial(100, 2/3) and E[S_100] = 200/3 = 66.67 → 66.7. The reviewer's exact-fraction and simulation check gave 66.667 (simulated 66.667); the stored author check (linearity, the exact Binomial pmf mean, and a 100 000-run bag simulation ≈ 66.66) was re-run and agrees. 200/3 lies inside the official key range 66.6 to 66.7."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -97,16 +97,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper prints a space before the final question mark (\"T ∩ S ?\"); it is kept as printed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper prints a space before the final question mark (\"T ∩ S ?\"); it is kept as printed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(A) 0",
     "agreesWithKey": true,
     "checkCode": "from itertools import product\nfrom fractions import Fraction as F\noutcomes = list(product(\"HT\", repeat=3))          # 8 equally likely outcomes\nT = {o for o in outcomes if o.count(\"H\") >= 2}   # two or more heads\nS = {o for o in outcomes if o.count(\"T\") >= 2}   # two or more tails\nprint(\"P(T) =\", F(len(T), 8), \" P(S) =\", F(len(S), 8))   # 1/2, 1/2\nprint(\"T & S =\", T & S, \" P(T & S) =\", F(len(T & S), 8))   # set(), 0",
-    "notes": "Heads + tails = 3, so at least 2 heads and at least 2 tails cannot occur together and T ∩ S is empty. Enumerating all 8 outcomes gives P(T) = P(S) = 1/2 and P(T ∩ S) = 0. This agrees with official key A."
+    "notes": "Blind re-solve before viewing the key: with three tosses, heads + tails = 3, so at least 2 heads and at least 2 tails would need at least 4 tosses; T ∩ S is empty and P(T ∩ S) = 0, which is (A). Enumerating all 8 equally likely outcomes in Python gives P(T) = P(S) = 1/2 and P(T ∩ S) = 0. This agrees with official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -126,7 +126,7 @@ export function cleanPreview(input: string): string {
   s = s.replace(/\\/g, " ").replace(/:?-{3,}:?/g, " ");
   for (const [re, rep] of INFIX) s = s.replace(re, rep);
   return s
-    .replace(/\s+([,.;:?)\]}])/g, "$1")
+    .replace(/\s+([,.;?)\]}])/g, "$1")
     .replace(/([([{])\s+/g, "$1")
     .replace(/\s{2,}/g, " ")
     .trim();

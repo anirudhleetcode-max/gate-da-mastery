@@ -1,0 +1,73 @@
+{
+  "id": "DA2025-S5-Q63",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 63,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-python",
+  "subtopicIds": [
+    "pdsa-python"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (tracing a short recursive Python function) in which only the odd branch is ever taken, so five calls unwind by repeated doubling (10 → 20 → 40 → 80 → 160) in about a minute for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "Consider the following Python code snippet.\n\n```python\ndef f(a,b):\n    if (a==0):\n        return b\n    if (a%2==1):\n        return 2*f((a-1)/2,b)\n    return b+f(a-1,b)\nprint(f(15,10))\n```\n\nThe value printed by the code snippet is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ (Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "160 to 160",
+  "answer": {
+    "kind": "NAT",
+    "min": 160,
+    "max": 160
+  },
+  "solution": {
+    "quick": "Trace the recursion. $15$ is odd, so $f(15,10) = 2\\,f(7,10)$, and the arguments $7 \\to 3 \\to 1 \\to 0$ are all odd until the base case $f(0,10) = 10$. Unwinding doubles four times: $10 \\to 20 \\to 40 \\to 80 \\to 160$. In fact $f(a,b) = (a+1)\\,b$, so $f(15,10) = 16 \\times 10 =$ **160**.",
+    "steps": [
+      {
+        "title": "Read the three branches",
+        "body": "The function has one base case and two recursive cases:\n\n- `a==0`: return `b` (base case).\n- `a` odd (`a%2==1`): return `2*f((a-1)/2,b)`, i.e. **double** the value for $\\frac{a-1}{2}$.\n- `a` even and non-zero: return `b+f(a-1,b)`, i.e. **add `b`** to the value for $a-1$.\n\nIn Python 3, `/` is true division, so `(a-1)/2` produces a float: $(15-1)/2 = 7.0$. This is harmless here: `7.0 % 2` is `1.0`, which compares equal to `1`, and `0.0 == 0` is `True`, so the float arguments follow exactly the same branches as the integers $7, 3, 1, 0$ would."
+      },
+      {
+        "title": "Trace the calls downward",
+        "body": "| Call | Test | Branch taken | Returns |\n| :--- | :--- | :--- | :--- |\n| `f(15,10)` | $15 \\bmod 2 = 1$ | odd | `2*f(7.0,10)` |\n| `f(7.0,10)` | $7.0 \\bmod 2 = 1.0$ | odd | `2*f(3.0,10)` |\n| `f(3.0,10)` | $3.0 \\bmod 2 = 1.0$ | odd | `2*f(1.0,10)` |\n| `f(1.0,10)` | $1.0 \\bmod 2 = 1.0$ | odd | `2*f(0.0,10)` |\n| `f(0.0,10)` | $a = 0$ | base case | `10` |\n\nThe new first arguments are $\\frac{15-1}{2} = 7$, $\\frac{7-1}{2} = 3$, $\\frac{3-1}{2} = 1$ and $\\frac{1-1}{2} = 0$. The even branch is never used: $15 = 1111_2$, and each step drops one binary $1$, leaving another odd number until $0$ is reached."
+      },
+      {
+        "title": "Unwind the returns",
+        "body": "Substitute back from the base case:\n\n$$\nf(0,10) = 10,\\quad f(1,10) = 2 \\times 10 = 20,\\quad f(3,10) = 2 \\times 20 = 40,\n$$\n\n$$\nf(7,10) = 2 \\times 40 = 80,\\quad f(15,10) = 2 \\times 80 = 160 .\n$$\n\nEvery returned value is built from `b = 10` (an `int`) using only `2*…` and `b+…`, so the result is the integer `160` (not `160.0`), and `print` outputs **160**."
+      },
+      {
+        "title": "Cross-check with a closed form",
+        "body": "Small cases suggest $f(a,b) = (a+1)\\,b$: $f(0)=b$, $f(1)=2f(0)=2b$, $f(2)=b+f(1)=3b$, $f(3)=2f(1)=4b$. Prove it by strong induction on $a \\ge 0$:\n\n- $a = 0$: $f(0,b) = b = (0+1)\\,b$.\n- $a = 2k+1$ (odd): $f(a,b) = 2\\,f(k,b) = 2(k+1)\\,b = (2k+2)\\,b = (a+1)\\,b$.\n- $a = 2k \\ge 2$ (even): $f(a,b) = b + f(a-1,b) = b + a\\,b = (a+1)\\,b$.\n\nHence $f(15,10) = (15+1) \\times 10 = 160$, agreeing with the trace."
+      }
+    ],
+    "finalAnswer": "**160**",
+    "teaching": "**How to trace a recursive function.** A recursive function solves a problem by calling itself on a smaller input. Two ingredients are always present: a **base case** that returns an answer directly (here `a==0` returns `b`), and one or more **recursive cases** that reduce the input and combine the result of the smaller call (here \"halve and double\" for odd `a`, \"subtract one and add `b`\" for even `a`).\n\nTracing has two phases:\n\n1. **Going down (the call stack).** Starting from the original call, apply whichever branch matches and write down the smaller call it makes. Repeat until a base case is hit. Each pending call waits on the stack with its unfinished work (`2*…` or `b+…`).\n2. **Coming back up (unwinding).** Once the base case returns a value, finish the pending calls in reverse order, each applying its own combining operation.\n\nA table with one row per call (argument, branch, pending operation) keeps this reliable under exam pressure.\n\n**Python details that matter.** In Python 3, `/` always returns a float (`14/2` is `7.0`), while `//` is integer (floor) division. For whole-valued floats this rarely changes the control flow: `7.0 % 2` is `1.0` and `1.0 == 1` is `True`, so the branches are the same. The type of the *result* depends on what is combined: here only `b` (an `int`) is ever returned or added, so the output stays an `int`.\n\n**Spotting what the function computes.** After a few small cases, look for a pattern and prove it by induction; it is the fastest check on a hand trace. This function behaves like the doubling/adding scheme of binary multiplication, but with a twist: halving $a$ to $\\frac{a-1}{2}$ and doubling gives $(a+1)\\,b$, not $a\\,b$.\n\n**Back to this question.** $15 \\to 7 \\to 3 \\to 1 \\to 0$ are all odd before the base case, so the base value $10$ is doubled four times: $10 \\times 2^4 = 160 = (15+1) \\times 10$.",
+    "shortcut": "Check a few small values: $f(0)=b$, $f(1)=2b$, $f(2)=3b$, $f(3)=4b$, which suggests $f(a,b) = (a+1)\\,b$ (provable by induction). So $f(15,10) = 16 \\times 10 = 160$.",
+    "commonTrap": "Assuming the doubling/adding pattern computes the product $a \\times b$ and answering $150$; the halving step uses $\\frac{a-1}{2}$, so the function actually returns $(a+1)\\,b$. A second worry is that `/` makes the arguments floats and the output `160.0`: the floats $7.0, 3.0, 1.0, 0.0$ take the same branches as integers, and the returned value is always built from the integer `b`, so Python prints `160`."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q63-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The verifier compared the code character by character with the rendering (def f(a,b):, if (a==0):, return b, if (a%2==1):, return 2*f((a-1)/2,b), return b+f(a-1,b), print(f(15,10))); all operators are ASCII in the PDF text layer. The rendering shows a blank line between successive code lines, which is dropped. The paper places the code by layout position rather than literal spaces (the two if lines and return b+f(a-1,b) sit about 3.5, and the two inner return lines about 8.3, monospace character widths right of def; print is level with def). The nesting is rendered with standard 4- and 8-space indentation, which keeps the printed structure (both if statements and the last return in the function body, each inner return inside its if, print at top level). The paper has no space between the answer blank and '(Answer in integer)'; the blank is rendered as escaped underscores followed by a space. The only embedded image in the region is the GATE 2025 / IIT Roorkee watermark, which is not part of the question; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "160",
+    "agreesWithKey": true,
+    "checkCode": "calls = []\ndef f(a,b):\n    calls.append((a,b))\n    if (a==0):\n        return b\n    if (a%2==1):\n        return 2*f((a-1)/2,b)\n    return b+f(a-1,b)\nprint(f(15,10))\nprint('call chain:', calls)\ncalls.clear()\n# closed form check: f(a,b) == (a+1)*b for small non-negative integers a\nprint('f(a,b)==(a+1)*b for a<200:', all(f(a,7)==(a+1)*7 for a in range(200)))\n",
+    "notes": "Independent re-solve by the verifier: f(15,10) takes the odd branch with first arguments 15, 7.0, 3.0, 1.0 (true division gives floats, but 7.0 % 2 == 1.0 == 1 and 0.0 == 0, so the branches are the same as for integers) and reaches the base case f(0.0,10) = 10; unwinding doubles four times, 10 -> 20 -> 40 -> 80 -> 160, and the result stays an int because only b = 10 is ever returned, doubled or added. The stored check code (the function body verbatim plus a call log and the closed-form test f(a,b) == (a+1)*b for a < 200) was re-run by the verifier and prints 160 and True. This matches the official key 160 to 160. Process note: the key row was visible in the context file read at the start of the check, but the answer here was derived from the question alone by hand and confirmed by running code, before the stored solution was read."
+  },
+  "solutionStatus": "VERIFIED"
+}

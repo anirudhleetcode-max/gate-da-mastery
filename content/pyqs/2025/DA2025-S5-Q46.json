@@ -77,7 +77,7 @@
       {
         "label": "C",
         "verdict": "incorrect",
-        "explanation": "$9$ is not the size of any complete set of groupings that CUBE produces. It comes from leaving out grouping sets, for example $6 + 3$ (dropping `(D2)` and `()`) or $6 + 2 + 1$ (dropping `(D1)`). Even `ROLLUP (D1, D2)` would give $6 + 3 + 1 = 10$."
+        "explanation": "$9$ is not the size of any complete set of groupings that CUBE produces. It comes from leaving out grouping sets, for example $6 + 3$ (dropping `(D2)` and `()`, which is the same as the miscount $3 \\times (2+1)$ that adds an \"ALL\" value to only one dimension) or $6 + 2 + 1$ (dropping `(D1)`). Even `ROLLUP (D1, D2)` would give $6 + 3 + 1 = 10$."
       },
       {
         "label": "D",
@@ -98,16 +98,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The three SQL lines are set as separate monospace lines at the same indentation in the paper and are transcribed as one SQL code block, character for character (including the space in `CUBE (D1, D2)` and the lowercase `sum`). The options are plain numerals in text font. The GATE 2025 logo watermark behind the options (the only embedded image in this region) is not part of the question, so no figure is included."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Caveats: the SQL is transcribed character for character from the monospace lines (`Facts(D1, D2, val)` with no space before the parenthesis, the space in `CUBE (D1, D2)`, the lowercase `sum` and the trailing semicolon); the three SQL lines are shown as one code block. The options are plain numerals in the text font. The only embedded image in this region is the GATE 2025 logo watermark, so no figure is included."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "D (12)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "D (12 tuples)",
     "agreesWithKey": true,
-    "checkCode": "import sqlite3, itertools\ncon = sqlite3.connect(':memory:')\ncon.execute('CREATE TABLE Facts(D1, D2, val)')\nrows = [(d1, d2, v) for v, (d1, d2) in enumerate(itertools.product(['a','b','c'], ['x','y']), 1)]\ncon.executemany('INSERT INTO Facts VALUES (?,?,?)', rows)   # all 3*2 = 6 combinations present\n# CUBE(D1, D2) = union of the 2^2 grouping sets (D1,D2), (D1), (D2), ()\nq = '''SELECT D1, D2, sum(val) FROM Facts GROUP BY D1, D2\nUNION ALL SELECT D1, NULL, sum(val) FROM Facts GROUP BY D1\nUNION ALL SELECT NULL, D2, sum(val) FROM Facts GROUP BY D2\nUNION ALL SELECT NULL, NULL, sum(val) FROM Facts'''\nres = con.execute(q).fetchall()\nfor r in res: print(r)\nprint(len(res), (3 + 1) * (2 + 1))   # 12 12\n",
-    "notes": "SQLite has no CUBE operator, so the check builds a dense 3 x 2 Facts table and evaluates CUBE (D1, D2) as the UNION ALL of its four grouping sets (D1, D2), (D1), (D2), (). The result has 6 + 3 + 2 + 1 = 12 rows, matching (3+1)(2+1) = 12. This agrees with the official key D."
+    "checkCode": "import itertools, sqlite3\nrows = [(a, b, v) for v, (a, b) in enumerate(itertools.product('abc', 'xy'), 1)]  # dense 3 x 2\nq = 'SELECT D1, D2, sum(val) FROM Facts GROUP BY CUBE (D1, D2)'   # query as printed\ntry:                                   # native CUBE (pip install duckdb)\n    import duckdb\n    con = duckdb.connect()\n    con.execute('CREATE TABLE Facts(D1 VARCHAR, D2 VARCHAR, val INTEGER)')\n    con.executemany('INSERT INTO Facts VALUES (?,?,?)', rows)\nexcept ImportError:                    # SQLite fallback: CUBE = UNION ALL of its 4 grouping sets\n    con = sqlite3.connect(':memory:')\n    con.execute('CREATE TABLE Facts(D1, D2, val)')\n    con.executemany('INSERT INTO Facts VALUES (?,?,?)', rows)\n    q = ('SELECT D1, D2, sum(val) FROM Facts GROUP BY D1, D2 UNION ALL '\n         'SELECT D1, NULL, sum(val) FROM Facts GROUP BY D1 UNION ALL '\n         'SELECT NULL, D2, sum(val) FROM Facts GROUP BY D2 UNION ALL '\n         'SELECT NULL, NULL, sum(val) FROM Facts')\nres = con.execute(q).fetchall()\nprint(len(res), (3 + 1) * (2 + 1))    # 12 12\n",
+    "notes": "Blind re-solve (before seeing the key): CUBE (D1, D2) = grouping sets (D1, D2), (D1), (D2), () giving 6 + 3 + 2 + 1 = 12 rows = (3+1)(2+1), option D. Checked by running the exact printed query with DuckDB's native GROUP BY CUBE on a dense 3 x 2 Facts table: 12 rows (6 base, 3 D1-subtotals, 2 D2-subtotals, 1 grand total). The SQLite UNION ALL emulation of the four grouping sets gives the same 12. Agrees with the official key D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

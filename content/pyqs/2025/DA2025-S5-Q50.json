@@ -109,16 +109,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the transpose with the $\\top$ symbol and the middle terms of the sum as '+ . . . +', rendered here as $x_1x_1^\\top + \\ldots + x_5x_5^\\top$. The digits $0$ and $1$ in options (B) and (C) are typeset in math mode in the paper. No figure is needed. The watermark on the page is not part of the question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and options (A)-(D) match the official crop, including option order. The paper writes the transpose with the $\\top$ symbol and the middle terms of the sum as '+ . . . +', rendered here as $x_1x_1^\\top + \\ldots + x_5x_5^\\top$. The digits $0$ and $1$ in options (B) and (C) are typeset in math mode in the paper. No figure is needed. The watermark on the page is not part of the question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "A;B (A is the rank-5 orthogonal projection: eigenvalues = singular values = five 1s and five 0s; det A = 0, singular)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "A;B",
     "agreesWithKey": true,
-    "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=x**4/4-2*x**3/3-3*x**2/2+1\nd1=sp.diff(f,x); d2=sp.diff(f,x,2)\nprint('f\\'=',sp.factor(d1),' f\\'\\'=',d2)\nfor c in sorted(sp.solve(d1,x)):\n    s=d2.subs(x,c); print(c,'f=',f.subs(x,c),'f\\'\\'=',s,'local min' if s>0 else 'local max' if s<0 else 'test fails')\n# 0: f''=-3 local max; 3: f''=12 local min; -1: f''=4 local min -> (A),(B) true; (C),(D) false\n",
-    "notes": "Hand solve: A = QQ^T with Q^T Q = I_5, so A is symmetric and idempotent, i.e. the orthogonal projection onto a 5-dimensional subspace of R^10. Its eigenvalues are 1 (x5) and 0 (x5); since A is symmetric PSD its singular values are the same, so A and B are true. det A = 0 and rank A = 5, so C and D are false. The NumPy check builds A from 5 random orthonormal vectors in R^10 and confirms symmetry, idempotence, identical eigenvalue and singular-value lists {1 x5, 0 x5}, det approximately 0 and rank 5. This agrees with the official key A;B."
+    "checkCode": "import numpy as np\nrng=np.random.default_rng(0)\nQ,_=np.linalg.qr(rng.standard_normal((10,5)))  # 5 orthonormal columns in R^10\nA=sum(np.outer(Q[:,i],Q[:,i]) for i in range(5))\nev=np.sort(np.linalg.eigvalsh(A))[::-1]; sv=np.linalg.svd(A,compute_uv=False)\nprint('eig',np.round(ev,10)); print('sv ',np.round(sv,10))\nprint('A: sv==eig',np.allclose(sv,ev),'| B: sv in {0,1}',np.allclose(sv*(1-sv),0),'| det',round(np.linalg.det(A),12),'| rank',np.linalg.matrix_rank(A))\n",
+    "notes": "Verifier solved the question blind before comparing with the key. A = QQ^T with Q^T Q = I_5, so A is symmetric and idempotent: the orthogonal projection onto a 5-dimensional subspace of R^10. Its eigenvalues are 1 (x5) and 0 (x5); since A is symmetric PSD its singular values are |lambda_i| = lambda_i, the same list, so A and B are true. det A = 0 and rank A = 5, so C and D are false. The NumPy check builds A from 5 random orthonormal vectors in R^10 and confirms identical eigenvalue and singular-value lists {1 x5, 0 x5}, det 0 and rank 5. This agrees with the official key A;B. (The previously stored checkCode belonged to a different question and has been replaced.)"
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

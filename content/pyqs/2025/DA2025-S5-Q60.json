@@ -59,16 +59,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The superscripts (1), (n), (i), 100 and the exponent 2−i in λ_i = 100^{2−i} are read from the rendering; the PDF text layer flattens them (e.g. '1002−i', 'R100'). The inline condition Σ_{i=1}^{n} x^(i) = 0 is printed with its limits above and below the sigma, so it is written with \\displaystyle. The answer blank after the centred display formula is rendered as an underlined space inside the display math. No figure is involved."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the display formula, the blank and the instruction '(Answer in integer)' match the official crop word for word; ℝ is blackboard bold on the paper (\\mathbb{R}^{100}), the eigenvalue formula is λ_i = 100^{2−i} with 1 ≤ i ≤ 100, and the superscripts (1), (n), (i) were checked against the rendering (the PDF text layer flattens them). The inline Σ_{i=1}^{n} x^{(i)} = 0 is printed with limits above/below, hence \\displaystyle. No figure is involved."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "100 (for centred data (1/n)Σ(uᵀx⁽ⁱ⁾)² = uᵀCu, maximised over unit u at the top eigenvector with value λ_max = λ₁ = 100^(2−1) = 100)",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "100",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nfrom fractions import Fraction\nd, n = 100, 400\nlam = [Fraction(100)**(2-i) for i in range(1, d+1)]                  # lambda_i = 100^(2-i), i = 1..100\nprint('lambda_1..4 =', [str(l) for l in lam[:4]], '| max =', max(lam), 'at i =', lam.index(max(lam)) + 1)\nprint('total variance =', float(sum(lam)))\n# build a zero-mean dataset whose covariance (1/n) sum x x^T has exactly these eigenvalues\nrng = np.random.default_rng(0)\nZ = rng.standard_normal((n, d)); Z -= Z.mean(0)\nL = np.linalg.cholesky(Z.T @ Z / n); W = Z @ np.linalg.inv(L).T     # (1/n) W^T W = I, zero column means\nQ, _ = np.linalg.qr(rng.standard_normal((d, d)))                     # random orthonormal eigenbasis\nX = W @ np.diag(np.sqrt([float(l) for l in lam])) @ Q.T              # rows are x^(i)\nprint('sum_i x^(i) = 0 :', np.abs(X.sum(0)).max() < 1e-9)\nC = X.T @ X / n\nev, V = np.linalg.eigh(C); u = V[:, -1]                              # unit eigenvector of the largest eigenvalue\nprint('largest eigenvalues of C:', np.round(ev[::-1][:3], 6))\nprint('(1/n) sum (u^T x^(i))^2 =', round(float(np.mean((X @ u)**2)), 6))\nvals = []\nfor _ in range(2000):                                                # no other unit direction does better\n    v = rng.standard_normal(d); v /= np.linalg.norm(v); vals.append(float(np.mean((X @ v)**2)))\nprint('max over 2000 random unit directions:', round(max(vals), 4))\n",
-    "notes": "Hand solve: the data are centred, so (1/n)Σ(uᵀx⁽ⁱ⁾)² = uᵀCu with C = (1/n)Σx⁽ⁱ⁾x⁽ⁱ⁾ᵀ; over unit vectors this is maximised by the top eigenvector with value λ_max; λ_i = 100^(2−i) is strictly decreasing, so λ_max = λ₁ = 100. The Python check builds a zero-mean dataset (n = 400, d = 100) whose 1/n-normalised covariance has eigenvalues exactly 100^(2−i) in a random orthonormal basis, recovers the top eigenvector numerically and gets (1/n)Σ(uᵀx⁽ⁱ⁾)² = 100.0, while the best of 2000 random unit directions gives only about 14.8. This agrees with the official key 100 to 100. The equality uses the 1/n-normalised covariance (with 1/(n−1) the value would be (n−1)/n × 100, which depends on n); the question's integer answer is consistent with the 1/n convention."
+    "notes": "Solved blind before the key was opened: the data are centred, so (1/n)Σ(uᵀx⁽ⁱ⁾)² = uᵀCu with C = (1/n)Σx⁽ⁱ⁾x⁽ⁱ⁾ᵀ; over unit u this Rayleigh quotient is maximised by the top eigenvector with value λ_max; λ_i = 100^(2−i) is strictly decreasing, so λ_max = λ₁ = 100. The reviewer's own numpy check (zero-mean data with exact covariance eigenvalues 100^(2−i), n = 5000) gave 100.0; the stored author check (n = 400, plus 2000 random unit directions whose best is only ≈ 14.8) was re-run and also gives 100.0. Agrees with the official key 100 to 100. The identity uses the 1/n-normalised covariance; with 1/(n−1) the value would be (n−1)/n × 100, which depends on the unstated n, so the integer answer is consistent with the 1/n convention (noted in the solution)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -1,0 +1,77 @@
+{
+  "id": "DA2025-S5-Q62",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 62,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-relational-algebra"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE because it applies one concept (relational division as a \"for all\" query) through 3 routine steps on small tables (natural join, projection, division), with a likely trap of counting the joined pairs or distinct customers instead of those covering every branch; about 2–3 minutes.",
+  "estimatedTimeSec": 150,
+  "stem": "Consider the following tables, **Loan** and **Borrower**, of a bank.\n\n**Loan**\n\n| loan\\_num | branch\\_name | amount |\n| :---: | :---: | :---: |\n| L11 | Banjara Hills | 90000 |\n| L14 | Kondapur | 50000 |\n| L15 | SR Nagar | 40000 |\n| L22 | SR Nagar | 25000 |\n| L23 | Balanagar | 80000 |\n| L25 | Kondapur | 70000 |\n| L19 | SR Nagar | 65000 |\n\n**Borrower**\n\n| customer\\_name | loan\\_num |\n| :---: | :---: |\n| Anand | L11 |\n| Karteek | L11 |\n| Karteek | L14 |\n| Ankita | L15 |\n| Gopal | L19 |\n| Karteek | L22 |\n| Karteek | L23 |\n| Sunil | L23 |\n| Sunil | L25 |\n\nQuery: $\\pi_{\\textbf{branch\\_name},\\ \\textbf{customer\\_name}}(\\textbf{Loan} \\bowtie \\textbf{Borrower}) \\div \\pi_{\\textbf{branch\\_name}}(\\textbf{Loan})$\n\nwhere $\\bowtie$ denotes natural join.\n\nThe number of tuples returned by the above relational algebra query is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n(Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "1 to 1",
+  "answer": {
+    "kind": "NAT",
+    "min": 1,
+    "max": 1
+  },
+  "solution": {
+    "quick": "The join links each loan's branch to its borrowers; projecting gives the (branch, customer) pairs. Dividing by the set of all branches $\\{$Banjara Hills, Kondapur, SR Nagar, Balanagar$\\}$ keeps the customers who hold a loan at **every** branch. Only Karteek does (L11, L14, L22, L23 cover all four branches), so the query returns **1** tuple.",
+    "steps": [
+      {
+        "title": "Natural join Loan ⋈ Borrower",
+        "body": "The only common attribute is `loan_num`, so each Borrower row is matched with the Loan row having the same loan number. Every loan number appears in both tables, giving $9$ joined rows:\n\n| loan\\_num | branch\\_name | amount | customer\\_name |\n| :---: | :---: | :---: | :---: |\n| L11 | Banjara Hills | 90000 | Anand |\n| L11 | Banjara Hills | 90000 | Karteek |\n| L14 | Kondapur | 50000 | Karteek |\n| L15 | SR Nagar | 40000 | Ankita |\n| L22 | SR Nagar | 25000 | Karteek |\n| L23 | Balanagar | 80000 | Karteek |\n| L23 | Balanagar | 80000 | Sunil |\n| L25 | Kondapur | 70000 | Sunil |\n| L19 | SR Nagar | 65000 | Gopal |"
+      },
+      {
+        "title": "Dividend: project onto (branch_name, customer_name)",
+        "body": "$R = \\pi_{\\text{branch\\_name},\\, \\text{customer\\_name}}(\\text{Loan} \\bowtie \\text{Borrower})$ keeps only these two columns. Relational algebra uses set semantics, so duplicate pairs would be dropped, but here all $9$ pairs are already distinct:\n\n| branch\\_name | customer\\_name |\n| :---: | :---: |\n| Banjara Hills | Anand |\n| Banjara Hills | Karteek |\n| Kondapur | Karteek |\n| SR Nagar | Ankita |\n| SR Nagar | Karteek |\n| Balanagar | Karteek |\n| Balanagar | Sunil |\n| Kondapur | Sunil |\n| SR Nagar | Gopal |"
+      },
+      {
+        "title": "Divisor: all branch names",
+        "body": "$S = \\pi_{\\text{branch\\_name}}(\\text{Loan})$. Duplicates are removed (SR Nagar occurs three times and Kondapur twice in Loan), leaving $4$ branches:\n\n$$\nS = \\{\\text{Banjara Hills},\\ \\text{Kondapur},\\ \\text{SR Nagar},\\ \\text{Balanagar}\\}.\n$$"
+      },
+      {
+        "title": "Divide: customers paired with every branch",
+        "body": "$R(\\text{branch\\_name}, \\text{customer\\_name}) \\div S(\\text{branch\\_name})$ has schema $(\\text{customer\\_name})$ and contains a customer $c$ exactly when $(b, c) \\in R$ for **every** branch $b \\in S$. Group $R$ by customer:\n\n| customer\\_name | branches in $R$ | covers all 4? |\n| :---: | :---: | :---: |\n| Anand | Banjara Hills | No |\n| Karteek | Banjara Hills, Kondapur, SR Nagar, Balanagar | **Yes** |\n| Ankita | SR Nagar | No |\n| Gopal | SR Nagar | No |\n| Sunil | Balanagar, Kondapur | No (missing Banjara Hills, SR Nagar) |\n\nSo the result is $\\{(\\text{Karteek})\\}$."
+      },
+      {
+        "title": "Count the tuples",
+        "body": "The query returns a single tuple, $(\\text{Karteek})$: the one customer who has a loan at every branch of the bank. The number of tuples is $\\mathbf{1}$."
+      }
+    ],
+    "finalAnswer": "**1**",
+    "teaching": "**What division means.** Relational division answers *\"for all\"* questions. If $R$ has attributes $(A, B)$ and $S$ has attribute $B$, then $R \\div S$ has attribute $A$ only and contains the values $a$ such that $(a, b) \\in R$ for **every** $b \\in S$. Think of $R$ as \"who is linked to what\" and $S$ as \"the full checklist\": division returns the entities whose links cover the whole checklist. Here $R$ lists which customer borrows at which branch, and $S$ is the list of all branches, so $R \\div S$ is \"customers who have a loan at every branch\".\n\n**How to evaluate it by hand.**\n1. Build the dividend $R$ (here: a natural join followed by a projection). A natural join matches rows on all attributes with the same name, here only `loan_num`.\n2. Build the divisor $S$ and remove duplicates, since relational algebra works with sets.\n3. Group $R$ by the attributes that are not in $S$ (here `customer_name`) and keep a group only if its set of $S$-values contains all of $S$.\n\n**Division from basic operators.** For $R(A, B) \\div S(B)$,\n\n$$\nR \\div S = \\pi_A(R) - \\pi_A\\big((\\pi_A(R) \\times S) - R\\big).\n$$\n\n$\\pi_A(R) \\times S$ lists every candidate paired with every required value; subtracting $R$ leaves the *missing* pairs; any candidate with a missing pair is removed. Questions sometimes write division in this expanded form without the $\\div$ symbol, so learn to recognise it.\n\n**Useful observations.**\n- The result's attributes are those of $R$ that are not in $S$; attribute order in the projection does not matter.\n- Division by a larger divisor can only shrink the result (more conditions to meet).\n- An entity that appears with extra values beyond $S$ still qualifies; extras are allowed.\n\n**Back to this question.** Customer–branch pairs come from matching loan numbers, the divisor is the $4$ distinct branches, and only Karteek (loans L11, L14, L22, L23 at Banjara Hills, Kondapur, SR Nagar, Balanagar) covers all of them, so exactly $1$ tuple is returned.",
+    "shortcut": "Look at the branches with a single loan: Banjara Hills has only L11 and Balanagar has only L23. A qualifying customer must therefore borrow both L11 (Anand, Karteek) and L23 (Karteek, Sunil), which leaves only Karteek. Karteek also has L14 (Kondapur) and L22 (SR Nagar), so the answer is $1$.",
+    "commonTrap": "Reporting the size of the dividend ($9$ branch–customer pairs) or the number of distinct customers ($5$) instead of applying the \"for every branch\" condition. Another slip is counting Sunil, who borrows at Kondapur and Balanagar but not at Banjara Hills or SR Nagar. Remember that the divisor $\\pi_{\\text{branch\\_name}}(\\text{Loan})$ is a set of $4$ distinct branches, and that the result has only the `customer_name` column, so each qualifying customer contributes exactly one tuple."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q62-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Both tables (printed side by side on the paper, transcribed one after the other) were checked cell by cell and in row order against the crop: Loan has 7 rows L11, L14, L15, L22, L23, L25, L19 with the branch names and amounts as printed; Borrower has 9 rows as printed. The query, 'where ⋈ denotes natural join', the blank and '(Answer in integer)' match word for word; the bold projection attributes and relation names are kept with \\textbf. The watermark behind the tables is not part of the question; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "1 (only Karteek is paired with all four branches)",
+    "agreesWithKey": true,
+    "checkCode": "loan = [('L11','Banjara Hills',90000),('L14','Kondapur',50000),('L15','SR Nagar',40000),\n        ('L22','SR Nagar',25000),('L23','Balanagar',80000),('L25','Kondapur',70000),('L19','SR Nagar',65000)]\nborrower = [('Anand','L11'),('Karteek','L11'),('Karteek','L14'),('Ankita','L15'),('Gopal','L19'),\n            ('Karteek','L22'),('Karteek','L23'),('Sunil','L23'),('Sunil','L25')]\njoin = [(ln, br, amt, c) for (ln, br, amt) in loan for (c, ln2) in borrower if ln == ln2]   # natural join on loan_num\nR = {(br, c) for (ln, br, amt, c) in join}          # pi_{branch_name, customer_name} (set semantics)\nS = {br for (ln, br, amt) in loan}                  # pi_{branch_name}(Loan)\nprint('R =', sorted(R)); print('S =', sorted(S))\n# R(branch, customer) / S(branch): customers paired with EVERY branch in S\ncands = {c for (br, c) in R}\nQ = {c for c in cands if all((b, c) in R for b in S)}\nfor c in sorted(cands): print(c, sorted(b for (b, cc) in R if cc == c))\nprint('result =', sorted(Q), ' tuples =', len(Q))\n# textbook identity: R/S = pi_C(R) - pi_C((pi_C(R) x S) - R)\nQ2 = cands - {c for (b, c) in ({(b, c) for c in cands for b in S} - R)}\nprint('via identity:', sorted(Q2), len(Q2))\n",
+    "notes": "Solved blind before the key was opened: the natural join on loan_num gives 9 rows and 9 distinct (branch_name, customer_name) pairs; the divisor is the 4 distinct branches {Banjara Hills, Kondapur, SR Nagar, Balanagar}; only Karteek (L11, L14, L22, L23) is paired with all four, so the division returns 1 tuple. The reviewer's own Python evaluation of the join, projections and division gave ['Karteek'] (1 tuple); the stored author check (direct division plus the identity R ÷ S = π_A(R) − π_A((π_A(R) × S) − R)) was re-run and agrees. Matches the official key 1 to 1."
+  },
+  "solutionStatus": "VERIFIED"
+}

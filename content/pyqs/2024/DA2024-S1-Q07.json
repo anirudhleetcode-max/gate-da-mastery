@@ -97,16 +97,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Fractions 1/2, 3/8, 1/8, 1/4 printed inline as slash fractions; rendered here as $1/2$ etc. without change of meaning."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper prints the fractions inline as 1/2, 3/8, 1/8 and 1/4; they are rendered as $1/2$, $3/8$, etc. with no change of meaning."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (3/8)",
     "agreesWithKey": true,
-    "checkCode": "from itertools import product\nfrom fractions import Fraction as F\nfrom math import comb\nouts = list(product('BG', repeat=3))            # 8 equally likely ordered outcomes\nfav = [o for o in outs if o.count('G') == 2]    # exactly two girls, one boy\np = F(len(fav), len(outs))\nassert p == F(comb(3, 2), 2**3) == F(3, 8)\nprint(fav, p)  # [('B','G','G'), ('G','B','G'), ('G','G','B')] 3/8",
-    "notes": "Enumerating the 8 equally likely birth orders gives 3 favourable outcomes, i.e. 3/8, which matches the official key A."
+    "checkCode": "from itertools import product\nfrom fractions import Fraction as F\nouts = list(product('BG', repeat=3))  # 8 ordered birth sequences, each (1/2)^3\np = sum(F(1, 8) for o in outs if o.count('G') == 2 and o.count('B') == 1)\nopts = {'A': F(3, 8), 'B': F(1, 8), 'C': F(1, 4), 'D': F(1, 2)}\nprint(p, [k for k, v in opts.items() if v == p])  # 3/8 ['A']",
+    "notes": "Blind solve: the 8 ordered birth sequences are equally likely (probability 1/8 each); exactly two girls and one boy occurs in C(3,2) = 3 of them (BGG, GBG, GGB), so P = 3/8. Enumeration in Python confirms 3/8, which agrees with the official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

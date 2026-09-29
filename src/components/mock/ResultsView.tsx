@@ -89,9 +89,8 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
     setReviewFilter("all");
     setOpenId(id);
     requestAnimationFrame(() => {
-      const btn = document.getElementById(`review-btn-${id}`);
-      btn?.scrollIntoView({ block: "start", behavior: "smooth" });
-      btn?.focus({ preventScroll: true });
+      document.getElementById(`review-${id}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+      document.getElementById(`review-btn-${id}`)?.focus({ preventScroll: true });
     });
   }, []);
 
@@ -223,14 +222,14 @@ export function ResultsView({ test, attemptId }: { test: ResultsTestMeta; attemp
         {res || stored ? (
           <>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Stat label="Score" value={`${formatMarks(res?.score ?? stored!.score)} / ${formatMarks(res?.maxScore ?? stored!.maxScore)}`} hint="Platform marks, GATE scheme" />
+              <Stat label="Score" value={`${formatMarks(res?.score ?? stored!.score)} / ${formatMarks(res?.maxScore ?? stored!.maxScore)}`} hint="GATE marking scheme" />
               <Stat label="Accuracy" value={pct(res?.accuracy ?? stored!.accuracy, 0)} hint="Correct ÷ attempted" />
               <Stat label="Attempted" value={`${res?.attempted ?? stored!.attempted} / ${analysis?.items.length ?? (stored!.attempted + stored!.unanswered)}`} />
               <Stat label="Time used" value={formatDuration(used)} hint={`of ${formatMinutes(test.durationMinutes)}`} />
               <Stat label="Correct" value={<span className="text-success">{res?.correct ?? stored!.correct}</span>} />
               <Stat label="Incorrect" value={<span className="text-danger">{res?.incorrect ?? stored!.incorrect}</span>} />
               <Stat label="Skipped" value={res?.unanswered ?? stored!.unanswered} />
-              <Stat label="Avg time / attempted" value={analysis ? formatDuration(analysis.avgTime) : "—"} hint="Tracked on screen" />
+              <Stat label="Average time" value={analysis ? formatDuration(analysis.avgTime) : "—"} hint="per attempted question" />
             </div>
             {res ? (
               <p className="mt-3 text-sm text-fg-2">

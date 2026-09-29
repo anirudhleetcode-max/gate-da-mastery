@@ -63,16 +63,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the real numbers as blackboard-bold R, rendered here as $\\mathbb{R}$. The answer blank is an underline in the paper, rendered as ________, followed by '(Answer in integer)'. No figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The statement matches the official crop, including the bound $(x - y)^2$ (exponent 2 on the parenthesised difference, not on the absolute value) and the instruction '(Answer in integer)'. The paper sets the real numbers as blackboard-bold R, rendered here as $\\mathbb{R}$. The answer blank is an underline in the paper, rendered as ________. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as Fr\n# Telescoping: split [0,1] into n equal pieces; each piece contributes at most (1/n)^2.\nfor n in [1, 2, 10, 100, 10**6]:\n    bound = n * Fr(1, n)**2\n    print(f'n={n}: |f(1)-f(0)| <= n*(1/n)^2 = {bound}')\n# The only integer value compatible with |f(1)-f(0)| <= 1/n for every n is 0.\n# Sanity: a constant satisfies the hypothesis; f(x)=x and f(x)=x^2 do not.\nimport random\ndef satisfies(f, trials=20000):\n    random.seed(1)\n    for _ in range(trials):\n        x, y = random.uniform(-3, 3), random.uniform(-3, 3)\n        if abs(f(x) - f(y)) > (x - y)**2 + 1e-12: return False, (round(x, 3), round(y, 3))\n    return True, None\nfor name, f in [('f=5', lambda x: 5.0), ('f=x', lambda x: x), ('f=x^2', lambda x: x*x)]:\n    print(name, 'satisfies |f(x)-f(y)|<=(x-y)^2 ?', satisfies(f))\nprint('f(1)-f(0) =', 0)\n",
-    "notes": "Hand solve: dividing by |x - y| gives |(f(x) - f(y))/(x - y)| <= |x - y|, which tends to 0 as y -> x. So f'(x) = 0 for all x, f is constant, and f(1) - f(0) = 0. Telescoping over n equal steps gives |f(1) - f(0)| <= n(1/n)^2 = 1/n for every n, which confirms 0 without derivatives. The Python check prints this 1/n bound for several n, confirms that a constant satisfies the hypothesis, and finds violating pairs for f(x) = x and f(x) = x^2. This agrees with the official key 0 to 0."
+    "notes": "Blind re-solve (before reading the key or the stored solution): for y != x, |(f(y) - f(x))/(y - x)| <= |y - x| -> 0, so f'(x) = 0 everywhere and f is constant by the mean value theorem; independently, telescoping over n equal steps gives |f(1) - f(0)| <= n(1/n)^2 = 1/n for every n, forcing 0. So f(1) - f(0) = 0. The stored checkCode was re-run: it prints the 1/n bound for several n, confirms a constant satisfies the hypothesis, and finds violating pairs for f(x) = x and f(x) = x^2. This agrees with the official key 0 to 0."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

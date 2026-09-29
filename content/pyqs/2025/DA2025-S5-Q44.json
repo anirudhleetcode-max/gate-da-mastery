@@ -100,16 +100,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The state graph is vector art; it was rendered from the official PDF page 24 with the background watermark image removed (drawing and labels unchanged). The paper shows no heuristic value for the start state S (not needed for the answer). The line-break hyphenation 'asso-ciated' in the paper was joined as 'associated'; 'h' is upright in the paper and kept as plain text."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and all four expansion sequences match the official crop character for character. The line-break hyphenation 'asso-ciated' in the paper is joined as 'associated'; 'h' is upright in the paper and kept as plain text; the text layer's 'A∗algorithm' is the math A^* in the rendering, transcribed as $A^*$. The state graph is vector art rendered from the official PDF page 24 with the background watermark removed; the figure file was checked against the crop (edge directions, the costs 4, 1, 2, 2, 2, 3, 3 and the boxed h values are unchanged). The paper shows no heuristic value for the start state S (not needed for the answer)."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C (S,A,E,B,C,D,G)",
     "agreesWithKey": true,
     "checkCode": "import heapq, itertools\nedges = {'S': [('A', 4), ('E', 1)], 'A': [('B', 2)], 'B': [('C', 2)], 'E': [('C', 2)],\n         'C': [('D', 3)], 'D': [('G', 3)], 'G': []}\nh = {'S': 0, 'A': 2, 'B': 2, 'C': 6, 'E': 6, 'D': 2, 'G': 0}  # h(S) not shown; irrelevant (S is expanded first)\ndef search(key, trace=False):\n    cnt = itertools.count(); pq = [(0, next(cnt), 0, 'S')]; best = {'S': 0}; order = []; closed = set()\n    while pq:\n        k, _, g, n = heapq.heappop(pq)\n        if n in closed: continue\n        closed.add(n); order.append(n)\n        if trace: print(f'  expand {n}: g={g}, priority={k}')\n        if n == 'G': return ','.join(order)\n        for m, c in edges[n]:\n            if m not in closed and (m not in best or g + c < best[m]):\n                best[m] = g + c; heapq.heappush(pq, (key(g + c, m), next(cnt), g + c, m))\n            elif trace: print(f'    {n}->{m}: g={g+c} not better than {best[m]}, ignored')\nprint('A* (f=g+h):', search(lambda g, m: g + h[m], trace=True))\nprint('UCS (g only):', search(lambda g, m: g))\nprint('Greedy (h only, FIFO ties):', search(lambda g, m: h[m]))\nprint('inconsistent edges (h(n) > c + h(m)):', [(n, m) for n in edges for m, c in edges[n] if h[n] > c + h[m]])",
-    "notes": "A* trace with f = g + h: S, then A (f = 6), E (7), B (8), C (9; the path via B with f = 14 is ignored), D (8), G (9). No f-ties occur, so tie-breaking does not matter. This matches official key C. The Python check runs A* with a priority queue and gives S,A,E,B,C,D,G. For comparison, uniform-cost search gives S,E,C,A,D,B,G and greedy best-first with FIFO tie-breaking gives S,A,B,E,C,D,G (option D). The heuristic is admissible but inconsistent on C -> D (6 > 3 + 2), which does not affect the expansion order here."
+    "notes": "Blind re-solve (done before viewing the key or the stored solution): expand S -> frontier A (f = 4+2 = 6), E (f = 1+6 = 7); expand A -> B (f = 6+2 = 8); expand E -> C (f = 3+6 = 9); expand B -> C via B has g = 8 (f = 14), worse than g = 3, ignored; expand C -> D (f = 6+2 = 8); expand D -> G (f = 9); expand G. Sequence S,A,E,B,C,D,G, option (C), matching official key C. No f-ties occur, so tie-breaking is irrelevant. The verifier's own heapq A* simulation and the stored Python check (re-run by the verifier) both give S,A,E,B,C,D,G; the stored check also shows uniform-cost search gives S,E,C,A,D,B,G and greedy best-first with FIFO tie-breaking gives S,A,B,E,C,D,G (option D). The heuristic is admissible but inconsistent on C -> D (6 > 3 + 2), which does not affect the expansion order here."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
