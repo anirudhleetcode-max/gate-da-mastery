@@ -27,7 +27,9 @@
     "whenToUse": "Deciding whether a set defined by conditions is a subspace. Quick screen: a set defined only by **homogeneous linear equations** (constant term 0) is always a subspace. A nonzero constant term, a nonlinear condition ($x^2$, $|x|$, $xy = 0$) or an inequality ($x \\ge 0$) almost always breaks one of the conditions; find the counterexample.",
     "commonMistake": "Checking only that $\\mathbf{0} \\in W$. The set $\\{(x,y) : xy = 0\\}$ (the two coordinate axes) contains $\\mathbf{0}$ and is closed under scaling, but $(1,0) + (0,1) = (1,1)$ is not in it, so it is **not** a subspace. Likewise the **union** of two subspaces is generally not a subspace (the intersection always is).",
     "example": "$W_1 = \\{(x,y,z) : x + 2y - z = 0\\}$: $\\mathbf{0}$ satisfies it, and if $\\mathbf{u},\\mathbf{v}$ satisfy it then $\\alpha\\mathbf{u} + \\beta\\mathbf{v}$ gives $\\alpha\\cdot 0 + \\beta\\cdot 0 = 0$. So $W_1$ is a subspace (a plane through the origin, dimension $3 - 1 = 2$).\n\n$W_2 = \\{(x,y,z) : x + 2y - z = 1\\}$: $(0,0,0)$ gives $0 \\ne 1$, so $\\mathbf{0} \\notin W_2$. **Not a subspace.**",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-vector-spaces-subspaces"
+    ]
   },
   {
     "id": "f-la-linear-independence",
@@ -53,7 +55,10 @@
     "whenToUse": "Testing independence, extracting a basis (keep the pivot columns), finding the dimension of a span, or finding the value of a parameter that makes vectors dependent (set the determinant to 0).",
     "commonMistake": "Concluding independence because no two vectors are parallel. $(1,0), (0,1), (1,1)$ are pairwise non-parallel but dependent (three vectors in $\\mathbb{R}^2$). Also, the determinant test applies only when the matrix is square; for $k \\ne n$ use the rank.",
     "example": "$\\mathbf{v}_1 = (1,2,3)$, $\\mathbf{v}_2 = (4,5,6)$, $\\mathbf{v}_3 = (7,8,9)$:\n\n$$\n\\det\\begin{bmatrix} 1 & 4 & 7 \\\\ 2 & 5 & 8 \\\\ 3 & 6 & 9 \\end{bmatrix} = 1(45-48) - 4(18-24) + 7(12-15) = -3 + 24 - 21 = 0\n$$\n\nSo they are **dependent**: indeed $\\mathbf{v}_1 - 2\\mathbf{v}_2 + \\mathbf{v}_3 = (1-8+7,\\ 2-10+8,\\ 3-12+9) = \\mathbf{0}$. The rank is 2, so their span is a plane.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-linear-independence-basis",
+      "c-la-rank-nullity"
+    ]
   },
   {
     "id": "f-la-dimension-of-sum",
@@ -79,7 +84,10 @@
     "whenToUse": "Finding the dimension of the intersection or the sum of two subspaces (two planes in $\\mathbb{R}^3$, two null spaces, two spans), or arguing that two subspaces must share a nonzero vector.",
     "commonMistake": "Using the union $U \\cup W$ in place of $U + W$ (the union is usually not a subspace). Also, the formula is for **two** subspaces only; the three-subspace inclusion–exclusion analogue does not hold in general.",
     "example": "$U = \\{z = 0\\}$ (the $xy$-plane) and $W = \\{x = 0\\}$ (the $yz$-plane) in $\\mathbb{R}^3$: $\\dim U = \\dim W = 2$. Their bases $\\{\\mathbf{e}_1,\\mathbf{e}_2\\}$ and $\\{\\mathbf{e}_2,\\mathbf{e}_3\\}$ together span $\\mathbb{R}^3$, so $\\dim(U + W) = 3$. Then\n\n$$\n\\dim(U \\cap W) = 2 + 2 - 3 = 1,\n$$\n\nwhich is the $y$-axis. In general, two distinct planes through the origin in $\\mathbb{R}^3$ always meet in a line.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-vector-spaces-subspaces",
+      "c-la-linear-independence-basis"
+    ]
   },
   {
     "id": "f-la-standard-dimensions",
@@ -105,7 +113,10 @@
     "whenToUse": "Questions asking for the dimension of a space of matrices or polynomials, or of a subspace defined by linear constraints (trace zero, symmetric, zero row sums, $p(1) = 0$, …).",
     "commonMistake": "Writing $\\dim \\mathcal{P}_n = n$ (forgetting the constant term), or swapping the symmetric and skew-symmetric counts: the diagonal is free for symmetric matrices but forced to zero for skew-symmetric ones.",
     "example": "For $n = 4$: symmetric $\\frac{4\\cdot 5}{2} = 10$, skew-symmetric $\\frac{4\\cdot 3}{2} = 6$, and $10 + 6 = 16 = 4^2$.\n\nThe $3 \\times 3$ matrices with trace 0 satisfy one linear constraint on 9 entries, so the dimension is $9 - 1 = 8$. The polynomials in $\\mathcal{P}_3$ with $p(1) = 0$ have dimension $4 - 1 = 3$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-vector-spaces-subspaces",
+      "c-la-linear-independence-basis"
+    ]
   },
   {
     "id": "f-la-inverse-adjugate",
@@ -139,7 +150,11 @@
     "whenToUse": "Inverting $2 \\times 2$ matrices by inspection, finding a single entry of $A^{-1}$ (it is $C_{ji}/\\det A$), simplifying expressions such as $(A^\\top B)^{-1}$ or $(ABC)^\\top$, and solving small ($2 \\times 2$ or $3 \\times 3$) systems, or finding a single unknown, by Cramer's rule.",
     "commonMistake": "Writing $(AB)^{-1} = A^{-1}B^{-1}$; the order must reverse (the two agree only if $A$ and $B$ commute). Forgetting the transpose in the adjugate (entry $(i,j)$ of $A^{-1}$ uses cofactor $C_{ji}$, not $C_{ij}$). And $(A + B)^{-1} \\ne A^{-1} + B^{-1}$ in general.",
     "example": "$A = \\begin{bmatrix} 4 & 7 \\\\ 2 & 6 \\end{bmatrix}$: $\\det A = 24 - 14 = 10$, so\n\n$$\nA^{-1} = \\frac{1}{10}\\begin{bmatrix} 6 & -7 \\\\ -2 & 4 \\end{bmatrix} = \\begin{bmatrix} 0.6 & -0.7 \\\\ -0.2 & 0.4 \\end{bmatrix}.\n$$\n\nCheck the first row of $AA^{-1}$: $4(0.6) + 7(-0.2) = 1$ and $4(-0.7) + 7(0.4) = 0$. ✓\n\nSolve $4x + 7y = 1,\\; 2x + 6y = 2$: $A^{-1}\\begin{bmatrix} 1 \\\\ 2 \\end{bmatrix} = \\begin{bmatrix} 0.6 - 1.4 \\\\ -0.2 + 0.8 \\end{bmatrix} = \\begin{bmatrix} -0.8 \\\\ 0.6 \\end{bmatrix}$. Cramer's rule agrees: $x = \\frac{1\\cdot 6 - 7\\cdot 2}{10} = -0.8$ and $y = \\frac{4\\cdot 2 - 1\\cdot 2}{10} = 0.6$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-matrix-algebra",
+      "c-la-linear-systems",
+      "c-la-determinant"
+    ]
   },
   {
     "id": "f-la-orthogonal-matrix",
@@ -169,7 +184,9 @@
     "whenToUse": "Inverting $Q$ instantly (just transpose it), testing whether a given matrix is orthogonal (column dot products 0, column norms 1), and in the spectral decomposition and the SVD, where $Q$, $U$ and $V$ are orthogonal.",
     "commonMistake": "Treating columns that are merely orthogonal as enough. $\\begin{bmatrix} 1 & 1 \\\\ 1 & -1 \\end{bmatrix}$ has $Q^\\top Q = 2I$, so it is not orthogonal until you divide by $\\sqrt{2}$. Also, $\\det Q = \\pm 1$ is necessary but not sufficient: $\\begin{bmatrix} 1 & 1 \\\\ 0 & 1 \\end{bmatrix}$ has determinant 1 but is not orthogonal.",
     "example": "Rotation by $60^\\circ$: $Q = \\begin{bmatrix} 1/2 & -\\sqrt{3}/2 \\\\ \\sqrt{3}/2 & 1/2 \\end{bmatrix}$.\n\n- Column norms: $\\frac{1}{4} + \\frac{3}{4} = 1$; dot product: $\\frac{1}{2}\\cdot\\left(-\\frac{\\sqrt{3}}{2}\\right) + \\frac{\\sqrt{3}}{2}\\cdot\\frac{1}{2} = 0$. ✓\n- $\\det Q = \\frac{1}{4} + \\frac{3}{4} = 1$ (a rotation), and $Q^{-1} = Q^\\top$ is the rotation by $-60^\\circ$.\n- Eigenvalues: $\\lambda^2 - \\lambda + 1 = 0 \\Rightarrow \\lambda = \\frac{1}{2} \\pm \\frac{\\sqrt{3}}{2}i$, each with $|\\lambda| = 1$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-orthogonal-matrices"
+    ]
   },
   {
     "id": "f-la-idempotent-matrix",
@@ -199,7 +216,9 @@
     "whenToUse": "Whenever a question states $A^2 = A$ (or gives a hat or projection matrix) and asks for eigenvalues, rank, determinant, trace, $(I - A)^k$ or an inverse such as $(I + A)^{-1}$.",
     "commonMistake": "Assuming idempotent implies symmetric: $\\begin{bmatrix} 1 & 1 \\\\ 0 & 0 \\end{bmatrix}$ is idempotent but not symmetric (an oblique projection). Also assuming both 0 and 1 must occur as eigenvalues; $A = I$ has only 1 and $A = 0$ has only 0.",
     "example": "$A = \\begin{bmatrix} 1 & 1 \\\\ 0 & 0 \\end{bmatrix}$: $A^2 = \\begin{bmatrix} 1 & 1 \\\\ 0 & 0 \\end{bmatrix} = A$. ✓\n\n- $\\operatorname{tr} A = 1$, so $\\operatorname{rank} A = 1$, the eigenvalues are $1, 0$ and $\\det A = 0$.\n- $I - A = \\begin{bmatrix} 0 & -1 \\\\ 0 & 1 \\end{bmatrix}$ is idempotent with rank $2 - 1 = 1$.\n- $(I + A)^{-1} = I - \\frac{1}{2}A = \\begin{bmatrix} 0.5 & -0.5 \\\\ 0 & 1 \\end{bmatrix}$; check: $\\begin{bmatrix} 2 & 1 \\\\ 0 & 1 \\end{bmatrix}\\begin{bmatrix} 0.5 & -0.5 \\\\ 0 & 1 \\end{bmatrix} = I$. ✓",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-projections-idempotent"
+    ]
   },
   {
     "id": "f-la-projection-matrix",
@@ -225,7 +244,9 @@
     "whenToUse": "Projecting a vector onto a plane or subspace spanned by given vectors, fitted values in least squares, and questions on the eigenvalues, rank or trace of a projection or hat matrix.",
     "commonMistake": "\"Simplifying\" $(A^\\top A)^{-1}$ to $A^{-1}(A^\\top)^{-1}$, which is valid only when $A$ is square and invertible (and then $P = I$). Using the formula when the columns of $A$ are dependent: $A^\\top A$ is then singular, so drop the redundant columns first.",
     "example": "Project onto the plane spanned by $(1,0,1)$ and $(0,1,1)$: $A = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\\\ 1 & 1 \\end{bmatrix}$, $A^\\top A = \\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\end{bmatrix}$, $(A^\\top A)^{-1} = \\frac{1}{3}\\begin{bmatrix} 2 & -1 \\\\ -1 & 2 \\end{bmatrix}$.\n\n$$\nP = \\frac{1}{3}\\begin{bmatrix} 2 & -1 & 1 \\\\ -1 & 2 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}, \\qquad \\operatorname{tr}P = \\frac{2+2+2}{3} = 2 = \\operatorname{rank}A.\n$$\n\nFor $\\mathbf{b} = (1,1,0)$: $P\\mathbf{b} = \\left(\\frac{1}{3}, \\frac{1}{3}, \\frac{2}{3}\\right)$, error $\\mathbf{e} = \\left(\\frac{2}{3}, \\frac{2}{3}, -\\frac{2}{3}\\right)$, and $\\mathbf{e}\\cdot(1,0,1) = 0$, $\\mathbf{e}\\cdot(0,1,1) = 0$. ✓",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-projections-idempotent"
+    ]
   },
   {
     "id": "f-la-partitioned-matrix",
@@ -259,7 +280,10 @@
     "whenToUse": "Matrices with visible zero blocks: compute the determinant, eigenvalues or inverse block by block instead of expanding a $4 \\times 4$ or $5 \\times 5$ matrix. Also block multiplication in derivations (e.g. $X^\\top X$ for a design matrix split into column groups).",
     "commonMistake": "Using $\\det\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix} = \\det(AD - BC)$ with matrix blocks. This is not valid in general; it needs extra conditions (for example, $C$ and $D$ commuting). Also multiplying blocks in the wrong order ($AE \\ne EA$ for matrices).",
     "example": "$M = \\begin{bmatrix} 2 & 1 & 5 & 7 \\\\ 1 & 3 & 6 & 8 \\\\ 0 & 0 & 4 & 1 \\\\ 0 & 0 & 2 & 3 \\end{bmatrix}$ is block upper-triangular with $A = \\begin{bmatrix} 2 & 1 \\\\ 1 & 3 \\end{bmatrix}$ ($\\det = 5$) and $D = \\begin{bmatrix} 4 & 1 \\\\ 2 & 3 \\end{bmatrix}$ ($\\det = 10$). So\n\n$$\n\\det M = 5 \\times 10 = 50.\n$$\n\nIts eigenvalues are those of $D$ ($\\lambda^2 - 7\\lambda + 10 = 0 \\Rightarrow 2, 5$) and of $A$ ($\\lambda^2 - 5\\lambda + 5 = 0 \\Rightarrow \\frac{5 \\pm \\sqrt{5}}{2}$).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-matrix-algebra",
+      "c-la-determinant"
+    ]
   },
   {
     "id": "f-la-quadratic-form",
@@ -289,7 +313,9 @@
     "whenToUse": "Converting a polynomial like $3x_1^2 + 4x_1x_2 + 5x_2^2$ into matrix form, classifying definiteness, and finding the maximum or minimum of $\\mathbf{x}^\\top A\\mathbf{x}$ subject to $\\lVert\\mathbf{x}\\rVert = 1$ (answer: the largest or smallest eigenvalue).",
     "commonMistake": "Putting the full cross-term coefficient off the diagonal ($a_{12} = 4$ instead of 2), which doubles the cross term. Also reading definiteness from the eigenvalues of a non-symmetric $M$; symmetrize first.",
     "example": "$Q = 3x_1^2 + 4x_1x_2 + 5x_2^2 \\Rightarrow A = \\begin{bmatrix} 3 & 2 \\\\ 2 & 5 \\end{bmatrix}$.\n\nCheck at $\\mathbf{x} = (1,1)$: $3 + 4 + 5 = 12$ and $\\mathbf{x}^\\top A\\mathbf{x} = 3 + 2 + 2 + 5 = 12$. ✓\n\nEigenvalues: $\\lambda^2 - 8\\lambda + 11 = 0 \\Rightarrow \\lambda = 4 \\pm \\sqrt{5}$. So on $\\lVert\\mathbf{x}\\rVert = 1$, $Q$ ranges over $[4 - \\sqrt{5},\\ 4 + \\sqrt{5}] \\approx [1.764,\\ 6.236]$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-quadratic-forms"
+    ]
   },
   {
     "id": "f-la-definiteness-tests",
@@ -315,7 +341,9 @@
     "whenToUse": "Classifying quadratic forms, the second-derivative (Hessian) test in optimization, checking that a covariance matrix is valid, and convexity questions.",
     "commonMistake": "Using the leading-minor test for **semi**definiteness. $\\begin{bmatrix} 0 & 0 \\\\ 0 & -1 \\end{bmatrix}$ has $\\Delta_1 = 0$ and $\\Delta_2 = 0$, yet it is negative semidefinite, not positive semidefinite: its principal minor $-1$ is negative. Also applying these tests to a non-symmetric matrix without symmetrizing first.",
     "example": "$A = \\begin{bmatrix} 2 & -1 & 0 \\\\ -1 & 2 & -1 \\\\ 0 & -1 & 2 \\end{bmatrix}$:\n\n- $\\Delta_1 = 2 > 0$\n- $\\Delta_2 = 4 - 1 = 3 > 0$\n- $\\Delta_3 = 2(4 - 1) - (-1)(-2 - 0) + 0 = 6 - 2 = 4 > 0$\n\nSo $A$ is **positive definite**. Consistent with its eigenvalues $2 - \\sqrt{2},\\ 2,\\ 2 + \\sqrt{2} \\approx 0.586,\\ 2,\\ 3.414$, all positive.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-quadratic-forms"
+    ]
   },
   {
     "id": "f-la-consistency-rank-test",
@@ -349,7 +377,10 @@
     "whenToUse": "\"For which values of $k$ (and $\\mu$) does the system have no, a unique, or infinitely many solutions?\" Row reduce the augmented matrix and watch where a pivot can vanish.",
     "commonMistake": "Comparing the rank with $m$ (the number of equations) instead of $n$ (the number of unknowns) when deciding uniqueness. Also concluding \"infinitely many solutions\" from $\\det A = 0$ alone, without checking the augmented rank; the system may be inconsistent.",
     "example": "$x + y + z = 6,\\;\\; x + 2y + 3z = 10,\\;\\; x + 2y + kz = \\mu$. Row reduce ($R_2 - R_1$, $R_3 - R_1$, then $R_3 - R_2$):\n\n$$\n\\left[\\begin{array}{ccc|c} 1 & 1 & 1 & 6 \\\\ 0 & 1 & 2 & 4 \\\\ 0 & 0 & k-3 & \\mu-10 \\end{array}\\right]\n$$\n\n- $k \\ne 3$: rank $3 = n$, so a **unique** solution.\n- $k = 3,\\ \\mu \\ne 10$: $\\operatorname{rank}A = 2 < \\operatorname{rank}[A \\mid \\mathbf{b}] = 3$, so **no solution**.\n- $k = 3,\\ \\mu = 10$: both ranks 2 $< 3$, so **infinitely many** solutions with $3 - 2 = 1$ free variable.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-linear-systems",
+      "c-la-gaussian-elimination-lu"
+    ]
   },
   {
     "id": "f-la-general-solution-structure",
@@ -379,7 +410,10 @@
     "whenToUse": "Writing the complete solution after Gaussian elimination (free variables become the parameters of $\\mathbf{x}_h$), counting free parameters, and questions such as \"for which $k$ does $A\\mathbf{x} = \\mathbf{0}$ have a non-trivial solution\" (set $\\det A = 0$).",
     "commonMistake": "Calling the solution set of $A\\mathbf{x} = \\mathbf{b}$ ($\\mathbf{b} \\ne \\mathbf{0}$) a subspace (it does not contain $\\mathbf{0}$). Also stopping at the particular solution and forgetting the null-space part, or counting free parameters as $m - r$ instead of $n - r$.",
     "example": "$x + y + z = 6,\\;\\; x + 2y + 3z = 10$ (2 equations, 3 unknowns, rank 2, so $3 - 2 = 1$ free variable). Elimination gives $y = 4 - 2z$, $x = 6 - y - z = 2 + z$. With $z = t$:\n\n$$\n\\mathbf{x} = \\begin{bmatrix} 2 \\\\ 4 \\\\ 0 \\end{bmatrix} + t\\begin{bmatrix} 1 \\\\ -2 \\\\ 1 \\end{bmatrix}, \\quad t \\in \\mathbb{R}.\n$$\n\nCheck: $\\mathbf{x}_p$ gives $2 + 4 + 0 = 6$ and $2 + 8 + 0 = 10$; $\\mathbf{x}_h$ gives $1 - 2 + 1 = 0$ and $1 - 4 + 3 = 0$. ✓",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-linear-systems",
+      "c-la-rank-nullity"
+    ]
   },
   {
     "id": "f-la-gaussian-elimination",
@@ -413,7 +447,10 @@
     "whenToUse": "Solving linear systems, computing rank, determinants of $3 \\times 3$ and larger numeric matrices, inverses via Gauss–Jordan, and producing the $L$ and $U$ factors (the multipliers $m_{ik}$ become the entries of $L$).",
     "commonMistake": "Forgetting the sign change for each row swap, or scaling a row (e.g. halving it to get a leading 1) and not compensating in the determinant. Also reading eigenvalues off the echelon form: row operations preserve rank and the solution set, but **not** eigenvalues.",
     "example": "$A = \\begin{bmatrix} 2 & 1 & -1 \\\\ 6 & 1 & 0 \\\\ -4 & 4 & 3 \\end{bmatrix}$. Multipliers $m_{21} = 6/2 = 3$, $m_{31} = -4/2 = -2$: $R_2 - 3R_1 = (0, -2, 3)$, $R_3 + 2R_1 = (0, 6, 1)$. Then $m_{32} = 6/(-2) = -3$: $R_3 + 3R_2 = (0, 0, 10)$.\n\n$$\nU = \\begin{bmatrix} 2 & 1 & -1 \\\\ 0 & -2 & 3 \\\\ 0 & 0 & 10 \\end{bmatrix}, \\qquad \\det A = 2 \\cdot (-2) \\cdot 10 = -40 \\quad (s = 0).\n$$\n\nCofactor check along row 1: $2(3 - 0) - 1(18 - 0) + (-1)(24 + 4) = 6 - 18 - 28 = -40$. ✓ All three pivots are nonzero, so $\\operatorname{rank}A = 3$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-gaussian-elimination-lu",
+      "c-la-determinant"
+    ]
   },
   {
     "id": "f-la-characteristic-equation",
@@ -447,7 +484,9 @@
     "whenToUse": "Finding the eigenvalues of $2 \\times 2$ and $3 \\times 3$ matrices quickly, then the eigenvectors by solving $(A - \\lambda I)\\mathbf{v} = \\mathbf{0}$.",
     "commonMistake": "Row reducing $A$ first and reading eigenvalues from the echelon form (row operations change eigenvalues). Also sign slips in the cubic: in the monic form the constant term is $-\\det A$ for $n = 3$.",
     "example": "$A = \\begin{bmatrix} 4 & 1 \\\\ 2 & 3 \\end{bmatrix}$: $\\operatorname{tr}A = 7$, $\\det A = 10$, so\n\n$$\n\\lambda^2 - 7\\lambda + 10 = (\\lambda - 2)(\\lambda - 5) = 0 \\Rightarrow \\lambda = 2, 5.\n$$\n\n- $\\lambda = 5$: $A - 5I = \\begin{bmatrix} -1 & 1 \\\\ 2 & -2 \\end{bmatrix} \\Rightarrow \\mathbf{v} = (1, 1)$; check $A(1,1) = (5,5)$. ✓\n- $\\lambda = 2$: $A - 2I = \\begin{bmatrix} 2 & 1 \\\\ 2 & 1 \\end{bmatrix} \\Rightarrow \\mathbf{v} = (1, -2)$; check $A(1,-2) = (2,-4)$. ✓",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-eigenvalues-eigenvectors"
+    ]
   },
   {
     "id": "f-la-eigenvalue-trace-determinant",
@@ -473,7 +512,10 @@
     "whenToUse": "Finding a missing eigenvalue from the others, sanity-checking computed eigenvalues, and trace or determinant questions stated in terms of eigenvalues (e.g. $\\det(A^2 + I)$ or $\\operatorname{tr}(A^3)$).",
     "commonMistake": "Counting a repeated eigenvalue once: a $3 \\times 3$ matrix with eigenvalues $2, 2, 5$ has trace 9, not 7. Also $\\operatorname{tr}(AB) \\ne \\operatorname{tr}(A)\\operatorname{tr}(B)$ and $\\det(A + B) \\ne \\det A + \\det B$ in general.",
     "example": "$A = \\begin{bmatrix} 2 & 1 & 1 \\\\ 1 & 2 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}$ has the eigenvalue 1 with multiplicity 2 (since $\\operatorname{rank}(A - I) = 1$). Then:\n\n- third eigenvalue $= \\operatorname{tr}A - 1 - 1 = 6 - 2 = 4$;\n- $\\det A = 1 \\cdot 1 \\cdot 4 = 4$ (direct: $2(3) - 1(1) + 1(-1) = 4$ ✓);\n- $\\det(A^2 + I) = (1^2 + 1)(1^2 + 1)(4^2 + 1) = 2 \\cdot 2 \\cdot 17 = 68$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-eigenvalues-eigenvectors",
+      "c-la-determinant"
+    ]
   },
   {
     "id": "f-la-eigen-of-matrix-functions",
@@ -507,7 +549,10 @@
     "whenToUse": "Eigenvalues, trace or determinant of $A^2 - 3A + 2I$, $A^{-1}$, $A^{10}$, $\\operatorname{adj}A$, $(A + 2I)^{-1}$ and similar, without ever computing the matrix itself.",
     "commonMistake": "Adding the eigenvalues of $A$ and $B$ to get those of $A + B$ (valid only when they share eigenvectors, e.g. $B = cI$), and likewise multiplying them for $AB$. Also assuming $A^\\top$ has the same eigenvectors as $A$.",
     "example": "$A$ ($3 \\times 3$) has eigenvalues $1, 2, 3$, so $\\det A = 6$.\n\n- $B = A^2 - 3A + 2I$ has eigenvalues $p(\\lambda) = \\lambda^2 - 3\\lambda + 2$: $p(1) = 0,\\ p(2) = 0,\\ p(3) = 2$. So $\\det B = 0$ and $\\operatorname{tr}B = 2$.\n- $A^{-1}$ has eigenvalues $1, \\frac{1}{2}, \\frac{1}{3}$, so $\\operatorname{tr}A^{-1} = \\frac{11}{6} \\approx 1.833$.\n- $\\operatorname{adj}A$ has eigenvalues $\\frac{6}{1}, \\frac{6}{2}, \\frac{6}{3} = 6, 3, 2$, so $\\det(\\operatorname{adj}A) = 36 = (\\det A)^2$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-eigenvalues-eigenvectors",
+      "c-la-diagonalization-spectral"
+    ]
   },
   {
     "id": "f-la-cayley-hamilton",
@@ -537,7 +582,9 @@
     "whenToUse": "Computing $A^{-1}$ or a high power $A^k$ without row reduction, and simplifying polynomial expressions in $A$ (divide the polynomial by $p(\\lambda)$ and keep the remainder).",
     "commonMistake": "Writing the constant term as the scalar $c_0$ instead of $c_0I$. Also \"proving\" it by substituting $\\lambda = A$ inside $\\det(\\lambda I - A)$; expand the polynomial first, then substitute the matrix.",
     "example": "$A = \\begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\end{bmatrix}$: $\\operatorname{tr}A = 5$, $\\det A = -2$, so $A^2 - 5A - 2I = 0$.\n\n- $A^2 = 5A + 2I = \\begin{bmatrix} 7 & 10 \\\\ 15 & 22 \\end{bmatrix}$ (matches direct multiplication).\n- $A(A - 5I) = 2I \\Rightarrow A^{-1} = \\frac{1}{2}(A - 5I) = \\frac{1}{2}\\begin{bmatrix} -4 & 2 \\\\ 3 & -1 \\end{bmatrix} = \\begin{bmatrix} -2 & 1 \\\\ 1.5 & -0.5 \\end{bmatrix}$.\n\nCheck the first row of $AA^{-1}$: $1(-2) + 2(1.5) = 1$ and $1(1) + 2(-0.5) = 0$. ✓",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-diagonalization-spectral"
+    ]
   },
   {
     "id": "f-la-diagonalization",
@@ -571,7 +618,9 @@
     "whenToUse": "Computing $A^k$ (Markov chains, linear recurrences such as Fibonacci), and deciding diagonalizability when an eigenvalue is repeated.",
     "commonMistake": "Assuming a repeated eigenvalue rules out diagonalization ($I$ has eigenvalue 1 repeated and is already diagonal). Only $g < a$ does. Also mismatching the order of the columns of $P$ and the entries of $D$.",
     "example": "**Not diagonalizable:** $\\begin{bmatrix} 2 & 1 \\\\ 0 & 2 \\end{bmatrix}$ has $a(2) = 2$ but $\\operatorname{rank}(A - 2I) = \\operatorname{rank}\\begin{bmatrix} 0 & 1 \\\\ 0 & 0 \\end{bmatrix} = 1$, so $g(2) = 1 < 2$.\n\n**Power via diagonalization:** $A = \\begin{bmatrix} 4 & 1 \\\\ 2 & 3 \\end{bmatrix}$ has $\\lambda = 5, 2$ with eigenvectors $(1,1), (1,-2)$. So $P = \\begin{bmatrix} 1 & 1 \\\\ 1 & -2 \\end{bmatrix}$, $D = \\operatorname{diag}(5, 2)$, $P^{-1} = \\frac{1}{3}\\begin{bmatrix} 2 & 1 \\\\ 1 & -1 \\end{bmatrix}$, and\n\n$$\nA^3 = P\\begin{bmatrix} 125 & 0 \\\\ 0 & 8 \\end{bmatrix}P^{-1} = \\frac{1}{3}\\begin{bmatrix} 258 & 117 \\\\ 234 & 141 \\end{bmatrix} = \\begin{bmatrix} 86 & 39 \\\\ 78 & 47 \\end{bmatrix}.\n$$",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-diagonalization-spectral"
+    ]
   },
   {
     "id": "f-la-spectral-theorem",
@@ -601,7 +650,11 @@
     "whenToUse": "Symmetric matrices in PCA and covariance questions, quadratic forms, computing $A^k$ or $A^{1/2}$ of a symmetric matrix, and questions asking whether eigenvectors are orthogonal.",
     "commonMistake": "Forgetting to normalize the eigenvectors, so that $Q^\\top \\ne Q^{-1}$. Also assuming that non-symmetric matrices have orthogonal eigenvectors, or that they are always diagonalizable.",
     "example": "$A = \\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\end{bmatrix}$: $\\lambda_1 = 3$ with $\\mathbf{q}_1 = \\frac{1}{\\sqrt{2}}(1, 1)$, and $\\lambda_2 = 1$ with $\\mathbf{q}_2 = \\frac{1}{\\sqrt{2}}(1, -1)$. Here $\\mathbf{q}_1\\cdot\\mathbf{q}_2 = 0$. Rebuild $A$:\n\n$$\n3\\cdot\\frac{1}{2}\\begin{bmatrix} 1 & 1 \\\\ 1 & 1 \\end{bmatrix} + 1\\cdot\\frac{1}{2}\\begin{bmatrix} 1 & -1 \\\\ -1 & 1 \\end{bmatrix} = \\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\end{bmatrix}. \\;✓\n$$",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-quadratic-forms",
+      "c-la-diagonalization-spectral",
+      "c-la-svd"
+    ]
   },
   {
     "id": "f-la-rank-one-eigenvalues",
@@ -631,7 +684,10 @@
     "whenToUse": "Matrices such as $J$, $I + J$, \"$a$ on the diagonal and $b$ elsewhere\", $\\mathbf{x}\\mathbf{x}^\\top$, or matrices whose rows are all multiples of one row. Gives eigenvalues, determinant and trace in one line.",
     "commonMistake": "Taking the nonzero eigenvalue to be $\\lVert\\mathbf{u}\\rVert\\,\\lVert\\mathbf{v}\\rVert$ or $\\mathbf{u}^\\top\\mathbf{u}$; it is $\\mathbf{v}^\\top\\mathbf{u}$. That can be 0, and then $\\mathbf{u}\\mathbf{v}^\\top$ is nilpotent ($(\\mathbf{u}\\mathbf{v}^\\top)^2 = \\mathbf{0}$) and not diagonalizable.",
     "example": "The $4 \\times 4$ matrix with 3 on the diagonal and 1 everywhere else is $A = 2I + J_4$. Since $J_4$ has eigenvalues $4, 0, 0, 0$, $A$ has eigenvalues $6, 2, 2, 2$.\n\n$$\n\\det A = 6 \\cdot 2^3 = 48, \\qquad \\operatorname{tr}A = 6 + 2 + 2 + 2 = 12 = 4 \\times 3. \\;✓\n$$",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-eigenvalues-eigenvectors",
+      "c-la-svd"
+    ]
   },
   {
     "id": "f-la-special-matrix-eigenvalues",
@@ -669,7 +725,10 @@
     "whenToUse": "MCQ/MSQ statements such as \"a real skew-symmetric matrix of odd order is singular\", \"if $A^2 = I$ the eigenvalues are $\\pm 1$\", \"a nilpotent matrix has zero trace\", or a matrix whose rows all add up to the same number. Identify the structure first; the eigenvalues, trace and determinant then often follow without solving the characteristic equation.",
     "commonMistake": "Reading the implications backwards. Eigenvalues in $\\{0, 1\\}$ do **not** make a matrix idempotent: $\\begin{bmatrix} 1 & 1 \\\\ 0 & 1 \\end{bmatrix}$ has eigenvalues $1, 1$, but its square is $\\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}$. Also saying a real skew-symmetric matrix has \"no real eigenvalues\": 0 is real, and it always occurs when $n$ is odd.",
     "example": "- **Skew-symmetric:** $S = \\begin{bmatrix} 0 & 2 & -1 \\\\ -2 & 0 & 3 \\\\ 1 & -3 & 0 \\end{bmatrix}$ has $\\operatorname{tr}S = 0$, $\\det S = 0$ (odd order) and $S_2 = 2^2 + (-1)^2 + 3^2 = 14$ (sum of its $2 \\times 2$ principal minors). So $\\lambda^3 + 14\\lambda = 0$, giving $\\lambda = 0,\\ \\pm i\\sqrt{14}$.\n- **Equal row sums:** every row of $A = \\begin{bmatrix} 2 & 1 & 1 \\\\ 0 & 3 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}$ sums to 4, so $\\lambda_1 = 4$. Then $\\lambda_2 + \\lambda_3 = \\operatorname{tr}A - 4 = 3$ and $\\lambda_2\\lambda_3 = \\det A/4 = 8/4 = 2$, so $\\lambda_2, \\lambda_3 = 1, 2$.\n- **Nilpotent:** $N = \\begin{bmatrix} 0 & 1 & 2 \\\\ 0 & 0 & 3 \\\\ 0 & 0 & 0 \\end{bmatrix}$ is strictly upper triangular, so $N^3 = 0$, all its eigenvalues are 0, and $\\det(I + N) = 1$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-orthogonal-matrices",
+      "c-la-eigenvalues-eigenvectors"
+    ]
   },
   {
     "id": "f-la-determinant-properties",
@@ -707,7 +766,9 @@
     "whenToUse": "Evaluating determinants by hand, and the very common one-line questions: \"$\\det A = 4$ for a $3 \\times 3$ matrix; find $\\det(2A^{-1})$\", or $\\det(A^\\top A)$, $\\det(\\operatorname{adj}A)$.",
     "commonMistake": "Writing $\\det(kA) = k\\det A$: every one of the $n$ rows is scaled, so the factor is $k^n$. Also $\\det(A + B) = \\det A + \\det B$ (false), and forgetting the checkerboard signs $(-1)^{i+j}$ in the expansion.",
     "example": "$A$ is $3 \\times 3$ with $\\det A = 4$:\n\n- $\\det(2A) = 2^3 \\cdot 4 = 32$\n- $\\det(A^{-1}) = \\frac{1}{4}$\n- $\\det(3A^{-1}) = \\frac{27}{4} = 6.75$\n- $\\det(A^\\top A) = 4 \\cdot 4 = 16$\n- $\\det(\\operatorname{adj}A) = 4^{3-1} = 16$",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-determinant"
+    ]
   },
   {
     "id": "f-la-rank-nullity",
@@ -737,7 +798,10 @@
     "whenToUse": "Finding the dimension of a solution space or null space, counting free parameters, and deciding whether a linear map can be one-to-one or onto (a map $\\mathbb{R}^5 \\to \\mathbb{R}^3$ has nullity $\\ge 2$, so it cannot be one-to-one).",
     "commonMistake": "Using $m$ (the number of rows) in place of $n$. The nullity of $A^\\top$ is the one that uses $m$: $\\operatorname{nullity}(A^\\top) = m - r$.",
     "example": "$A = \\begin{bmatrix} 1 & 2 & 3 & 4 \\\\ 2 & 4 & 6 & 8 \\\\ 1 & 0 & 1 & 0 \\end{bmatrix}$ ($3 \\times 4$). Row 2 $= 2 \\times$ row 1, and rows 1 and 3 are not parallel, so $\\operatorname{rank}A = 2$.\n\n$$\n\\operatorname{nullity}(A) = 4 - 2 = 2, \\qquad \\operatorname{nullity}(A^\\top) = 3 - 2 = 1.\n$$",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-linear-systems",
+      "c-la-rank-nullity"
+    ]
   },
   {
     "id": "f-la-rank-inequalities",
@@ -763,7 +827,10 @@
     "whenToUse": "Bounding the rank of products ($\\mathbf{x}\\mathbf{y}^\\top$, $X^\\top X$, $AB$ with given ranks), deciding invertibility of $X^\\top X$ in regression, and the rank of a sum of outer products.",
     "commonMistake": "Assuming $\\operatorname{rank}(AB) = \\min(\\operatorname{rank}A, \\operatorname{rank}B)$; it can be smaller. $A = \\begin{bmatrix} 1 & 0 \\\\ 0 & 0 \\end{bmatrix}$ and $B = \\begin{bmatrix} 0 & 0 \\\\ 0 & 1 \\end{bmatrix}$ each have rank 1, but $AB = 0$. Similarly $\\operatorname{rank}(A + B)$ can drop (take $B = -A$).",
     "example": "$A$ is $5 \\times 3$ with rank 3 and $B$ is $3 \\times 4$ with rank 2. Upper bound: $\\operatorname{rank}(AB) \\le \\min(3, 2) = 2$. Sylvester lower bound: $\\operatorname{rank}(AB) \\ge 3 + 2 - 3 = 2$. Hence\n\n$$\n\\operatorname{rank}(AB) = 2.\n$$\n\nAlso $\\operatorname{rank}(A^\\top A) = 3$, so the $3 \\times 3$ matrix $A^\\top A$ is invertible.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-rank-nullity",
+      "c-la-svd"
+    ]
   },
   {
     "id": "f-la-projection-onto-line",
@@ -793,7 +860,9 @@
     "whenToUse": "The component of a vector along a direction, the distance from a point to a line through the origin, Gram–Schmidt orthogonalization, and the score of a data point along a unit principal direction ($\\mathbf{a}^\\top\\mathbf{b}$).",
     "commonMistake": "Dividing by $\\lVert\\mathbf{a}\\rVert$ instead of $\\lVert\\mathbf{a}\\rVert^2 = \\mathbf{a}^\\top\\mathbf{a}$ when returning the projected **vector** (that mixes up the scalar and vector projections). Also projecting $\\mathbf{a}$ onto $\\mathbf{b}$ when the question asks for $\\mathbf{b}$ onto $\\mathbf{a}$.",
     "example": "$\\mathbf{a} = (1, 2, 2)$, $\\mathbf{b} = (3, 0, 3)$: $\\mathbf{a}^\\top\\mathbf{b} = 3 + 0 + 6 = 9$ and $\\mathbf{a}^\\top\\mathbf{a} = 9$, so\n\n$$\n\\operatorname{proj}_{\\mathbf{a}}\\mathbf{b} = \\frac{9}{9}(1, 2, 2) = (1, 2, 2), \\qquad \\mathbf{e} = (2, -2, 1).\n$$\n\nCheck $\\mathbf{e}\\cdot\\mathbf{a} = 2 - 4 + 2 = 0$. ✓ The distance from $\\mathbf{b}$ to the line is $\\lVert\\mathbf{e}\\rVert = \\sqrt{4 + 4 + 1} = 3$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-projections-idempotent"
+    ]
   },
   {
     "id": "f-la-gram-schmidt",
@@ -827,7 +896,10 @@
     "whenToUse": "Building an orthonormal basis for a span or a column space, projecting onto a subspace without inverting $A^\\top A$, computing a QR factorization, and checking a list of vectors for dependence (a zero $\\mathbf{w}_k$ flags it).",
     "commonMistake": "Subtracting projections onto the **original** $\\mathbf{a}_j$ instead of the orthogonalized $\\mathbf{w}_j$ (or $\\mathbf{q}_j$); the $\\mathbf{a}_j$ are not orthogonal to each other, so the result is not orthogonal either. Forgetting to normalize (orthogonal is not orthonormal). And treating the $m \\times n$ factor $Q$ as an orthogonal matrix when $m > n$: $Q^\\top Q = I_n$, but $QQ^\\top \\ne I_m$ (it is the projection onto $C(A)$).",
     "example": "$\\mathbf{a}_1 = (2, 1, 2)$, $\\mathbf{a}_2 = (3, 3, 0)$:\n\n- $\\mathbf{w}_1 = \\mathbf{a}_1$, $\\lVert\\mathbf{w}_1\\rVert = 3$.\n- $\\mathbf{w}_2 = \\mathbf{a}_2 - \\frac{\\mathbf{w}_1^\\top\\mathbf{a}_2}{\\mathbf{w}_1^\\top\\mathbf{w}_1}\\,\\mathbf{w}_1 = (3, 3, 0) - \\frac{9}{9}(2, 1, 2) = (1, 2, -2)$; check $\\mathbf{w}_1\\cdot\\mathbf{w}_2 = 2 + 2 - 4 = 0$ ✓ and $\\lVert\\mathbf{w}_2\\rVert = 3$.\n- $\\mathbf{q}_1 = \\frac{1}{3}(2, 1, 2)$, $\\mathbf{q}_2 = \\frac{1}{3}(1, 2, -2)$, and $r_{12} = \\mathbf{q}_1^\\top\\mathbf{a}_2 = \\frac{6 + 3 + 0}{3} = 3$:\n\n$$\n\\begin{bmatrix} 2 & 3 \\\\ 1 & 3 \\\\ 2 & 0 \\end{bmatrix} = \\underbrace{\\frac{1}{3}\\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\\\ 2 & -2 \\end{bmatrix}}_{Q}\\,\\underbrace{\\begin{bmatrix} 3 & 3 \\\\ 0 & 3 \\end{bmatrix}}_{R}.\n$$\n\nProjection of $\\mathbf{b} = (0, 0, 9)$ onto this plane: $\\mathbf{q}_1^\\top\\mathbf{b} = 6$ and $\\mathbf{q}_2^\\top\\mathbf{b} = -6$, so $\\mathbf{p} = 6\\mathbf{q}_1 - 6\\mathbf{q}_2 = (4, 2, 4) - (2, 4, -4) = (2, -2, 8)$. The error $\\mathbf{e} = \\mathbf{b} - \\mathbf{p} = (-2, 2, 1)$ is orthogonal to $\\mathbf{a}_1$ ($-4 + 2 + 2 = 0$) and to $\\mathbf{a}_2$ ($-6 + 6 + 0 = 0$). ✓",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-orthogonal-matrices",
+      "c-la-projections-idempotent"
+    ]
   },
   {
     "id": "f-la-least-squares-normal-equations",
@@ -857,7 +929,9 @@
     "whenToUse": "Overdetermined systems, fitting a line $y = c + dt$ (or any model linear in its parameters) to data points, and projecting onto a subspace spanned by given vectors.",
     "commonMistake": "\"Cancelling\" $A^\\top$ in $A^\\top A\\hat{\\mathbf{x}} = A^\\top\\mathbf{b}$ to get $A\\hat{\\mathbf{x}} = \\mathbf{b}$ (not allowed when $A$ is not square and invertible). Forgetting the column of ones for the intercept, which forces the fitted line through the origin.",
     "example": "Fit $y = c + dt$ to $(t, y) = (0, 1), (1, 2), (2, 6)$: $A = \\begin{bmatrix} 1 & 0 \\\\ 1 & 1 \\\\ 1 & 2 \\end{bmatrix}$, $\\mathbf{b} = (1, 2, 6)$.\n\n$$\nA^\\top A = \\begin{bmatrix} 3 & 3 \\\\ 3 & 5 \\end{bmatrix}, \\quad A^\\top\\mathbf{b} = \\begin{bmatrix} 9 \\\\ 14 \\end{bmatrix} \\;\\Rightarrow\\; 3c + 3d = 9,\\;\\; 3c + 5d = 14 \\;\\Rightarrow\\; d = 2.5,\\; c = 0.5.\n$$\n\nBest line $y = 0.5 + 2.5t$. Fitted $\\mathbf{p} = (0.5, 3, 5.5)$, residual $\\mathbf{e} = (0.5, -1, 0.5)$, $A^\\top\\mathbf{e} = (0, 0)$ ✓. Minimum sum of squared errors $= 0.25 + 1 + 0.25 = 1.5$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-projections-idempotent"
+    ]
   },
   {
     "id": "f-la-lu-decomposition",
@@ -891,7 +965,9 @@
     "whenToUse": "Solving $A\\mathbf{x} = \\mathbf{b}$ for several right-hand sides, computing determinants, and questions asking for a specific entry of $L$ or $U$.",
     "commonMistake": "Storing the negatives of the multipliers in $L$; the entry is $+m_{ik}$ when the step is $R_i \\leftarrow R_i - m_{ik}R_k$. Also forgetting that factorization without pivoting fails at a zero pivot: $\\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}$ has no LU factorization and needs $PA = LU$.",
     "example": "$A = \\begin{bmatrix} 2 & 1 & -1 \\\\ 6 & 1 & 0 \\\\ -4 & 4 & 3 \\end{bmatrix}$ with multipliers $m_{21} = 3$, $m_{31} = -2$, $m_{32} = -3$:\n\n$$\nL = \\begin{bmatrix} 1 & 0 & 0 \\\\ 3 & 1 & 0 \\\\ -2 & -3 & 1 \\end{bmatrix}, \\qquad U = \\begin{bmatrix} 2 & 1 & -1 \\\\ 0 & -2 & 3 \\\\ 0 & 0 & 10 \\end{bmatrix}.\n$$\n\nPivot check: $\\Delta_1 = 2$, $\\Delta_2 = 2 \\cdot 1 - 1 \\cdot 6 = -4$, $\\Delta_3 = \\det A = -40$, so $u_{22} = -4/2 = -2$ and $u_{33} = -40/(-4) = 10$. ✓\n\nSolve for $\\mathbf{b} = (1, 8, 13)$:\n- Forward ($L\\mathbf{y} = \\mathbf{b}$): $y_1 = 1$, $y_2 = 8 - 3(1) = 5$, $y_3 = 13 + 2(1) + 3(5) = 30$.\n- Back ($U\\mathbf{x} = \\mathbf{y}$): $x_3 = 30/10 = 3$, then $-2x_2 + 3(3) = 5 \\Rightarrow x_2 = 2$, then $2x_1 + 2 - 3 = 1 \\Rightarrow x_1 = 1$.\n\nSo $\\mathbf{x} = (1, 2, 3)$; check $A\\mathbf{x} = (2 + 2 - 3,\\ 6 + 2 + 0,\\ -4 + 8 + 9) = (1, 8, 13)$ ✓.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-gaussian-elimination-lu"
+    ]
   },
   {
     "id": "f-la-svd",
@@ -929,6 +1005,8 @@
     "whenToUse": "Questions on singular values, rank, matrix 2-norm or Frobenius norm, low-rank approximation error, PCA (the principal directions are the right singular vectors of the centred data matrix) and pseudo-inverses.",
     "commonMistake": "Taking the singular values to be the eigenvalues of $A$; for a non-symmetric $A$ they differ, and for a symmetric $A$, $\\sigma_i = |\\lambda_i|$. Forgetting the square root of the eigenvalues of $A^\\top A$. Choosing $\\mathbf{u}_i$ independently of $\\mathbf{v}_i$; the signs must match via $\\mathbf{u}_i = A\\mathbf{v}_i/\\sigma_i$.",
     "example": "$A = \\begin{bmatrix} 2 & 2 \\\\ -1 & 1 \\end{bmatrix}$: $A^\\top A = \\begin{bmatrix} 5 & 3 \\\\ 3 & 5 \\end{bmatrix}$ has eigenvalues $8$ and $2$ (eigenvectors $(1, 1)$ and $(1, -1)$), so\n\n$$\n\\sigma_1 = \\sqrt{8} = 2\\sqrt{2} \\approx 2.828, \\qquad \\sigma_2 = \\sqrt{2} \\approx 1.414.\n$$\n\n- $\\mathbf{v}_1 = \\frac{1}{\\sqrt{2}}(1, 1)$: $A\\mathbf{v}_1 = (2\\sqrt{2}, 0) \\Rightarrow \\mathbf{u}_1 = (1, 0)$. $\\mathbf{v}_2 = \\frac{1}{\\sqrt{2}}(1, -1)$: $A\\mathbf{v}_2 = (0, -\\sqrt{2}) \\Rightarrow \\mathbf{u}_2 = (0, -1)$.\n- Checks: $\\sigma_1\\sigma_2 = 4 = |\\det A|$ ✓ and $\\sigma_1^2 + \\sigma_2^2 = 10 = 4 + 4 + 1 + 1 = \\lVert A\\rVert_F^2$ ✓.\n- Best rank-1 approximation: $A_1 = \\sigma_1\\mathbf{u}_1\\mathbf{v}_1^\\top = \\begin{bmatrix} 2 & 2 \\\\ 0 & 0 \\end{bmatrix}$, with error $\\lVert A - A_1\\rVert_2 = \\sigma_2 = \\sqrt{2} \\approx 1.414$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-la-svd"
+    ]
   }
 ]

@@ -110,7 +110,7 @@ export default async function SubjectFormulasPage({ params }: Params) {
       <TableScrollFocus />
       {header}
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_14rem]">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_14rem] print:block">
         <aside className="no-print hidden lg:col-start-2 lg:row-start-1 lg:block">
           <nav aria-label="Topics in this formula book" className="sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-[var(--radius)] border border-border bg-surface p-2">
             <p className="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-fg-3">Jump to topic</p>

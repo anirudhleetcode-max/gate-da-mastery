@@ -197,6 +197,7 @@ export default async function ConceptPage({ params }: Params) {
           <LearnSection
             id="pyqs"
             title="Related official PYQs"
+            bodyClassName={pyqRows.length ? "px-2 sm:px-5" : undefined}
             description={pyqRows.length ? `${plural(pyqRows.length, "question")} from official GATE DA papers that test this concept` : undefined}
             action={
               <Link href={`/pyqs/browse?subject=${subject.id}&topic=${topic.id}`} className="inline-flex min-h-8 items-center gap-1 text-sm font-medium text-accent-text hover:underline">
@@ -220,6 +221,7 @@ export default async function ConceptPage({ params }: Params) {
           <LearnSection
             id="practice"
             title="Practice"
+            bodyClassName={practiceRows.length ? "px-2 sm:px-5" : undefined}
             description={practiceRows.length ? `${plural(practiceRows.length, "original practice question")} on this concept` : undefined}
             action={
               poolCount && practiceRows.length ? (

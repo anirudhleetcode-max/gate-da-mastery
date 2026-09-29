@@ -27,7 +27,7 @@ export function ConceptPyqList({ rows }: { rows: QuestionRow[] }) {
   const correct = ids.filter((id) => pyqState(statuses.get(id)) === "correct").length;
   return (
     <div className="space-y-2">
-      <p className="text-sm text-fg-2">
+      <p className="px-1 text-sm text-fg-2 sm:px-0">
         {attempted ? (
           <>
             You have attempted <span className="tnum font-semibold text-fg">{attempted}</span> of <span className="tnum">{ids.length}</span>;{" "}
@@ -52,7 +52,7 @@ export function ConceptPyqList({ rows }: { rows: QuestionRow[] }) {
           </li>
         ))}
       </ol>
-      <p className="text-xs text-fg-3">Difficulty labels are platform estimates; GATE does not publish difficulty levels.</p>
+      <p className="px-1 text-xs text-fg-3 sm:px-0">Difficulty labels are platform estimates; GATE does not publish difficulty levels.</p>
     </div>
   );
 }
