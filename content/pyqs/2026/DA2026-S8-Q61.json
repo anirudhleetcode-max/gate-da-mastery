@@ -1,0 +1,75 @@
+{
+  "id": "DA2026-S8-Q61",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 61,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-er-relational",
+  "subtopicIds": [
+    "dbw-er-model",
+    "dbw-relational-model",
+    "dbw-normal-forms"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - two directly linked concepts: the ER-to-relational mapping rules for a multi-valued attribute and an M:N relationship, and the 3NF (partial-dependency) check that rules out merging. It is routine for a prepared student but the total-participation wording is a likely distraction; about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Consider an ER model with the entities $\\mathtt{E1}(\\mathtt{A}_{11},\\mathtt{A}_{12},\\mathtt{A}_{13})$ and $\\mathtt{E2}(\\mathtt{A}_{21},\\mathtt{A}_{22},\\mathtt{A}_{23})$, where, $\\mathtt{A}_{11}$, $\\mathtt{A}_{12}$, $\\mathtt{A}_{13}$ are the attributes of $\\mathtt{E1}$, and $\\mathtt{A}_{21}$, $\\mathtt{A}_{22}$, $\\mathtt{A}_{23}$ are the attributes of $\\mathtt{E2}$. Let $\\mathtt{A}_{22}$ be a multi-valued attribute. $\\mathtt{A}_{11}$ and $\\mathtt{A}_{21}$ are the primary keys of E1 and E2, respectively.\n\nLet $\\mathtt{R12}$ be a many-to-many relationship between $\\mathtt{E1}$ and $\\mathtt{E2}$. Participation of both $\\mathtt{E1}$ and $\\mathtt{E2}$ in $\\mathtt{R12}$ is total.\n\nThe minimum number of relations required to convert the ER model into relational model (assuming there is no other functional dependency) where each relation is in third normal form (3NF) is __________ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "4 to 4",
+  "answer": {
+    "kind": "NAT",
+    "min": 4,
+    "max": 4
+  },
+  "solution": {
+    "quick": "Apply the standard mapping. E1 gives $E1(\\underline{A_{11}}, A_{12}, A_{13})$. E2 gives $E2(\\underline{A_{21}}, A_{23})$, and its multi-valued attribute goes to its own relation $E2\\_A22(\\underline{A_{21}, A_{22}})$. The many-to-many relationship gives $R12(\\underline{A_{11}, A_{21}})$. All four relations are in 3NF. Merging any of them either needs a non-atomic column or creates a partial dependency, and total participation does not let an M:N relationship be absorbed. Minimum = **4**.",
+    "steps": [
+      {
+        "title": "List the dependencies the ER model implies",
+        "body": "The only functional dependencies (FDs) are the ones implied by the keys; the question says there are no others:\n\n$$\nA_{11} \\to A_{12}\\,A_{13}, \\qquad A_{21} \\to A_{23}.\n$$\n\n- $A_{22}$ is **multi-valued**: one E2 entity can have several $A_{22}$ values. So $A_{21} \\not\\to A_{22}$; the link is only a multivalued dependency $A_{21} \\twoheadrightarrow A_{22}$.\n- $\\mathtt{R12}$ is **many-to-many**: an E1 entity can be related to many E2 entities and vice versa. So neither $A_{11} \\to A_{21}$ nor $A_{21} \\to A_{11}$ holds.\n- **Total participation** of both sides only means that every E1 entity and every E2 entity takes part in at least one $\\mathtt{R12}$ pair. It adds no FD.\n\nRecall the 3NF test: for every non-trivial FD $X \\to A$ that holds in a relation, either $X$ is a superkey of the relation or $A$ is a prime attribute (part of some candidate key)."
+      },
+      {
+        "title": "Map the entities (and the multi-valued attribute)",
+        "body": "**E1** (strong entity, all attributes single-valued):\n\n$$\nE1(\\underline{A_{11}}, A_{12}, A_{13}), \\qquad \\text{key } A_{11}.\n$$\n\nThe only non-trivial FD is $A_{11} \\to A_{12}A_{13}$, and $A_{11}$ is the key, so E1 is in BCNF and therefore in 3NF.\n\n**E2 with its multi-valued attribute.** A relation must hold atomic values (1NF), so the set of $A_{22}$ values cannot be stored in one cell of E2. The standard mapping splits E2 into:\n\n$$\nE2(\\underline{A_{21}}, A_{23}), \\qquad E2\\_A22(\\underline{A_{21}, A_{22}}),\n$$\n\nwith $A_{21}$ in $E2\\_A22$ a foreign key to E2. In $E2$ the FD $A_{21} \\to A_{23}$ has a key on the left. $E2\\_A22$ has only trivial FDs. Both are in BCNF, hence in 3NF.\n\n*Why not one relation for E2?* Flattening to $(A_{21}, A_{22}, A_{23})$, one row per $A_{22}$ value, makes the key $\\{A_{21}, A_{22}\\}$. Then $A_{21} \\to A_{23}$ is a **partial dependency** (a non-prime attribute depends on part of the key). That violates 2NF, so the relation is not in 3NF; it would also repeat $A_{23}$ once for every $A_{22}$ value."
+      },
+      {
+        "title": "Map the many-to-many relationship",
+        "body": "An M:N relationship needs its own relation, keyed by both participating keys:\n\n$$\nR12(\\underline{A_{11}, A_{21}}), \\qquad A_{11} \\text{ references } E1,\\ A_{21} \\text{ references } E2.\n$$\n\nIt has only trivial FDs, so it is in BCNF.\n\n*Why can't it be absorbed, even with total participation?*\n\n- Folding it into E1 gives $(A_{11}, A_{12}, A_{13}, A_{21})$ with key $\\{A_{11}, A_{21}\\}$, since one $A_{11}$ now appears with many $A_{21}$ values. Then $A_{11} \\to A_{12}A_{13}$ is a partial dependency, so the relation is not in 3NF.\n- Folding it into E2 gives $(A_{21}, A_{23}, A_{11})$ with key $\\{A_{11}, A_{21}\\}$, and $A_{21} \\to A_{23}$ is a partial dependency, so again not 3NF.\n\nTotal participation lets a relationship be merged into an entity's relation only for 1:1 or 1:N relationships, where the other side's key becomes a (NOT NULL) foreign key. For M:N it only adds the constraint that every $A_{11}$ and every $A_{21}$ appears in $R12$."
+      },
+      {
+        "title": "Check the final schema and count",
+        "body": "| Relation | Attributes | Key | Non-trivial FDs | 3NF? |\n| --- | --- | --- | --- | :---: |\n| $E1$ | $A_{11}, A_{12}, A_{13}$ | $A_{11}$ | $A_{11} \\to A_{12}A_{13}$ | ✔ |\n| $E2$ | $A_{21}, A_{23}$ | $A_{21}$ | $A_{21} \\to A_{23}$ | ✔ |\n| $E2\\_A22$ | $A_{21}, A_{22}$ | $\\{A_{21}, A_{22}\\}$ | none | ✔ |\n| $R12$ | $A_{11}, A_{21}$ | $\\{A_{11}, A_{21}\\}$ | none | ✔ |\n\nA partial dependency rules out every merge that would put an entity's non-key attributes ($A_{12}, A_{13}$ or $A_{23}$) next to a composite key.\n\nOne more merge is sometimes suggested: combine $R12$ and $E2\\_A22$ into $(A_{11}, A_{21}, A_{22})$. That relation has only trivial FDs, but it stores every combination of an E2 entity's partners with its $A_{22}$ values (the multivalued dependency $A_{21} \\twoheadrightarrow A_{22}$, a 4NF violation that causes heavy redundancy), and it cannot record an E2 entity that has no $A_{22}$ value without a NULL in the key. The standard ER-to-relational mapping, which this question is based on, keeps one relation per multi-valued attribute and one per M:N relationship.\n\nMinimum number of relations = **4**, which matches the official key (4 to 4)."
+      }
+    ],
+    "finalAnswer": "**4**",
+    "teaching": "**Mapping an ER diagram to relations: the standard rules.**\n\n1. **Strong entity** → one relation containing its simple (single-valued) attributes, with the entity's key as the primary key. Composite attributes are flattened into their components.\n2. **Multi-valued attribute** → a separate relation $(\\text{owner key}, \\text{attribute})$ whose key is the combination of both. A relational cell must hold one atomic value (1NF), so a set of phone numbers or skills cannot sit inside the entity's row.\n3. **1:1 relationship** → no new relation. Put the key of one side into the other as a foreign key, preferably on the side with total participation. If both sides participate totally, the two entities can even be merged into one relation.\n4. **1:N relationship** → no new relation. Put the key of the \"1\" side into the \"N\" side's relation as a foreign key.\n5. **M:N relationship** → always a separate relation containing both keys (plus any relationship attributes), with the pair of keys as the primary key.\n\n**Why the separate relations are needed for normal forms.** 2NF forbids **partial dependencies**: a non-prime attribute depending on part of a composite key. 3NF additionally forbids **transitive dependencies**: for every non-trivial $X \\to A$, $X$ must be a superkey or $A$ must be prime. Whenever you try to glue an entity's descriptive attributes (such as $A_{12}, A_{13}$) onto a table whose key is composite (because of an M:N relationship or a multi-valued attribute), the entity key alone still determines those attributes. That is a partial dependency, so the table is not in 2NF and hence not in 3NF.\n\n**What total participation does and does not do.** Total participation means \"every entity must take part in at least one relationship instance\". For 1:1 and 1:N relationships it justifies merging, because the foreign key can be NOT NULL. For M:N it changes nothing structurally: you still need a relation of pairs.\n\n**Quick counting rule** (when nothing else, such as weak entities, is involved): minimum relations = strong entities + multi-valued attributes + M:N relationships.\n\n**Connecting to this question.** There are 2 strong entities (E1, E2), 1 multi-valued attribute ($A_{22}$) and 1 M:N relationship (R12), so $2 + 1 + 1 = 4$ relations, each in 3NF.",
+    "shortcut": "Minimum relations = strong entities + multi-valued attributes + M:N relationships. Here that is $2 + 1 + 1 = 4$. (1:1 and 1:N relationships would add nothing, since they can be absorbed as foreign keys; there are none here.)",
+    "commonTrap": "- Answering **3** by keeping the multi-valued attribute $A_{22}$ inside E2. Stored as a set it breaks 1NF; flattened, it creates the partial dependency $A_{21} \\to A_{23}$.\n- Answering **3** (or 2) by thinking that total participation lets the M:N relationship be merged into E1 or E2. That works only for 1:1 or 1:N relationships; for M:N it creates the partial dependencies $A_{11} \\to A_{12}A_{13}$ or $A_{21} \\to A_{23}$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q61-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the entity names E1 and E2, the relationship name R12 and the attribute names A11 to A23 in a monospace font, with the two-digit attribute indices as subscripts. All of these are rendered as math in \\mathtt with subscripts (e.g. $\\mathtt{A}_{11}$), so that the subscripts are kept in the same monospace style. In the phrase 'are the primary keys of E1 and E2, respectively' the paper sets E1 and E2 in the text (serif) font, so they are plain text there. The following are kept as printed: no spaces after the commas inside E1(A11,A12,A13) and E2(A21,A22,A23), the comma after 'where', and 'into relational model' without an article. 'integer' is bold in the answer note, as in the paper, and the space the paper leaves between the blank and the full stop is kept. The region contains no embedded figure (no candidate images), and none is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "4",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import combinations\n# FDs implied by the ER model: keys of E1 and E2. A22 is multi-valued (A21 ->> A22 is an MVD, not an FD);\n# R12 is many-to-many, so neither A11 -> A21 nor A21 -> A11 holds.\nFDS = [({'A11'}, {'A12', 'A13'}), ({'A21'}, {'A23'})]\ndef closure(X):\n    X = set(X); changed = True\n    while changed:\n        changed = False\n        for l, r in FDS:\n            if l <= X and not r <= X: X |= r; changed = True\n    return X\ndef subsets(R):\n    return [set(c) for k in range(1, len(R) + 1) for c in combinations(sorted(R), k)]\ndef keys(R):\n    sk = [X for X in subsets(R) if R <= closure(X)]\n    return [K for K in sk if not any(o < K for o in sk)]\ndef is_3nf(R):\n    R = set(R); prime = set().union(*keys(R))\n    for X in subsets(R):\n        for A in (closure(X) & R) - X:          # non-trivial X -> A projected onto R\n            if not (R <= closure(X) or A in prime):\n                return False\n    return True\nstandard = {'E1': {'A11', 'A12', 'A13'}, 'E2': {'A21', 'A23'},\n            'E2_A22': {'A21', 'A22'}, 'R12': {'A11', 'A21'}}\nfor name, R in standard.items():\n    print(name, sorted(R), 'keys', [sorted(k) for k in keys(R)], '3NF' if is_3nf(R) else 'NOT 3NF')\nassert all(is_3nf(R) for R in standard.values()) and len(standard) == 4   # official key 4 to 4\n# merges that would save a relation but break 3NF (partial dependencies on a composite key)\nassert not is_3nf({'A11', 'A12', 'A13', 'A21'})    # R12 folded into E1: A11 -> A12,A13\nassert not is_3nf({'A21', 'A23', 'A11'})           # R12 folded into E2: A21 -> A23\nassert not is_3nf({'A21', 'A22', 'A23'})           # A22 flattened into E2: A21 -> A23\n# caveat: R12 joined with the A22 table has only trivial FDs, so it passes an FD-only 3NF test,\n# but it stores the cross product of partners x A22-values (MVD A21 ->> A22, a 4NF violation) and\n# cannot hold an E2 entity with no A22 value; the standard mapping keeps them separate.\nprint('R12 x A22 merge 3NF by FDs only:', is_3nf({'A11', 'A21', 'A22'}))\n",
+    "notes": "The standard ER-to-relational mapping gives E1(A11, A12, A13), E2(A21, A23), E2_A22(A21, A22) and R12(A11, A21). An FD-closure 3NF test in checkCode confirms each is in 3NF under the key FDs A11 -> A12 A13 and A21 -> A23. Folding R12 into E1 or E2, or flattening A22 into E2, creates a partial dependency and fails 3NF. This gives 4, which matches the official key 4 to 4. Caveat for the reviewer: joining R12 with the A22 relation into (A11, A21, A22) leaves only trivial FDs, so it passes an FD-only 3NF test. It is not the standard mapping: it violates 4NF through the MVD A21 ->> A22, and it cannot record an E2 entity with no A22 value. The solution follows the standard mapping, and the key agrees with it."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -100,16 +100,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Exponents $\\log_{10}(m)$ and $\\log_{10}(n)$ read from the rendered image (the PDF text layer flattens the superscripts)."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The exponents $\\log_{10}(m)$ and $\\log_{10}(n)$ are superscripts in the official rendering (the PDF text layer flattens them) and are transcribed as such; all option expressions match."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C",
     "agreesWithKey": true,
     "checkCode": "import math, random, sympy as sp\nm,n=sp.symbols('m n',positive=True)\nprint(sp.expand_log(sp.log(n**(sp.log(m,10)))-sp.log(m**(sp.log(n,10))),force=True))  # 0 -> log x = log y\nrandom.seed(1)\nfor _ in range(10**5):  # numeric spot-check with m > n > 0\n    n_=10**random.uniform(-5,5); m_=n_*10**random.uniform(1e-6,5)\n    x=n_**math.log10(m_); y=m_**math.log10(n_)\n    assert math.isclose(math.log10(x),math.log10(y),rel_tol=1e-9,abs_tol=1e-9)\nprint(10**math.log10(100), 100**math.log10(10), math.log10(100))  # m=100,n=10: x=y=100, log10(y)=2",
-    "notes": "Symbolic check: log(x) - log(y) simplifies to 0; 100,000 random positive pairs with m > n all give x = y; m = 100, n = 10 gives x = y = 100 and log10(y) = 2. Matches the official key (C)."
+    "notes": "Blind re-solve before viewing the key: log10 x = log10(m) log10(n) = log10 y, and log10 is one-to-one, so x = y for all positive m, n (the condition m > n is irrelevant), giving (C). Independent random numeric check (m > n > 0) and the stored sympy/numeric check both confirm x = y; m = 100, n = 10 gives x = y = 100 and log10(y) = 2, ruling out (D). Agrees with the official key (C)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

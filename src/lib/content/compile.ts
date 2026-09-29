@@ -44,6 +44,8 @@ export interface RawContent {
   formulaFiles: { file: string; data: unknown }[];
   strategy: unknown | null;
   roadmap: unknown | null;
+  /** Official answer-key tables parsed from the key PDFs (content/exam/official-keys.json). */
+  officialKeys?: unknown | null;
 }
 
 export interface CompileOptions {
@@ -93,6 +95,21 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
     if (Number.isNaN(d.getTime()) || d.getUTCFullYear() !== p.year) err(p.id, `exam date ${p.examDate} inconsistent with year ${p.year}`);
     if (d.getUTCMonth() > 2) warn(p.id, `exam date ${p.examDate} is outside the usual Jan–Mar GATE window`);
   }
+  const keyTables = parse(
+    z.array(z.object({ paperId: z.string(), sourceId: z.string(), note: z.string(), rows: z.array(z.object({ q: z.number(), session: z.number(), type: z.enum(["MCQ", "MSQ", "NAT"]), section: z.enum(["GA", "DA"]), key: z.string(), marks: z.number() })) })),
+    raw.officialKeys ?? [],
+    "exam/official-keys.json",
+  ) ?? [];
+  const officialKey = new Map<string, { session: number; type: string; section: string; key: string; marks: number }>();
+  for (const t of keyTables) {
+    const paper = paperById.get(t.paperId);
+    if (!paper) err("official-keys", `unknown paper ${t.paperId}`);
+    if (!sourceIds.has(t.sourceId)) err("official-keys", `unknown source ${t.sourceId}`);
+    for (const r of t.rows) officialKey.set(`${t.paperId}#${r.q}`, r);
+    if (paper && t.rows.length !== paper.totalQuestions) err(t.paperId, `official key has ${t.rows.length} rows, paper has ${paper.totalQuestions} questions`);
+    if (paper && t.rows.reduce((a, r) => a + r.marks, 0) !== paper.totalMarks) err(t.paperId, "official key marks do not sum to the paper total");
+    if (paper && t.rows.some((r) => r.session !== paper.session)) err(t.paperId, "official key session differs from paper session");
+  }
   for (const s of syllabus.subjects) for (const sid of s.sourceIds) if (!sourceIds.has(sid)) err(`syllabus:${s.id}`, `unknown source ${sid}`);
   if (pattern) for (const f of pattern.facts) for (const sid of f.sourceIds) if (!sourceIds.has(sid)) err(`pattern:${f.id}`, `unknown source ${sid}`);
 
@@ -133,6 +150,17 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
     if (paper.year !== q.year) err(q.id, "year differs from paper year");
     if (!q.id.includes(`-S${paper.session}-`)) err(q.id, `id session does not match paper session ${paper.session}`);
     for (const sid of q.sourceIds) if (!sourceIds.has(sid)) err(q.id, `unknown source ${sid}`);
+    // Independent cross-check against the machine-parsed official key table.
+    const k = officialKey.get(`${q.paperId}#${q.questionNumber}`);
+    if (keyTables.length) {
+      if (!k) err(q.id, "no row in the official key table");
+      else {
+        if (k.key.replace(/\s+/g, " ").trim() !== q.officialKeyRaw.replace(/\s+/g, " ").trim()) err(q.id, `officialKeyRaw "${q.officialKeyRaw}" differs from official key table "${k.key}"`);
+        if (k.type !== q.type) err(q.id, `type ${q.type} differs from official key (${k.type})`);
+        if (k.marks !== q.marks) err(q.id, `marks ${q.marks} differ from official key (${k.marks})`);
+        if (k.section !== q.section) err(q.id, `section ${q.section} differs from official key (${k.section})`);
+      }
+    }
     const srcStatus = weakest(...q.sourceIds.map((s) => sourceById.get(s)?.verificationStatus));
     addQ({
       id: q.id,

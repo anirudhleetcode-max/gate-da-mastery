@@ -1,0 +1,115 @@
+{
+  "id": "DA2025-S5-Q30",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 30,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-clustering",
+  "subtopicIds": [
+    "ml-hierarchical",
+    "ml-clustering-algorithms"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (the definitions of single and complete linkage) answered by direct recall for all four statements, under 1 min for a prepared student.",
+  "estimatedTimeSec": 40,
+  "stem": "Let $C_1$ and $C_2$ be two sets of objects. Let $D(x, y)$ be a measure of dissimilarity between two objects $x$ and $y$. Consider the following definitions of dissimilarity between $C_1$ and $C_2$.\n\n$$\n\\begin{aligned}\n\\textbf{DIS-1}(C_1, C_2) &= \\max_{x \\in C_1,\\, y \\in C_2} D(x, y) \\\\\n\\textbf{DIS-2}(C_1, C_2) &= \\min_{x \\in C_1,\\, y \\in C_2} D(x, y)\n\\end{aligned}\n$$\n\nWhich of the following statements is/are correct?",
+  "options": [
+    {
+      "label": "A",
+      "text": "Single Linkage Clustering uses **DIS-1**"
+    },
+    {
+      "label": "B",
+      "text": "Single Linkage Clustering uses **DIS-2**"
+    },
+    {
+      "label": "C",
+      "text": "Complete Linkage Clustering uses **DIS-2**"
+    },
+    {
+      "label": "D",
+      "text": "Complete Linkage Clustering uses **DIS-1**"
+    }
+  ],
+  "officialKeyRaw": "B;D",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "B",
+      "D"
+    ]
+  },
+  "solution": {
+    "quick": "In hierarchical clustering, **single linkage** measures the distance between two clusters by their **closest** pair of points (the minimum, **DIS-2**), and **complete linkage** by their **farthest** pair (the maximum, **DIS-1**). So (B) and (D) are correct.",
+    "steps": [
+      {
+        "title": "Where a cluster-to-cluster dissimilarity is needed",
+        "body": "Agglomerative (bottom-up) hierarchical clustering starts with every object in its own cluster and repeatedly **merges the two clusters with the smallest dissimilarity**. $D(x, y)$ only compares two *objects*, so we need a rule, called the **linkage**, that turns the pairwise values $\\{D(x, y) : x \\in C_1, y \\in C_2\\}$ into a single number for the pair of clusters $(C_1, C_2)$."
+      },
+      {
+        "title": "Match the two definitions to the linkages",
+        "body": "- **Single linkage** (nearest neighbour): the clusters are as close as their **closest** pair of members,\n\n$$\nd_{\\text{single}}(C_1, C_2) = \\min_{x \\in C_1,\\, y \\in C_2} D(x, y) = \\textbf{DIS-2}(C_1, C_2).\n$$\n\n- **Complete linkage** (farthest neighbour): the clusters are as close as their **farthest** pair of members,\n\n$$\nd_{\\text{complete}}(C_1, C_2) = \\max_{x \\in C_1,\\, y \\in C_2} D(x, y) = \\textbf{DIS-1}(C_1, C_2).\n$$"
+      },
+      {
+        "title": "A small numerical illustration",
+        "body": "Take points on a line with $D(x, y) = |x - y|$, $C_1 = \\{0, 1\\}$ and $C_2 = \\{4, 7\\}$. The four cross-pair distances are\n\n| | $y = 4$ | $y = 7$ |\n| --- | --- | --- |\n| $x = 0$ | $4$ | $7$ |\n| $x = 1$ | $3$ | $6$ |\n\nSingle linkage uses the minimum, $\\textbf{DIS-2} = 3$ (the pair $1, 4$). Complete linkage uses the maximum, $\\textbf{DIS-1} = 7$ (the pair $0, 7$)."
+      },
+      {
+        "title": "Evaluate the statements",
+        "body": "- (A) Single linkage uses **DIS-1** (max): false; it uses the min.\n- (B) Single linkage uses **DIS-2** (min): **true**.\n- (C) Complete linkage uses **DIS-2** (min): false; it uses the max.\n- (D) Complete linkage uses **DIS-1** (max): **true**.\n\nThe correct statements are **(B)** and **(D)**."
+      }
+    ],
+    "finalAnswer": "**(B), (D)**",
+    "teaching": "**Hierarchical clustering** builds a tree (dendrogram) of nested clusters. The bottom-up (agglomerative) version starts with $n$ singleton clusters and, at every step, merges the two clusters that are closest, until one cluster remains. Cutting the dendrogram at some height gives a flat clustering.\n\nThe data only give a dissimilarity $D(x, y)$ between individual objects. To decide which two *clusters* are closest, we need a **linkage criterion** that summarises all cross-pair dissimilarities between two clusters:\n\n| Linkage | Cluster dissimilarity | Behaviour |\n| --- | --- | --- |\n| Single | $\\min_{x \\in C_1, y \\in C_2} D(x, y)$ (closest pair) | Merges as soon as **one** pair is close; can form long, chain-like clusters (the *chaining* effect). |\n| Complete | $\\max_{x \\in C_1, y \\in C_2} D(x, y)$ (farthest pair) | Merges only when **all** pairs are close; favours compact clusters of similar diameter. |\n| Average | mean of $D(x, y)$ over all cross pairs | A compromise between the two. |\n\n**Remembering which is which.** The names describe how many links must be short. In *single* linkage, a single short link between the clusters is enough to make them close, so the smallest distance decides. In *complete* linkage, the clusters count as close only when the complete set of links is short, and the longest link is the one that decides.\n\n**Back to the question.** **DIS-2** takes the minimum over all cross pairs, so it is the single-linkage dissimilarity; **DIS-1** takes the maximum, so it is the complete-linkage dissimilarity. Statements (B) and (D) are correct; (A) and (C) swap the two.",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "incorrect",
+        "explanation": "**DIS-1** is the maximum cross-pair dissimilarity (the farthest pair). Single linkage uses the closest pair, i.e. the minimum."
+      },
+      {
+        "label": "B",
+        "verdict": "correct",
+        "explanation": "Single linkage (nearest neighbour) defines the distance between clusters as $\\min_{x \\in C_1, y \\in C_2} D(x, y)$, which is exactly **DIS-2**."
+      },
+      {
+        "label": "C",
+        "verdict": "incorrect",
+        "explanation": "**DIS-2** is the minimum cross-pair dissimilarity, which is single linkage. Complete linkage uses the maximum."
+      },
+      {
+        "label": "D",
+        "verdict": "correct",
+        "explanation": "Complete linkage (farthest neighbour) defines the distance between clusters as $\\max_{x \\in C_1, y \\in C_2} D(x, y)$, which is exactly **DIS-1**."
+      }
+    ],
+    "shortcut": "**S**ingle = **s**mallest pair distance (min, DIS-2); **complete** = all pairs must be close, so the largest pair distance decides (max, DIS-1).",
+    "commonTrap": "Mixing up the two linkages, for example reasoning that \"complete\" linkage should use the closest pair because the clusters are \"completely\" joined. Complete linkage requires every cross pair to be close, so it is governed by the **largest** distance; single linkage needs just one close pair, so it is governed by the **smallest**."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q30-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The text layer flattens the subscripts (\"C1\", \"C2\") and the max/min limits; the rendering shows $C_1$, $C_2$ and $\\max_{x \\in C_1,\\, y \\in C_2}$ / $\\min_{x \\in C_1,\\, y \\in C_2}$ as limits, transcribed as KaTeX. The labels DIS-1 and DIS-2 are printed in bold; they are transcribed with \\textbf in the display math and Markdown bold in the options. The two definitions are aligned at the equals sign as in the paper."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "B;D (single linkage = min = DIS-2; complete linkage = max = DIS-1)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\nfrom scipy.spatial.distance import cdist\nrng = np.random.default_rng(1)\nP = rng.normal(size=(12, 2))\ndef agglomerate(P, dis):                          # naive bottom-up clustering with a given set dissimilarity\n    clusters, heights = [[i] for i in range(len(P))], []\n    while len(clusters) > 1:\n        best = min(((dis(cdist(P[a], P[b])), i, j) for i, a in enumerate(clusters) for j, b in enumerate(clusters) if i < j))\n        h, i, j = best; heights.append(h)\n        clusters = [c for k, c in enumerate(clusters) if k not in (i, j)] + [clusters[i] + clusters[j]]\n    return np.array(heights)\nDIS1, DIS2 = np.max, np.min\nfor name, method in (('single', 'single'), ('complete', 'complete')):\n    ref = linkage(P, method=method)[:, 2]\n    print(name, 'linkage matches DIS-1 (max):', np.allclose(agglomerate(P, DIS1), ref),\n          '| matches DIS-2 (min):', np.allclose(agglomerate(P, DIS2), ref))\n",
+    "notes": "Independent solve: single linkage defines the cluster dissimilarity as the minimum cross-pair dissimilarity (DIS-2) and complete linkage as the maximum (DIS-1), so B and D are correct. This gives B;D, matching the official key B;D. The Python check runs a naive agglomerative clustering on 12 random 2-D points with DIS-1 (max) and DIS-2 (min) as the merge criterion and compares the merge heights with scipy.cluster.hierarchy.linkage: single linkage matches DIS-2 only and complete linkage matches DIS-1 only."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

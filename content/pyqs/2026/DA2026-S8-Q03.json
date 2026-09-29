@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The two figures (the four pieces, and the four candidate figures P, Q, R, S with their labels) are cropped from the official page rendering. Only the faint background watermark was whitened (pixels with every channel at least 225 set to white); no figure content was altered. In the paper P and Q are in the top row and R and S in the bottom row, as reproduced. The second official image is the top of page 3 (header and table border only)."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem wording and options match the official crop and the PDF text layer. Both figures (the four pieces; the candidate figures P, Q, R, S with labels, P and Q in the top row and R and S in the bottom row as in the paper) were compared with the official crop and faithfully reproduce it; only the faint background watermark was whitened (pixels with every channel at least 225 set to white). The second official image is only the top of page 3 (header and table border)."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A",
     "agreesWithKey": true,
     "checkCode": "# Q3: put the 4 printed pieces back into one square; compare with P,Q,R,S (run from repo root)\nfrom PIL import Image; import numpy as np\nL=lambda f: np.array(Image.open(f).convert('L'))<128\nA=L('public/pyq/2026/fig/Q03-1.png'); B=L('public/pyq/2026/fig/Q03-2.png')\nc=np.where(A.any(0))[0]; G=np.split(c,np.where(np.diff(c)>1)[0]+1)  # pieces: left, top, right, bottom\nr=np.where(A[:,G[0][0]:G[0][-1]+1].any(1))[0]; y0,s=r[0],r[-1]-r[0]+1  # left piece spans a full side\nU=np.zeros((s,s),bool)\nfor k,g in enumerate(G):\n    P=np.zeros_like(A); P[:,g[0]:g[-1]+1]=A[:,g[0]:g[-1]+1]\n    x0=g[-1]-s+1 if k==2 else g[0]; U|=P[y0:y0+s,x0:x0+s]\ndef bands(v,t):\n    i=np.where(v>t)[0]; return [(b[0],b[-1]+1) for b in np.split(i,np.where(np.diff(i)>1)[0]+1)]\nres={}\nfor ri,(a,b) in enumerate(bands(B.sum(1),60)):\n    for ci,(p,q) in enumerate(bands(B[a:b].sum(0),0)):\n        M=np.array(Image.fromarray(B[a:b,p:q]).resize((s,s)))!=U\n        for _ in range(2): M=M[1:-1,1:-1]&M[:-2,1:-1]&M[2:,1:-1]&M[1:-1,:-2]&M[1:-1,2:]  # drop 1-2px seams\n        res['PQRS'[2*ri+ci]]=int(M.sum())\nprint(res)  # expect P: 0 (exact fit); Q, R, S: large solid mismatches",
-    "notes": "Visual solve: the pieces placed in their natural positions leave a head + beak + tilted body hole identical to P. Checked with a pixel overlay of the pieces as printed (piece images also extracted from the PDF gave the same result): after removing 1–2 px seams, the mismatch with P is 0 px, while Q, R and S differ by solid regions (the beak, the lower part of the body, a wedge in the head). Matches the official key (A)."
+    "notes": "Blind visual re-solve before viewing the key: the right piece's spike notch forces a beak (rules out Q), the bottom piece's V-dip forces a pointed lower body corner (rules out R), the top piece's smooth round bite forces a full round head (rules out S), leaving P, i.e. (A). Independent pixel check using the piece and figure images embedded in the PDF itself (not the platform crops): the four piece images are disjoint (overlap 0 px) and their union differs from P only along 1-2 px diagonal seams (0 px after 2-step erosion), while Q, R and S leave solid mismatches of 578, 3102 and 1733 px (extra black where the beak, lower body corner and head wedge should be). The stored checkCode (overlay of the published crops) was also re-run: P 0, Q 263, R 1760, S 952. Agrees with the official key (A)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

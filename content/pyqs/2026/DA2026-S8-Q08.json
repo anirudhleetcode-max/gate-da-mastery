@@ -64,12 +64,12 @@
       }
     ],
     "finalAnswer": "**(D)**",
-    "teaching": "This is a **deductive logic** puzzle with an elimination format: the loser of each game leaves and the winner stays to play the next game, like *king of the hill*. Two structural facts make such puzzles quick.\n\n1. **Count the losers.** Every game eliminates exactly one player, so $k$ decisive games among $k+1$ players leave exactly **one** unbeaten player. The question \"who never lost?\" therefore has a unique answer once the sequence is known.\n2. **Track who is still in.** Before each game, list the players who have not lost. A condition such as \"only game 1 was between classmates\" limits which pairs may meet later. In particular, if the last two players left are classmates, the final game breaks the condition.\n\n**Method: case analysis with early pruning.** Branch on the smallest decision (who plays game 1). For each branch, find the move that is *forced*, such as \"the game‑1 winner must also win game 2\". Then apply the counting conditions (wins by class, wins by gender) to kill branches. Stop as soon as one consistent scenario remains, and re-check it against every condition.\n\nHere the class structure forces one player to win both games 1 and 2. The win counts identify that player as a Class 5 boy, i.e. Rishi. That leaves exactly one girl's win for game 3. Since Rishi then loses, the unbeaten player is **Tanvi**, the student who played only the final game. The trap is to assume the most successful player (Rishi, 2 wins) must be the one who never lost.",
+    "teaching": "This is a **deductive logic** puzzle with an elimination (knockout) format: the loser of each game drops out, and the next game is played between two players who have not yet lost. The question does **not** say that the winner must play the next game. In this puzzle, that is something you *deduce* from the class condition. Two structural facts make such puzzles quick.\n\n1. **Count the losers.** Every game eliminates exactly one player, so $k$ decisive games among $k+1$ players leave exactly **one** unbeaten player. The question \"who never lost?\" therefore has a unique answer once the sequence is known.\n2. **Track who is still in.** Before each game, list the players who have not lost. A condition such as \"only game 1 was between classmates\" limits which pairs may meet later. In particular, if the last two players left are classmates, the final game breaks the condition.\n\n**Method: case analysis with early pruning.** Branch on the smallest decision (who plays game 1). For each branch, find the move that is *forced*, such as \"the game‑1 winner must also win game 2\". Then apply the counting conditions (wins by class, wins by gender) to kill branches. Stop as soon as one consistent scenario remains, and re-check it against every condition.\n\nHere the class structure forces one player to win both games 1 and 2. The win counts identify that player as a Class 5 boy, i.e. Rishi. That leaves exactly one girl's win for game 3. Since Rishi then loses, the unbeaten player is **Tanvi**, the student who played only the final game. The trap is to assume the most successful player (Rishi, 2 wins) must be the one who never lost.",
     "optionAnalysis": [
       {
         "label": "A",
         "verdict": "incorrect",
-        "explanation": "Pavan loses game 2 to Rishi. For Pavan to stay unbeaten, he would have to beat the player who won games 1 and 2 in game 3. If that player is Rishi, the boys win all 3 games. If it is Swathi, the girls already have 2 wins. Both cases contradict (iii)."
+        "explanation": "Pavan loses game 2 to Rishi. Game 1 cannot be Pavan vs Tanvi (Step 2), so it is Rishi vs Swathi, and its winner must also win game 2. For Pavan to stay unbeaten, he would have to beat the player who won games 1 and 2 in game 3. If that player is Rishi, the boys win all 3 games. If it is Swathi, the girls already have 2 wins. Both cases contradict (iii)."
       },
       {
         "label": "B",
@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Conditions (i)–(iii) are laid out as a hanging-indent list in the paper; each is rendered here as its own paragraph. Official crop Q08-2 shows only the top edge of the next page's table and contains no question content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The names, classes, genders, conditions (i)–(iii) and the options (A) Pavan, (B) Rishi, (C) Swathi, (D) Tanvi match the paper word for word and in order. Conditions (i)–(iii) are laid out as a hanging-indent list in the paper; each is rendered here as its own paragraph. The candidate embedded image on this page is only the GATE 2026 watermark behind the text, so no figure is needed. Official crop Q08-2 shows only the top edge of the next page's table and contains no question content."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "D (Tanvi)",
     "agreesWithKey": true,
     "checkCode": "from itertools import permutations\ncls={'R':5,'S':5,'P':4,'T':4}; boy={'R':1,'S':0,'P':1,'T':0}\nsols=[]\ndef go(alive,games):\n    if len(games)==3:\n        ws=[w for w,l in games]; c5=sum(cls[w]==5 for w in ws)\n        same=[cls[w]==cls[l] for w,l in games]\n        if same==[True,False,False] and c5>3-c5 and sum(boy[w] for w in ws)==2:\n            sols.append((games,alive))\n        return\n    for w,l in permutations(alive,2):\n        go([x for x in alive if x!=l],games+[(w,l)])\ngo(list('RSPT'),[])\nprint(sols)  # [([('R','S'),('R','P'),('T','R')], ['T'])] -> Tanvi",
-    "notes": "A hand case analysis and an exhaustive search over all elimination sequences of 3 decisive games give one consistent scenario (R beats S, R beats P, T beats R), with Tanvi unbeaten. This agrees with official key D. Assumption used: every game is decisive, which follows from (iii) counting 3 wins (2 by boys, 1 by girls) in 3 games."
+    "notes": "Blind hand case analysis: a Class 4 first game would force Class 4 to win games 1 and 2, violating (ii). So game 1 is Rishi vs Swathi, and its winner must win game 2, or game 3 would be between the two Class 4 students. Swathi winning would give the girls 2 wins, so Rishi wins games 1 and 2 and the girls' one win is Tanvi beating Rishi in game 3. An exhaustive search over all elimination sequences of 3 decisive games gives exactly one consistent scenario (R beats S, R beats P, T beats R), with Tanvi unbeaten. This agrees with official key D. Assumption used: every game is decisive, which follows from (iii) counting 3 wins (2 by boys, 1 by girls) in 3 games."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

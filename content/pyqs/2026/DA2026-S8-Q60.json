@@ -1,0 +1,70 @@
+{
+  "id": "DA2026-S8-Q60",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 60,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-sql"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - one concept (correlated scalar subqueries with COUNT(*)) applied in 2-3 routine steps: two strict-inequality counts for each of the 5 rows and a comparison, with a tie (A1, A2) and an equality case (A3: 2 >= 2) to handle correctly; about 1.5 to 2 minutes.",
+  "estimatedTimeSec": 105,
+  "stem": "Let `Account` be a relation as shown.\n\n`Account`\n\n| `AccNo` | `Balance` |\n| :---: | :---: |\n| A1 | 5000 |\n| A2 | 5000 |\n| A3 | 10000 |\n| A4 | 15000 |\n| A5 | 18000 |\n\nConsider the given SQL query.\n\n```sql\nSELECT AccNo FROM Account AS A\nWHERE (SELECT COUNT(*) FROM Account AS B\nWHERE A.Balance < B.Balance) >= (SELECT COUNT(*)\nFROM Account AS C WHERE A.Balance > C.Balance)\n```\n\nThe number of rows returned by the SQL query is __________ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "3 to 3",
+  "answer": {
+    "kind": "NAT",
+    "min": 3,
+    "max": 3
+  },
+  "solution": {
+    "quick": "For each account `A`, the query counts the accounts with a strictly **larger** balance (subquery on `B`) and those with a strictly **smaller** balance (subquery on `C`). It keeps `A` when the first count is at least the second. A1 and A2 give $3 \\ge 0$ and A3 gives $2 \\ge 2$, so they are kept; A4 ($1 \\ge 3$) and A5 ($0 \\ge 4$) fail. **3** rows are returned.",
+    "steps": [
+      {
+        "title": "Read the correlated subqueries",
+        "body": "The outer query scans `Account` under the alias `A`. Its `WHERE` clause compares two **correlated scalar subqueries**. They are correlated because they mention `A.Balance`, so both are re-evaluated for every outer row:\n\n- `(SELECT COUNT(*) FROM Account AS B WHERE A.Balance < B.Balance)` counts the rows whose balance is **strictly greater** than `A`'s. Call this count $g(A)$.\n- `(SELECT COUNT(*) FROM Account AS C WHERE A.Balance > C.Balance)` counts the rows whose balance is **strictly smaller** than `A`'s. Call this count $s(A)$.\n\nRow `A` is returned exactly when $g(A) \\ge s(A)$.\n\nBoth comparisons are strict, so the row itself and any row with an **equal** balance are counted in neither subquery. `COUNT(*)` over an empty set returns $0$, not `NULL`, so the comparison always has a definite result."
+      },
+      {
+        "title": "Evaluate both counts for every row",
+        "body": "Balances: A1 = 5000, A2 = 5000, A3 = 10000, A4 = 15000, A5 = 18000.\n\n| `AccNo` | `Balance` | rows with larger balance, $g$ | rows with smaller balance, $s$ | $g \\ge s$? |\n| :---: | :---: | :--- | :--- | :---: |\n| A1 | 5000 | A3, A4, A5 → $3$ | none → $0$ | $3 \\ge 0$ ✔ |\n| A2 | 5000 | A3, A4, A5 → $3$ | none → $0$ | $3 \\ge 0$ ✔ |\n| A3 | 10000 | A4, A5 → $2$ | A1, A2 → $2$ | $2 \\ge 2$ ✔ |\n| A4 | 15000 | A5 → $1$ | A1, A2, A3 → $3$ | $1 \\ge 3$ ✘ |\n| A5 | 18000 | none → $0$ | A1, A2, A3, A4 → $4$ | $0 \\ge 4$ ✘ |\n\nA1 and A2 have the same balance, so neither counts the other: A2 is not \"larger\" than A1, and A1 is not \"smaller\" than A2."
+      },
+      {
+        "title": "Collect the result",
+        "body": "The rows that satisfy the condition are A1, A2 and A3:\n\n$$\n\\text{result} = \\{\\text{A1},\\ \\text{A2},\\ \\text{A3}\\}.\n$$\n\nA3 is kept only because the operator is `>=`: it has as many larger balances as smaller ones ($2 = 2$).\n\n**Interpretation.** The query returns the accounts that have at least as many balances above them as below them, i.e. the \"lower half\" of the balances including the middle one. The sorted balances are 5000, 5000, **10000**, 15000, 18000 and the median is 10000, so the accounts with balance $\\le 10000$ are returned.\n\nThe number of rows returned is **3**, which matches the official key (3 to 3)."
+      }
+    ],
+    "finalAnswer": "**3**",
+    "teaching": "**Scalar subqueries.** A subquery in parentheses that returns one row and one column can be used like a single value, for example in a comparison such as `(SELECT COUNT(*) ...) >= (SELECT COUNT(*) ...)`. An aggregate without `GROUP BY` always returns exactly one row. `COUNT(*)` on an empty set returns **0**; `SUM`, `AVG`, `MIN` and `MAX` return `NULL` on an empty set, and that difference often matters.\n\n**Correlated subqueries.** When a subquery refers to a column of the outer query (here `A.Balance`), it is *correlated*. Conceptually, the DBMS runs it again for every row of the outer table, substituting that row's values. A reliable way to evaluate such a query by hand is:\n\n1. Fix one outer row.\n2. Evaluate each subquery for that row. Here that means two counts.\n3. Apply the outer `WHERE` test, then move to the next row.\n\n**Strict versus non-strict comparisons, and ties.** `A.Balance < B.Balance` counts only strictly larger balances. So the outer row never counts itself, and rows with the same balance are counted on neither side. With duplicates (A1 and A2 both have 5000), each of them sees 3 larger and 0 smaller balances.\n\n**What the pattern computes.** Comparing \"how many are above me\" with \"how many are below me\" is a rank test. Here $g \\ge s$ selects the rows at or below the middle of the ordering. With a strict `>` it would select only the rows strictly below the middle. Patterns like `(SELECT COUNT(*) ... WHERE A.x < B.x) < k` are the classic way to write \"top-$k$\" queries without `LIMIT`.\n\n**Connecting to this question.** A1 and A2 (3 above, 0 below) and A3 (2 above, 2 below) pass the test $g \\ge s$. A4 and A5 have more balances below them than above, so they fail. **3** rows are returned.",
+    "shortcut": "With 5 rows, $g \\ge s$ holds exactly for the rows at or below the median, provided the median value is not tied (here 10000 appears once). Sorted balances: 5000, 5000, 10000, 15000, 18000. The accounts with balance $\\le 10000$ are A1, A2 and A3, so the answer is **3**. If the median value were tied, count $g$ and $s$ directly instead.",
+    "commonTrap": "- Treating the operator as a strict `>`, which drops the median row A3 ($2 \\ge 2$ is true, but $2 > 2$ is false) and gives 2.\n- Counting the row itself or rows with an equal balance, as if `<=` / `>=` had been written inside the subqueries. The comparisons are strict, so A1 and A2 (both 5000) are neither larger nor smaller than each other.\n- Thinking that `COUNT(*)` over no rows gives `NULL`. That would wrongly drop A1, A2 and A5, whose counts include a 0."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q60-1.webp",
+    "/pyq/2026/official/Q60-2.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. In the paper the relation name Account (in the first sentence and as the table caption) and the column headers AccNo and Balance are set in monospace; they are shown as inline code. The cell values (A1 to A5, 5000 to 18000) are in the text font and are kept as plain text, centred as printed. The SQL query is a monospace block and is transcribed as an sql code block character for character, keeping the paper's four line breaks. The PDF text layer shows trailing spaces at some line ends; these are dropped, which does not change the SQL. 'integer' is bold in the answer note, as in the paper; the line break before it is only a wrap, and the space the paper leaves between the blank and the full stop is kept. The second official crop (Q60-2) shows only the header and a table border of the next page. The region contains no embedded figure (no candidate images), and none is needed because the table is transcribed as a GFM table."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "3",
+    "agreesWithKey": true,
+    "checkCode": "import sqlite3\nrows = [('A1', 5000), ('A2', 5000), ('A3', 10000), ('A4', 15000), ('A5', 18000)]\ndb = sqlite3.connect(':memory:')\ndb.execute('CREATE TABLE Account (AccNo TEXT, Balance INTEGER)')\ndb.executemany('INSERT INTO Account VALUES (?, ?)', rows)\nq = '''SELECT AccNo FROM Account AS A\nWHERE (SELECT COUNT(*) FROM Account AS B\nWHERE A.Balance < B.Balance) >= (SELECT COUNT(*)\nFROM Account AS C WHERE A.Balance > C.Balance)'''\nout = [r[0] for r in db.execute(q)]\nprint(out, len(out))                      # ['A1', 'A2', 'A3'] 3\n# the same test by hand: (#rows with a larger balance) >= (#rows with a smaller balance)\nfor acc, bal in rows:\n    more = sum(b > bal for _, b in rows); less = sum(b < bal for _, b in rows)\n    print(acc, bal, more, less, more >= less)   # A1/A2: 3,0  A3: 2,2  A4: 1,3  A5: 0,4\nassert out == ['A1', 'A2', 'A3'] and len(out) == 3   # official key 3 to 3\n# contrast: with a strict '>' instead of '>=' the median row A3 (2 vs 2) would drop out\nstrict = [acc for acc, bal in rows if sum(b > bal for _, b in rows) > sum(b < bal for _, b in rows)]\nassert strict == ['A1', 'A2']\n",
+    "notes": "Running the query verbatim in SQLite (Python sqlite3) over the transcribed relation returns A1, A2 and A3, i.e. 3 rows. A hand count of strictly larger and strictly smaller balances for each row gives the same result: A1/A2 3 vs 0, A3 2 vs 2, A4 1 vs 3, A5 0 vs 4. A3 passes only through the equality in >=. This matches the official key 3 to 3."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

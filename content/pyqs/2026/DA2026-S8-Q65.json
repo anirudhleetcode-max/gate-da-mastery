@@ -1,0 +1,75 @@
+{
+  "id": "DA2026-S8-Q65",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 65,
+  "section": "DA",
+  "subjectId": "la",
+  "topicId": "la-matrices",
+  "subtopicIds": [
+    "la-quadratic-forms",
+    "la-projection-matrix",
+    "la-eigen"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - two directly linked concepts (the maximum of a quadratic form over unit vectors is the largest eigenvalue, and the centering matrix is a projection with eigenvalues 0 and 1) with a short computation, about 1.5 minutes.",
+  "estimatedTimeSec": 90,
+  "stem": "Let $A = \\left(I_n - \\frac{1}{n}\\,\\mathbf{1}\\mathbf{1}^\\top\\right)$ be a matrix, where $\\mathbf{1} = (1,1,1,\\ldots,1)^\\top \\in \\mathbb{R}^n$ and $I_n$ is the identity matrix of order $n$.\n\nThe value of $\\max\\limits_{S} x^\\top A x$, where $S = \\{x \\in \\mathbb{R}^n \\mid x^\\top x = 1\\}$, is __________ . (Answer in **integer**)",
+  "options": [],
+  "officialKeyRaw": "1 to 1",
+  "answer": {
+    "kind": "NAT",
+    "min": 1,
+    "max": 1
+  },
+  "solution": {
+    "quick": "$A$ is the centering matrix: symmetric and idempotent, i.e. the orthogonal projection onto $\\{x : \\sum_i x_i = 0\\}$, with eigenvalues $0$ (eigenvector $\\mathbf{1}$) and $1$ (multiplicity $n - 1$). The maximum of $x^\\top A x$ over unit vectors is the largest eigenvalue, **1**. Directly: $x^\\top A x = 1 - \\frac{(\\sum_i x_i)^2}{n} \\le 1$, with equality whenever $\\sum_i x_i = 0$.",
+    "steps": [
+      {
+        "title": "Maximum of a quadratic form on the unit sphere",
+        "body": "For a real symmetric matrix $A$, the spectral theorem gives $A = Q\\Lambda Q^\\top$ with $Q$ orthogonal and $\\Lambda = \\operatorname{diag}(\\lambda_1, \\ldots, \\lambda_n)$. Put $y = Q^\\top x$; then $y^\\top y = x^\\top x = 1$ and\n\n$$\nx^\\top A x = y^\\top \\Lambda y = \\sum_{i=1}^{n} \\lambda_i y_i^2 \\le \\lambda_{\\max}\\sum_{i=1}^{n} y_i^2 = \\lambda_{\\max},\n$$\n\nwith equality at a unit eigenvector for $\\lambda_{\\max}$. So $\\max\\limits_{S} x^\\top A x = \\lambda_{\\max}(A)$."
+      },
+      {
+        "title": "A is symmetric and idempotent",
+        "body": "$A^\\top = I_n - \\frac{1}{n}(\\mathbf{1}\\mathbf{1}^\\top)^\\top = A$. Using $\\mathbf{1}^\\top\\mathbf{1} = n$:\n\n$$\nA^2 = I_n - \\frac{2}{n}\\mathbf{1}\\mathbf{1}^\\top + \\frac{1}{n^2}\\mathbf{1}(\\mathbf{1}^\\top\\mathbf{1})\\mathbf{1}^\\top = I_n - \\frac{2}{n}\\mathbf{1}\\mathbf{1}^\\top + \\frac{n}{n^2}\\mathbf{1}\\mathbf{1}^\\top = I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top = A.\n$$\n\nA symmetric idempotent matrix is an orthogonal projection, and if $Av = \\lambda v$ with $v \\ne \\mathbf{0}$ then $\\lambda v = A^2 v = \\lambda^2 v$, so every eigenvalue is 0 or 1."
+      },
+      {
+        "title": "Eigenvalues of A explicitly",
+        "body": "- $A\\mathbf{1} = \\mathbf{1} - \\frac{1}{n}\\mathbf{1}(\\mathbf{1}^\\top\\mathbf{1}) = \\mathbf{1} - \\mathbf{1} = \\mathbf{0}$, so $\\lambda = 0$ with eigenvector $\\mathbf{1}$.\n- For any $v$ with $\\mathbf{1}^\\top v = \\sum_i v_i = 0$: $Av = v - \\frac{1}{n}\\mathbf{1}(\\mathbf{1}^\\top v) = v$, so $\\lambda = 1$. These $v$ form an $(n-1)$-dimensional subspace, so $\\lambda = 1$ has multiplicity $n - 1$.\n\nCheck: $\\operatorname{tr}(A) = n - \\frac{1}{n}\\cdot n = n - 1 = 0 + (n - 1)\\cdot 1$. Hence $\\lambda_{\\max}(A) = 1$ (for $n \\ge 2$)."
+      },
+      {
+        "title": "Direct verification and the maximiser",
+        "body": "For $x^\\top x = 1$:\n\n$$\nx^\\top A x = x^\\top x - \\frac{1}{n}(\\mathbf{1}^\\top x)^2 = 1 - \\frac{1}{n}\\Big(\\sum_{i=1}^{n} x_i\\Big)^2 \\le 1,\n$$\n\nwith equality exactly when $\\sum_i x_i = 0$; for example $x = \\frac{1}{\\sqrt{2}}(1, -1, 0, \\ldots, 0)^\\top$ gives $x^\\top A x = 1 - 0 = 1$. (The minimum, 0, is attained at $x = \\mathbf{1}/\\sqrt{n}$.) Therefore $\\max\\limits_{S} x^\\top A x = 1$, matching the official key 1 to 1. Only in the degenerate case $n = 1$ is $A$ the zero matrix, where the value would be 0; for every $n \\ge 2$ it is 1."
+      }
+    ],
+    "finalAnswer": "**1**",
+    "teaching": "**Maximising a quadratic form on the unit sphere.** For a symmetric matrix $A$, the spectral theorem writes $A = Q\\Lambda Q^\\top$ with $Q$ orthogonal and real eigenvalues $\\lambda_1, \\ldots, \\lambda_n$ on the diagonal of $\\Lambda$. The change of variables $y = Q^\\top x$ is a rotation, so it keeps $y^\\top y = x^\\top x = 1$, and it turns the quadratic form into $x^\\top A x = \\sum_i \\lambda_i y_i^2$: a weighted average of the eigenvalues with non-negative weights $y_i^2$ that sum to 1. A weighted average is largest when all the weight sits on the largest eigenvalue, so $\\max_{x^\\top x = 1} x^\\top A x = \\lambda_{\\max}(A)$, attained at a unit eigenvector; likewise the minimum is $\\lambda_{\\min}(A)$. The ratio $x^\\top A x / x^\\top x$ is the Rayleigh quotient, and this is exactly the fact behind PCA: the first principal direction maximises $w^\\top \\Sigma w$ over unit vectors $w$.\n\n**The centering matrix.** $C_n = I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^\\top$ subtracts the mean from every coordinate: $C_n x = x - \\bar{x}\\mathbf{1}$ with $\\bar{x} = \\frac{1}{n}\\sum_i x_i$. It is symmetric and idempotent (centering an already centred vector changes nothing), so it is the orthogonal projection onto the subspace $\\{x : \\sum_i x_i = 0\\}$. A projection has only the eigenvalues 1 (vectors already in the subspace are unchanged) and 0 (the removed direction, here $\\mathbf{1}$, is sent to $\\mathbf{0}$). Also $x^\\top C_n x = \\lVert C_n x \\rVert^2 = \\sum_i (x_i - \\bar{x})^2$, the sum of squared deviations used in the sample variance.\n\n**Connecting to this question.** The matrix $A$ is the centering matrix, with eigenvalues 0 (once) and 1 ($n - 1$ times), so the maximum of $x^\\top A x$ over unit vectors is $\\lambda_{\\max} = 1$. Equivalently, $x^\\top A x = \\sum_i (x_i - \\bar{x})^2 = \\sum_i x_i^2 - n\\bar{x}^2 = 1 - n\\bar{x}^2 \\le 1$, with equality for any unit vector whose entries sum to zero. The answer is **1**.",
+    "shortcut": "$x^\\top A x = \\sum_i (x_i - \\bar{x})^2 = \\sum_i x_i^2 - n\\bar{x}^2 \\le \\sum_i x_i^2 = 1$, with equality when $\\bar{x} = 0$. Or: $A$ is a projection matrix, so its eigenvalues are 0 and 1 and the maximum is 1.",
+    "commonTrap": "Answering $n$ or $n - 1$ by confusing the largest eigenvalue with the eigenvalue $n$ of $\\mathbf{1}\\mathbf{1}^\\top$ or with $\\operatorname{tr}(A) = n - 1$ (the sum of the eigenvalues, not the largest one). Another slip is testing only $x = \\mathbf{1}/\\sqrt{n}$, which gives 0: that is the *minimum*, not the maximum."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q65-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes transposes with a superscript italic T (in 1 1^T, (1,1,1, ..., 1)^T, x^T Ax and x^T x); they are transcribed with ^\\top per the platform convention, which does not change the meaning. The all-ones vector 1 is bold in the paper and is kept bold, and ℝ is printed as a blackboard-bold R. The fraction 1/n is printed as a small stacked fraction and the paper's parentheses around I_n - (1/n) 1 1^T are kept. The subscript S is printed beneath 'max' and is transcribed as \\max\\limits_{S}. The paper leaves a double space before 'max', a space between 'x^T Ax' and the following comma, and wraps '(Answer in integer)' onto a new line after the answer blank; these are layout only and are not reproduced (the answer note follows the blank on the same line). 'integer' is bold as in the paper, and the space between the answer blank and the full stop is kept. The matrix is the same one defined as M in Q52 of this paper. The region has no embedded figure and none is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "1",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfor n in range(1, 9):\n    one = np.ones((n, 1))\n    A = np.eye(n) - one @ one.T / n\n    assert np.allclose(A, A.T) and np.allclose(A @ A, A)       # symmetric, idempotent\n    ev = np.linalg.eigvalsh(A)                                  # max of x^T A x on x^T x = 1 is lambda_max\n    print(n, np.round(ev, 12), 'max =', round(ev.max(), 12))\n# n >= 2: eigenvalues 0 (once, eigenvector 1) and 1 (n-1 times) -> max = 1; n = 1 gives A = [0].\nn = 4\nx = np.array([1., -1., 0., 0.]) / np.sqrt(2)                   # unit vector orthogonal to 1\nprint('x^T A x =', x @ (np.eye(n) - np.ones((n, n)) / n) @ x)   # 1.0\n# x^T A x = ||x||^2 - n*xbar^2 = 1 - (sum x)^2/n <= 1, equality iff sum x = 0\nrng = np.random.default_rng(2)\nX = rng.normal(size=(100000, 6)); X /= np.linalg.norm(X, axis=1, keepdims=True)\nq = 1 - X.sum(1)**2 / 6\nprint('sampled max', q.max(), '<= 1:', bool(q.max() <= 1 + 1e-12))\n",
+    "notes": "For n = 1 to 8, numpy confirms that A is symmetric and idempotent, with eigenvalues 0 (once) and 1 (n - 1 times) for every n >= 2, so the maximum of x^T A x over unit vectors (the largest eigenvalue) is 1. The explicit unit vector (1, -1, 0, 0)/sqrt(2) attains 1 for n = 4, and 100,000 random unit vectors in R^6 never exceed 1. This matches the official key 1 to 1. In the degenerate case n = 1, A = [0] and the value would be 0; for every n >= 2 it is 1."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

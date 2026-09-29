@@ -97,16 +97,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. \"Leave-One-Out-Cross-Validation\" is italic in the paper and the hyphenated line break (\"Cross-/Validation\") is joined. The second official crop (Q12-2) shows only the page header and an empty table border; the whole question appears in the first crop."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. \"Leave-One-Out-Cross-Validation\" is italic in the paper, and the hyphenated line break (\"Cross-/Validation\") is joined. The second official crop (Q12-2) shows only the top strip of the next page (header text and an empty table border); the whole question appears in the first crop."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C",
     "agreesWithKey": true,
     "checkCode": "n_total,n_test=1000,100\ntrain=list(range(n_test,n_total))  # first 100 samples form the test set\nsplits=[([j for j in train if j!=i],[i]) for i in train]  # LOOCV: leave one out\nassert all(len(tr)==len(train)-1 and len(va)==1 for tr,va in splits)\nprint(len(splits))  # 900\n",
-    "notes": "Model selection uses the 1000 - 100 = 900 non-test samples, and LOOCV creates one split per sample, giving 900; this matches the official key (C). The Python check enumerates the LOOCV splits over the 900 non-test samples and counts 900, each with 899 training samples and 1 validation sample."
+    "notes": "Independent verifier solved the question blind before seeing the key: the first 100 samples are a held-out test set, so LOOCV runs on 1000 - 100 = 900 samples and creates one split per sample, giving 900, answer C. This agrees with the official key (C). Re-running the Python check enumerates the LOOCV splits over the 900 non-test samples and counts 900, each with 899 training samples and 1 validation sample."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

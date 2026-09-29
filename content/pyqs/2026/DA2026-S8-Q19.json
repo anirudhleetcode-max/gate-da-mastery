@@ -97,16 +97,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The PDF text layer flattens the exponents (e.g. \"21013(21013 −1)/22026\"); the superscripts were read from the rendered paper image: 2^{1013}, 2^{2026}. The set is written \"S = {1,2,3, … ,2026}\" in the paper and is rendered with \\ldots."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The PDF text layer flattens the exponents (e.g. \"21013(21013 −1)/22026\"); the superscripts 2^{1013} and 2^{2026} and the parenthesisation of each option were read from the rendered paper image. The set is written \"S = {1,2,3, … ,2026}\" in the paper and is rendered with \\ldots."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
     "independentAnswer": "C",
     "agreesWithKey": true,
-    "checkCode": "from fractions import Fraction as Fr\nfrom itertools import combinations\nfrom math import prod\ndef brute(n):  # uniform over non-empty subsets of {1..n}\n    subs=[c for k in range(1,n+1) for c in combinations(range(1,n+1),k)]\n    return Fr(sum(prod(c)%2==0 for c in subs), len(subs))\nfor n in [2,4,6,8,10]:\n    h=n//2; assert brute(n)==Fr(2**h*(2**h-1),2**n-1)\nN,h=2026,1013\nC=Fr(2**h*(2**h-1),2**N-1); A=Fr(2**h*(2**h-1),2**N); B=Fr(2**h,2**N); D=Fr(1,2**N-1)\nassert C==Fr(2**h,2**h+1) and len({A,B,C,D})==4\nprint('C =', C==Fr(2**h,2**h+1))  # option C is the exact probability\n",
-    "notes": "Treating M as uniform over the 2^2026 − 1 non-empty subsets: the product is odd iff M contains only odd numbers (2^1013 − 1 non-empty subsets of the 1013 odd numbers), so P(even) = (2^2026 − 2^1013)/(2^2026 − 1) = 2^1013(2^1013 − 1)/(2^2026 − 1) = 2^1013/(2^1013 + 1). The Python check brute-forces the same formula for S = {1..n} with n = 2, 4, 6, 8, 10 using exact fractions, confirms the simplification for n = 2026, and confirms options A, B, C, D are pairwise distinct. This matches the official key (C)."
+    "checkCode": "from fractions import Fraction as Fr\nfrom itertools import combinations\nfrom math import prod\ndef brute(n):  # uniform over non-empty subsets of {1..n}\n    subs=[c for k in range(1,n+1) for c in combinations(range(1,n+1),k)]\n    return Fr(sum(prod(c)%2==0 for c in subs), len(subs))\nfor n in [2,4,6,8,10,12]:\n    h=n//2; assert brute(n)==Fr(2**h*(2**h-1),2**n-1)\nN,h=2026,1013\nexact=Fr((2**N-1)-(2**h-1),2**N-1)  # complement of the 2^1013-1 all-odd non-empty subsets\nopts={'A':Fr(2**h*(2**h-1),2**N),'B':Fr(2**h,2**N),'C':Fr(2**h*(2**h-1),2**N-1),'D':Fr(1,2**N-1)}\nassert len(set(opts.values()))==4 and exact==Fr(2**h,2**h+1)\nprint([k for k,v in opts.items() if v==exact])  # ['C']\n",
+    "notes": "Independent verifier re-solved the question. The official key row was present in the verifier's context file, so the solve was not strictly blind to the key; it was nevertheless derived from scratch from the official crop before the stored solution was read. Taking M uniform over the 2^2026 − 1 non-empty subsets, the product is odd iff every element is odd (2^1013 − 1 non-empty subsets of the 1013 odd numbers), so P(even) = (2^2026 − 2^1013)/(2^2026 − 1) = 2^1013(2^1013 − 1)/(2^2026 − 1) = 2^1013/(2^1013 + 1), answer C. This agrees with the official key (C). The Python check brute-forces S = {1..n} for n = 2, 4, 6, 8, 10, 12 with exact fractions against the closed form, then for n = 2026 computes the exact probability by complement, confirms the four options are pairwise distinct, and finds that only option C equals it."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -1,0 +1,114 @@
+{
+  "id": "DA2025-S5-Q29",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 29,
+  "section": "DA",
+  "subjectId": "pdsa",
+  "topicId": "pdsa-sorting",
+  "subtopicIds": [
+    "pdsa-basic-sorts"
+  ],
+  "type": "MSQ",
+  "marks": 1,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: one concept (insertion-sort swaps equal the number of inversions) applied in 2-3 routine steps to four candidate values, with a trap in forgetting the inversion (15, 13) already present; about 1.5-2 min for a prepared student.",
+  "estimatedTimeSec": 100,
+  "stem": "Suppose that insertion sort is applied to the array $[1, 3, 5, 7, 9, 11, x, 15, 13]$ and it takes exactly two swaps to sort the array. Select all possible values of $x$.",
+  "options": [
+    {
+      "label": "A",
+      "text": "10"
+    },
+    {
+      "label": "B",
+      "text": "12"
+    },
+    {
+      "label": "C",
+      "text": "14"
+    },
+    {
+      "label": "D",
+      "text": "16"
+    }
+  ],
+  "officialKeyRaw": "A;C",
+  "answer": {
+    "kind": "MSQ",
+    "correct": [
+      "A",
+      "C"
+    ]
+  },
+  "solution": {
+    "quick": "Insertion sort performs one swap per **inversion** (a pair $i < j$ with $a_i > a_j$). Without $x$ the array already has exactly one inversion, $(15, 13)$, so $x$ must be part of exactly one more. $x = 10$ (only $11 > 10$ before it) and $x = 14$ (only $13 < 14$ after it) qualify; $x = 12$ gives $1$ swap and $x = 16$ gives $3$. Answer **(A), (C)**.",
+    "steps": [
+      {
+        "title": "Swaps in insertion sort = number of inversions",
+        "body": "Insertion sort takes each element $a_i$ in turn and moves it left, swapping it with its left neighbour while that neighbour is larger:\n\n```text\nfor i = 1 .. n-1:\n    j = i\n    while j > 0 and a[j-1] > a[j]:\n        swap a[j-1], a[j]\n        j = j - 1\n```\n\nAn **inversion** is a pair of positions $i < j$ with $a_i > a_j$. Each swap exchanges two *adjacent* elements that are out of order, so it removes exactly one inversion and creates none. The sort stops when no inversions remain, hence\n\n$$\n\\text{number of swaps} = \\text{number of inversions in the input.}\n$$"
+      },
+      {
+        "title": "Inversions that do not involve $x$",
+        "body": "Ignore $x$ and look at the other eight values in order: $1, 3, 5, 7, 9, 11, 15, 13$.\n\n- $1, 3, 5, 7, 9, 11$ are increasing, so no inversions among them.\n- Every one of them is smaller than both $15$ and $13$, so no inversions between the prefix and $\\{15, 13\\}$.\n- $15$ comes before $13$: **one** inversion, $(15, 13)$.\n\nSo the array already needs $1$ swap without $x$. For exactly two swaps, $x$ must take part in **exactly one** inversion."
+      },
+      {
+        "title": "Inversions involving $x$ for each option",
+        "body": "$x$ sits at position 7. Its inversions are the elements **before** it that are larger than $x$ (from $1, 3, 5, 7, 9, 11$) plus the elements **after** it that are smaller than $x$ (from $15, 13$).\n\n| $x$ | Before $x$ and $> x$ | After $x$ and $< x$ | Inversions with $x$ | Total swaps $= 1 + \\text{(previous column)}$ |\n| --- | --- | --- | --- | --- |\n| $10$ | $11$ | none | $1$ | $2$ |\n| $12$ | none | none | $0$ | $1$ |\n| $14$ | none | $13$ | $1$ | $2$ |\n| $16$ | none | $15, 13$ | $2$ | $3$ |\n\nExactly two swaps occur for $x = 10$ and $x = 14$."
+      },
+      {
+        "title": "Confirm by tracing the sort",
+        "body": "Positions $1$ to $6$ are already sorted, so the first swap can happen only when position $7$ is inserted.\n\n- **$x = 10$:** insert $10$: $10 < 11$, swap $\\Rightarrow [1,3,5,7,9,10,11,15,13]$; then $9 < 10$, stop. Insert $15$: $11 < 15$, no swap. Insert $13$: $13 < 15$, swap $\\Rightarrow [\\ldots,11,13,15]$; then $11 < 13$, stop. **2 swaps.**\n- **$x = 12$:** $12$ and $15$ are already in place; inserting $13$ needs one swap past $15$. **1 swap.**\n- **$x = 14$:** $14$ and $15$ are in place. Insert $13$: swap past $15$ $\\Rightarrow [\\ldots,11,14,13,15]$, swap past $14$ $\\Rightarrow [\\ldots,11,13,14,15]$; then $11 < 13$, stop. **2 swaps.**\n- **$x = 16$:** insert $15$: $15 < 16$, swap $\\Rightarrow [\\ldots,11,15,16,13]$. Insert $13$: swap past $16$, swap past $15$ $\\Rightarrow [\\ldots,11,13,15,16]$. **3 swaps.**\n\nThe traces agree with the inversion count: the possible values are $10$ and $14$, options **(A)** and **(C)**."
+      }
+    ],
+    "finalAnswer": "**(A), (C)**",
+    "teaching": "**How insertion sort works.** Insertion sort grows a sorted prefix one element at a time. At step $i$, the prefix $a_1, \\ldots, a_{i-1}$ is already sorted, and the new element $a_i$ is moved left past every larger element in the prefix until it meets one that is not larger. In the swap-based version each move is one swap of adjacent elements; in the shift-based version each move is one shift. The count is the same either way.\n\n**Inversions measure how unsorted an array is.** An inversion is a pair of positions $i < j$ whose values are out of order ($a_i > a_j$). A sorted array has $0$ inversions, and a reverse-sorted array of $n$ distinct values has the maximum $\\binom{n}{2} = n(n-1)/2$.\n\n**Why swaps equal inversions.** Swapping two adjacent out-of-order elements changes the relative order of only that one pair, so it removes exactly one inversion and cannot create any. Insertion sort only ever swaps adjacent out-of-order pairs and finishes with zero inversions, so the total number of swaps is exactly the number of inversions in the input. This is also why insertion sort runs in $\\Theta(n + I)$ time, where $I$ is the inversion count: it is fast ($\\Theta(n)$) on nearly sorted inputs and $\\Theta(n^2)$ on reverse-sorted ones.\n\n**Counting inversions for one element.** The inversions that involve a particular element $v$ are: the elements *before* $v$ that are larger than $v$, plus the elements *after* $v$ that are smaller than $v$.\n\n**Back to the question.** Apart from $x$, the array $[1, 3, 5, 7, 9, 11, \\_, 15, 13]$ has one inversion, $(15, 13)$. Two swaps in total therefore means $x$ must be out of order with exactly one other element. With distinct values, that happens when $x$ lies just below $11$ (between $9$ and $11$, e.g. $10$) or just above $13$ (between $13$ and $15$, e.g. $14$). $x = 12$ fits between $11$ and $13$ with no inversion (1 swap in total), and $x = 16$ is larger than both $15$ and $13$ (3 swaps in total). So the answer is (A) and (C).",
+    "optionAnalysis": [
+      {
+        "label": "A",
+        "verdict": "correct",
+        "explanation": "$x = 10$: one inversion with $x$ (the $11$ before it) plus the existing $(15, 13)$ gives $2$ swaps."
+      },
+      {
+        "label": "B",
+        "verdict": "incorrect",
+        "explanation": "$x = 12$ is already in its correct place ($11 < 12 < 13$), so it adds no inversion. Only $(15, 13)$ remains: $1$ swap, not $2$."
+      },
+      {
+        "label": "C",
+        "verdict": "correct",
+        "explanation": "$x = 14$: one inversion with $x$ (the $13$ after it) plus the existing $(15, 13)$ gives $2$ swaps. The $13$ is swapped past $15$ and then past $14$."
+      },
+      {
+        "label": "D",
+        "verdict": "incorrect",
+        "explanation": "$x = 16$ is larger than both $15$ and $13$ that follow it, giving $2$ inversions with $x$ plus $(15, 13)$: $3$ swaps, not $2$."
+      }
+    ],
+    "shortcut": "Swaps = inversions. The array already has one inversion, $(15, 13)$, so $x$ must be out of order with exactly **one** element: count (larger elements before $x$) + (smaller elements after $x$) and keep the options where this equals $1$.",
+    "commonTrap": "Forgetting that $(15, 13)$ is already an inversion and looking for an $x$ that creates two inversions by itself; that wrongly picks $x = 16$ (D), which actually needs $3$ swaps. Another slip is counting comparisons instead of swaps."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q29-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array and $x$ are typeset as math in the paper and are transcribed as KaTeX; the options 10, 12, 14, 16 are printed as plain numbers. The paper's line break after \"it takes\" is joined."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "A;C (x = 10 and x = 14 each give exactly two swaps)",
+    "agreesWithKey": true,
+    "checkCode": "def insertion_sort_swaps(a):\n    a, swaps = list(a), 0\n    for i in range(1, len(a)):\n        j = i\n        while j > 0 and a[j - 1] > a[j]:          # swap-based insertion sort\n            a[j - 1], a[j] = a[j], a[j - 1]; swaps += 1; j -= 1\n    assert a == sorted(a)\n    return swaps\ninv = lambda a: sum(a[i] > a[j] for i in range(len(a)) for j in range(i + 1, len(a)))\nfor label, x in zip('ABCD', (10, 12, 14, 16)):\n    arr = [1, 3, 5, 7, 9, 11, x, 15, 13]\n    s = insertion_sort_swaps(arr)\n    print(label, x, 'swaps =', s, '| inversions =', inv(arr), '| exactly two:', s == 2)\nprint('integers x in 0..20 giving exactly 2 swaps:', [x for x in range(21) if insertion_sort_swaps([1, 3, 5, 7, 9, 11, x, 15, 13]) == 2])\n",
+    "notes": "Independent solve: insertion-sort swaps equal the number of inversions. Without x the array has one inversion (15, 13), so x must be in exactly one inversion: x = 10 (with 11) and x = 14 (with 13) give 2 swaps, x = 12 gives 1 and x = 16 gives 3. This gives A;C, matching the official key A;C. The Python check runs a swap-based insertion sort on each option's array and reports 2, 1, 2 and 3 swaps for x = 10, 12, 14, 16, equal to the brute-force inversion counts. For information only: over integers 0-20 the values giving exactly two swaps are 9, 10, 14 and 15; 9 and 15 would duplicate a value already in the array and are not among the options."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

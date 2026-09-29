@@ -1,0 +1,73 @@
+{
+  "id": "DA2025-S5-Q33",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 33,
+  "section": "DA",
+  "subjectId": "dbw",
+  "topicId": "dbw-query-languages",
+  "subtopicIds": [
+    "dbw-sql"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (an uncorrelated scalar subquery with MAX feeding a strict comparison) followed by a direct scan of seven rows, about a minute for a prepared student.",
+  "estimatedTimeSec": 60,
+  "stem": "On a relation named **Loan** of a bank:\n\n**Loan**\n\n| loan_number | branch_name | amount |\n| :---: | :---: | :---: |\n| L11 | Banjara Hills | 90000 |\n| L14 | Kondapur | 50000 |\n| L15 | SR Nagar | 40000 |\n| L22 | SR Nagar | 25000 |\n| L23 | Balanagar | 80000 |\n| L25 | Kondapur | 70000 |\n| L19 | SR Nagar | 65000 |\n\nthe following SQL query is executed.\n\n```sql\nSELECT L1.loan_number\nFROM Loan L1\nWHERE L1.amount > (SELECT MAX (L2.amount)\n                   FROM Loan L2\n                   WHERE L2.branch_name = ’SR Nagar’);\n```\n\nThe number of rows returned by the query is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_ (Answer in integer)",
+  "options": [],
+  "officialKeyRaw": "3 to 3",
+  "answer": {
+    "kind": "NAT",
+    "min": 3,
+    "max": 3
+  },
+  "solution": {
+    "quick": "The subquery returns one number, the largest SR Nagar loan: $\\max(40000,\\ 25000,\\ 65000) = 65000$. The outer query keeps the loans whose amount is **strictly greater** than $65000$: L11 ($90000$), L23 ($80000$) and L25 ($70000$). So the query returns **3** rows.",
+    "steps": [
+      {
+        "title": "Read the structure of the query",
+        "body": "`L1` and `L2` are two aliases for the same relation `Loan`.\n\n- The inner query `SELECT MAX (L2.amount) FROM Loan L2 WHERE L2.branch_name = 'SR Nagar'` does **not** mention `L1`, so it is an *uncorrelated* subquery. It is evaluated once and, because `MAX` is an aggregate with no `GROUP BY`, it returns exactly one value (a *scalar subquery*).\n- The outer query returns `L1.loan_number` for every row of `Loan` whose `amount` is greater than that single value.\n\nSo the task is: find the value $m$ of the subquery, then count the rows with `amount` $> m$."
+      },
+      {
+        "title": "Evaluate the subquery",
+        "body": "Select the rows with `branch_name = 'SR Nagar'`:\n\n| loan_number | branch_name | amount |\n| :---: | :---: | :---: |\n| L15 | SR Nagar | 40000 |\n| L22 | SR Nagar | 25000 |\n| L19 | SR Nagar | 65000 |\n\n$$m = \\max(40000,\\ 25000,\\ 65000) = 65000.$$"
+      },
+      {
+        "title": "Apply the outer condition `L1.amount > 65000` to every row",
+        "body": "| loan_number | branch_name | amount | amount $> 65000$? |\n| :---: | :---: | :---: | :---: |\n| L11 | Banjara Hills | 90000 | Yes |\n| L14 | Kondapur | 50000 | No |\n| L15 | SR Nagar | 40000 | No |\n| L22 | SR Nagar | 25000 | No |\n| L23 | Balanagar | 80000 | Yes |\n| L25 | Kondapur | 70000 | Yes |\n| L19 | SR Nagar | 65000 | No ($65000$ is not *greater than* $65000$) |"
+      },
+      {
+        "title": "Count the returned rows",
+        "body": "The result is\n\n| loan_number |\n| :---: |\n| L11 |\n| L23 |\n| L25 |\n\nThere is no `DISTINCT`, but it would not matter here because each `loan_number` appears once. The number of rows returned is **3**."
+      }
+    ],
+    "finalAnswer": "**3**",
+    "teaching": "**Subqueries in `WHERE`.** SQL lets a `WHERE` clause compare a column with the result of another query. When that inner query returns a single value (one row, one column), it is called a **scalar subquery** and can be used with ordinary comparison operators such as `=`, `>` and `<`. An aggregate like `MAX`, `MIN`, `SUM`, `AVG` or `COUNT` without `GROUP BY` always produces exactly one row, so `(SELECT MAX(...) FROM ...)` is the classic scalar subquery.\n\n**Correlated vs uncorrelated.** If the inner query mentions a column of the outer query's table (for example `L1.branch_name`), it is *correlated* and is conceptually re-evaluated for every outer row. Here the inner query only uses `L2`, so it is *uncorrelated*: compute it once, then treat it as a constant. Aliases (`L1`, `L2`) are just two names for the same table; they let the query refer to it twice without ambiguity.\n\n**How to trace such a query by hand.**\n1. Evaluate the innermost query first and write down its value.\n2. Substitute that value into the outer `WHERE`.\n3. Check the condition row by row, paying attention to strict (`>`) versus non-strict (`>=`) comparisons.\n4. Count or list the surviving rows.\n\n**Equivalent forms.** `amount > (SELECT MAX(amount) ...)` asks for amounts larger than *every* SR Nagar amount, which is the same as `amount > ALL (SELECT amount ...)` whenever the subquery set is non-empty. By contrast, `amount > ANY (SELECT amount ...)` (larger than *some* SR Nagar amount) behaves like `> MIN(...)`; here that would be `> 40000` and would return 5 rows. (If SR Nagar had no loans at all, `MAX` would return `NULL`, the comparison `amount > NULL` would be *unknown* and no rows would be returned, whereas `> ALL` over an empty set is true for every row.)\n\n**Back to this question.** The inner query gives $65000$. Exactly three amounts exceed it ($90000$, $80000$, $70000$), so the query returns $3$ rows.",
+    "shortcut": "Find the largest SR Nagar amount ($65000$) and count the amounts in the table that are strictly larger: $90000$, $80000$, $70000$, which gives **3**.",
+    "commonTrap": "Counting L19 itself: its amount $65000$ equals the maximum, and the condition is the strict `>`, so it is **not** returned (counting it gives 4). Another slip is reading the subquery as \"greater than some SR Nagar loan\" (i.e. using the minimum $40000$), which gives 5."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q33-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. 'Loan' is bold in the first sentence, as printed. The relation is a bordered table whose top row is a bold caption 'Loan' spanning all three columns, above bold column headers; GFM tables cannot span columns, so the caption is given as a bold line above a GFM table whose header row holds the column names (a header row renders bold). The column and attribute names contain underscores (loan_number, branch_name) as seen in the rendering; the PDF text layer drops them. The query is set in a typewriter font with a blank line between successive lines; it is transcribed as a single-spaced sql code block with the paper's line breaks. In the paper the last two lines ('FROM Loan L2' and 'WHERE L2.branch_name = ...') start directly under the SELECT of the subquery; they are indented by 19 spaces here so that they align under that SELECT. The '>' is set with slightly wider spacing than the monospace grid and is transcribed as ' > '. The space in 'MAX (L2.amount)' is kept as printed. The string literal is printed with typographic right single quotes (’SR Nagar’) and is kept as printed; it denotes the ordinary SQL string 'SR Nagar'. The answer blank is an underline followed by '(Answer in integer)', as printed. The only background element in the region is the GATE 2025 watermark, which is not part of the question; no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "3 (rows L11, L23, L25)",
+    "agreesWithKey": true,
+    "checkCode": "import sqlite3\nrows = [('L11','Banjara Hills',90000),('L14','Kondapur',50000),('L15','SR Nagar',40000),\n        ('L22','SR Nagar',25000),('L23','Balanagar',80000),('L25','Kondapur',70000),('L19','SR Nagar',65000)]\ndb = sqlite3.connect(':memory:')\ndb.execute('CREATE TABLE Loan(loan_number TEXT, branch_name TEXT, amount INTEGER)')\ndb.executemany('INSERT INTO Loan VALUES (?,?,?)', rows)\nprint('max SR Nagar =', db.execute(\"SELECT MAX(amount) FROM Loan WHERE branch_name='SR Nagar'\").fetchone()[0])\nres = db.execute(\"\"\"SELECT L1.loan_number FROM Loan L1\nWHERE L1.amount > (SELECT MAX (L2.amount) FROM Loan L2 WHERE L2.branch_name = 'SR Nagar');\"\"\").fetchall()\nprint(res, 'rows =', len(res))\n",
+    "notes": "Hand solve: the uncorrelated scalar subquery gives MAX(amount) over SR Nagar = max(40000, 25000, 65000) = 65000, and the amounts strictly greater than 65000 are 90000 (L11), 80000 (L23) and 70000 (L25), i.e. 3 rows. The Python check loads the seven rows into an in-memory SQLite table and runs the query (with ordinary straight quotes around 'SR Nagar' in place of the paper's typographic quotes); it returns L11, L23 and L25, i.e. 3 rows. This agrees with the official key 3 to 3."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

@@ -48,7 +48,7 @@
       },
       {
         "title": "Distribution of the split size",
-        "body": "The elements are distinct and randomly ordered, so every one of the $n!$ orderings is equally likely. The first element is then equally likely to be the smallest, the 2nd smallest, $\\ldots$, or the largest element:\n\n$$\nP(\\text{left part has } k \\text{ elements}) = \\frac{1}{n}, \\qquad k = 0, 1, \\ldots, n-1.\n$$\n\nPartitioning only compares elements with the pivot, so each part is again a randomly ordered set of distinct elements. This is the standard property used in the average-case analysis. The expected cost of sorting a part of size $m$ is therefore $T(m)$, the same function."
+        "body": "The elements are distinct and randomly ordered, so every one of the $n!$ orderings is equally likely. The first element is then equally likely to be the smallest, the 2nd smallest, $\\ldots$, or the largest element:\n\n$$\nP(\\text{left part has } k \\text{ elements}) = \\frac{1}{n}, \\qquad k = 0, 1, \\ldots, n-1.\n$$\n\nPartitioning only compares elements with the pivot, so (for the usual partitioning schemes) each part is again a uniformly randomly ordered set of distinct elements. This is the standard property used in the average-case analysis. The expected cost of sorting a part of size $m$ is therefore $T(m)$, the same function."
       },
       {
         "title": "Average over the $n$ equally likely splits",
@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. In (D) the paper sets the fraction and the summation limits in inline (text) style, with the limits beside the summation sign; it is transcribed as inline math. The square brackets in (D) are as printed. The variable n is italic in the stem and is transcribed as $n$. The second official crop (Q15-2) shows only the header and a table border of the next page. The only embedded image on the page is the GATE 2026 background watermark; no figure is needed for this question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem wording (three paragraphs), option order and every expression in (A)-(D) match the official crop and the PDF text layer. In (D) the paper sets the fraction and the summation limits in inline (text) style, with the limits beside the summation sign; it is transcribed as inline math. The square brackets in (D) are as printed. The variable n is italic in the stem and is transcribed as $n$. The second official crop (Q15-2) shows only the header and a table border of the next page. The only embedded image on the page is the GATE 2026 background watermark (the same full-page bounding box recurs on other pages); no figure is needed for this question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "(D) - the pivot rank is uniform, so each split (k, n-k-1) has probability 1/n; averaging gives T(n) = (1/n) Σ_{k=0}^{n-1} [T(k) + T(n-k-1)] + O(n).",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "(D)",
     "agreesWithKey": true,
     "checkCode": "import random\nfrom fractions import Fraction as F\nfrom math import factorial\nfrom itertools import permutations\ndef qs(a):  # quicksort, pivot = first element; returns #comparisons (partition cost = len-1)\n    if len(a) <= 1: return 0\n    p = a[0]; L = [x for x in a[1:] if x < p]; R = [x for x in a[1:] if x > p]\n    return (len(a) - 1) + qs(L) + qs(R)\n# Option (D) with the O(n) term taken as exactly n-1 comparisons\nT = [F(0)] * 11\nfor n in range(1, 11):\n    T[n] = F(n - 1) + F(1, n) * sum(T[k] + T[n - k - 1] for k in range(n))\n# Exact average over all n! input orders for small n\nfor n in range(1, 8):\n    avg = F(sum(qs(list(p)) for p in permutations(range(n))), factorial(n))\n    assert avg == T[n], (n, avg, T[n])\nprint('exact average == recurrence (D) for n=1..7:', [str(T[n]) for n in range(1, 8)])\n# Pivot rank is uniform: left-part size k occurs with prob 1/n\nn = 8; cnt = [0] * n\nfor p in permutations(range(n)): cnt[p[0]] += 1\nprint('left size k=0..7 counts:', cnt, '-> each 1/n')\nrandom.seed(1); n = 2000\nsim = sum(qs(random.sample(range(10**6), n)) for _ in range(200)) / 200\nH = sum(1 / i for i in range(1, n + 1))\nprint('simulated', round(sim), 'closed form 2(n+1)H_n-4n =', round(2 * (n + 1) * H - 4 * n))\nprint('sorted input (worst case):', qs(list(range(300))), '= n(n-1)/2 =', 300 * 299 // 2)",
-    "notes": "Author solve agrees with the official key D. The Python check computes the exact average comparison count of first-element-pivot quicksort over all n! input orders for n = 1..7 and shows that it equals recurrence (D) with the O(n) term taken as n-1 comparisons (0, 1, 8/3, 29/6, 37/5, 103/10, 472/35). It also checks that the pivot rank is uniform, compares a random simulation for n = 2000 with the closed form 2(n+1)H_n - 4n, and confirms the n(n-1)/2 worst case on sorted input."
+    "notes": "Blind re-solve (before reading the key or the stored solution) gives (D): with distinct, randomly ordered elements the first-element pivot has a uniformly random rank, so the left part has size k with probability 1/n for k = 0..n-1 and the right part n-k-1; conditioning on k gives T(n) = (1/n) Σ [T(k) + T(n-k-1)] + O(n). This agrees with the official key D (confirmed in the official answer-key PDF: Q15, session 8, MCQ, DA, key D, 1 mark). A separate verifier check (exact average comparison count over all n! input orders for n = 1..8) matched recurrence (D) with the O(n) term taken as n-1 comparisons (0, 1, 8/3, 29/6, 37/5, 103/10, 472/35, 2369/140), while (A) gives n(n-1)/2. The stored checkCode (kept because it is more complete) does the same exact comparison for n = 1..7, confirms the pivot rank is uniform, compares a simulation for n = 2000 with the closed form 2(n+1)H_n - 4n, and confirms the n(n-1)/2 worst case on sorted input."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

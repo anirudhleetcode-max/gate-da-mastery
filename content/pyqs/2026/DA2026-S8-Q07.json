@@ -81,7 +81,7 @@
       {
         "label": "D",
         "verdict": "incorrect",
-        "explanation": "Reaching 3 requires relaxing the mode condition, e.g. also counting sets such as $\\{0, 3, 18, 19, 20\\}$ (sum 60, median 18, but every value appears once, so there is no unique mode). No such set is valid."
+        "explanation": "There are not three valid multisets. The unique-mode condition forces $d = e = 20$, and the mean then leaves $a + b = 2$, so the only candidates are $(0, 2)$ and $(1, 1)$. Of these, $(1, 1)$ fails because it ties with $20$. Other sets with sum $60$ and median $18$, such as $\\{0, 3, 18, 19, 20\\}$, fail because every value appears once, so $20$ is not a single mode. Dropping the mode condition entirely would give $17$ multisets, not $3$, so no reading of the conditions produces this count."
       }
     ],
     "shortcut": "Because the median is 18, the value 20 fits only in the top two slots, so it must fill both: $d = e = 20$. Then $a + b = 60 - 18 - 40 = 2$. Reject $(1, 1)$ because it ties the mode, which leaves the single answer $\\{0, 2, 18, 20, 20\\}$.",
@@ -98,16 +98,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Official crop Q07-2 shows only the top edge of the next page's table and contains no question content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The stem (0 to 20, mean 12, median 18, single mode of 20, \"Ignoring permutations\") and options (A) 0, (B) 1, (C) 2, (D) 3 match the paper exactly. Official crop Q07-2 shows only the top edge of the next page's table and contains no question content."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B (exactly one multiset: {0, 2, 18, 20, 20})",
     "agreesWithKey": true,
     "checkCode": "from itertools import combinations_with_replacement as C\nfrom collections import Counter\ndef single_mode_20(c):\n    m=Counter(c); top=max(m.values())\n    return [v for v in m if m[v]==top]==[20]\ns=[c for c in C(range(21),5) if sum(c)==60 and c[2]==18 and single_mode_20(c)]\nprint(s, len(s))  # [(0, 2, 18, 20, 20)] 1",
-    "notes": "A hand derivation and an exhaustive enumeration of all 5-element multisets from 0–20 both give exactly one multiset, {0, 2, 18, 20, 20}. This agrees with official key B."
+    "notes": "Blind hand derivation: with sorted a <= b <= c <= d <= e, the median gives c = 18 and the mean gives a sum of 60. A unique mode of 20 forces d = e = 20, because 20 cannot occupy c. That leaves a + b = 2, and (1, 1) is rejected because it ties with 20. This leaves {0, 2, 18, 20, 20}, i.e. 1 way. An exhaustive enumeration of all 5-element multisets from 0 to 20 confirms exactly one solution. This agrees with official key B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

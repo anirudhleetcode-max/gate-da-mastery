@@ -48,6 +48,7 @@ export function loadRawContent(): RawContent {
     formulaFiles: readDir(C("formulas")),
     strategy: readOptional(C("strategy", "articles.json")),
     roadmap: readOptional(C("roadmap.json")),
+    officialKeys: readOptional(C("exam", "official-keys.json")),
   };
 }
 

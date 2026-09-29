@@ -71,7 +71,7 @@
       {
         "label": "B",
         "verdict": "incorrect",
-        "explanation": "No pair of consecutive numbers from 10 to 22 has a sum of squares with tens digit 5, so $Y = 5$ is impossible."
+        "explanation": "The sums of squares of consecutive pairs from 10 to 22 are $221, 265, 313, 365, 421, 481, 545, 613, 685, 761, 841, 925$ (for $n = 10, \\dots, 21$). None has tens digit $5$, so $Y = 5$ is impossible even before the distinctness check."
       },
       {
         "label": "C",
@@ -81,7 +81,7 @@
       {
         "label": "D",
         "verdict": "incorrect",
-        "explanation": "$7$ is the hundreds digit $X$ of $761$, not $Y$. Choosing it is a misreading of the positions in $XYP$."
+        "explanation": "$7$ is the hundreds digit $X$ of $761$, not $Y$, so choosing it misreads the positions in $XYP$. None of the sums $221, 265, \\dots, 925$ for consecutive pairs from 10 to 22 has tens digit $7$, so no assignment gives $Y = 7$."
       }
     ],
     "shortcut": "Distinct $P$ and $R$ mean the consecutive numbers must cross a multiple of ten. Since the squares must sum to under 1000, the only candidates are 19 and 20. $361 + 400 = 761$, so $Y$ is the middle digit, $6$.",
@@ -98,16 +98,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. In the paper, the equation $(PQ)^2 + (RS)^2 = XYP$ starts on a new line within the same sentence; here it is kept inline. Official crop Q09-2 shows only the top edge of the next page's table and contains no question content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The italic letters $P, Q, R, S, X, Y$, the phrase \"distinct single-digit whole numbers taking values from 0 to 9\", the equation $(PQ)^2 + (RS)^2 = XYP$ and the options (A) 4, (B) 5, (C) 6, (D) 7 match the paper exactly. In the paper, the equation starts on a new line within the same sentence; here it is kept inline. The candidate embedded image on this page is only the GATE 2026 watermark, so no figure is needed. Official crop Q09-2 shows only the top edge of the next page's table and contains no question content."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C (Y = 6; PQ = 19, RS = 20, XYP = 761)",
     "agreesWithKey": true,
     "checkCode": "sols=[]\nfor pq in range(0,100):          # also allows a leading zero, for robustness\n  for rs in (pq-1,pq+1):\n    if not 0<=rs<=99: continue\n    t=pq*pq+rs*rs\n    if not 100<=t<=999: continue\n    P,Q=divmod(pq,10); R,S=divmod(rs,10); X,Y,P2=t//100,(t//10)%10,t%10\n    if P2==P and len({P,Q,R,S,X,Y})==6: sols.append((pq,rs,t,Y))\nprint(sols)  # [(19, 20, 761, 6)] -> Y = 6",
-    "notes": "The hand derivation and an exhaustive search (which also allows leading zeros) give one assignment: PQ = 19, RS = 20, XYP = 761, so Y = 6. This agrees with official key C."
+    "notes": "Blind hand derivation: since P != R, the consecutive two-digit numbers must straddle a multiple of 10. A three-digit sum of squares requires the smaller number n <= 21 (21^2 + 22^2 = 925, 22^2 + 23^2 = 1013), so the pair is {19, 20}. Then 361 + 400 = 761 = XYP, whose units digit forces P = 1, i.e. PQ = 19, RS = 20, X = 7, Y = 6, with all six digits distinct. An exhaustive search (which also allows leading zeros) finds only this assignment. This agrees with official key C."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

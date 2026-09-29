@@ -97,16 +97,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Option (D) is printed as \"0 < θ < 90°\" (no degree sign on the 0); kept as printed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Option (D) is printed as \"0 < θ < 90°\" (no degree sign on the 0); kept as printed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B",
     "agreesWithKey": true,
-    "checkCode": "import numpy as np\nrng=np.random.default_rng(0)\nX=rng.normal(size=(500,100))@rng.normal(size=(100,100))  # correlated 100-D data\nXc=X-X.mean(0)\nw,V=np.linalg.eigh(np.cov(Xc,rowvar=False))\nV=V[:,np.argsort(w)[::-1]][:,:10]  # top-10 principal directions\nc=V[:,0]@V[:,9]\nprint(c, np.degrees(np.arccos(np.clip(c,-1,1))))  # ~-3e-17, 90.0\nprint(np.abs(V.T@V-np.eye(10)).max())  # ~1e-15: the 10 PCs are orthonormal\n",
-    "notes": "Principal components are orthonormal eigenvectors of the symmetric covariance matrix, so the first and tenth are at exactly 90 degrees; this matches the official key (B). The numpy check (PCA on random correlated 100-D data, top 10 components) gives cos(theta) about -3e-17, i.e. 90.0 degrees, and V^T V = I to about 1e-15."
+    "checkCode": "import numpy as np\nrng=np.random.default_rng(0)\nX=rng.normal(size=(500,100))@rng.normal(size=(100,100))  # correlated 100-D data\nXc=X-X.mean(0)\nw,V=np.linalg.eigh(np.cov(Xc,rowvar=False))\nV=V[:,np.argsort(w)[::-1]][:,:10]  # top-10 principal directions\nc=V[:,0]@V[:,9]\nprint(c, np.degrees(np.arccos(np.clip(c,-1,1))))  # ~-3e-17, 90.0\nprint(np.abs(V.T@V-np.eye(10)).max())  # ~1e-15: the 10 PCs are orthonormal\n# independent cross-check via SVD of the centred data\nVt=np.linalg.svd(Xc,full_matrices=False)[2][:10]\nprint(np.degrees(np.arccos(np.clip(Vt[0]@Vt[9],-1,1))))  # 90.0\n",
+    "notes": "Independent verifier solved the question blind before seeing the key: principal components are orthonormal eigenvectors of the symmetric covariance matrix, so the first and tenth are at exactly 90 degrees, answer B. This agrees with the official key (B). Re-running the numpy check (eigendecomposition of the covariance of random correlated 100-D data, top 10 directions) gives cos(theta) = -3.1e-17, i.e. 90.0 degrees, and max|V^T V - I| = 1.4e-15; an SVD-based cross-check also gives 90.0 degrees."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

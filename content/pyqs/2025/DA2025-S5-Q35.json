@@ -1,0 +1,74 @@
+{
+  "id": "DA2025-S5-Q35",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 35,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-classification",
+  "subtopicIds": [
+    "ml-naive-bayes"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (the Bayes/MAP decision rule, whose error at a point is $1 - \\max_k P(y_k \\mid x)$) with a single short computation of two posteriors from given priors and likelihoods, about a minute for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "The naive Bayes classifier is used to solve a two-class classification problem with class-labels $y_1, y_2$. Suppose the prior probabilities are $P(y_1) = \\frac{1}{3}$ and $P(y_2) = \\frac{2}{3}$. Assuming a discrete feature space with\n\n$$P(x|y_1) = \\frac{3}{4} \\quad \\text{and} \\quad P(x|y_2) = \\frac{1}{4}$$\n\nfor a specific feature vector $x$. The probability of misclassifying $x$ is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n(Round off to two decimal places)",
+  "options": [],
+  "officialKeyRaw": "0.39 to 0.41",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.39,
+    "max": 0.41
+  },
+  "solution": {
+    "quick": "Scores (prior × likelihood): $y_1$: $\\frac{1}{3}\\cdot\\frac{3}{4} = \\frac{1}{4}$, $y_2$: $\\frac{2}{3}\\cdot\\frac{1}{4} = \\frac{1}{6}$. Normalising gives $P(y_1 \\mid x) = \\frac{3}{5} = 0.6$ and $P(y_2 \\mid x) = \\frac{2}{5} = 0.4$.\n\nThe classifier predicts $y_1$, so $x$ is misclassified exactly when its true class is $y_2$: $P(\\text{error} \\mid x) = 1 - 0.6 = $ **0.40**.",
+    "steps": [
+      {
+        "title": "Decision rule of the (naive) Bayes classifier",
+        "body": "A Bayes classifier assigns $x$ to the class with the largest posterior probability (the MAP rule):\n\n$$\\hat{y}(x) = \\arg\\max_{k} P(y_k \\mid x), \\qquad P(y_k \\mid x) = \\frac{P(x \\mid y_k)\\,P(y_k)}{P(x)}.$$\n\nThe \"naive\" assumption only affects how $P(x \\mid y_k)$ is computed from individual features. Here the class-conditional probabilities of the whole feature vector $x$ are given directly, so we can use them as they are."
+      },
+      {
+        "title": "Compute prior × likelihood for each class",
+        "body": "$$P(x \\mid y_1)\\,P(y_1) = \\frac{3}{4} \\cdot \\frac{1}{3} = \\frac{3}{12} = \\frac{1}{4},$$\n\n$$P(x \\mid y_2)\\,P(y_2) = \\frac{1}{4} \\cdot \\frac{2}{3} = \\frac{2}{12} = \\frac{1}{6}.$$\n\nThese are the joint probabilities $P(x, y_1)$ and $P(x, y_2)$."
+      },
+      {
+        "title": "Normalise to get the posteriors",
+        "body": "The evidence is the sum of the joints (law of total probability):\n\n$$P(x) = \\frac{1}{4} + \\frac{1}{6} = \\frac{3}{12} + \\frac{2}{12} = \\frac{5}{12}.$$\n\n$$P(y_1 \\mid x) = \\frac{1/4}{5/12} = \\frac{3}{5} = 0.6, \\qquad P(y_2 \\mid x) = \\frac{1/6}{5/12} = \\frac{2}{5} = 0.4.$$\n\nCheck: $0.6 + 0.4 = 1$."
+      },
+      {
+        "title": "Classify and find the probability of error",
+        "body": "Since $P(y_1 \\mid x) = 0.6 > P(y_2 \\mid x) = 0.4$, the classifier assigns $x$ to $y_1$.\n\nThe decision is wrong exactly when the true class of this $x$ is $y_2$, so\n\n$$P(\\text{misclassify } x) = P(y_2 \\mid x) = 1 - \\max_k P(y_k \\mid x) = 1 - \\frac{3}{5} = \\frac{2}{5} = 0.40.$$\n\nRounded to two decimal places, the answer is **0.40**, inside the official range 0.39 to 0.41."
+      }
+    ],
+    "finalAnswer": "**0.40**",
+    "teaching": "**Bayes' theorem as a classifier.** In classification we observe a feature vector $x$ and want its class $y$. Bayes' theorem turns what we can estimate from training data (how often each class occurs, $P(y_k)$, and how likely $x$ is inside each class, $P(x \\mid y_k)$) into what we actually want, the posterior $P(y_k \\mid x)$:\n\n$$P(y_k \\mid x) = \\frac{P(x \\mid y_k)\\,P(y_k)}{\\sum_j P(x \\mid y_j)\\,P(y_j)}.$$\n\nThe denominator is the same for every class, so for *deciding* you can compare the numerators $P(x \\mid y_k)P(y_k)$ directly; you only need the denominator when you want actual probabilities.\n\n**Where \"naive\" comes in.** With many features, $P(x \\mid y_k)$ is hard to estimate, so naive Bayes assumes the features are conditionally independent given the class: $P(x \\mid y_k) = \\prod_i P(x_i \\mid y_k)$. In this question the product has already been done for us, and we are handed $P(x \\mid y_1)$ and $P(x \\mid y_2)$ for the whole vector.\n\n**The decision and its error.** The Bayes (MAP) rule picks the class with the largest posterior. Given this particular $x$, the true class is still random: it is $y_k$ with probability $P(y_k \\mid x)$. If we predict $\\hat{y}$, we are right with probability $P(\\hat{y} \\mid x)$ and wrong with probability\n\n$$P(\\text{error} \\mid x) = 1 - P(\\hat{y} \\mid x) = 1 - \\max_k P(y_k \\mid x).$$\n\nChoosing the largest posterior makes this conditional error as small as possible, which is why the Bayes classifier is optimal. Averaging it over all $x$ gives the Bayes error rate. For two classes the error at a point is simply the *smaller* posterior.\n\n**Priors versus evidence.** Before seeing $x$, class $y_2$ is twice as likely ($\\frac{2}{3}$ vs $\\frac{1}{3}$). But $x$ is three times as likely under $y_1$ ($\\frac{3}{4}$ vs $\\frac{1}{4}$). The posterior odds are prior odds × likelihood ratio $= \\frac{1}{2} \\times 3 = \\frac{3}{2}$ in favour of $y_1$, i.e. $P(y_1 \\mid x) = \\frac{3}{5}$.\n\n**Back to this question.** The classifier predicts $y_1$ with posterior $0.6$, so the probability that this $x$ is misclassified is the remaining posterior mass, $0.4$.",
+    "shortcut": "For two classes, $P(\\text{error} \\mid x) = \\dfrac{\\min(a, b)}{a + b}$ with $a = P(y_1)P(x \\mid y_1)$ and $b = P(y_2)P(x \\mid y_2)$. Over a common denominator of 12: $a = 3$, $b = 2$, so the error is $\\frac{2}{3 + 2} = 0.40$.",
+    "commonTrap": "Reporting the joint $P(x, y_2) = \\frac{1}{6} \\approx 0.17$ instead of the normalised posterior $P(y_2 \\mid x) = \\frac{2}{5}$ (forgetting to divide by $P(x) = \\frac{5}{12}$). Another trap is deciding by the prior alone (predicting $y_2$ because $P(y_2) = \\frac{2}{3}$), which gives the wrong class and an \"error\" of $0.60$; the likelihood ratio of 3 outweighs the prior ratio of 2, so the classifier picks $y_1$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q35-1.webp",
+    "/pyq/2025/official/Q35-2.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word 'class-labels' is split across a line break in the paper ('class-' / 'labels'); it is transcribed with the hyphen, as printed. The two class-conditional probabilities are displayed on their own line in the paper and are transcribed as display math. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to two decimal places)' is on the next line, as printed. The second official crop (Q35-2) shows only the next page's section header 'Q. 36 – Q. 65 carry two marks each.' and contains no part of this question. The region has no embedded question images and no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.40 (exactly 2/5)",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\nprior = {'y1': F(1, 3), 'y2': F(2, 3)}\nlik = {'y1': F(3, 4), 'y2': F(1, 4)}\njoint = {k: prior[k] * lik[k] for k in prior}\nev = sum(joint.values())\npost = {k: joint[k] / ev for k in prior}\npred = max(post, key=post.get)\nerr = 1 - post[pred]\nprint('joint', joint, 'evidence', ev)\nprint('posterior', post, 'predict', pred)\nprint('P(misclassify x) =', err, '=', float(err), '->', round(float(err), 2))\n",
+    "notes": "Hand solve: P(x|y1)P(y1) = 1/4 and P(x|y2)P(y2) = 1/6, so P(x) = 5/12, P(y1|x) = 3/5 and P(y2|x) = 2/5. The MAP rule predicts y1, and the probability of misclassifying x is 1 − 3/5 = 2/5 = 0.40. The Python check reproduces these exact fractions (joint 1/4 and 1/6, evidence 5/12, posteriors 3/5 and 2/5, prediction y1, error 2/5 = 0.4). 0.40 lies within the official key range 0.39 to 0.41."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

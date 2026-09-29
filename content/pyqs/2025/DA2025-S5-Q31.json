@@ -1,0 +1,74 @@
+{
+  "id": "DA2025-S5-Q31",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 31,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-conditional",
+  "subtopicIds": [
+    "ps-bayes",
+    "ps-marginal-joint"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: one concept (Bayes' theorem with the law of total probability) and a routine single computation with small fractions, about 1-1.5 min for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "There are three boxes containing white balls and black balls.\n\nBox-1 contains 2 black and 1 white balls.\n\nBox-2 contains 1 black and 2 white balls.\n\nBox-3 contains 3 black and 3 white balls.\n\nIn a random experiment, one of these boxes is selected, where the probability of choosing Box-1 is $\\dfrac{1}{2}$, Box-2 is $\\dfrac{1}{6}$, and Box-3 is $\\dfrac{1}{3}$. A ball is drawn at random from the selected box. Given that the ball drawn is white, the probability that it is drawn from Box-2 is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n(Round off to two decimal places)",
+  "options": [],
+  "officialKeyRaw": "0.25 to 0.25",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.25,
+    "max": 0.25
+  },
+  "solution": {
+    "quick": "Bayes' theorem: $P(W) = \\frac12 \\cdot \\frac13 + \\frac16 \\cdot \\frac23 + \\frac13 \\cdot \\frac12 = \\frac16 + \\frac19 + \\frac16 = \\frac49$, and $P(\\text{Box-2} \\mid W) = \\dfrac{\\frac16 \\cdot \\frac23}{\\frac49} = \\dfrac{1/9}{4/9} = \\frac14 = \\mathbf{0.25}$.",
+    "steps": [
+      {
+        "title": "Name the events and list the priors",
+        "body": "Let $B_1, B_2, B_3$ be the events that Box-1, Box-2, Box-3 is chosen, and $W$ the event that the ball drawn is white. The selection probabilities (priors) are\n\n$$\nP(B_1) = \\tfrac12, \\qquad P(B_2) = \\tfrac16, \\qquad P(B_3) = \\tfrac13,\n$$\n\nand they sum to $\\tfrac36 + \\tfrac16 + \\tfrac26 = 1$, as they should. We want $P(B_2 \\mid W)$."
+      },
+      {
+        "title": "Likelihood of drawing white from each box",
+        "body": "A ball is drawn at random, so $P(W \\mid B_k) = \\dfrac{\\text{white balls in Box-}k}{\\text{total balls in Box-}k}$:\n\n| Box | Black | White | Total | $P(W \\mid B_k)$ |\n| --- | --- | --- | --- | --- |\n| Box-1 | $2$ | $1$ | $3$ | $\\tfrac13$ |\n| Box-2 | $1$ | $2$ | $3$ | $\\tfrac23$ |\n| Box-3 | $3$ | $3$ | $6$ | $\\tfrac36 = \\tfrac12$ |"
+      },
+      {
+        "title": "Total probability of drawing white",
+        "body": "By the law of total probability,\n\n$$\n\\begin{aligned}\nP(W) &= P(B_1)P(W \\mid B_1) + P(B_2)P(W \\mid B_2) + P(B_3)P(W \\mid B_3) \\\\\n&= \\tfrac12 \\cdot \\tfrac13 + \\tfrac16 \\cdot \\tfrac23 + \\tfrac13 \\cdot \\tfrac12 \\\\\n&= \\tfrac16 + \\tfrac19 + \\tfrac16 = \\tfrac{3}{18} + \\tfrac{2}{18} + \\tfrac{3}{18} = \\tfrac{8}{18} = \\tfrac49.\n\\end{aligned}\n$$"
+      },
+      {
+        "title": "Apply Bayes' theorem",
+        "body": "$$\nP(B_2 \\mid W) = \\frac{P(B_2)\\,P(W \\mid B_2)}{P(W)} = \\frac{\\tfrac16 \\cdot \\tfrac23}{\\tfrac49} = \\frac{\\tfrac19}{\\tfrac49} = \\frac14 = 0.25.\n$$\n\nCheck: the other posteriors are $P(B_1 \\mid W) = \\frac{1/6}{4/9} = \\frac38$ and $P(B_3 \\mid W) = \\frac38$, and $\\frac38 + \\frac14 + \\frac38 = 1$.\n\nRounded to two decimal places, the answer is $\\mathbf{0.25}$."
+      }
+    ],
+    "finalAnswer": "**0.25**",
+    "teaching": "**Reversing a conditional probability.** The experiment is described in the *forward* direction: first a box is chosen (with known probabilities), then a ball is drawn (with probabilities that depend on the box). The question asks in the *reverse* direction: having seen the ball's colour, how likely is it that a particular box was used? Bayes' theorem is the tool for this reversal.\n\n**1. Law of total probability.** If $B_1, \\ldots, B_k$ are mutually exclusive and together cover every outcome (exactly one box is chosen), then for any event $W$,\n\n$$\nP(W) = \\sum_{k} P(B_k)\\,P(W \\mid B_k).\n$$\n\nEach term $P(B_k)P(W \\mid B_k) = P(B_k \\cap W)$ is the probability of the path \"choose box $k$, then draw white\".\n\n**2. Bayes' theorem.** The posterior probability of a box is its path's share of the total:\n\n$$\nP(B_j \\mid W) = \\frac{P(B_j)\\,P(W \\mid B_j)}{\\sum_k P(B_k)\\,P(W \\mid B_k)}.\n$$\n\n**Intuition.** The posterior combines two things: how likely the box was to be chosen (prior) and how well the box explains the evidence (likelihood). Box-2 explains a white ball best ($\\tfrac23$), but it is rarely chosen ($\\tfrac16$). Box-1 explains white poorly ($\\tfrac13$) but is chosen half the time. Weighing both, the white-ball paths have probabilities $\\tfrac16, \\tfrac19, \\tfrac16$, i.e. in the ratio $3 : 2 : 3$.\n\n**Back to the question.** Box-2's share of the white-ball probability is $\\dfrac{2}{3 + 2 + 3} = \\dfrac{2}{8} = 0.25$. Its posterior ($0.25$) is higher than its prior ($\\tfrac16 \\approx 0.17$) because a white ball is more likely from Box-2 than from the other boxes, but it stays low because Box-2 is seldom chosen.",
+    "shortcut": "Put the path probabilities over a common denominator of $18$: $P(B_k \\cap W) = \\tfrac{3}{18}, \\tfrac{2}{18}, \\tfrac{3}{18}$. The posterior is just Box-2's share of these weights: $\\tfrac{2}{3+2+3} = \\tfrac28 = 0.25$.",
+    "commonTrap": "Ignoring the unequal selection probabilities and treating the boxes as equally likely: $\\dfrac{2/3}{1/3 + 2/3 + 1/2} = \\dfrac49 \\approx 0.44$. Another slip is pooling all the white balls ($2$ of the $1 + 2 + 3 = 6$ white balls are in Box-2, giving $0.33$), which ignores both the priors and the different box sizes. Reporting the likelihood $P(W \\mid B_2) = 0.67$ or the prior $\\tfrac16 \\approx 0.17$ is also wrong; the question asks for $P(B_2 \\mid W)$."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q31-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The selection probabilities are printed as stacked fractions (the text layer flattens them to \"1 2\", \"1 6\", \"1 3\"); they are transcribed as $\\dfrac{1}{2}$, $\\dfrac{1}{6}$, $\\dfrac{1}{3}$. The paper's line-break hyphenation \"choos-ing\" is joined as \"choosing\". The wording \"2 black and 1 white balls\" is kept as printed. The answer blank is rendered as a line of escaped underscores."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.25 (exactly 1/4)",
+    "agreesWithKey": true,
+    "checkCode": "from fractions import Fraction as F\nprior = {1: F(1, 2), 2: F(1, 6), 3: F(1, 3)}\nwhite = {1: F(1, 3), 2: F(2, 3), 3: F(3, 6)}      # P(white | box) = white / total\njoint = {b: prior[b] * white[b] for b in prior}\npw = sum(joint.values())\npost = {b: joint[b] / pw for b in prior}\nprint('P(W) =', pw, '| joints =', joint)\nprint('P(Box-2 | W) =', post[2], '=', round(float(post[2]), 2), '| posteriors sum to', sum(post.values()))\nimport random; random.seed(0); N = 10**6; w = w2 = 0\nfor _ in range(N):\n    b = random.choices((1, 2, 3), weights=(3, 1, 2))[0]\n    if random.random() < white[b]:\n        w += 1; w2 += (b == 2)\nprint('simulation estimate:', round(w2 / w, 4))\n",
+    "notes": "Independent solve: P(W) = (1/2)(1/3) + (1/6)(2/3) + (1/3)(1/2) = 1/6 + 1/9 + 1/6 = 4/9, so P(Box-2 | W) = (1/9)/(4/9) = 1/4 = 0.25. This gives 0.25, matching the official key 0.25 to 0.25. The Python check computes the posterior with exact fractions (1/4; the three posteriors 3/8, 1/4, 3/8 sum to 1) and a 1,000,000-trial simulation gives 0.2502."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

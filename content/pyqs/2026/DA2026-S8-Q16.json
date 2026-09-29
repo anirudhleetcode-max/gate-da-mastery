@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The code is transcribed from the monospace (Consolas) block in the paper. In the paper the two body lines are indented by a single tab stop (the PDF text layer shows one whitespace character, and the text resumes at a 0.5-inch tab position, about 5.5 character widths in). They are transcribed with the conventional 4-space Python indentation, which does not change the program; all other characters match the paper. The option outputs are printed in the same monospace font, one list per line, and are transcribed as plain-text code blocks. The second official crop (Q16-2) shows only the header and a table border of the next page. The only embedded image on the page is the background watermark; no figure is needed for this question."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The code was compared character by character with the official crop and the PDF character data (Consolas): all identifiers, brackets, commas and spaces match. In the paper the two body lines start about 5.5 character widths to the right of `def` (x = 161.4 pt vs 125.4 pt, 6.6 pt per character), i.e. a single tab stop; they are transcribed with the conventional 4-space Python indentation, one level, which does not change the program. The option outputs are printed in the same monospace font, one list per line, and are transcribed as plain-text code blocks with the spacing as printed (e.g. `[1, 2]`). The second official crop (Q16-2) shows only the header and a table border of the next page. The only embedded image on the page is the background watermark; no figure is needed for this question."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "(B) - [1], [1, 2], [3]: the default list is created once and shared by calls 1 and 2; call 3 passes a fresh list.",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
+    "independentAnswer": "(B)",
     "agreesWithKey": true,
-    "checkCode": "import io, contextlib\nsrc = '''def append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))\n'''\nbuf, ns = io.StringIO(), {}\nwith contextlib.redirect_stdout(buf): exec(src, ns)\nout = buf.getvalue().splitlines(); print(out)  # ['[1]', '[1, 2]', '[3]']\nopts = {'A': ['[1]', '[2]', '[3]'], 'B': ['[1]', '[1, 2]', '[3]'],\n        'C': ['[1]', '[2]', '[1, 2, 3]'], 'D': ['[1]', '[1, 2]', '[1, 3]']}\nprint('matching option:', [k for k, v in opts.items() if v == out])  # ['B']\nprint('shared default after the run:', ns['append_to_lst'].__defaults__)  # ([1, 2],)",
-    "notes": "Author trace agrees with the official key B. The Python check executes the transcribed program and compares its printed lines with the four options; only (B) matches (['[1]', '[1, 2]', '[3]']). It also shows that the function's stored default is [1, 2] after the run, which confirms that the default list is shared."
+    "checkCode": "import io, contextlib\nsrc = \"def append_to_lst(val, lst=[]):\\n\\tlst.append(val)\\n\\treturn lst\\nprint(append_to_lst(1))\\nprint(append_to_lst(2))\\nprint(append_to_lst(3, []))\\n\"  # tab indent as in the paper\nout = {}\nfor name, code in (('tab', src), ('4sp', src.replace('\\t', '    '))):\n    buf, ns = io.StringIO(), {}\n    with contextlib.redirect_stdout(buf): exec(code, ns)\n    out[name] = buf.getvalue().splitlines()\n    out[name + '_default_after'] = ns['append_to_lst'].__defaults__\nopts = {'A': ['[1]', '[2]', '[3]'], 'B': ['[1]', '[1, 2]', '[3]'], 'C': ['[1]', '[2]', '[1, 2, 3]'], 'D': ['[1]', '[1, 2]', '[1, 3]']}\nprint(out, [k for k, v in opts.items() if v == out['tab'] == out['4sp']])  # expect ['B']",
+    "notes": "Blind trace (before reading the key or the stored solution) gives (B): the default list is created once when def runs, so calls 1 and 2 share it and print [1] then [1, 2]; call 3 passes a fresh [] and prints [3]. This agrees with the official key B (confirmed in the official answer-key PDF: Q16, session 8, MCQ, DA, key B, 1 mark). The Python check executes the program with the paper's tab indentation and with the 4-space rendering; both print ['[1]', '[1, 2]', '[3]'], only option (B) matches, and the stored default is [1, 2] after the run."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

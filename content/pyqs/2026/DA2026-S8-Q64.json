@@ -1,0 +1,75 @@
+{
+  "id": "DA2026-S8-Q64",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2026-S8",
+  "year": 2026,
+  "questionNumber": 64,
+  "section": "DA",
+  "subjectId": "ps",
+  "topicId": "ps-discrete",
+  "subtopicIds": [
+    "ps-discrete-named",
+    "ps-independent",
+    "ps-counting"
+  ],
+  "type": "NAT",
+  "marks": 2,
+  "difficulty": "MODERATE",
+  "difficultyRationale": "Platform-estimated: MODERATE - binomial probabilities for Bernoulli sums plus one conditioning step on the entry shared by the row and the column; two or three short computations, about 2 minutes, with a likely trap of treating the row and column sums as independent.",
+  "estimatedTimeSec": 120,
+  "stem": "Let $A_{5\\times 5}$ be a matrix such that each of its elements follows $\\mathit{Bernoulli}(p = 0.50)$ distribution independently.\n\nThe probability that the row-sum of the second row and the column-sum of the third column are both equal to 3 is ________ . (Rounded off to **two** decimal places)",
+  "options": [],
+  "officialKeyRaw": "0.08 to 0.12",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.08,
+    "max": 0.12
+  },
+  "solution": {
+    "quick": "Row 2 and column 3 share exactly one entry, $a_{23}$, so their sums are not independent. Condition on it: if $a_{23} = 1$, the other 4 entries of the row and the other 4 entries of the column must each contain exactly 2 ones; if $a_{23} = 0$, exactly 3 ones each. So $P = \\frac{1}{2}\\big(\\tfrac{6}{16}\\big)^2 + \\frac{1}{2}\\big(\\tfrac{4}{16}\\big)^2 = \\frac{13}{128} \\approx 0.1016$, i.e. **0.10**.",
+    "steps": [
+      {
+        "title": "Identify the entries involved",
+        "body": "Write $A = [a_{ij}]$ with independent $a_{ij} \\sim \\mathit{Bernoulli}(0.5)$. Let\n\n$$\nR = a_{21} + a_{22} + a_{23} + a_{24} + a_{25} \\quad (\\text{second row}), \\qquad C = a_{13} + a_{23} + a_{33} + a_{43} + a_{53} \\quad (\\text{third column}).\n$$\n\nBoth sums contain $a_{23}$, so they involve $5 + 5 - 1 = 9$ distinct entries; the other 16 entries of the matrix do not matter. Split off the shared entry:\n\n$$\nR = a_{23} + R', \\quad R' = a_{21} + a_{22} + a_{24} + a_{25}; \\qquad C = a_{23} + C', \\quad C' = a_{13} + a_{33} + a_{43} + a_{53}.\n$$\n\n$a_{23}$, $R'$ and $C'$ are built from disjoint sets of independent entries, so they are mutually independent, and $R', C' \\sim \\mathit{Binomial}(4, 0.5)$ with $P(R' = k) = \\binom{4}{k}/2^4 = \\binom{4}{k}/16$."
+      },
+      {
+        "title": "Condition on the shared entry a23",
+        "body": "By the law of total probability, $P(R = 3, C = 3) = \\sum_{s \\in \\{0, 1\\}} P(a_{23} = s)\\,P(R' = 3 - s)\\,P(C' = 3 - s)$, because once $a_{23}$ is fixed the row and column conditions involve disjoint entries.\n\n| $a_{23}$ | $P(a_{23})$ | condition needed | $P(R' = k)$ | $P(C' = k)$ | contribution |\n| :---: | :---: | :---: | :---: | :---: | :---: |\n| 1 | $\\frac{1}{2}$ | $R' = C' = 2$ | $\\binom{4}{2}/16 = \\frac{6}{16}$ | $\\frac{6}{16}$ | $\\frac{1}{2}\\cdot\\frac{36}{256} = \\frac{18}{256}$ |\n| 0 | $\\frac{1}{2}$ | $R' = C' = 3$ | $\\binom{4}{3}/16 = \\frac{4}{16}$ | $\\frac{4}{16}$ | $\\frac{1}{2}\\cdot\\frac{16}{256} = \\frac{8}{256}$ |"
+      },
+      {
+        "title": "Add the two cases",
+        "body": "$$\nP(R = 3, C = 3) = \\frac{18}{256} + \\frac{8}{256} = \\frac{26}{256} = \\frac{13}{128} = 0.1015625.\n$$\n\nCounting check: of the $2^9 = 512$ equally likely 0/1 patterns of the 9 relevant entries, the favourable ones number $\\binom{4}{2}^2 + \\binom{4}{3}^2 = 36 + 16 = 52$, and $\\frac{52}{512} = \\frac{13}{128}$."
+      },
+      {
+        "title": "Round",
+        "body": "$0.1015625$ rounded off to two decimal places is **0.10**, which lies inside the official key range 0.08 to 0.12."
+      }
+    ],
+    "finalAnswer": "**0.10**",
+    "teaching": "**Bernoulli sums are binomial.** If $B_1, \\ldots, B_m$ are independent $\\mathit{Bernoulli}(p)$ variables, their sum counts the ones and follows $\\mathit{Binomial}(m, p)$: $P(\\text{sum} = k) = \\binom{m}{k} p^k (1 - p)^{m-k}$. With $p = \\frac{1}{2}$ every 0/1 pattern has probability $2^{-m}$, so this is just counting: $\\binom{m}{k}/2^m$. For example, a single row of 5 entries has $P(\\text{row-sum} = 3) = \\binom{5}{3}/32 = \\frac{10}{32}$.\n\n**When are two sums independent?** Functions of *disjoint* groups of independent variables are independent. Two sums that share a variable are not: the sum of row $i$ and the sum of column $j$ both contain $a_{ij}$. In fact $\\operatorname{Cov}(R, C) = \\operatorname{Var}(a_{ij}) = p(1 - p) = \\frac{1}{4} > 0$, so the two sums are positively correlated and $P(R = 3, C = 3)$ is not $P(R = 3)\\,P(C = 3)$.\n\n**Condition on what couples the events.** The standard fix is the law of total probability, $P(E) = \\sum_s P(E \\mid S = s)\\,P(S = s)$, where $S$ is the shared variable. Once $S$ is fixed, what remains of the two events involves disjoint sets of variables, so the conditional probability factorises into a product of simple binomial terms. The same idea (condition on the common cause, then use independence) is at the heart of Bayesian-network inference.\n\n**Irrelevant variables.** Only the 9 entries lying in row 2 or column 3 affect the event; the other 16 entries can take any values and simply sum out.\n\n**Connecting to this question.** With $R = a_{23} + R'$ and $C = a_{23} + C'$, where $R', C' \\sim \\mathit{Binomial}(4, \\frac{1}{2})$: if $a_{23} = 1$ we need $R' = C' = 2$ (probability $(\\frac{6}{16})^2$); if $a_{23} = 0$ we need $R' = C' = 3$ (probability $(\\frac{4}{16})^2$). Averaging over $a_{23}$ gives $\\frac{1}{2}\\cdot\\frac{36 + 16}{256} = \\frac{13}{128} \\approx 0.1016$, which rounds to **0.10**.",
+    "shortcut": "Only the 9 entries of row 2 and column 3 matter, and all $2^9 = 512$ patterns are equally likely. Favourable patterns: $a_{23} = 1$ with 2 more ones in each arm, $\\binom{4}{2}^2 = 36$; or $a_{23} = 0$ with 3 ones in each arm, $\\binom{4}{3}^2 = 16$. So $P = \\frac{52}{512} \\approx 0.10$.",
+    "commonTrap": "Treating the row-sum and the column-sum as independent and multiplying $P(R = 3)\\,P(C = 3) = \\big(\\frac{10}{32}\\big)^2 = \\frac{25}{256} \\approx 0.0977$. This ignores the shared entry $a_{23}$, so the method is wrong; here the error happens to be small enough that the rounded value is also 0.10, but it would not be in general. Another slip is counting the ones in 10 entries (5 + 5) instead of 9 distinct entries."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2026/official/Q64-1.webp"
+  ],
+  "sourceIds": [
+    "gate2026-da-qp",
+    "gate2026-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. 'Bernoulli' is set in math italics in the paper and is transcribed with \\mathit{}; the subscript 5×5 in A_{5×5} was read from the rendered image (the PDF text layer flattens it). 'two' in the rounding instruction is bold in the paper and is kept bold, and the space between the answer blank and the full stop is kept. The region has no embedded figure and none is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.10 (exactly 13/128 = 0.1015625)",
+    "agreesWithKey": true,
+    "checkCode": "from itertools import product\nfrom fractions import Fraction\nfrom math import comb\n# Exact: row 2 = A[1][:], column 3 = A[:][2]; they share A[1][2]. Only these 9 cells matter.\n# Enumerate the shared cell s, the 4 other row-2 cells r, the 4 other column-3 cells c.\ngood = sum(1 for s in (0, 1) for r in product((0, 1), repeat=4) for c in product((0, 1), repeat=4)\n           if s + sum(r) == 3 and s + sum(c) == 3)\np = Fraction(good, 2**9)\nprint(good, p, float(p))                                 # 52 13/128 0.1015625\n# Conditioning formula\np2 = Fraction(1, 2) * Fraction(comb(4, 3), 16)**2 + Fraction(1, 2) * Fraction(comb(4, 2), 16)**2\nassert p == p2 == Fraction(13, 128)\n# Wrong 'independent' shortcut: P(row=3)*P(col=3)\nnaive = Fraction(comb(5, 3), 32)**2\nprint('naive', naive, float(naive))                      # 25/256 0.09765625\nprint(round(float(p), 2))                                # 0.1\nassert 0.08 <= float(p) <= 0.12\n# Monte Carlo on full 5x5 matrices\nimport numpy as np\nrng = np.random.default_rng(1)\nA = rng.integers(0, 2, size=(500_000, 5, 5), dtype=np.int8)\nprint('MC', np.mean((A[:, 1, :].sum(1) == 3) & (A[:, :, 2].sum(1) == 3)))   # ~0.1016\n",
+    "notes": "Exhaustive enumeration of the 2^9 = 512 equally likely patterns of the nine relevant entries (row 2 and column 3, which share a_23) finds 52 favourable patterns, i.e. probability 13/128 = 0.1015625, which rounds to 0.10; the conditioning formula gives the same exact value, and a Monte Carlo run over 500,000 random 5x5 matrices gives about 0.1016. 0.10 lies within the official key range 0.08 to 0.12. The naive product P(row-sum = 3) P(column-sum = 3) = 25/256 (about 0.0977) ignores the shared entry; it also happens to round to 0.10, but it is not the correct probability."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}

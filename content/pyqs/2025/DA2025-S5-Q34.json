@@ -1,0 +1,73 @@
+{
+  "id": "DA2025-S5-Q34",
+  "origin": "OFFICIAL_PYQ",
+  "paperId": "DA-2025-S5",
+  "year": 2025,
+  "questionNumber": 34,
+  "section": "DA",
+  "subjectId": "ml",
+  "topicId": "ml-regression",
+  "subtopicIds": [
+    "ml-simple-linear-regression"
+  ],
+  "type": "NAT",
+  "marks": 1,
+  "difficulty": "EASY",
+  "difficultyRationale": "Platform-estimated: EASY because it tests one concept (the least-squares slope of a line through the origin, $w^* = \\sum x_i y_i / \\sum x_i^2$) with a single short computation on three points, about a minute for a prepared student.",
+  "estimatedTimeSec": 75,
+  "stem": "Given data $\\{(-1, 1), (2, -5), (3, 5)\\}$ of the form $(x, y)$, we fit a model $y = wx$ using linear least-squares regression. The optimal value of $w$ is \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_\n\n(Round off to three decimal places)",
+  "options": [],
+  "officialKeyRaw": "0.285 to 0.287",
+  "answer": {
+    "kind": "NAT",
+    "min": 0.285,
+    "max": 0.287
+  },
+  "solution": {
+    "quick": "For the no-intercept model $y = wx$, minimising $\\sum_i (y_i - w x_i)^2$ gives\n\n$$w^* = \\frac{\\sum x_i y_i}{\\sum x_i^2} = \\frac{(-1)(1) + (2)(-5) + (3)(5)}{1 + 4 + 9} = \\frac{4}{14} = \\frac{2}{7} \\approx 0.286.$$",
+    "steps": [
+      {
+        "title": "Write the least-squares objective",
+        "body": "The model $y = wx$ has a single parameter $w$ and **no intercept**. Least squares chooses $w$ to minimise the sum of squared residuals\n\n$$L(w) = \\sum_{i=1}^{3} (y_i - w x_i)^2.$$\n\nWith the data $(x_i, y_i) = (-1, 1), (2, -5), (3, 5)$:\n\n$$L(w) = (1 + w)^2 + (-5 - 2w)^2 + (5 - 3w)^2.$$"
+      },
+      {
+        "title": "Set the derivative to zero",
+        "body": "$$\\frac{dL}{dw} = -2\\sum_i x_i\\,(y_i - w x_i) = 0 \\;\\Longrightarrow\\; w\\sum_i x_i^2 = \\sum_i x_i y_i \\;\\Longrightarrow\\; w^* = \\frac{\\sum_i x_i y_i}{\\sum_i x_i^2}.$$\n\nThe second derivative is $2\\sum_i x_i^2 > 0$, so this stationary point is the minimum."
+      },
+      {
+        "title": "Compute the two sums",
+        "body": "| $x_i$ | $y_i$ | $x_i y_i$ | $x_i^2$ |\n| ---: | ---: | ---: | ---: |\n| $-1$ | $1$ | $-1$ | $1$ |\n| $2$ | $-5$ | $-10$ | $4$ |\n| $3$ | $5$ | $15$ | $9$ |\n| **Sum** | | $4$ | $14$ |"
+      },
+      {
+        "title": "Substitute and round",
+        "body": "$$w^* = \\frac{4}{14} = \\frac{2}{7} = 0.285714\\ldots \\approx 0.286.$$\n\n**Check by expanding the loss:** $L(w) = (1 + 2w + w^2) + (25 + 20w + 4w^2) + (25 - 30w + 9w^2) = 14w^2 - 8w + 51$, a parabola with its minimum at $w = \\frac{8}{2 \\cdot 14} = \\frac{2}{7}$, where $L = 51 - \\frac{8}{7} \\approx 49.857$.\n\nRounded to three decimal places, $w^* = $ **0.286**."
+      }
+    ],
+    "finalAnswer": "**0.286**",
+    "teaching": "**What least squares does.** Given data points $(x_i, y_i)$ and a model with parameters, linear least-squares regression picks the parameters that make the total squared vertical error $\\sum_i (y_i - \\hat{y}_i)^2$ as small as possible. Squaring makes every error positive, penalises large errors more, and gives a smooth objective that we can minimise with calculus.\n\n**A line through the origin.** Here the model is $\\hat{y} = wx$: a line forced to pass through $(0, 0)$, with only the slope $w$ free. The loss $L(w) = \\sum_i (y_i - w x_i)^2$ is a quadratic in $w$ with positive leading coefficient $\\sum_i x_i^2$, so it has a unique minimum where $L'(w) = 0$:\n\n$$w^* = \\frac{\\sum_i x_i y_i}{\\sum_i x_i^2}.$$\n\n**Geometric view.** Stack the data into vectors $\\mathbf{x} = (-1, 2, 3)^\\top$ and $\\mathbf{y} = (1, -5, 5)^\\top$. Fitting $y = wx$ means finding the multiple $w\\mathbf{x}$ closest to $\\mathbf{y}$, which is the orthogonal projection of $\\mathbf{y}$ onto $\\mathbf{x}$: $w^* = \\dfrac{\\mathbf{x}^\\top \\mathbf{y}}{\\mathbf{x}^\\top \\mathbf{x}}$. This is also the one-column case of the normal equations $w^* = (X^\\top X)^{-1} X^\\top \\mathbf{y}$ with $X = \\mathbf{x}$.\n\n**With vs without intercept.** The familiar simple-regression slope $\\hat{\\beta}_1 = \\dfrac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sum (x_i - \\bar{x})^2}$ uses *centred* data because that model, $y = \\beta_0 + \\beta_1 x$, also fits an intercept. Without an intercept there is nothing to centre, and the sums use the raw values. For this data the with-intercept slope would be $\\frac{8/3}{26/3} = \\frac{4}{13} \\approx 0.308$, which is a different model and a different answer.\n\n**Back to this question.** $\\sum x_i y_i = -1 - 10 + 15 = 4$ and $\\sum x_i^2 = 1 + 4 + 9 = 14$, so $w^* = \\frac{2}{7} \\approx 0.286$.",
+    "shortcut": "For a no-intercept fit, $w^* = \\dfrac{\\mathbf{x}^\\top\\mathbf{y}}{\\mathbf{x}^\\top\\mathbf{x}}$: dot product $(-1)(1) + (2)(-5) + (3)(5) = 4$ over squared norm $1 + 4 + 9 = 14$, which gives $\\frac{2}{7} \\approx 0.286$.",
+    "commonTrap": "Using the with-intercept (centred) slope formula $\\frac{S_{xy}}{S_{xx}}$, which gives $\\frac{4}{13} \\approx 0.308$; the model $y = wx$ has no intercept. Other slips are the sign of $(2)(-5) = -10$ (getting $\\frac{24}{14}$) and using the ratio of sums $\\frac{\\sum y_i}{\\sum x_i} = \\frac{1}{4} = 0.25$, which is not the least-squares solution."
+  },
+  "conceptIds": [],
+  "formulaIds": [],
+  "officialImages": [
+    "/pyq/2025/official/Q34-1.webp"
+  ],
+  "sourceIds": [
+    "gate2025-da-qp",
+    "gate2025-da-key"
+  ],
+  "transcription": {
+    "status": "PARTIALLY_VERIFIED",
+    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The data set is printed as {(−1, 1), (2, −5), (3, 5)} and transcribed with minus signs in math mode. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to three decimal places)' is on the next line, as printed. The only background element in the region is the IIT Roorkee watermark, which is not part of the question; the region has no embedded question images and no figure is needed."
+  },
+  "answerVerification": {
+    "status": "PARTIALLY_VERIFIED",
+    "method": "Author solve (not blind) compared with official key",
+    "independentAnswer": "0.286 (exactly 2/7 = 0.285714...)",
+    "agreesWithKey": true,
+    "checkCode": "import numpy as np\nfrom fractions import Fraction as F\nx = [-1, 2, 3]; y = [1, -5, 5]\nsxy = sum(a*b for a, b in zip(x, y)); sxx = sum(a*a for a in x)\nw = F(sxy, sxx); print('sum xy =', sxy, 'sum x^2 =', sxx, 'w =', w, '=', float(w), '->', round(float(w), 3))\nwl, *_ = np.linalg.lstsq(np.array(x, float).reshape(-1, 1), np.array(y, float), rcond=None)\nprint('numpy lstsq (no intercept):', wl)\nL = lambda w: sum((b - w*a)**2 for a, b in zip(x, y))\nprint('SSE at w, w+-0.01:', float(L(w)), L(float(w)+0.01), L(float(w)-0.01))\n# contrast: model WITH intercept (not what is asked)\nb1, b0 = np.polyfit(x, y, 1); print('with intercept slope =', b1, 'intercept =', b0)\n",
+    "notes": "Hand solve: L(w) = Σ(y_i − w x_i)² = 14w² − 8w + 51, so dL/dw = 0 gives w* = Σx_i y_i / Σx_i² = 4/14 = 2/7 ≈ 0.285714, which rounds to 0.286. The Python check computes the exact fraction 2/7, confirms it with numpy lstsq on the single-column design matrix (no intercept), and checks that the squared error rises on either side of w*. For contrast it prints the with-intercept slope 4/13 ≈ 0.308, which is not what the model y = wx asks for. 0.286 lies within the official key range 0.285 to 0.287."
+  },
+  "solutionStatus": "PARTIALLY_VERIFIED"
+}
