@@ -62,16 +62,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The dataset plot is a raster image embedded in the official PDF (page 40). It is copied unchanged as Q63-1.png and carries faint traces of the 'GATE 2024' watermark. The diamond symbol printed in parentheses in the stem (U+22C4 in the PDF text layer) is written with KaTeX \\diamond. The coordinates in the alt text are the labels printed next to each point in the figure. The wording ('Given the two-dimensional dataset … and assume that …', 'neighbor') is kept as printed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem wording checked word-for-word against the crop and PDF text layer (kept as printed, including 'Given the two-dimensional dataset … and assume that …' and 'neighbor'). The diamond symbol (U+22C4 in the PDF text layer) is written as KaTeX \\diamond. The dataset plot is the raster embedded in the official PDF (page 40), copied unchanged as Q63-1.png; it shows the same five labelled points and the diamond at (2,1) as the official crop, with faint traces of the 'GATE 2024' watermark. The alt text coordinates are the labels printed next to each point."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "5",
     "agreesWithKey": true,
     "checkCode": "import math\nfrom collections import Counter\n# points read from the official figure: (x, y, label)\npts=[(1,1,'circle'),(1,2,'circle'),(2,3,'square'),(3,3,'square'),(3,2,'square')]\nq=(2,1)  # diamond\nd=sorted((math.dist(q,p[:2]),p) for p in pts)\nfor dist,p in d: print(round(dist,4),p)\nres=None\nfor k in (1,3,5):\n    kth=d[k-1][0]; nxt=d[k][0] if k<len(d) else None\n    tie_at_boundary = nxt is not None and abs(nxt-kth)<1e-12\n    votes=Counter(p[2] for _,p in d[:k])\n    lab=votes.most_common(1)[0][0]\n    print('k=%d votes=%s -> %s  (tie at k-th boundary: %s)'%(k,dict(votes),lab,tie_at_boundary))\n    if lab=='square' and res is None: res=k\nprint('minimum odd k giving square =',res)\n",
-    "notes": "Python computes the Euclidean distances from the diamond (2,1): 1 to circle (1,1), √2 to circle (1,2), √2 to square (3,2), 2 to square (2,3) and √5 to square (3,3). The majority votes are circle for k = 1, circle for k = 3 (2–1) and square for k = 5 (3–2). The √2 distance tie occupies ranks 2 and 3, so it never straddles the cut-off for k = 1, 3 or 5, and the result does not depend on tie-breaking. The minimum odd k is 5, matching the official key 5 to 5."
+    "notes": "The verifier re-solved the question from the official crop without consulting the stored solution. Euclidean distances from the diamond (2,1) are 1 to circle (1,1), √2 to circle (1,2), √2 to square (3,2), 2 to square (2,3) and √5 to square (3,3). The votes are circle for k = 1, circle for k = 3 (2–1) and square for k = 5 (3–2), so the minimum odd k is 5. The √2 tie occupies ranks 2 and 3 and never straddles the cut-off for k = 1, 3 or 5, so the result does not depend on tie-breaking. The Python check confirms this and matches the official key 5 to 5."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

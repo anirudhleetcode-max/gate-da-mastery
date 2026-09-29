@@ -60,7 +60,7 @@
       },
       {
         "title": "Complexity note and conclusion",
-        "body": "Each pass of all three algorithms scans the unsorted part, so a pass costs $O(n)$ comparisons and all three are $O(n^2)$ in the worst case. How many passes a particular input needs is what differs:\n\n| Algorithm | After pass 1 | After pass 2 | Sorted after exactly two passes? |\n| --- | --- | --- | --- |\n| (i) Bubble sort | $[3, 2, 1, 4, 5]$ | $[2, 1, 3, 4, 5]$ | No (needs 3) |\n| (ii) Insertion sort | $[3, 4, 2, 1, 5]$ | $[2, 3, 4, 1, 5]$ | No (needs 3) |\n| (iii) Selection sort | $[1, 3, 2, 4, 5]$ | $[1, 2, 3, 4, 5]$ | **Yes** |\n\nOnly (iii) works, so the answer is **(B)** \"(iii) only\"."
+        "body": "Each pass costs at most $O(n)$ comparisons (bubble sort and selection sort scan the unsorted part; insertion sort scans back through the sorted prefix), and there are $n - 1$ passes, so all three are $O(n^2)$ in the worst case. How many passes a particular input needs is what differs:\n\n| Algorithm | After pass 1 | After pass 2 | Sorted after exactly two passes? |\n| --- | --- | --- | --- |\n| (i) Bubble sort | $[3, 2, 1, 4, 5]$ | $[2, 1, 3, 4, 5]$ | No (needs 3) |\n| (ii) Insertion sort | $[3, 4, 2, 1, 5]$ | $[2, 3, 4, 1, 5]$ | No (needs 3) |\n| (iii) Selection sort | $[1, 3, 2, 4, 5]$ | $[1, 2, 3, 4, 5]$ | **Yes** |\n\nOnly (iii) works, so the answer is **(B)** \"(iii) only\"."
       }
     ],
     "finalAnswer": "**(B)**",
@@ -100,16 +100,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper lists (i) Bubble sort, (ii) Insertion sort and (iii) Selection sort as an indented list; each item is transcribed as its own paragraph. The bold words ONE and exactly two are kept in bold, and the array is set as math $[4, 3, 2, 1, 5]$."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The stem, the list (i) Bubble sort, (ii) Insertion sort, (iii) Selection sort, the array [4, 3, 2, 1, 5], the bold words ONE and exactly two, and the option order (A) (i) only, (B) (iii) only, (C) (i) and (iii) only, (D) (ii) and (iii) only all match the official crop. The paper's indented list is rendered as one paragraph per item."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B",
     "agreesWithKey": true,
     "checkCode": "A0=[4,3,2,1,5]; S=sorted(A0)\ndef bubble(a):  # left-to-right sweeps\n    a=a[:]; out=[]\n    for p in range(len(a)-1):\n        for j in range(len(a)-1-p):\n            if a[j]>a[j+1]: a[j],a[j+1]=a[j+1],a[j]\n        out.append(a[:])\n    return out\ndef bubble_rl(a):  # variant: right-to-left sweeps\n    a=a[:]; out=[]\n    for p in range(len(a)-1):\n        for j in range(len(a)-1,p,-1):\n            if a[j-1]>a[j]: a[j-1],a[j]=a[j],a[j-1]\n        out.append(a[:])\n    return out\ndef insertion(a):\n    a=a[:]; out=[]\n    for i in range(1,len(a)):\n        k=a[i]; j=i-1\n        while j>=0 and a[j]>k: a[j+1]=a[j]; j-=1\n        a[j+1]=k; out.append(a[:])\n    return out\ndef selection(a):  # standard: minimum of unsorted part to the front\n    a=a[:]; out=[]\n    for i in range(len(a)-1):\n        m=min(range(i,len(a)),key=lambda t:a[t]); a[i],a[m]=a[m],a[i]; out.append(a[:])\n    return out\ndef selection_max(a):  # variant: maximum of unsorted part to the end\n    a=a[:]; out=[]\n    for i in range(len(a)-1,0,-1):\n        m=max(range(i+1),key=lambda t:a[t]); a[i],a[m]=a[m],a[i]; out.append(a[:])\n    return out\nfor name,f in [('bubble',bubble),('bubble_rl',bubble_rl),('insertion',insertion),('selection',selection),('selection_max',selection_max)]:\n    ps=f(A0); print(name, ps[:2], 'sorted after exactly two passes:', ps[0]!=S and ps[1]==S)\n# bubble [[3,2,1,4,5],[2,1,3,4,5]] False; bubble_rl [[1,4,3,2,5],[1,2,4,3,5]] False\n# insertion [[3,4,2,1,5],[2,3,4,1,5]] False; selection [[1,3,2,4,5],[1,2,3,4,5]] True\n# selection_max [[4,3,2,1,5],[1,3,2,4,5]] False  -> only (iii) (standard version): option B\n",
-    "notes": "A pass-by-pass simulation on [4, 3, 2, 1, 5] shows that only selection sort (standard version, minimum swapped to the front) is sorted after exactly two passes: [1, 3, 2, 4, 5] then [1, 2, 3, 4, 5]. Bubble sort (either sweep direction) and insertion sort each need three passes. This gives option B, matching the official key B. The check also shows that the less common max-to-the-end variant of selection sort would need three passes, so the key corresponds to the standard minimum-selecting formulation."
+    "notes": "Verifier solved the question blind before seeing the key: two passes of bubble sort give [3, 2, 1, 4, 5] -> [2, 1, 3, 4, 5] (unsorted), two passes of insertion sort give [3, 4, 2, 1, 5] -> [2, 3, 4, 1, 5] (unsorted), and two passes of (minimum-selecting) selection sort give [1, 3, 2, 4, 5] -> [1, 2, 3, 4, 5] (sorted). Answer (iii) only = B, matching the official key B. The stored Python simulation (kept from the author because it also covers the right-to-left bubble-sort and max-selecting selection-sort variants) was re-run and reproduces these traces; neither variant changes the conclusion for bubble sort, and the max-selecting selection-sort variant would leave the array unsorted, so the key corresponds to the standard minimum-selecting formulation."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

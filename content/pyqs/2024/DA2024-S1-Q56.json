@@ -53,24 +53,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q56-1.webp",
-    "/pyq/2024/official/Q56-2.webp"
+    "/pyq/2024/official/Q56-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. X and Y are italic throughout the paper (the PDF text layer loses the italics in 'If X and Y are') and are set as math everywhere. The ≥ in P(X ≥ Y) is transcribed as \\ge. The word 'three' in the rounding instruction is bold in the paper and is kept in bold; the answer blank is rendered as underscores. The second official crop (Q56-2) shows only a table border from the top of the next page and contains no question text. No figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Independent check: the wording, the intervals [1, 3] for X and [2, 4] for Y, the event P(X ≥ Y) and the rounding instruction ('rounded off to three decimal places', with 'three' in bold) all match the official crop. Caveats: X and Y are italic throughout the paper (the PDF text layer loses the italics in 'If X and Y are') and are set as math everywhere. The ≥ in P(X ≥ Y) is transcribed as \\ge. The answer blank is rendered as underscores. The question's table box spills onto the next page with only a border and no text, so only the first official crop is referenced. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.125",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp, numpy as np\nx,y,d=sp.symbols('x y d')\nf=sp.Rational(1,2)*sp.Rational(1,2)                      # joint pdf 1/4 on [1,3]x[2,4]\np=sp.integrate(sp.integrate(f,(y,2,x)),(x,2,3))          # X>=Y needs x in [2,3], y in [2,x]\nprint('exact P(X>=Y) =',p,'=',float(p))                  # 1/8 = 0.125\nprint('via D=X-Y (triangular on [-3,1], f=(1-d)/4 on [-1,1]):', sp.integrate((1-d)/4,(d,0,1)))  # 1/8\nrng=np.random.default_rng(0); N=10**7\nX=rng.uniform(1,3,N); Y=rng.uniform(2,4,N)\nprint('Monte Carlo ~',(X>=Y).mean())                     # ~0.12497\n",
-    "notes": "Exact symbolic integration of the joint density 1/4 over the region 2 ≤ y ≤ x ≤ 3 gives 1/8. A cross-check through the triangular density of D = X − Y on [−3, 1] also gives P(D ≥ 0) = 1/8, and a Monte Carlo simulation with 10^7 samples gives about 0.1250. This gives 0.125, inside the official key range 0.125 to 0.125."
+    "notes": "Blind re-solve: by independence (X, Y) is uniform on [1, 3] × [2, 4] with density 1/4; X ≥ Y is the triangle with vertices (2, 2), (3, 2), (3, 3) of area 1/2, so P(X ≥ Y) = 1/8 = 0.125. The stored Python check confirms this by exact symbolic integration of the joint density over 2 ≤ y ≤ x ≤ 3 (1/8), by the triangular density of D = X − Y on [−3, 1] (P(D ≥ 0) = 1/8), and by a Monte Carlo simulation with 10^7 samples (about 0.1250). This agrees with the official key 0.125 to 0.125."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

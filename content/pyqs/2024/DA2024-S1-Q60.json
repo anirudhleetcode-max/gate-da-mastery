@@ -63,16 +63,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The answer blank that the paper prints inside the displayed equation ('= ______.') is rendered as an underlined space in the display math. The paper's spacing 'ln ((x^2+1) cos x)' is typeset as $\\ln\\left((x^2+1)\\cos x\\right)$ without changing its meaning."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Independent check: the lead sentence 'Evaluate the following limit:', the limit point $x \\to 0$, the numerator $\\ln\\left((x^2+1)\\cos x\\right)$, the denominator $x^2$ and the trailing '= ______.' (blank followed by a full stop) match the official crop; the paper gives no rounding instruction. Caveats: the answer blank printed inside the displayed equation is rendered as an underlined space in the display math; the paper's spacing 'ln ((x^2+1) cos x)' is typeset as $\\ln\\left((x^2+1)\\cos x\\right)$ without changing its meaning. The second crop region for this question (top of page 39) contains only the empty continuation of the table border, with no question content."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.5",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp, math\nx = sp.symbols('x')\nnum = sp.log((x**2 + 1)*sp.cos(x))\nprint('limit =', sp.limit(num/x**2, x, 0))\nprint('series of numerator:', sp.series(num, x, 0, 6))\nprint('ln(1+x^2)/x^2 ->', sp.limit(sp.log(1 + x**2)/x**2, x, 0), ' ln(cos x)/x^2 ->', sp.limit(sp.log(sp.cos(x))/x**2, x, 0))\nfor h in [0.1, 0.01, 0.001]:\n    print(h, math.log((h*h + 1)*math.cos(h))/h**2)\n",
-    "notes": "Independent solve: split the log into ln(1+x^2) + ln(cos x); the two pieces contribute limits 1 and -1/2, so the limit is 1/2 = 0.5. SymPy's limit gives 1/2, the Maclaurin expansion of the numerator is x^2/2 - 7x^4/12 + ..., and direct evaluation gives 0.4942 at x = 0.1 and 0.49994 at x = 0.01. This agrees with the official key '0.5 to 0.5'."
+    "notes": "Blind re-solve (done before consulting the key or the stored solution): ln((x^2+1)cos x) = ln(1+x^2) + ln(cos x) = (x^2 − x^4/2 + …) + (−x^2/2 − x^4/12 + …) = x^2/2 − 7x^4/12 + …, so dividing by x^2 and letting x → 0 gives 1/2 = 0.5. A SymPy check (limit = 1/2, same series) confirms it; the stored checkCode was re-run and reproduces its claimed outputs (0.49420 at x = 0.1, 0.49994 at x = 0.01, 0.4999994 at x = 0.001). This agrees with the official key '0.5 to 0.5'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

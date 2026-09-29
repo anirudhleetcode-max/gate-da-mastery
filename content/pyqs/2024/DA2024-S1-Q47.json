@@ -101,24 +101,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q47-1.webp",
-    "/pyq/2024/official/Q47-2.webp"
+    "/pyq/2024/official/Q47-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets each option as a set in tall braces with a bold x and bracketed column vectors; these are transcribed as display math with \\left\\{ \\right\\}, \\mathbf{x} and bmatrix. Commas and spacing follow the paper (for example ', α, β ∈ ℝ' after the last vector in (A) and (B), and the two equations in (C) separated by a comma). The superscripts in (B) (α² and β²) were read from the rendered image, since the PDF text layer flattens them. The second official crop (Q47-2) shows only the continuation border of the question table on the next page and carries no content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The stem, the Note line, and all four sets match the official crop: (A) alpha(1, 1, 0) + beta(1, 0, 0); (B) alpha^2(1, 2, 0) + beta^2(1, 0, 1) (the squares were read from the image, since the PDF text layer flattens the superscripts); (C) 5x_1 + 2x_3 = 0, 4x_1 - 2x_2 + 3x_3 = 0; (D) 5x_1 + 2x_3 + 4 = 0. The paper sets each option as a set in tall braces with a bold x and bracketed column vectors; these are transcribed as display math with \\left\\{ \\right\\}, \\mathbf{x} and bmatrix, keeping the paper's commas. The question continues onto the next page only as an empty table border, which carries no content and is not included as an official image."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;C",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\na,b=sp.symbols('alpha beta',real=True)\n# (A) span{[1,1,0],[1,0,0]}: general element and rank\nprint('A:', list(a*sp.Matrix([1,1,0])+b*sp.Matrix([1,0,0])), 'rank', sp.Matrix([[1,1],[1,0],[0,0]]).rank())  # [a+b, a, 0], 2 -> plane x3=0\n# (B) alpha^2*[1,2,0]+beta^2*[1,0,1]; v=[1,2,0] (alpha=1,beta=0) is in the set; is -v?\neqs=list(a**2*sp.Matrix([1,2,0])+b**2*sp.Matrix([1,0,1])-sp.Matrix([-1,-2,0]))\nprint('B: real solutions for -v:', [s for s in sp.solve(eqs,[a,b],dict=True) if all(x.is_real for x in s.values())])  # [] -> not closed under scaling by -1\n# (C) null space of the coefficient matrix\nM=sp.Matrix([[5,0,2],[4,-2,3]]); n=M.nullspace()[0]\nprint('C: rank', M.rank(), 'null space basis', list(n), 'check M*[4,-7,-10] =', list(M*sp.Matrix([4,-7,-10])))  # line through 0\n# (D) zero vector and closure under scaling\nprint('D: 0 in set?', 5*0+2*0+4==0, '; x=[0,0,-2] in set?', 5*0+2*(-2)+4==0, '; 2x in set?', 5*0+2*(-4)+4==0)  # False True False\n",
-    "notes": "(A) is a span (rank 2, the plane x3 = 0) and (C) is the null space of a rank-2 2x3 matrix (the line through (4, -7, -10)), so both are subspaces. The sympy check confirms that -(1, 2, 0) has no real (alpha, beta) in (B), so (B) is not closed under scalar multiplication, and that (D) excludes the zero vector and fails scaling closure. This gives A;C, matching the official key A;C."
+    "notes": "Verifier solved the question blind before seeing the key: (A) is a span with unrestricted real coefficients (the plane x3 = 0), a subspace; (B) has coefficients alpha^2, beta^2 >= 0, so (1, 2, 0) is in the set but -(1, 2, 0) is not (it would need 2 alpha^2 = -2), so it is not closed under scalar multiplication; (C) is the null space of a homogeneous 2x3 system (the line through (4, -7, -10)), a subspace; (D) excludes the zero vector (0 + 0 + 4 = 4 != 0). Answer A;C, matching the official key A;C. The stored sympy check was re-run and confirms each case."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

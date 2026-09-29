@@ -59,16 +59,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The complement is printed as $T$ with an overbar and is transcribed as $\\overline{T}$; the conditional bar is kept as a plain '|' as in the paper. The paper's wording 'The probability associated with different events are given as follows:' (singular 'probability' with 'are') is kept verbatim."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Independent check: the three given values $P(\\overline{T}) = 0.6$, $P(S|T) = 0.3$, $P(S|\\overline{T}) = 0.6$ (in that order), the requested $P(T|S)$ and the rounding instruction ('**two** decimal places', bold in the paper) all match the official crop. Caveats: the complement is printed as $T$ with an overbar and is transcribed as $\\overline{T}$; the conditional bar is kept as a plain '|' as in the paper; the paper's wording 'The probability associated with different events are given as follows:' (singular 'probability' with 'are') is kept verbatim."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.25",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\nP_Tc = F(6,10); P_T = 1 - P_Tc\nP_S_T = F(3,10); P_S_Tc = F(6,10)\nP_S = P_S_T*P_T + P_S_Tc*P_Tc          # total probability\nP_T_S = P_S_T*P_T / P_S                # Bayes\nprint('P(T) =', P_T, ' P(S and T) =', P_S_T*P_T, ' P(S) =', P_S, '=', float(P_S))\nprint('P(T|S) =', P_T_S, '=', round(float(P_T_S), 2))\n# simulation check\nimport random\nrandom.seed(1); n = 10**6; s = ts = 0\nfor _ in range(n):\n    t = random.random() < float(P_T)\n    sv = random.random() < (0.3 if t else 0.6)\n    s += sv; ts += sv and t\nprint('MC P(T|S) =', round(ts/s, 3))\n",
-    "notes": "Independent solve: P(T) = 0.4, P(S) = 0.3·0.4 + 0.6·0.6 = 0.48, P(T|S) = 0.12/0.48 = 1/4 = 0.25. Exact fraction arithmetic gives 1/4 and a simulation gives ≈ 0.251. This agrees with the official key '0.25 to 0.25'."
+    "notes": "Blind re-solve (done before consulting the key or the stored solution): P(T) = 1 − 0.6 = 0.4; P(S) = 0.3·0.4 + 0.6·0.6 = 0.12 + 0.36 = 0.48; P(T|S) = 0.12/0.48 = 1/4 = 0.25. The stored check uses exact fractions (1/4) and a simulation (≈ 0.251). This agrees with the official key '0.25 to 0.25'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

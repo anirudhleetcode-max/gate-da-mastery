@@ -1,47 +1,47 @@
 # Content audit
 
-Generated: 2026-09-29T19:39:35.422Z
-Status: **NOT YET PUBLISHABLE**. Validation found 40 error(s) and 3 warning(s).
+Generated: 2026-09-29T20:36:06.594Z
+Status: **NOT YET PUBLISHABLE**. Validation found 38 error(s) and 0 warning(s).
 
 ## PYQ audit
 | Paper | Date | Session / slot | Loaded | Marks | Schedule status |
 | --- | --- | --- | --- | --- | --- |
-| DA-2024-S1 | 2024-02-03 | S1 / FORENOON | 53/65 | 83 | PARTIALLY_VERIFIED |
-| DA-2025-S5 | 2025-02-15 | S5 / FORENOON | 60/65 | 91 | PARTIALLY_VERIFIED |
-| DA-2026-S8 | 2026-02-15 | S8 / AFTERNOON | 60/65 | 90 | PARTIALLY_VERIFIED |
+| DA-2024-S1 | 2024-02-03 | S1 / FORENOON | 65/65 | 100 | PARTIALLY_VERIFIED |
+| DA-2025-S5 | 2025-02-15 | S5 / FORENOON | 65/65 | 100 | PARTIALLY_VERIFIED |
+| DA-2026-S8 | 2026-02-15 | S8 / AFTERNOON | 65/65 | 100 | PARTIALLY_VERIFIED |
 
-- Total PYQs loaded: **173**
-- Fully verified (transcription, answer and solution): **10**
-- Overall badge: PARTIALLY_VERIFIED: 172, NEEDS_REVIEW: 1
-- Answer verification: PARTIALLY_VERIFIED: 162, NEEDS_REVIEW: 1, VERIFIED: 10
-- Transcription: PARTIALLY_VERIFIED: 163, VERIFIED: 10
-- Solution review: PARTIALLY_VERIFIED: 163, VERIFIED: 10
+- Total PYQs loaded: **195**
+- Fully verified (transcription, answer and solution): **194**
+- Overall badge: PARTIALLY_VERIFIED: 194, NEEDS_REVIEW: 1
+- Answer verification: VERIFIED: 194, NEEDS_REVIEW: 1
+- Transcription: VERIFIED: 195
+- Solution review: VERIFIED: 195
 - Disagreements with the official key: **1**: DA2024-S1-Q14
 - Marks-to-all questions: DA2024-S1-Q59
 - Missing solutions: **0**
-- With teaching mode: 173
+- With teaching mode: 195
 - Duplicates found: **0**
 
 ## Mock audit
-- Mock tests: **50**; complete: **10**
-- Questions: **183** of 1550 planned
+- Mock tests: **50**; complete: **12**
+- Questions: **200** of 1550 planned
 - Answers verified by blind independent re-solve: **0**
-- Verification status: PARTIALLY_VERIFIED: 183
+- Verification status: PARTIALLY_VERIFIED: 200
 - Corrected during verification: 0
-- Questions with complete solutions: **183**
+- Questions with complete solutions: **200**
 - FOUNDATION: 9/10 complete (150 questions planned)
-- BEGINNER_INTERMEDIATE: 1/10 complete (200 questions planned)
-- INTERMEDIATE: 0/10 complete (250 questions planned)
+- BEGINNER_INTERMEDIATE: 2/10 complete (200 questions planned)
+- INTERMEDIATE: 1/10 complete (250 questions planned)
 - ADVANCED: 0/10 complete (300 questions planned)
 - FULL_GATE: 0/10 complete (650 questions planned)
-- Incomplete: mock-03, mock-12, mock-13, mock-14, mock-15, mock-16, mock-17, mock-18, mock-19, mock-20, mock-21, mock-22, mock-23, mock-24, mock-25, mock-26, mock-27, mock-28, mock-29, mock-30, mock-31, mock-32, mock-33, mock-34, mock-35, mock-36, mock-37, mock-38, mock-39, mock-40, mock-41, mock-42, mock-43, mock-44, mock-45, mock-46, mock-47, mock-48, mock-49, mock-50
+- Incomplete: mock-03, mock-13, mock-14, mock-15, mock-16, mock-17, mock-18, mock-19, mock-20, mock-22, mock-23, mock-24, mock-25, mock-26, mock-27, mock-28, mock-29, mock-30, mock-31, mock-32, mock-33, mock-34, mock-35, mock-36, mock-37, mock-38, mock-39, mock-40, mock-41, mock-42, mock-43, mock-44, mock-45, mock-46, mock-47, mock-48, mock-49, mock-50
 
 ## Syllabus audit
 - Official subjects: 8; platform topic groups: 40
 - Official subtopics (syllabus phrases): **111**; implemented: **111**; missing: **0**
-- Subtopics with at least one PYQ: 98
+- Subtopics with at least one PYQ: 101
 - Subtopics without a concept page: 111 (ga-grammar, ga-vocabulary, ga-reading, ga-narrative, ga-data-interpretation, ga-numerical, ga-mensuration, ga-stats-prob, ga-logic, ga-analogy, ga-numerical-reasoning, ga-transformations, ga-paper-folding, ps-counting, ps-axioms, ps-sample-space, ps-independent, ps-mutually-exclusive, ps-marginal-joint, ps-bayes, ps-central-tendency, ps-correlation-covariance, ps-random-variables, ps-conditional-expectation, ps-pmf, ps-discrete-named, ps-pdf, ps-continuous-named, ps-cdf, ps-conditional-pdf, ps-clt, ps-confidence-interval, ps-hypothesis-tests, la-vector-space, la-subspaces, la-independence, la-matrices, la-projection-matrix, la-orthogonal-matrix, la-idempotent-matrix, la-partition-matrix, la-quadratic-forms, la-systems, la-gaussian-elimination, la-eigen, la-determinant, la-rank, la-nullity, la-projections, la-lu, la-svd, co-functions, co-limits, co-continuity-differentiability, co-taylor-series, co-maxima-minima, co-single-var-optimization, pdsa-python, pdsa-stacks, pdsa-queues, pdsa-linked-lists, pdsa-trees, pdsa-hash-tables, pdsa-linear-search, pdsa-binary-search, pdsa-basic-sorts, pdsa-divide-conquer, pdsa-graph-theory, pdsa-traversals, pdsa-shortest-path, dbw-er-model, dbw-relational-model, dbw-integrity-constraints, dbw-relational-algebra, dbw-tuple-calculus, dbw-sql, dbw-normal-forms, dbw-file-organization, dbw-indexing, dbw-data-types, dbw-data-transformation, dbw-multidimensional-schema, dbw-concept-hierarchies, dbw-measures, ml-problem-types, ml-simple-linear-regression, ml-multiple-linear-regression, ml-ridge-regression, ml-logistic-regression, ml-knn, ml-naive-bayes, ml-lda, ml-svm, ml-decision-trees, ml-bias-variance, ml-cross-validation, ml-mlp, ml-feedforward, ml-clustering-algorithms, ml-kmeans, ml-hierarchical, ml-dim-reduction, ml-pca, ai-uninformed, ai-informed, ai-adversarial, ai-propositional, ai-predicate, ai-conditional-independence, ai-variable-elimination, ai-sampling)
-- Subtopics without mock questions: 13
+- Subtopics without mock questions: 12
 - Syllabus status: PARTIALLY_VERIFIED: 8
 
 ## Learning content
@@ -53,7 +53,6 @@ Status: **NOT YET PUBLISHABLE**. Validation found 40 error(s) and 3 warning(s).
 
 ## Validation issues (first 50)
 - ERROR [mock-03] 15 question(s) missing (e.g. M03-Q01, M03-Q02, M03-Q03)
-- ERROR [mock-12] 10 question(s) missing (e.g. M12-Q01, M12-Q02, M12-Q03)
 - ERROR [mock-13] 20 question(s) missing (e.g. M13-Q01, M13-Q02, M13-Q03)
 - ERROR [mock-14] 20 question(s) missing (e.g. M14-Q01, M14-Q02, M14-Q03)
 - ERROR [mock-15] 20 question(s) missing (e.g. M15-Q01, M15-Q02, M15-Q03)
@@ -62,7 +61,6 @@ Status: **NOT YET PUBLISHABLE**. Validation found 40 error(s) and 3 warning(s).
 - ERROR [mock-18] 20 question(s) missing (e.g. M18-Q01, M18-Q02, M18-Q03)
 - ERROR [mock-19] 20 question(s) missing (e.g. M19-Q01, M19-Q02, M19-Q03)
 - ERROR [mock-20] 20 question(s) missing (e.g. M20-Q01, M20-Q02, M20-Q03)
-- ERROR [mock-21] 7 question(s) missing (e.g. M21-Q19, M21-Q20, M21-Q21)
 - ERROR [mock-22] 25 question(s) missing (e.g. M22-Q01, M22-Q02, M22-Q03)
 - ERROR [mock-23] 25 question(s) missing (e.g. M23-Q01, M23-Q02, M23-Q03)
 - ERROR [mock-24] 25 question(s) missing (e.g. M24-Q01, M24-Q02, M24-Q03)

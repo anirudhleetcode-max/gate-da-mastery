@@ -57,16 +57,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The network diagram is a raster image embedded in the official PDF (page 41) and is copied unchanged as Q64-1.png. The four conditional probability tables are transcribed as Markdown tables in the order printed: P(·) for U, then P(V|·), P(W|·) and P(Z|·). In the paper the P(V|·) and P(W|·) tables are drawn directly one above the other. The P(Z|·) table has separate row-label columns for V and W, reproduced here as two columns with empty headers. The PDF text layer places the table contents after the final sentence; the order used here follows the rendered page, where all tables come before the question sentence."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The network diagram is the raster embedded in the official PDF (page 41), copied unchanged as Q64-1.png; it shows U→V, U→W, V→Z and W→Z as in the crop. All four conditional probability tables were checked cell by cell against the crop and transcribed as Markdown tables in the printed order: P(·) for U, then P(V|·), P(W|·) and P(Z|·). In the paper the P(V|·) and P(W|·) tables are drawn directly one above the other. The P(Z|·) table's two row-label columns (V and W) are reproduced as two columns with empty headers. The PDF text layer puts the table contents after the final sentence; the order used here follows the rendered page, where all tables come before the question sentence."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.125",
     "agreesWithKey": true,
     "checkCode": "import itertools\nPU={0:0.5,1:0.5}\nPV={0:{0:0.5,1:0.5},1:{0:0.5,1:0.5}}          # PV[u][v]\nPW={0:{0:1.0,1:0.0},1:{0:0.0,1:1.0}}          # PW[u][w]\nPZ={(0,0):{0:0.5,1:0.5},(0,1):{0:1.0,1:0.0},(1,0):{0:1.0,1:0.0},(1,1):{0:0.5,1:0.5}}  # PZ[(v,w)][z]\nJ=lambda u,v,w,z: PU[u]*PV[u][v]*PW[u][w]*PZ[(v,w)][z]\nprint('P(U=1,V=1,W=1,Z=1) =',J(1,1,1,1))\nprint('sum of joint over all 16 assignments =',sum(J(*a) for a in itertools.product((0,1),repeat=4)))\n",
-    "notes": "Python evaluates the factorised joint P(U)P(V|U)P(W|U)P(Z|V,W) from the transcribed CPTs: P(U=1, V=1, W=1, Z=1) = 0.5 × 0.5 × 1 × 0.5 = 0.125. As a consistency check on the transcribed tables, the 16 joint entries sum to 1. This matches the official key 0.125 to 0.125."
+    "notes": "The verifier re-solved the question from the official crop without consulting the stored solution. Using the factorisation P(U)P(V|U)P(W|U)P(Z|V,W), P(U=1, V=1, W=1, Z=1) = 0.5 × 0.5 × 1 × 0.5 = 0.125. The Python check evaluates the same product from the transcribed CPTs and confirms that the 16 joint entries sum to 1. This matches the official key 0.125 to 0.125."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

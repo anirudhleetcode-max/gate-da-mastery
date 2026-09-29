@@ -62,16 +62,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The first sentence of the stem has no closing punctuation in the paper and is kept as printed. The joint function is transcribed exactly as printed ($2xy$ on $0 < x < 2$, $0 < y < x$); as shown in the solution, it integrates to 4, not 1, over that region. It is not altered here. 'otherwise' is typeset upright in this question and is rendered with \\text."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Independent check: the joint function $2xy$, the support $0 < x < 2$, $0 < y < x$, and the requested $E[Y|X = 1.5]$ match the official crop; there is no rounding instruction in the paper. Caveats: the first sentence of the stem has no closing punctuation in the paper and is kept as printed; 'otherwise' is typeset upright in this question and is rendered with \\text. The joint function is transcribed exactly as printed; as shown in the solution, it integrates to 4, not 1, over the stated region. It is not altered here."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check; official key is MTA (marks to all)",
     "independentAnswer": "1 (E[Y|X = x] = 2x/3, evaluated at x = 1.5); official key: MTA",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nx, y = sp.symbols('x y', positive=True)\nf = 2*x*y                                   # stated on 0<x<2, 0<y<x\ntotal = sp.integrate(sp.integrate(f, (y, 0, x)), (x, 0, 2))\nprint('integral of stated f over support =', total)   # 4, not 1\nfX = sp.integrate(f, (y, 0, x))                        # marginal of X (unnormalised)\nprint('f_X(x) =', fX)\ncond = sp.simplify(f/fX)                               # f_{Y|X}(y|x); any constant c cancels\nprint('f_{Y|X}(y|x) =', cond, ' integrates to', sp.integrate(cond, (y, 0, x)))\nEYx = sp.simplify(sp.integrate(y*cond, (y, 0, x)))\nprint('E[Y|X=x] =', EYx, ' -> at x=1.5:', EYx.subs(x, sp.Rational(3,2)))\n# same result with the normalised density f/4\nc = sp.Rational(1,4); fn = c*f\nprint('with f/4:', sp.integrate(y*fn, (y, 0, x)).subs(x, 1.5) / sp.integrate(fn, (y, 0, x)).subs(x, 1.5))\n",
-    "notes": "The official final answer key lists this question as MTA (marks to all), so there is no numerical key to compare with; agreesWithKey is true under the MTA convention of docs §6. Working the question as posed: f_X(x) = x^3, f_{Y|X}(y|x) = 2y/x^2 on 0<y<x, E[Y|X=x] = 2x/3, so E[Y|X=1.5] = 1. The sympy check also shows that the function as printed integrates to 4 (not 1) over 0<x<2, 0<y<x; rescaling it to xy/2 leaves the conditional density and the value 1 unchanged. The key itself states no reason for the MTA decision."
+    "notes": "The official final answer key lists this question as MTA (marks to all candidates), so there is no numerical key to compare with; agreesWithKey is true under the MTA convention of docs §6. Blind re-solve (done before consulting the key or the stored solution): f_X(x) = ∫_0^x 2xy dy = x^3, f_{Y|X}(y|x) = 2y/x^2 on 0 < y < x, E[Y|X = x] = 2x/3, so E[Y|X = 1.5] = 1. The stored sympy check reproduces this and also shows that the function as printed integrates to 4 (not 1) over 0 < x < 2, 0 < y < x; rescaling it to xy/2 leaves the conditional density and the value 1 unchanged. The key itself states no reason for the MTA decision."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

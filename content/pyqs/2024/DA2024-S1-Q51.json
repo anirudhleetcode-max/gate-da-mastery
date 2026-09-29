@@ -104,16 +104,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The DAG is a raster image embedded in the official PDF (page 33). It is copied unchanged as Q51-1.png and carries faint traces of the 'GATE 2024' watermark. The edges as drawn are P→Q, R→Q, Q→S, Q→V, S→U and V→T. The four option orderings were checked against both the PDF text layer and the rendered crop."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The DAG is the raster image embedded in the official PDF (page 33), copied unchanged as Q51-1.png; it carries faint traces of the 'GATE 2024' watermark. The figure file was re-inspected: its edges are P→Q, R→Q, Q→S, Q→V, S→U and V→T, as in the official crop. The stem wording and the four option orderings match the official crop and the PDF text layer letter by letter."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;D",
     "agreesWithKey": true,
     "checkCode": "from itertools import permutations\nE=[('P','Q'),('R','Q'),('Q','S'),('Q','V'),('S','U'),('V','T')]\nopts={'A':'PQRSTUV','B':'PRQVSUT','C':'PQRSVUT','D':'PRQSVTU'}\ndef bad(o):\n    pos={v:i for i,v in enumerate(o)}\n    return [f'{u}->{v}' for u,v in E if pos[u]>pos[v]]\nfor k,o in opts.items():\n    assert sorted(o)==sorted('PQRSTUV')\n    b=bad(o); print(k,' '.join(o),'VALID' if not b else 'INVALID, violated: '+', '.join(b))\nallv=[p for p in permutations('PQRSTUV') if not bad(p)]\nprint('number of topological orders:',len(allv))  # 2 (P,R order) * C(4,2)=6 interleavings of S-U and V-T -> 12\n",
-    "notes": "A Python check of every edge against each ordering finds (A) violating R→Q and V→T, (C) violating R→Q, and (B) and (D) valid. Brute force over all 5040 permutations finds 12 topological orders, matching 2 × C(4,2). This matches the official key B;D."
+    "notes": "Independent verifier solved it blind from the official crop before seeing the key. Reading the edges P→Q, R→Q, Q→S, Q→V, S→U and V→T, (A) violates R→Q and V→T, (C) violates R→Q, and (B) and (D) respect every edge, giving B;D. The stored Python check tests every edge against each ordering and brute-forces all 5040 permutations; it finds 12 topological orders, matching 2 × C(4,2). This matches the official key B;D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

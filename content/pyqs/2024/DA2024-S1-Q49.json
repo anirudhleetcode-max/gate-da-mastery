@@ -106,16 +106,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The phrase 'projection on to the subspace U' (with 'on to' as two words) is kept as printed. M is bold italic in the paper and is transcribed as \\boldsymbol{M}; the exponents in (C) and (D) (M² and M³) were read from the rendered image, since the PDF text layer flattens them to 'M2' and 'M3'."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The phrase 'projection on to the subspace U' (with 'on to' as two words) is kept as printed. M is bold italic in the paper and is transcribed as \\boldsymbol{M}; the exponents in (C) and (D) (M² and M³) were read from the rendered image, since the PDF text layer flattens them to 'M2' and 'M3'. Options (C) and (D) have no full stop, as in the paper."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B;C;D",
     "agreesWithKey": true,
-    "checkCode": "import numpy as np\nrng=np.random.default_rng(0); r=np.linalg.matrix_rank\nfor k in (1,2):\n    A=rng.standard_normal((3,k))                  # columns span a k-dim subspace U of R^3\n    M=A@np.linalg.inv(A.T@A)@A.T                  # orthogonal projection onto U\n    print(f'dim U={k}: rank M={r(M)}, nullity={3-r(M)}, M^2==M {np.allclose(M@M,M)}, M^3==M {np.allclose(M@M@M,M)}')\n# dim U=1 -> nullity 2 ((A) false); dim U=2 -> nullity 1 ((B) true); M^2=M and M^3=M ((C),(D) true)\n# Oblique (non-orthogonal) projection onto the plane z=0 along (1,1,1): also idempotent, nullity 1\nP=np.array([[1.,0,-1],[0,1,-1],[0,0,0]])\nprint('oblique: rank',r(P),'nullity',3-r(P),'P^2==P',np.allclose(P@P,P),'P^3==P',np.allclose(P@P@P,P))\n",
-    "notes": "For a projection onto U, rank M = dim U and M is idempotent, so nullity = 3 - dim U (2 for a line, 1 for a plane) and M^3 = M^2 M = M. The numpy check builds the orthogonal projection A(A^T A)^{-1}A^T onto random 1- and 2-dimensional subspaces and confirms nullity 2 and 1 respectively, with M^2 = M and M^3 = M in both cases; an oblique projection onto a plane gives the same results, so the answer does not depend on whether the projection is orthogonal. This gives B;C;D, matching the official key B;C;D."
+    "checkCode": "import numpy as np\nrng=np.random.default_rng(1); r=np.linalg.matrix_rank\nfor k in (1,2):                                   # k = dim U\n    A=rng.standard_normal((3,k))                  # columns span U\n    P=A@np.linalg.inv(A.T@A)@A.T                  # orthogonal projection onto U\n    S=np.column_stack([A,rng.standard_normal((3,3-k))])\n    Q=S@np.diag([1.]*k+[0.]*(3-k))@np.linalg.inv(S)  # oblique projection onto U along a random complement\n    for name,M in (('orthogonal',P),('oblique',Q)):\n        print(f'dim U={k} {name}: rank={r(M)} nullity={3-r(M)} M^2==M {np.allclose(M@M,M)} M^3==M {np.allclose(M@M@M,M)}')\n# dim U=1 -> nullity 2 ((A) false); dim U=2 -> nullity 1 ((B) true); M^2=M, M^3=M always ((C),(D) true)\n",
+    "notes": "Blind re-solve (before viewing the key): a projection onto U has range U, so rank M = dim U and nullity = 3 - dim U: 2 for a line (A false) and 1 for a plane (B true). A projection is idempotent (M^2 = M, C true), hence M^3 = M^2 M = M (D true). Independent answer B;C;D. The numpy check builds both the orthogonal projection A(A^T A)^{-1}A^T and a random oblique projection onto random 1- and 2-dimensional subspaces and confirms nullity 2 and 1 respectively, with M^2 = M and M^3 = M in every case, so the answer does not depend on whether 'projection' means orthogonal projection. This matches the official key B;C;D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

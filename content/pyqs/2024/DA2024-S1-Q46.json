@@ -97,24 +97,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q46-1.webp",
-    "/pyq/2024/official/Q46-2.webp"
+    "/pyq/2024/official/Q46-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The set of functional dependencies, centred on its own line in the paper, is set as display math, with the arrows as \\rightarrow. The second official crop (Q46-2) shows only the continuation border of the question table on the next page and carries no content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. R = (U, V, W, X, Y, Z), the FD set {U -> V, U -> W, WX -> Y, WX -> Z, V -> X} (centred on its own line in the paper, set here as display math with \\rightarrow) and options (A) VW -> YZ, (B) WX -> YZ, (C) VW -> U, (D) VW -> Y all match the official crop. The question continues onto the next page only as an empty table border, which carries no content and is not included as an official image."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;B;D",
     "agreesWithKey": true,
     "checkCode": "F=[('U','V'),('U','W'),('WX','Y'),('WX','Z'),('V','X')]\ndef closure(attrs):\n    c=set(attrs); changed=True\n    while changed:\n        changed=False\n        for l,r in F:\n            if set(l)<=c and not set(r)<=c: c|=set(r); changed=True\n    return c\nopts={'A':('VW','YZ'),'B':('WX','YZ'),'C':('VW','U'),'D':('VW','Y')}\nfor k,(l,r) in opts.items():\n    c=closure(l); print(k, l+'->'+r, 'closure', ''.join(sorted(c)), 'derivable:', set(r)<=c)\n# A True, B True, C False, D True  -> A;B;D\n# Counterexample for C: two tuples equal on V..Z, different on U, satisfy F but violate VW->U\ncols='UVWXYZ'; t1=dict(zip(cols,['u1','v','w','x','y','z'])); t2=dict(t1,U='u2')\nsat=lambda l,r: not all(t1[a]==t2[a] for a in l) or all(t1[a]==t2[a] for a in r)\nprint('F satisfied:', all(sat(l,r) for l,r in F), ' VW->U satisfied:', sat('VW','U'))  # True False\n",
-    "notes": "An attribute-closure computation gives (VW)+ = {V, W, X, Y, Z} and (WX)+ = {W, X, Y, Z}, so VW -> YZ, WX -> YZ and VW -> Y are derivable and VW -> U is not. The check also confirms a two-tuple counterexample (rows equal except on U) that satisfies every given FD but violates VW -> U. This gives A;B;D, matching the official key A;B;D."
+    "notes": "Verifier solved the question blind before seeing the key: (VW)+ = {V, W, X, Y, Z} (V -> X, then WX -> Y and WX -> Z) contains Y and Z but not U, and WX -> YZ is the union of two given FDs. So A, B and D are derivable and C is not, matching the official key A;B;D. U appears on no right-hand side, so no attribute set without U can determine it. The stored Python closure computation and two-tuple counterexample for VW -> U were re-run and confirm this."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

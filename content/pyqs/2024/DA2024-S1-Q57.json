@@ -59,16 +59,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word 'otherwise' in the density is typeset in italic math in the paper and is rendered with \\textit here; $E(X)$ and $Var(X)$ are kept in the paper's italic-math form. The paper writes '… of $X$ is given by:' with a colon before the displayed density."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Independent check: wording, the exponent $-\\lambda x$, the subscript in $f_X(x)$, the support $x \\ge 0$, the condition $5E(X) = Var(X)$ and the rounding instruction ('**one** decimal place', bold in the paper) all match the official crop. Caveats: the word 'otherwise' in the density is typeset in italic math in the paper and is rendered with \\textit here; $E(X)$ and $Var(X)$ are kept in the paper's italic-math form; the paper writes '… of $X$ is given by:' with a colon before the displayed density."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.2",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nx, lam = sp.symbols('x lambda', positive=True)\nf = lam*sp.exp(-lam*x)\nprint('integral of pdf:', sp.integrate(f, (x, 0, sp.oo)))\nE = sp.integrate(x*f, (x, 0, sp.oo)); E2 = sp.integrate(x**2*f, (x, 0, sp.oo))\nV = sp.simplify(E2 - E**2)\nprint('E =', E, ' Var =', V)\nsol = sp.solve(sp.Eq(5*E, V), lam)\nprint('lambda =', sol, '->', [round(float(s), 1) for s in sol])\n# Monte Carlo sanity check\nimport numpy as np\nX = np.random.default_rng(0).exponential(scale=1/0.2, size=2_000_000)\nprint('MC: 5*mean =', round(5*X.mean(), 2), ' var =', round(X.var(), 2))\n",
-    "notes": "Independent solve: E(X) = 1/λ and Var(X) = 1/λ², so 5/λ = 1/λ² gives λ = 1/5 = 0.2. A sympy symbolic solve returns λ = 1/5, and a Monte Carlo check with λ = 0.2 gives 5·mean ≈ 25 ≈ variance. This agrees with the official key '0.2 to 0.2'."
+    "notes": "Blind re-solve (done before consulting the key or the stored solution): for the rate-parameterised exponential density printed in the question, E(X) = 1/λ and Var(X) = 1/λ², so 5/λ = 1/λ² gives 5λ = 1 and λ = 1/5 = 0.2 (the only positive root). The stored sympy check confirms the density integrates to 1, E = 1/λ, Var = 1/λ² and λ = 1/5; a Monte Carlo run with λ = 0.2 gives 5·mean ≈ 25 ≈ variance. This agrees with the official key '0.2 to 0.2'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

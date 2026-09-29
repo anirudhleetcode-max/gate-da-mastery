@@ -92,24 +92,23 @@
   "conceptIds": [],
   "formulaIds": [],
   "officialImages": [
-    "/pyq/2024/official/Q50-1.webp",
-    "/pyq/2024/official/Q50-2.webp"
+    "/pyq/2024/official/Q50-1.webp"
   ],
   "sourceIds": [
     "gate2024-da-qp",
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The definition of f, centred on its own line in the paper, is set as display math; its exponents and fractions (x⁴/4, 2x³/3, 3x²/2) were read from the rendered image, since the PDF text layer flattens them. The options end without a full stop, as in the paper. The second official crop (Q50-2) shows only a table border from the next page and carries no Q50 content."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The definition of f, centred on its own line in the paper, is set as display math; its exponents and fractions (x⁴/4, 2x³/3, 3x²/2, all with minus signs except the first term, and the constant +1) were read from the rendered image, since the PDF text layer flattens them. The options end without a full stop, as in the paper. The second official crop (Q50-2) shows only a table border from the next page and carries no Q50 content."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;B",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=x**4/4-2*x**3/3-3*x**2/2+1\nd1=sp.diff(f,x); d2=sp.diff(f,x,2)\nprint('f\\'=',sp.factor(d1),' f\\'\\'=',d2)\nfor c in sorted(sp.solve(d1,x)):\n    s=d2.subs(x,c); print(c,'f=',f.subs(x,c),'f\\'\\'=',s,'local min' if s>0 else 'local max' if s<0 else 'test fails')\n# 0: f''=-3 local max; 3: f''=12 local min; -1: f''=4 local min -> (A),(B) true; (C),(D) false\n",
-    "notes": "sympy gives f'(x) = x(x - 3)(x + 1) and f''(x) = 3x^2 - 4x - 3, with f''(-1) = 4 (local minimum, f = 5/12), f''(0) = -3 (local maximum, f = 1) and f''(3) = 12 (local minimum, f = -41/4). So x = 0 is a local maximum and x = 3 a local minimum, while x = -1 is a minimum (not a maximum) and x = 0 is not a minimum. This gives A;B, matching the official key A;B."
+    "notes": "Blind re-solve (before viewing the key): f'(x) = x^3 - 2x^2 - 3x = x(x - 3)(x + 1), critical points -1, 0, 3; f''(x) = 3x^2 - 4x - 3 gives f''(-1) = 4 > 0 (local minimum), f''(0) = -3 < 0 (local maximum), f''(3) = 12 > 0 (local minimum). So (A) and (B) are true, (C) is false (x = -1 is a minimum) and (D) is false (x = 0 is a strict maximum). Independent answer A;B. The sympy check reproduces the factorisation, the second-derivative values and f(-1) = 5/12, f(0) = 1, f(3) = -41/4. This matches the official key A;B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

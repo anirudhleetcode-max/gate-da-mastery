@@ -52,7 +52,7 @@
     "finalAnswer": "**0.0625**, which is **0.063** to three decimal places (the official key accepts 0.062 to 0.063)",
     "teaching": "**Covariance.** For random variables $X$ and $Y$,\n\n$$\\operatorname{Cov}(X, Y) = E\\big[(X - E[X])(Y - E[Y])\\big] = E[XY] - E[X]\\,E[Y].$$\n\nIt is positive when $X$ and $Y$ tend to be above their means together, and negative when one tends to be high while the other is low. Independent variables have zero covariance, although zero covariance does not imply independence.\n\n**Indicator (Bernoulli) variables.** An indicator $\\mathbb{1}_A$ equals 1 if event $A$ happens and 0 otherwise. Two facts make indicators easy to work with:\n\n- $E[\\mathbb{1}_A] = P(A)$: the mean of a Bernoulli variable is its success probability.\n- $\\mathbb{1}_A\\,\\mathbb{1}_B = \\mathbb{1}_{A \\cap B}$: the product is 1 only when both events happen.\n\nHence, for indicators,\n\n$$\\operatorname{Cov}(\\mathbb{1}_A, \\mathbb{1}_B) = P(A \\cap B) - P(A)\\,P(B).$$\n\nThis is zero exactly when $A$ and $B$ are independent events, and positive when knowing that $A$ happened makes $B$ more likely.\n\n**Nested events.** If $A \\subseteq B$, then $A \\cap B = A$ and the formula becomes $P(A) - P(A)P(B) = P(A)\\,(1 - P(B)) = P(A)\\,P(B^c)$.\n\n**Back to this question.** $X$ indicates $A = \\{\\text{both heads}\\}$ with $P(A) = \\tfrac14$, and $Y$ indicates $B = \\{\\text{at least one head}\\}$ with $P(B) = \\tfrac34$. Both heads certainly means at least one head, so $A \\subseteq B$ and $\\operatorname{Cov}(X, Y) = \\tfrac14 \\cdot \\tfrac14 = \\tfrac1{16} = 0.0625$. The covariance is positive, as expected: learning that both tosses were heads guarantees that at least one was.",
     "shortcut": "When one indicator implies the other ($X = 1 \\Rightarrow Y = 1$), $\\operatorname{Cov}(X, Y) = P(X = 1)\\,P(Y = 0)$. Here that is $P(\\text{HH}) \\cdot P(\\text{TT}) = \\tfrac14 \\cdot \\tfrac14 = \\tfrac1{16}$.",
-    "commonTrap": "Taking $E[XY] = E[X]\\,E[Y] = \\tfrac3{16}$ as if $X$ and $Y$ were independent, which makes the covariance $0$. Both variables are defined from the same two tosses and are strongly dependent: $XY = X$, so $E[XY] = \\tfrac14$. A second slip is using $P(Y = 1) = \\tfrac12$ (exactly one head) instead of $\\tfrac34$ (at least one head), which gives $0.125$."
+    "commonTrap": "Taking $E[XY] = E[X]\\,E[Y] = \\tfrac3{16}$ as if $X$ and $Y$ were independent, which makes the covariance $0$. Both variables are defined from the same two tosses and are strongly dependent: $XY = X$, so $E[XY] = \\tfrac14$. A second slip is misreading $Y$ as \"exactly one head\" ($P = \\tfrac12$) instead of \"at least one head\" ($P = \\tfrac34$). Then $XY = 0$ on every outcome and the covariance becomes $0 - \\tfrac14 \\cdot \\tfrac12 = -0.125$, with even the sign wrong."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -64,16 +64,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Plain-text question with no figure or table. The variable names X and Y are italic in the paper and are written as $X$ and $Y$."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Plain-text question with no figure or table; wording and the rounding instruction ('rounded off to three decimal places', with 'three' in bold) checked word-for-word against the crop. The italic variable names X and Y are written as $X$ and $Y$."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.0625 (1/16), i.e. 0.063 to three decimal places",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\nfrom itertools import product\nout=list(product('HT',repeat=2)); p=F(1,len(out))\nX=lambda o: 1 if o==('H','H') else 0\nY=lambda o: 1 if 'H' in o else 0\nEX=sum(p*X(o) for o in out); EY=sum(p*Y(o) for o in out); EXY=sum(p*X(o)*Y(o) for o in out)\ncov=EXY-EX*EY\nprint('E[X]=',EX,'E[Y]=',EY,'E[XY]=',EXY,'Cov=',cov,'=',float(cov))\nprint('rounded to 3 dp:', round(float(cov)+1e-12,3), '| truncated:', int(float(cov)*1000)/1000)\n",
-    "notes": "Exact enumeration with Python fractions over the four equally likely outcomes gives E[X] = 1/4, E[Y] = 3/4, E[XY] = 1/4 and Cov(X, Y) = 1/16 = 0.0625. The exact value lies midway between 0.062 and 0.063 (round-half-up gives 0.063, truncation gives 0.062), and it falls inside the official key range 0.062 to 0.063. Agrees with the key."
+    "notes": "The verifier re-solved the question from the official crop without consulting the stored solution. Over the four equally likely outcomes, E[X] = 1/4, E[Y] = 3/4 and E[XY] = 1/4 (X = 1 forces Y = 1, so XY = X), which gives Cov(X, Y) = 1/4 − 3/16 = 1/16 = 0.0625. The exact value lies midway between 0.062 and 0.063: round-half-up gives 0.063 and truncation gives 0.062. Both are inside the official key range 0.062 to 0.063, so the answer agrees with the key. The Python enumeration with exact fractions confirms this."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

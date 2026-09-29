@@ -101,16 +101,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Figures 1 and 2 are raster images embedded in the official PDF. They are copied unchanged as Q43-1.png (Figure 1) and Q43-2.png (Figure 2) and carry faint traces of the 'GATE 2024' watermark. The Figure 1 connectivity used in the solution was read from a zoomed rendering: 7 input-to-hidden edges, all weight 1 (x1 to all three neurons, x2 to top and bottom, x3 to middle and bottom); 6 hidden-to-second-layer edges, all weight 2; and 2 output edges of weight 3. The paper typesets the options with uneven spacing (e.g. 'p = 36, q = 24,r = 24'); spacing is normalised in LaTeX without changing values."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Figures 1 and 2 are the raster images embedded in the official PDF, copied unchanged as Q43-1.png (Figure 1, the multi-layer network) and Q43-2.png (Figure 2, weights p, q, r); both were viewed and confirmed to match the crop. They carry faint traces of the 'GATE 2024' watermark. The Figure 1 connectivity was re-read by the verifier from an enlarged rendering: 7 input-to-hidden edges, all weight 1 (x1 to all three neurons, x2 to top and bottom, x3 to middle and bottom); 6 hidden-to-second-layer edges, all weight 2; and 2 output edges of weight 3. The paper typesets the options with uneven spacing (e.g. 'p = 36, q = 24,r = 24'); spacing is normalised in LaTeX without changing values."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nrelu=lambda z: np.maximum(0,z)\n# Figure 1 edges read from the figure (all input->hidden weights 1):\n# h1<-x1,x2 ; h2<-x1,x3 ; h3<-x1,x2,x3\nW1=np.array([[1,1,0],[1,0,1],[1,1,1]])\nW2=2*np.ones((2,3))          # every hidden neuron -> both 2nd-layer neurons, weight 2\nW3=np.array([[3,3]])         # both -> output, weight 3\nnet1=lambda x: relu(W3@relu(W2@relu(W1@x)))\nprint('linear map for x>0:', W3@W2@W1)   # [[36 24 24]]\nopts={'A':(36,24,24),'B':(24,24,36),'C':(18,36,24),'D':(36,36,36)}\nrng=np.random.default_rng(0); X=rng.uniform(0.01,10,(3,1000))\nfor k,(p,q,r) in opts.items():\n    net2=relu(np.array([[p,q,r]])@X)\n    print(k, np.allclose(net1(X),net2))\n",
-    "notes": "Composing the weight matrices read from Figure 1 gives W3·W2·W1 = [36, 24, 24]. A numpy check on 1000 random positive inputs shows that only option A, (36, 24, 24), reproduces the Figure 1 output exactly. This matches the official key A."
+    "notes": "Verifier solved blind before seeing the key, after re-reading the Figure 1 edges from an enlarged crop: with positive inputs, positive weights and zero biases every ReLU acts as the identity, so h1 = x1+x2, h2 = x1+x3, h3 = x1+x2+x3, both second-layer neurons equal 2(3x1+2x2+2x3), and the output is 36x1+24x2+24x3, giving (p, q, r) = (36, 24, 24), option (A). Composing the weight matrices gives W3·W2·W1 = [36, 24, 24], and a numpy check on 1000 random positive inputs shows only option A reproduces the Figure 1 output. This matches the official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
