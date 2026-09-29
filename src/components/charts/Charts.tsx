@@ -132,6 +132,7 @@ export function BarList({ data, max, formatValue = (v) => String(v), height = 22
             <span
               className="relative col-span-2 block sm:col-span-1 sm:col-start-2 sm:row-start-1"
               style={{ height: Math.min(height, 24) }}
+              role="img"
               tabIndex={0}
               onMouseEnter={() => setHover(d.key)}
               onMouseLeave={() => setHover(null)}

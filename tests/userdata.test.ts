@@ -85,4 +85,24 @@ describe("backup", () => {
     expect(await db.revisionItems.count()).toBe(1);
     await expect(importAll(db, { app: "other" })).rejects.toThrow(/Not a GATE DA Mastery backup/);
   });
+  it("drops invalid rows and neutralises crafted snapshots in an imported backup", async () => {
+    await recordAttemptWithFollowUps(db, attempt("correct"), { title: "t" });
+    const backup = JSON.parse(JSON.stringify(await exportAll(db)));
+    backup.attempts.push({ questionId: "<img src=x onerror=alert(1)>", status: "hacked" });
+    backup.bookmarks = [
+      { key: "question:A", kind: "question", refId: "A", title: "A", createdAt: new Date().toISOString(), snapshot: { html: '<div class="fixed inset-0 z-50">x</div>', href: "https://evil.example/", savedAt: new Date().toISOString() } },
+      { key: "question:B", kind: "question", refId: "B", title: "B", createdAt: new Date().toISOString(), snapshot: { html: "<p>ok</p>", href: "/questions/B", savedAt: new Date().toISOString() } },
+      { key: "bad", kind: "virus", refId: "C", title: "C", createdAt: "x" },
+    ];
+    await clearAll(db);
+    const { imported, dropped } = await importAll(db, backup);
+    expect(imported.attempts).toBe(1);
+    expect(dropped.attempts).toBe(1);
+    expect(dropped.bookmarks).toBe(1);
+    const a = await db.bookmarks.get("question:A");
+    expect(a?.snapshot).toBeUndefined(); // off-site link → snapshot removed
+    const b = await db.bookmarks.get("question:B");
+    expect(b?.snapshot?.href).toBe("/questions/B");
+    expect(b?.snapshot?.html).not.toContain("fixed"); // sanitised (empty without a DOM in this test runner)
+  });
 });

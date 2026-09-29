@@ -50,9 +50,11 @@ export const pct0 = (x: number) => `${Math.round(x * 100)}%`;
 
 /** Where a revision item lives (same convention as the subject pages' revision panel). */
 export function revisionHref(r: Pick<RevisionItemRow, "kind" | "refId" | "subjectId">): string {
-  if (r.kind === "question") return `/questions/${r.refId}`;
-  if (r.kind === "concept") return `/concepts/${r.refId}`;
-  return r.subjectId ? `/formulas/${r.subjectId}#${r.refId}` : "/formulas";
+  // Ids come from IndexedDB (possibly an imported backup), so encode them.
+  const id = encodeURIComponent(r.refId);
+  if (r.kind === "question") return `/questions/${id}`;
+  if (r.kind === "concept") return `/concepts/${id}`;
+  return r.subjectId ? `/formulas/${encodeURIComponent(r.subjectId)}#${id}` : "/formulas";
 }
 
 /** Mock score as % of each mock's maximum, over submitted attempts in date order. */

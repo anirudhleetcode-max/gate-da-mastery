@@ -317,7 +317,7 @@ function SessionItem({
         </Callout>
       );
     } else {
-      body = <QuestionView q={state.q} context="revision" headingLevel="h2" compact onSubmitted={() => setSubmitted(true)} />;
+      body = <QuestionView q={state.q} context="revision" headingLevel="h3" compact onSubmitted={() => setSubmitted(true)} />;
     }
   } else if (kind === "concept") {
     const c = concepts.get(refId);
@@ -327,9 +327,9 @@ function SessionItem({
           <Badge tone="info">{KIND_LABEL.concept}</Badge>
           {subject ? <Badge tone="outline">{subject}</Badge> : null}
         </div>
-        <h2 id={`rev-c-${refId}`} className="text-lg font-semibold text-fg">
+        <h3 id={`rev-c-${refId}`} className="text-lg font-semibold text-fg">
           {c?.title ?? title}
-        </h2>
+        </h3>
         {topic ? <p className="text-sm text-fg-3">Topic: {topic}</p> : null}
         <p className="text-sm text-fg-2">
           Before opening the concept, say or write out its definition, the key formula or result, when it applies in a GATE question, and one mistake students make with it. Then
@@ -434,9 +434,9 @@ function FormulaRecall({ formula, fallbackTitle, subject, topic }: { formula: Re
         <Badge tone="info">{KIND_LABEL.formula}</Badge>
         {subject ? <Badge tone="outline">{subject}</Badge> : null}
       </div>
-      <h2 id={`rev-f-${formula?.id ?? "missing"}`} className="text-lg font-semibold text-fg">
+      <h3 id={`rev-f-${formula?.id ?? "missing"}`} className="text-lg font-semibold text-fg">
         {formula?.name ?? fallbackTitle}
-      </h2>
+      </h3>
       {topic ? <p className="text-sm text-fg-3">Topic: {topic}</p> : null}
       {formula ? (
         <>

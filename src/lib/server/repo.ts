@@ -44,7 +44,8 @@ function load(): Repo {
   const search = new MiniSearch<SearchDoc>({
     fields: ["title", "text"],
     storeFields: ["id", "category", "title", "href", "subjectId", "year"],
-    searchOptions: { boost: { title: 3 }, prefix: true, fuzzy: 0.15, combineWith: "AND" },
+    // No fuzzy matching for numbers: "2026" must not match 2024/2025, nor "Q14" match Q15.
+    searchOptions: { boost: { title: 3 }, prefix: true, fuzzy: (term: string) => (/\d/.test(term) ? false : 0.15), combineWith: "AND" },
   });
   search.addAll(bundle.searchDocs);
   const servable = servableIds(bundle.questions, bundle.mocks);

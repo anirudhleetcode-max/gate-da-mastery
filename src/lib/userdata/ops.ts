@@ -5,6 +5,7 @@
  */
 import type { GateDaDB, AttemptRow, BookmarkKind, BookmarkRow, ErrorLogRow, MistakeType, RevisionItemRow, RevisionKind, RevisionReason } from "./db";
 import { localDay } from "./db";
+import { cleanBackup } from "./backup";
 import { initialState, review, type RecallGrade } from "@/lib/revision/schedule";
 
 export async function recordAttempt(db: GateDaDB, row: Omit<AttemptRow, "id" | "createdAt" | "day">, now = new Date()): Promise<number> {
@@ -183,24 +184,42 @@ export async function exportAll(db: GateDaDB) {
 
 export type Backup = Awaited<ReturnType<typeof exportAll>>;
 
-/** Replace all user data with a backup (after validation of its envelope). */
+/**
+ * Replace all user data with a backup. The envelope is checked, then every row
+ * is validated (src/lib/userdata/backup.ts): invalid rows are dropped, saved
+ * question HTML is sanitised and stored links must stay on this site.
+ * Returns how many rows were imported and dropped per table.
+ */
 export async function importAll(db: GateDaDB, data: unknown) {
-  const b = data as Backup;
-  if (!b || b.app !== "gate-da-mastery" || typeof b.version !== "number" || b.version > BACKUP_VERSION) {
+  const b = data as Partial<Backup> & Record<string, unknown>;
+  if (!b || typeof b !== "object" || b.app !== "gate-da-mastery" || typeof b.version !== "number" || b.version > BACKUP_VERSION) {
     throw new Error("Not a GATE DA Mastery backup file (or it comes from a newer version).");
   }
+  const { rows, dropped } = cleanBackup(b);
   const tables = [db.attempts, db.mockAttempts, db.bookmarks, db.revisionItems, db.errorLogs, db.roadmap, db.settings, db.views];
   await db.transaction("rw", tables, async () => {
     for (const t of tables) await t.clear();
-    await db.attempts.bulkAdd(b.attempts ?? []);
-    await db.mockAttempts.bulkAdd(b.mockAttempts ?? []);
-    await db.bookmarks.bulkAdd(b.bookmarks ?? []);
-    await db.revisionItems.bulkAdd(b.revisionItems ?? []);
-    await db.errorLogs.bulkAdd(b.errorLogs ?? []);
-    await db.roadmap.bulkAdd(b.roadmap ?? []);
-    await db.settings.bulkAdd(b.settings ?? []);
-    await db.views.bulkAdd(b.views ?? []);
+    await db.attempts.bulkPut(rows.attempts);
+    await db.mockAttempts.bulkPut(rows.mockAttempts);
+    await db.bookmarks.bulkPut(rows.bookmarks);
+    await db.revisionItems.bulkPut(rows.revisionItems);
+    await db.errorLogs.bulkPut(rows.errorLogs);
+    await db.roadmap.bulkPut(rows.roadmap);
+    await db.settings.bulkPut(rows.settings);
+    await db.views.bulkPut(rows.views);
   });
+  const imported = Object.fromEntries(Object.entries(rows).map(([k, v]) => [k, v.length])) as Record<keyof typeof rows, number>;
+  return { imported, dropped };
+}
+
+/** Set (or clear, with an empty string) the student's note on a bookmark. */
+export async function updateBookmarkNote(db: GateDaDB, key: string, note: string): Promise<void> {
+  await db.bookmarks.update(key, { note: note.trim() ? note : undefined });
+}
+
+/** Remove a bookmark by key (idempotent, unlike toggleBookmark). */
+export async function removeBookmark(db: GateDaDB, key: string): Promise<void> {
+  await db.bookmarks.delete(key);
 }
 
 export async function clearAll(db: GateDaDB) {

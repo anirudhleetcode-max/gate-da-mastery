@@ -208,19 +208,4 @@ export function revisionHref(r: Pick<RevisionItemRow, "kind" | "refId" | "subjec
   return formulaHref(r.refId, r.subjectId);
 }
 
-/**
- * A stored link (e.g. a bookmark snapshot's href) is used only when it is a
- * plain path on this site: never another origin, a protocol-relative URL or
- * a javascript: URL from a tampered backup file.
- */
-export function safeInternalHref(href: string | undefined): string | null {
-  if (typeof href !== "string") return null;
-  const v = href.trim();
-  if (!/^\/(?![/\\])[^\s\\]*$/.test(v)) return null;
-  try {
-    const u = new URL(v, "https://internal.invalid");
-    return u.origin === "https://internal.invalid" ? `${u.pathname}${u.search}${u.hash}` : null;
-  } catch {
-    return null;
-  }
-}
+export { safeInternalHref } from "@/lib/userdata/sanitize";

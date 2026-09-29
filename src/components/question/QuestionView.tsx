@@ -31,7 +31,7 @@ export interface QuestionViewProps {
   onSubmitted?: (result: { status: string; marks: number }) => void;
   /** Hide the related/similar section (e.g. inside compact sessions). */
   compact?: boolean;
-  headingLevel?: "h1" | "h2";
+  headingLevel?: "h1" | "h2" | "h3";
 }
 
 export function questionTitle(q: Pick<QuestionPayload, "origin" | "year" | "questionNumber" | "topicName" | "testId">) {
@@ -43,6 +43,13 @@ export function questionTitle(q: Pick<QuestionPayload, "origin" | "year" | "ques
 /** Keyed by question id so all per-question state resets when the question changes. */
 export function QuestionView(props: QuestionViewProps) {
   return <QuestionViewInner key={props.q.id} {...props} />;
+}
+
+/** Offline copy saved with a bookmark: the stem plus the options (build-time HTML). */
+function snapshotHtml(q: QuestionPayload): string {
+  if (!q.html.options.length) return q.html.stem;
+  const opts = q.html.options.map((o) => `<li><strong>(${o.label})</strong> ${o.html}</li>`).join("");
+  return `${q.html.stem}<ul>${opts}</ul>`;
 }
 
 function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, headingLevel = "h1" }: QuestionViewProps) {
@@ -66,6 +73,8 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
 
   const title = questionTitle(q);
   const H = headingLevel;
+  // Section headings sit one level below the question title (h1 → h2, h2 → h3, h3 → h4).
+  const Sub = headingLevel === "h1" ? "h2" : headingLevel === "h2" ? "h3" : "h4";
   const isMta = q.answer.kind === "MTA";
 
   async function submit() {
@@ -244,7 +253,7 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
 
       {/* ---------------------------------------------------------- actions */}
       <div className="flex flex-wrap gap-2">
-        <BookmarkButton kind="question" refId={q.id} title={title} subjectId={q.subjectId} snapshot={{ html: q.html.stem, href: `/questions/${q.id}` }} />
+        <BookmarkButton kind="question" refId={q.id} title={title} subjectId={q.subjectId} snapshot={{ html: snapshotHtml(q), href: `/questions/${q.id}` }} />
         <Button
           size="sm"
           className="h-[34px]"
@@ -292,7 +301,7 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
       {/* ---------------------------------------------------------- solution */}
       {done ? (
         <div className="rounded-[var(--radius)] border border-border bg-surface p-4 shadow-[var(--shadow)] sm:p-6">
-          <SolutionPanel html={q.html} correctAnswerText={formatAnswer(q.answer)} />
+          <SolutionPanel html={q.html} correctAnswerText={formatAnswer(q.answer)} headingLevel={Sub} />
         </div>
       ) : null}
 
@@ -301,9 +310,9 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
           {/* Learn this concept */}
           <section aria-labelledby={`learn-${q.id}`} className="grid gap-4 md:grid-cols-2">
             <div className="rounded-[var(--radius)] border border-border bg-surface p-4">
-              <h2 id={`learn-${q.id}`} className="mb-2 flex items-center gap-2 font-semibold text-fg">
+              <Sub id={`learn-${q.id}`} className="mb-2 flex items-center gap-2 font-semibold text-fg">
                 <BookOpenCheck aria-hidden className="h-4 w-4 text-accent" /> Learn this concept
-              </h2>
+              </Sub>
               {q.concepts.length ? (
                 <ul className="space-y-1.5">
                   {q.concepts.map((c) => (
@@ -322,7 +331,7 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
               {q.concept ? <p className="mt-2 text-sm text-fg-3">Concept tested: {q.concept}</p> : null}
             </div>
             <div className="rounded-[var(--radius)] border border-border bg-surface p-4">
-              <h2 className="mb-2 font-semibold text-fg">Related formulas</h2>
+              <Sub className="mb-2 font-semibold text-fg">Related formulas</Sub>
               {q.formulas.length ? (
                 <ul className="space-y-2">
                   {q.formulas.slice(0, 3).map((f) => (
@@ -342,9 +351,9 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
 
           {/* Similar questions */}
           <section aria-labelledby={`similar-${q.id}`}>
-            <h2 id={`similar-${q.id}`} className="mb-2 font-semibold text-fg">
+            <Sub id={`similar-${q.id}`} className="mb-2 font-semibold text-fg">
               Similar questions
-            </h2>
+            </Sub>
             {similar.length ? (
               <ul className="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
                 {similar.map((s) => (

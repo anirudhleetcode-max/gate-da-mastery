@@ -114,8 +114,18 @@ export function DataManagement() {
     if (!db || !pending) return;
     setBusy("import");
     try {
-      await importAll(db, pending.data);
-      setNotice({ tone: "success", title: `Imported ${pending.fileName}`, lines: [`${where[0].toUpperCase()}${where.slice(1)} now matches the backup.`] });
+      const { dropped } = await importAll(db, pending.data);
+      const skipped = Object.entries(dropped).filter(([, n]) => n);
+      setNotice({
+        tone: "success",
+        title: `Imported ${pending.fileName}`,
+        lines: [
+          `${where[0].toUpperCase()}${where.slice(1)} now matches the backup.`,
+          ...(skipped.length
+            ? [`Skipped ${skipped.map(([t, n]) => `${n} invalid ${t} row${n === 1 ? "" : "s"}`).join(", ")}: they did not match the format this app writes.`]
+            : []),
+        ],
+      });
       setPending(null);
     } catch (e) {
       setNotice({ tone: "danger", title: "Import failed; nothing was changed", lines: [(e as Error).message || "The database rejected the backup.", "The import runs in one transaction, so your existing data is left exactly as it was."] });
