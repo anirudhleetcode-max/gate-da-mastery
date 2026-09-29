@@ -52,7 +52,7 @@ export default async function MockIntroPage({ params }: Params) {
         {/* ------------------------------------------------ start (first on mobile, right column on desktop) */}
         <aside aria-label="Start this mock" className="space-y-4 lg:sticky lg:top-20 lg:col-start-2 lg:row-start-1 lg:self-start">
           <MockStartPanel testId={test.id} number={test.number} available={test.available} durationMinutes={test.durationMinutes} />
-          <p className="px-1 text-xs leading-relaxed text-fg-3">
+          <p className="px-1 text-xs leading-relaxed text-fg-2">
             {TIER_LABEL[test.tier]} ({TIER_RANGE[test.tier]}): {TIER_EXPLANATION[test.tier]}
           </p>
         </aside>
@@ -217,7 +217,7 @@ export default async function MockIntroPage({ params }: Params) {
                   Timer
                 </h3>
                 <ul className="list-disc space-y-1 pl-5">
-                  <li>The countdown (hh:mm:ss) starts at {formatMinutes(test.durationMinutes)} when the exam screen opens. It turns red at 10 minutes left, and screen readers hear alerts at 30, 10, 5 and 1 minute(s).</li>
+                  <li>The countdown (hh:mm:ss) starts at {formatMinutes(test.durationMinutes)} when the exam screen opens. At 10 minutes left it turns amber and shows an alarm-clock icon; screen readers hear alerts at 30, 10, 5 and 1 minute(s) left.</li>
                   <li>
                     <strong className="text-fg">At 0:00 the test is submitted automatically</strong> with the answers you have given.
                   </li>

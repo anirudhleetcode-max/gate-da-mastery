@@ -1,6 +1,6 @@
 "use client";
 import type { ReactNode, SelectHTMLAttributes } from "react";
-import { DIFFICULTY_LABEL, DIFFICULTY_ORDER } from "@/lib/labels";
+import { DIFFICULTY_LABEL, DIFFICULTY_ORDER, SUBJECT_SHORT } from "@/lib/labels";
 import { formatDate, cn } from "@/lib/utils";
 import { slotName, type PaperInfo, type TaxonomySubject } from "./data";
 import { MARKS, STATUSES, STATUS_LABEL, TYPES, type BrowseFilters } from "./filters";
@@ -68,7 +68,7 @@ export function FilterControls({
         <option value="">{withCount("All subjects", f.subject.get("*"))}</option>
         {taxonomy.map((s) => (
           <option key={s.id} value={s.id}>
-            {withCount(s.name, f.subject.get(s.id))}
+            {withCount(SUBJECT_SHORT[s.id], f.subject.get(s.id))}
           </option>
         ))}
       </FilterSelect>
@@ -90,7 +90,7 @@ export function FilterControls({
               </option>
             ))
           : taxonomy.map((s) => (
-              <optgroup key={s.id} label={s.name}>
+              <optgroup key={s.id} label={SUBJECT_SHORT[s.id]}>
                 {s.topics.map((t) => (
                   <option key={t.id} value={t.id}>
                     {withCount(t.name, f.topic.get(t.id))}

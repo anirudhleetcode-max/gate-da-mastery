@@ -47,7 +47,7 @@ export function ReviewQuestion({ q, item, state }: { q: QuestionPayload; item: S
 
       <dl className={cn("grid gap-x-6 gap-y-2 rounded-lg border px-4 py-3 text-sm sm:grid-cols-2 lg:grid-cols-4", tone)}>
         <div>
-          <dt className="text-xs text-fg-3">Result</dt>
+          <dt className="text-xs text-fg-2">Result</dt>
           <dd className="flex items-center gap-1.5 font-semibold text-fg">
             <StatusIcon status={item.status} />
             {STATUS_LABEL[item.status]} · <span className="tnum">{signedMarks(item.awarded)}</span>
@@ -55,20 +55,20 @@ export function ReviewQuestion({ q, item, state }: { q: QuestionPayload; item: S
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-fg-3">Your answer / correct answer</dt>
+          <dt className="text-xs text-fg-2">Your answer / correct answer</dt>
           <dd className="tnum font-medium text-fg">
             {formatResponse(response)} <span className="text-fg-3">/</span> {formatAnswer(q.answer)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-fg-3">Your time / estimate</dt>
+          <dt className="text-xs text-fg-2">Your time / estimate</dt>
           <dd className="tnum flex items-center gap-1.5 font-medium text-fg">
             <Clock3 aria-hidden className="h-3.5 w-3.5 text-fg-3" />
             {formatSeconds(item.timeSpentMs / 1000)} / {formatSeconds(item.estimatedTimeSec)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-fg-3">Confidence · review mark</dt>
+          <dt className="text-xs text-fg-2">Confidence · review mark</dt>
           <dd className="flex items-center gap-1.5 font-medium text-fg">
             {item.confidence ? CONFIDENCE_LABEL[item.confidence] : "Not recorded"}
             {item.markedForReview ? (

@@ -335,7 +335,7 @@ export function ExamSession({ db, test, questions, initial, resumed, demo, patte
   const paletteTitle = multiSection ? `Question palette: ${SECTION_NAME[currentSection.section]}` : "Question palette";
 
   return (
-    <div className="flex h-dvh flex-col bg-bg">
+    <div className="flex h-dvh flex-col bg-surface">
       {/* ---------------------------------------------------- top bar */}
       <header className="shrink-0 border-b border-border bg-surface">
         <div className="flex h-14 items-center gap-2 px-2 sm:gap-3 sm:px-4">

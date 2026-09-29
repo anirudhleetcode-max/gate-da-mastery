@@ -51,7 +51,12 @@ export function PyqRow({ meta, topicName, subjectLabel, state, paperText, onNavi
           </span>
         </span>
       </Link>
-      {trailing ? <div className="absolute right-2 top-1.5 sm:right-3">{trailing}</div> : null}
+      {trailing ? (
+        // Named group: the shared compact BookmarkButton is announced only as "Bookmark", so the group says which question it is for.
+        <div role="group" aria-label={`Q.${meta.questionNumber}${meta.year ? `, GATE DA ${meta.year}` : ""}`} className="absolute right-2 top-1.5 sm:right-3">
+          {trailing}
+        </div>
+      ) : null}
     </div>
   );
 }

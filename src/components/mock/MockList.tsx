@@ -114,11 +114,11 @@ export function MockList({ tiers }: { tiers: TierGroup[] }) {
             <div className="mb-3 flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
               <div className="min-w-0">
                 <h2 id={`tier-h-${t.tier}`} className="text-lg font-semibold text-fg">
-                  {t.label} <span className="text-sm font-normal text-fg-3">· {t.range}</span>
+                  {t.label} <span className="text-sm font-normal text-fg-2">· {t.range}</span>
                 </h2>
                 <p className="mt-0.5 max-w-3xl text-sm text-fg-2">{t.explanation}</p>
               </div>
-              <p className="tnum text-sm text-fg-3">
+              <p className="tnum text-sm text-fg-2">
                 {avail} of {t.mocks.length} available
               </p>
             </div>
@@ -135,7 +135,7 @@ export function MockList({ tiers }: { tiers: TierGroup[] }) {
             ) : null}
             {avail < t.mocks.length ? (
               <div className={avail ? "mt-4" : undefined}>
-                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-fg-3">
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-fg-2">
                   <Lock aria-hidden className="h-3 w-3" /> Not yet available ({t.mocks.length - avail})
                 </h3>
                 <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
@@ -160,7 +160,7 @@ export function MockList({ tiers }: { tiers: TierGroup[] }) {
 function PendingTile({ m }: { m: MockSummary }) {
   const focus = m.shortTitle.split(" — ")[1];
   return (
-    <div className="h-full rounded-lg border border-dashed border-border-strong bg-surface-2/60 px-3 py-2 text-fg-3" title={`${m.title}: not yet available`}>
+    <div className="h-full rounded-lg border border-dashed border-border-strong bg-surface px-3 py-2 text-fg-3" title={`${m.title}: not yet available`}>
       <p className="text-sm font-medium text-fg-2">
         Mock {m.number}
         <span className="sr-only">: {m.shortTitle}, not yet available</span>

@@ -11,7 +11,7 @@ import { BarList, ChartFrame } from "@/components/charts/Charts";
 import { PaperQuestionList, type PaperSection } from "@/components/pyq/PaperQuestionList";
 import { ScheduleVerification, SourceDetail } from "@/components/pyq/Sources";
 import { GA_LAST_QUESTION, slotName } from "@/components/pyq/data";
-import { cleanPreview } from "@/components/pyq/preview";
+import { stemPreview } from "@/components/pyq/preview";
 import { SUBJECT_ABBR, SUBJECT_COLOR, SUBJECT_SHORT } from "@/lib/labels";
 import { formatDate, formatMarks } from "@/lib/utils";
 
@@ -77,7 +77,7 @@ export default async function PaperPage({ params }: Params) {
     return {
       key,
       title: key === "GA" ? `General Aptitude (Q.${from}–Q.${to})` : `Data Science & AI (Q.${from}–Q.${to})`,
-      rows: qs.map((q) => ({ meta: { ...toMeta(q), preview: cleanPreview(q.preview) }, topicName: getTopic(q.topicId)?.name ?? q.topicId })),
+      rows: qs.map((q) => ({ meta: { ...toMeta(q), preview: stemPreview(q.html.stem) }, topicName: getTopic(q.topicId)?.name ?? q.topicId })),
       missing,
     };
   });
@@ -151,7 +151,7 @@ export default async function PaperPage({ params }: Params) {
         {questions.length ? (
           <ChartFrame
             title="Subject-wise marks in this paper"
-            description={`Historical estimate for this paper only, from ${coverage}. Focus or hover a bar for the question count.`}
+            description={`Historical estimate for this paper only, from ${coverage}. Focus or hover a bar for the question types.`}
             table={{
               columns: ["Subject", "Questions", "Marks", "MCQ", "MSQ", "NAT"],
               rows: [
@@ -169,7 +169,7 @@ export default async function PaperPage({ params }: Params) {
           >
             {/* Full subject names where there is room; abbreviations keep the bars readable on phones. */}
             {(["full", "abbr"] as const).map((variant) => (
-              <div key={variant} className={variant === "full" ? "hidden sm:block" : "sm:hidden"}>
+              <div key={variant} className={variant === "full" ? "hidden sm:block" : "sm:hidden [&_li]:grid-cols-[3.25rem_minmax(0,1fr)]"}>
                 <BarList
                   ariaLabel={`Marks per subject in GATE DA ${paper.year}`}
                   data={breakdown.map((b) => ({
@@ -183,6 +183,21 @@ export default async function PaperPage({ params }: Params) {
                 />
               </div>
             ))}
+            <div className="mt-3 border-t border-border pt-2 text-xs text-fg-3">
+              <p id="paper-qcount-h" className="font-medium text-fg-2">
+                Questions per subject
+              </p>
+              <ul aria-labelledby="paper-qcount-h" className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                {breakdown.map((b) => (
+                  <li key={b.id} className="whitespace-nowrap">
+                    <abbr title={SUBJECT_SHORT[b.id]} className="no-underline">
+                      {SUBJECT_ABBR[b.id]}
+                    </abbr>{" "}
+                    <span className="tnum font-medium text-fg-2">{b.questions}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </ChartFrame>
         ) : null}
       </section>

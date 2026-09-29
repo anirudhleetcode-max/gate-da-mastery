@@ -118,10 +118,10 @@ export function normalizeFilters(f: BrowseFilters, ctx: FilterContext): BrowseFi
   return out;
 }
 
-type Params = URLSearchParams | Record<string, string | string[] | undefined>;
+type Params = Pick<URLSearchParams, "get"> | Record<string, string | string[] | undefined>;
 function param(p: Params, k: string): string {
-  if (p instanceof URLSearchParams) return p.get(k) ?? "";
-  const v = p[k];
+  if (typeof p.get === "function") return (p as Pick<URLSearchParams, "get">).get(k) ?? "";
+  const v = (p as Record<string, string | string[] | undefined>)[k];
   return (Array.isArray(v) ? v[0] : v) ?? "";
 }
 
@@ -185,6 +185,20 @@ export function parseSearch(q: string): SearchToken[] {
       const m = /^q#(\d{1,2})$/.exec(w);
       return m ? { kind: "qnum", n: Number(m[1]) } : { kind: "text", t: w };
     });
+}
+
+const SYMBOL_WORDS: Record<string, string> = {
+  α: "alpha", β: "beta", γ: "gamma", δ: "delta", ε: "epsilon", η: "eta", θ: "theta", λ: "lambda", μ: "mu", π: "pi",
+  ρ: "rho", σ: "sigma", τ: "tau", φ: "phi", χ: "chi", ψ: "psi", ω: "omega", Δ: "delta", Σ: "sigma sum", Π: "pi product",
+  Φ: "phi", Ω: "omega", ℝ: "R real", ℕ: "N natural", ℤ: "Z integer", "∞": "infinity", "√": "sqrt", "∈": "in", "∫": "integral",
+};
+const SYMBOL_RE = new RegExp(`[${Object.keys(SYMBOL_WORDS).join("")}]`, "gu");
+
+/** Words for the symbols in a preview ("σ" → "sigma"), so searches typed in ASCII still match. */
+export function symbolWords(text: string): string {
+  const out = new Set<string>();
+  for (const m of text.matchAll(SYMBOL_RE)) out.add(SYMBOL_WORDS[m[0]]);
+  return [...out].join(" ");
 }
 
 export interface RowFacts {

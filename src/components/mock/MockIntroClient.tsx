@@ -127,65 +127,97 @@ export function AttemptHistory({ testId }: { testId: string }) {
             Your score, accuracy and time appear here after you submit this mock.
           </EmptyState>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <caption className="sr-only">Previous attempts of this mock</caption>
-              <thead>
-                <tr className="border-b border-border text-left text-xs text-fg-3">
-                  <th scope="col" className="px-4 py-2 font-medium sm:px-5">
-                    Date
-                  </th>
-                  <th scope="col" className="px-2 py-2 text-right font-medium">
-                    Score
-                  </th>
-                  <th scope="col" className="px-2 py-2 text-right font-medium">
-                    Accuracy
-                  </th>
-                  <th scope="col" className="px-2 py-2 text-right font-medium">
-                    Time
-                  </th>
-                  <th scope="col" className="px-4 py-2 font-medium sm:px-5">
-                    <span className="sr-only">Details</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((a) => (
-                  <tr key={a.id} className="border-b border-border last:border-0">
-                    <td className="whitespace-nowrap px-4 py-2.5 text-fg-2 sm:px-5">{formatDateTime(a.submittedAt ?? a.startedAt)}</td>
-                    {a.status === "in_progress" ? (
-                      <td colSpan={3} className="px-2 py-2.5 text-right text-fg-2">
-                        In progress · <span className="tnum">{formatClock(a.remainingMs)}</span> left
-                      </td>
-                    ) : a.result ? (
-                      <>
-                        <td className="tnum whitespace-nowrap px-2 py-2.5 text-right font-medium text-fg">
-                          {formatMarks(a.result.score)} / {formatMarks(a.result.maxScore)}
-                        </td>
-                        <td className="tnum px-2 py-2.5 text-right text-fg-2">{pct(a.result.accuracy, 0)}</td>
-                        <td className="tnum whitespace-nowrap px-2 py-2.5 text-right text-fg-2">{formatDuration(a.result.timeUsedMs)}</td>
-                      </>
-                    ) : (
-                      <td colSpan={3} className="px-2 py-2.5 text-right text-fg-2">
-                        Submitted · scoring pending
-                      </td>
-                    )}
-                    <td className="whitespace-nowrap px-4 py-2.5 text-right sm:px-5">
-                      {a.status === "in_progress" ? (
-                        <Link href={`/mocks/${testId}/exam`} className="font-medium text-accent-text hover:underline">
-                          Resume
-                        </Link>
-                      ) : (
-                        <Link href={`/mocks/${testId}/results/${a.id}`} className="font-medium text-accent-text hover:underline">
-                          Results
-                        </Link>
-                      )}
-                    </td>
+          <>
+            {/* Phones: one stacked row per attempt (a 5-column table would scroll sideways). */}
+            <ul className="divide-y divide-border sm:hidden" aria-label="Previous attempts of this mock">
+              {rows.map((a) => {
+                const href = a.status === "in_progress" ? `/mocks/${testId}/exam` : `/mocks/${testId}/results/${a.id}`;
+                return (
+                  <li key={a.id}>
+                    <Link href={href} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-surface-2">
+                      <span className="min-w-0">
+                        <span className="block text-sm text-fg-2">{formatDateTime(a.submittedAt ?? a.startedAt)}</span>
+                        <span className="tnum block text-xs text-fg-3">
+                          {a.status === "in_progress"
+                            ? `In progress · ${formatClock(a.remainingMs)} left`
+                            : a.result
+                              ? `${pct(a.result.accuracy, 0)} accuracy · ${formatDuration(a.result.timeUsedMs)}`
+                              : "Submitted · scoring pending"}
+                        </span>
+                      </span>
+                      <span className="flex shrink-0 items-center gap-2 text-sm">
+                        {a.result ? (
+                          <span className="tnum font-semibold text-fg">
+                            {formatMarks(a.result.score)} / {formatMarks(a.result.maxScore)}
+                          </span>
+                        ) : null}
+                        <span className="font-medium text-accent-text">{a.status === "in_progress" ? "Resume" : "Results"}</span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="hidden overflow-x-auto sm:block">
+              <table className="w-full text-sm">
+                <caption className="sr-only">Previous attempts of this mock</caption>
+                <thead>
+                  <tr className="border-b border-border text-left text-xs text-fg-3">
+                    <th scope="col" className="px-4 py-2 font-medium sm:px-5">
+                      Date
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-right font-medium">
+                      Score
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-right font-medium">
+                      Accuracy
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-right font-medium">
+                      Time
+                    </th>
+                    <th scope="col" className="px-4 py-2 font-medium sm:px-5">
+                      <span className="sr-only">Details</span>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {rows.map((a) => (
+                    <tr key={a.id} className="border-b border-border last:border-0">
+                      <td className="whitespace-nowrap px-4 py-2.5 text-fg-2 sm:px-5">{formatDateTime(a.submittedAt ?? a.startedAt)}</td>
+                      {a.status === "in_progress" ? (
+                        <td colSpan={3} className="px-2 py-2.5 text-right text-fg-2">
+                          In progress · <span className="tnum">{formatClock(a.remainingMs)}</span> left
+                        </td>
+                      ) : a.result ? (
+                        <>
+                          <td className="tnum whitespace-nowrap px-2 py-2.5 text-right font-medium text-fg">
+                            {formatMarks(a.result.score)} / {formatMarks(a.result.maxScore)}
+                          </td>
+                          <td className="tnum px-2 py-2.5 text-right text-fg-2">{pct(a.result.accuracy, 0)}</td>
+                          <td className="tnum whitespace-nowrap px-2 py-2.5 text-right text-fg-2">{formatDuration(a.result.timeUsedMs)}</td>
+                        </>
+                      ) : (
+                        <td colSpan={3} className="px-2 py-2.5 text-right text-fg-2">
+                          Submitted · scoring pending
+                        </td>
+                      )}
+                      <td className="whitespace-nowrap px-4 py-2.5 text-right sm:px-5">
+                        {a.status === "in_progress" ? (
+                          <Link href={`/mocks/${testId}/exam`} className="font-medium text-accent-text hover:underline">
+                            Resume
+                          </Link>
+                        ) : (
+                          <Link href={`/mocks/${testId}/results/${a.id}`} className="font-medium text-accent-text hover:underline">
+                            Results
+                          </Link>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </CardBody>
     </Card>

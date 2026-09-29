@@ -20,7 +20,7 @@ export function ExamTimer({ remainingMs, durationMs, className }: { remainingMs:
         aria-label={`Time remaining ${formatClock(remainingMs)}`}
         className={cn(
           "inline-flex h-9 items-center gap-1.5 rounded-lg border px-2.5 text-sm font-semibold sm:text-base",
-          warn ? "border-danger/40 bg-danger-soft text-danger" : "border-border bg-surface-2 text-fg",
+          warn ? "border-warning/50 bg-warning-soft text-warning" : "border-border bg-surface-2 text-fg",
         )}
       >
         <Icon aria-hidden className="h-4 w-4 shrink-0" />

@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Dumbbell, Search, SlidersHorizontal, X } from "lucide-react";
 import type { QuestionMeta } from "@/lib/content/types";
 import { useBookmarkKeys, useQuestionStatuses } from "@/lib/userdata/hooks";
@@ -24,9 +25,11 @@ import {
   facetCounts,
   filtersToQuery,
   normalizeFilters,
+  parseFilters,
   parseSearch,
   rowMatches,
   statusKeysOf,
+  symbolWords,
   type BrowseFilters,
   type FilterKey,
   type RowFacts,
@@ -35,7 +38,8 @@ import {
 import { FilterControls, type Facets } from "./FilterControls";
 import { PyqRow } from "./PyqRow";
 import { isAttempted, pyqState } from "./status";
-import { useStoreNavList } from "./useNavList";
+import { useAttemptsLoaded } from "./useAttemptsLoaded";
+import { rememberListAnchor, useStoreNavList } from "./useNavList";
 import { VirtualResults } from "./VirtualResults";
 
 const PRACTICE_LIMIT = 50;
@@ -44,18 +48,23 @@ export interface PyqBrowserProps {
   rows: QuestionMeta[];
   papers: PaperInfo[];
   taxonomy: TaxonomySubject[];
-  initial: BrowseFilters;
 }
 
-export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps) {
+export function PyqBrowser({ rows, papers, taxonomy }: PyqBrowserProps) {
   const ctx = useMemo(() => buildFilterContext(taxonomy, papers), [taxonomy, papers]);
   const look = useMemo(() => buildGroupLookups(taxonomy, papers), [taxonomy, papers]);
-  const [filters, setFilters] = useState<BrowseFilters>(initial);
+  // The URL is the source of truth when the browser mounts. Filter changes rewrite it with
+  // replaceState, so after Back from a question the router may restore this page's original
+  // server props while the address bar holds the latest filters; useSearchParams has the latter.
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<BrowseFilters>(() => parseFilters(searchParams, ctx));
   const [sheetOpen, setSheetOpen] = useState(false);
   const statuses = useQuestionStatuses();
   const bookmarks = useBookmarkKeys();
+  const progress = useAttemptsLoaded();
   const storeNavList = useStoreNavList();
   const listTop = useRef(0);
+  const filtersButton = useRef<HTMLButtonElement>(null);
   const onListTop = useCallback((top: number) => {
     listTop.current = top;
   }, []);
@@ -69,6 +78,7 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
         m.id,
         [
           m.preview,
+          symbolWords(m.preview),
           look.topicName.get(m.topicId),
           ...m.subtopicIds.map((id) => subtopicName.get(id)),
           look.subjectName.get(m.subjectId),
@@ -129,6 +139,14 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
     if (opts.scroll !== false && !sheetOpen) scrollToResults();
   };
   const update = (patch: Partial<BrowseFilters>) => apply(normalizeFilters({ ...filters, ...patch }, ctx));
+  // The shared Dialog returns focus only to a Radix trigger, so hand it back to the Filters button here.
+  const closeSheet = () => {
+    setSheetOpen(false);
+    requestAnimationFrame(() => {
+      filtersButton.current?.focus({ preventScroll: true });
+      scrollToResults();
+    });
+  };
   const clearFilters = () => apply({ ...DEFAULT_FILTERS, sort: filters.sort });
 
   const removeFilter = (k: FilterKey) => {
@@ -178,7 +196,10 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
       subjectLabel={SUBJECT_SHORT[m.subjectId]}
       state={facts.get(m.id)?.state ?? "unattempted"}
       paperText={`${m.year} · ${formatDate(m.examDate)} · ${slotName(m.slot ?? "")}`}
-      onNavigate={() => storeNavList(results.orderedIds)}
+      onNavigate={() => {
+        storeNavList(results.orderedIds);
+        rememberListAnchor(m.id);
+      }}
       className={isLast ? "border-b-0" : undefined}
       trailing={<BookmarkButton kind="question" refId={m.id} title={pyqTitle(m)} subjectId={m.subjectId} compact className="h-10 w-10 justify-center px-0" />}
     />
@@ -232,13 +253,13 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
                 type="search"
                 value={filters.q}
                 onChange={(e) => update({ q: e.target.value })}
-                placeholder="Search text, topic, year or Q12"
+                placeholder="Search text or Q12"
                 autoComplete="off"
                 spellCheck={false}
                 className="h-10 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-sm text-fg placeholder:text-fg-3"
               />
             </div>
-            <Button className="lg:hidden" onClick={() => setSheetOpen(true)} aria-haspopup="dialog" aria-expanded={sheetOpen}>
+            <Button ref={filtersButton} className="lg:hidden" onClick={() => setSheetOpen(true)} aria-haspopup="dialog" aria-expanded={sheetOpen}>
               <SlidersHorizontal aria-hidden className="h-4 w-4" />
               Filters
               {activeCount ? <span className="tnum rounded-full bg-accent-soft px-1.5 text-xs font-semibold text-accent-text">{activeCount}</span> : null}
@@ -307,7 +328,14 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
           {filtered.length ? (
             <VirtualResults items={results.items} groups={results.groups} renderRow={renderRow} onTop={onListTop} />
           ) : (
-            <NoResults filters={filters} attemptedAny={attemptedAny} bookmarkedAny={bookmarkedAny} onClear={clearFilters} onShowAll={() => update({ status: "" })} />
+            <NoResults
+              filters={filters}
+              progress={progress}
+              attemptedAny={attemptedAny}
+              bookmarkedAny={bookmarkedAny}
+              onClear={clearFilters}
+              onShowAll={() => update({ status: "" })}
+            />
           )}
         </div>
         {filtered.length ? (
@@ -320,14 +348,18 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
       {/* ------------------------------------------------ mobile filter sheet */}
       <Dialog
         open={sheetOpen}
-        onOpenChange={(o) => {
-          setSheetOpen(o);
-          if (!o) requestAnimationFrame(scrollToResults);
-        }}
+        onOpenChange={(o) => (o ? setSheetOpen(true) : closeSheet())}
         title="Filter PYQs"
         className="bottom-0 left-0 top-auto max-h-[88dvh] w-full max-w-none translate-x-0 translate-y-0 rounded-b-none pb-0 sm:left-1/2 sm:max-w-xl sm:-translate-x-1/2"
       >
-        <form role="search" aria-label="PYQ filters" onSubmit={(e) => { e.preventDefault(); setSheetOpen(false); }}>
+        <form
+          role="search"
+          aria-label="PYQ filters"
+          onSubmit={(e) => {
+            e.preventDefault();
+            closeSheet();
+          }}
+        >
           {controls("m")}
           <div className="sticky bottom-0 -mx-5 mt-5 flex items-center gap-2 border-t border-border bg-surface px-5 py-3">
             <Button onClick={clearFilters} disabled={!activeCount}>
@@ -345,18 +377,30 @@ export function PyqBrowser({ rows, papers, taxonomy, initial }: PyqBrowserProps)
 
 function NoResults({
   filters,
+  progress,
   attemptedAny,
   bookmarkedAny,
   onClear,
   onShowAll,
 }: {
   filters: BrowseFilters;
+  progress: ReturnType<typeof useAttemptsLoaded>;
   attemptedAny: boolean;
   bookmarkedAny: boolean;
   onClear: () => void;
   onShowAll: () => void;
 }) {
   const others = activeFilterCount({ ...filters, status: "" });
+  if (filters.status && progress === "loading") {
+    return <EmptyState title="Loading your progress…">Your attempts and bookmarks on this device are being read; the status filter applies as soon as they load.</EmptyState>;
+  }
+  if (filters.status && progress === "unavailable") {
+    return (
+      <EmptyState title="Your status is not available in this browser" action={<Button onClick={onShowAll}>Show all questions</Button>}>
+        This browser is blocking local storage (for example in a private window), so attempts and bookmarks cannot be saved or filtered here.
+      </EmptyState>
+    );
+  }
   if (filters.status === "bookmarked" && !bookmarkedAny) {
     return (
       <EmptyState title="You have not bookmarked any PYQs yet" action={<Button onClick={onShowAll}>Show all questions</Button>}>

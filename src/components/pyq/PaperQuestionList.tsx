@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { QuestionMeta } from "@/lib/content/types";
 import { useQuestionStatuses } from "@/lib/userdata/hooks";
 import { SUBJECT_SHORT } from "@/lib/labels";
@@ -8,7 +8,8 @@ import { BookmarkButton } from "@/components/userdata/BookmarkButton";
 import { marksLabel, pyqTitle } from "./data";
 import { PyqRow } from "./PyqRow";
 import { isAttempted, pyqState } from "./status";
-import { useStoreNavList } from "./useNavList";
+import { useAttemptsLoaded } from "./useAttemptsLoaded";
+import { rememberListAnchor, takeListAnchor, useStoreNavList } from "./useNavList";
 
 export interface PaperSection {
   key: "GA" | "DA";
@@ -34,19 +35,27 @@ function ranges(ns: number[]): string {
 /** The paper's questions in official order, grouped by section, with the student's status. */
 export function PaperQuestionList({ sections }: { sections: PaperSection[] }) {
   const statuses = useQuestionStatuses();
+  const progress = useAttemptsLoaded();
   const storeNavList = useStoreNavList();
   const ids = useMemo(() => sections.flatMap((s) => s.rows.map((r) => r.meta.id)), [sections]);
   const states = useMemo(() => new Map(ids.map((id) => [id, pyqState(statuses.get(id))])), [ids, statuses]);
+  // Back from a question: the browser restores the scroll position; return keyboard focus to the row too.
+  useEffect(() => {
+    const id = takeListAnchor();
+    if (id) document.querySelector<HTMLAnchorElement>(`a[href="/questions/${id}"]`)?.focus({ preventScroll: true });
+  }, []);
   const attempted = ids.filter((id) => isAttempted(states.get(id)!)).length;
   const correct = ids.filter((id) => states.get(id) === "correct").length;
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-fg-2">
-        {attempted ? (
+        {progress === "loading" ? (
+          <span className="text-fg-3">Loading your progress on this device…</span>
+        ) : attempted ? (
           <>
             You have attempted <span className="tnum font-semibold text-fg">{attempted}</span> of the <span className="tnum">{ids.length}</span> loaded questions in this paper;{" "}
-            <span className="tnum font-semibold text-fg">{correct}</span> are solved correctly on your latest attempt.
+            <span className="tnum font-semibold text-fg">{correct}</span> {correct === 1 ? "is" : "are"} solved correctly on your latest attempt.
           </>
         ) : (
           <>You have not attempted any question from this paper yet. Open Q.1 to work through it in official order; Previous / Next on each question follow this list.</>
@@ -73,7 +82,10 @@ export function PaperQuestionList({ sections }: { sections: PaperSection[] }) {
                       topicName={r.topicName}
                       subjectLabel={SUBJECT_SHORT[r.meta.subjectId]}
                       state={states.get(r.meta.id) ?? "unattempted"}
-                      onNavigate={() => storeNavList(ids)}
+                      onNavigate={() => {
+                        storeNavList(ids);
+                        rememberListAnchor(r.meta.id);
+                      }}
                       className={i === s.rows.length - 1 ? "border-b-0" : undefined}
                       trailing={<BookmarkButton kind="question" refId={r.meta.id} title={pyqTitle(r.meta)} subjectId={r.meta.subjectId} compact className="h-10 w-10 justify-center px-0" />}
                     />

@@ -155,7 +155,7 @@ export function WeakTopicsPanel({ here, history, items }: { here: MockTopicStat[
             {here.length ? (
               <ul className="divide-y divide-border">
                 {here.map((t) => (
-                  <li key={t.topicId} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 py-2 first:pt-0 last:pb-0">
+                  <li key={t.topicId} className="grid gap-x-4 gap-y-0.5 py-2 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
                     <span className="min-w-0">
                       <Badge tone="outline" className="mr-1.5">
                         {SUBJECT_ABBR[t.subjectId]}
@@ -164,7 +164,7 @@ export function WeakTopicsPanel({ here, history, items }: { here: MockTopicStat[
                         {t.topicName}
                       </Link>
                     </span>
-                    <span className="tnum text-sm text-fg-2">
+                    <span className="tnum text-sm text-fg-2 sm:text-right">
                       {t.attempted ? `${t.correct} of ${t.attempted} correct (${pct(t.accuracy, 0)})` : "not attempted"}
                       {t.total - t.attempted > 0 && t.attempted ? ` · ${t.total - t.attempted} skipped` : ""}
                       {!t.attempted ? ` · ${t.total} questions` : ""}
@@ -193,7 +193,7 @@ export function WeakTopicsPanel({ here, history, items }: { here: MockTopicStat[
                 {history.map((t) => {
                   const info = topicInfo.get(t.topicId);
                   return (
-                    <li key={t.topicId} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 py-2 first:pt-0 last:pb-0">
+                    <li key={t.topicId} className="grid gap-x-4 gap-y-0.5 py-2 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
                       <span className="min-w-0">
                         {info ? (
                           <Badge tone="outline" className="mr-1.5">
@@ -204,7 +204,7 @@ export function WeakTopicsPanel({ here, history, items }: { here: MockTopicStat[
                           {info?.name ?? t.topicId}
                         </Link>
                       </span>
-                      <span className="tnum text-sm text-fg-2">
+                      <span className="tnum text-sm text-fg-2 sm:text-right">
                         {t.incorrect} wrong of {t.attempted} ({pct(t.accuracy, 0)} correct)
                       </span>
                     </li>
@@ -504,8 +504,8 @@ export function QuestionReview({
                   >
                     <span className="tnum w-9 shrink-0 pt-0.5 text-sm font-semibold text-fg">Q{i.n}</span>
                     <span className="min-w-0 flex-1">
-                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-3">
-                        <span className="inline-flex items-center gap-1 font-medium text-fg-2">
+                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-2">
+                        <span className="inline-flex items-center gap-1 font-medium text-fg">
                           <StatusIcon status={i.status} className="h-3.5 w-3.5" />
                           {STATUS_LABEL[i.status]}
                         </span>

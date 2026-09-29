@@ -1,133 +1,321 @@
 /**
- * Display clean-up for question previews.
+ * Plain-text previews for PYQ list rows, built on the server from the compiled
+ * stem HTML.
  *
- * The build-time preview is the stem with Markdown/LaTeX punctuation stripped,
- * which leaves command names glued to their arguments ("boldsymbolM in R^3
- * times 3", "textttMovie(underlinetextttID)"). This turns the common ones back
- * into readable plain text for list rows and search. It is deliberately
- * conservative: words that are also ordinary English ("in", "to", "cap",
- * "land", …) are only converted between single-symbol math tokens, and the full
- * question is always rendered from the compiled HTML, never from this text.
+ * The bundle's `preview` field is made from the Markdown with LaTeX punctuation
+ * stripped, which loses meaning: "$m > n$" becomes "m n", blanks disappear
+ * ("[silly → → daft]") and command names are glued to their arguments. The
+ * compiled HTML still carries every formula verbatim in its math placeholder,
+ * so this module converts that LaTeX to readable Unicode text instead
+ * ("m > n", "x = n^(log₁₀(m))", "M ∈ ℝ³ˣ³"). Display only: the question page
+ * always renders the full stem with KaTeX.
  */
 
+export { cleanPreview } from "./legacyPreview";
+
+// ------------------------------------------------------------------ symbol tables
+
 const GREEK: Record<string, string> = {
-  alpha: "α",
-  beta: "β",
-  gamma: "γ",
-  delta: "δ",
-  Delta: "Δ",
-  epsilon: "ε",
-  varepsilon: "ε",
-  theta: "θ",
-  lambda: "λ",
-  mu: "μ",
-  sigma: "σ",
-  Sigma: "Σ",
-  pi: "π",
-  phi: "φ",
-  rho: "ρ",
-  tau: "τ",
-  omega: "ω",
-  eta: "η",
+  alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε", zeta: "ζ", eta: "η",
+  theta: "θ", vartheta: "ϑ", iota: "ι", kappa: "κ", lambda: "λ", mu: "μ", nu: "ν", xi: "ξ", pi: "π",
+  rho: "ρ", sigma: "σ", tau: "τ", upsilon: "υ", phi: "φ", varphi: "φ", chi: "χ", psi: "ψ", omega: "ω",
+  Gamma: "Γ", Delta: "Δ", Theta: "Θ", Lambda: "Λ", Xi: "Ξ", Pi: "Π", Sigma: "Σ", Phi: "Φ", Psi: "Ψ", Omega: "Ω",
 };
-const GREEK_RE = new RegExp(`(?<![A-Za-z])(${Object.keys(GREEK).sort((a, b) => b.length - a.length).join("|")})(?![a-z])`, "g");
 
-/** Command names that never occur as English words; safe to replace anywhere (even glued). */
-const SYMBOLS: [RegExp, string][] = [
-  [/Leftrightarrow/g, "⇔"],
-  [/leftrightarrow/g, "↔"],
-  [/Rightarrow/g, "⇒"],
-  [/rightarrow/g, "→"],
-  [/leftarrow/g, "←"],
-  [/\bleq\b/g, "≤"],
-  [/\bgeq\b/g, "≥"],
-  [/\bneq\b/g, "≠"],
-  [/\bnotin\b/g, "∉"],
-  [/\bforall\b/g, "∀"],
-  [/\bwedge\b/g, "∧"],
-  [/\bvee\b/g, "∨"],
-  [/infty\b/g, "∞"],
-  [/[lcv]dots\b/g, "…"],
-  [/\bcdot\b/g, "·"],
-  [/\bpmod\s*/g, "mod "],
-  [/\blfloor\b/g, "⌊"],
-  [/\brfloor\b/g, "⌋"],
-  [/\blceil\b/g, "⌈"],
-  [/\brceil\b/g, "⌉"],
-  [/\bsqrt\s?/g, "√"],
-  [/\^top\b/g, "ᵀ"],
-  [/\^circ\b/g, "°"],
-];
+/** Relations and binary operators: written with a space on each side. */
+const SPACED: Record<string, string> = {
+  in: "∈", notin: "∉", ni: "∋", le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", lt: "<", gt: ">",
+  times: "×", div: "÷", pm: "±", mp: "∓", approx: "≈", sim: "∼", simeq: "≃", cong: "≅", equiv: "≡", propto: "∝",
+  to: "→", rightarrow: "→", leftarrow: "←", gets: "←", Rightarrow: "⇒", Leftarrow: "⇐", Leftrightarrow: "⇔",
+  leftrightarrow: "↔", Longrightarrow: "⟹", longrightarrow: "⟶", Longleftrightarrow: "⟺", implies: "⟹", iff: "⟺",
+  mapsto: "↦", mid: "|", cap: "∩", cup: "∪", subset: "⊂", subseteq: "⊆", supset: "⊃", supseteq: "⊇",
+  setminus: "∖", land: "∧", wedge: "∧", lor: "∨", vee: "∨", oplus: "⊕", otimes: "⊗", bowtie: "⋈", perp: "⊥",
+  parallel: "∥", cdot: "·", ast: "∗", star: "⋆", circ: "∘", bmod: "mod", mod: "mod", vdash: "⊢", models: "⊨",
+};
 
-/** Formatting commands whose names can simply be dropped. */
-const DROP =
-  /(?:displaystyle|mathit|mathrm|mathbf|mathsf|mathcal|mathbb|boldsymbol|texttt|textit|textbf|textrm|textsf|operatorname|widetilde|scriptstyle|[dt]?frac)(?=[A-Za-z0-9(\\[\s])/g;
+/** Other symbols: written in place. */
+const SYMBOL: Record<string, string> = {
+  infty: "∞", forall: "∀", exists: "∃", nexists: "∄", neg: "¬", lnot: "¬", emptyset: "∅", varnothing: "∅",
+  sum: "Σ", prod: "Π", int: "∫", oint: "∮", partial: "∂", nabla: "∇", bigcap: "⋂", bigcup: "⋃",
+  ldots: "…", dots: "…", cdots: "⋯", vdots: "⋮", ddots: "⋱", lfloor: "⌊", rfloor: "⌋", lceil: "⌈", rceil: "⌉",
+  langle: "⟨", rangle: "⟩", angle: "∠", triangle: "△", bullet: "•", prime: "′", ell: "ℓ", hbar: "ℏ",
+  top: "⊤", bot: "⊥", checkmark: "✓", dagger: "†", aleph: "ℵ", Re: "ℜ", Im: "ℑ", vert: "|", Vert: "‖",
+  lvert: "|", rvert: "|", lVert: "‖", rVert: "‖", colon: ":", backslash: "\\", degree: "°", S: "§", P: "¶",
+  quad: " ", qquad: " ", enspace: " ", thinspace: " ",
+};
 
-// One math token: a single letter, a number, a decorated letter (x^2) or a closing bracket.
-const TOK = String.raw`(?:[A-Za-z]|\d+(?:\.\d+)?|[A-Za-z0-9]\^\S+|[)\]])`;
-const between = (word: string, repl: string): [RegExp, string] => [
-  new RegExp(String.raw`(?<=(?:^|[\s(,\[])${TOK}) ${word} (?=[A-Za-z0-9(\[+\-¬])`, "g"),
-  ` ${repl} `,
-];
-// Next token is a number set (R, R^n, Z…), an interval, or a single capital (a set or relation name).
-const SET_NEXT = String.raw`(?=(?:[A-Z](?:\^\S+)?|\[)(?:[\s,.;:)]|$)|\[)`;
+/** Named functions: kept as words. */
+const FUNCTIONS = new Set([
+  "sin", "cos", "tan", "cot", "sec", "csc", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh", "log", "ln", "lg",
+  "exp", "max", "min", "sup", "inf", "lim", "liminf", "limsup", "det", "dim", "ker", "arg", "deg", "gcd", "Pr", "argmax", "argmin", "sgn", "rank", "tr",
+]);
 
-const INFIX: [RegExp, string][] = [
-  between("le", "≤"),
-  between("ge", "≥"),
-  between("ne", "≠"),
-  between("cap", "∩"),
-  between("cup", "∪"),
-  between("land", "∧"),
-  between("lor", "∨"),
-  between("mid", "|"),
-  between("sim", "∼"),
-  [new RegExp(String.raw`(?<=(?:^|[\s(,\[])(?:${TOK}|[A-Za-z0-9)\]]ᵀ)) in ${SET_NEXT}`, "g"), " ∈ "],
-  // f: R to R, g: R to (1, ∞) and lim x to 0 only; "from 1 to 12" stays English.
-  [/(?<=\bR(?:\^\S+)?) to (?=R\b|\(|\[)/g, " → "],
-  [/(?<=\blim\s+[a-z]) to /g, " → "],
-  [new RegExp(String.raw`(?<=(?:^|[\s(,\[])${TOK}) times (?=[A-Za-z0-9(])`, "g"), " × "],
-  [/(?<=\^[A-Za-z])times(?=\s?[A-Za-z0-9])/g, " × "],
-  [/(?<=[\s(,])neg (?=[A-Za-z(])/g, "¬"],
-];
+/** Commands whose single argument is kept as plain text. */
+const KEEP_ARG = new Set([
+  "text", "textrm", "textit", "textbf", "texttt", "textsf", "textnormal", "textup", "emph", "mathrm", "mathit", "mathbf",
+  "mathsf", "mathtt", "mathcal", "mathscr", "mathfrak", "boldsymbol", "bm", "pmb", "operatorname", "underline", "mbox", "hbox",
+  "boxed", "fbox", "underbrace", "overbrace", "textstyle",
+]);
 
+/** Size and style switches without arguments. */
+const DROP = new Set([
+  "left", "right", "big", "Big", "bigg", "Bigg", "bigl", "bigr", "Bigl", "Bigr", "biggl", "biggr", "middle",
+  "displaystyle", "scriptstyle", "scriptscriptstyle", "limits", "nolimits", "hline", "cline", "centering", "noindent",
+  "rm", "bf", "it", "tt", "sf", "small", "large", "Large", "normalsize", "footnotesize", "nonumber", "notag", "strut",
+]);
 
-export function cleanPreview(input: string): string {
-  let s = input;
-  // A LaTeX command cut in half by the 200-character limit.
-  s = s.replace(/\s?(?:end|begin|text|math|bold|display|under|over|lambd|sigm|thet)[a-z]*…$/, " …");
-  // Environments: matrices become [a b; c d], cases become { … ; … }.
-  s = s.replace(/begin[bv]?matrix/g, "[").replace(/end[bv]?matrix/g, "]");
-  s = s.replace(/beginpmatrix/g, "(").replace(/endpmatrix/g, ")");
-  s = s.replace(/begincases/g, "{").replace(/endcases/g, "}");
-  s = s.replace(/beginarray(?:\s+[lcr|](?=\s))*/g, "").replace(/endarray/g, "");
-  s = s.replace(/begin(?:aligned|align\*?|gathered)|end(?:aligned|align\*?|gathered)/g, "");
-  s = s.replace(/\bhline\b/g, " ");
-  // Blanks and spacing commands.
-  s = s.replace(/underline\\?hspace[\d.]+(?:em|pt|ex|cm|mm)/g, "____");
-  s = s.replace(/(?:\\ ){2,}/g, " ____ ");
-  s = s.replace(/\\\\(?:\[[\d.]+(?:pt|em|ex)\])?/g, " ; ");
-  s = s.replace(/\\[,;:! ]/g, " ");
-  s = s.replace(/\bhspace[\d.]+(?:em|pt|ex)/g, " ");
-  s = s.replace(/(?<![A-Za-z])(?:q?quad)+(?![A-Za-z])/g, " ");
-  s = s.replace(/\s&\s/g, "  ");
-  // Formatting commands and decorations.
-  s = s.replace(DROP, "");
-  s = s.replace(/widehat([A-Za-z])/g, "$1\u0302").replace(/\b(?:hat)([A-Za-z])\b/g, "$1\u0302");
-  s = s.replace(/overline([A-Za-z])(?![a-z])/g, "$1\u0305").replace(/\bbar([A-Za-z])(?![a-z])/g, "$1\u0304");
-  s = s.replace(/\bunderline(?=[A-Z(\\]|[a-z]{2,}|\s+\()/g, "");
-  s = s.replace(/lnleft/g, "ln").replace(/\bleft(?=[([|.\\])/g, "").replace(/right(?=[)\]|.\\])/g, "");
-  s = s.replace(/\bleft\\(?=\s)/g, "");
-  s = s.replace(/\b(cos|sin|tan)(?=theta|alpha|beta|phi|pi\b)/g, "$1 ");
-  for (const [re, rep] of SYMBOLS) s = s.replace(re, rep);
-  s = s.replace(/(?<![A-Za-z]{2})sum(?=\s?[a-z]\s?=)/g, (m, offset: number, whole: string) => (/[A-Za-z]/.test(whole[offset - 1] ?? "") ? " Σ" : "Σ"));
-  s = s.replace(GREEK_RE, (m) => GREEK[m] ?? m);
-  // Leftover lone backslashes from stripped \{ \} and similar; Markdown table rules.
-  s = s.replace(/\\/g, " ").replace(/:?-{3,}:?/g, " ");
-  for (const [re, rep] of INFIX) s = s.replace(re, rep);
-  return s
-    .replace(/\s+([,.;?)\]}])/g, "$1")
-    .replace(/([([{])\s+/g, "$1")
-    .replace(/\s{2,}/g, " ")
+const BLACKBOARD: Record<string, string> = { R: "ℝ", N: "ℕ", Z: "ℤ", Q: "ℚ", C: "ℂ", E: "𝔼", P: "ℙ", F: "𝔽" };
+
+const COMBINING: Record<string, string> = {
+  hat: "̂", widehat: "̂", bar: "̄", overline: "̅", tilde: "̃", widetilde: "̃",
+  vec: "⃗", dot: "̇", ddot: "̈", check: "̌", acute: "́", grave: "̀",
+};
+
+const SUP: Record<string, string> = {
+  "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+  "+": "⁺", "-": "⁻", "−": "⁻", "=": "⁼", "(": "⁽", ")": "⁾", n: "ⁿ", i: "ⁱ", k: "ᵏ", m: "ᵐ", j: "ʲ", t: "ᵗ",
+  x: "ˣ", "×": "ˣ", h: "ʰ", T: "ᵀ", d: "ᵈ", "⊤": "ᵀ", "∘": "°", "′": "′", "*": "*", "∗": "*",
+};
+const SUB: Record<string, string> = {
+  "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉",
+  "+": "₊", "-": "₋", "−": "₋", "=": "₌", "(": "₍", ")": "₎", a: "ₐ", e: "ₑ", h: "ₕ", i: "ᵢ", j: "ⱼ", k: "ₖ",
+  l: "ₗ", m: "ₘ", n: "ₙ", o: "ₒ", p: "ₚ", r: "ᵣ", s: "ₛ", t: "ₜ", u: "ᵤ", v: "ᵥ", x: "ₓ",
+};
+
+const ENV_OPEN: Record<string, [string, string]> = {
+  bmatrix: ["[", "]"], Bmatrix: ["{", "}"], pmatrix: ["(", ")"], vmatrix: ["|", "|"], Vmatrix: ["‖", "‖"],
+  matrix: ["", ""], smallmatrix: ["", ""], cases: ["{ ", " }"], array: ["", ""], aligned: ["", ""], align: ["", ""],
+  "align*": ["", ""], gathered: ["", ""], split: ["", ""], equation: ["", ""], "equation*": ["", ""], tabular: ["", ""],
+};
+
+// ------------------------------------------------------------------ LaTeX → text
+
+class TexReader {
+  private i = 0;
+  constructor(private readonly s: string) {}
+
+  /** Reads until the end of input, a closing brace (in a group) or \end (in an environment). */
+  seq(stopAtBrace: boolean, stopAtEnd = false): string {
+    let out = "";
+    while (this.i < this.s.length) {
+      const c = this.s[this.i];
+      if (c === "}") {
+        if (stopAtBrace) return out;
+        this.i++;
+        continue;
+      }
+      if (stopAtEnd && c === "\\" && this.s.startsWith("\\end", this.i) && !/[a-zA-Z]/.test(this.s[this.i + 4] ?? "")) return out;
+      out += this.atom();
+    }
+    return out;
+  }
+
+  /** One unit: a group, a command with its arguments, a script, or a character. */
+  private atom(): string {
+    const c = this.s[this.i];
+    if (c === "{") {
+      this.i++;
+      const inner = this.seq(true);
+      this.i++; // the closing brace
+      return inner;
+    }
+    if (c === "^" || c === "_") {
+      this.i++;
+      return script(this.arg(), c === "^" ? SUP : SUB, c);
+    }
+    if (c === "&") {
+      this.i++;
+      return "  ";
+    }
+    if (c === "~") {
+      this.i++;
+      return " ";
+    }
+    if (c === "\\") return this.command();
+    this.i++;
+    return c;
+  }
+
+  /** A command argument: a braced group, a command or a single character (spaces skipped). */
+  private arg(): string {
+    while (this.s[this.i] === " ") this.i++;
+    if (this.i >= this.s.length) return "";
+    return this.atom();
+  }
+
+  /** A raw braced argument (environment names, column specs, lengths). */
+  private rawArg(): string {
+    while (this.s[this.i] === " ") this.i++;
+    if (this.s[this.i] !== "{") return "";
+    const end = this.s.indexOf("}", this.i);
+    const v = this.s.slice(this.i + 1, end < 0 ? undefined : end);
+    this.i = end < 0 ? this.s.length : end + 1;
+    return v;
+  }
+
+  private optArg(): string {
+    if (this.s[this.i] !== "[") return "";
+    const end = this.s.indexOf("]", this.i);
+    const v = this.s.slice(this.i + 1, end < 0 ? undefined : end);
+    this.i = end < 0 ? this.s.length : end + 1;
+    return new TexReader(v).seq(false);
+  }
+
+  private command(): string {
+    this.i++; // backslash
+    const m = /^[a-zA-Z]+\*?/.exec(this.s.slice(this.i));
+    if (!m) {
+      // Control symbol: \{ \} \| \, \; \\ …
+      const ch = this.s[this.i++] ?? "";
+      if (ch === "\\") {
+        // Line break, optionally with extra spacing: \\[4pt]
+        const sp = /^\s*\[[\d.]+\s*(?:pt|em|ex|mm|cm)\]/.exec(this.s.slice(this.i));
+        if (sp) this.i += sp[0].length;
+        return "; ";
+      }
+      if (ch === "|") return "‖";
+      if (",;:! ".includes(ch)) return " ";
+      return ch;
+    }
+    const name = m[0].replace(/\*$/, "");
+    this.i += m[0].length;
+
+    if (name === "begin") {
+      const env = this.rawArg();
+      if (env === "array" || env === "tabular") this.rawArg();
+      const [open, close] = ENV_OPEN[env] ?? ["", ""];
+      const body = this.seq(false, true);
+      if (this.s.startsWith("\\end", this.i)) {
+        this.i += 4;
+        this.rawArg();
+      }
+      return `${open}${body.replace(/;\s*$/, "").trim()}${close}`;
+    }
+    if (name === "end") {
+      this.rawArg();
+      return "";
+    }
+    if (name === "frac" || name === "dfrac" || name === "tfrac" || name === "cfrac") {
+      const a = this.arg();
+      const b = this.arg();
+      return `${wrap(a)}/${wrap(b)}`;
+    }
+    if (name === "binom" || name === "dbinom" || name === "tbinom") {
+      const a = this.arg();
+      const b = this.arg();
+      return `C(${a.trim()}, ${b.trim()})`;
+    }
+    if (name === "sqrt") {
+      const n = this.optArg();
+      const a = this.arg();
+      return `${n ? `${n.trim()}` : ""}√${wrap(a)}`;
+    }
+    if (name === "mathbb") {
+      const a = this.arg().trim();
+      return BLACKBOARD[a] ?? a;
+    }
+    if (name in COMBINING) {
+      const a = this.arg().trim();
+      return [...a].map((ch) => (/\s/.test(ch) ? ch : ch + COMBINING[name])).join("");
+    }
+    if (name === "hspace" || name === "vspace" || name === "phantom" || name === "hphantom" || name === "vphantom") {
+      this.rawArg();
+      return " ";
+    }
+    if (name === "pmod") return ` (mod ${this.arg().trim()})`;
+    if (name === "left" || name === "right") {
+      // \left. and \right. are invisible delimiters.
+      if (this.s[this.i] === ".") this.i++;
+      return "";
+    }
+    if (DROP.has(name)) return "";
+    if (name === "underline") {
+      // \underline{\hspace{2cm}} is a fill-in blank.
+      const a = this.arg();
+      return a.trim() ? a : "____";
+    }
+    if (KEEP_ARG.has(name)) return this.arg();
+    if (name in GREEK) return GREEK[name];
+    if (name in SPACED) return ` ${SPACED[name]} `;
+    if (name in SYMBOL) return SYMBOL[name];
+    if (FUNCTIONS.has(name)) {
+      // "cos θ", "log x" but "log₁₀(m)", "max(0, x)", "cos(\left…".
+      const rest = this.s.slice(this.i);
+      return /^(?:$|[\s({[^_]|\\(?:left|right|big|Big|bigl|Bigl)\b)/.test(rest) ? name : `${name} `;
+    }
+    // Unknown command: keep its name as a word.
+    return name;
+  }
+}
+
+/** Parenthesise a fraction part or exponent that is more than one token. */
+function wrap(x: string): string {
+  const t = x.trim();
+  return [...t].length === 1 || /^[\p{L}\p{N}.′]+$/u.test(t) || /^\([^()]*\)$/.test(t) ? t : `(${t})`;
+}
+
+function script(arg: string, table: Record<string, string>, mark: string): string {
+  const t = arg.trim();
+  if (!t) return "";
+  if (mark === "^" && (t === "⊤" || t === "T")) return "ᵀ";
+  if (mark === "^" && t === "∘") return "°";
+  const chars = [...t.replace(/\s+/g, "")];
+  if (chars.length <= 6 && chars.every((ch) => ch in table)) return chars.map((ch) => table[ch]).join("");
+  return `${mark}${wrap(t)}`;
+}
+
+/** Convert one LaTeX formula to readable Unicode text. */
+export function texToText(tex: string): string {
+  let out: string;
+  try {
+    out = new TexReader(tex).seq(false);
+  } catch {
+    out = tex.replace(/\\([a-zA-Z]+)/g, "$1").replace(/[{}]/g, "");
+  }
+  return out.replace(/\s+/g, " ").replace(/\(\s+/g, "(").replace(/\s+\)/g, ")").replace(/¬\s+/g, "¬").replace(/\s+;/g, ";").trim();
+}
+
+// ------------------------------------------------------------------ HTML → preview
+
+const PLACEHOLDER = /<(span|div) class="math-tex" data-display="(?:true|false)">([\s\S]*?)<\/\1>/g;
+const ENTITIES: Record<string, string> = { lt: "<", gt: ">", quot: '"', apos: "'", amp: "&", nbsp: " " };
+
+function unescapeHtml(s: string): string {
+  return s.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (m, e: string) => {
+    if (e[0] === "#") {
+      const code = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+      return Number.isFinite(code) ? String.fromCodePoint(code) : m;
+    }
+    return ENTITIES[e] ?? m;
+  });
+}
+
+export const PREVIEW_MAX = 200;
+
+/**
+ * A ≤ 200-character plain-text preview of a question stem from its compiled
+ * HTML: formulas converted to text, figures and tables marked as such,
+ * blanks kept as "____".
+ */
+export function stemPreview(html: string, max = PREVIEW_MAX): string {
+  // Formulas are swapped for tokens first: their text may contain "<" and ">".
+  const formulas: string[] = [];
+  let s = html.replace(PLACEHOLDER, (_m, _tag: string, tex: string) => `\u0000${formulas.push(texToText(unescapeHtml(tex))) - 1}\u0000`);
+  s = s
+    .replace(/<div class="table-wrap">[\s\S]*?<\/div>|<table[\s\S]*?<\/table>/g, " [table] ")
+    .replace(/<img\b[^>]*>/g, " [figure] ")
+    .replace(/<br\s*\/?>|<\/(?:p|div|li|h\d|pre|blockquote|figure|figcaption)>/g, " ")
+    .replace(/<[^>]+>/g, "");
+  s = unescapeHtml(s)
+    .replace(/\u0000(\d+)\u0000/g, (_m, i: string) => formulas[Number(i)] ?? "")
+    .replace(/_{3,}/g, "____")
+    .replace(/(?:\s*\[(?:figure|table)\]){2,}/g, (m) => ` ${m.trim().split(/\s+/)[0]}`)
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.;?!)\]])/g, "$1")
+    .replace(/([([])\s+/g, "$1")
     .trim();
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).replace(/[\s,;:.]+$/, "")}…`;
 }

@@ -5,13 +5,14 @@
  * the first rows are rendered statically during SSR / hydration so the list
  * is visible before JavaScript runs.
  */
-import { useCallback, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import type { QuestionMeta } from "@/lib/content/types";
 import { SUBJECT_COLOR } from "@/lib/labels";
 import { cn, plural } from "@/lib/utils";
 import { marksLabel } from "./data";
 import type { ResultGroup, ResultItem } from "./filters";
+import { takeListAnchor } from "./useNavList";
 
 /** Height of the app's sticky top bar (h-14). */
 const APP_BAR = 56;
@@ -90,6 +91,24 @@ export function VirtualResults({
     scrollMargin,
     useFlushSync: false,
   });
+
+  // Back from a question: bring the row the student opened into view and give it focus again.
+  const restored = useRef(false);
+  useEffect(() => {
+    if (!mounted || restored.current || scrollMargin <= 0) return;
+    restored.current = true;
+    const id = takeListAnchor();
+    const index = id ? items.findIndex((it) => it.kind === "row" && it.key === id) : -1;
+    if (index < 0) return;
+    virtualizer.scrollToIndex(index, { align: "center" });
+    let tries = 0;
+    const focusRow = () => {
+      const link = document.querySelector<HTMLAnchorElement>(`[data-index="${index}"] a[href="/questions/${id}"]`);
+      if (link) link.focus({ preventScroll: true });
+      else if (++tries < 10) window.setTimeout(focusRow, 50);
+    };
+    window.setTimeout(focusRow, 50);
+  }, [mounted, scrollMargin, items, virtualizer]);
 
   const renderItem = (it: ResultItem, index: number) =>
     it.kind === "header" ? <GroupHeader group={groups[it.groupIndex]} /> : renderRow(it.meta, index === items.length - 1);
