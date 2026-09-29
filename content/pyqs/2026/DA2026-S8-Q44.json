@@ -98,16 +98,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The distribution names Bernoulli and Normal appear in math italics on the paper and are transcribed with \\mathit{}. The space before the final '?' is kept as printed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The distribution names Bernoulli and Normal appear in math italics on the paper and are transcribed with \\mathit{}. The space before the final '?' is kept as printed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (100)",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nfrom fractions import Fraction as F\np=F(3,10); s2=100\nEW=(2*1-1)*p+(2*0-1)*(1-p); EW2=1                      # W=2X-1 in {-1,+1}\nvar=EW2*(s2+0**2)-(EW*0)**2                              # Var(WY)=E[W^2]E[Y^2]-(E[W]E[Y])^2\nprint(EW, var); assert var==100\nrng=np.random.default_rng(0); n=4_000_000\nX=rng.random(n)<0.3; Y=rng.normal(0,10,n); print(((2*X-1)*Y).var())",
-    "notes": "With W = 2X − 1 ∈ {−1, +1}, W² = 1 and E[W] = −0.4. By independence, E[WY] = E[W]E[Y] = 0 and E[(WY)²] = E[W²]E[Y²] = 100, so Var = 100. This is cross-checked with the product-variance formula (84 + 0 + 16 = 100), exact Fraction arithmetic and a 4-million-sample Monte Carlo (≈ 99.9). This matches official key A."
+    "notes": "Independent verifier solved from the official crop before viewing the key or stored solution. W = 2X − 1 takes only the values ±1, so W² = 1 and E[W] = −0.4. W and Y are independent, so E[WY] = E[W]E[Y] = 0 and E[(WY)²] = E[W²]E[Y²] = 1 × (100 + 0²) = 100, giving Var((2X − 1)Y) = 100. This is independent of p, and WY ~ N(0, 100) by the symmetry of Y. It is cross-checked with the product-variance formula (0.84·100 + 0.84·0 + 100·0.16 = 100), exact rational arithmetic and a 4-million-sample Monte Carlo (≈ 99.9). Matches official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

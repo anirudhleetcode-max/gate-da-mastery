@@ -65,7 +65,7 @@
       {
         "label": "A",
         "verdict": "incorrect",
-        "explanation": "A P1 row needs $X$'s P1 tuple in the left operand, but $(\\text{P1}, \\text{Q1}, \\text{R1}, 2)$ fails $Q = Q3 \\vee R = R2$ ($\\text{Q1} \\ne \\text{Q3}$, $\\text{R1} \\ne \\text{R2}$). Moreover $(\\text{P1}, \\text{R1}, 5)$ would pair $X$'s $(\\text{P1}, \\text{Q1}, \\text{R1})$ with $S = 5$, which belongs to $Y$'s tuple $(\\text{P1}, \\text{Q2}, 5)$ with a different $Q$. Rows like these would arise, for example, if the left selection were skipped **and** the final join matched on $P$ alone."
+        "explanation": "A P1 row needs $X$'s P1 tuple in the left operand, but $(\\text{P1}, \\text{Q1}, \\text{R1}, 2)$ fails $Q = Q3 \\vee R = R2$ ($\\text{Q1} \\ne \\text{Q3}$, $\\text{R1} \\ne \\text{R2}$). Moreover $(\\text{P1}, \\text{R1}, 5)$ would pair $X$'s $(\\text{P1}, \\text{Q1}, \\text{R1})$ with $S = 5$, which belongs to $Y$'s tuple $(\\text{P1}, \\text{Q2}, 5)$ with a different $Q$. That pairing happens only if $X$ and $Y$ are wrongly joined on $P$ alone (ignoring $Q$) **and** the left selection is skipped, so option (A) is the result of two separate mistakes."
       },
       {
         "label": "B",
@@ -97,16 +97,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The relations X, Y and Z are transcribed as GFM tables. The paper writes the projection with the ∏ symbol subscripted PRS; it is transcribed as \\prod\\nolimits_{PRS}. The constants Q3 and R2 in the selection condition appear in math italics on the paper and are kept as written."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The relations X, Y and Z are transcribed as GFM tables (values, row order and the NULL entry in Z checked cell by cell). The paper writes the projection as ∏ with subscript PRS; it is transcribed as \\prod\\nolimits_{PRS}. The constants Q3 and R2 in the selection condition appear in math italics on the paper and are kept as written."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "D (zero rows)",
     "agreesWithKey": true,
-    "checkCode": "X=[dict(P=p,Q=q,R=r) for p,q,r in [('P1','Q1','R1'),('P2','Q2','R2'),('P3','Q3','R2')]]\nY=[dict(P=p,Q=q,S=s) for p,q,s in [('P1','Q1',2),('P1','Q2',5),('P2','Q1',6),('P3','Q3',1)]]\nZ=[dict(P=p,T=t) for p,t in [('P1','T1'),('P3','T2'),('P4','T3'),('P4',None)]]\ndef nj(A,B):\n    c=set(A[0])&set(B[0]); return [{**a,**b} for a in A for b in B if all(a[k]==b[k] and a[k] is not None for k in c)]\nL=[t for t in nj(X,Y) if t['Q']=='Q3' or t['R']=='R2']\nR=[t for t in nj(Y,Z) if t['S']>1]\nprint('X*Y sel:',L); print('Y*Z sel:',R)\nout={(t['P'],t['R'],t['S']) for t in nj(L,R)} if L and R else set()\nprint('result:',out); assert out==set()",
-    "notes": "Hand evaluation: X⋈Y (on P,Q) = {(P1,Q1,R1,2), (P3,Q3,R2,1)}; σ(Q=Q3 ∨ R=R2) keeps only (P3,Q3,R2,1). Y⋈Z (on P) = {(P1,Q1,2,T1), (P1,Q2,5,T1), (P3,Q3,1,T2)}; σ(S>1) keeps the two P1 tuples. The outer natural join on P,Q,S is empty, so the projection has zero rows. A Python simulation of the natural joins gives the same empty result. This matches official key D."
+    "checkCode": "X=[dict(P=p,Q=q,R=r) for p,q,r in [('P1','Q1','R1'),('P2','Q2','R2'),('P3','Q3','R2')]]\nY=[dict(P=p,Q=q,S=s) for p,q,s in [('P1','Q1',2),('P1','Q2',5),('P2','Q1',6),('P3','Q3',1)]]\nZ=[dict(P=p,T=t) for p,t in [('P1','T1'),('P3','T2'),('P4','T3'),('P4',None)]]\ndef nj(A,B):  # natural join: equal (non-NULL) values on every shared attribute\n    return [{**a,**b} for a in A for b in B if all(a[k]==b[k] and a[k] is not None for k in set(a)&set(b))]\nL=[t for t in nj(X,Y) if t['Q']=='Q3' or t['R']=='R2']\nR=[t for t in nj(Y,Z) if t['S']>1]\nprint('left :',L); print('right:',R)\nout={(t['P'],t['R'],t['S']) for t in nj(L,R)}\nprint('result:',out, len(out),'rows'); assert out==set()",
+    "notes": "Independent verifier solved from the official crop before viewing the key or stored solution. X⋈Y (shared P,Q) = {(P1,Q1,R1,2), (P3,Q3,R2,1)}; σ(Q=Q3 ∨ R=R2) keeps only (P3,Q3,R2,1). Y⋈Z (shared P) = {(P1,Q1,2,T1), (P1,Q2,5,T1), (P3,Q3,1,T2)}; σ(S>1) keeps the two P1 tuples. The outer natural join on P,Q,S is empty, so Π_PRS gives zero rows. The Python simulation gives the same empty result. Matches official key D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

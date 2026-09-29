@@ -97,16 +97,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The subscript in option (B) is rendered as $L_1$ as printed; no figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Wording and option order match the official crop; the subscript in option (B) is rendered as $L_1$ as printed. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(D)",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\n# Orthonormal design: ridge = OLS/(1+lam) -> E[w]=w/(1+lam) (bias -lam*w/(1+lam)), Var=s^2/(1+lam)^2, signs kept\nrng=np.random.default_rng(0); X,_=np.linalg.qr(rng.normal(size=(30,3))); w=np.array([2.,-1.,0.5]); s=1.0\nfor lam in [0,1,4]:\n  W=np.array([np.linalg.solve(X.T@X+lam*np.eye(3),X.T@(X@w+rng.normal(scale=s,size=30))) for _ in range(20000)])\n  print(lam,W.mean(0).round(3),(w/(1+lam)).round(3),W.var(0).round(3),round(s**2/(1+lam)**2,3))\n# lam=0: mean~[2,-1,0.5] var~1.0; lam=1: mean~[1,-0.5,0.25] var~0.25; lam=4: mean~[0.4,-0.2,0.1] var~0.04",
-    "notes": "Conceptual question. Ridge uses a squared L2 penalty; statement (D), the bias-variance trade-off, is the only true statement, matching the official key D. The Python check simulates ridge on an orthonormal design and confirms coefficient means w/(1+lambda) (bias up, signs preserved) and variance sigma^2/(1+lambda)^2 (variance down)."
+    "notes": "Conceptual question. Verifier solved blind before seeing the key: (A) reverses the overfitting scenario (good on training, poor on test), (B) describes Lasso (L1) not ridge (squared L2), (C) is false because the penalty is sign-symmetric and does not remove parameters, (D) is the bias-variance trade-off, so (D), matching the official key D. The stored Monte-Carlo check was re-run: on an orthonormal design the ridge coefficient means are w/(1+lambda) (bias up, signs preserved) and variances sigma^2/(1+lambda)^2 (1.0, 0.25, 0.04 for lambda = 0, 1, 4)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -90,7 +90,7 @@
         "explanation": "In the in-order sequence F R G, G lies to the **right** of R. So G is R's right child, and R's left subtree contains only F."
       }
     ],
-    "shortcut": "The in-order splits at P into 3 | 3, and each block of three splits at its pre-order root (Q, then R) into 1 | 1. So T is the perfect tree P(Q(S, E), R(F, G)). For a perfect tree, the post-order is each parent's children followed by the parent: S E Q, F G R, P.",
+    "shortcut": "The in-order splits at P into 3 | 3, and each block of three splits at its pre-order root (Q, then R) into 1 | 1. So T is the perfect tree P(Q(S, E), R(F, G)). Each of Q and R has two leaf children, so the post-order is simply (left leaf, right leaf, parent) for each side, then the root: S E Q, F G R, P.",
     "commonTrap": "Reading parent–child links straight off the pre-order sequence. Seeing \"Q S E\" consecutively, a student may think S is Q's only child and E is S's child, and mark (C). The in-order S Q E shows that S and E sit on opposite sides of Q. Another slip is reversing the pre-order to get a \"post-order\" (G F R E S Q P). Post-order is left–right–root, which is not the reverse of root–left–right."
   },
   "conceptIds": [],
@@ -104,16 +104,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The node names E, F, G, P, Q, R, S (in the stem list, the two traversal lines and options (A)-(D)) are set in a monospace font in the paper and are transcribed as inline code. The tree name T is in the body serif font and is kept plain. The paper lays out each traversal as widely spaced letters on one line; here the letters are separated by single spaces. In (B), the post-order sequence is on its own indented line in the paper and is kept on its own line. The only embedded image in the region is the page background with the GATE 2026 watermark, and no figure is needed. The second official crop (Q25-2) shows only the header and table border of the next page."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, both traversal sequences and options (A)-(D) were compared letter by letter with the official crop and match. The node names E, F, G, P, Q, R, S (in the stem list, the two traversal lines and options (A)-(D)) are set in a monospace font in the paper and are transcribed as inline code. The tree name T is in the body serif font and is kept plain. The paper lays out each traversal as widely spaced letters on one line; here the letters are separated by single spaces. In (B), the post-order sequence is on its own indented line in the paper and is kept on its own line. The only candidate image extracted from the region is a rendering of the page area itself (text and the GATE 2026 watermark), not a separate diagram, so no figure is needed. The second official crop (Q25-2) shows only the header and table border of the next page."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;B",
     "agreesWithKey": true,
     "checkCode": "pre = list('PQSERFG'); ino = list('SQEPFRG')\ndef build(pre, ino):\n    if not pre: return None\n    r = pre[0]; i = ino.index(r)\n    return (r, build(pre[1:1+i], ino[:i]), build(pre[1+i:], ino[i+1:]))\ndef post(t): return [] if t is None else post(t[1]) + post(t[2]) + [t[0]]\ndef find(t, x):\n    if t is None: return None\n    return t if t[0] == x else (find(t[1], x) or find(t[2], x))\ndef nodes(t): return set() if t is None else {t[0]} | nodes(t[1]) | nodes(t[2])\nT = build(pre, ino); print(T); print('post:', ''.join(post(T)))\nq = find(T, 'Q'); r = find(T, 'R')\nres = dict(A=T[0] == 'P', B=post(T) == list('SEQFGRP'),\n           C=sum(c is not None for c in q[1:]) == 1, D='G' in nodes(r[1]))\nprint(res); assert res == dict(A=True, B=True, C=False, D=False)   # -> A;B",
-    "notes": "Rebuilt from pre-order P Q S E R F G and in-order S Q E P F R G, the tree is P(Q(S, E), R(F, G)), and its in-order S Q E P F R G matches the given one. The post-order is S E Q F G R P. So A (P is the root) and B are true. C is false because Q has two children, S and E. D is false because R's left subtree is only F and G is its right child. This matches official key A;B."
+    "notes": "Verifier solved blind before seeing the key or the stored solution and got A;B. Rebuilt from pre-order P Q S E R F G and in-order S Q E P F R G, the tree is P(Q(S, E), R(F, G)), and its in-order S Q E P F R G matches the given one. The post-order is S E Q F G R P. So A (P is the root) and B are true. C is false because Q has two children, S and E. D is false because R's left subtree is only F and G is its right child. The Python reconstruction (stored check code, re-run) gives the same tree and verdicts. This matches official key A;B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

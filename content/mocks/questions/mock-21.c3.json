@@ -1,0 +1,618 @@
+[
+  {
+    "id": "M21-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-types"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — four statements each need independent checking (measurement-scale reasoning with a unit-conversion counterexample, two similarity coefficients on sparse binary vectors, and ordinal-scale statistics), with a likely trap in the pure-rescaling statement; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Attribute scale types: ratio statements survive rescaling but not shifts (interval vs ratio), ordinal summaries, and Jaccard versus simple matching for asymmetric binary attributes",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A clinic stores the following attributes for every patient: *triage level* (1 = most urgent, ..., 5 = least urgent; ordered categories), *body temperature* in °C, *weight* in kg, and ten binary symptom indicators (1 = symptom present, 0 = absent). Each individual symptom is present in only a small fraction of patients. The symptom vectors of two patients $p$ and $q$ are:\n\n| Symptom | s1 | s2 | s3 | s4 | s5 | s6 | s7 | s8 | s9 | s10 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| $p$ | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |\n| $q$ | 1 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 0 | 0 |\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Body temperature in °C is an interval attribute, not a ratio attribute: readings of 40 °C and 20 °C have ratio 2, but the same two temperatures are 104 °F and 68 °F, whose ratio is about 1.53, so ‘twice as hot’ has no meaning on the Celsius scale."
+      },
+      {
+        "label": "B",
+        "text": "For $p$ and $q$ the simple matching coefficient is $0.8$ and the Jaccard coefficient is $0.5$; Jaccard is the more suitable measure here because 0–0 matches on rare symptoms carry little information about similarity."
+      },
+      {
+        "label": "C",
+        "text": "Weight in kg is only an interval attribute, because converting it to pounds (multiplying by about $2.2046$) changes the ratio of an 80 kg weight to a 40 kg weight from $2$ to some other value."
+      },
+      {
+        "label": "D",
+        "text": "Triage level is an ordinal attribute: its median is a meaningful summary, but the numeric gaps between successive levels need not correspond to equal differences in urgency."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "A statement about ratios is meaningful only if it survives every change of unit. A pure rescaling $x \\mapsto cx$ keeps ratios (ratio scale), but a shift such as $x \\mapsto 1.8x + 32$ does not (interval scale).\nFor $p, q$: $f_{11}=2$, $f_{10}=1$, $f_{01}=1$, $f_{00}=6$, so SMC $=0.8$ and Jaccard $=0.5$. Triage level is ordinal.\nOnly (C) is wrong, because kg to lb is a pure rescaling and the ratio stays $2$.",
+      "steps": [
+        {
+          "title": "Scale types and what each allows",
+          "body": "- Ordinal: order is meaningful, so mode and median make sense, but gaps between values are not defined.\n- Interval: differences are meaningful, zero is arbitrary, so ratios are not meaningful; admissible unit changes are $x \\mapsto ax + b$.\n- Ratio: zero is a true absence, so ratios are meaningful; admissible unit changes are $x \\mapsto cx$, which leave every ratio unchanged."
+        },
+        {
+          "title": "Statement A: temperature in °C",
+          "body": "The conversion is $F = 1.8C + 32$, so $40\\,°\\text{C} \\to 104\\,°\\text{F}$ and $20\\,°\\text{C} \\to 68\\,°\\text{F}$.\n$$\n\\frac{40}{20} = 2, \\qquad \\frac{104}{68} \\approx 1.53.\n$$\nThe ratio depends on the unit, so it is not a property of the temperatures themselves: °C is an interval attribute. **A is correct.**"
+        },
+        {
+          "title": "Statement B: similarity of p and q",
+          "body": "Compare position by position: both have 1 at s1 and s8, so $f_{11} = 2$; only $p$ has 1 at s3, so $f_{10} = 1$; only $q$ has 1 at s6, so $f_{01} = 1$; the remaining $f_{00} = 10 - 4 = 6$ positions are 0–0.\n$$\n\\text{SMC} = \\frac{f_{11} + f_{00}}{10} = \\frac{2 + 6}{10} = 0.8, \\qquad J = \\frac{f_{11}}{f_{11} + f_{10} + f_{01}} = \\frac{2}{4} = 0.5.\n$$\nBecause 1 is the rare, informative outcome, the six shared absences inflate SMC; Jaccard ignores them. **B is correct.**"
+        },
+        {
+          "title": "Statement C: weight in kg",
+          "body": "Kilograms to pounds is $x \\mapsto 2.2046\\,x$, a pure rescaling with no offset, and $0$ kg means no weight.\n$$\n\\frac{80 \\times 2.2046}{40 \\times 2.2046} = \\frac{176.37}{88.18} = 2.\n$$\nThe ratio is unchanged, so weight is a **ratio** attribute. **C is incorrect.**"
+        },
+        {
+          "title": "Statement D: triage level",
+          "body": "The levels 1–5 are ordered categories, so the median (and mode) are meaningful. Nothing guarantees that the step from level 1 to 2 is as large as the step from 4 to 5 in real urgency, so arithmetic that relies on equal gaps (mean, standard deviation) is not justified. **D is correct.**"
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "°C to °F has an offset, which changes the ratio 2 into about 1.53. Ratios are therefore not meaningful for °C, so it is interval-scaled."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$f_{11}=2$, $f_{10}=f_{01}=1$, $f_{00}=6$ give SMC $=8/10=0.8$ and $J=2/4=0.5$; Jaccard is preferred because shared absences of rare symptoms are uninformative."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "kg to lb multiplies by a constant, so the ratio 80 : 40 stays exactly 2. Weight has a true zero and is a ratio attribute."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "For ordinal data the median is meaningful, while equal numeric gaps between successive codes are not implied by the ordering."
+        }
+      ],
+      "shortcut": "Test every claim against the admissible unit changes: if a claim survives $x \\mapsto cx$ only (like a ratio), it needs a ratio scale; if it survives $x \\mapsto ax + b$ (like a difference), an interval scale is enough.",
+      "commonTrap": "Concluding from statement C that any change of unit destroys ratios. Only a conversion with an offset (°C to °F) does; a pure rescaling (kg to lb) preserves them. A second slip is quoting the simple matching coefficient $0.8$ as the similarity of two sparse binary vectors, letting the six shared absences dominate."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A), (B), (D)",
+      "agreesWithKey": true,
+      "checkCode": "p=[1,0,1,0,0,0,0,1,0,0]; q=[1,0,0,0,0,1,0,1,0,0]; n=len(p)\nf11=sum(a&b for a,b in zip(p,q)); f00=sum((1-a)&(1-b) for a,b in zip(p,q))\nsmc=(f11+f00)/n; jac=f11/(n-f00)\nF=lambda c:1.8*c+32\nA=abs(F(40)/F(20)-40/20)>0.4          # ratio not preserved under C->F shift\nB=abs(smc-0.8)<1e-12 and abs(jac-0.5)<1e-12\nC=abs((80*2.2046)/(40*2.2046)-2)>1e-9   # False: pure rescaling keeps ratio 2\nprint(smc,jac,F(40)/F(20),(80*2.2046)/(40*2.2046))\nprint('A',A,'B',B,'C',C,'D',True)  # D: ordinal -> median ok, equal gaps not implied (definition)\n# expected: A True, B True, C False, D True -> A,B,D",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-queues"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — needs a careful wrap-around trace of a circular-array queue with one sacrificed slot, the stale-data behaviour of dequeue, and reasoning about a modified full-test that makes full look empty; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Circular-array queue with head/tail indices: one slot is sacrificed to tell full from empty, dequeue only advances head (stale data remains), and size = (tail - head) mod capacity cannot detect fullness",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A queue is implemented in a circular array, with the following Python class. Here `head` is the index of the front element and `tail` is the index of the next free slot.\n\n```python\nclass Ring:\n    def __init__(self, cap):\n        self.a = [None] * cap\n        self.cap = cap\n        self.head = 0\n        self.tail = 0\n\n    def size(self):\n        return (self.tail - self.head) % self.cap\n\n    def enq(self, x):\n        if (self.tail + 1) % self.cap == self.head:\n            return False\n        self.a[self.tail] = x\n        self.tail = (self.tail + 1) % self.cap\n        return True\n\n    def deq(self):\n        if self.head == self.tail:\n            return None\n        x = self.a[self.head]\n        self.head = (self.head + 1) % self.cap\n        return x\n```\n\nThe following program is then executed.\n\n```python\nq = Ring(5)\nfor v in (10, 20, 30, 40, 50):\n    q.enq(v)\nq.deq()\nq.deq()\nfor v in (60, 70, 80):\n    q.enq(v)\n```\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Only the call `q.enq(80)` returns `False`; every other `enq` call in the program succeeds."
+      },
+      {
+        "label": "B",
+        "text": "When the program finishes, `q.a` is `[70, 20, 30, 40, 60]`."
+      },
+      {
+        "label": "C",
+        "text": "The first `q.deq()` executed after the program returns `20`, because `20` is still stored in `q.a[1]`."
+      },
+      {
+        "label": "D",
+        "text": "Suppose the test in `enq` is changed to `if self.size() == self.cap:`. Then on a fresh `Ring(5)`, the five calls `enq(10)`, `enq(20)`, `enq(30)`, `enq(40)`, `enq(50)` all return `True`, and an immediately following `deq()` returns `None`."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The full test $(\\text{tail}+1) \\bmod 5 = \\text{head}$ leaves one slot unused, so at most 4 elements fit: `enq(50)` and `enq(80)` are both rejected. `deq` only moves `head` and never clears a slot.\nFinal state: head $=2$, tail $=1$, `a = [70, 20, 30, 40, 60]`, with live elements 30, 40, 60, 70. The modified test never fires (size is at most 4), so five enqueues wrap `tail` back to `head` and the queue looks empty.\nCorrect: (B) and (D).",
+      "steps": [
+        {
+          "title": "Invariants of this implementation",
+          "body": "The array has 5 slots, but `enq` refuses when $(\\text{tail}+1) \\bmod 5 = \\text{head}$, so the queue holds at most $5 - 1 = 4$ elements. The queue is empty when $\\text{head} = \\text{tail}$. `deq` only advances `head`; it does not erase the slot it read."
+        },
+        {
+          "title": "Trace the program",
+          "body": "| Operation | Result | head | tail | `a` afterwards |\n|---|---|---|---|---|\n| start | | 0 | 0 | `[N, N, N, N, N]` |\n| `enq(10)` | True | 0 | 1 | `[10, N, N, N, N]` |\n| `enq(20)` | True | 0 | 2 | `[10, 20, N, N, N]` |\n| `enq(30)` | True | 0 | 3 | `[10, 20, 30, N, N]` |\n| `enq(40)` | True | 0 | 4 | `[10, 20, 30, 40, N]` |\n| `enq(50)` | **False** ($(4+1)\\bmod 5 = 0 = \\text{head}$) | 0 | 4 | unchanged |\n| `deq()` | 10 | 1 | 4 | unchanged |\n| `deq()` | 20 | 2 | 4 | unchanged (20 stays in `a[1]`) |\n| `enq(60)` | True | 2 | 0 | `[10, 20, 30, 40, 60]` |\n| `enq(70)` | True | 2 | 1 | `[70, 20, 30, 40, 60]` |\n| `enq(80)` | **False** ($(1+1)\\bmod 5 = 2 = \\text{head}$) | 2 | 1 | unchanged |\n\n(N = `None`.) The final state is head $=2$, tail $=1$, `size()` $= (1-2) \\bmod 5 = 4$."
+        },
+        {
+          "title": "Statements A, B and C",
+          "body": "- A: two calls fail, `enq(50)` and `enq(80)`, so A is false.\n- B: the final array is `[70, 20, 30, 40, 60]`, so B is true. The `20` in `a[1]` is stale, since it was dequeued but never erased.\n- C: the front element is `a[head] = a[2] = 30`, so the next `deq()` returns `30`, not `20`. C is false."
+        },
+        {
+          "title": "Statement D: the modified full test",
+          "body": "`size()` is $(\\text{tail}-\\text{head}) \\bmod 5$, which always lies in $\\{0,1,2,3,4\\}$, so `size() == 5` is never true and `enq` never refuses. On a fresh queue the five enqueues store 10, 20, 30, 40, 50 in `a[0..4]` and all return `True`. After the fifth, $\\text{tail} = (4+1) \\bmod 5 = 0 = \\text{head}$, which is exactly the empty condition, so `deq()` returns `None`. D is true: a completely full queue becomes indistinguishable from an empty one, which is why the original code sacrifices a slot."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The capacity is 4, not 5. `enq(50)` is rejected as well, because $(4+1) \\bmod 5 = 0 = \\text{head}$. Two calls fail, not one."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "60 lands in `a[4]`, 70 wraps into `a[0]`, `enq(80)` is rejected, and the dequeued 20 remains in `a[1]`, giving `[70, 20, 30, 40, 60]`."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "`head` is 2 after two dequeues, so the front is `a[2] = 30`. The `20` in `a[1]` is stale and lies outside the live region."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "`size()` never reaches `cap`, so all five enqueues succeed and `tail` wraps to equal `head`, which the empty test reads as an empty queue, so `deq()` returns `None`."
+        }
+      ],
+      "commonTrap": "Assuming that an array of 5 slots holds 5 items, so that only `enq(80)` fails. A related slip is to treat `deq` as erasing data, or to read the stale `20` in `a[1]` as the front element instead of `a[head]`."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B), (D)",
+      "agreesWithKey": true,
+      "checkCode": "import copy\nclass Ring:\n    def __init__(s,c,mode=None): s.a=[None]*c; s.c=c; s.h=s.t=0; s.mode=mode\n    def size(s): return (s.t-s.h)%s.c\n    def enq(s,x):\n        full = (s.size()==s.c) if s.mode=='size' else ((s.t+1)%s.c==s.h)\n        if full: return False\n        s.a[s.t]=x; s.t=(s.t+1)%s.c; return True\n    def deq(s):\n        if s.h==s.t: return None\n        x=s.a[s.h]; s.h=(s.h+1)%s.c; return x\nq=Ring(5); r=[q.enq(v) for v in (10,20,30,40,50)]; q.deq(); q.deq(); r+=[q.enq(v) for v in (60,70,80)]\nA=(r.count(False)==1 and r[-1] is False)\nB=(q.a==[70,20,30,40,60])\nC=(copy.deepcopy(q).deq()==20)\nq2=Ring(5,'size'); r2=[q2.enq(v) for v in (10,20,30,40,50)]\nD=(all(r2) and q2.deq() is None)\nprint(r, q.a, q.h, q.t, q.size(), 'A',A,'B',B,'C',C,'D',D)  # expect B, D",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q21",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 21,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-binary-search"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (binary search on a sorted list), one short trace of four iterations; about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Tracing binary search for an absent key: probe count and the return value on failure",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The function below performs binary search on a list sorted in ascending order. It returns a pair: the index of the key (or $-1$ if the key is absent) and the number of times an element `arr[mid]` was examined.\n\n```python\ndef bsearch(arr, key):\n    lo, hi = 0, len(arr) - 1\n    probes = 0\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        probes += 1\n        if arr[mid] == key:\n            return mid, probes\n        elif arr[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1, probes\n\narr = [4, 9, 15, 21, 28, 34, 40, 47, 55, 63, 70, 78, 86, 93]\nprint(bsearch(arr, 60))\n```\n\nWhat is printed?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`(-1, 3)`"
+      },
+      {
+        "label": "B",
+        "text": "`(9, 4)`"
+      },
+      {
+        "label": "C",
+        "text": "`(-1, 4)`"
+      },
+      {
+        "label": "D",
+        "text": "`(-1, 14)`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The key 60 is not in the list, so the loop runs until `lo > hi` and the function returns `-1`. The probes are at indices 6, 10, 8, 9, that is, the values 40, 70, 55, 63, so the count is 4.\nOutput: `(-1, 4)`.",
+      "steps": [
+        {
+          "title": "Input and algorithm",
+          "body": "The list has 14 elements (indices 0 to 13) and the key 60 is absent (55 < 60 < 63). Each iteration probes `mid = (lo + hi) // 2`, compares, and discards half the range; the loop stops when `lo > hi`."
+        },
+        {
+          "title": "Execution trace",
+          "body": "| Iteration | lo | hi | mid | `arr[mid]` | Comparison with 60 | Update |\n|---|---|---|---|---|---|---|\n| 1 | 0 | 13 | 6 | 40 | 40 < 60 | lo = 7 |\n| 2 | 7 | 13 | 10 | 70 | 70 > 60 | hi = 9 |\n| 3 | 7 | 9 | 8 | 55 | 55 < 60 | lo = 9 |\n| 4 | 9 | 9 | 9 | 63 | 63 > 60 | hi = 8 |\n\nNow `lo = 9 > hi = 8`, so the loop condition fails without another probe."
+        },
+        {
+          "title": "Complexity and result",
+          "body": "There were 4 probes, matching the worst case $\\lfloor \\log_2 14 \\rfloor + 1 = 4$. The key was never found, so the function returns `(-1, 4)`, which is option C."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This drops one probe: four elements (40, 70, 55, 63) are examined, not three."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The function returns the literal `-1` when the key is absent; it never returns the insertion index (9 is where 60 would be inserted)."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Four probes (indices 6, 10, 8, 9) and the key is absent, so `(-1, 4)` is printed."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "14 is what a linear scan of the whole list would examine; binary search halves the range each time."
+        }
+      ],
+      "commonTrap": "Counting the final failed loop test as a fifth probe, or forgetting that the range can shrink to a single element (`lo = hi = 9`) that is still probed before the loop ends."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(-1, 4), option (C)",
+      "agreesWithKey": true,
+      "checkCode": "def bsearch(arr, key):\n    lo, hi = 0, len(arr) - 1\n    probes = 0\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        probes += 1\n        if arr[mid] == key:\n            return mid, probes\n        elif arr[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1, probes\narr = [4, 9, 15, 21, 28, 34, 40, 47, 55, 63, 70, 78, 86, 93]\nprint(bsearch(arr, 60))  # (-1, 4)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q22",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 22,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-ridge-regression"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the one-feature ridge closed form) and a short computation of two sums and a prediction; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "One-feature ridge regression without intercept: w = sum(xy) / (sum(x^2) + lambda), then prediction",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A sensor's reading $y$ is modelled as proportional to the reference value $x$, that is, $\\hat{y} = w\\,x$ (no intercept). Four calibration points are recorded.\n\n| $x$ | 1 | 2 | 3 | 5 |\n|---|---|---|---|---|\n| $y$ | 2 | 3 | 7 | 10 |\n\nThe weight $w$ is fitted by ridge regression, that is, by minimising\n$$\nJ(w) = \\sum_{i=1}^{4} (y_i - w\\,x_i)^2 + \\lambda\\, w^2, \\qquad \\lambda = 11.\n$$\nThe fitted model's prediction at $x = 4$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 6.31,
+      "max": 6.33
+    },
+    "solution": {
+      "quick": "Setting $J'(w) = 0$ gives $w = \\dfrac{\\sum x_i y_i}{\\sum x_i^2 + \\lambda}$. With $\\sum x_i y_i = 79$ and $\\sum x_i^2 = 39$, $w = 79/50 = 1.58$.\nThe prediction at $x = 4$ is $4 \\times 1.58 = 6.32$.",
+      "steps": [
+        {
+          "title": "Ridge solution for one feature",
+          "body": "$$\nJ'(w) = -2\\sum x_i (y_i - w x_i) + 2\\lambda w = 0 \\;\\Rightarrow\\; w = \\frac{\\sum x_i y_i}{\\sum x_i^2 + \\lambda}.\n$$\nThe penalty $\\lambda$ is simply added to the denominator, which shrinks $w$ towards $0$."
+        },
+        {
+          "title": "Sums from the data",
+          "body": "$\\sum x_i^2 = 1 + 4 + 9 + 25 = 39$ and $\\sum x_i y_i = 1(2) + 2(3) + 3(7) + 5(10) = 2 + 6 + 21 + 50 = 79$."
+        },
+        {
+          "title": "Weight",
+          "body": "$$\nw = \\frac{79}{39 + 11} = \\frac{79}{50} = 1.58.\n$$\n(Without the penalty, $w_{\\text{OLS}} = 79/39 \\approx 2.026$, so ridge has shrunk the weight.)"
+        },
+        {
+          "title": "Prediction at x = 4",
+          "body": "$\\hat{y}(4) = 1.58 \\times 4 = 6.32$."
+        }
+      ],
+      "finalAnswer": "**6.32** (accepted range 6.31 to 6.33)",
+      "commonTrap": "Ignoring the penalty and using the least-squares weight $79/39$, which gives $\\hat{y}(4) \\approx 8.10$. Another slip is to use $\\lambda/2$ (as if the loss carried a factor $\\tfrac12$): that gives $w \\approx 1.78$ and a prediction of about $7.10$, but with the objective as written $\\lambda$ enters in full."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6.32 (w = 79/50 = 1.58)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx=np.array([1,2,3,5.]); y=np.array([2,3,7,10.]); lam=11.0\nw=(x@y)/(x@x+lam)\ng=np.linspace(0,4,400001); J=((y[None,:]-g[:,None]*x[None,:])**2).sum(1)+lam*g**2\nprint(w, 4*w, round(4*w,2), g[J.argmin()])  # 1.58 6.32 6.32 1.58",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q23",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 23,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-svd"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept with several routine steps: eigen-decomposition of a 2x2 A^T A, the leading singular triplet, and the Eckart–Young truncation; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Best rank-1 approximation from the SVD (Eckart–Young): A_1 = sigma_1 u_1 v_1^T = A v_1 v_1^T",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n$$\nA = \\begin{bmatrix} 2 & 2 \\\\ 1 & 0 \\\\ 0 & 1 \\end{bmatrix}.\n$$\nAmong all $3 \\times 2$ real matrices $B$ of rank at most $1$, let $A_1$ be the one that minimises the Frobenius norm $\\|A - B\\|_F$. Then $A_1$ equals",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\begin{bmatrix} 2 & 2 \\\\ 0 & 0 \\\\ 0 & 0 \\end{bmatrix}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\begin{bmatrix} 2 & 2 \\\\ \\tfrac{1}{2} & \\tfrac{1}{2} \\\\ \\tfrac{1}{2} & \\tfrac{1}{2} \\end{bmatrix}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\begin{bmatrix} 6 & 6 \\\\ \\tfrac{3}{2} & \\tfrac{3}{2} \\\\ \\tfrac{3}{2} & \\tfrac{3}{2} \\end{bmatrix}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\begin{bmatrix} 0 & 0 \\\\ \\tfrac{1}{2} & -\\tfrac{1}{2} \\\\ -\\tfrac{1}{2} & \\tfrac{1}{2} \\end{bmatrix}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$A^\\top A = \\begin{bmatrix} 5 & 4 \\\\ 4 & 5 \\end{bmatrix}$ has eigenvalues $9, 1$ with unit eigenvectors $v_1 = (1,1)/\\sqrt{2}$ and $v_2 = (1,-1)/\\sqrt{2}$, so $\\sigma_1 = 3$, $\\sigma_2 = 1$.\nBy the Eckart–Young theorem the best rank-1 approximation is $A_1 = \\sigma_1 u_1 v_1^\\top = A v_1 v_1^\\top = \\begin{bmatrix} 2 & 2 \\\\ \\tfrac12 & \\tfrac12 \\\\ \\tfrac12 & \\tfrac12 \\end{bmatrix}$, with error $\\|A - A_1\\|_F = \\sigma_2 = 1$.",
+      "steps": [
+        {
+          "title": "Form A^T A",
+          "body": "The columns of $A$ are $c_1 = (2,1,0)$ and $c_2 = (2,0,1)$, so $c_1\\cdot c_1 = 5$, $c_1 \\cdot c_2 = 4$, $c_2 \\cdot c_2 = 5$:\n$$\nA^\\top A = \\begin{bmatrix} 5 & 4 \\\\ 4 & 5 \\end{bmatrix}.\n$$"
+        },
+        {
+          "title": "Eigenvalues and right singular vectors",
+          "body": "The eigenvalues are $5 \\pm 4 = 9$ and $1$, with unit eigenvectors $v_1 = \\tfrac{1}{\\sqrt{2}}(1, 1)$ for $9$ and $v_2 = \\tfrac{1}{\\sqrt{2}}(1, -1)$ for $1$. Hence $\\sigma_1 = \\sqrt{9} = 3$ and $\\sigma_2 = \\sqrt{1} = 1$."
+        },
+        {
+          "title": "Leading left singular vector",
+          "body": "$$\nA v_1 = \\tfrac{1}{\\sqrt{2}}(4, 1, 1)^\\top, \\qquad u_1 = \\frac{A v_1}{\\sigma_1} = \\frac{(4, 1, 1)^\\top}{3\\sqrt{2}},\n$$\nand $\\|u_1\\| = \\sqrt{18}/(3\\sqrt{2}) = 1$ as required."
+        },
+        {
+          "title": "Eckart–Young truncation",
+          "body": "The best rank-1 approximation in Frobenius norm keeps only the largest singular triplet:\n$$\nA_1 = \\sigma_1 u_1 v_1^\\top = 3 \\cdot \\frac{(4,1,1)^\\top}{3\\sqrt{2}} \\cdot \\frac{(1,1)}{\\sqrt{2}} = \\frac{1}{2}\\begin{bmatrix} 4 \\\\ 1 \\\\ 1 \\end{bmatrix}\\begin{bmatrix} 1 & 1 \\end{bmatrix} = \\begin{bmatrix} 2 & 2 \\\\ \\tfrac12 & \\tfrac12 \\\\ \\tfrac12 & \\tfrac12 \\end{bmatrix}.\n$$"
+        },
+        {
+          "title": "Check",
+          "body": "$A - A_1 = \\begin{bmatrix} 0 & 0 \\\\ \\tfrac12 & -\\tfrac12 \\\\ -\\tfrac12 & \\tfrac12 \\end{bmatrix}$ has $\\|A - A_1\\|_F = \\sqrt{4 \\cdot \\tfrac14} = 1 = \\sigma_2$, exactly the Eckart–Young error. This matrix is option B."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "It has rank 1 but is not optimal: $A - B = \\begin{bmatrix} 0&0\\\\1&0\\\\0&1 \\end{bmatrix}$ has Frobenius norm $\\sqrt{2} > 1 = \\sigma_2$. Keeping the row or entries of largest size is not the SVD truncation."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$A_1 = \\sigma_1 u_1 v_1^\\top$ with $\\sigma_1 = 3$; the error is exactly $\\sigma_2 = 1$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is three times $A_1$: it scales by the eigenvalue $\\sigma_1^2 = 9$ of $A^\\top A$ instead of the singular value $\\sigma_1 = 3$. Its error is $\\|A - C\\|_F \\approx 6.08$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is $\\sigma_2 u_2 v_2^\\top = A - A_1$, the discarded component, not the retained one. Its distance from $A$ is $\\sigma_1 = 3$."
+        }
+      ],
+      "shortcut": "Only $v_1$ is needed: $A_1 = A v_1 v_1^\\top$, i.e. project each row of $A$ onto $v_1 = (1,1)/\\sqrt{2}$. The row $(2,2)$ already lies along $v_1$, and the rows $(1,0)$ and $(0,1)$ each project to $(\\tfrac12, \\tfrac12)$.",
+      "commonTrap": "Building the rank-1 matrix with the eigenvalue $9$ of $A^\\top A$ instead of the singular value $3$ (option C), or truncating 'by inspection' by keeping the largest row or entries (option A). The SVD truncation acts on singular directions, not on entries."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B): A_1 = [[2,2],[1/2,1/2],[1/2,1/2]]",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA=np.array([[2,2],[1,0],[0,1.]]); U,s,Vt=np.linalg.svd(A)\nA1=s[0]*np.outer(U[:,0],Vt[0])\nopts={'A':np.array([[2,2],[0,0],[0,0.]]),'B':np.array([[2,2],[.5,.5],[.5,.5]]),\n      'C':np.array([[6,6],[1.5,1.5],[1.5,1.5]]),'D':np.array([[0,0],[.5,-.5],[-.5,.5]])}\nprint(s, A1.round(6).tolist(), {k:round(float(np.linalg.norm(A-v)),4) for k,v in opts.items()})\nprint([k for k,v in opts.items() if np.allclose(v,A1)])  # ['B'], error = sigma2 = 1",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q24",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 24,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-decision-trees"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (information gain for a root split) needing tallies, five entropy evaluations and the gain-versus-remaining-entropy distinction; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Choosing the root split of a decision tree by information gain: parent entropy minus size-weighted child entropy",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A support team logs 12 tickets. Each ticket has a *Channel* (Phone or Email), a *Priority* (High or Normal), and a label *Escalated* (Yes or No).\n\n| Ticket | Channel | Priority | Escalated |\n|---|---|---|---|\n| T1 | Phone | Normal | Yes |\n| T2 | Email | High | No |\n| T3 | Email | Normal | Yes |\n| T4 | Phone | High | Yes |\n| T5 | Phone | Normal | Yes |\n| T6 | Email | Normal | No |\n| T7 | Phone | High | Yes |\n| T8 | Phone | High | Yes |\n| T9 | Phone | High | Yes |\n| T10 | Email | Normal | No |\n| T11 | Phone | Normal | No |\n| T12 | Email | Normal | No |\n\nA decision-tree learner chooses each split by the largest information gain, with entropy computed using logarithms to base 2. Which feature is chosen for the root, and what is its information gain (in bits)?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Priority, with information gain about $0.10$"
+      },
+      {
+        "label": "B",
+        "text": "Channel, with information gain about $0.65$"
+      },
+      {
+        "label": "C",
+        "text": "Priority, with information gain about $0.88$"
+      },
+      {
+        "label": "D",
+        "text": "Channel, with information gain about $0.33$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The parent node has 7 Yes and 5 No, so $H = 0.980$ bits. Channel splits it into Phone $(6,1)$ and Email $(1,4)$ with weighted entropy $0.646$, giving gain $0.334$. Priority splits it into High $(4,1)$ and Normal $(3,4)$ with weighted entropy $0.876$, giving gain $0.104$.\nChannel has the larger gain, so it is the root, with gain $\\approx 0.33$ bits.",
+      "steps": [
+        {
+          "title": "Tally and parent entropy",
+          "body": "Escalated = Yes for 7 tickets and No for 5.\n$$\nH(\\text{parent}) = -\\tfrac{7}{12}\\log_2\\tfrac{7}{12} - \\tfrac{5}{12}\\log_2\\tfrac{5}{12} = 0.4536 + 0.5263 = 0.980 \\text{ bits}.\n$$"
+        },
+        {
+          "title": "Split on Channel",
+          "body": "Phone has 7 tickets (6 Yes, 1 No) and Email has 5 tickets (1 Yes, 4 No).\n$$\nH(\\text{Phone}) = 0.5917, \\qquad H(\\text{Email}) = 0.7219.\n$$\nThe weighted entropy is $\\tfrac{7}{12}(0.5917) + \\tfrac{5}{12}(0.7219) = 0.3451 + 0.3008 = 0.646$, so\n$$\nIG(\\text{Channel}) = 0.980 - 0.646 = 0.334.\n$$"
+        },
+        {
+          "title": "Split on Priority",
+          "body": "High has 5 tickets (4 Yes, 1 No) and Normal has 7 tickets (3 Yes, 4 No).\n$$\nH(\\text{High}) = 0.7219, \\qquad H(\\text{Normal}) = 0.9852.\n$$\nThe weighted entropy is $\\tfrac{5}{12}(0.7219) + \\tfrac{7}{12}(0.9852) = 0.3008 + 0.5747 = 0.876$, so\n$$\nIG(\\text{Priority}) = 0.980 - 0.876 = 0.104.\n$$"
+        },
+        {
+          "title": "Compare and interpret",
+          "body": "$0.334 > 0.104$, so the root splits on **Channel**, with information gain $\\approx 0.33$ bits. Phone tickets are mostly escalated (6 of 7) and Email tickets mostly are not (4 of 5 not escalated), so Channel separates the labels much better than Priority. The values $0.65$ and $0.88$ in the other options are the weighted child entropies, not gains."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.10$ is the correct gain for Priority, but Priority is not the best split: Channel has gain $0.33$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Channel is the right feature, but $0.65$ is the weighted entropy remaining after the split; the gain is $0.980 - 0.646 = 0.33$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.88$ is the weighted entropy remaining after splitting on Priority, not its gain (which is $0.10$), and Priority is not chosen anyway."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$IG(\\text{Channel}) = 0.980 - 0.646 = 0.334 \\approx 0.33$, larger than $IG(\\text{Priority}) = 0.104$."
+        }
+      ],
+      "commonTrap": "Reporting the weighted entropy left after the split (0.65 for Channel, 0.88 for Priority) instead of subtracting it from the parent entropy 0.98. A second slip is to average the child entropies without weighting them by node size."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(D): Channel, IG = 0.3339 bits",
+      "agreesWithKey": true,
+      "checkCode": "from math import log2\nfrom collections import Counter\nrows=[('Phone','High','Yes')]*4+[('Phone','Normal','Yes')]*2+[('Phone','Normal','No')]+[('Email','High','No')]+[('Email','Normal','Yes')]+[('Email','Normal','No')]*3\nH=lambda c:-sum(v/sum(c)*log2(v/sum(c)) for v in c if v)\nlab=lambda rs:list(Counter(r[2] for r in rs).values())\npar=H(lab(rows)); gains={}\nfor i,name in ((0,'Channel'),(1,'Priority')):\n    rem=0\n    for v in set(r[i] for r in rows):\n        sub=[r for r in rows if r[i]==v]; rem+=len(sub)/len(rows)*H(lab(sub))\n    gains[name]=(round(par-rem,4),round(rem,4))\nprint(round(par,4), gains)  # Channel gain 0.3339 (remaining 0.646); Priority gain 0.1043 (remaining 0.8756)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M21-Q25",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-21",
+    "questionNumber": 25,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-measures"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (an algebraic measure rolled up from distributive ones) with several routine steps: recover sums of squares, aggregate, compute variance; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Standard deviation as an algebraic measure: a roll-up needs COUNT, SUM and SUM of squares of the child cells, not the child standard deviations alone",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retail data warehouse stores a cube with dimensions Store, Product and Time. For one store and one product category, the following measures of *order value* (in ₹) are precomputed at the *quarter* level of the Time dimension.\n\n| Quarter | Orders | Mean order value | Population standard deviation |\n|---|---|---|---|\n| Q1 | 20 | 40 | 6 |\n| Q2 | 30 | 50 | 8 |\n| Q3 | 10 | 60 | 10 |\n| Q4 | 40 | 55 | 5 |\n\nThe analyst rolls the Time dimension up from quarter to year, without access to the base order records. The population standard deviation of order value for the whole year is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 9.23,
+      "max": 9.25
+    },
+    "solution": {
+      "quick": "Standard deviation is an algebraic measure: it is computed from the distributive measures COUNT, SUM and SUM of squares, not from the child standard deviations. Recover $\\sum x = n\\mu$ and $\\sum x^2 = n(\\sigma^2 + \\mu^2)$ per quarter and add them up: $N = 100$, $\\sum x = 5100$, $\\sum x^2 = 268640$.\nThen $\\mu = 51$, variance $= 2686.4 - 2601 = 85.4$, and $\\sigma = \\sqrt{85.4} \\approx 9.24$.",
+      "steps": [
+        {
+          "title": "Which measures roll up",
+          "body": "COUNT, SUM and SUM of squares are distributive: the yearly value is the sum of the quarterly values. The standard deviation is algebraic: it is a function of those three, $\\sigma^2 = \\dfrac{\\sum x^2}{N} - \\mu^2$. Averaging the four standard deviations is therefore wrong."
+        },
+        {
+          "title": "Recover the distributive measures per quarter",
+          "body": "Using $\\sum x = n\\mu$ and $\\sum x^2 = n(\\sigma^2 + \\mu^2)$:\n\n| Quarter | $n$ | $\\sum x$ | $\\sum x^2$ |\n|---|---|---|---|\n| Q1 | 20 | $20 \\cdot 40 = 800$ | $20(36 + 1600) = 32720$ |\n| Q2 | 30 | $30 \\cdot 50 = 1500$ | $30(64 + 2500) = 76920$ |\n| Q3 | 10 | $10 \\cdot 60 = 600$ | $10(100 + 3600) = 37000$ |\n| Q4 | 40 | $40 \\cdot 55 = 2200$ | $40(25 + 3025) = 122000$ |\n| Year | 100 | 5100 | 268640 |"
+        },
+        {
+          "title": "Yearly mean and variance",
+          "body": "$$\n\\mu = \\frac{5100}{100} = 51, \\qquad \\sigma^2 = \\frac{268640}{100} - 51^2 = 2686.4 - 2601 = 85.4.\n$$"
+        },
+        {
+          "title": "Standard deviation",
+          "body": "$\\sigma = \\sqrt{85.4} \\approx 9.2412$, which is $9.24$ to two decimal places. It exceeds every quarterly value except Q3's $10$ because the quarterly means (40 to 60) also differ, adding between-quarter spread to the within-quarter spread."
+        }
+      ],
+      "finalAnswer": "**9.24** (accepted range 9.23 to 9.25)",
+      "commonTrap": "Averaging the quarterly standard deviations (simple average $7.25$, order-weighted $6.6$), or pooling only the within-quarter variances ($\\sqrt{46.4} \\approx 6.81$). Both ignore that the quarterly means differ. Dividing by $N - 1$ instead of $N$ (the sample formula) would give $9.29$, but the question asks for the population value."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "9.24 (variance 85.4, sigma = 9.2412)",
+      "agreesWithKey": true,
+      "checkCode": "from math import sqrt\ncells=[(20,40,6),(30,50,8),(10,60,10),(40,55,5)]   # (orders, mean, population std)\nN=sum(n for n,m,s in cells); S=sum(n*m for n,m,s in cells); Q=sum(n*(s*s+m*m) for n,m,s in cells)\nmu=S/N; var=Q/N-mu*mu\nprint(N,S,Q,mu,var,sqrt(var))  # 100 5100 268640 51.0 85.4 9.2412\n# raw-data cross-check: build synthetic samples with exactly these (n, mean, pop std) and take np.std\nimport numpy as np\nxs=[]\nfor n,m,s in cells:\n    z=np.random.default_rng(0).standard_normal(n); z=(z-z.mean())/z.std(); xs+=list(m+s*z)\nprint(np.std(xs))  # 9.2412",
+      "notes": ""
+    }
+  }
+]

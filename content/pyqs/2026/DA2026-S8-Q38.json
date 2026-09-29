@@ -59,7 +59,7 @@
       },
       {
         "title": "Truth-table confirmation",
-        "body": "| $C$ | $S$ | $D$ | Assumption $C \\Rightarrow (S \\Leftrightarrow D)$ | (i) $(C \\wedge S) \\Leftrightarrow D$ | (ii) | (iii) $\\equiv C$ |\n| --- | --- | --- | --- | --- | --- | --- |\n| F | F | F | T | T | T | F |\n| F | F | T | T | **F** | T | **F** |\n| F | T | F | T | T | T | F |\n| F | T | T | T | **F** | T | **F** |\n| T | F | F | T | T | T | T |\n| T | F | T | F | F | F | **T** |\n| T | T | F | F | F | F | **T** |\n| T | T | T | T | T | T | T |\n\nColumn (ii) matches the assumption in all 8 rows. Column (i) differs in 2 rows, and column (iii) differs in 6 rows (all four rows with $C = \\text{F}$, plus two rows where it is true but the assumption is false). Only (ii) is TRUE, so the answer is **(B)**."
+        "body": "| $C$ | $S$ | $D$ | Assumption $C \\Rightarrow (S \\Leftrightarrow D)$ | (i) $(C \\wedge S) \\Leftrightarrow D$ | (ii) | (iii) $\\equiv C$ |\n| --- | --- | --- | --- | --- | --- | --- |\n| F | F | F | T | T | T | **F** |\n| F | F | T | T | **F** | T | **F** |\n| F | T | F | T | T | T | **F** |\n| F | T | T | T | **F** | T | **F** |\n| T | F | F | T | T | T | T |\n| T | F | T | F | F | F | **T** |\n| T | T | F | F | F | F | **T** |\n| T | T | T | T | T | T | T |\n\nBold entries are the ones that disagree with the assumption column.\n\nColumn (ii) matches the assumption in all 8 rows. Column (i) differs in 2 rows, and column (iii) differs in 6 rows (all four rows with $C = \\text{F}$, plus two rows where it is true but the assumption is false). Only (ii) is TRUE, so the answer is **(B)**."
       }
     ],
     "finalAnswer": "**(B)**",
@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. Statement (i) is printed without parentheses as C ∧ S ⇔ D and is transcribed as printed (standard precedence reads it as (C ∧ S) ⇔ D). The PDF text layer shows a long double arrow (⟺) in (ii), but the rendered paper shows the same ⇔ symbol as in (i) and (iii), so all are transcribed as \\Leftrightarrow. The second official crop (Q38-2) contains only the page header/table border. No figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Wording, the three formulas and option order match the official crop. Statement (i) is printed without parentheses as C ∧ S ⇔ D and is transcribed as printed (standard precedence reads it as (C ∧ S) ⇔ D). In (ii) the paper uses a slightly longer double arrow (⟺ in the PDF text layer) than in (i) and (iii); it has the same meaning and is transcribed as \\Leftrightarrow throughout. The second official crop (Q38-2) contains only the page header/table border. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(B) Only (ii) is TRUE",
     "agreesWithKey": true,
     "checkCode": "import itertools\nimp=lambda a,b:(not a) or b; iff=lambda a,b:a==b\nspec=lambda C,S,D: imp(C,iff(S,D))  # 'creative => (succeed <=> disciplined)'\nf={'i':lambda C,S,D: iff(C and S,D),'ii':lambda C,S,D: imp(C,iff(S,D)),'iii':lambda C,S,D: iff(C,imp(D,S) or (not S))}\nrows=list(itertools.product([False,True],repeat=3))  # (C,S,D)\nfor k,g in f.items(): print(k,'equiv',all(g(*r)==spec(*r) for r in rows),'entailed',all(g(*r) for r in rows if spec(*r)))\n# i: False False ; ii: True True ; iii: False False  -> only (ii)",
-    "notes": "The assumption formalises as C ⇒ (S ⇔ D). A truth-table check over all 8 assignments shows (ii) is equivalent to it, (i) differs when C=F, D=T, and (iii) reduces to C. The conclusion is the same whether 'TRUE' is read as 'equivalent to the assumption' or 'entailed by the assumption', and it matches the official key B."
+    "notes": "Verifier solved blind before seeing the key: the assumption formalises as C ⇒ (S ⇔ D), which is (ii). A truth-table check over all 8 assignments shows (ii) is equivalent to it, (i) (read as (C ∧ S) ⇔ D, and also under the alternative reading C ∧ (S ⇔ D)) differs when C=F, D=T, and (iii) reduces to C because (D ⇒ S) ∨ ¬S is a tautology. The conclusion is the same whether TRUE is read as equivalent to or entailed by the assumption, giving (B), which matches the official key B."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

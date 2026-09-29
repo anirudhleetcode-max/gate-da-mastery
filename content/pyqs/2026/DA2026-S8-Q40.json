@@ -41,7 +41,7 @@
     "correct": "D"
   },
   "solution": {
-    "quick": "BFS and DFS from a vertex visit exactly the vertices reachable from it, so only reachability matters. Reversing every edge reverses every path: $v \\leadsto u$ in $G$ $\\iff$ $u \\leadsto v$ in $G^R$.\n\nThat is statement (D). The graph with a single edge between $u$ and $v$ breaks (A), (B) and (C). **(D)**",
+    "quick": "BFS and DFS from a vertex visit exactly the vertices reachable from it, so only reachability matters. Reversing every edge reverses every path: $v \\leadsto u$ in $G$ $\\iff$ $u \\leadsto v$ in $G^R$.\n\nThat is statement (D). A two-vertex graph with one edge ($u \\to v$ for (A); $v \\to u$ for (B) and (C)) breaks the other three statements. **(D)**",
     "steps": [
       {
         "title": "Concept: what BFS and DFS visit",
@@ -102,16 +102,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper writes the reversed graph as $G^R$ (superscript R), and it is transcribed that way."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper writes the reversed graph as $G^R$ (superscript R), and it is transcribed that way."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "D",
     "agreesWithKey": true,
-    "checkCode": "from collections import deque\ndef bfs(adj, s):\n    seen, order, q = {s}, [s], deque([s])\n    while q:\n        x = q.popleft()\n        for y in sorted(adj[x]):\n            if y not in seen: seen.add(y); order.append(y); q.append(y)\n    return order\ndef dfs(adj, s):\n    seen, order = set(), []\n    def go(x):\n        seen.add(x); order.append(x)\n        for y in sorted(adj[x]):\n            if y not in seen: go(y)\n    go(s); return order\nok = dict.fromkeys('ABCD', True)\nfor n in (2, 3, 4):                        # every digraph on n vertices, no self-loops\n    V = range(n); pairs = [(a, b) for a in V for b in V if a != b]\n    for mask in range(1 << len(pairs)):\n        E = [p for i, p in enumerate(pairs) if mask >> i & 1]\n        G = {x: [b for a, b in E if a == x] for x in V}\n        GR = {x: [a for a, b in E if b == x] for x in V}\n        for v in V:\n            bR, dG = bfs(GR, v), dfs(G, v)\n            ok['A'] &= all(u in dG for u in bR)\n            ok['B'] &= set(bR) == set(dG)\n            ok['C'] &= bR == dG[::-1]\n            ok['D'] &= all(v in bfs(GR, u) for u in dG)\nprint(ok)   # {'A': False, 'B': False, 'C': False, 'D': True}",
-    "notes": "(D) follows from path reversal: u in Reach_G(v) iff v in Reach_{G^R}(u). Two-vertex counterexamples refute (A), (B) and (C). A brute force over all self-loop-free digraphs on 2 to 4 vertices, with every start vertex, finds counterexamples to (A), (B) and (C) and none to (D). This matches official key D."
+    "checkCode": "from collections import deque\ndef bfs(adj, s):\n    seen, order, q = {s}, [s], deque([s])\n    while q:\n        x = q.popleft()\n        for y in sorted(adj[x]):\n            if y not in seen: seen.add(y); order.append(y); q.append(y)\n    return order\ndef dfs(adj, s):\n    seen, order = set(), []\n    def go(x):\n        seen.add(x); order.append(x)\n        for y in sorted(adj[x]):\n            if y not in seen: go(y)\n    go(s); return order\nok = dict.fromkeys('ABCD', True)\nfor n in (2, 3, 4):                        # every digraph on n vertices, no self-loops\n    V = range(n); pairs = [(a, b) for a in V for b in V if a != b]\n    for mask in range(1 << len(pairs)):\n        E = [p for i, p in enumerate(pairs) if mask >> i & 1]\n        G = {x: [b for a, b in E if a == x] for x in V}\n        GR = {x: [a for a, b in E if b == x] for x in V}\n        for v in V:\n            bR, dG = bfs(GR, v), dfs(G, v)\n            ok['A'] &= all(u in dG for u in bR)\n            ok['B'] &= set(bR) == set(dG)\n            ok['C'] &= bR == dG[::-1]\n            ok['D'] &= all(v in bfs(GR, u) for u in dG)\nprint(ok)   # {'A': False, 'B': False, 'C': False, 'D': True}\nassert ok == {'A': False, 'B': False, 'C': False, 'D': True}",
+    "notes": "Blind re-solve (before reading the key): BFS/DFS visit exactly the reachable set, and a path v -> ... -> u in G read backwards is a path u -> ... -> v in G^R, so (D) always holds; (A) and (B) confuse descendants with ancestors (counterexamples: G = {u->v} for (A), G = {v->u} for (B)), and (C) fails because one order starts with v while the reversed order ends with v. The verifier's own brute force over all 3-vertex digraphs and the stored brute force over all self-loop-free digraphs on 2 to 4 vertices (every start vertex) both find counterexamples to (A), (B), (C) and none to (D). This matches official key D."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

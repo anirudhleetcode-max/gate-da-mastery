@@ -105,16 +105,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. TRUE, FALSE and the sentence names X and Y are set in italic math in the paper. TRUE and FALSE are transcribed with \\mathit{}. The PDF text layer gives the conjunction in (B) as U+22C0 (n-ary logical AND), while the rendered paper shows a plain wedge, transcribed as \\land. The paper prints a small extra gap before the arrow in (A) (\"X  ⇒ Y\"), and the spacing is normalised here. The second official crop (Q24-2) shows only the header and table border of the next page, and no figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem and options (A)-(D) were compared with the official crop and the PDF text layer and match. TRUE, FALSE and the sentence names X and Y are set in italic math in the paper; TRUE and FALSE are transcribed with \\mathit{}. The PDF text layer gives the conjunction in (B) as U+22C0 (n-ary logical AND), while the rendered paper shows a plain wedge, transcribed as \\land. The paper prints a small extra gap before the arrow in (A) (\"X  ⇒ Y\"), and the spacing is normalised here. The second official crop (Q24-2) shows only the header and table border of the next page, and no figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;B;C",
     "agreesWithKey": true,
     "checkCode": "from itertools import product\n# X, Y range over ALL Boolean functions of 2 atoms (16 each); models = 4 assignments\nM = list(product([0, 1], repeat=2))\nF = list(product([0, 1], repeat=4))          # truth table of a sentence over the 4 models\nent = lambda X, Y: all(Y[i] for i in range(4) if X[i])\nimp = lambda a, b: (not a) or b\nok = dict(A=True, B=True, C=True, D=True); pairs = 0\nfor X, Y in product(F, F):\n    if not ent(X, Y): continue\n    pairs += 1\n    ok['A'] &= all(imp(X[i], Y[i]) for i in range(4))        # X => Y valid\n    ok['B'] &= not any(X[i] and not Y[i] for i in range(4))  # X & ~Y unsatisfiable\n    ok['C'] &= all(imp(X[i], Y[i]) for i in range(4))        # \"if X then Y\"\n    ok['D'] &= all(imp(Y[i], X[i]) for i in range(4))        # converse\nprint(pairs, 'entailing pairs;', ok); assert ok == dict(A=True, B=True, C=True, D=False)  # -> A;B;C\n# explicit counterexample for D: X = P & Q, Y = P, model P=1, Q=0\nP, Q = 1, 0; print('X=P&Q:', P and Q, ' Y=P:', P)",
-    "notes": "X entails Y means M(X) ⊆ M(Y), which rules out only the assignment X=T, Y=F. So X ⇒ Y is valid (deduction theorem), which covers A and C (C is the English reading of the same implication). X ∧ ¬Y is unsatisfiable, which covers B. The converse Y ⇒ X can fail (counterexample X = P ∧ Q, Y = P), so D is false. An exhaustive check over all 16 × 16 pairs of Boolean functions of two atoms (81 entailing pairs) confirms A, B and C always hold and D does not. This matches official key A;B;C."
+    "notes": "Verifier solved blind before seeing the key or the stored solution and got A;B;C. X entails Y means M(X) ⊆ M(Y), which rules out only the assignment X=T, Y=F. So X ⇒ Y is valid (deduction theorem), which covers A and C (C is the English reading of the same implication). X ∧ ¬Y is unsatisfiable, which covers B. The converse Y ⇒ X can fail (counterexample X = P ∧ Q, Y = P), so D is false. An exhaustive check over all 16 × 16 pairs of Boolean functions of two atoms (3^4 = 81 entailing pairs) confirms that A, B and C always hold. D fails in 65 of the 81 pairs, holding only in the 16 where X ≡ Y. This matches official key A;B;C."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

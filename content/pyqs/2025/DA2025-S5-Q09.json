@@ -96,16 +96,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The PDF text layer flattens the superscripts; the exponents ($x^2$, $x$, $2$) were read from the rendered page."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The PDF text layer flattens the superscripts; the exponents ($3^{x^2}$, $9^x$, $2^{x^2}$, $(2^x)^2$) and the option exponents ($-1$, $0$, $3$, $15$) were checked against the rendered page. The paper typesets the target as a stacked fraction; it is rendered here with \\dfrac."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nx=sp.symbols('x',real=True)\nroots=sp.solve(sp.Eq(3**(x**2),27*9**x),x); print('roots',roots)\nfor r in roots: print(r, sp.simplify(2**(r**2)/(2**r)**2))",
-    "notes": "Independent solve ($x^2 - 2x = 3$, so the value is $2^3$ for both real roots $x = 3, -1$) gives (C), agreeing with the official key C. The sympy check solves $3^{x^2} = 27 \\cdot 9^x$ over the reals and evaluates the expression at each root (both give 8)."
+    "notes": "Blind re-solve (before viewing the key): $27\\times9^x=3^{3+2x}$, so $x^2-2x=3$ and $\\dfrac{2^{x^2}}{(2^x)^2}=2^{x^2-2x}=2^3$ → (C), agreeing with the official key C. Both real roots ($x=3$, $x=-1$) give 8. The stored sympy check (re-run by the verifier) solves the equation over the reals and evaluates the expression at each root."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

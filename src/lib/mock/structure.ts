@@ -135,6 +135,16 @@ function fraction(x: number): string {
 }
 
 /**
+ * One-line marking hint for a question in the exam, e.g. "Wrong answer: −1/3 mark"
+ * for a 1-mark MCQ, "No negative marking" for MSQ and NAT.
+ */
+export function negativeHint(type: QuestionType, marks: number, negativeMarking: boolean, pattern?: ExamPattern | null): string {
+  if (type !== "MCQ" || !negativeMarking) return "No negative marking";
+  const f = pattern?.marking.mcqNegativeFraction ?? 1 / 3;
+  return `Wrong answer: −${fraction(f * marks)} mark`;
+}
+
+/**
  * The marking scheme as display rules, taken from the verified exam pattern
  * (pattern.json). When a mock has negative marking switched off, MCQ
  * penalties are reported as not applying.

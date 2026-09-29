@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The B+ tree figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q41-1.png. The tree cannot be expressed faithfully as a table or text because of its node, record-pointer and leaf-chain layout."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The B+ tree figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q41-1.png; the verifier compared it with the official crop (root [5 | 8]; leaves (1,5), (7,8), (9,12) with dashed record pointers and a leaf chain ending in NULL). The tree cannot be expressed faithfully as a table or text because of its node, record-pointer and leaf-chain layout."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (root holds 5)",
     "agreesWithKey": true,
     "checkCode": "import bisect\nLEAF_MAX, PTR_MAX = 2, 3        # leaf <= 2 keys; non-leaf <= 3 pointers\nclass N:\n    def __init__(s, keys, kids=None): s.keys, s.kids = keys, kids\ndef insert(root, k, left_bias=True):   # convention from figure: child i holds K[i-1] < k <= K[i]\n    def ins(nd):\n        if nd.kids is None:\n            bisect.insort(nd.keys, k)\n            if len(nd.keys) <= LEAF_MAX: return None\n            m = (len(nd.keys) + 1)//2 if left_bias else len(nd.keys)//2\n            L, R = N(nd.keys[:m]), N(nd.keys[m:])\n            return L.keys[-1], L, R    # separator copied up\n        i = bisect.bisect_left(nd.keys, k)\n        r = ins(nd.kids[i])\n        if r is None: return None\n        s, L, R = r\n        nd.keys.insert(i, s); nd.kids[i:i+1] = [L, R]\n        if len(nd.kids) <= PTR_MAX: return None\n        m = len(nd.keys)//2            # middle key moved up\n        return nd.keys[m], N(nd.keys[:m], nd.kids[:m+1]), N(nd.keys[m+1:], nd.kids[m+1:])\n    r = ins(root)\n    return root if r is None else N([r[0]], [r[1], r[2]])\nfor b in (True, False):\n    t = insert(N([5, 8], [N([1, 5]), N([7, 8]), N([9, 12])]), 3, b)\n    print(t.keys, [c.keys for c in t.kids], [[g.keys for g in c.kids] for c in t.kids])\n    assert t.keys == [5]",
-    "notes": "Hand simulation: the leaf (1,5) overflows to (1,3,5) and splits into (1,3) and (5), copying separator 3 up. The root overflows to (3,5,8) with 4 pointers and splits, moving 5 up to a new root. A Python B+ tree simulation, using the figure's 'k <= separator goes left' convention, gives root [5] for both left- and right-biased leaf splits. This matches official key A."
+    "notes": "Blind re-solve (before reading the key): 3 <= 5 goes to leaf (1,5), which overflows to (1,3,5) and splits into (1,3) and (5), copying separator 3 up; the root becomes (3,5,8) with 4 pointers (> 3 allowed) and splits, moving the middle key 5 up into a new root [5]. The verifier's own independent Python B+ tree simulation and the stored simulation both give root [5] for left- and right-biased leaf splits. The result is also robust to the separator convention: under a 'k >= separator goes right' convention the root keys before the split would be (5,5,8) or (3,5,8), whose middle key is again 5. This matches official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

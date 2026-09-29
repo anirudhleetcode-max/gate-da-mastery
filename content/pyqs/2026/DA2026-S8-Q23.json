@@ -101,16 +101,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The words Task and Algorithm (in the text and the table header), the placeholders t and a, and the notation t:a are set in a monospace font in the paper and are transcribed as inline code. As printed, the sentence \"Denote such a match as t:a\" has no final full stop. The table is transcribed as a GFM table, keeping the en dashes in entries such as \"T1 – Clustering\". The only embedded image in the region is the page background with the GATE 2026 watermark, and no figure is needed. The second official crop (Q23-2) shows only the header and table border of the next page."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, table and options (A)-(D) were compared line by line with the official crop and match. The words Task and Algorithm (in the text and the table header), the placeholders t and a, and the notation t:a are set in a monospace font in the paper and are transcribed as inline code. As printed, the sentence \"Denote such a match as t:a\" has no final full stop, and this is kept. The table is transcribed as a GFM table, keeping the en dashes in entries such as \"T1 – Clustering\". The only candidate image extracted from the region is a rendering of the page area itself (text, table and the GATE 2026 watermark), not a separate diagram, so no figure is needed. The second official crop (Q23-2) shows only the header and table border of the next page."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "B",
     "agreesWithKey": true,
     "checkCode": "# tasks each algorithm is a standard method for\ncan = {'A1': {'T3'},            # MCMC -> sampling\n       'A2': {'T1'},            # K-Medoid -> clustering\n       'A3': {'T2', 'T4'},      # Linear Discriminant Analysis -> classification, feature extraction\n       'A4': {'T2'}}            # Naive Bayes -> classification\nopts = {'A': 'T1:A4 T2:A3 T3:A1 T4:A2', 'B': 'T1:A2 T2:A4 T3:A1 T4:A3',\n        'C': 'T1:A3 T2:A4 T3:A1 T4:A2', 'D': 'T1:A4 T2:A2 T3:A1 T4:A3'}\nres = {}\nfor k, s in opts.items():\n    pairs = [p.split(':') for p in s.split()]\n    bad = [f'{t}:{a}' for t, a in pairs if t not in can[a]]\n    res[k] = not bad; print(k, 'invalid pairs:', bad)\nprint(res); assert [k for k in res if res[k]] == ['B']   # -> B",
-    "notes": "The standard roles are: MCMC for sampling, K-Medoid for (unsupervised) clustering, Linear Discriminant Analysis for supervised dimensionality reduction / feature extraction (it can also classify), and Naive Bayes for classification. The resulting matching T1:A2, T2:A4, T3:A1, T4:A3 is option B, and B is the only option with T1:A2. Every other option assigns clustering to a supervised method. This matches official key B. Classification note: MCMC belongs to the AI subtopic ai-sampling, which cannot be listed alongside ML subtopics, so the question is filed under ml-classification with ml-lda, ml-naive-bayes and ml-kmeans."
+    "notes": "Verifier solved blind before seeing the key or the stored solution and got B. K-Medoid is the only unsupervised clustering algorithm listed (T1:A2), MCMC is the only sampling method (T3:A1), Linear Discriminant Analysis is supervised dimensionality reduction / feature extraction (T4:A3; it can also classify), and Naive Bayes is a classifier (T2:A4). Options A and D give clustering to Naive Bayes, and option C gives it to LDA. Only B is fully valid, which matches official key B. The stored check code (a lookup of each algorithm's standard tasks) was re-run and returns only B. Classification note: MCMC belongs to the AI subtopic ai-sampling, which cannot be listed alongside ML subtopics, so the question is filed under ml-classification with ml-lda, ml-naive-bayes and ml-kmeans."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

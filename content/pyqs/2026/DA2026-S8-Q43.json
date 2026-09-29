@@ -98,16 +98,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The concept-hierarchy figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q43-1.png. Options (A) and (B) are rendered on the paper as superscript powers 4^3 and 2^3 (the PDF text layer flattens them to '43' and '23'); transcribed from the image."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The concept-hierarchy figure is the raster image embedded in the official paper, extracted as-is (byte-identical to the embedded image, not redrawn), and reproduced as /pyq/2026/fig/Q43-1.png. As on the paper, the figure follows the question sentence. Options (A) and (B) are rendered on the paper as the superscript powers 4^3 and 2^3 (the PDF text layer flattens them to '43' and '23'); they are transcribed from the image."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A (4^3 = 64 cuboids)",
     "agreesWithKey": true,
-    "checkCode": "from itertools import product\nlevels={'time':['Day','Month','Year'],'location':['City','State','Country'],'item':['Item','Item Type','Item Category']}\nchoices=[lv+['all'] for lv in levels.values()]   # each dimension: one of its 3 levels, or rolled up to 'all'\ncuboids=list(product(*choices)); print(len(cuboids), 4**3, 2**3); assert len(cuboids)==4**3==64",
-    "notes": "Three dimensions with 3-level hierarchies each (Year–Month–Day, Country–State–City, Item Category–Item Type–Item). The cuboid count is the product of (L_i + 1) over dimensions = 4^3 = 64; enumeration in Python confirms 64. This matches official key A."
+    "checkCode": "from itertools import product\nlevels={'time':['Day','Month','Year'],'location':['City','State','Country'],'item':['Item','Item Type','Item Category']}\nchoices=[lv+['all'] for lv in levels.values()]   # each dimension: one of its 3 levels, or rolled up to 'all'\ncuboids=list(product(*choices))\nprint(len(cuboids), '| options: 4^3 =',4**3,' 2^3 =',2**3,' 2! = 2  4! = 24')\nassert len(cuboids)==4**3==64",
+    "notes": "Independent verifier solved from the official crop before viewing the key or stored solution. There are three dimensions, each with a 3-level concept hierarchy (Year–Month–Day, Country–State–City, Item Category–Item Type–Item). The number of cuboids is ∏(L_i + 1) (Han, Kamber and Pei), where the +1 is the virtual top level 'all', giving (3+1)^3 = 4^3 = 64. Enumerating every (level-or-all) choice per dimension in Python also gives 64. Matches official key A."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

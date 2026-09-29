@@ -101,16 +101,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem wording, the notation E[X|Y] and E[E[X|Y]], the fraction in option (B) and the option order all match the official crop; no figures."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
     "independentAnswer": "C (E[E[X|Y]] = E[X], law of total expectation)",
     "agreesWithKey": true,
-    "checkCode": "import numpy as np\nfrom fractions import Fraction as F\n# worked example from the solution: X in {1,3}, Y in {0,1}\np = {(1, 0): F(1, 10), (1, 1): F(3, 10), (3, 0): F(2, 10), (3, 1): F(4, 10)}\npY = {y: sum(v for (x, yy), v in p.items() if yy == y) for y in (0, 1)}\ng = {y: sum(x * v for (x, yy), v in p.items() if yy == y) / pY[y] for y in (0, 1)}  # E[X|Y=y]\nEEXY = sum(g[y] * pY[y] for y in (0, 1)); EX = sum(x * v for (x, y), v in p.items()); EY = sum(y * v for (x, y), v in p.items())\nprint('g =', g, ' E[E[X|Y]] =', EEXY, ' E[X] =', EX, ' E[Y] =', EY, ' E[X]/E[Y] =', float(EX / EY))\nassert EEXY == EX == F(11, 5)\n# random joint pmfs\nrng = np.random.default_rng(1)\nfor _ in range(1000):\n    xs, ys = rng.normal(size=4), rng.normal(size=3)\n    P = rng.random((4, 3)); P /= P.sum(); pY = P.sum(axis=0)\n    assert np.isclose(((xs[:, None] * P).sum(axis=0) / pY * pY).sum(), (xs * P.sum(axis=1)).sum())\nprint('tower property holds on 1000 random joint pmfs')",
-    "notes": "Independent solve: E[X|Y] = g(Y) with g(y) = E[X|Y=y]; averaging over Y gives sum_y g(y)P(Y=y) = sum_x x P(X=x) = E[X], i.e. option (C). This matches the official key C. The Python check reproduces the worked example exactly with fractions (E[E[X|Y]] = E[X] = 11/5, while E[Y] = 7/10 and E[X]/E[Y] is about 3.14) and confirms the identity on 1000 random joint pmfs."
+    "checkCode": "import numpy as np, random\nfrom fractions import Fraction as F\n# 1) worked example used in the solution (exact fractions)\np = {(1, 0): F(1, 10), (1, 1): F(3, 10), (3, 0): F(2, 10), (3, 1): F(4, 10)}\npY = {y: sum(v for (x, yy), v in p.items() if yy == y) for y in (0, 1)}\ng = {y: sum(x * v for (x, yy), v in p.items() if yy == y) / pY[y] for y in (0, 1)}      # E[X|Y=y]\nEX = sum(x * v for (x, y), v in p.items()); EY = sum(y * v for (x, y), v in p.items())\nassert g == {0: F(7, 3), 1: F(15, 7)} and sum(g[y] * pY[y] for y in (0, 1)) == EX == F(11, 5) and EY == F(7, 10)\nprint('example: E[X|Y] in', g, ' E[E[X|Y]] = E[X] =', EX, ' E[Y] =', EY, ' E[X]/E[Y] =', float(EX / EY))\n# 2) exact check on 300 random 3x3 joint pmfs: E[E[X|Y]] == E[X] (option C), and differs from E[Y], E[X]/E[Y] in general\nrandom.seed(7)\nfor _ in range(300):\n    xs = [F(random.randint(-5, 9)) for _ in range(3)]; ys = [F(random.randint(1, 6)) for _ in range(3)]\n    w = [[F(random.randint(1, 9)) for _ in ys] for _ in xs]; T = sum(map(sum, w)); P = [[v / T for v in r] for r in w]\n    pY = [sum(P[i][j] for i in range(3)) for j in range(3)]\n    g = [sum(xs[i] * P[i][j] for i in range(3)) / pY[j] for j in range(3)]\n    assert sum(g[j] * pY[j] for j in range(3)) == sum(xs[i] * sum(P[i]) for i in range(3))\nprint('exact: E[E[X|Y]] == E[X] on 300 random joint pmfs')\n# 3) continuous Monte Carlo: Y ~ Exp(1), X|Y ~ N(3Y, 1) => E[X|Y] = 3Y, E[X] = 3, E[Y] = 1\nrng = np.random.default_rng(0); Y = rng.exponential(1.0, 10**6); X = rng.normal(3 * Y, 1.0)\nprint('MC: mean(3Y) = %.4f, mean(X) = %.4f, mean(Y) = %.4f' % ((3 * Y).mean(), X.mean(), Y.mean()))\nassert abs((3 * Y).mean() - X.mean()) < 0.02",
+    "notes": "Independent solve: E[X|Y] = g(Y) with g(y) = E[X|Y=y]; E[g(Y)] = sum_y g(y)P(Y=y) = sum_y sum_x x P(X=x,Y=y) = sum_x x P(X=x) = E[X], i.e. option (C). This matches the official key C. The Python check reproduces the worked example exactly (E[X|Y] takes 7/3 and 15/7, E[E[X|Y]] = E[X] = 11/5, E[Y] = 7/10, E[X]/E[Y] about 3.14), confirms the identity exactly on 300 random rational joint pmfs, and confirms it by Monte Carlo for a continuous pair (Y ~ Exp(1), X|Y ~ N(3Y,1): mean of E[X|Y] = mean of X = 3, while E[Y] = 1). The original author's check (random pmfs) also passes. Caveat on blindness: the official key letter was visible in the per-question context file that the verifier read at the start, so this re-solve was independent in derivation but not strictly blind."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -102,16 +102,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper indents the code with tab stops: one level for `if`/`else`, two levels for the `return` statements. It is rendered here with 4 spaces per level, keeping the nesting exactly. The standalone call `mystery(4)` is set in monospace on its own line in the paper and is rendered as a code block."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper indents the code with tab stops: one level for `if`/`else`, two levels for the `return` statements. It is rendered here with 4 spaces per level, keeping the nesting exactly (Python semantics unchanged). The standalone call `mystery(4)` is set in monospace on its own line in the paper and is rendered as a code block."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C (15 calls)",
     "agreesWithKey": true,
-    "checkCode": "from collections import Counter\ncalls = Counter()\ndef mystery(n):\n    calls[n] += 1\n    if n <= 0:\n        return 1\n    else:\n        return mystery(n-1) + mystery(n-2)\nv = mystery(4)\nC = {-1: 1, 0: 1}                      # C(n) = number of activations of mystery(n)\nfor n in range(1, 5): C[n] = 1 + C[n-1] + C[n-2]\nprint(v, dict(calls), sum(calls.values()), C)   # 8 {4:1,3:1,2:2,1:3,0:5,-1:3} 15\nassert sum(calls.values()) == C[4] == 2*v - 1 == 15",
-    "notes": "The recurrence C(n) = 1 + C(n-1) + C(n-2) with C(0) = C(-1) = 1, the per-argument call tally and a Python execution with a call counter all give 15 activations. This matches official key C."
+    "checkCode": "from collections import Counter\ncalls = Counter(); depth = mx = 0\ndef mystery(n):\n    global depth, mx\n    calls[n] += 1; depth += 1; mx = max(mx, depth)\n    r = 1 if n <= 0 else mystery(n-1) + mystery(n-2)\n    depth -= 1\n    return r\nv = mystery(4)\nC = {-1: 1, 0: 1}                      # C(n) = number of activations of mystery(n)\nfor n in range(1, 5): C[n] = 1 + C[n-1] + C[n-2]\nprint(v, dict(calls), sum(calls.values()), C, mx)   # 8 {4:1,3:1,2:2,1:3,0:5,-1:3} 15 ... max depth 5\nassert sum(calls.values()) == C[4] == 2*v - 1 == 15 and mx == 5",
+    "notes": "Blind re-solve via the recurrence C(n) = 1 + C(n-1) + C(n-2) with C(0) = C(-1) = 1 gives C(4) = 15, done before reading the key. A Python execution of the exact code with a call counter confirms 15 activations (per-argument tally 1,1,2,3,5,3 for n = 4..-1), return value 8 (so 2*8-1 = 15 nodes in the full binary recursion tree) and maximum stack depth 5. This matches official key C."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -66,7 +66,7 @@
       {
         "label": "A",
         "verdict": "incorrect",
-        "explanation": "$O(n)$ would require a constant amount of work per row. In back substitution, row $i$ uses the $n-i$ unknowns already computed, so the total is $\\frac{n(n-1)}{2}$ multiplications, which is quadratic. Linear cost is only possible for special structures such as diagonal or bidiagonal matrices."
+        "explanation": "$O(n)$ would require a constant amount of work per row. For a general (dense) upper triangular matrix, row $i$ of back substitution uses the $n-i$ unknowns already computed, so the total is $\\frac{n(n-1)}{2}$ multiplications and as many subtractions, which is quadratic. Linear cost is only possible for special structures such as diagonal or bidiagonal matrices, and the question says *any* upper triangular matrix."
       },
       {
         "label": "B",
@@ -76,7 +76,7 @@
       {
         "label": "C",
         "verdict": "incorrect",
-        "explanation": "$O(n^3)$ is the cost of the forward-elimination phase on a general dense matrix. Here the matrix is already upper triangular, so that phase needs no arithmetic. (Any $O(n^2)$ quantity is formally also $O(n^3)$, but \"of the order\" asks for the tight growth rate, which is $n^2$.)"
+        "explanation": "$O(n^3)$ is the cost of the forward-elimination phase on a general dense matrix. Here the matrix is already upper triangular, so every multiplier is $0$ and that phase needs no arithmetic. (Only a program that blindly subtracted $0 \\times$ (pivot row) from every row below each pivot would waste about $\\frac{n^3}{3}$ multiply–subtract pairs; that work changes nothing. Also, any $O(n^2)$ quantity is formally $O(n^3)$ too, but \"of the order\" asks for the tight growth rate, which is $n^2$.)"
       },
       {
         "label": "D",
@@ -97,16 +97,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper hyphenates \"elimina-tion\" across a line break; it is joined here as \"elimination\"."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper hyphenates \"elimina-tion\" across a line break; it is joined here as \"elimination\". Option order and exponents (n, n^2, n^3, n^4) match the official crop."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
-    "independentAnswer": "B (O(n^2): forward phase is trivial, back substitution needs n(n-1)/2 multiplications and n(n-1)/2 additions/subtractions)",
+    "status": "VERIFIED",
+    "method": "Independent re-solve + Python check agrees with official key",
+    "independentAnswer": "B (O(n^2): forward elimination has nothing to eliminate; back substitution needs n(n-1)/2 multiplications and n(n-1)/2 additions/subtractions)",
     "agreesWithKey": true,
-    "checkCode": "import numpy as np\ndef gauss_solve_count(U, b):\n    \"\"\"Gaussian elimination (forward phase + back substitution) on Ux=b, counting +/- and * (and /).\"\"\"\n    A = np.hstack([U.astype(float), b.reshape(-1, 1).astype(float)]); n = len(U); ops = {'fwd': 0, 'back': 0}\n    for k in range(n - 1):                      # forward elimination\n        for i in range(k + 1, n):\n            if A[i, k] == 0: continue            # multiplier is 0 -> nothing to do\n            m = A[i, k] / A[k, k]; ops['fwd'] += 1\n            A[i, k:] -= m * A[k, k:]; ops['fwd'] += 2 * (n + 1 - k)\n    x = np.zeros(n)\n    for i in range(n - 1, -1, -1):              # back substitution\n        s = A[i, n]\n        for j in range(i + 1, n):\n            s -= A[i, j] * x[j]; ops['back'] += 2   # one multiply + one subtract\n        x[i] = s / A[i, i]; ops['back'] += 1       # one divide\n    return x, ops\nrng = np.random.default_rng(0); res = []\nfor n in [10, 20, 40, 80, 160]:\n    U = np.triu(rng.random((n, n)) + 1); b = rng.random(n)\n    x, ops = gauss_solve_count(U, b)\n    assert np.allclose(U @ x, b) and ops['back'] == n * n and ops['fwd'] == 0\n    res.append((n, ops['fwd'], ops['back'])); print(n, ops)\nns = np.array([r[0] for r in res]); tot = np.array([r[1] + r[2] for r in res])\nprint('fitted exponent:', np.polyfit(np.log(ns), np.log(tot), 1)[0])",
-    "notes": "Independent solve: on an upper triangular matrix every elimination multiplier is 0, so the forward phase needs no arithmetic. Back substitution needs n(n-1)/2 multiplications, n(n-1)/2 additions/subtractions and n divisions, which is Theta(n^2), i.e. option (B). This matches the official key B. The Python operation counter gives 0 forward-phase operations and exactly n^2 back-substitution operations for n = 10 to 160 (fitted log-log exponent 2.0), and the computed x satisfies Ux = b. The solution assumes non-zero diagonal pivots and counts back substitution as part of the Gaussian-elimination solve; the question text does not spell out either point. If only the reduction phase were counted, no arithmetic would be needed at all."
+    "checkCode": "import numpy as np\ndef ge_ops(M, b):\n    \"\"\"Textbook Gaussian elimination on [M|b] with op counting: forward phase then back substitution.\"\"\"\n    A = np.hstack([M.astype(float), b[:, None].astype(float)]); n = len(M); c = {'fwd': 0, 'back': 0}\n    for k in range(n - 1):\n        for i in range(k + 1, n):\n            m = A[i, k] / A[k, k]; c['fwd'] += 1                 # multiplier (a division)\n            if m == 0: continue                                   # zero multiplier: row unchanged\n            for j in range(k, n + 1): A[i, j] -= m * A[k, j]; c['fwd'] += 2\n    x = np.zeros(n)\n    for i in range(n - 1, -1, -1):\n        s = A[i, n]\n        for j in range(i + 1, n): s -= A[i, j] * x[j]; c['back'] += 2   # 1 mult + 1 sub\n        x[i] = s / A[i, i]; c['back'] += 1\n    return x, c\nrng = np.random.default_rng(3); rows = []\nfor n in [8, 16, 32, 64, 128]:\n    U = np.triu(rng.uniform(1, 2, (n, n))); b = rng.random(n)\n    x, cu = ge_ops(U, b); assert np.allclose(U @ x, b)\n    G = rng.uniform(1, 2, (n, n)) + n * np.eye(n); _, cg = ge_ops(G, b)\n    addmul_U = cu['back'] - n                                     # additions + multiplications only\n    assert addmul_U == n * (n - 1)\n    rows.append((n, addmul_U, cg['fwd'] + cg['back']))\n    print(f'n={n:4d} upper-triangular: fwd mults/adds=0, back add+mult={addmul_U} (=n(n-1)); dense total={cg[\"fwd\"] + cg[\"back\"]}')\nns, tu, tg = map(np.array, zip(*rows))\nprint('log-log slope, triangular: %.2f   dense: %.2f' % (np.polyfit(np.log(ns), np.log(tu), 1)[0], np.polyfit(np.log(ns), np.log(tg), 1)[0]))",
+    "notes": "Independent solve: the matrix already has zeros below the diagonal, so forward elimination needs no additions or multiplications; back substitution needs n(n-1)/2 multiplications, n(n-1)/2 additions/subtractions and n divisions, i.e. Theta(n^2), option (B). This matches the official key B. The Python operation counter gives 0 forward-phase additions/multiplications and exactly n(n-1) back-substitution additions+multiplications for n = 8 to 128 (log-log slope about 2.0), with Ux = b satisfied; a dense matrix of the same sizes gives a slope approaching 3 for comparison. The question text is loosely worded: it does not say whether back substitution is included, and counting only the reduction phase would give zero arithmetic, while a naive implementation that performs updates with zero multipliers would do about n^3/3 useless multiply-subtract pairs. The official answer O(n^2) corresponds to the standard reading (exploit the triangular structure; the remaining work is the triangular solve), which is what the solution explains. The original author's op-count check also passes. Caveat on blindness: the official key letter was visible in the per-question context file that the verifier read at the start, so this re-solve was independent in derivation but not strictly blind."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

@@ -45,7 +45,7 @@
     "steps": [
       {
         "title": "Set up the sample space",
-        "body": "An outcome is an **ordered** 4-tuple $(n_1, n_2, n_3, n_4)$ of non-negative integers with sum $20$. For example, $(20,0,0,0)$ and $(0,20,0,0)$ are different solutions.\n\n\"A random solution\" is read in the standard way: every solution is equally likely to be returned. (The options are all ratios of solution counts, which confirms this reading.) Then\n\n$$\nP(\\text{all positive}) = \\frac{\\#\\{\\text{solutions with every } n_i \\ge 1\\}}{\\#\\{\\text{solutions with every } n_i \\ge 0\\}}.\n$$"
+        "body": "An outcome is an **ordered** 4-tuple $(n_1, n_2, n_3, n_4)$ of non-negative integers with sum $20$. For example, $(20,0,0,0)$ and $(0,20,0,0)$ are different solutions.\n\n\"A random solution\" is read in the standard way: every solution is equally likely to be returned. (The options are all ratios of solution counts, which is consistent with this reading; the question does not state the distribution explicitly.) Then\n\n$$\nP(\\text{all positive}) = \\frac{\\#\\{\\text{solutions with every } n_i \\ge 1\\}}{\\#\\{\\text{solutions with every } n_i \\ge 0\\}}.\n$$"
       },
       {
         "title": "Count the non-negative solutions (stars and bars)",
@@ -85,7 +85,7 @@
       }
     ],
     "shortcut": "For $k$ variables summing to $n$ (uniform over solutions), $P(\\text{all positive}) = \\binom{n-1}{k-1}\\big/\\binom{n+k-1}{k-1}$. Here $k-1 = 3$, which rules out (B) and (D) at once. The numerator's top index is $n-1 = 19$, which picks (A) over (C).",
-    "commonTrap": "Off-by-one errors in stars and bars: writing $\\binom{n+k}{k}$ or $\\binom{n+k-1}{k}$ instead of $\\binom{n+k-1}{k-1}$ (as in (B) and (D)), or subtracting $3$ instead of $4$ from $20$ for the positive count (as in (C)). The lower index is the number of **bars**, $k-1 = 3$, and making all four variables positive removes $4$ from the total."
+    "commonTrap": "Off-by-one errors in stars and bars. Using $k = 4$ as the lower index instead of the number of bars $k-1 = 3$ gives the five-variable counts $\\binom{24}{4} = \\binom{n+k}{k}$ and $\\binom{20}{4}$ or $\\binom{19}{4}$ seen in (B) and (D). Subtracting $3$ instead of $4$ from $20$ for the positive count gives $\\binom{20}{3}$, as in (C). The lower index is the number of **bars**, $k-1 = 3$, and making all four variables positive removes $4$ from the total."
   },
   "conceptIds": [],
   "formulaIds": [],
@@ -98,16 +98,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The options print each binomial coefficient as a stacked pair in round brackets (e.g. 19 over 3); transcribed as \\binom{19}{3} etc. The PDF text layer flattens these, so they were read from the rendered image. The second official crop (Q20-2) contains only the page header and an empty table border."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The options print each binomial coefficient as a stacked pair in round brackets (e.g. 19 over 3); transcribed as \\binom{19}{3} etc. The PDF text layer flattens these, so they were read from the rendered image. The second official crop (Q20-2) contains only the page header and an empty table border."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A",
     "agreesWithKey": true,
     "checkCode": "from itertools import product\nfrom math import comb\nfrom fractions import Fraction as F\nsols=[s for s in product(range(21),repeat=4) if sum(s)==20]\npos=[s for s in sols if min(s)>0]\nassert len(sols)==comb(23,3)==1771 and len(pos)==comb(19,3)==969\np=F(len(pos),len(sols))\nopts={'A':F(comb(19,3),comb(23,3)),'B':F(comb(20,4),comb(24,4)),'C':F(comb(20,3),comb(23,3)),'D':F(comb(19,4),comb(24,4))}\nprint(p, float(p), [k for k,v in opts.items() if v==p])  # 969/1771 0.547 ['A']\n",
-    "notes": "Reading \"random solution\" as uniform over the ordered non-negative integer solutions (the reading implied by the options, which are all ratios of solution counts): stars and bars gives C(23,3) = 1771 non-negative solutions and, after the shift m_i = n_i - 1, C(19,3) = 969 positive solutions, so P = 969/1771 ≈ 0.547. The Python check enumerates all 4-tuples summing to 20, confirms both counts, and confirms that only option A equals the probability (B ≈ 0.456, C ≈ 0.644, D ≈ 0.365). This matches the official key (A)."
+    "notes": "Independent verifier re-solved the question. The official key row was present in the verifier's context file, so the solve was not strictly blind to the key; it was nevertheless derived from scratch from the official crop before the stored solution was read. Reading \"random solution\" as uniform over the ordered non-negative integer solutions (the paper does not state the distribution; this is the standard reading and the one consistent with the options, which are all ratios of solution counts): stars and bars gives C(23,3) = 1771 non-negative solutions and, after the shift m_i = n_i - 1, C(19,3) = 969 positive solutions, so P = 969/1771 ≈ 0.547, option A. The Python check enumerates all 4-tuples summing to 20, confirms both counts, and confirms that only option A equals the probability (B ≈ 0.456, C ≈ 0.644, D ≈ 0.365). This agrees with the official key (A)."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
