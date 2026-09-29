@@ -1,0 +1,848 @@
+[
+  {
+    "id": "M18-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-tuple-calculus"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (evaluating a tuple relational calculus expression that combines an existential and a universal quantifier over the same relation) needing a group-by-manager check of eight rows, with a likely trap (a universal condition that holds vacuously); about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Tuple relational calculus with $\\exists$ and $\\forall$: a universally quantified implication is vacuously true when no tuple satisfies its premise, so an explicit $\\exists$ is needed to exclude such tuples.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A company stores its reporting hierarchy in the relation $\\text{Emp}(\\text{eid}, \\text{ename}, \\text{mgr}, \\text{sal})$, where $\\text{mgr}$ is the $\\text{eid}$ of the employee's direct manager (it is $\\text{null}$ for the top-level employee, and a null value never equals any $\\text{eid}$). Salaries are in thousands of rupees per month.\n\n| eid | ename | mgr | sal |\n|---|---|---|---|\n| 1 | Kavya | null | 70 |\n| 2 | Rohan | 1 | 85 |\n| 3 | Tanvi | 1 | 90 |\n| 4 | Imran | 2 | 60 |\n| 5 | Lata | 2 | 95 |\n| 6 | Vikram | 3 | 92 |\n| 7 | Neha | 3 | 100 |\n| 8 | Owen | 6 | 88 |\n\nConsider the tuple relational calculus expression\n\n$$\\{\\, t.\\text{ename} \\mid \\text{Emp}(t) \\;\\wedge\\; \\exists s\\,\\big(\\text{Emp}(s) \\wedge s.\\text{mgr} = t.\\text{eid}\\big) \\;\\wedge\\; \\forall s\\,\\big( (\\text{Emp}(s) \\wedge s.\\text{mgr} = t.\\text{eid}) \\Rightarrow s.\\text{sal} > t.\\text{sal} \\big) \\,\\}$$\n\nThe result of this expression is",
+    "options": [
+      {
+        "label": "A",
+        "text": "{Kavya, Rohan, Tanvi}"
+      },
+      {
+        "label": "B",
+        "text": "{Kavya, Tanvi}"
+      },
+      {
+        "label": "C",
+        "text": "{Vikram}"
+      },
+      {
+        "label": "D",
+        "text": "{Kavya, Tanvi, Imran, Lata, Neha, Owen}"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Only employees with at least one direct report can satisfy the $\\exists$ part: Kavya (reports Rohan, Tanvi), Rohan (Imran, Lata), Tanvi (Vikram, Neha) and Vikram (Owen).\nThe $\\forall$ part needs every report to earn more than the manager: Kavya $70<85,90$ holds, Rohan $85>60$ fails, Tanvi $90<92,100$ holds, Vikram $92>88$ fails.\nThe result is {Kavya, Tanvi}.",
+      "steps": [
+        {
+          "title": "Read the expression",
+          "body": "A tuple $t$ is selected when (i) $t$ has at least one direct report ($\\exists s$ with $s.\\text{mgr}=t.\\text{eid}$) and (ii) **every** direct report $s$ of $t$ has $s.\\text{sal} > t.\\text{sal}$. The output is the $\\text{ename}$ of each such $t$."
+        },
+        {
+          "title": "List each manager's reports",
+          "body": "| Manager (sal) | Direct reports (sal) |\n|---|---|\n| Kavya (70) | Rohan (85), Tanvi (90) |\n| Rohan (85) | Imran (60), Lata (95) |\n| Tanvi (90) | Vikram (92), Neha (100) |\n| Vikram (92) | Owen (88) |\n\nImran, Lata, Neha and Owen have no reports, so the $\\exists$ condition is false for them."
+        },
+        {
+          "title": "Test the universal condition for each manager",
+          "body": "- Kavya: $85>70$ and $90>70$, so it holds.\n- Rohan: $60>85$ is false, so it fails.\n- Tanvi: $92>90$ and $100>90$, so it holds.\n- Vikram: $88>92$ is false, so it fails."
+        },
+        {
+          "title": "Combine",
+          "body": "The employees satisfying both conditions are Kavya and Tanvi. Imran, Lata, Neha and Owen satisfy the $\\forall$ condition vacuously (they have no reports) but are removed by the $\\exists$ condition. The result is {Kavya, Tanvi}."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is what results from reading the condition as \"**some** report earns more than the manager\" ($\\exists$ instead of $\\forall$). Rohan is wrongly included because of Lata ($95>85$), although Imran ($60$) earns less than Rohan."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Exactly Kavya and Tanvi have at least one report and have every report earning more than them."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This reverses the inequality (every report earns **less** than the manager). Only Vikram ($92>88$) satisfies that; it is not what $s.\\text{sal} > t.\\text{sal}$ asks for."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This drops the $\\exists$ conjunct. Imran, Lata, Neha and Owen have no reports, so the implication is vacuously true for them, but the expression also requires $\\exists s$ with $s.\\text{mgr}=t.\\text{eid}$, which fails."
+        }
+      ],
+      "commonTrap": "Forgetting that $\\forall s\\,(P(s)\\Rightarrow Q(s))$ is true when no tuple satisfies $P$: without the explicit $\\exists$ conjunct, every employee with no reports would be returned as well."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "{Kavya, Tanvi}",
+      "agreesWithKey": true,
+      "checkCode": "emp = {1: ('Kavya', None, 70), 2: ('Rohan', 1, 85), 3: ('Tanvi', 1, 90), 4: ('Imran', 2, 60),\n       5: ('Lata', 2, 95), 6: ('Vikram', 3, 92), 7: ('Neha', 3, 100), 8: ('Owen', 6, 88)}\nrep = lambda t: [s for s in emp if emp[s][1] == t]\nprint(sorted(emp[t][0] for t in emp if rep(t) and all(emp[s][2] > emp[t][2] for s in rep(t))))  # exists+forall -> Kavya, Tanvi\nprint(sorted(emp[t][0] for t in emp if all(emp[s][2] > emp[t][2] for s in rep(t))))            # forall only (option D)\nprint(sorted(emp[t][0] for t in emp if any(emp[s][2] > emp[t][2] for s in rep(t))))            # exists-greater (option A)\nprint(sorted(emp[t][0] for t in emp if rep(t) and all(emp[s][2] < emp[t][2] for s in rep(t))))  # reversed (option C)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-projection-matrix"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (orthogonal projection matrix onto a column space) with four statements: one theory property, one matrix-vector value, one trace and one eigen-direction claim, needing a short calculation of $P$ or $I-P$; about 2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "Orthogonal projection $P = A(A^{\\top}A)^{-1}A^{\\top}$ onto a column space: $P$ is symmetric and idempotent, $\\operatorname{tr}(P)=\\operatorname{rank}(P)$, and $P$ sends the orthogonal complement to $\\mathbf{0}$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$A = \\begin{bmatrix} 1 & 0 \\\\ 1 & 1 \\\\ 0 & 1 \\end{bmatrix},$$\n\nand let $P = A\\,(A^{\\top}A)^{-1}A^{\\top}$ be the matrix of the orthogonal projection of $\\mathbb{R}^3$ onto the column space of $A$. Let $\\mathbf{x} = (3,\\ 1,\\ 2)^{\\top}$ and $\\mathbf{n} = (1,\\ -1,\\ 1)^{\\top}$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$P^{\\top} = P$ and $P^{2} = P$."
+      },
+      {
+        "label": "B",
+        "text": "$P\\mathbf{x} = \\left(\\tfrac{5}{3},\\ \\tfrac{7}{3},\\ \\tfrac{2}{3}\\right)^{\\top}$."
+      },
+      {
+        "label": "C",
+        "text": "$\\operatorname{tr}(P) = 3$."
+      },
+      {
+        "label": "D",
+        "text": "$P\\mathbf{n} = \\mathbf{n}$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "$A^{\\top}A=\\begin{bmatrix}2&1\\\\1&2\\end{bmatrix}$ gives $P=\\dfrac13\\begin{bmatrix}2&1&-1\\\\1&2&1\\\\-1&1&2\\end{bmatrix}$, which is symmetric with $P^2=P$, $\\operatorname{tr}(P)=2$ and $P\\mathbf{x}=\\frac13(5,7,2)^{\\top}$.\nThe vector $\\mathbf{n}$ is orthogonal to both columns of $A$, so $P\\mathbf{n}=\\mathbf{0}$.\nHence A and B are correct; C and D are not.",
+      "steps": [
+        {
+          "title": "Compute $P$",
+          "body": "$A^{\\top}A=\\begin{bmatrix}1&1&0\\\\0&1&1\\end{bmatrix}\\begin{bmatrix}1&0\\\\1&1\\\\0&1\\end{bmatrix}=\\begin{bmatrix}2&1\\\\1&2\\end{bmatrix}$, with inverse $\\dfrac13\\begin{bmatrix}2&-1\\\\-1&2\\end{bmatrix}$. Then\n\n$$A(A^{\\top}A)^{-1}=\\frac13\\begin{bmatrix}2&-1\\\\1&1\\\\-1&2\\end{bmatrix},\\qquad P=A(A^{\\top}A)^{-1}A^{\\top}=\\frac13\\begin{bmatrix}2&1&-1\\\\1&2&1\\\\-1&1&2\\end{bmatrix}.$$"
+        },
+        {
+          "title": "Statements A and B",
+          "body": "- A: $P$ is visibly symmetric. Squaring gives, for example, $(P^2)_{11}=\\frac19(4+1+1)=\\frac23=P_{11}$ and $(P^2)_{12}=\\frac19(2+2-1)=\\frac13=P_{12}$; in general $P^2=A(A^{\\top}A)^{-1}(A^{\\top}A)(A^{\\top}A)^{-1}A^{\\top}=P$. True.\n- B: $P\\mathbf{x}=\\frac13(2\\cdot3+1-2,\\ 3+2+2,\\ -3+1+4)^{\\top}=\\frac13(5,7,2)^{\\top}$. True."
+        },
+        {
+          "title": "Statements C and D",
+          "body": "- C: $\\operatorname{tr}(P)=\\frac13(2+2+2)=2$, which equals the rank of $P$ (the dimension of the column space). It is not $3$, the trace of the identity. False.\n- D: $\\mathbf{n}\\cdot(1,1,0)^{\\top}=1-1=0$ and $\\mathbf{n}\\cdot(0,1,1)^{\\top}=-1+1=0$, so $\\mathbf{n}$ is orthogonal to the column space and $P\\mathbf{n}=\\mathbf{0}\\ne\\mathbf{n}$. Check: $P\\mathbf{n}=\\frac13(2-1-1,\\ 1-2+1,\\ -1-1+2)^{\\top}=\\mathbf{0}$. False."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Any orthogonal projection matrix built as $A(A^{\\top}A)^{-1}A^{\\top}$ is symmetric and idempotent; here $P=\\frac13\\begin{bmatrix}2&1&-1\\\\1&2&1\\\\-1&1&2\\end{bmatrix}$ confirms both."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$P\\mathbf{x}=\\frac13(6+1-2,\\ 3+2+2,\\ -3+1+4)^{\\top}=\\left(\\frac53,\\frac73,\\frac23\\right)^{\\top}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\operatorname{tr}(P)=\\operatorname{rank}(P)=2$ because the column space of $A$ is a plane; $3$ would be the trace of $I_3$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\mathbf{n}$ is orthogonal to both columns of $A$, so it lies in the null space of $P$: $P\\mathbf{n}=\\mathbf{0}$. Only vectors in the column space are fixed by $P$."
+        }
+      ],
+      "shortcut": "The column space of $A$ is the plane orthogonal to $\\mathbf{n}=(1,-1,1)^{\\top}$, so $P=I-\\dfrac{\\mathbf{n}\\mathbf{n}^{\\top}}{\\mathbf{n}^{\\top}\\mathbf{n}}=I-\\tfrac13\\mathbf{n}\\mathbf{n}^{\\top}$; then $P\\mathbf{x}=\\mathbf{x}-\\dfrac{\\mathbf{n}\\cdot\\mathbf{x}}{3}\\mathbf{n}=(3,1,2)^{\\top}-\\tfrac43(1,-1,1)^{\\top}$, and $\\operatorname{tr}(P)=3-1=2$.",
+      "commonTrap": "Confusing the projection with the identity: taking the trace of a $3\\times3$ projection to be $3$, or assuming that $P$ fixes every vector, including the normal vector $\\mathbf{n}$ that it actually sends to $\\mathbf{0}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[1, 0], [1, 1], [0, 1]], float)\nP = A @ np.linalg.inv(A.T @ A) @ A.T\nx, n = np.array([3, 1, 2.]), np.array([1, -1, 1.])\nprint(np.round(3 * P, 6).tolist())\nprint('A', np.allclose(P, P.T) and np.allclose(P @ P, P))\nprint('B', np.allclose(P @ x, [5 / 3, 7 / 3, 2 / 3]))\nprint('C', np.isclose(np.trace(P), 3))\nprint('D', np.allclose(P @ n, n))   # A True B True C False D False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-gaussian-elimination"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (forward elimination followed by back substitution on a $3\\times3$ system) with integer multipliers and no row interchanges; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Gaussian elimination on a $3\\times3$ linear system: eliminate below each pivot with integer multipliers, then solve the triangular system by back substitution.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A stationery stall issues three bills for combinations of pens, notebooks and highlighters. All pens cost the same, all notebooks cost the same and all highlighters cost the same (prices in whole rupees).\n\n| Bill | Pens | Notebooks | Highlighters | Total (₹) |\n|---|---|---|---|---|\n| 1 | 1 | 2 | 1 | 85 |\n| 2 | 2 | 1 | 2 | 116 |\n| 3 | 3 | 3 | 1 | 131 |\n\nLet $p$, $n$ and $h$ be the prices (in ₹) of one pen, one notebook and one highlighter. Solving the resulting system of linear equations by Gaussian elimination (forward elimination followed by back substitution), the price of one pen, $p$, is ________ rupees.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 14,
+      "max": 14
+    },
+    "solution": {
+      "quick": "The system is $p+2n+h=85$, $2p+n+2h=116$, $3p+3n+h=131$.\nEliminating $p$ with $R_2-2R_1$ and $R_3-3R_1$ gives $-3n=-54$ and $-3n-2h=-124$, so $n=18$ and then $h=35$.\nBack-substituting, $p=85-36-35=14$.",
+      "steps": [
+        {
+          "title": "Write the augmented matrix",
+          "body": "$$\\left[\\begin{array}{ccc|c}1&2&1&85\\\\2&1&2&116\\\\3&3&1&131\\end{array}\\right]$$"
+        },
+        {
+          "title": "Forward elimination",
+          "body": "The first pivot is $1$. Use $R_2\\leftarrow R_2-2R_1$ and $R_3\\leftarrow R_3-3R_1$:\n\n$$\\left[\\begin{array}{ccc|c}1&2&1&85\\\\0&-3&0&-54\\\\0&-3&-2&-124\\end{array}\\right]$$\n\nThe second pivot is $-3$. Use $R_3\\leftarrow R_3-R_2$:\n\n$$\\left[\\begin{array}{ccc|c}1&2&1&85\\\\0&-3&0&-54\\\\0&0&-2&-70\\end{array}\\right]$$"
+        },
+        {
+          "title": "Back substitution",
+          "body": "- Row 3: $-2h=-70$, so $h=35$.\n- Row 2: $-3n=-54$, so $n=18$.\n- Row 1: $p=85-2(18)-35=85-36-35=14$."
+        },
+        {
+          "title": "Check",
+          "body": "Bill 3: $3(14)+3(18)+35=42+54+35=131$, which matches, so the price of one pen is $14$."
+        }
+      ],
+      "finalAnswer": "**14**",
+      "commonTrap": "Slipping on a sign or a multiplier during elimination, for instance subtracting $2R_1$ from $R_3$ instead of $3R_1$, or stopping after finding $n$ and forgetting to back-substitute for $p$ (the question asks for the pen, the first unknown, not the last)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "14",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[1, 2, 1], [2, 1, 2], [3, 3, 1]], float)\nb = np.array([85, 116, 131], float)\nM = np.hstack([A, b[:, None]])\nfor i in range(3):                       # forward elimination, no row swaps\n    for r in range(i + 1, 3):\n        M[r] -= M[r, i] / M[i, i] * M[i]\nsol = np.zeros(3)\nfor i in (2, 1, 0):                      # back substitution\n    sol[i] = (M[i, 3] - M[i, i + 1:3] @ sol[i + 1:3]) / M[i, i]\nprint(sol, np.linalg.solve(A, b))         # [14. 18. 35.]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked ideas (composing $\\ln(1+u)$ with the sine series, then extracting an $x^6$ coefficient and converting it to a derivative) needing a lengthy expansion of several powers of a series, with likely traps (dropping the $x^5$ term of $\\sin x$, or replacing $\\sin x$ by $x$); about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Maclaurin coefficients of a composite function: $f^{(n)}(0)=n!\\,a_n$, where $a_n$ is found by substituting the series of $\\sin x$ into $\\ln(1+u)$ and collecting the $x^n$ terms.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x) = \\ln(1 + \\sin x)$ for $-\\dfrac{\\pi}{2} < x < \\dfrac{\\pi}{2}$, and let $f^{(6)}$ denote its sixth derivative.\n\nThe value of $f^{(6)}(0)$ is ________ (an integer).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": -16,
+      "max": -16
+    },
+    "solution": {
+      "quick": "Put $s=\\sin x=x-\\frac{x^3}{6}+\\frac{x^5}{120}-\\dots$ in $\\ln(1+s)=s-\\frac{s^2}{2}+\\frac{s^3}{3}-\\frac{s^4}{4}+\\frac{s^5}{5}-\\frac{s^6}{6}+\\dots$ and collect $x^6$.\nThe contributions are $0,\\ -\\frac1{45},\\ 0,\\ +\\frac16,\\ 0,\\ -\\frac16$, so $a_6=-\\frac1{45}$.\nHence $f^{(6)}(0)=6!\\,a_6=720\\cdot\\left(-\\frac1{45}\\right)=-16$.",
+      "steps": [
+        {
+          "title": "Set up",
+          "body": "$f^{(6)}(0)=6!\\,a_6$, where $a_6$ is the coefficient of $x^6$ in the Maclaurin series of $f$. Write $s=\\sin x$ and use $\\ln(1+s)=s-\\dfrac{s^2}{2}+\\dfrac{s^3}{3}-\\dfrac{s^4}{4}+\\dfrac{s^5}{5}-\\dfrac{s^6}{6}+\\cdots$ (valid because $s\\to0$)."
+        },
+        {
+          "title": "Powers of $s$ up to $x^6$",
+          "body": "With $s=x-\\dfrac{x^3}{6}+\\dfrac{x^5}{120}-\\cdots$:\n\n- $s^2=x^2-\\dfrac{x^4}{3}+\\left(\\dfrac1{36}+\\dfrac{2}{120}\\right)x^6=x^2-\\dfrac{x^4}{3}+\\dfrac{2}{45}x^6+\\cdots$\n- $s^3=x^3-\\dfrac{x^5}{2}+\\cdots$ (no $x^6$ term, since $s^3$ is odd)\n- $s^4=x^4-\\dfrac{2}{3}x^6+\\cdots$\n- $s^5=x^5+\\cdots$ (no $x^6$ term), $\\quad s^6=x^6+\\cdots$\n- $s$ itself has no $x^6$ term."
+        },
+        {
+          "title": "Collect the coefficient of $x^6$",
+          "body": "$$a_6=0-\\frac12\\cdot\\frac{2}{45}+0-\\frac14\\left(-\\frac23\\right)+0-\\frac16(1)=-\\frac1{45}+\\frac16-\\frac16=-\\frac1{45}.$$"
+        },
+        {
+          "title": "Convert to the derivative",
+          "body": "$$f^{(6)}(0)=6!\\,a_6=720\\times\\left(-\\frac{1}{45}\\right)=-16.$$"
+        }
+      ],
+      "finalAnswer": "**-16**",
+      "shortcut": "Since $f'(x)=\\dfrac{\\cos x}{1+\\sin x}=\\dfrac{1-\\sin x}{\\cos x}=\\sec x-\\tan x$ and $\\sec x$ is even (all its odd-order derivatives vanish at $0$), $f^{(6)}(0)=(f')^{(5)}(0)=-\\tan^{(5)}(0)$. From $\\tan x=x+\\tfrac{x^3}{3}+\\tfrac{2x^5}{15}+\\cdots$, $\\tan^{(5)}(0)=120\\cdot\\tfrac{2}{15}=16$, so $f^{(6)}(0)=-16$.",
+      "commonTrap": "Replacing $\\sin x$ by $x$ (which gives $\\ln(1+x)$ and $f^{(6)}(0)=-5!=-120$), or dropping the $\\frac{x^5}{120}$ term of $\\sin x$ (which changes the $x^6$ coefficient of $s^2$ from $\\frac{2}{45}$ to $\\frac1{36}$), or forgetting that $s^4$ and $s^6$ also contribute to $x^6$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-16",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.log(1 + sp.sin(x))\nprint(sp.diff(f, x, 6).subs(x, 0))                          # -16\nprint(sp.series(f, x, 0, 8).removeO().coeff(x, 6) * sp.factorial(6))   # -16",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-hash-tables"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (separate chaining with head insertion) needing eight modulo computations and one list ordering; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Separate chaining: a key goes to slot $h(k)$, and inserting at the head of the list reverses the arrival order of the keys that collide in a slot.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hash table has $m = 7$ slots, numbered $0$ to $6$, and resolves collisions by **separate chaining**. The hash function is $h(k) = k \\bmod 7$, and every new key is inserted at the **head** of the linked list of its slot.\n\nStarting from an empty table, the keys\n\n$$25,\\; 10,\\; 20,\\; 11,\\; 24,\\; 60,\\; 39,\\; 52$$\n\nare inserted in this order. The linked list stored in slot $4$, from its head to its tail, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$25 \\to 11 \\to 60 \\to 39$"
+      },
+      {
+        "label": "B",
+        "text": "$52 \\to 24 \\to 10$"
+      },
+      {
+        "label": "C",
+        "text": "$39 \\to 60 \\to 24 \\to 11 \\to 25$"
+      },
+      {
+        "label": "D",
+        "text": "$39 \\to 60 \\to 11 \\to 25$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The residues mod $7$ of $25,10,20,11,24,60,39,52$ are $4,3,6,4,3,4,4,3$.\nThe keys going to slot $4$ arrive in the order $25,11,60,39$.\nInsertion at the head reverses this order, so the list is $39\\to60\\to11\\to25$.",
+      "steps": [
+        {
+          "title": "Compute the hash values",
+          "body": "| key | 25 | 10 | 20 | 11 | 24 | 60 | 39 | 52 |\n|---|---|---|---|---|---|---|---|---|\n| $k \\bmod 7$ | 4 | 3 | 6 | 4 | 3 | 4 | 4 | 3 |"
+        },
+        {
+          "title": "Keys arriving in slot 4",
+          "body": "In insertion order the keys that hash to slot $4$ are $25,\\ 11,\\ 60,\\ 39$."
+        },
+        {
+          "title": "Apply head insertion",
+          "body": "- After $25$: $25$\n- After $11$: $11\\to25$\n- After $60$: $60\\to11\\to25$\n- After $39$: $39\\to60\\to11\\to25$"
+        },
+        {
+          "title": "Result",
+          "body": "The chain in slot $4$ read from head to tail is $39\\to60\\to11\\to25$. (Slot $3$ holds $52\\to24\\to10$ and slot $6$ holds $20$.)"
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the arrival order $25,11,60,39$, which is what appending at the **tail** would give. The question inserts at the head, so the order is reversed."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the chain of slot $3$ ($10,24,52$ inserted at the head), reached by counting slots from $1$ instead of from $0$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The key $24$ does not belong here: $24 \\bmod 7 = 3$ (since $24=21+3$), so it is stored in slot $3$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Keys $25,11,60,39$ all satisfy $k\\bmod7=4$, and head insertion produces $39\\to60\\to11\\to25$."
+        }
+      ],
+      "commonTrap": "Reading the list in arrival order (as with insertion at the tail), or slipping on a residue such as $24 \\bmod 7$ so that a key lands in the wrong slot."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "39 -> 60 -> 11 -> 25",
+      "agreesWithKey": true,
+      "checkCode": "m = 7\nT = [[] for _ in range(m)]\nfor k in (25, 10, 20, 11, 24, 60, 39, 52):\n    T[k % m].insert(0, k)             # head insertion\nprint(T[4], T[3])                     # [39, 60, 11, 25] [52, 24, 10]\nU = [[] for _ in range(m)]\nfor k in (25, 10, 20, 11, 24, 60, 39, 52):\n    U[k % m].append(k)                # tail insertion\nprint(U[4])                           # [25, 11, 60, 39]  (option A)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-conditional-pdf"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a conditional density obtained from a joint density) needing the marginal density, the conditional density at a given value and one integration, with likely traps (skipping the normalisation by the marginal); about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Conditional PDF: $f_{X\\mid Y}(x\\mid y)=f_{X,Y}(x,y)/f_Y(y)$, and $P(X\\le a\\mid Y=y)$ is the integral of this conditional density.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The joint probability density function of two continuous random variables $X$ and $Y$, the normalised load and the normalised delay of a service, is\n\n$$f_{X,Y}(x, y) = \\begin{cases} \\dfrac{3}{2}\\,\\big(x^{2} + y^{2}\\big), & 0 < x < 1,\\ 0 < y < 1, \\\\[2mm] 0, & \\text{otherwise.} \\end{cases}$$\n\nThe conditional probability $P\\!\\left(X \\le \\dfrac{1}{2} \\;\\middle|\\; Y = \\dfrac{1}{2}\\right)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{1}{6}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{1}{4}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{2}{7}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{5}{16}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$f_Y(y)=\\int_0^1\\tfrac32(x^2+y^2)\\,dx=\\tfrac12+\\tfrac32y^2$, so $f_Y(\\tfrac12)=\\tfrac78$.\nThen $f_{X\\mid Y}(x\\mid\\tfrac12)=\\dfrac{\\frac32(x^2+\\frac14)}{7/8}=\\dfrac{12}{7}\\left(x^2+\\dfrac14\\right)$ for $0<x<1$.\n$P(X\\le\\tfrac12\\mid Y=\\tfrac12)=\\dfrac{12}{7}\\left(\\dfrac1{24}+\\dfrac18\\right)=\\dfrac{12}{7}\\cdot\\dfrac16=\\dfrac27$.",
+      "steps": [
+        {
+          "title": "Marginal density of $Y$",
+          "body": "$$f_Y(y)=\\int_0^1\\frac32\\,(x^2+y^2)\\,dx=\\frac32\\left(\\frac13+y^2\\right)=\\frac12+\\frac32y^2,\\qquad f_Y\\!\\left(\\tfrac12\\right)=\\frac12+\\frac38=\\frac78.$$"
+        },
+        {
+          "title": "Conditional density at $y=\tfrac12$",
+          "body": "$$f_{X\\mid Y}\\!\\left(x\\mid\\tfrac12\\right)=\\frac{f_{X,Y}(x,\\tfrac12)}{f_Y(\\tfrac12)}=\\frac{\\tfrac32\\left(x^2+\\tfrac14\\right)}{7/8}=\\frac{12}{7}\\left(x^2+\\frac14\\right),\\quad 0<x<1.$$\n\nCheck: $\\displaystyle\\int_0^1\\frac{12}{7}\\left(x^2+\\frac14\\right)dx=\\frac{12}{7}\\cdot\\frac{7}{12}=1$."
+        },
+        {
+          "title": "Integrate up to $x=\\tfrac12$",
+          "body": "$$P\\!\\left(X\\le\\tfrac12\\mid Y=\\tfrac12\\right)=\\frac{12}{7}\\int_0^{1/2}\\left(x^2+\\frac14\\right)dx=\\frac{12}{7}\\left(\\frac{1}{24}+\\frac{1}{8}\\right)=\\frac{12}{7}\\cdot\\frac16=\\frac27.$$"
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\int_0^{1/2}\\left(x^2+\\frac14\\right)dx=\\frac16$ omits both the factor $\\frac32$ and the division by the marginal $f_Y(\\tfrac12)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\int_0^{1/2}f_{X,Y}(x,\\tfrac12)\\,dx=\\frac14$ uses the joint density without dividing by $f_Y(\\tfrac12)=\\frac78$, so it is not a conditional probability."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Dividing the joint density at $y=\\frac12$ by $f_Y(\\frac12)=\\frac78$ and integrating over $0<x\\le\\frac12$ gives $\\frac27$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\frac{5}{16}=P(X\\le\\frac12)$ is the unconditional (marginal) probability. $X$ and $Y$ are not independent, since $f_{X,Y}$ does not factorise, so conditioning on $Y=\\frac12$ changes the answer."
+        }
+      ],
+      "shortcut": "The constant $\\tfrac32$ cancels in the ratio: $P=\\dfrac{\\int_0^{1/2}(x^2+\\frac14)\\,dx}{\\int_0^{1}(x^2+\\frac14)\\,dx}=\\dfrac{1/6}{7/12}=\\dfrac27$.",
+      "commonTrap": "Integrating the joint density along $y=\\tfrac12$ without dividing by the marginal density $f_Y(\\tfrac12)$, or using the marginal probability $P(X\\le\\tfrac12)$ as if $X$ and $Y$ were independent."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2/7",
+      "agreesWithKey": true,
+      "checkCode": "from sympy import symbols, Rational as R, integrate, simplify\nx, y = symbols('x y')\nf = R(3, 2) * (x**2 + y**2)\nfy = integrate(f, (x, 0, 1))\ncond = f.subs(y, R(1, 2)) / fy.subs(y, R(1, 2))\nprint(simplify(integrate(cond, (x, 0, R(1, 2)))))             # 2/7\nprint(integrate(f.subs(y, R(1, 2)), (x, 0, R(1, 2))))         # 1/4  (option B, unnormalised)\nprint(integrate(f, (x, 0, R(1, 2)), (y, 0, 1)))               # 5/16 (option D, marginal P(X<=1/2))\nprint(integrate(f.subs(y, R(1, 2)) / R(3, 2), (x, 0, R(1, 2))))  # 1/6 (option A)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-adversarial"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (alpha–beta pruning on a four-level game tree with sixteen leaves) needing a careful left-to-right trace with inherited $\\alpha$ and $\\beta$ bounds, and a likely trap (missing the deep cut-offs that depend on a bound from the root); about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "Alpha–beta pruning: bounds $\\alpha$ and $\\beta$ are inherited by all descendants, so a node can be cut off by a bound set several levels above it.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A two-player zero-sum game tree has four levels. The root $R$ is a **MAX** node, its children are **MIN** nodes, their children are **MAX** nodes, and the grandchildren of those are **MIN** nodes $P_1,\\dots,P_8$, each with two leaf children.\n\n| Node | Type | Children (left to right) |\n|---|---|---|\n| $R$ | MAX | $A,\\ B$ |\n| $A$ | MIN | $C,\\ D$ |\n| $B$ | MIN | $E,\\ F$ |\n| $C,\\ D,\\ E,\\ F$ | MAX | $P_1, P_2$; $P_3, P_4$; $P_5, P_6$; $P_7, P_8$ respectively |\n| $P_1, \\dots, P_8$ | MIN | two leaves each |\n\nThe leaves are numbered $L_1,\\dots,L_{16}$ from left to right, so $P_i$ has leaves $L_{2i-1}$ and $L_{2i}$. Their utilities (for MAX) are:\n\n| MIN node | $P_1$ | $P_2$ | $P_3$ | $P_4$ | $P_5$ | $P_6$ | $P_7$ | $P_8$ |\n|---|---|---|---|---|---|---|---|---|\n| Leaf utilities (left, right) | 21, 16 | 12, 24 | 22, 29 | 3, 39 | 36, 33 | 26, 34 | 13, 4 | 11, 6 |\n\nAlpha\\u2013beta pruning starts at $R$ with $\\alpha=-\\infty$ and $\\beta=+\\infty$, examines the children of every node from left to right, and stops examining the remaining children of a node as soon as $\\alpha \\ge \\beta$. Each node passes its current $\\alpha$ and $\\beta$ to the child it examines next.\n\nThe set of leaves that are **never examined** is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{L_4,\\ L_7,\\ L_8,\\ L_{12},\\ L_{14},\\ L_{16}\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\{L_4,\\ L_7,\\ L_8,\\ L_{12}\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\{L_{10},\\ L_{13},\\ L_{14},\\ L_{15},\\ L_{16}\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\{L_1,\\ L_2,\\ L_3,\\ L_5,\\ L_6,\\ L_9,\\ L_{10},\\ L_{11},\\ L_{13},\\ L_{15}\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Trace left to right: $P_1=16$, so $C$ has $\\alpha=16$; $P_2$ is cut after $L_3=12\\le16$ (prunes $L_4$); $C=16$ gives $A$ the bound $\\beta=16$; $D$ gets $\\alpha=22\\ge16$ after $P_3$, pruning $P_4$ ($L_7,L_8$).\n$R$ now has $\\alpha=16$. In $B$: $P_6$ is cut after $L_{11}=26\\le33$ (prunes $L_{12}$); in $F$ the bound $\\alpha=16$ cuts $P_7$ after $L_{13}=13$ ($L_{14}$) and $P_8$ after $L_{15}=11$ ($L_{16}$).\nPruned: $\\{L_4,L_7,L_8,L_{12},L_{14},L_{16}\\}$.",
+      "steps": [
+        {
+          "title": "Left subtree $A$ (with $\\alpha=-\\infty,\\ \\beta=+\\infty$ at the start)",
+          "body": "- $C$ (MAX): $P_1$ (MIN) examines $21,16$ and returns $16$ (no cut is possible yet), so $C$ has $\\alpha=16$.\n- $P_2$ (MIN, $\\alpha=16$): $L_3=12$ gives $\\beta=12\\le\\alpha$, so $L_4$ is **pruned**. $P_2\\le12$, and $C=16$.\n- $A$ (MIN) now has $\\beta=16$. $D$ (MAX, $\\alpha=-\\infty,\\ \\beta=16$): $P_3$ examines $22,29$ and returns $22$, so $\\alpha=22\\ge\\beta=16$ and $P_4$ (leaves $L_7,L_8$) is **pruned**. $D$ returns $22$.\n- $A=\\min(16,22)=16$."
+        },
+        {
+          "title": "Right subtree $B$ (with $\\alpha=16$ inherited from $R$)",
+          "body": "- $E$ (MAX, $\\alpha=16,\\ \\beta=+\\infty$): $P_5$ examines $36,33$ and returns $33$ (its $\\beta$ stays above $16$, so no cut), so $\\alpha=33$.\n- $P_6$ (MIN, $\\alpha=33$): $L_{11}=26\\le33$, so $L_{12}$ is **pruned**. $E=33$, and $B$ has $\\beta=33$.\n- $F$ (MAX, $\\alpha=16,\\ \\beta=33$): $P_7$ (MIN, $\\alpha=16$): $L_{13}=13\\le16$, so $L_{14}$ is **pruned**. This cut uses $\\alpha=16$ set at the root, three levels above $P_7$.\n- $P_8$ (MIN, $\\alpha=16$): $L_{15}=11\\le16$, so $L_{16}$ is **pruned**. $F=\\max(13,11)=13$, $B=\\min(33,13)=13$."
+        },
+        {
+          "title": "Result",
+          "body": "$R=\\max(16,13)=16$. The leaves never examined are $L_4,\\ L_7,\\ L_8,\\ L_{12},\\ L_{14},\\ L_{16}$, and the ten examined leaves are $L_1,L_2,L_3,L_5,L_6,L_9,L_{10},L_{11},L_{13},L_{15}$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The cut-offs are at $P_2$ ($L_4$), at $D$ ($P_4$: $L_7,L_8$), at $P_6$ ($L_{12}$), and the two deep cut-offs at $P_7$ ($L_{14}$) and $P_8$ ($L_{16}$) caused by $\\alpha=16$ from the root."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This set keeps only the cut-offs that compare with the immediate parent's value. It misses $L_{14}$ and $L_{16}$, which are pruned because $\\alpha=16$ is inherited from $R$ through $B$ and $F$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is the pruning pattern obtained when the levels are swapped (root treated as MIN, its children as MAX). The tree in the question has a MAX root."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the set of leaves that **are** examined (the complement of the pruned set), not the set that is never examined."
+        }
+      ],
+      "commonTrap": "Applying cut-offs only against the immediate parent's value and missing the deep cut-offs at $P_7$ and $P_8$, which need the bound $\\alpha=16$ that was set at the root and passed down through $B$ and $F$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "{L4, L7, L8, L12, L14, L16}",
+      "agreesWithKey": true,
+      "checkCode": "INF = float('inf')\nvals = [21, 16, 12, 24, 22, 29, 3, 39, 36, 33, 26, 34, 13, 4, 11, 6]\nseen = []\ndef ab(lo, hi, is_max, a, b):          # node covers leaves vals[lo:hi]; levels alternate MAX, MIN, ...\n    if hi - lo == 1:\n        seen.append(lo + 1); return vals[lo]\n    mid, v = (lo + hi) // 2, (-INF if is_max else INF)\n    for l, h in ((lo, mid), (mid, hi)):\n        r = ab(l, h, not is_max, a, b)\n        if is_max: v = max(v, r); a = max(a, v)\n        else: v = min(v, r); b = min(b, v)\n        if a >= b: break\n    return v\nprint(ab(0, 16, True, -INF, INF), ['L%d' % i for i in range(1, 17) if i not in seen])   # 16 [L4, L7, L8, L12, L14, L16]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (identifying the highest normal form) needing the candidate keys and prime attributes from four functional dependencies, and a likely trap (spotting the BCNF-only violation and overlooking the transitive dependency); about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Highest normal form: find all candidate keys and prime attributes, then check partial dependencies (2NF), non-superkey determinants with non-prime targets (3NF) and non-superkey determinants (BCNF).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A university keeps tutorial records in the relation\n\n`Tutorial(student, course, tutor, room, building)`\n\nEvery attribute is atomic. The following functional dependencies hold, and every other non-trivial functional dependency that holds on `Tutorial` is implied by them.\n\n- `student, course` → `tutor`\n- `tutor` → `course`\n- `student, tutor` → `room`\n- `room` → `building`\n\nWhich one of the following statements about `Tutorial` is TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "It is in BCNF, because each of its two candidate keys determines every attribute of the relation."
+      },
+      {
+        "label": "B",
+        "text": "It is in 3NF but not in BCNF, because `tutor` → `course` violates BCNF while every other dependency satisfies 3NF."
+      },
+      {
+        "label": "C",
+        "text": "It is in 1NF but not in 2NF, because a non-prime attribute depends on a proper subset of a candidate key."
+      },
+      {
+        "label": "D",
+        "text": "It is in 2NF but not in 3NF, because `room` → `building` has a determinant that is not a superkey and a right-hand side that is not prime."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The candidate keys are $\\{student, course\\}$ and $\\{student, tutor\\}$, so the prime attributes are student, course and tutor.\nNo non-prime attribute (room, building) depends on a proper subset of a key, so the relation is in 2NF.\n`room` → `building` has a non-superkey determinant and a non-prime right side, which violates 3NF; hence the relation is in 2NF but not 3NF.",
+      "steps": [
+        {
+          "title": "Candidate keys and prime attributes",
+          "body": "`student` never appears on a right-hand side, so it is in every key. $\\{student, course\\}^+$ contains `tutor` (first FD), then `room` (third FD, using student and tutor) and `building`, i.e. all attributes, so it is a key. Because `tutor` → `course`, $\\{student, tutor\\}^+$ also contains course, hence everything, so it is a key too. No smaller set works ($student^+=\\{student\\}$). The candidate keys are $\\{student, course\\}$ and $\\{student, tutor\\}$; the prime attributes are student, course, tutor; the non-prime attributes are room and building."
+        },
+        {
+          "title": "2NF test",
+          "body": "A partial dependency needs a non-prime attribute that is determined by a proper subset of a candidate key. The closures are $student^+=\\{student\\}$, $course^+=\\{course\\}$ and $tutor^+=\\{tutor, course\\}$; none contains room or building. So there is no partial dependency and the relation is in 2NF."
+        },
+        {
+          "title": "3NF and BCNF tests, FD by FD",
+          "body": "| FD | Determinant a superkey? | RHS prime? | 3NF | BCNF |\n|---|---|---|---|---|\n| `student, course` → `tutor` | yes | | ok | ok |\n| `tutor` → `course` | no | yes | ok | **violated** |\n| `student, tutor` → `room` | yes | | ok | ok |\n| `room` → `building` | no | no | **violated** | **violated** |"
+        },
+        {
+          "title": "Conclusion",
+          "body": "`room` → `building` violates 3NF, so the relation is not in 3NF (and therefore not in BCNF). It satisfies 1NF and 2NF, so its highest normal form is 2NF."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Every key determines every attribute, but BCNF requires the left side of **every** non-trivial FD to be a superkey. `tutor` and `room` are not superkeys, so both `tutor` → `course` and `room` → `building` violate BCNF."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "`tutor` → `course` does violate BCNF while satisfying 3NF (course is prime), but `room` → `building` violates 3NF as well: `room` is not a superkey and `building` is not prime. So the relation is not in 3NF."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "There is no partial dependency: the non-prime attributes room and building are not determined by student, course or tutor alone. The relation satisfies 2NF."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "`room` → `building` violates 3NF (non-superkey determinant, non-prime right side), while no non-prime attribute depends on part of a key, so the highest normal form is 2NF."
+        }
+      ],
+      "commonTrap": "Recognising the pattern `tutor` → `course` (a BCNF violation whose right side is prime) and concluding \"3NF but not BCNF\", without checking the remaining dependency `room` → `building`, which breaks 3NF."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (2NF but not 3NF)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nA = ['student', 'course', 'tutor', 'room', 'building']\nF = [({'student', 'course'}, {'tutor'}), ({'tutor'}, {'course'}), ({'student', 'tutor'}, {'room'}), ({'room'}, {'building'})]\ndef cl(X):\n    X = set(X)\n    while True:\n        n = set(X)\n        for l, r in F:\n            if l <= X: n |= r\n        if n == X: return X\n        X = n\nsup = lambda X: cl(X) == set(A)\nkeys = []\nfor k in range(1, 6):\n    for c in combinations(A, k):\n        if sup(c) and not any(K <= set(c) for K in keys): keys.append(set(c))\nprime = set().union(*keys)\nnonprime = set(A) - prime\npartial = any(cl(s) & nonprime for K in keys for j in range(1, len(K)) for s in combinations(sorted(K), j))\nthird = all(r <= l or sup(l) or (r - l) <= prime for l, r in F)\nbcnf = all(r <= l or sup(l) for l, r in F)\nprint(keys, sorted(prime), 'partial dep', partial, '3NF', third, 'BCNF', bcnf)   # no partial dep (2NF ok), 3NF False, BCNF False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-binary-search"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked ideas (a binary search over the answer range whose comparison is a greedy feasibility test) needing six mid-value evaluations, each a pass over eight jobs, and counting the rounds, with likely traps (dropping the new job when a worker is added, and off-by-one rounds); about 4.5 minutes.",
+    "estimatedTimeSec": 280,
+    "concept": "Binary search over a numeric answer range with a monotone feasibility test: each round halves $[lo, hi]$, the test is a greedy pass, and the loop ends when $lo=hi$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Eight jobs with the durations below (in minutes) must be processed in the given order. Each worker takes a contiguous block of jobs, and the function `fits` tells whether a limit `cap` on the total duration of every block allows the jobs to be split among at most `workers` workers.\n\n```python\ndef fits(jobs, cap, workers):\n    used, load = 1, 0\n    for j in jobs:\n        if load + j > cap:\n            used += 1\n            load = j\n        else:\n            load += j\n    return used <= workers\n\njobs = [10, 10, 12, 9, 7, 4, 12, 5]\nlo, hi = max(jobs), sum(jobs)\nrounds = 0\nwhile lo < hi:\n    mid = (lo + hi) // 2\n    rounds += 1\n    if fits(jobs, mid, 3):\n        hi = mid\n    else:\n        lo = mid + 1\nprint(lo, rounds)\n```\n\nThe output of the program is",
+    "options": [
+      {
+        "label": "A",
+        "text": "`28 5`"
+      },
+      {
+        "label": "B",
+        "text": "`28 6`"
+      },
+      {
+        "label": "C",
+        "text": "`37 6`"
+      },
+      {
+        "label": "D",
+        "text": "`20 6`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Initially $lo=12$ and $hi=69$. The successive $(mid,\\ \\text{fits})$ pairs are $(40,\\text{T}),(26,\\text{F}),(33,\\text{T}),(30,\\text{T}),(28,\\text{T}),(27,\\text{F})$.\nThe range shrinks $[12,69]\\to[12,40]\\to[27,40]\\to[27,33]\\to[27,30]\\to[27,28]\\to[28,28]$, so the loop runs $6$ times and ends with $lo=28$.\nThe program prints `28 6`.",
+      "steps": [
+        {
+          "title": "Initial range",
+          "body": "$lo=\\max(jobs)=12$ and $hi=\\sum jobs=10+10+12+9+7+4+12+5=69$. `fits(jobs, cap, 3)` greedily packs jobs into blocks of total at most `cap` and checks that at most $3$ blocks are needed."
+        },
+        {
+          "title": "Trace the six rounds",
+          "body": "| Round | $lo,\\ hi$ | $mid$ | Greedy blocks (sums) | Blocks | `fits` | New range |\n|---|---|---|---|---|---|---|\n| 1 | 12, 69 | 40 | 32 / 37 | 2 | True | $hi=40$ |\n| 2 | 12, 40 | 26 | 20 / 21 / 23 / 5 | 4 | False | $lo=27$ |\n| 3 | 27, 40 | 33 | 32 / 32 / 5 | 3 | True | $hi=33$ |\n| 4 | 27, 33 | 30 | 20 / 28 / 21 | 3 | True | $hi=30$ |\n| 5 | 27, 30 | 28 | 20 / 28 / 21 | 3 | True | $hi=28$ |\n| 6 | 27, 28 | 27 | 20 / 21 / 23 / 5 | 4 | False | $lo=28$ |"
+        },
+        {
+          "title": "Detail of the close calls (caps 26, 27 and 28)",
+          "body": "- $mid=26$: $10+10=20$; adding $12$ gives $32>26$, so block 2 starts with $12$; $12+9=21$; adding $7$ gives $28>26$, so block 3 starts with $7$; $7+4+12=23$; adding $5$ gives $28>26$, so block 4 starts with $5$. Four blocks, so `fits` is False.\n- $mid=27$: $20$; $32>27$ so block 2 starts with $12$; $12+9=21$; $28>27$ so block 3 starts with $7$; $7+4+12=23$; $28>27$ so block 4 starts with $5$. Four blocks, so False.\n- $mid=28$: $20$; $32>28$ so block 2 starts with $12$; $12+9+7=28$ (not $>28$); $28+4=32>28$ so block 3 starts with $4$; $4+12+5=21$. Three blocks, so True."
+        },
+        {
+          "title": "Result",
+          "body": "After round 6, $lo=hi=28$ and the loop stops with `rounds` $=6$. The program prints `28 6`."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The value $28$ is right, but the loop runs $6$ times, not $5$. The sixth round tests $mid=27$ (False) and moves $lo$ to $28$ before the loop condition $lo<hi$ fails."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The range narrows in six rounds to $lo=hi=28$: the smallest cap that lets three workers finish."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "`37 6` results from testing `used < workers` (at most two blocks) instead of `used <= workers`, which forces a larger cap."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "`20 6` results from forgetting that the job `j` that triggered a new block belongs to that block (using `load = 0`), which makes the greedy pass think a small cap suffices."
+        }
+      ],
+      "commonTrap": "When a new worker is started, forgetting to put the current job into the new block (`load = j`), and miscounting the rounds by stopping one iteration early (or late)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "28 6",
+      "agreesWithKey": true,
+      "checkCode": "def run(jobs, workers, strict=False, drop=False):\n    def fits(cap):\n        used, load = 1, 0\n        for j in jobs:\n            if load + j > cap:\n                used += 1\n                load = 0 if drop else j\n            else:\n                load += j\n        return used < workers if strict else used <= workers\n    lo, hi, rounds = max(jobs), sum(jobs), 0\n    while lo < hi:\n        mid = (lo + hi) // 2\n        rounds += 1\n        if fits(mid): hi = mid\n        else: lo = mid + 1\n    return lo, rounds\njobs = [10, 10, 12, 9, 7, 4, 12, 5]\nprint(run(jobs, 3), run(jobs, 3, strict=True), run(jobs, 3, drop=True))   # (28, 6) (37, 6) (20, 6)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-confidence-interval"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (confidence interval for a mean with known $\\sigma$) needing three linked steps: recover $\\sigma$ from a reported interval, set up the width condition for a different confidence level, and round up to an integer; about 2 minutes.",
+    "estimatedTimeSec": 140,
+    "concept": "Confidence interval for a mean with known $\\sigma$: width $=2z\\sigma/\\sqrt n$, so $\\sigma$ can be recovered from a reported interval and the sample size needed for a target width is $n\\ge(2z\\sigma/w)^2$, rounded up.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The daily peak bandwidth demand (in Mbps) of a server is modelled as a normal random variable with unknown mean $\\mu$ and known standard deviation $\\sigma$. From a random sample of $n = 49$ days, a $95\\%$ confidence interval for $\\mu$ was computed as $(37.20,\\ 42.80)$, using $z_{0.025} = 1.96$.\n\nAn engineer now wants a $99\\%$ confidence interval for $\\mu$ whose total width is at most $4$ Mbps. For a standard normal random variable $Z$, $P(Z > z_{0.005}) = 0.005$ with $z_{0.005} = 2.576$.\n\nThe smallest number of days that must be sampled is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 166,
+      "max": 166
+    },
+    "solution": {
+      "quick": "The half-width of the $95\\%$ interval is $2.80=1.96\\,\\sigma/\\sqrt{49}$, so $\\sigma=2.80\\cdot7/1.96=10$.\nFor a $99\\%$ interval the total width is $2(2.576)(10)/\\sqrt n\\le4$, i.e. $\\sqrt n\\ge12.88$.\nSo $n\\ge12.88^2=165.89$, and the smallest integer is $166$.",
+      "steps": [
+        {
+          "title": "Recover $\\sigma$ from the 95% interval",
+          "body": "The interval is $\\bar x\\pm z_{0.025}\\dfrac{\\sigma}{\\sqrt n}$, so its half-width is $\\dfrac{42.80-37.20}{2}=2.80$. Then\n$$2.80=1.96\\cdot\\frac{\\sigma}{\\sqrt{49}}=0.28\\,\\sigma\\quad\\Longrightarrow\\quad \\sigma=10.$$"
+        },
+        {
+          "title": "Width condition for the 99% interval",
+          "body": "The total width is $2\\,z_{0.005}\\dfrac{\\sigma}{\\sqrt n}=\\dfrac{2(2.576)(10)}{\\sqrt n}=\\dfrac{51.52}{\\sqrt n}$. Requiring width $\\le4$:\n$$\\sqrt n\\ge\\frac{51.52}{4}=12.88\\quad\\Longrightarrow\\quad n\\ge12.88^2=165.8944.$$"
+        },
+        {
+          "title": "Round up",
+          "body": "$n$ must be an integer and the width must not exceed $4$, so $n=\\lceil165.8944\\rceil=166$. Check: $n=166$ gives width $51.52/\\sqrt{166}\\approx3.999<4$, while $n=165$ gives $51.52/\\sqrt{165}\\approx4.011>4$."
+        }
+      ],
+      "finalAnswer": "**166**",
+      "commonTrap": "Treating $4$ as the half-width (giving $n\\ge(2.576\\cdot10/4)^2=41.5\\Rightarrow42$), keeping $z=1.96$ from the 95% interval (giving $(2\\cdot1.96\\cdot10/4)^2=96.04\\Rightarrow97$), or rounding $165.89$ down instead of up."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "166",
+      "agreesWithKey": true,
+      "checkCode": "import math\nlo, hi, n, z95, z99, W = 37.20, 42.80, 49, 1.96, 2.576, 4\nsigma = (hi - lo) / 2 * math.sqrt(n) / z95\nreq = (2 * z99 * sigma / W) ** 2\nprint(round(sigma, 6), round(req, 4), math.ceil(req - 1e-9))     # 10.0 165.8944 166\nprint(2 * z99 * sigma / math.sqrt(165), 2 * z99 * sigma / math.sqrt(166))",
+      "notes": ""
+    }
+  }
+]

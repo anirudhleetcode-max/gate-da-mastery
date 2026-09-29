@@ -1,0 +1,883 @@
+[
+  {
+    "id": "M18-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-hierarchical"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (single versus complete linkage) with four short statements that each need one merge sequence read off a 4×4 dissimilarity matrix; about 90 seconds.",
+    "estimatedTimeSec": 90,
+    "concept": "Agglomerative hierarchical clustering: single linkage merges at the smallest and complete linkage at the largest cross-cluster dissimilarity, so merge heights can differ even when the merge order and the cut partitions coincide.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Four news articles $P_1, P_2, P_3, P_4$ are compared using a topic-dissimilarity score. The symmetric dissimilarity matrix is\n\n| | $P_1$ | $P_2$ | $P_3$ | $P_4$ |\n|---|---|---|---|---|\n| $P_1$ | 0 | 4 | 9 | 11 |\n| $P_2$ | 4 | 0 | 6 | 10 |\n| $P_3$ | 9 | 6 | 0 | 3 |\n| $P_4$ | 11 | 10 | 3 | 0 |\n\nAgglomerative (bottom-up) hierarchical clustering starts with every article as its own cluster and repeatedly merges the two closest clusters until a single cluster remains. The dissimilarity between two clusters is the *smallest* pairwise dissimilarity between their members under **single linkage**, and the *largest* pairwise dissimilarity under **complete linkage**.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "With single linkage, the last merge (the one that produces the single remaining cluster) takes place at dissimilarity $6$."
+      },
+      {
+        "label": "B",
+        "text": "With complete linkage, the last merge takes place at dissimilarity $9$."
+      },
+      {
+        "label": "C",
+        "text": "Cutting the single-linkage dendrogram at height $5$ gives exactly the two clusters $\\{P_1, P_2\\}$ and $\\{P_3, P_4\\}$."
+      },
+      {
+        "label": "D",
+        "text": "If each dendrogram is cut so that two clusters remain, single linkage and complete linkage give different partitions of the four articles."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Both linkages merge $P_3, P_4$ first (height $3$) and then $P_1, P_2$ (height $4$). The final merge joins $\\{P_1,P_2\\}$ and $\\{P_3,P_4\\}$ at the smallest cross dissimilarity, $\\min(9,11,6,10)=6$, under single linkage and at the largest, $\\max(9,11,6,10)=11$, under complete linkage.\nSo A and C are correct; B is wrong ($11$, not $9$) and D is wrong (the two-cluster partitions coincide).",
+      "steps": [
+        {
+          "title": "Single linkage: merge sequence",
+          "body": "Smallest entry overall is $d(P_3,P_4)=3$, so $\\{P_3,P_4\\}$ forms at height $3$.\n\nDistances now: $d(P_1,P_2)=4$; $d(\\{P_3,P_4\\},P_1)=\\min(9,11)=9$; $d(\\{P_3,P_4\\},P_2)=\\min(6,10)=6$. The smallest is $4$, so $\\{P_1,P_2\\}$ forms at height $4$.\n\nLast merge: $d(\\{P_1,P_2\\},\\{P_3,P_4\\})=\\min(9,11,6,10)=6$. Statement A is true."
+        },
+        {
+          "title": "Complete linkage: merge sequence",
+          "body": "$\\{P_3,P_4\\}$ forms at height $3$ as before. Then $d(P_1,P_2)=4$, $d(\\{P_3,P_4\\},P_1)=\\max(9,11)=11$ and $d(\\{P_3,P_4\\},P_2)=\\max(6,10)=10$, so $\\{P_1,P_2\\}$ forms at height $4$.\n\nLast merge: $d(\\{P_1,P_2\\},\\{P_3,P_4\\})=\\max(9,11,6,10)=11$. Statement B (which says $9$) is false; $9$ is only the single entry $d(P_1,P_3)$."
+        },
+        {
+          "title": "Cutting the single-linkage dendrogram at height 5",
+          "body": "A cut at height $5$ keeps every merge whose height is at most $5$: the merges at heights $3$ and $4$ are kept, the merge at height $6$ is not. The clusters are therefore $\\{P_3,P_4\\}$ and $\\{P_1,P_2\\}$, exactly two of them. Statement C is true."
+        },
+        {
+          "title": "Two-cluster partitions of the two linkages",
+          "body": "Leaving two clusters means stopping before the last merge. For single linkage this gives $\\{P_1,P_2\\},\\{P_3,P_4\\}$ (Step 1) and for complete linkage the same partition (Step 2). Only the height of the last merge ($6$ versus $11$) differs. Statement D is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: the last merge joins $\\{P_1,P_2\\}$ and $\\{P_3,P_4\\}$, and the smallest of the four cross dissimilarities $9, 11, 6, 10$ is $6$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Under complete linkage the last merge uses the *largest* cross dissimilarity, $\\max(9,11,6,10)=11$. The value $9$ is just the single entry $d(P_1,P_3)$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: the merges at heights $3$ and $4$ lie below the cut at $5$ and the merge at $6$ lies above it, leaving $\\{P_1,P_2\\}$ and $\\{P_3,P_4\\}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Both linkages perform the same first two merges (heights $3$ and $4$), so stopping with two clusters gives $\\{P_1,P_2\\},\\{P_3,P_4\\}$ for both. The linkages differ only in the height of the final merge."
+        }
+      ],
+      "commonTrap": "Taking a single 'middle' entry such as $d(P_1,P_3)=9$ for the last merge instead of the minimum (single linkage) or maximum (complete linkage) over all four cross pairs, and assuming that different linkages must produce different partitions."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A;C",
+      "agreesWithKey": true,
+      "checkCode": "D = {('P1','P2'): 4, ('P1','P3'): 9, ('P1','P4'): 11, ('P2','P3'): 6, ('P2','P4'): 10, ('P3','P4'): 3}\nd = lambda a, b: D.get((a, b), D.get((b, a)))\ndef run(link):\n    cl, out = [('P1',), ('P2',), ('P3',), ('P4',)], []\n    while len(cl) > 1:\n        h, x, y = min(((link(d(a, b) for a in x for b in y), x, y) for i, x in enumerate(cl) for y in cl[i + 1:]), key=lambda t: t[0])\n        cl = [c for c in cl if c not in (x, y)] + [x + y]\n        out.append((h, sorted(x + y)))\n    return out\nfor name, link in (('single', min), ('complete', max)):\n    print(name, run(link))\n# Output: single [(3, ['P3', 'P4']), (4, ['P1', 'P2']), (6, ['P1', 'P2', 'P3', 'P4'])] | complete [(3, ['P3', 'P4']), (4, ['P1', 'P2']), (11, ['P1', 'P2', 'P3', 'P4'])]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (variance of the conditional mean) with several routine steps: marginal of $X$, three conditional means, their weighted variance, and a likely trap of confusing it with the total or the average conditional variance; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Variance of the conditional expectation: $\\operatorname{Var}(E[Y \\mid X])=\\sum_x P(X=x)\\,(E[Y \\mid X=x]-E[Y])^2$, the between-group part of the law of total variance.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A board-testing lab records, for a randomly chosen electronic board, the number $X$ of defects found in visual inspection and the diagnostic time $Y$ (in hours) that the board then needs. The joint probability mass function $P(X=x,\\,Y=y)$ is\n\n| | $Y=1$ | $Y=2$ | $Y=3$ |\n|---|---|---|---|\n| $X=0$ | 0.25 | 0 | 0 |\n| $X=1$ | 0.10 | 0 | 0.15 |\n| $X=2$ | 0.15 | 0.10 | 0.25 |\n\nThe value of $\\operatorname{Var}\\big(E[Y \\mid X]\\big)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.27$"
+      },
+      {
+        "label": "B",
+        "text": "$0.32$"
+      },
+      {
+        "label": "C",
+        "text": "$0.62$"
+      },
+      {
+        "label": "D",
+        "text": "$0.89$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$E[Y\\mid X]$ takes the values $1,\\ 2.2,\\ 2.2$ with probabilities $0.25,\\ 0.25,\\ 0.50$, so $E[Y]=1.9$.\n$\\operatorname{Var}(E[Y\\mid X])=0.25(0.9)^2+0.25(0.3)^2+0.50(0.3)^2=0.2025+0.0225+0.045=0.27$.",
+      "steps": [
+        {
+          "title": "Marginal distribution of $X$",
+          "body": "Add each row: $P(X=0)=0.25$, $P(X=1)=0.10+0+0.15=0.25$, $P(X=2)=0.15+0.10+0.25=0.50$."
+        },
+        {
+          "title": "Conditional means $E[Y \\mid X=x]$",
+          "body": "- $x=0$: all the mass is at $Y=1$, so $E[Y\\mid X=0]=1$.\n- $x=1$: $\\dfrac{1(0.10)+3(0.15)}{0.25}=\\dfrac{0.55}{0.25}=2.2$.\n- $x=2$: $\\dfrac{1(0.15)+2(0.10)+3(0.25)}{0.50}=\\dfrac{1.10}{0.50}=2.2$."
+        },
+        {
+          "title": "Mean of the conditional mean",
+          "body": "$E\\big[E[Y\\mid X]\\big]=0.25(1)+0.25(2.2)+0.50(2.2)=0.25+0.55+1.10=1.9$, which equals $E[Y]$ by the law of total expectation."
+        },
+        {
+          "title": "Variance of the conditional mean",
+          "body": "$$\\operatorname{Var}\\big(E[Y\\mid X]\\big)=0.25(1-1.9)^2+0.25(2.2-1.9)^2+0.50(2.2-1.9)^2=0.2025+0.0225+0.045=0.27.$$"
+        },
+        {
+          "title": "Cross-check with the law of total variance",
+          "body": "$P(Y=1)=0.50$, $P(Y=2)=0.10$, $P(Y=3)=0.40$, so $E[Y^2]=0.5+0.4+3.6=4.5$ and $\\operatorname{Var}(Y)=4.5-1.9^2=0.89$.\nThe within-group variances are $0,\\ 0.96,\\ 0.76$, so $E[\\operatorname{Var}(Y\\mid X)]=0.25(0)+0.25(0.96)+0.50(0.76)=0.62$.\nIndeed $0.62+0.27=0.89=\\operatorname{Var}(Y)$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $\\operatorname{Var}(E[Y\\mid X])=0.27$, the between-group variance."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.32$ is the *unweighted* variance of the three conditional means $1, 2.2, 2.2$ (their mean is $1.8$). The conditional means must be weighted by $P(X=x)=0.25, 0.25, 0.50$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.62$ is $E[\\operatorname{Var}(Y\\mid X)]$, the average within-group variance, not the variance of the conditional mean."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.89$ is the total variance $\\operatorname{Var}(Y)=E[\\operatorname{Var}(Y\\mid X)]+\\operatorname{Var}(E[Y\\mid X])$, of which the asked quantity is only a part."
+        }
+      ],
+      "commonTrap": "Mixing up the three related quantities: $\\operatorname{Var}(Y)=0.89$ (total), $E[\\operatorname{Var}(Y\\mid X)]=0.62$ (average within-group) and $\\operatorname{Var}(E[Y\\mid X])=0.27$ (between-group); or averaging the conditional means with equal weights instead of weighting by $P(X=x)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nT = {0: {1: F(25, 100), 2: F(0), 3: F(0)}, 1: {1: F(10, 100), 2: F(0), 3: F(15, 100)}, 2: {1: F(15, 100), 2: F(10, 100), 3: F(25, 100)}}\npx = {x: sum(T[x].values()) for x in T}\nm = {x: sum(y * p for y, p in T[x].items()) / px[x] for x in T}\nEY = sum(px[x] * m[x] for x in T)\nVE = sum(px[x] * (m[x] - EY) ** 2 for x in T)\npy = {y: sum(T[x][y] for x in T) for y in (1, 2, 3)}\nVY = sum(py[y] * y * y for y in py) - EY ** 2\nunw = sum((m[x] - sum(m.values()) / 3) ** 2 for x in T) / 3\nprint(float(VE), float(VY), float(VY - VE), float(unw))\n# Output: 0.27 0.89 0.62 0.32",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-relational-model"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (uniqueness constraints bound the size of a relation instance) with a single short argument per shift and a final multiplication; about 80 seconds.",
+    "estimatedTimeSec": 80,
+    "concept": "Key (uniqueness) constraints on a relation: two keys sharing an attribute force a one-to-one matching within each value of the shared attribute, so the number of tuples is bounded by the smaller domain.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A relation **Roster**(EmpId, Shift, Station) records which employee staffs which station in which shift. The attribute EmpId can take 12 different values, Shift can take 3 different values and Station can take 5 different values. No attribute may be NULL. An instance of Roster is a set of tuples and must satisfy exactly these two uniqueness constraints:\n\n- no two tuples agree on both EmpId and Shift;\n- no two tuples agree on both Station and Shift.\n\nThe maximum possible number of tuples in a legal instance of Roster is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 15,
+      "max": 15
+    },
+    "solution": {
+      "quick": "Tuples with different Shift values never conflict, so the shifts can be filled independently.\nWithin one shift both EmpId and Station must be pairwise distinct, so at most $\\min(12,5)=5$ tuples fit, and $5$ are achievable.\nTotal $=3\\times 5=15$.",
+      "steps": [
+        {
+          "title": "What the two constraints say",
+          "body": "Consider two tuples with **different** Shift values: they differ in Shift, so they cannot violate either constraint. Constraints only act between tuples of the **same** shift, and inside one shift they say that no two tuples share an EmpId and no two share a Station."
+        },
+        {
+          "title": "Maximum size within one shift",
+          "body": "Within one shift the tuples form a one-to-one pairing between employees and stations. With $12$ possible EmpId values and $5$ possible Station values, at most $\\min(12,5)=5$ tuples are possible: there are only $5$ distinct stations to give to different tuples.\n$5$ is reachable, for example by pairing employees $e_1,\\dots,e_5$ with stations $s_1,\\dots,s_5$."
+        },
+        {
+          "title": "Combine the shifts",
+          "body": "The three shifts are independent, so the maximum is $3\\times 5=15$. A legal instance with $15$ tuples is $\\{(e_i, \\text{shift } k, s_i) : i=1,\\dots,5,\\ k=1,2,3\\}$."
+        }
+      ],
+      "finalAnswer": "**15**",
+      "shortcut": "With two keys that share Shift, each shift is a matching between EmpId and Station, so the maximum is (number of shifts) $\\times\\ \\min(\\#\\text{EmpId},\\#\\text{Station})=3\\times\\min(12,5)$.",
+      "commonTrap": "Applying only one constraint and answering $12\\times 3=36$ (or multiplying all three domain sizes, $12\\times 3\\times 5=180$). The second constraint on (Station, Shift) is what limits each shift to $5$ tuples."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "15",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\ndef best(nE, nS, nT):\n    tup, top = list(product(range(nE), range(nS), range(nT))), 0\n    for mask in range(1 << len(tup)):\n        sel = [t for i, t in enumerate(tup) if mask >> i & 1]\n        if len({(e, s) for e, s, t in sel}) == len(sel) == len({(t, s) for e, s, t in sel}):\n            top = max(top, len(sel))\n    return top\nprint(best(3, 2, 2), 2 * min(3, 2), best(2, 2, 3), 2 * min(2, 3))\nprint(3 * min(12, 5))\n# Output: 4 4 4 4 | 15",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (tracing loops and helper functions) with three inputs to trace, tuple assignment from divmod and a repeated digit-sum reduction in base 7; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Tracing nested Python functions: divmod with tuple assignment to extract base-7 digits, a while loop whose condition calls a helper, and a generator expression inside sum.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef digits(n):\n    out = []\n    while n > 0:\n        n, r = divmod(n, 7)\n        out.append(r)\n    return out\n\ndef reduce7(n):\n    steps = 0\n    while len(digits(n)) > 1:\n        n = sum(digits(n))\n        steps += 1\n    return n * 10 + steps\n\nprint(sum(reduce7(m) for m in [50, 343, 2000]))\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 55,
+      "max": 55
+    },
+    "solution": {
+      "quick": "`digits` returns the base-7 digits of $n$, and `reduce7` repeatedly replaces $n$ by its base-7 digit sum until one digit remains, returning `n*10 + steps`.\n$50\\to 2$ in one step gives $21$; $343\\to 1$ in one step gives $11$; $2000\\to 20\\to 8\\to 2$ in three steps gives $23$.\nThe printed sum is $21+11+23=55$.",
+      "steps": [
+        {
+          "title": "What the helper functions do",
+          "body": "`divmod(n, 7)` returns `(n // 7, n % 7)`, so `digits(n)` collects the base-7 digits of $n$ (least significant first) and `len(digits(n)) > 1` is true exactly when $n \\ge 7$. `reduce7` replaces $n$ by the digit sum until $n$ has a single base-7 digit, counting the replacements in `steps`, and returns `n * 10 + steps`."
+        },
+        {
+          "title": "Input 50",
+          "body": "$50 = 1\\cdot 49 + 0\\cdot 7 + 1$, so `digits(50) = [1, 0, 1]` (three digits). Then $n = 1+0+1 = 2$ and `steps = 1`. `digits(2) = [2]` has one digit, so the loop stops: $2\\cdot 10 + 1 = \\mathbf{21}$."
+        },
+        {
+          "title": "Input 343",
+          "body": "$343 = 7^3$, so `digits(343) = [0, 0, 0, 1]` (four digits). Then $n = 1$, `steps = 1`, and `digits(1) = [1]` stops the loop: $1\\cdot 10 + 1 = \\mathbf{11}$."
+        },
+        {
+          "title": "Input 2000",
+          "body": "$2000 = 5\\cdot 343 + 5\\cdot 49 + 5\\cdot 7 + 5$, so `digits(2000) = [5, 5, 5, 5]` and $n = 20$, `steps = 1`.\n$20 = 2\\cdot 7 + 6$, so `digits(20) = [6, 2]` and $n = 8$, `steps = 2`.\n$8 = 1\\cdot 7 + 1$, so `digits(8) = [1, 1]` and $n = 2$, `steps = 3`.\n`digits(2) = [2]` stops the loop: $2\\cdot 10 + 3 = \\mathbf{23}$."
+        },
+        {
+          "title": "Total",
+          "body": "The generator expression is summed: $21 + 11 + 23 = 55$. The program prints `55`."
+        }
+      ],
+      "finalAnswer": "**55**",
+      "commonTrap": "Reducing in base 10 instead of base 7, or stopping after one digit-sum: $2000$ has base-7 digit sum $20$, which is still not a single base-7 digit and needs two more reductions (to $8$ and then to $2$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "55",
+      "agreesWithKey": true,
+      "checkCode": "def digits(n):\n    out = []\n    while n > 0:\n        n, r = divmod(n, 7)\n        out.append(r)\n    return out\n\ndef reduce7(n):\n    steps = 0\n    while len(digits(n)) > 1:\n        n = sum(digits(n))\n        steps += 1\n    return n * 10 + steps\n\nprint([reduce7(m) for m in [50, 343, 2000]], sum(reduce7(m) for m in [50, 343, 2000]))\n# Output: [21, 11, 23] 55",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-dim-reduction",
+      "ml-pca"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (variance retained by principal components) with four one-step statements read from the eigenvalue list; about 90 seconds.",
+    "estimatedTimeSec": 90,
+    "concept": "PCA on a covariance matrix: the variance retained by the first $k$ components is the sum of the top $k$ eigenvalues over the trace, principal component scores are uncorrelated, and a common rescaling of all features leaves the retained fraction unchanged.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A dataset has five mean-centred numerical features. Its covariance matrix $\\Sigma$ has eigenvalues $6,\\ 2,\\ 1,\\ 0.5,\\ 0.5$. Principal component analysis (PCA) is applied by an eigen-decomposition of $\\Sigma$, and the principal components are ordered by decreasing eigenvalue.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The first two principal components together retain $80\\%$ of the total variance."
+      },
+      {
+        "label": "B",
+        "text": "The smallest number of principal components that retains at least $85\\%$ of the total variance is $3$."
+      },
+      {
+        "label": "C",
+        "text": "The scores of the data on the first principal component and on the second principal component have zero covariance."
+      },
+      {
+        "label": "D",
+        "text": "If every feature is multiplied by $10$ before PCA is applied to the covariance matrix, the first two principal components retain more than $80\\%$ of the total variance."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "The total variance is the trace, $6+2+1+0.5+0.5=10$, so the cumulative retained fractions are $60\\%,\\ 80\\%,\\ 90\\%,\\ 95\\%,\\ 100\\%$.\nTwo components give exactly $80\\%$, the first to reach $85\\%$ is the third, PC scores are uncorrelated, and multiplying all features by $10$ multiplies every eigenvalue by $100$ and leaves the fractions unchanged.",
+      "steps": [
+        {
+          "title": "Total variance and cumulative fractions",
+          "body": "The total variance equals the sum of the eigenvalues: $6+2+1+0.5+0.5=10$. Dividing the running sums by $10$ gives\n$$\\frac{6}{10}=60\\%,\\quad \\frac{8}{10}=80\\%,\\quad \\frac{9}{10}=90\\%,\\quad \\frac{9.5}{10}=95\\%,\\quad 100\\%.$$"
+        },
+        {
+          "title": "Statements A and B",
+          "body": "Two components retain $(6+2)/10=80\\%$, so A is true. $80\\% < 85\\%$ but $90\\% \\ge 85\\%$, so the smallest number of components that reaches $85\\%$ is $3$ and B is true."
+        },
+        {
+          "title": "Statement C",
+          "body": "Principal directions are orthogonal eigenvectors of $\\Sigma$, so the covariance of the scores on two different components is $\\mathbf{v}_1^\\top \\Sigma\\, \\mathbf{v}_2=\\lambda_2\\,\\mathbf{v}_1^\\top\\mathbf{v}_2=0$. C is true."
+        },
+        {
+          "title": "Statement D",
+          "body": "Multiplying every feature by $10$ multiplies $\\Sigma$ by $100$, so the eigenvalues become $600, 200, 100, 50, 50$ and the eigenvectors are unchanged. The retained fraction of the first two components is still $800/1000=80\\%$, which is not *more* than $80\\%$. D is false."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $(6+2)/10=80\\%$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: two components retain only $80\\% < 85\\%$, three retain $90\\% \\ge 85\\%$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: the principal directions are orthogonal eigenvectors of $\\Sigma$, so the scores on different components are uncorrelated (their covariance is $\\lambda_2\\,\\mathbf{v}_1^\\top\\mathbf{v}_2=0$)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "A common rescaling of all features multiplies every eigenvalue by the same factor ($100$), so the ratio of the first two eigenvalues to the trace stays exactly $80\\%$; it does not exceed $80\\%$."
+        }
+      ],
+      "shortcut": "Write the running sums of the eigenvalues as fractions of the trace ($60\\%, 80\\%, 90\\%, 95\\%, 100\\%$) once; every 'how many components' or 'how much variance' question then reads straight off the list.",
+      "commonTrap": "Believing that rescaling the features changes the fraction of variance retained. It does only when the features are scaled *differently*; a common factor cancels in the ratio. A second slip is rounding $80\\%$ up to satisfy the $85\\%$ requirement with two components."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A;B;C",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nlam = [6, 2, 1, 0.5, 0.5]\ncum = [sum(lam[:k]) / sum(lam) for k in range(1, 6)]\nprint(cum, next(k for k, c in enumerate(cum, 1) if c >= 0.85))\nlam10 = [100 * v for v in lam]\nprint((lam10[0] + lam10[1]) / sum(lam10))\nrng = np.random.default_rng(0); Q, _ = np.linalg.qr(rng.normal(size=(5, 5)))\nS = Q @ np.diag(lam) @ Q.T; V = np.linalg.eigh(S)[1][:, ::-1]\nprint(np.round(V[:, :2].T @ S @ V[:, :2], 6))\n# Output: [0.6, 0.8, 0.9, 0.95, 1.0] 3 | 0.8 | [[ 6. -0.] |  [-0.  2.]]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-simple-linear-regression"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (ordinary least squares for one predictor) with a single-pass computation of the two sums of squares, the slope and the intercept, then one prediction; about 90 seconds.",
+    "estimatedTimeSec": 90,
+    "concept": "Ordinary least squares for simple linear regression: $\\hat\\beta_1=S_{xy}/S_{xx}$, $\\hat\\beta_0=\\bar y-\\hat\\beta_1\\bar x$, then predict with $\\hat y=\\hat\\beta_0+\\hat\\beta_1 x$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A farm trials a fertiliser on five plots. The dose $x$ (in kg per plot) and the crop yield $y$ (in kg per plot) are recorded.\n\n| Plot | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| $x$ (dose) | 1 | 3 | 7 | 8 | 11 |\n| $y$ (yield) | 9 | 10 | 20 | 21 | 25 |\n\nA simple linear regression model $\\hat{y} = \\beta_0 + \\beta_1 x$ is fitted to these data by ordinary least squares. The predicted yield (in kg) for a plot that receives a dose of $5$ kg is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 15.24,
+      "max": 15.26
+    },
+    "solution": {
+      "quick": "$\\bar x=6$, $\\bar y=17$, $S_{xy}=112$, $S_{xx}=64$, so $\\hat\\beta_1=112/64=1.75$ and $\\hat\\beta_0=17-1.75(6)=6.5$.\nThe prediction at $x=5$ is $6.5+1.75(5)=15.25$.",
+      "steps": [
+        {
+          "title": "Formulas",
+          "body": "For one predictor, ordinary least squares gives\n$$\\hat\\beta_1=\\frac{S_{xy}}{S_{xx}}=\\frac{\\sum (x_i-\\bar x)(y_i-\\bar y)}{\\sum (x_i-\\bar x)^2},\\qquad \\hat\\beta_0=\\bar y-\\hat\\beta_1\\bar x.$$"
+        },
+        {
+          "title": "Means and deviations",
+          "body": "$\\bar x=(1+3+7+8+11)/5=6$ and $\\bar y=(9+10+20+21+25)/5=17$.\n\nDeviations of $x$: $-5,-3,1,2,5$. Deviations of $y$: $-8,-7,3,4,8$."
+        },
+        {
+          "title": "Sums of squares and products",
+          "body": "$S_{xy}=(-5)(-8)+(-3)(-7)+(1)(3)+(2)(4)+(5)(8)=40+21+3+8+40=112$.\n\n$S_{xx}=25+9+1+4+25=64$."
+        },
+        {
+          "title": "Slope and intercept",
+          "body": "$\\hat\\beta_1=112/64=1.75$ and $\\hat\\beta_0=17-1.75\\times 6=17-10.5=6.5$."
+        },
+        {
+          "title": "Prediction",
+          "body": "$\\hat y(5)=6.5+1.75\\times 5=6.5+8.75=15.25$ kg."
+        }
+      ],
+      "finalAnswer": "**15.25**",
+      "commonTrap": "Forgetting the intercept (predicting $1.75\\times 5=8.75$), or computing the slope from uncentred sums as $\\sum x_iy_i/\\sum x_i^2$ instead of using deviations from the means."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "15.25",
+      "agreesWithKey": true,
+      "checkCode": "xs, ys = [1, 3, 7, 8, 11], [9, 10, 20, 21, 25]\nn = len(xs); xb, yb = sum(xs) / n, sum(ys) / n\nb1 = sum((x - xb) * (y - yb) for x, y in zip(xs, ys)) / sum((x - xb) ** 2 for x in xs)\nb0 = yb - b1 * xb\nprint(xb, yb, b1, b0, round(b0 + 5 * b1, 2))\n# Output: 6.0 17.0 1.75 6.5 15.25",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-lda"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (one-dimensional LDA with unequal priors) with three routine steps: write the two discriminants, equate them and solve for the threshold, with a likely trap on the direction of the prior shift; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "One-dimensional LDA with unequal priors: the decision threshold is the midpoint of the class means shifted by $\\sigma^2\\ln(\\pi_1/\\pi_2)/(\\mu_2-\\mu_1)$ towards the mean of the less likely class.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A fitness band classifies a wearer's state from a single index $x$ computed from the heart-rate signal. Under the linear discriminant analysis (LDA) model, $x$ is normally distributed within each class with the same variance $\\sigma^2 = 4$:\n\n| Class | State | Mean $\\mu_k$ of $x$ | Prior probability $\\pi_k$ |\n|---|---|---|---|\n| 1 | resting | $2$ | $0.75$ |\n| 2 | stressed | $6$ | $0.25$ |\n\nLDA assigns a reading $x$ to the class with the larger discriminant\n$$\\delta_k(x) = \\frac{x\\,\\mu_k}{\\sigma^2} - \\frac{\\mu_k^2}{2\\sigma^2} + \\ln \\pi_k .$$\nThe threshold $x^{*}$ is the value at which $\\delta_1(x^{*}) = \\delta_2(x^{*})$, so that readings below $x^{*}$ are assigned to class 1 and readings above $x^{*}$ to class 2. Take $\\ln 3 = 1.0986$.\n\nThe threshold $x^{*}$ is approximately",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2.90$"
+      },
+      {
+        "label": "B",
+        "text": "$4.00$"
+      },
+      {
+        "label": "C",
+        "text": "$4.55$"
+      },
+      {
+        "label": "D",
+        "text": "$5.10$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$\\delta_1(x)=0.5x-0.5+\\ln 0.75$ and $\\delta_2(x)=1.5x-4.5+\\ln 0.25$.\nSetting them equal gives $x^{*}=4+\\ln\\dfrac{0.75}{0.25}=4+\\ln 3=5.0986\\approx 5.10$: the midpoint $4$ is pushed towards the mean of the less likely class.",
+      "steps": [
+        {
+          "title": "Write both discriminants",
+          "body": "With $\\sigma^2=4$:\n$$\\delta_1(x)=\\frac{2x}{4}-\\frac{4}{8}+\\ln 0.75=0.5x-0.5+\\ln 0.75,$$\n$$\\delta_2(x)=\\frac{6x}{4}-\\frac{36}{8}+\\ln 0.25=1.5x-4.5+\\ln 0.25.$$"
+        },
+        {
+          "title": "Equate and solve",
+          "body": "$0.5x-0.5+\\ln 0.75=1.5x-4.5+\\ln 0.25$ gives\n$$x^{*}=4+\\ln 0.75-\\ln 0.25=4+\\ln 3=4+1.0986=5.0986\\approx 5.10.$$"
+        },
+        {
+          "title": "Interpretation",
+          "body": "With equal priors the threshold would be the midpoint $(2+6)/2=4$. Because resting readings are three times as likely a priori, the threshold moves *away* from the resting mean $2$, towards the stressed mean $6$, enlarging the region assigned to class 1. So $x^{*}>4$."
+        },
+        {
+          "title": "Check against the other values",
+          "body": "$2.90=4-\\ln 3$ shifts the wrong way. $4.55=4+2\\ln 3/4$ divides by $\\sigma$ instead of $\\sigma^2$ in the prior term. $4.00$ ignores the priors."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$2.90=4-\\ln 3$ has the prior correction with the wrong sign: the larger prior of class 1 must *enlarge* its region, moving the threshold above $4$, not below."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$4.00$ is the midpoint of the means, valid only for equal priors. Here $\\pi_1\\ne\\pi_2$, so the $\\ln(\\pi_1/\\pi_2)$ term shifts the threshold."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$4.55=4+\\dfrac{\\sigma\\ln 3}{\\mu_2-\\mu_1}=4+\\dfrac{2(1.0986)}{4}$ uses $\\sigma=2$ where the variance $\\sigma^2=4$ belongs in the shift term."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $x^{*}=\\dfrac{\\mu_1+\\mu_2}{2}+\\dfrac{\\sigma^2}{\\mu_2-\\mu_1}\\ln\\dfrac{\\pi_1}{\\pi_2}=4+\\dfrac{4}{4}(1.0986)=5.0986\\approx 5.10$."
+        }
+      ],
+      "shortcut": "For equal variances the threshold is $\\dfrac{\\mu_1+\\mu_2}{2}+\\dfrac{\\sigma^2}{\\mu_2-\\mu_1}\\ln\\dfrac{\\pi_1}{\\pi_2}$: start at the midpoint and move towards the mean of the less likely class.",
+      "commonTrap": "Dropping the prior term (threshold $4.00$) or moving the threshold the wrong way. A larger prior for class 1 pushes the boundary *away* from $\\mu_1$, so that class 1 claims more of the line."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import math\nmu1, mu2, s2, p1, p2 = 2, 6, 4, 0.75, 0.25\ndelta = lambda x, mu, p: x * mu / s2 - mu ** 2 / (2 * s2) + math.log(p)\nlo, hi = 0.0, 10.0\nfor _ in range(60):\n    mid = (lo + hi) / 2\n    if delta(mid, mu1, p1) > delta(mid, mu2, p2): lo = mid\n    else: hi = mid\nprint(round(lo, 4), round(4 + math.log(3), 4))\nprint(round(4 - math.log(3), 2), round(4 + 2 * math.log(3) / 4, 2))\n# Output: 5.0986 5.0986 | 2.9 4.55",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-variable-elimination"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (variable elimination on a Bayesian network) with four statements needing a factor-scope count, a leaf-sum identity, a four-term marginal and a Bayes inversion; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Variable elimination on a Bayesian network: summing out a leaf gives an all-ones factor, the scope of a new factor is the union of the scopes it multiplies minus the eliminated variable, and posteriors need Bayes' rule on top of the marginals.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An orchard is modelled by a Bayesian network over five Boolean variables ($1$ = true, $0$ = false): $F$ (a frost occurs), $B$ (a blight outbreak occurs), $Y$ (the harvest is poor), $R$ (the market price rises) and $C$ (an insurance claim is filed). The edges are $F \\to Y$, $B \\to Y$, $Y \\to R$ and $Y \\to C$, so the joint distribution is $P(F)\\,P(B)\\,P(Y \\mid F, B)\\,P(R \\mid Y)\\,P(C \\mid Y)$. The parameters are:\n\n| Quantity | Value |\n|---|---|\n| $P(F=1)$ | $0.3$ |\n| $P(B=1)$ | $0.2$ |\n| $P(Y=1 \\mid F=1, B=1)$ | $0.9$ |\n| $P(Y=1 \\mid F=1, B=0)$ | $0.6$ |\n| $P(Y=1 \\mid F=0, B=1)$ | $0.5$ |\n| $P(Y=1 \\mid F=0, B=0)$ | $0.1$ |\n| $P(R=1 \\mid Y=1)$ | $0.8$ |\n| $P(R=1 \\mid Y=0)$ | $0.1$ |\n| $P(C=1 \\mid Y=1)$ | $0.7$ |\n| $P(C=1 \\mid Y=0)$ | $0.05$ |\n\nExact inference uses **variable elimination** (VE): to eliminate a variable, VE multiplies all current factors that mention it and sums it out, which creates one new factor.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "To compute $P(R)$ with no evidence, eliminating $C$ first creates a new factor over $Y$ whose two entries are $0.7$ and $0.05$."
+      },
+      {
+        "label": "B",
+        "text": "To compute $P(R)$ with no evidence, eliminating $Y$ first creates a new factor over exactly three variables."
+      },
+      {
+        "label": "C",
+        "text": "$P(F=1 \\mid Y=1) = 0.66$."
+      },
+      {
+        "label": "D",
+        "text": "$P(R=1) = 0.3268$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Only D holds: $P(Y=1)=0.324$, so $P(R=1)=0.324(0.8)+0.676(0.1)=0.3268$.\nEliminating $C$ sums $P(C\\mid Y)$ over both values of $C$, giving all ones (A false); eliminating $Y$ first leaves a factor over $F, B, R, C$, four variables (B false); and $P(F=1\\mid Y=1)=0.198/0.324\\approx0.611$, not the $0.66$ that is $P(Y=1\\mid F=1)$ (C false).",
+      "steps": [
+        {
+          "title": "Statement A: eliminating the leaf $C$",
+          "body": "Only the factor $P(C\\mid Y)$ mentions $C$. Summing it over $C$ gives, for each value of $Y$, $P(C=1\\mid Y)+P(C=0\\mid Y)=1$: the new factor over $Y$ is $(1,1)$, not $(0.7, 0.05)$. Keeping only $C=1$ would correspond to observing $C=1$. A is false."
+        },
+        {
+          "title": "Statement B: eliminating $Y$ first",
+          "body": "The factors that mention $Y$ are $P(Y\\mid F,B)$, $P(R\\mid Y)$ and $P(C\\mid Y)$. Their product has scope $\\{F,B,Y,R,C\\}$; summing out $Y$ leaves a factor over $\\{F,B,R,C\\}$, that is **four** variables ($2^4=16$ entries). B is false."
+        },
+        {
+          "title": "Statement D: the marginal $P(R=1)$",
+          "body": "$$P(Y=1)=0.3(0.2)(0.9)+0.3(0.8)(0.6)+0.7(0.2)(0.5)+0.7(0.8)(0.1)=0.054+0.144+0.070+0.056=0.324.$$\n$$P(R=1)=P(Y=1)(0.8)+P(Y=0)(0.1)=0.324(0.8)+0.676(0.1)=0.2592+0.0676=0.3268.$$\nD is true."
+        },
+        {
+          "title": "Statement C: a posterior via Bayes' rule",
+          "body": "$P(Y=1\\mid F=1)=0.2(0.9)+0.8(0.6)=0.18+0.48=0.66$. Then\n$$P(F=1\\mid Y=1)=\\frac{P(Y=1\\mid F=1)\\,P(F=1)}{P(Y=1)}=\\frac{0.66\\times 0.3}{0.324}=\\frac{0.198}{0.324}\\approx 0.611.$$\nThe value $0.66$ is the reverse conditional $P(Y=1\\mid F=1)$. C is false."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Summing $P(C\\mid Y)$ over both values of $C$ gives $1$ for each $Y$, so the factor is $(1,1)$. The entries $0.7$ and $0.05$ are only the $C=1$ terms."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The product of $P(Y\\mid F,B)$, $P(R\\mid Y)$ and $P(C\\mid Y)$ mentions $F,B,Y,R,C$; after summing out $Y$ the new factor is over $F,B,R,C$, four variables, not three."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$P(F=1\\mid Y=1)=0.198/0.324\\approx 0.611$. The number $0.66$ is $P(Y=1\\mid F=1)$, the conditional in the opposite direction."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $P(Y=1)=0.324$ and $P(R=1)=0.324(0.8)+0.676(0.1)=0.3268$."
+        }
+      ],
+      "commonTrap": "Reading $P(Y=1\\mid F=1)=0.66$ as $P(F=1\\mid Y=1)$, and keeping only the observed-looking $C=1$ entries when eliminating a leaf; an unobserved leaf must be summed over both of its values."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\npF, pB = 0.3, 0.2\npY = {(1, 1): 0.9, (1, 0): 0.6, (0, 1): 0.5, (0, 0): 0.1}\npR, pC = {1: 0.8, 0: 0.1}, {1: 0.7, 0: 0.05}\ndef joint(f, b, y, r, c):\n    j = (pF if f else 1 - pF) * (pB if b else 1 - pB) * (pY[f, b] if y else 1 - pY[f, b])\n    return j * (pR[y] if r else 1 - pR[y]) * (pC[y] if c else 1 - pC[y])\nP = lambda cond: sum(joint(*v) for v in itertools.product([0, 1], repeat=5) if cond(*v))   # v = (f, b, y, r, c)\nprint(round(P(lambda f, b, y, r, c: r == 1), 4))\nprint(round(P(lambda f, b, y, r, c: f == 1 and y == 1) / P(lambda f, b, y, r, c: y == 1), 4))\nprint(pC[1] + (1 - pC[1]), pC[0] + (1 - pC[0]))\nfactors = [{'F'}, {'B'}, {'Y', 'F', 'B'}, {'R', 'Y'}, {'C', 'Y'}]\nprint(sorted(set().union(*[s for s in factors if 'Y' in s]) - {'Y'}))\n# Output: 0.3268 | 0.6111 | 1.0 1.0 | ['B', 'C', 'F', 'R']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-subspaces"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (sum and intersection of subspaces, dimension formula) with three routine steps: spot the redundant spanning vector, find $\\dim W$ and $\\dim(U\\cap W)$, then apply the formula; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Dimension of a sum of subspaces: $\\dim(U+W)=\\dim U+\\dim W-\\dim(U\\cap W)$, where $\\dim U$ is the rank of a spanning set, not its size.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $U$ be the subspace of $\\mathbb{R}^4$ spanned by the vectors $(1,0,1,0)$, $(0,1,0,1)$ and $(1,1,1,1)$, and let\n$$W=\\{(x_1,x_2,x_3,x_4)\\in\\mathbb{R}^4 : x_1=x_3 \\text{ and } x_2=-x_4\\}.$$\nThe dimension of the subspace $U+W=\\{\\mathbf{u}+\\mathbf{w} : \\mathbf{u}\\in U,\\ \\mathbf{w}\\in W\\}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2$"
+      },
+      {
+        "label": "B",
+        "text": "$3$"
+      },
+      {
+        "label": "C",
+        "text": "$4$"
+      },
+      {
+        "label": "D",
+        "text": "$5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$(1,1,1,1)$ is the sum of the other two spanning vectors, so $\\dim U=2$; $W=\\{(a,b,a,-b)\\}$ has $\\dim W=2$.\nA vector $(a,b,a,b)\\in U$ lies in $W$ only if $b=-b$, so $U\\cap W=\\operatorname{span}\\{(1,0,1,0)\\}$ has dimension $1$.\nHence $\\dim(U+W)=2+2-1=3$.",
+      "steps": [
+        {
+          "title": "Dimension of $U$",
+          "body": "The third spanning vector is the sum of the first two: $(1,1,1,1)=(1,0,1,0)+(0,1,0,1)$. So $U=\\operatorname{span}\\{(1,0,1,0),(0,1,0,1)\\}$, and these two are independent, giving $\\dim U=2$ (not $3$)."
+        },
+        {
+          "title": "Dimension of $W$",
+          "body": "The conditions $x_3=x_1$ and $x_4=-x_2$ leave $x_1,x_2$ free, so $W=\\{(a,b,a,-b)\\}=\\operatorname{span}\\{(1,0,1,0),(0,1,0,-1)\\}$ and $\\dim W=2$."
+        },
+        {
+          "title": "The intersection $U\\cap W$",
+          "body": "Every vector of $U$ has the form $a(1,0,1,0)+b(0,1,0,1)=(a,b,a,b)$. It lies in $W$ when $x_2=-x_4$, that is $b=-b$, so $b=0$. Thus $U\\cap W=\\{(a,0,a,0)\\}=\\operatorname{span}\\{(1,0,1,0)\\}$, and $\\dim(U\\cap W)=1$."
+        },
+        {
+          "title": "Apply the dimension formula",
+          "body": "$$\\dim(U+W)=\\dim U+\\dim W-\\dim(U\\cap W)=2+2-1=3.$$\nCheck: $U+W=\\operatorname{span}\\{(1,0,1,0),(0,1,0,1),(0,1,0,-1)\\}$, and these three vectors are linearly independent, so the dimension is $3$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$2$ would need $U+W$ to equal each of $U$ and $W$, that is $U=W$. But $(0,1,0,1)\\in U$ is not in $W$, so $U+W$ is strictly larger."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: $\\dim U+\\dim W-\\dim(U\\cap W)=2+2-1=3$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$4$ comes from either assuming $U\\cap W=\\{\\mathbf 0\\}$ ($2+2-0$) or counting $\\dim U=3$ from the three spanning vectors ($3+2-1$). Both mistakes are avoided by finding the rank of $U$ and the actual intersection."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$5$ counts all three spanning vectors of $U$ as independent ($\\dim U=3$) and adds $\\dim W=2$ as if $U$ and $W$ had nothing in common. In fact $\\dim U=2$ and the two subspaces share the vector $(1,0,1,0)$."
+        }
+      ],
+      "shortcut": "Stack all spanning vectors of $U$ and $W$ as rows: $\\dim(U+W)$ is the rank of that matrix, here $\\operatorname{rank}\\{(1,0,1,0),(0,1,0,1),(0,1,0,-1)\\}=3$.",
+      "commonTrap": "Taking $\\dim U$ as the number of spanning vectors ($3$) although $(1,1,1,1)$ is dependent, and ignoring the vector $(1,0,1,0)$ that $U$ and $W$ share; either error makes the sum look bigger than it is."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nU = sp.Matrix([[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 1, 1]])\nW = sp.Matrix([[1, 0, -1, 0], [0, 1, 0, 1]]).nullspace()\ndU, dW = U.rank(), len(W)\ndS = sp.Matrix.vstack(U, sp.Matrix.hstack(*W).T).rank()\nprint(dU, dW, dS, dU + dW - dS)\n# Output: 2 2 3 1",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M18-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-18",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept family (binomial and discrete uniform) with four statements needing a mode check by probability ratio, mean and variance formulas, a complement probability and a uniform variance; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Binomial and discrete uniform distributions: mode via the ratio $P(k+1)/P(k)$, mean $np$ and variance $np(1-p)$, complement probability $1-(1-p)^n$, and variance $(m^2-1)/12$ of a uniform on $\\{1,\\dots,m\\}$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A network router sends a burst of $10$ packets. Each packet is lost independently with probability $\\tfrac{1}{4}$, and $X$ denotes the number of packets lost in the burst. Separately, each burst is sent over one of $6$ links numbered $1, 2, \\ldots, 6$, chosen uniformly at random; let $K$ denote the number of the chosen link.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The most likely value of $X$ is $3$."
+      },
+      {
+        "label": "B",
+        "text": "$E[X] = 2.5$ and $\\operatorname{Var}(X) = 1.875$."
+      },
+      {
+        "label": "C",
+        "text": "$P(X \\ge 1) = 1 - \\left(\\tfrac{1}{4}\\right)^{10}$."
+      },
+      {
+        "label": "D",
+        "text": "$\\operatorname{Var}(K) = \\tfrac{35}{12}$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$X\\sim\\text{Binomial}(10,\\tfrac14)$: $E[X]=2.5$ and $\\operatorname{Var}(X)=10\\cdot\\tfrac14\\cdot\\tfrac34=1.875$ (B true); $K$ is uniform on $\\{1,\\dots,6\\}$ with $\\operatorname{Var}(K)=(6^2-1)/12=35/12$ (D true).\nThe mode is $2$, since $P(X=2)=0.2816>P(X=3)=0.2503$ (A false), and $P(X\\ge1)=1-(3/4)^{10}\\approx0.9437$, not $1-(1/4)^{10}$ (C false).",
+      "steps": [
+        {
+          "title": "Statement A: the mode of $X$",
+          "body": "For $X\\sim\\text{Binomial}(10,\\tfrac14)$, $\\dfrac{P(X=k+1)}{P(X=k)}=\\dfrac{10-k}{k+1}\\cdot\\dfrac{1/4}{3/4}=\\dfrac{10-k}{3(k+1)}$. For $k=1$ this is $\\tfrac{9}{6}>1$ and for $k=2$ it is $\\tfrac{8}{9}<1$, so probabilities rise up to $X=2$ and fall afterwards.\nDirectly, $P(X=2)=45\\left(\\tfrac14\\right)^2\\left(\\tfrac34\\right)^8\\approx0.2816$ and $P(X=3)=120\\left(\\tfrac14\\right)^3\\left(\\tfrac34\\right)^7\\approx0.2503$. The mode is $2$, so A is false."
+        },
+        {
+          "title": "Statement B: mean and variance",
+          "body": "$E[X]=np=10\\cdot\\tfrac14=2.5$ and $\\operatorname{Var}(X)=np(1-p)=10\\cdot\\tfrac14\\cdot\\tfrac34=1.875$. B is true."
+        },
+        {
+          "title": "Statement C: at least one loss",
+          "body": "$P(X\\ge1)=1-P(X=0)=1-\\left(\\tfrac34\\right)^{10}\\approx1-0.0563=0.9437$. The expression in C, $1-(\\tfrac14)^{10}\\approx 0.999999$, swaps the loss probability and the delivery probability. C is false."
+        },
+        {
+          "title": "Statement D: variance of the uniform link number",
+          "body": "$E[K]=3.5$ and $E[K^2]=\\dfrac{1+4+9+16+25+36}{6}=\\dfrac{91}{6}$, so $\\operatorname{Var}(K)=\\dfrac{91}{6}-\\dfrac{49}{4}=\\dfrac{182-147}{12}=\\dfrac{35}{12}$. This matches $(m^2-1)/12$ with $m=6$. D is true."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The mean $2.5$ is not a value $X$ can take, and rounding it to $3$ is not how the mode is found. The ratio test shows $P(X=2)=0.2816>P(X=3)=0.2503$, so the mode is $2$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: $np=2.5$ and $np(1-p)=10\\cdot\\tfrac14\\cdot\\tfrac34=1.875$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The event 'no packet is lost' has probability $(1-p)^{10}=(3/4)^{10}$, so $P(X\\ge1)=1-(3/4)^{10}\\approx0.9437$. The option uses $p^{10}=(1/4)^{10}$, which is the probability that *all* ten are lost."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: for a uniform variable on $\\{1,\\dots,m\\}$, $\\operatorname{Var}=(m^2-1)/12=35/12$ when $m=6$."
+        }
+      ],
+      "commonTrap": "Taking the mode to be the rounded mean ($3$ instead of $2$), and writing $1-p^n$ instead of $1-(1-p)^n$ for 'at least one success'."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B;D",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\nn, p = 10, 0.25\npm = [comb(n, k) * p ** k * (1 - p) ** (n - k) for k in range(n + 1)]\nprint(max(range(n + 1), key=pm.__getitem__), round(pm[2], 4), round(pm[3], 4))\nprint(n * p, n * p * (1 - p))\nprint(round(1 - (1 - p) ** n, 4), round(1 - p ** n, 6))\nK = range(1, 7); EK = sum(K) / 6\nprint(round(sum(k * k for k in K) / 6 - EK ** 2, 4), round(35 / 12, 4))\n# Output: 2 0.2816 0.2503 | 2.5 1.875 | 0.9437 0.999999 | 2.9167 2.9167",
+      "notes": ""
+    }
+  }
+]

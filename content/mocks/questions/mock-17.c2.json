@@ -1,0 +1,805 @@
+[
+  {
+    "id": "M17-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (bias\u2013variance decomposition of the mean squared error) applied to four estimators that each need a short calculation, with two likely traps (an unsquared bias, and smallest variance implying smallest MSE); about 2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "MSE = bias$^2$ + variance: shrinking an unbiased estimator by a factor $c$ trades bias for variance, the MSE is minimised at an intermediate $c$, and the lowest-variance estimator need not have the lowest MSE.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The daily energy demand of a small facility (in MWh) has true mean $\\mu = 6$ and variance $\\sigma^2 = 24$. An analyst collects $n = 6$ independent daily observations $X_1, \\dots, X_6$, with sample mean $\\bar{X}$, and considers the shrinkage estimators\n\n$$T_c = c\\,\\bar{X}, \\qquad c \\in \\{1,\\ 0.9,\\ 0.8,\\ 0.5\\},$$\n\nof $\\mu$, so that $T_1 = \\bar{X}$. For an estimator $T$ of $\\mu$, the bias is $E[T] - \\mu$ and the mean squared error is $\\mathrm{MSE}(T) = E\\big[(T - \\mu)^2\\big]$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$T_{0.8}$ is biased, yet its MSE is exactly equal to the MSE of $\\bar{X}$."
+      },
+      {
+        "label": "B",
+        "text": "$T_{0.9}$ has a smaller MSE than $\\bar{X}$."
+      },
+      {
+        "label": "C",
+        "text": "Among the four estimators, the one with the smallest variance also has the smallest MSE."
+      },
+      {
+        "label": "D",
+        "text": "$T_{0.5}$ has the same MSE as $\\bar{X}$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "$E[\\bar X]=6$ and $\\operatorname{Var}(\\bar X)=24/6=4$, so $T_c$ has bias $6(c-1)$ and variance $4c^2$, giving $\\mathrm{MSE}(T_c)=36(c-1)^2+4c^2$.\nFor $c=1,\\ 0.9,\\ 0.8,\\ 0.5$ the MSE is $4,\\ 3.6,\\ 4,\\ 10$.\nHence statements A and B are true, while C and D are false.",
+      "steps": [
+        {
+          "title": "Bias and variance of $T_c$",
+          "body": "$E[\\bar X]=\\mu=6$ and $\\operatorname{Var}(\\bar X)=\\sigma^2/n=24/6=4$. For $T_c=c\\bar X$:\n\n$$\\text{bias}=E[T_c]-\\mu=6c-6=6(c-1),\\qquad \\operatorname{Var}(T_c)=c^2\\operatorname{Var}(\\bar X)=4c^2,$$\n\n$$\\mathrm{MSE}(T_c)=\\text{bias}^2+\\operatorname{Var}(T_c)=36(c-1)^2+4c^2.$$"
+        },
+        {
+          "title": "Numbers for the four estimators",
+          "body": "| $c$ | bias | bias$^2$ | variance | MSE |\n|---|---|---|---|---|\n| $1$ | $0$ | $0$ | $4$ | $4$ |\n| $0.9$ | $-0.6$ | $0.36$ | $3.24$ | $3.60$ |\n| $0.8$ | $-1.2$ | $1.44$ | $2.56$ | $4.00$ |\n| $0.5$ | $-3$ | $9$ | $1$ | $10$ |"
+        },
+        {
+          "title": "Check each statement",
+          "body": "- A: $T_{0.8}$ has bias $-1.2 \\neq 0$, and $\\mathrm{MSE}=1.44+2.56=4.00$, equal to $\\mathrm{MSE}(\\bar X)=0+4$. True.\n- B: $3.60 < 4$: the drop in variance ($4 \\to 3.24$) outweighs the added squared bias ($0.36$). True.\n- C: The smallest variance belongs to $T_{0.5}$ (variance $1$), but its MSE ($10$) is the largest of the four. False.\n- D: $\\mathrm{MSE}(T_{0.5})=9+1=10\\neq 4$. False."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Bias is $6(0.8-1)=-1.2$, so $T_{0.8}$ is biased, and $\\mathrm{MSE}=1.44+2.56=4.00$, the same as $\\mathrm{MSE}(\\bar X)=4$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\mathrm{MSE}(T_{0.9})=0.36+3.24=3.60<4$, so a little shrinkage improves on the unbiased $\\bar X$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$T_{0.5}$ has the smallest variance ($1$) but the largest MSE ($10$), because its squared bias ($9$) dominates. The smallest MSE among the four is $3.60$, at $c=0.9$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\mathrm{MSE}(T_{0.5})=(-3)^2+1=10$, not $4$. The value $4$ comes from adding the bias $3$ instead of its square $9$."
+        }
+      ],
+      "shortcut": "As a function of $c$, $\\mathrm{MSE}(c)=40c^2-72c+36=40(c-0.9)^2+3.6$, a parabola with its minimum at $c=0.9$. The values $c=0.8$ and $c=1$ are equally far ($0.1$) from $0.9$, so they tie at $4$; $c=0.5$ is $0.4$ away, giving $40(0.16)+3.6=10$.",
+      "commonTrap": "Adding the bias instead of its square (which makes $T_{0.5}$ look like $1+3=4$, the same as $\\bar X$), and assuming that the estimator with the smallest variance must have the smallest MSE."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B",
+      "agreesWithKey": true,
+      "checkCode": "mu, s2, n = 6, 24, 6\nmse = {}\nfor c in (1, 0.9, 0.8, 0.5):\n    bias, var = (c - 1) * mu, c * c * s2 / n\n    mse[c] = bias * bias + var\n    print(c, round(bias, 2), round(var, 2), round(mse[c], 2))\nprint('A', abs(mse[0.8] - mse[1]) < 1e-9, 'B', mse[0.9] < mse[1],\n      'C', min(mse, key=mse.get) == 0.5, 'D', abs(mse[0.5] - mse[1]) < 1e-9)   # A True B True C False D False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-mlp"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (backpropagation through a sigmoid output neuron) needing a two-factor chain rule with two given numbers; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Backpropagation at a sigmoid output neuron with squared-error loss: $\\partial L/\\partial z=(a-y)\\,\\sigma'(z)$, where $\\sigma'(z)=a(1-a)$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An output neuron of a multi-layer perceptron computes $a = \\sigma(z)$, where $z$ is its pre-activation and $\\sigma(z) = \\dfrac{1}{1 + e^{-z}}$. For a training example with target $y = 1$, the neuron outputs $a = 0.8$. The loss on this example is\n\n$$L = \\tfrac{1}{2}(a - y)^2.$$\n\nThe value of $\\dfrac{\\partial L}{\\partial z}$ for this example is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$-0.2$"
+      },
+      {
+        "label": "B",
+        "text": "$-0.032$"
+      },
+      {
+        "label": "C",
+        "text": "$0.032$"
+      },
+      {
+        "label": "D",
+        "text": "$0.16$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "By the chain rule $\\dfrac{\\partial L}{\\partial z}=\\dfrac{\\partial L}{\\partial a}\\cdot\\dfrac{\\partial a}{\\partial z}$, with $\\dfrac{\\partial L}{\\partial a}=a-y=-0.2$ and $\\dfrac{\\partial a}{\\partial z}=a(1-a)=0.16$.\nSo $\\dfrac{\\partial L}{\\partial z}=(-0.2)(0.16)=-0.032$.",
+      "steps": [
+        {
+          "title": "Chain rule",
+          "body": "The loss depends on $z$ only through $a=\\sigma(z)$, so $\\dfrac{\\partial L}{\\partial z}=\\dfrac{\\partial L}{\\partial a}\\cdot\\dfrac{\\partial a}{\\partial z}$."
+        },
+        {
+          "title": "Derivative of the loss with respect to the output",
+          "body": "$L=\\tfrac12(a-y)^2$ gives $\\dfrac{\\partial L}{\\partial a}=a-y=0.8-1=-0.2$."
+        },
+        {
+          "title": "Derivative of the sigmoid",
+          "body": "$\\sigma'(z)=\\sigma(z)\\big(1-\\sigma(z)\\big)=a(1-a)=0.8\\times 0.2=0.16$."
+        },
+        {
+          "title": "Multiply",
+          "body": "$$\\frac{\\partial L}{\\partial z}=(-0.2)(0.16)=-0.032.$$\nThe negative sign means that increasing $z$ would lower the loss, as expected because the output $0.8$ is below the target $1$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$-0.2$ is only $\\partial L/\\partial a=a-y$. It omits the factor $\\sigma'(z)=0.16$ from the activation."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$(a-y)\\,a(1-a)=(-0.2)(0.16)=-0.032$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The magnitude is right but the sign is wrong: it comes from using $y-a=+0.2$ instead of $a-y=-0.2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.16$ is only $\\sigma'(z)=a(1-a)$. It omits the error factor $a-y$ coming from the loss."
+        }
+      ],
+      "commonTrap": "Stopping after one factor of the chain rule: reporting $a-y=-0.2$ (forgetting $\\sigma'(z)$) or $a(1-a)=0.16$ (forgetting the error term), or flipping the sign by using $y-a$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-0.032 (B)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nz = math.log(0.8 / 0.2)                     # pre-activation that gives a = 0.8\na = 1 / (1 + math.exp(-z)); y = 1\nL = lambda z: 0.5 * (1 / (1 + math.exp(-z)) - y) ** 2\nh = 1e-6\nprint(round(a, 3), round((L(z + h) - L(z - h)) / (2 * h), 4), round((a - y) * a * (1 - a), 4))   # 0.8 -0.032 -0.032",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-types"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (proximity between objects with mixed attribute types) needing four different per-attribute rules, a normalisation for each of the ordinal and numeric attributes, and the exclusion of a joint absence; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Dissimilarity for mixed attribute types: nominal (match or mismatch), ordinal (normalised rank difference), ratio-scaled (range-normalised difference) and asymmetric binary attributes (joint absences are left out of the average).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two loan applications, $X$ and $Y$, are compared using five attributes of different types. The dissimilarity between them is\n\n$$d(X, Y) = \\frac{\\sum_{f} \\delta_f\\, d_f}{\\sum_{f} \\delta_f},$$\n\nwhere the sums run over the five attributes $f$, and $\\delta_f$ and $d_f \\in [0, 1]$ are defined as follows.\n\n- $\\delta_f = 0$ if $f$ is an asymmetric binary attribute on which both applications have the value $0$; otherwise $\\delta_f = 1$.\n- Nominal attribute: $d_f = 0$ if the two values are equal, otherwise $d_f = 1$.\n- Ordinal attribute with $M_f$ ordered states: each value is replaced by its rank $r \\in \\{1, \\dots, M_f\\}$ (the lowest state has rank $1$), and $d_f = |r_X - r_Y| / (M_f - 1)$.\n- Ratio-scaled numeric attribute: $d_f = |x - y| / (\\max_f - \\min_f)$, where $\\max_f$ and $\\min_f$ are the largest and smallest values of the attribute in the whole data set.\n- Asymmetric binary attribute (when $\\delta_f = 1$): $d_f = 0$ if both values are $1$, and $d_f = 1$ if the two values differ.\n\n| Attribute | Type | Details | $X$ | $Y$ |\n|---|---|---|---|---|\n| Employment | nominal | Salaried, Self-employed, Retired, Student | Salaried | Self-employed |\n| Credit grade | ordinal | $E < D < C < B < A$ | $B$ | $E$ |\n| Annual income (lakh rupees) | ratio-scaled | data-set minimum $2$, maximum $34$ | $14$ | $8$ |\n| Has a guarantor | asymmetric binary | $1$ = yes, $0$ = no | $1$ | $0$ |\n| Has a past default | asymmetric binary | $1$ = yes, $0$ = no | $0$ | $0$ |\n\nThe value of $d(X, Y)$ is ________. (rounded off to two decimal places)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.72,
+      "max": 0.74
+    },
+    "solution": {
+      "quick": "Only the past-default attribute is dropped ($\\delta=0$, both values are $0$), so the denominator is $4$.\nThe contributions are: employment $1$, credit grade $|4-1|/4=0.75$, income $|14-8|/32=0.1875$, guarantor $1$.\n$d=(1+0.75+0.1875+1)/4=0.734375\\approx 0.73$.",
+      "steps": [
+        {
+          "title": "Decide which attributes enter the average",
+          "body": "Only the asymmetric binary attribute *past default* has both values $0$, so $\\delta=0$ for it and $\\delta=1$ for the other four attributes. Hence $\\sum_f\\delta_f=4$."
+        },
+        {
+          "title": "Per-attribute dissimilarities",
+          "body": "- Employment (nominal): Salaried $\\ne$ Self-employed, so $d=1$.\n- Credit grade (ordinal, $M=5$): ranks $E=1,\\ D=2,\\ C=3,\\ B=4,\\ A=5$, so $r_X=4$ and $r_Y=1$, and $d=\\dfrac{|4-1|}{5-1}=0.75$.\n- Annual income (ratio-scaled): $d=\\dfrac{|14-8|}{34-2}=\\dfrac{6}{32}=0.1875$.\n- Guarantor (asymmetric binary, values $1$ and $0$ differ): $d=1$."
+        },
+        {
+          "title": "Combine",
+          "body": "$$d(X,Y)=\\frac{1+0.75+0.1875+1}{4}=\\frac{2.9375}{4}=0.734375\\approx 0.73.$$"
+        }
+      ],
+      "finalAnswer": "**0.73**",
+      "commonTrap": "Treating *past default* as a symmetric attribute, so that the joint $0$ counts as a match ($d=0$, $\\delta=1$). That gives $2.9375/5=0.5875\\approx 0.59$. Another slip is using the raw rank difference $3$ and the raw income difference $6$ instead of the normalised values."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.73",
+      "agreesWithKey": true,
+      "checkCode": "X = dict(emp='Salaried', grade='B', inc=14, gua=1, dft=0)\nY = dict(emp='Self-employed', grade='E', inc=8, gua=0, dft=0)\nrank = {g: i + 1 for i, g in enumerate('EDCBA')}\nd = {'emp': float(X['emp'] != Y['emp']),\n     'grade': abs(rank[X['grade']] - rank[Y['grade']]) / (len(rank) - 1),\n     'inc': abs(X['inc'] - Y['inc']) / (34 - 2),\n     'gua': float(X['gua'] != Y['gua']),\n     'dft': float(X['dft'] != Y['dft'])}\ndelta = {k: 1 for k in d}\ndelta['dft'] = 0 if X['dft'] == 0 and Y['dft'] == 0 else 1     # joint absence is ignored\nval = sum(delta[k] * d[k] for k in d) / sum(delta.values())\nprint(d, sum(delta.values()), round(val, 4), round(val, 2))   # 0.734375 -> 0.73",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-correlation-covariance"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (sample correlation coefficient) as a single computation on five data pairs whose means are whole numbers; about 100 seconds.",
+    "estimatedTimeSec": 100,
+    "concept": "Sample Pearson correlation coefficient $r = S_{xy}/\\sqrt{S_{xx}S_{yy}}$ computed from paired data.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A bookshop records, on five days, the number of customers who entered, $x$ (in tens), and the number of books sold, $y$.\n\n| Day | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| $x$ (tens of customers) | 4 | 5 | 8 | 11 | 12 |\n| $y$ (books sold) | 5 | 4 | 5 | 12 | 9 |\n\nThe sample correlation coefficient (Pearson's $r$) between $x$ and $y$ is ________. (rounded off to two decimal places)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.82,
+      "max": 0.84
+    },
+    "solution": {
+      "quick": "$\\bar x=8$, $\\bar y=7$, and the sums of deviations give $S_{xy}=40$, $S_{xx}=50$, $S_{yy}=46$.\n$r=\\dfrac{40}{\\sqrt{50\\times 46}}=\\dfrac{40}{47.96}=0.834\\approx 0.83$.",
+      "steps": [
+        {
+          "title": "Means and deviations",
+          "body": "$\\bar x=\\dfrac{4+5+8+11+12}{5}=8$ and $\\bar y=\\dfrac{5+4+5+12+9}{5}=7$.\n\n| $x$ | $y$ | $x-\\bar x$ | $y-\\bar y$ | product | $(x-\\bar x)^2$ | $(y-\\bar y)^2$ |\n|---|---|---|---|---|---|---|\n| 4 | 5 | $-4$ | $-2$ | 8 | 16 | 4 |\n| 5 | 4 | $-3$ | $-3$ | 9 | 9 | 9 |\n| 8 | 5 | 0 | $-2$ | 0 | 0 | 4 |\n| 11 | 12 | 3 | 5 | 15 | 9 | 25 |\n| 12 | 9 | 4 | 2 | 8 | 16 | 4 |\n| **Sum** | | 0 | 0 | **40** | **50** | **46** |"
+        },
+        {
+          "title": "Apply the formula",
+          "body": "$$r=\\frac{S_{xy}}{\\sqrt{S_{xx}\\,S_{yy}}}=\\frac{40}{\\sqrt{50\\times 46}}=\\frac{40}{\\sqrt{2300}}=\\frac{40}{47.958}=0.8341.$$"
+        },
+        {
+          "title": "Round and interpret",
+          "body": "To two decimal places $r\\approx 0.83$, a strong positive linear association. (Using the sample covariance $40/4=10$ and variances $50/4=12.5$, $46/4=11.5$ gives the same $r=10/\\sqrt{12.5\\times 11.5}$, since the factor $n-1$ cancels.)"
+        }
+      ],
+      "finalAnswer": "**0.83**",
+      "commonTrap": "Reporting the covariance ($10$, or $8$ with divisor $n$) instead of the correlation, forgetting the square root in the denominator, or giving $r^2\\approx 0.70$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.83",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx = np.array([4, 5, 8, 11, 12]); y = np.array([5, 4, 5, 12, 9])\ndx, dy = x - x.mean(), y - y.mean()\nr = (dx * dy).sum() / np.sqrt((dx ** 2).sum() * (dy ** 2).sum())\nprint((dx * dy).sum(), (dx ** 2).sum(), (dy ** 2).sum(), round(r, 4), round(r, 2), round(np.corrcoef(x, y)[0, 1], 2))   # 40 50 46 0.8341 0.83 0.83",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (entailment checked by counting counter-models over five variables) needing a short case analysis that fixes two variables to make sentences trivially true; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Checking entailment by counting counter-models: $KB \\not\\models \\alpha$ exactly when some model of $KB$ falsifies $\\alpha$, and fixing the variables that falsify $\\alpha$ often makes KB sentences trivially true.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A CI/CD pipeline is described by five propositional variables:\n\n- $B$: the artifact is published to the staging area,\n- $T$: the test suite passes,\n- $L$: the linter passes,\n- $C$: the canary deployment is healthy,\n- $R$: the release is approved.\n\nThe pipeline policy is the knowledge base\n\n$$\nKB = \\{\\; R \\to (T \\land C),\\;\\; C \\to B,\\;\\; B \\to (T \\lor L) \\;\\}.\n$$\n\nA colleague claims that $KB$ entails the sentence $\\alpha = (T \\lor L) \\to R$.\n\nThe number of truth assignments to $(B, T, L, C, R)$, out of the $32$ possible, that make every sentence of $KB$ true but make $\\alpha$ false is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 9,
+      "max": 9
+    },
+    "solution": {
+      "quick": "$\\alpha$ is false exactly when $T\\lor L$ is true and $R$ is false. With $R$ false and $T\\lor L$ true, the first and third sentences of $KB$ hold automatically, leaving only $C\\to B$.\nThere are $3$ choices of $(T,L)$ with $T\\lor L$ true and $3$ choices of $(B,C)$ with $C\\to B$, so $3\\times 3=9$.",
+      "steps": [
+        {
+          "title": "When is $\\alpha$ false?",
+          "body": "$\\alpha=(T\\lor L)\\to R$ is false only when the antecedent $T\\lor L$ is true and the consequent $R$ is false. So we count assignments with $R=0$ and $T\\lor L=1$ that also satisfy all three sentences of $KB$."
+        },
+        {
+          "title": "Simplify the sentences of $KB$ under these conditions",
+          "body": "- $R\\to(T\\land C)$ is true because $R=0$.\n- $B\\to(T\\lor L)$ is true because $T\\lor L=1$.\n- Only $C\\to B$ still constrains the assignment."
+        },
+        {
+          "title": "Count",
+          "body": "- $(T,L)$ with $T\\lor L$ true: $(1,0),(0,1),(1,1)$, that is $3$ choices.\n- $(B,C)$ with $C\\to B$: $(0,0),(1,0),(1,1)$, that is $3$ choices (the pair $B=0,C=1$ is excluded).\n- $R$ is fixed at $0$.\n\nTotal $=3\\times 3=9$."
+        },
+        {
+          "title": "Cross-check",
+          "body": "Without $KB$, the assignments with $\\alpha$ false number $3\\times 2\\times 2=12$ ($(T,L)$: $3$; $B$, $C$: free). The $3$ of them with $B=0,C=1$ violate $C\\to B$, leaving $12-3=9$."
+        }
+      ],
+      "finalAnswer": "**9**",
+      "commonTrap": "Counting all assignments that falsify $\\alpha$ without imposing $KB$ (which gives $12$), or counting the models of $KB$ (there are also $12$), instead of the assignments that satisfy $KB$ and falsify $\\alpha$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "9",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nimp = lambda p, q: (not p) or q\ncnt = kb_models = 0\nfor B, T, L, C, R in product([False, True], repeat=5):\n    kb = imp(R, T and C) and imp(C, B) and imp(B, T or L)\n    alpha = imp(T or L, R)\n    kb_models += kb\n    cnt += kb and not alpha\nprint(cnt, kb_models)   # 9 12",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-continuity-differentiability"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (continuity and differentiability at a point) needing two linked limit computations that each rely on a Taylor expansion of $e^{2x}$ to third order, with a likely trap of truncating too early; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Continuity via the limit at a point and differentiability via the difference-quotient limit; the Maclaurin expansion of $e^{2x}$ resolves both $0/0$ limits.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Define $f : \\mathbb{R} \\to \\mathbb{R}$ by\n\n$$\nf(x) = \\begin{cases} \\dfrac{e^{2x} - 1 - 2x}{x^{2}}, & x \\neq 0, \\\\ c, & x = 0, \\end{cases}\n$$\n\nwhere $c$ is the real constant for which $f$ is continuous at $x = 0$. The value of $f'(0)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0$"
+      },
+      {
+        "label": "B",
+        "text": "$\\tfrac{4}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$2$"
+      },
+      {
+        "label": "D",
+        "text": "$\\tfrac{8}{3}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Since $e^{2x}=1+2x+2x^2+\\tfrac43x^3+\\cdots$, we get $f(x)=2+\\tfrac43x+\\tfrac23x^2+\\cdots$ for $x\\ne0$.\nContinuity forces $c=f(0)=\\lim_{x\\to0}f(x)=2$, and then $f'(0)=\\lim_{x\\to0}\\dfrac{f(x)-2}{x}=\\tfrac43$.",
+      "steps": [
+        {
+          "title": "Find $c$ from continuity",
+          "body": "The Maclaurin series is $e^{2x}=1+2x+\\dfrac{(2x)^2}{2!}+\\dfrac{(2x)^3}{3!}+\\dfrac{(2x)^4}{4!}+\\cdots=1+2x+2x^2+\\tfrac43x^3+\\tfrac23x^4+\\cdots$.\n\nSo for $x\\ne0$: $\\quad f(x)=\\dfrac{2x^2+\\tfrac43x^3+\\tfrac23x^4+\\cdots}{x^2}=2+\\tfrac43x+\\tfrac23x^2+\\cdots$\n\nHence $\\lim_{x\\to0}f(x)=2$, and continuity at $0$ requires $c=f(0)=2$."
+        },
+        {
+          "title": "Derivative at $0$ from the definition",
+          "body": "$$f'(0)=\\lim_{x\\to0}\\frac{f(x)-f(0)}{x}=\\lim_{x\\to0}\\frac{\\tfrac43x+\\tfrac23x^2+\\cdots}{x}=\\frac43.$$\nEquivalently, $f'(0)=\\lim_{x\\to0}\\dfrac{e^{2x}-1-2x-2x^2}{x^3}$, a $0/0$ form; three applications of L'H\u00f4pital's rule give $\\dfrac{8e^{2x}}{6}\\to\\dfrac43$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The limit exists, so $f$ is differentiable at $0$ with $f'(0)=\\tfrac43$ (the coefficient of $x$ in the expansion of $f$)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0$ results from truncating $e^{2x}$ after the $x^2$ term: then $f$ looks constant near $0$. The cubic term $\\tfrac43x^3$ supplies the linear term of $f$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$f'(0)=\\tfrac43$, the coefficient of $x$ in $f(x)=2+\\tfrac43x+\\cdots$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$2$ is the value $c=f(0)$ that makes $f$ continuous, not the derivative."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac83$ comes from using $(2x)^3/3=\\tfrac83x^3$ instead of $(2x)^3/3!=\\tfrac43x^3$, that is, forgetting the factorial."
+        }
+      ],
+      "commonTrap": "Reporting $f(0)=c=2$ as if it were $f'(0)$, or stopping the series too early (so that $f'(0)=0$). The linear term of $f$ comes from the cubic term of $e^{2x}$, whose coefficient is $2^3/3!=\\tfrac43$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4/3 (B)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = (sp.exp(2 * x) - 1 - 2 * x) / x ** 2\nc = sp.limit(f, x, 0)\nfp = sp.limit((f - c) / x, x, 0)\nprint(c, fp, sp.series(f, x, 0, 3))   # 2 4/3 2 + 4*x/3 + 2*x**2/3 + O(x**3)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-shortest-path"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (Dijkstra's algorithm) with a full run on a seven-vertex graph, then four statements about finalization order, a distance, path uniqueness and an edge-weight change; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Dijkstra's algorithm on a positively weighted DAG: distances, order of finalization, ties between shortest paths, and why raising the weight of an edge on only some shortest paths leaves the distance unchanged.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A directed graph has vertices $S, A, B, C, D, E, T$. All edge weights are positive:\n\n| Edge | $S \\to A$ | $S \\to B$ | $A \\to B$ | $A \\to C$ | $B \\to C$ | $B \\to D$ | $C \\to E$ | $C \\to T$ | $D \\to E$ | $D \\to T$ | $E \\to T$ |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n| Weight | 3 | 2 | 2 | 6 | 3 | 6 | 2 | 6 | 8 | 2 | 3 |\n\nDijkstra's algorithm is run with source $S$. At each step it finalizes (removes from the priority queue) the non-finalized vertex with the smallest tentative distance, and then relaxes the edges leaving that vertex.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The shortest path from $S$ to $T$ is unique."
+      },
+      {
+        "label": "B",
+        "text": "Dijkstra's algorithm finalizes vertex $E$ before it finalizes vertex $D$."
+      },
+      {
+        "label": "C",
+        "text": "The shortest distance from $S$ to $E$ is $7$."
+      },
+      {
+        "label": "D",
+        "text": "If the weight of edge $B \\to D$ is increased from $6$ to $8$, the shortest distance from $S$ to $T$ does not change."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Running Dijkstra gives the final distances $S=0,\\ B=2,\\ A=3,\\ C=5,\\ E=7,\\ D=8,\\ T=10$, finalized in the order $S,B,A,C,E,D,T$.\nTwo paths reach $T$ at cost $10$: $S\\to B\\to C\\to E\\to T$ and $S\\to B\\to D\\to T$, so B, C and D hold, while A fails.\nRaising $B\\to D$ to $8$ lengthens only the second path, so the distance stays $10$.",
+      "steps": [
+        {
+          "title": "Run Dijkstra from $S$",
+          "body": "| Step | Finalized (distance) | Tentative distances after relaxing |\n|---|---|---|\n| 1 | $S\\,(0)$ | $A=3,\\ B=2$ |\n| 2 | $B\\,(2)$ | $C=5,\\ D=8$ |\n| 3 | $A\\,(3)$ | $C$ via $A$ is $9$, no change |\n| 4 | $C\\,(5)$ | $E=7,\\ T=11$ |\n| 5 | $E\\,(7)$ | $T=\\min(11,\\ 7+3)=10$ |\n| 6 | $D\\,(8)$ | $E$ via $D$ is $16$, no change; $T$ via $D$ is $8+2=10$, a tie |\n| 7 | $T\\,(10)$ | done |\n\nFinal distances: $S=0,\\ B=2,\\ A=3,\\ C=5,\\ E=7,\\ D=8,\\ T=10$. Order of finalization: $S,B,A,C,E,D,T$."
+        },
+        {
+          "title": "Shortest paths from $S$ to $T$",
+          "body": "- $S\\to B\\to C\\to E\\to T$: $2+3+2+3=10$.\n- $S\\to B\\to D\\to T$: $2+6+2=10$.\n- Every other path costs at least $11$ (for example $S\\to B\\to C\\to T=11$).\n\nSo there are exactly two shortest paths, both of weight $10$."
+        },
+        {
+          "title": "Check the four statements",
+          "body": "- A: false, there are two shortest paths.\n- B: true, $E$ is finalized at distance $7$ and $D$ at distance $8$.\n- C: true, $d(S,E)=2+3+2=7$ via $B\\to C\\to E$; every other route to $E$ is longer ($S\\to A\\to B\\to C\\to E=10$, $S\\to A\\to C\\to E=11$, $S\\to B\\to D\\to E=16$, $S\\to A\\to B\\to D\\to E=19$).\n- D: true. With $w(B\\to D)=8$ the path $S\\to B\\to D\\to T$ costs $12$, but $S\\to B\\to C\\to E\\to T$ still costs $10$, so $d(S,T)=10$ is unchanged."
+        }
+      ],
+      "finalAnswer": "**(B), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Two different paths, $S\\to B\\to C\\to E\\to T$ and $S\\to B\\to D\\to T$, both have weight $10$, so the shortest path is not unique."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$E$ is finalized at distance $7$ (step 5) and $D$ at distance $8$ (step 6), so $E$ comes first."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The route $S\\to B\\to C\\to E$ costs $2+3+2=7$, and every other route to $E$ costs at least $10$, so $d(S,E)=7$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The edge $B\\to D$ lies on only one of the two shortest paths. After the change that path costs $12$, but the other still costs $10$."
+        }
+      ],
+      "commonTrap": "Stopping as soon as one path of cost $10$ is found and calling it the only shortest path, or assuming that raising the weight of any edge on a shortest path must raise the shortest distance. It does not when another shortest path avoids that edge."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import heapq\nE = {('S','A'):3,('S','B'):2,('A','B'):2,('A','C'):6,('B','C'):3,('B','D'):6,\n     ('C','E'):2,('C','T'):6,('D','E'):8,('D','T'):2,('E','T'):3}\ndef dijkstra(E):\n    g = {}\n    for (u, v), w in E.items(): g.setdefault(u, []).append((v, w))\n    dist, order, pq = {'S': 0}, [], [(0, 'S')]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if u in order: continue\n        order.append(u)\n        for v, w in g.get(u, []):\n            if d + w < dist.get(v, 1e9): dist[v] = d + w; heapq.heappush(pq, (d + w, v))\n    return dist, order\ndef costs(u, c, E, out):                      # the graph is a DAG, so plain recursion enumerates all paths\n    if u == 'T': out.append(c)\n    for (a, b), w in E.items():\n        if a == u: costs(b, c + w, E, out)\ndist, order = dijkstra(E)\nout = []; costs('S', 0, E, out)\nE2 = dict(E); E2[('B', 'D')] = 8\nprint(dist, order)\nprint('A', out.count(min(out)) == 1, 'B', order.index('E') < order.index('D'), 'C', dist['E'] == 7, 'D', dijkstra(E2)[0]['T'] == dist['T'])   # A False B True C True D True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-multidimensional-schema"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 two linked concepts (snowflake versus star schema, and joins along foreign-key chains) with a routine count of the tables a query must touch in each design and three likely miscounts; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Snowflaking a dimension adds tables along its concept hierarchy, so a query that groups by a high level must join the whole chain (tables $-\\,1$ joins), whereas a star schema needs one join per dimension used.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A telecom operator's data warehouse stores one fact row per phone call. In its snowflake schema the dimensions are normalized as follows. Every `_key` column is the primary key of its own table and a foreign key wherever else it appears.\n\n| Table | Role | Columns |\n|---|---|---|\n| CallFact | fact | date_key, cell_key, plan_key, duration_min, charge |\n| DateDim | dimension | date_key, day, month, quarter, year |\n| CellDim | dimension | cell_key, tower_name, locality_key |\n| LocalityDim | dimension | locality_key, locality_name, city_key |\n| CityDim | dimension | city_key, city_name, state_name |\n| PlanDim | dimension | plan_key, plan_name, category_key |\n| CategoryDim | dimension | category_key, category_name |\n\nAn equivalent star schema keeps CallFact and DateDim unchanged, but replaces the location and plan tables by two denormalized dimension tables, CellStar(cell_key, tower_name, locality_name, city_name, state_name) and PlanStar(plan_key, plan_name, category_name).\n\nA report needs the total `charge` for every combination of `state_name`, `category_name` and `quarter`. Counting each binary join between two tables as one join operation, the minimum number of joins needed to answer this query in the snowflake schema and in the star schema, respectively, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$7$ and $4$"
+      },
+      {
+        "label": "B",
+        "text": "$3$ and $3$"
+      },
+      {
+        "label": "C",
+        "text": "$5$ and $2$"
+      },
+      {
+        "label": "D",
+        "text": "$6$ and $3$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The query needs `quarter` (DateDim), `state_name` and `category_name`, and these must be linked back to CallFact through foreign-key chains.\nSnowflake: CallFact, DateDim, CellDim, LocalityDim, CityDim, PlanDim, CategoryDim are $7$ tables, so $6$ joins.\nStar: CallFact, DateDim, CellStar, PlanStar are $4$ tables, so $3$ joins.",
+      "steps": [
+        {
+          "title": "Where each grouping attribute lives",
+          "body": "`quarter` is in DateDim. `state_name` is in CityDim (snowflake) or CellStar (star). `category_name` is in CategoryDim (snowflake) or PlanStar (star). `charge` is in CallFact."
+        },
+        {
+          "title": "Snowflake schema: tables on the join paths",
+          "body": "The tables are linked only through foreign keys, so every table on a path from CallFact to a needed table must be joined:\n\n- CallFact $\\to$ DateDim.\n- CallFact $\\to$ CellDim $\\to$ LocalityDim $\\to$ CityDim, because CityDim has no key in CallFact.\n- CallFact $\\to$ PlanDim $\\to$ CategoryDim.\n\nThat is $1+1+3+2=7$ tables (CallFact, DateDim, CellDim, LocalityDim, CityDim, PlanDim, CategoryDim). Joining $k$ tables into one result takes $k-1$ binary joins, so $7-1=6$ joins."
+        },
+        {
+          "title": "Star schema",
+          "body": "CallFact is joined directly to DateDim, CellStar and PlanStar: $4$ tables, so $4-1=3$ joins."
+        },
+        {
+          "title": "Result",
+          "body": "Snowflake $6$ joins, star $3$ joins. Snowflaking saves storage by removing redundancy in the dimension tables, but it costs extra joins at query time."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$7$ and $4$ are the numbers of tables, not the numbers of joins. Joining $k$ tables takes $k-1$ joins."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Joining only the tables that supply the three grouping attributes would need $3$ joins, but in the snowflake schema CityDim and CategoryDim cannot be joined to CallFact directly. The intermediate tables CellDim, LocalityDim and PlanDim must be joined too."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This leaves out DateDim, although the report groups by `quarter`. Including it gives $6$ and $3$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Snowflake: $7$ tables give $6$ joins. Star: $4$ tables give $3$ joins."
+        }
+      ],
+      "commonTrap": "Reporting the number of tables instead of the number of joins, or skipping the intermediate snowflaked tables (LocalityDim, CellDim, PlanDim), which carry no requested attribute but are needed to connect CityDim and CategoryDim to the fact table."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6 and 3 (D)",
+      "agreesWithKey": true,
+      "checkCode": "snow = {'CallFact': ['DateDim', 'CellDim', 'PlanDim'], 'CellDim': ['LocalityDim'],\n        'LocalityDim': ['CityDim'], 'PlanDim': ['CategoryDim']}          # parent -> children (foreign-key links)\nstar = {'CallFact': ['DateDim', 'CellStar', 'PlanStar']}\ndef joins(fk, needed):\n    parent = {c: p for p, cs in fk.items() for c in cs}\n    used = {'CallFact'}\n    for t in needed:                                                       # walk each needed table back to the fact table\n        while t not in used:\n            used.add(t); t = parent[t]\n    return len(used) - 1\nprint(joins(snow, ['DateDim', 'CityDim', 'CategoryDim']), joins(star, ['DateDim', 'CellStar', 'PlanStar']))   # 6 3",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-determinant"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (determinant of a structured matrix) needing a cofactor recurrence with a non-symmetric off-diagonal product carried over five steps; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Determinant of a tridiagonal matrix by cofactor expansion: $D_n=a\\,D_{n-1}-bc\\,D_{n-2}$, where $b$ and $c$ are the paired super- and sub-diagonal entries.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $T$ be the $5 \\times 5$ real matrix\n\n$$\nT = \\begin{bmatrix} 4 & 1 & 0 & 0 & 0 \\\\ 3 & 4 & 1 & 0 & 0 \\\\ 0 & 3 & 4 & 1 & 0 \\\\ 0 & 0 & 3 & 4 & 1 \\\\ 0 & 0 & 0 & 3 & 4 \\end{bmatrix}.\n$$\n\nThe determinant of $T$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 364,
+      "max": 364
+    },
+    "solution": {
+      "quick": "Expanding along the first row gives $D_n=4D_{n-1}-(1)(3)D_{n-2}$ for the leading $n\\times n$ block, with $D_0=1$, $D_1=4$.\nThen $D_2=13$, $D_3=40$, $D_4=121$, $D_5=4(121)-3(40)=364$.",
+      "steps": [
+        {
+          "title": "Set up the recurrence",
+          "body": "Let $D_n$ be the determinant of the top-left $n\\times n$ block of $T$. Expanding along the first row, the first term is $4\\,D_{n-1}$. In the second term the entry $1$ is multiplied by the minor obtained by deleting row $1$ and column $2$, and expanding that minor along its first column leaves only the entry $3$ times $D_{n-2}$. Therefore\n\n$$D_n=4D_{n-1}-(1\\cdot 3)\\,D_{n-2},\\qquad D_0=1,\\ D_1=4.$$"
+        },
+        {
+          "title": "Iterate",
+          "body": "- $D_2=4(4)-3(1)=13$ (check: $\\det\\begin{bmatrix}4&1\\\\3&4\\end{bmatrix}=16-3=13$).\n- $D_3=4(13)-3(4)=52-12=40$.\n- $D_4=4(40)-3(13)=160-39=121$.\n- $D_5=4(121)-3(40)=484-120=364$."
+        },
+        {
+          "title": "Result",
+          "body": "$\\det T=D_5=364$. (The values $1,4,13,40,121,364$ follow $D_n=\\dfrac{3^{n+1}-1}{2}$.)"
+        }
+      ],
+      "finalAnswer": "**364**",
+      "shortcut": "The recurrence $D_n=4D_{n-1}-3D_{n-2}$ has characteristic equation $\\lambda^2-4\\lambda+3=0$ with roots $1$ and $3$, so $D_n=\\dfrac{3^{n+1}-1}{2}$ (fit to $D_0=1$, $D_1=4$). For $n=5$: $\\dfrac{729-1}{2}=364$.",
+      "commonTrap": "Using the wrong coefficient in the recurrence: the correction term is the product of the paired off-diagonal entries ($1\\times 3=3$), not $1$ or $9$. Multiplying the diagonal entries ($4^5=1024$) is only valid for triangular matrices."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "364",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np, sympy as sp\nT = sp.zeros(5, 5)\nfor i in range(5):\n    T[i, i] = 4\n    if i < 4: T[i, i + 1] = 1; T[i + 1, i] = 3\nD = [1, 4]\nfor n in range(2, 6): D.append(4 * D[-1] - 3 * D[-2])\nprint(T.det(), D, round(np.linalg.det(np.array(T.tolist(), dtype=float))))   # 364 [1, 4, 13, 40, 121, 364] 364",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-projections"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD \u2014 several linked concepts (a null space as an orthogonal complement, projection through a non-orthogonal basis using normal equations, Pythagoras) with a lengthy exact computation and a likely trap of treating the two rows as orthogonal; about 4 minutes.",
+    "estimatedTimeSec": 260,
+    "concept": "Orthogonal projection onto a subspace given by linear constraints: $W=(\\text{row space})^{\\perp}$, so $P_W\\mathbf b=\\mathbf b-P_{\\text{row}}\\mathbf b$, and the projection onto a non-orthogonal basis needs the normal equations.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In $\\mathbb{R}^4$ with the standard inner product, let\n\n$$\nW = \\{\\mathbf{x} \\in \\mathbb{R}^4 : x_1 + x_2 + x_3 + x_4 = 0 \\ \\text{ and } \\ x_1 + 2x_2 + 3x_3 + 4x_4 = 0\\}\n$$\n\nand let $\\mathbf{b} = (3,\\ 1,\\ 5,\\ 5)^{\\top}$. Let $P_W\\mathbf{b}$ denote the orthogonal projection of $\\mathbf{b}$ onto $W$.\n\nThe value of $\\lVert P_W\\mathbf{b} \\rVert^2$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$6$"
+      },
+      {
+        "label": "B",
+        "text": "$11$"
+      },
+      {
+        "label": "C",
+        "text": "$51$"
+      },
+      {
+        "label": "D",
+        "text": "$54$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$W$ is the orthogonal complement of the row space $R=\\operatorname{span}\\{r_1,r_2\\}$ with $r_1=(1,1,1,1)$, $r_2=(1,2,3,4)$, so $P_W\\mathbf b=\\mathbf b-P_R\\mathbf b$.\nThe normal equations give $P_R\\mathbf b=r_1+r_2=(2,3,4,5)$, hence $P_W\\mathbf b=(1,-2,1,0)$ and $\\lVert P_W\\mathbf b\\rVert^2=6$.",
+      "steps": [
+        {
+          "title": "Reduce to the row space",
+          "body": "$W$ is exactly the set of vectors orthogonal to $r_1=(1,1,1,1)$ and $r_2=(1,2,3,4)$, so $W=R^{\\perp}$ with $R=\\operatorname{span}\\{r_1,r_2\\}$. Then $\\mathbf b=P_R\\mathbf b+P_W\\mathbf b$, and the rows give an explicit basis of $R$. Note that $r_1\\cdot r_2=1+2+3+4=10\\neq 0$, so the rows are **not** orthogonal."
+        },
+        {
+          "title": "Normal equations for $R$",
+          "body": "With $A=[\\,r_1\\ \\ r_2\\,]$ (a $4\\times 2$ matrix) we solve $A^{\\top}A\\,\\mathbf c=A^{\\top}\\mathbf b$:\n\n$$\\begin{bmatrix}4&10\\\\10&30\\end{bmatrix}\\mathbf c=\\begin{bmatrix}r_1\\cdot\\mathbf b\\\\ r_2\\cdot\\mathbf b\\end{bmatrix}=\\begin{bmatrix}14\\\\40\\end{bmatrix}\\ \\Rightarrow\\ \\mathbf c=\\frac{1}{20}\\begin{bmatrix}30&-10\\\\-10&4\\end{bmatrix}\\begin{bmatrix}14\\\\40\\end{bmatrix}=\\begin{bmatrix}1\\\\1\\end{bmatrix}.$$"
+        },
+        {
+          "title": "Both components of $\\mathbf b$",
+          "body": "$P_R\\mathbf b=1\\cdot r_1+1\\cdot r_2=(2,3,4,5)$, so\n\n$$P_W\\mathbf b=\\mathbf b-P_R\\mathbf b=(3,1,5,5)-(2,3,4,5)=(1,-2,1,0).$$\n\nCheck that it lies in $W$: $1-2+1+0=0$ and $1-4+3+0=0$."
+        },
+        {
+          "title": "Squared length",
+          "body": "$\\lVert P_W\\mathbf b\\rVert^2=1+4+1+0=6$. Cross-check with Pythagoras: $\\lVert\\mathbf b\\rVert^2=9+1+25+25=60$ and $\\lVert P_R\\mathbf b\\rVert^2=4+9+16+25=54$, and $60-54=6$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$P_W\\mathbf b=(1,-2,1,0)$, so $\\lVert P_W\\mathbf b\\rVert^2=6$; also $60-54=6$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$11=60-\\dfrac{14^2}{4}$ removes only the component along $r_1$. The resulting vector still violates the second constraint, so it is not in $W$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$51$ comes from subtracting the projections onto $r_1$ and $r_2$ separately, which is valid only for orthogonal vectors; here $r_1\\cdot r_2=10\\neq 0$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$54=\\lVert P_R\\mathbf b\\rVert^2$ is the squared distance from $\\mathbf b$ to $W$, which is the squared length of the component in the row space, not of the projection onto $W$."
+        }
+      ],
+      "commonTrap": "Adding the projections onto the two constraint vectors separately even though they are not orthogonal (this gives $51$), or reporting the squared distance to $W$ ($54$) instead of the squared length of the projection onto $W$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6 (A)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nM = sp.Matrix([[1, 1, 1, 1], [1, 2, 3, 4]]); b = sp.Matrix([3, 1, 5, 5])\nPR = M.T * (M * M.T).inv() * M                  # projection onto the row space (= W perp)\npw = b - PR * b\nprint(pw.T, pw.dot(pw), (M * pw).T)              # (1, -2, 1, 0)  6  (0, 0)\nN = sp.Matrix.hstack(*M.nullspace()); PW = N * (N.T * N).inv() * N.T   # direct projection onto W\nprint((PW * b).dot(PW * b), b.dot(b), (PR * b).dot(PR * b))            # 6 60 54",
+      "notes": ""
+    }
+  }
+]

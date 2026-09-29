@@ -1,0 +1,892 @@
+[
+  {
+    "id": "M17-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-informed"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked concepts (true remaining costs, admissibility, consistency on every edge touching the varied node) with careful case analysis over seven edges and a likely trap of checking only one direction; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Admissibility versus consistency of a heuristic: every edge incident to a node gives a bound on its heuristic value (incoming edges a lower bound, outgoing edges an upper bound), and admissibility needs the true remaining cost.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A directed graph has nodes $S, A, B, C, G$ with start node $S$ and goal node $G$. The edge costs $c(u,v)$ are:\n\n| Edge | $S \\to A$ | $S \\to B$ | $A \\to B$ | $A \\to C$ | $B \\to C$ | $B \\to G$ | $C \\to G$ |\n|---|---|---|---|---|---|---|---|\n| Cost | 3 | 6 | 2 | 4 | 1 | 7 | 3 |\n\nA heuristic $h$ is defined by $h(S) = 8$, $h(A) = x$, $h(B) = 3$, $h(C) = 3$ and $h(G) = 0$, where $x$ is a non-negative integer.\n\nA heuristic is *admissible* if $h(n) \\le h^{*}(n)$ for every node $n$, where $h^{*}(n)$ is the cost of a cheapest path from $n$ to $G$. It is *consistent* if $h(u) \\le c(u,v) + h(v)$ for every edge $u \\to v$.\n\nFor how many values of $x$ is $h$ admissible but **not** consistent?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1$"
+      },
+      {
+        "label": "B",
+        "text": "$5$"
+      },
+      {
+        "label": "C",
+        "text": "$6$"
+      },
+      {
+        "label": "D",
+        "text": "$7$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The true remaining costs are $h^*(C)=3$, $h^*(B)=4$, $h^*(A)=6$, $h^*(S)=9$, so admissibility only requires $0 \\le x \\le 6$ (7 values).\nConsistency on the edges touching $A$ needs $x \\ge 5$ (from $S \\to A$) and $x \\le 5$ (from $A \\to B$), so only $x = 5$ is consistent.\nHence $7 - 1 = 6$ values are admissible but not consistent.",
+      "steps": [
+        {
+          "title": "True remaining costs $h^*$",
+          "body": "Work backwards from $G$.\n\n- $h^*(C) = 3$ (edge $C \\to G$).\n- $h^*(B) = \\min(1 + h^*(C),\\ 7) = \\min(4, 7) = 4$.\n- $h^*(A) = \\min(2 + h^*(B),\\ 4 + h^*(C)) = \\min(6, 7) = 6$.\n- $h^*(S) = \\min(3 + h^*(A),\\ 6 + h^*(B)) = \\min(9, 10) = 9$."
+        },
+        {
+          "title": "Values of $x$ for which $h$ is admissible",
+          "body": "The fixed values satisfy $h(S) = 8 \\le 9$, $h(B) = 3 \\le 4$, $h(C) = 3 \\le 3$ and $h(G) = 0 \\le 0$, so only node $A$ can break admissibility.\n$h(A) = x \\le h^*(A) = 6$, and $x \\ge 0$, so $x \\in \\{0, 1, 2, 3, 4, 5, 6\\}$: **7 values**."
+        },
+        {
+          "title": "Consistency, edge by edge",
+          "body": "Edges that do not involve $A$ hold for every $x$: $S \\to B$: $8 \\le 6 + 3$; $B \\to C$: $3 \\le 1 + 3$; $B \\to G$: $3 \\le 7 + 0$; $C \\to G$: $3 \\le 3 + 0$.\n\nEdges involving $A$ give bounds on $x$:\n\n- $S \\to A$: $h(S) \\le 3 + x \\Rightarrow 8 \\le 3 + x \\Rightarrow x \\ge 5$ (a lower bound).\n- $A \\to B$: $x \\le 2 + h(B) = 5$ (an upper bound).\n- $A \\to C$: $x \\le 4 + h(C) = 7$ (weaker than the previous bound).\n\nSo $h$ is consistent only for $x = 5$: **1 value**."
+        },
+        {
+          "title": "Count",
+          "body": "Because $h(G) = 0$, consistency implies admissibility, so $x = 5$ is one of the 7 admissible values. The admissible values that are not consistent are $x \\in \\{0, 1, 2, 3, 4, 6\\}$, that is $7 - 1 = 6$ values."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$1$ is what results when only the edges **leaving** $A$ are checked: they give $x \\le 5$, leaving only $x = 6$ inconsistent. The incoming edge $S \\to A$ also forces $x \\ge 5$, which makes $x = 0, \\dots, 4$ inconsistent too."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$5$ is what results when only the incoming edge $S \\to A$ is checked ($x \\ge 5$, so $x = 0, \\dots, 4$ fail). The outgoing edge $A \\to B$ forces $x \\le 5$, which also makes $x = 6$ inconsistent although it is admissible."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: $7$ admissible values ($0$ to $6$) minus the single consistent value $x = 5$ gives $6$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$7$ counts every admissible value. It ignores that $x = 5$ satisfies all seven consistency inequalities and is therefore consistent."
+        }
+      ],
+      "shortcut": "For a heuristic with $h(G)=0$, consistent $\\Rightarrow$ admissible, so the count is $\\#\\text{admissible} - \\#\\text{consistent} = 7 - 1$. For consistency, intersect the interval from the edges into $A$ ($x \\ge h(u) - c$) with the one from the edges out of $A$ ($x \\le c + h(v)$).",
+      "commonTrap": "Checking only the edges that leave the varied node (the admissibility-style upper bounds) or only the edge that enters it. Consistency is a two-sided condition on $x$: $x \\ge 5$ from $S \\to A$ and $x \\le 5$ from $A \\to B$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "E = {('S','A'):3, ('S','B'):6, ('A','B'):2, ('A','C'):4, ('B','C'):1, ('B','G'):7, ('C','G'):3}\nnodes = 'SABCG'\nhs = {n: 0 if n == 'G' else 10**9 for n in nodes}\nfor _ in nodes:                                   # Bellman-Ford on remaining cost\n    for (u, v), c in E.items(): hs[u] = min(hs[u], c + hs[v])\nadm, con = [], []\nfor x in range(40):\n    h = {'S': 8, 'A': x, 'B': 3, 'C': 3, 'G': 0}\n    if all(h[n] <= hs[n] for n in nodes): adm.append(x)\n    if all(h[u] <= c + h[v] for (u, v), c in E.items()): con.append(x)\nprint(hs, adm, con, len([x for x in adm if x not in con]))   # {'S':9,'A':6,'B':4,'C':3,'G':0} [0..6] [5] 6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-clt"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (sampling distribution of the mean under the CLT) checked through four one-step statements with a single standardisation; about 75 seconds.",
+    "estimatedTimeSec": 75,
+    "concept": "Central limit theorem for the sample mean: mean $\\mu$, standard error $\\sigma/\\sqrt{n}$, approximate normality of $\\bar X$ (not of individual observations), and $\\sqrt{n}$ scaling of the standard error.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The duration $X$ (in minutes) of a nightly backup job is right-skewed, with mean $45$ and standard deviation $15$. The durations on different nights are independent and identically distributed. Let $\\bar{X}$ be the average duration over $n = 25$ nights.\n\nUse $\\Phi(2) = 0.9772$, where $\\Phi$ is the standard normal cumulative distribution function.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The standard deviation of $\\bar{X}$ is $3$ minutes."
+      },
+      {
+        "label": "B",
+        "text": "Because $n = 25$ nights are averaged, the duration $X$ of a single night is itself approximately normally distributed."
+      },
+      {
+        "label": "C",
+        "text": "By the central limit theorem, $P(\\bar{X} > 51) \\approx 0.0228$."
+      },
+      {
+        "label": "D",
+        "text": "If the average were taken over $100$ nights instead of $25$, the standard deviation of $\\bar{X}$ would be $1.5$ minutes."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$\\bar X$ has mean $45$ and standard deviation $15/\\sqrt{25}=3$, and by the CLT it is approximately $N(45, 3^2)$.\nThen $P(\\bar X>51)=P(Z>2)=1-0.9772=0.0228$, and with $n=100$ the standard deviation is $15/10=1.5$.\nThe CLT describes the mean, not a single night's duration, which stays right-skewed.",
+      "steps": [
+        {
+          "title": "Mean and standard deviation of $\\bar{X}$",
+          "body": "For independent, identically distributed $X_i$: $E[\\bar X] = \\mu = 45$ and $\\operatorname{sd}(\\bar X) = \\sigma/\\sqrt{n} = 15/\\sqrt{25} = 3$ minutes. This holds for every $n$, whatever the shape of $X$. So statement A is true."
+        },
+        {
+          "title": "What the CLT says",
+          "body": "For large $n$ the distribution of $\\bar X$ is approximately $N(\\mu, \\sigma^2/n) = N(45, 3^2)$. The theorem is about the average (or sum); the distribution of a single $X$ does not change with $n$ and remains right-skewed. So statement B is false."
+        },
+        {
+          "title": "Tail probability",
+          "body": "$$z = \\frac{51 - 45}{3} = 2, \\qquad P(\\bar X > 51) \\approx 1 - \\Phi(2) = 1 - 0.9772 = 0.0228.$$\nStatement C is true."
+        },
+        {
+          "title": "Effect of more nights",
+          "body": "With $n = 100$: $\\operatorname{sd}(\\bar X) = 15/\\sqrt{100} = 1.5$ minutes. Statement D is true. (The standard deviation falls like $1/\\sqrt{n}$, so quadrupling $n$ halves it.)"
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $\\sigma/\\sqrt{n} = 15/5 = 3$ minutes."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The CLT concerns the distribution of the sample mean. The distribution of one night's duration $X$ stays right-skewed however many nights are averaged."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: $z = (51-45)/3 = 2$, so $P(\\bar X > 51) \\approx 1 - 0.9772 = 0.0228$ under the CLT approximation."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $15/\\sqrt{100} = 1.5$ minutes."
+        }
+      ],
+      "shortcut": "Standard error $=\\sigma/\\sqrt{n}$; standardise $\\bar X$ with it and read $\\Phi$. To change the standard error by a factor $k$, change $n$ by $k^2$.",
+      "commonTrap": "Believing that averaging makes the data itself normal (statement B), rather than the sample mean; and forgetting that the standard error shrinks with $\\sqrt{n}$ rather than $n$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A;C;D",
+      "agreesWithKey": true,
+      "checkCode": "import math\nPhi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))\nmu, sd, n = 45, 15, 25\nse = sd / math.sqrt(n)\nprint(se, round(1 - Phi((51 - mu) / se), 4), sd / math.sqrt(100))   # 3.0 0.0228 1.5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (expected cost of linear search) with a single weighted average of the hit and miss cases; about 70 seconds.",
+    "estimatedTimeSec": 70,
+    "concept": "Expected number of comparisons in linear search when the key is present with probability $p$ (uniform position, $(n+1)/2$ comparisons) or absent ($n$ comparisons).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A linear search scans an unsorted array of $n = 30$ distinct sensor IDs from the first position onwards. It compares the query ID with one array element at a time and stops as soon as a match is found.\n\nA query ID is present in the array with probability $0.8$. When it is present, it is equally likely to be at any of the $30$ positions. When it is absent, the whole array is scanned.\n\nThe expected number of ID comparisons per query is ________. (rounded off to one decimal place)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 18.3,
+      "max": 18.5
+    },
+    "solution": {
+      "quick": "If the ID is present at position $i$, exactly $i$ comparisons are made, so the average over $i=1,\\dots,30$ is $31/2=15.5$; if it is absent, $30$ comparisons are made.\n$E = 0.8 \\times 15.5 + 0.2 \\times 30 = 12.4 + 6 = 18.4$.",
+      "steps": [
+        {
+          "title": "Comparisons when the ID is present",
+          "body": "If the ID is at position $i$, the search makes exactly $i$ comparisons. With all positions equally likely,\n$$E[\\text{comparisons} \\mid \\text{present}] = \\frac{1}{30}\\sum_{i=1}^{30} i = \\frac{n+1}{2} = \\frac{31}{2} = 15.5$$"
+        },
+        {
+          "title": "Comparisons when the ID is absent",
+          "body": "Every one of the $30$ elements is compared and none matches, so exactly $30$ comparisons are made."
+        },
+        {
+          "title": "Combine with the probabilities",
+          "body": "$$E = 0.8 \\times 15.5 + 0.2 \\times 30 = 12.4 + 6.0 = 18.4.$$\nTo one decimal place the value is $18.4$."
+        }
+      ],
+      "finalAnswer": "**18.4**",
+      "commonTrap": "Using $n/2 = 15$ or $(n+1)/2$ for every query, i.e. ignoring the failed searches, which always cost the full $n = 30$ comparisons."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "18.4",
+      "agreesWithKey": true,
+      "checkCode": "n, p = 30, 0.8\ndef cmp_count(a, key):\n    c = 0\n    for x in a:\n        c += 1\n        if x == key: break\n    return c\na = list(range(n))\nhit = sum(cmp_count(a, k) for k in a) / n     # every position equally likely\nmiss = cmp_count(a, -1)                        # absent key scans everything\nprint(hit, miss, round(p * hit + (1 - p) * miss, 1))   # 15.5 30 18.4",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-sample-space",
+      "ps-mutually-exclusive"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (events on a finite sample space) with four statements that each need two or three counting or subset steps, including an inclusion–exclusion trap; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Event algebra on a product sample space: subset and mutual exclusivity relations between events, and inclusion–exclusion counting of intersections and unions.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A smart lock accepts a 3-digit code $d_1 d_2 d_3$ in which each digit is chosen from $\\{1, 2, 3, 4\\}$; repeated digits are allowed. The sample space $S$ is the set of all such codes, so $|S| = 64$. Consider the events\n\n- $E_1$: the three digits are all different;\n- $E_2$: the code contains at least one digit $4$;\n- $E_3$: $d_1 = d_3$;\n- $E_4$: $d_1 < d_2 < d_3$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$E_1$ and $E_3$ are mutually exclusive."
+      },
+      {
+        "label": "B",
+        "text": "$|E_1 \\cap E_2| = 24$"
+      },
+      {
+        "label": "C",
+        "text": "$E_4 \\subseteq E_1$"
+      },
+      {
+        "label": "D",
+        "text": "$|E_2 \\cup E_3| = 53$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "A code with $d_1=d_3$ cannot have three different digits, so $E_1\\cap E_3=\\varnothing$, and strictly increasing digits are different, so $E_4\\subseteq E_1$.\n$|E_1\\cap E_2|=24-6=18$ and $|E_2\\cup E_3|=37+16-7=46$, so B and D are false.",
+      "steps": [
+        {
+          "title": "Sizes of the events",
+          "body": "$|E_1| = 4\\cdot3\\cdot2 = 24$. For $E_2$, the codes with no digit $4$ number $3^3 = 27$, so $|E_2| = 64 - 27 = 37$. $|E_3| = 4\\cdot4 = 16$ (choose $d_1$ and $d_2$; then $d_3 = d_1$). $|E_4| = \\binom{4}{3} = 4$."
+        },
+        {
+          "title": "Relations between events",
+          "body": "If $d_1 = d_3$ the digits cannot be all different, so $E_1 \\cap E_3 = \\varnothing$: A is true. If $d_1 < d_2 < d_3$ the digits are certainly all different, so $E_4 \\subseteq E_1$: C is true."
+        },
+        {
+          "title": "$|E_1 \\cap E_2|$",
+          "body": "The $24$ codes in $E_1$ are the arrangements of three different digits from $\\{1,2,3,4\\}$. Those **without** a $4$ are the arrangements of $\\{1,2,3\\}$, i.e. $3! = 6$. So $|E_1 \\cap E_2| = 24 - 6 = 18 \\ne 24$: B is false."
+        },
+        {
+          "title": "$|E_2 \\cup E_3|$",
+          "body": "$E_2 \\cap E_3$ contains the palindromic codes that use a $4$: there are $16$ palindromes and $3\\cdot3 = 9$ of them avoid $4$, so $|E_2 \\cap E_3| = 7$. Then\n$$|E_2 \\cup E_3| = 37 + 16 - 7 = 46 \\ne 53.$$\nD is false (53 is $37 + 16$, which counts the overlap twice)."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $d_1 = d_3$ repeats a digit, so no such code has three different digits; $E_1 \\cap E_3 = \\varnothing$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$24$ is $|E_1|$ itself. Only the arrangements that contain a $4$ belong to $E_1 \\cap E_2$, and $3! = 6$ of the $24$ do not: $|E_1 \\cap E_2| = 18$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: strictly increasing digits are pairwise different, so every code of $E_4$ lies in $E_1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$53 = 37 + 16$ adds the sizes without removing the $7$ codes in $E_2 \\cap E_3$. The union has $46$ codes."
+        }
+      ],
+      "commonTrap": "Adding $|E_2| + |E_3|$ for the union (statement D) without subtracting the overlap, and quoting $|E_1|$ for $|E_1 \\cap E_2|$ (statement B)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A;C",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nS = list(itertools.product([1, 2, 3, 4], repeat=3))\nE1 = {s for s in S if len(set(s)) == 3}\nE2 = {s for s in S if 4 in s}\nE3 = {s for s in S if s[0] == s[2]}\nE4 = {s for s in S if s[0] < s[1] < s[2]}\nprint(len(S), len(E1), len(E2), len(E3), len(E4))               # 64 24 37 16 4\nprint(len(E1 & E3) == 0, len(E1 & E2), E4 <= E1, len(E2 | E3))  # True 18 True 46  -> A and C correct",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept family (the three basic sorts) where four statements each need a short trace or count, with likely traps on the swap-free pass and unconditional swap counts; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Behaviour of selection, bubble (with early exit) and insertion sort on a concrete array: swaps versus shifts, the swap-free final pass of bubble sort, and partial states after a few iterations.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following three Python functions, each of which sorts a list in ascending order in place.\n\n```python\ndef selection_sort(a):\n    n = len(a)\n    for i in range(n - 1):\n        m = i\n        for j in range(i + 1, n):\n            if a[j] < a[m]:\n                m = j\n        if m != i:\n            a[i], a[m] = a[m], a[i]\n\ndef bubble_sort(a):\n    n = len(a)\n    for i in range(n - 1):\n        swapped = False\n        for j in range(n - 1 - i):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n                swapped = True\n        if not swapped:\n            break\n\ndef insertion_sort(a):\n    for i in range(1, len(a)):\n        key = a[i]\n        j = i - 1\n        while j >= 0 and a[j] > key:\n            a[j + 1] = a[j]      # one shift\n            j -= 1\n        a[j + 1] = key\n```\n\nEach function is called on its own fresh copy of `a = [6, 3, 8, 1, 9, 2, 7]`. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`selection_sort` performs exactly $6$ swaps."
+      },
+      {
+        "label": "B",
+        "text": "The number of shifts made by `insertion_sort` equals the number of swaps made by `bubble_sort`."
+      },
+      {
+        "label": "C",
+        "text": "The outer loop of `bubble_sort` runs exactly $4$ times."
+      },
+      {
+        "label": "D",
+        "text": "After the first three iterations of the outer loop of `selection_sort`, the list is `[1, 2, 3, 6, 8, 9, 7]`."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "Both `insertion_sort` (shifts) and `bubble_sort` (swaps) do exactly one unit of work per inversion, and the array has $10$ inversions, so B is true.\n`selection_sort` swaps only $4$ times (the `if m != i` guard skips two iterations), `bubble_sort`'s outer loop runs $5$ times (a swap-free pass is needed to stop), and selection sort's list after three iterations is `[1, 2, 3, 6, 9, 8, 7]`.",
+      "steps": [
+        {
+          "title": "Count the inversions",
+          "body": "The pairs $(i<j)$ with $a_i > a_j$ in $[6,3,8,1,9,2,7]$ are: $6$ with $3,1,2$ (3 pairs); $3$ with $1,2$ (2); $8$ with $1,2,7$ (3); $1$ with none; $9$ with $2,7$ (2); $2$ with none. Total $3+2+3+0+2+0 = 10$ inversions."
+        },
+        {
+          "title": "Statement B: shifts versus swaps",
+          "body": "Each shift in `insertion_sort` moves one element past one larger element, and each swap in `bubble_sort` exchanges one adjacent inverted pair; each removes exactly one inversion. So both perform $10$ operations. B is true."
+        },
+        {
+          "title": "Statements A and D: selection sort",
+          "body": "Trace (minimum found, list after the iteration):\n\n- $i=0$: min $1$ at index 3, swap: `[1, 3, 8, 6, 9, 2, 7]`\n- $i=1$: min $2$ at index 5, swap: `[1, 2, 8, 6, 9, 3, 7]`\n- $i=2$: min $3$ at index 5, swap: `[1, 2, 3, 6, 9, 8, 7]`\n- $i=3$: min $6$ is already at index 3, no swap\n- $i=4$: min $7$ at index 6, swap: `[1, 2, 3, 6, 7, 8, 9]`\n- $i=5$: min $8$ is already in place, no swap\n\nThat is $4$ swaps, not $6$ (A is false), and after three iterations the list is `[1, 2, 3, 6, 9, 8, 7]`, not the list in D (D is false; that list is what a shifting, stable variant would give)."
+        },
+        {
+          "title": "Statement C: bubble sort passes",
+          "body": "Lists after each pass: `[3, 6, 1, 8, 2, 7, 9]`, `[3, 1, 6, 2, 7, 8, 9]`, `[1, 3, 2, 6, 7, 8, 9]`, `[1, 2, 3, 6, 7, 8, 9]` (sorted after pass 4). Pass 5 makes no swap, so `swapped` stays `False` and only then does the loop `break`. The outer loop runs $5$ times, so C is false."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$6 = n-1$ would be the number of swaps if the swap were unconditional. The guard `if m != i` skips iterations $i=3$ and $i=5$, so only $4$ swaps occur."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: both counts equal the number of inversions of the input, which is $10$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The list becomes sorted after pass $4$, but the algorithm only learns this from a fifth, swap-free pass. The outer loop runs $5$ times."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "That list arises from a stable variant that moves the minimum to position $i$ by shifting the elements in between one place right. This implementation swaps instead, giving `[1, 2, 3, 6, 9, 8, 7]` after three iterations."
+        }
+      ],
+      "shortcut": "Bubble-sort swaps and insertion-sort shifts each equal the number of inversions (here $10$), whatever the order of the input.",
+      "commonTrap": "Assuming bubble sort stops as soon as the list becomes sorted (4 passes) instead of one pass later, and counting $n-1$ swaps for selection sort although the code swaps only when `m != i`."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "A = [6, 3, 8, 1, 9, 2, 7]\ndef sel(a):\n    a = a[:]; sw = 0; hist = []\n    for i in range(len(a) - 1):\n        m = i\n        for j in range(i + 1, len(a)):\n            if a[j] < a[m]: m = j\n        if m != i: a[i], a[m] = a[m], a[i]; sw += 1\n        hist.append(a[:])\n    return sw, hist\ndef bub(a):\n    a = a[:]; sw = 0; outer = 0\n    for i in range(len(a) - 1):\n        outer += 1; s = False\n        for j in range(len(a) - 1 - i):\n            if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; s = True; sw += 1\n        if not s: break\n    return sw, outer\ndef ins(a):\n    a = a[:]; sh = 0\n    for i in range(1, len(a)):\n        k = a[i]; j = i - 1\n        while j >= 0 and a[j] > k: a[j + 1] = a[j]; sh += 1; j -= 1\n        a[j + 1] = k\n    return sh\nssw, hist = sel(A); bsw, outer = bub(A); ish = ins(A)\nprint(ssw, hist[2], bsw, outer, ish)          # 4 [1, 2, 3, 6, 9, 8, 7] 10 5 10\nprint('A', ssw == 6, 'B', ish == bsw, 'C', outer == 4, 'D', hist[2] == [1, 2, 3, 6, 8, 9, 7])   # only B is True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-problem-types"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the type of the target decides regression versus classification), direct recall applied to four short tasks; about 45 seconds.",
+    "estimatedTimeSec": 45,
+    "concept": "Regression versus classification: the type of the target variable (continuous numeric quantity versus discrete category), including numeric-looking class labels such as digits.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data-science team lists four prediction tasks, each to be solved by supervised learning from labelled historical data.\n\n- **P:** Predict the concentration of a pollutant (in $\\mu\\mathrm{g}/\\mathrm{m}^3$) at a monitoring station in the next hour, from weather and traffic features.\n- **Q:** Identify which digit ($0$ to $9$) is written in a scanned image of a handwritten character.\n- **R:** Estimate the resale price (in rupees) of a used laptop from its age, RAM and storage size.\n- **S:** Decide whether a card transaction is fraudulent or genuine.\n\nWhich of these tasks are regression problems?",
+    "options": [
+      {
+        "label": "A",
+        "text": "P and R only"
+      },
+      {
+        "label": "B",
+        "text": "Q and S only"
+      },
+      {
+        "label": "C",
+        "text": "P, Q and R only"
+      },
+      {
+        "label": "D",
+        "text": "R and S only"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "A regression problem predicts a continuous numeric quantity; a classification problem predicts one of a finite set of categories.\nP (concentration) and R (price) are continuous targets. Q (a digit label, one of ten classes) and S (fraudulent or genuine) are categories.",
+      "steps": [
+        {
+          "title": "Rule",
+          "body": "In supervised learning the type of the **target** decides the problem: a real-valued quantity to be estimated is regression; a label taken from a finite set of categories is classification."
+        },
+        {
+          "title": "Apply it to each task",
+          "body": "- P: the target is a concentration, a real number: regression.\n- Q: the target is one of ten digit classes. The labels $0,\\dots,9$ are names of categories; predicting $7$ when the truth is $8$ is simply a wrong class, not an error of size $1$: classification.\n- R: the target is a price, a real number: regression.\n- S: the target has two categories: classification."
+        },
+        {
+          "title": "Select the option",
+          "body": "The regression tasks are exactly P and R, so the matching option is \"P and R only\"."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: P and R have continuous numeric targets; Q and S have categorical targets."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the set of classification tasks (digit label, fraud label). It swaps the two kinds of problem."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Q is included only because its labels are numerals. The digits are class names, so digit recognition is a ten-class classification problem, not regression."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "S has a two-category target (fraudulent or genuine), so it is classification. Only R in this pair is a regression task."
+        }
+      ],
+      "commonTrap": "Treating a task as regression because its labels are numbers (digits $0$ to $9$). What matters is whether the target is a quantity on a continuous scale or a category."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "tasks = {'P': 'continuous', 'Q': 'categorical', 'R': 'continuous', 'S': 'categorical'}   # type of the target variable\nreg = sorted(t for t, kind in tasks.items() if kind == 'continuous')\nprint(reg)   # ['P', 'R'] -> option A",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen",
+      "la-determinant"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (eigenvalues) with two or three steps: recognise rank one, read off the spectrum from the trace, and take the product of shifted eigenvalues; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Eigenvalues of a rank-one matrix $\\mathbf{u}\\mathbf{v}^{\\top}$ (one nonzero eigenvalue $\\mathbf{v}^{\\top}\\mathbf{u}$, all others zero) and the determinant of a shifted matrix as the product of shifted eigenvalues.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$\nA = \\begin{bmatrix} 2 & -1 & 1 \\\\ 4 & -2 & 2 \\\\ 6 & -3 & 3 \\end{bmatrix}.\n$$\n\nThe value of $\\det(A - I)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$3$"
+      },
+      {
+        "label": "B",
+        "text": "$2$"
+      },
+      {
+        "label": "C",
+        "text": "$-1$"
+      },
+      {
+        "label": "D",
+        "text": "$-6$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Every row of $A$ is a multiple of $(2,-1,1)$, so $\\operatorname{rank}A=1$ and $A$ has eigenvalue $0$ with algebraic multiplicity $2$; the trace $2-2+3=3$ gives the third eigenvalue.\nThe eigenvalues of $A - I$ are $2, -1, -1$, so $\\det(A-I)=2\\cdot(-1)\\cdot(-1)=2$.",
+      "steps": [
+        {
+          "title": "Recognise the structure",
+          "body": "Rows $1,2,3$ of $A$ are $1,2,3$ times $(2,-1,1)$, so $A = \\mathbf{u}\\mathbf{v}^{\\top}$ with $\\mathbf{u} = (1,2,3)^{\\top}$ and $\\mathbf{v} = (2,-1,1)^{\\top}$. Hence $\\operatorname{rank} A = 1$."
+        },
+        {
+          "title": "Eigenvalues of $A$",
+          "body": "A rank-one $3\\times3$ matrix has nullity $2$, so $0$ is an eigenvalue with multiplicity at least $2$. The eigenvalues add up to the trace: $2 + (-2) + 3 = 3$, so the third eigenvalue is $3$ (also $\\mathbf{v}^{\\top}\\mathbf{u} = 2 - 2 + 3 = 3$). The eigenvalues of $A$ are $3, 0, 0$."
+        },
+        {
+          "title": "Shift by $-I$",
+          "body": "The eigenvalues of $A - I$ are those of $A$ minus $1$: $2, -1, -1$."
+        },
+        {
+          "title": "Determinant",
+          "body": "$$\\det(A - I) = 2 \\cdot (-1) \\cdot (-1) = 2.$$\nCross-check with the characteristic polynomial $\\det(\\lambda I - A) = \\lambda^2(\\lambda - 3)$: $\\det(A - I) = (-1)^3 \\det(I - A) = -(1)^2(1-3) = 2$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$3 = 3\\cdot(-1)\\cdot(-1)$ is obtained when the shift $-1$ is applied to the two zero eigenvalues but forgotten for the eigenvalue $3$. That eigenvalue also becomes $3 - 1 = 2$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: the eigenvalues of $A - I$ are $2, -1, -1$, with product $2$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$-1 = \\det A + \\det(-I) = 0 + (-1)$ wrongly treats the determinant as additive. In general $\\det(A - I) \\ne \\det A + \\det(-I)$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$-6$ comes from treating the diagonal entries $2, -2, 3$ as the eigenvalues: $(2-1)(-2-1)(3-1) = -6$. For a non-triangular matrix the diagonal entries are not the eigenvalues."
+        }
+      ],
+      "shortcut": "Rank-one matrix $\\Rightarrow$ eigenvalues $(\\operatorname{tr}A, 0, 0)$. Then $\\det(A - cI) = (\\operatorname{tr}A - c)(-c)^2 = (3-1)\\cdot1 = 2$.",
+      "commonTrap": "Reading the diagonal entries as eigenvalues (the matrix is not triangular), or using $\\det(A - I) = \\det A + \\det(-I)$. The determinant of a shifted matrix is the product of the shifted eigenvalues."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np, sympy as sp\nM = sp.Matrix([[2, -1, 1], [4, -2, 2], [6, -3, 3]])\nprint(M.rank(), M.eigenvals(), (M - sp.eye(3)).det())          # 1 {3: 1, 0: 2} 2\nA = np.array(M.tolist(), dtype=float)\nprint(round(np.linalg.det(A - np.eye(3)), 6), np.round(np.linalg.eigvals(A), 6))   # 2.0 and eigenvalues 3, 0, 0\nprint(np.prod(np.diag(A) - 1))                                  # -6.0 (diagonal-entries mistake)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-naive-bayes"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (naive Bayes with counted probabilities), a single-step computation of two class scores followed by normalisation; about 100 seconds.",
+    "estimatedTimeSec": 100,
+    "concept": "Naive Bayes posterior from raw frequency estimates: class prior times per-feature likelihoods under conditional independence, then normalisation over the classes.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A support team records, for ten past tickets, the Priority and Channel of each ticket and whether it was resolved within its service-level target (SLA met).\n\n| Ticket | Priority | Channel | SLA met |\n|---|---|---|---|\n| 1 | High | Chat | Yes |\n| 2 | High | Chat | Yes |\n| 3 | High | Chat | Yes |\n| 4 | High | Email | Yes |\n| 5 | Low | Chat | Yes |\n| 6 | Low | Chat | Yes |\n| 7 | High | Email | No |\n| 8 | High | Email | No |\n| 9 | Low | Email | No |\n| 10 | Low | Chat | No |\n\nA naive Bayes classifier is trained on this table, using the raw relative frequencies as probability estimates (no smoothing). For a new ticket with Priority = Low and Channel = Chat, the probability of SLA met = Yes computed by the classifier is (rounded off to two decimal places)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.17$"
+      },
+      {
+        "label": "B",
+        "text": "$0.23$"
+      },
+      {
+        "label": "C",
+        "text": "$0.69$"
+      },
+      {
+        "label": "D",
+        "text": "$0.77$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Yes: $P(\\text{Yes})\\,P(\\text{Low}\\mid\\text{Yes})\\,P(\\text{Chat}\\mid\\text{Yes}) = \\tfrac{6}{10}\\cdot\\tfrac{2}{6}\\cdot\\tfrac{5}{6} = \\tfrac16$.\nNo: $\\tfrac{4}{10}\\cdot\\tfrac{2}{4}\\cdot\\tfrac{1}{4} = \\tfrac{1}{20}$.\nNormalising, $P(\\text{Yes}\\mid\\text{Low},\\text{Chat}) = \\dfrac{1/6}{1/6+1/20} = \\dfrac{10}{13} \\approx 0.77$.",
+      "steps": [
+        {
+          "title": "Class priors and likelihoods from the table",
+          "body": "Six tickets are Yes and four are No, so $P(\\text{Yes}) = 6/10$ and $P(\\text{No}) = 4/10$.\n\nAmong the Yes tickets: Priority = Low in 2 of 6, Channel = Chat in 5 of 6.\nAmong the No tickets: Priority = Low in 2 of 4, Channel = Chat in 1 of 4."
+        },
+        {
+          "title": "Unnormalised class scores",
+          "body": "Under the naive (conditional independence) assumption:\n$$\\text{score(Yes)} = \\frac{6}{10}\\cdot\\frac{2}{6}\\cdot\\frac{5}{6} = \\frac{1}{6} \\approx 0.1667,$$\n$$\\text{score(No)} = \\frac{4}{10}\\cdot\\frac{2}{4}\\cdot\\frac{1}{4} = \\frac{1}{20} = 0.05.$$"
+        },
+        {
+          "title": "Normalise",
+          "body": "$$P(\\text{Yes} \\mid \\text{Low}, \\text{Chat}) = \\frac{1/6}{1/6 + 1/20} = \\frac{10/60}{13/60} = \\frac{10}{13} \\approx 0.769.$$\nRounded to two decimals this is $0.77$; the classifier predicts Yes."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.17$ is the unnormalised Yes score $1/6$. The two scores do not add up to $1$, so they must be divided by their sum."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.23 = 3/13$ is the classifier's probability for the other class, No. The question asks for Yes."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.69$ is obtained if the class priors are dropped: $\\dfrac{(2/6)(5/6)}{(2/6)(5/6) + (2/4)(1/4)} \\approx 0.69$. Naive Bayes multiplies the likelihoods by the priors $P(\\text{Yes})$ and $P(\\text{No})$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $\\dfrac{1/6}{1/6 + 1/20} = \\dfrac{10}{13} \\approx 0.77$."
+        }
+      ],
+      "commonTrap": "Forgetting to normalise (answering $0.17$), or leaving out the class priors, which changes the posterior from $0.77$ to $0.69$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nrows = [('High','Chat','Yes')]*3 + [('High','Email','Yes'), ('Low','Chat','Yes'), ('Low','Chat','Yes'),\n        ('High','Email','No'), ('High','Email','No'), ('Low','Email','No'), ('Low','Chat','No')]\nq = ('Low', 'Chat')\nscore = {}\nfor c in ('Yes', 'No'):\n    sub = [r for r in rows if r[2] == c]\n    s = F(len(sub), len(rows))\n    for i, v in enumerate(q): s *= F(sum(r[i] == v for r in sub), len(sub))\n    score[c] = s\nprint(score, float(score['Yes'] / sum(score.values())))    # {'Yes': 1/6, 'No': 1/20} 0.769... -> 0.77",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-file-organization"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (hashed file sizing) with three routine steps: blocking factor after the header, permitted average load, and a ceiling division; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Static hashed file organisation: blocking factor with a block header (unspanned records), average bucket load, and the ceiling needed to meet a load-factor limit.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A relation with $100000$ fixed-length records of $60$ bytes each is stored as a static hashed file. Every bucket is exactly one disk block of $1024$ bytes; each block begins with a $24$-byte header and the rest of the block holds whole records (records are not spanned across blocks). Overflow blocks are not used.\n\nThe hash function spreads the records so that the average load is (total records) $\\div$ (number of buckets). The minimum number of buckets needed so that the average number of records per bucket does not exceed $75\\%$ of the bucket capacity is ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 8334,
+      "max": 8334
+    },
+    "solution": {
+      "quick": "A bucket holds $\\lfloor (1024-24)/60 \\rfloor = 16$ records; $75\\%$ of that is $12$ records on average.\nNeed $100000/N \\le 12$, i.e. $N \\ge 8333.33$, so the minimum is $N = 8334$.",
+      "steps": [
+        {
+          "title": "Bucket capacity",
+          "body": "Usable space per block is $1024 - 24 = 1000$ bytes, so the blocking factor is $\\lfloor 1000/60 \\rfloor = \\lfloor 16.67 \\rfloor = 16$ records per bucket (unspanned)."
+        },
+        {
+          "title": "Permitted average load",
+          "body": "The average load may be at most $0.75 \\times 16 = 12$ records per bucket."
+        },
+        {
+          "title": "Number of buckets",
+          "body": "$$\\frac{100000}{N} \\le 12 \\iff N \\ge \\frac{100000}{12} = 8333.33\\ldots$$\n$N$ must be an integer, so $N = \\lceil 8333.33 \\rceil = 8334$. (With $N = 8333$ the average load is $12.0005 > 12$.)"
+        }
+      ],
+      "finalAnswer": "**8334**",
+      "commonTrap": "Ignoring the $24$-byte header (capacity $\\lfloor 1024/60 \\rfloor = 17$, giving $7844$ buckets), or rounding $8333.33$ down to $8333$, which pushes the average load just above $75\\%$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "8334",
+      "agreesWithKey": true,
+      "checkCode": "import math\nblock, header, rec, N, limit = 1024, 24, 60, 100000, 0.75\nbfr = (block - header) // rec                     # unspanned records per bucket\nallowed = limit * bfr                             # average records per bucket allowed\nbuckets = math.ceil(N / allowed)\nprint(bfr, allowed, N / allowed, buckets, N / (buckets - 1) > allowed)   # 16 12.0 8333.33.. 8334 True\nprint(math.ceil(N / (limit * (block // rec))))                           # 7844 (header ignored)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M17-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-17",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-bayes",
+      "ps-marginal-joint"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Bayes' theorem) with a three-branch total-probability computation followed by one conditional ratio; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Bayes' theorem with a three-way partition: total probability of a correct response, then the posterior of one branch given the evidence.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In an online multiple-choice test, every question has four options and exactly one is correct. For a given question, a candidate responds in exactly one of three ways:\n\n- with probability $0.5$ the candidate knows the answer and marks it;\n- with probability $0.3$ the candidate can eliminate two wrong options and then picks one of the remaining two options uniformly at random;\n- with probability $0.2$ the candidate has no idea and picks one of the four options uniformly at random.\n\nA randomly chosen response is found to be correct. The probability that it came from a candidate who had eliminated two options (the second way) is (rounded off to two decimal places)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.21$"
+      },
+      {
+        "label": "B",
+        "text": "$0.30$"
+      },
+      {
+        "label": "C",
+        "text": "$0.43$"
+      },
+      {
+        "label": "D",
+        "text": "$0.71$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$P(\\text{correct}) = 0.5\\cdot1 + 0.3\\cdot\\tfrac12 + 0.2\\cdot\\tfrac14 = 0.70$.\n$P(\\text{second way}\\mid\\text{correct}) = \\dfrac{0.3\\cdot\\frac12}{0.70} = \\dfrac{0.15}{0.70} = \\dfrac{3}{14} \\approx 0.21$.",
+      "steps": [
+        {
+          "title": "Events and given probabilities",
+          "body": "Let $K$, $E$ and $G$ be the three ways (knows, eliminates two, guesses among four) and $C$ the event that the response is correct. Then $P(K)=0.5$, $P(E)=0.3$, $P(G)=0.2$ and\n$P(C\\mid K) = 1$, $P(C\\mid E) = 1/2$, $P(C\\mid G) = 1/4$."
+        },
+        {
+          "title": "Total probability of a correct response",
+          "body": "$$P(C) = 0.5\\cdot 1 + 0.3\\cdot 0.5 + 0.2\\cdot 0.25 = 0.5 + 0.15 + 0.05 = 0.70.$$"
+        },
+        {
+          "title": "Bayes' theorem",
+          "body": "$$P(E \\mid C) = \\frac{P(C \\mid E)\\,P(E)}{P(C)} = \\frac{0.15}{0.70} = \\frac{3}{14} \\approx 0.2143.$$\nRounded to two decimals: $0.21$. (For comparison, $P(K\\mid C) = 0.5/0.7 \\approx 0.71$ and $P(G\\mid C) = 0.05/0.7 \\approx 0.07$; the three posteriors add up to $1$.)"
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $\\dfrac{0.3 \\times 0.5}{0.70} = \\dfrac{3}{14} \\approx 0.21$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.30$ is the prior $P(E)$. Observing a correct response makes the knowing candidates relatively more likely, so the posterior for $E$ falls below its prior."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.43 = 0.3/0.7$ treats a candidate who eliminated two options as always correct. That candidate is correct only with probability $1/2$, so the numerator is $0.15$, not $0.30$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.71 = 0.5/0.7$ is $P(K \\mid C)$, the probability that the candidate knew the answer, not the probability of the second way."
+        }
+      ],
+      "commonTrap": "Using the prior $0.3$ (or $0.3/0.7$) instead of the joint $P(E)\\,P(C \\mid E) = 0.15$; the chance of being correct differs in each of the three ways and must be included."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "ways = {'know': (0.5, 1.0), 'eliminate': (0.3, 0.5), 'guess': (0.2, 0.25)}   # (prior, P(correct | way))\npc = sum(p * c for p, c in ways.values())\npost = {k: p * c / pc for k, (p, c) in ways.items()}\nprint(round(pc, 4), {k: round(v, 4) for k, v in post.items()})    # 0.7 {'know': 0.7143, 'eliminate': 0.2143, 'guess': 0.0714}\nprint(round(post['eliminate'], 2), round(0.3 / pc, 2))            # 0.21 0.43",
+      "notes": ""
+    }
+  }
+]

@@ -1,0 +1,802 @@
+[
+  {
+    "id": "M16-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-single-var-optimization"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (extreme values of a function on a closed interval) in a single routine sequence: differentiate, solve a factorisable quadratic, compare four function values; about 1.5 minutes.",
+    "estimatedTimeSec": 85,
+    "concept": "Absolute maximum of a cubic on a closed interval from its critical points and endpoint values",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The temperature (in °C) of a chemical reactor $t$ hours after start-up is modelled by\n\n$$T(t) = 2t^{3} - 15t^{2} + 24t + 10, \\qquad 0 \\le t \\le 5.$$\n\nThe maximum temperature attained by the reactor during these five hours is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$10$ °C"
+      },
+      {
+        "label": "B",
+        "text": "$5$ °C"
+      },
+      {
+        "label": "C",
+        "text": "$21$ °C"
+      },
+      {
+        "label": "D",
+        "text": "$-6$ °C"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$T'(t) = 6t^2 - 30t + 24 = 6(t-1)(t-4)$, so the critical points in $[0,5]$ are $t=1$ and $t=4$.\nOn a closed interval the maximum is the largest value among the critical points and the endpoints: $T(0)=10$, $T(1)=21$, $T(4)=-6$, $T(5)=5$.\nHence the maximum temperature is $21$ °C.",
+      "steps": [
+        {
+          "title": "Find the critical points",
+          "body": "$$T'(t) = 6t^{2} - 30t + 24 = 6\\,(t^{2} - 5t + 4) = 6\\,(t-1)(t-4).$$\n\n$T'(t) = 0$ gives $t = 1$ or $t = 4$, and both lie in $[0, 5]$. The sign of $T'$ is positive for $t < 1$, negative for $1 < t < 4$ and positive for $t > 4$, so $t = 1$ is a local maximum and $t = 4$ a local minimum."
+        },
+        {
+          "title": "Evaluate $T$ at the critical points and the endpoints",
+          "body": "| $t$ | $T(t) = 2t^3 - 15t^2 + 24t + 10$ | value |\n| --- | --- | --- |\n| $0$ (endpoint) | $10$ | $10$ |\n| $1$ (critical) | $2 - 15 + 24 + 10$ | $21$ |\n| $4$ (critical) | $128 - 240 + 96 + 10$ | $-6$ |\n| $5$ (endpoint) | $250 - 375 + 120 + 10$ | $5$ |"
+        },
+        {
+          "title": "Compare the values",
+          "body": "$T$ is continuous on the closed interval $[0,5]$, so its maximum is attained at a critical point or an endpoint. The largest of $10,\\ 21,\\ -6,\\ 5$ is $21$, reached at $t = 1$.\n\nThe correct choice is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$10$ is $T(0)$, the temperature at start-up. The reactor heats up to $21$ °C by $t=1$, so the starting value is not the maximum."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$5$ is $T(5)$, the value at the right endpoint. Although $T$ is increasing at $t=5$, it only recovers from $-6$ at $t=4$ to $5$, which is below the earlier peak of $21$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The interior critical point $t=1$ is a local maximum with $T(1)=21$, and both endpoint values ($10$ and $5$) are smaller."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$-6$ is $T(4)$, the value at the local **minimum** ($T''(4) = 18 > 0$). It is the smallest of the four candidate values, not the largest."
+        }
+      ],
+      "commonTrap": "Choosing the wrong critical point ($t=4$, the local minimum) as the maximiser, or ignoring the interior critical point and simply taking the larger endpoint value $T(0)=10$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: 21 (at t = 1)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nt = sp.symbols('t')\nT = 2*t**3 - 15*t**2 + 24*t + 10\ncrit = [c for c in sp.solve(sp.diff(T, t), t) if 0 <= c <= 5]\nvals = {c: T.subs(t, c) for c in crit + [0, 5]}\nprint(vals, max(vals.values()))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-pmf"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the two defining conditions of a probability mass function) applied to four short candidates, each needing a one-line sum (finite, telescoping or geometric); about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Validity of a function as a PMF: non-negativity and total probability one (finite, telescoping and geometric sums)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In each option below, a function $p(k)$ is defined for the integers $k$ in the stated set $S$, and $p(k) = 0$ for every other integer $k$.\n\nWhich of the following define(s) a valid probability mass function of an integer-valued random variable?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$p(k) = \\dfrac{k}{10}$, with $S = \\{1, 2, 3, 4\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$p(k) = \\dfrac{k-2}{2}$, with $S = \\{1, 2, 3, 4\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$p(k) = \\dfrac{1}{k(k+1)}$, with $S = \\{1, 2, 3, \\dots\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$p(k) = \\dfrac{1}{3^{k}}$, with $S = \\{1, 2, 3, \\dots\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "A function is a valid PMF exactly when every $p(k) \\ge 0$ and $\\sum_k p(k) = 1$.\nA gives $\\tfrac{1+2+3+4}{10} = 1$ with non-negative terms, and C telescopes to $1$.\nB has $p(1) = -\\tfrac12 < 0$ even though its values add up to $1$, and D sums to only $\\tfrac12$.",
+      "steps": [
+        {
+          "title": "State the two conditions",
+          "body": "A function $p$ on a countable set is a probability mass function if and only if\n\n1. $p(k) \\ge 0$ for every $k$, and\n2. $\\sum_{k} p(k) = 1$."
+        },
+        {
+          "title": "Options A and B (finite supports)",
+          "body": "**A:** the values are $0.1,\\ 0.2,\\ 0.3,\\ 0.4$. All are non-negative and $0.1 + 0.2 + 0.3 + 0.4 = 1$, so A is valid.\n\n**B:** the values are $-\\tfrac12,\\ 0,\\ \\tfrac12,\\ 1$. They add up to $1$, but $p(1) = -\\tfrac12 < 0$ violates condition 1, so B is not valid."
+        },
+        {
+          "title": "Options C and D (infinite supports)",
+          "body": "**C:** $\\dfrac{1}{k(k+1)} = \\dfrac1k - \\dfrac1{k+1} > 0$, so the partial sum up to $N$ is $1 - \\dfrac{1}{N+1}$, which tends to $1$. C is valid.\n\n**D:** $\\sum_{k \\ge 1} 3^{-k}$ is a geometric series with first term $\\tfrac13$ and ratio $\\tfrac13$, so the sum is $\\dfrac{1/3}{1 - 1/3} = \\dfrac12 \\ne 1$. D is not valid (the function $2\\cdot 3^{-k}$ would be).\n\nHence the valid PMFs are **(A)** and **(C)**."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "All four values are non-negative and $\\frac{1}{10}+\\frac{2}{10}+\\frac{3}{10}+\\frac{4}{10} = 1$, so this is a valid PMF."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The values $-\\frac12, 0, \\frac12, 1$ sum to $1$, but $p(1) = -\\frac12$ is negative, and a probability can never be negative."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The terms are positive and telescope: $\\sum_{k=1}^{\\infty}\\left(\\frac1k - \\frac1{k+1}\\right) = 1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The geometric series $\\sum_{k \\ge 1} 3^{-k}$ equals $\\frac12$, not $1$, so the total probability is only $\\frac12$."
+        }
+      ],
+      "commonTrap": "Checking only that the values add up to $1$ (option B passes that test but has a negative value), or assuming that any decreasing infinite series such as $3^{-k}$ automatically sums to $1$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A and C",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nfrom fractions import Fraction as F\nk = sp.symbols('k', integer=True, positive=True)\nA = [F(j, 10) for j in range(1, 5)]\nB = [F(j - 2, 2) for j in range(1, 5)]\nC = sp.summation(1/(k*(k + 1)), (k, 1, sp.oo))\nD = sp.summation(sp.Rational(1, 3)**k, (k, 1, sp.oo))\nprint('A', sum(A), all(p >= 0 for p in A), '| B', sum(B), all(p >= 0 for p in B), '| C', C, '| D', D)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-matrices"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (2×2 matrix algebra) with four short, independent checks (order of a product, determinant of a product, square of a sum, inverse from trace and determinant), each a one-line computation; about 2 minutes.",
+    "estimatedTimeSec": 130,
+    "concept": "2×2 matrix algebra: non-commutativity, det(AB) = det A det B, expansion of (A+B)^2 and inverse via Cayley–Hamilton",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$A = \\begin{bmatrix} 2 & 3 \\\\ 1 & 4 \\end{bmatrix}, \\qquad B = \\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix},$$\n\nand let $I$ be the $2 \\times 2$ identity matrix. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$AB \\ne BA$"
+      },
+      {
+        "label": "B",
+        "text": "$\\det(AB) = -5$"
+      },
+      {
+        "label": "C",
+        "text": "$(A + B)^{2} = A^{2} + 2AB + B^{2}$"
+      },
+      {
+        "label": "D",
+        "text": "$A^{-1} = \\dfrac{1}{5}\\,(6I - A)$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$AB = \\begin{bmatrix}3&2\\\\4&1\\end{bmatrix}$ and $BA = \\begin{bmatrix}1&4\\\\2&3\\end{bmatrix}$, so $AB \\ne BA$; consequently $(A+B)^2 \\ne A^2 + 2AB + B^2$.\n$\\det A = 5$ and $\\det B = -1$ give $\\det(AB) = -5$.\nSince $\\operatorname{tr}A = 6$ and $\\det A = 5$, Cayley–Hamilton gives $A^2 - 6A + 5I = 0$, i.e. $A^{-1} = \\tfrac15(6I - A)$.",
+      "steps": [
+        {
+          "title": "Compute $AB$ and $BA$",
+          "body": "$B$ swaps columns when it multiplies on the right and swaps rows when it multiplies on the left:\n\n$$AB = \\begin{bmatrix} 3 & 2 \\\\ 4 & 1 \\end{bmatrix}, \\qquad BA = \\begin{bmatrix} 1 & 4 \\\\ 2 & 3 \\end{bmatrix}.$$\n\nThese are different, so statement A ($AB \\ne BA$) is true."
+        },
+        {
+          "title": "Determinant of the product",
+          "body": "$\\det A = 2\\cdot 4 - 3\\cdot 1 = 5$ and $\\det B = 0\\cdot 0 - 1\\cdot 1 = -1$, so $\\det A \\det B = -5$.\n\nDirectly, $\\det(AB) = 3\\cdot 1 - 2\\cdot 4 = -5$. Statement B is true."
+        },
+        {
+          "title": "Square of the sum",
+          "body": "$A + B = \\begin{bmatrix} 2 & 4 \\\\ 2 & 4 \\end{bmatrix}$, so $(A+B)^2 = \\begin{bmatrix} 12 & 24 \\\\ 12 & 24 \\end{bmatrix}$.\n\nNow $A^2 = \\begin{bmatrix} 7 & 18 \\\\ 6 & 19 \\end{bmatrix}$, $2AB = \\begin{bmatrix} 6 & 4 \\\\ 8 & 2 \\end{bmatrix}$ and $B^2 = I$, so\n\n$$A^2 + 2AB + B^2 = \\begin{bmatrix} 14 & 22 \\\\ 14 & 22 \\end{bmatrix} \\ne (A+B)^2.$$\n\nThe correct expansion is $(A+B)^2 = A^2 + AB + BA + B^2$, which equals $2AB$ only if $AB = BA$. Statement C is false."
+        },
+        {
+          "title": "Inverse of $A$",
+          "body": "The characteristic polynomial is $\\lambda^2 - (\\operatorname{tr}A)\\lambda + \\det A = \\lambda^2 - 6\\lambda + 5$, so by Cayley–Hamilton $A^2 - 6A + 5I = 0$, i.e. $A(6I - A) = 5I$ and $A^{-1} = \\tfrac15(6I - A)$.\n\nCheck: $6I - A = \\begin{bmatrix} 4 & -3 \\\\ -1 & 2 \\end{bmatrix}$ and $A\\,(6I - A) = \\begin{bmatrix} 5 & 0 \\\\ 0 & 5 \\end{bmatrix}$. Statement D is true.\n\nThe correct statements are **A, B and D**."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$AB = \\begin{bmatrix}3&2\\\\4&1\\end{bmatrix}$ while $BA = \\begin{bmatrix}1&4\\\\2&3\\end{bmatrix}$, so the two products differ."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\det(AB) = \\det A\\,\\det B = 5 \\cdot (-1) = -5$, which also matches the direct value $3\\cdot1 - 2\\cdot4 = -5$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$(A+B)^2 = A^2 + AB + BA + B^2$. Because $AB \\ne BA$ this is not $A^2 + 2AB + B^2$; numerically $\\begin{bmatrix}12&24\\\\12&24\\end{bmatrix} \\ne \\begin{bmatrix}14&22\\\\14&22\\end{bmatrix}$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Cayley–Hamilton gives $A^2 - 6A + 5I = 0$, so $A(6I - A) = 5I$ and $A^{-1} = \\frac15(6I - A) = \\frac15\\begin{bmatrix}4&-3\\\\-1&2\\end{bmatrix}$."
+        }
+      ],
+      "shortcut": "For any $2\\times 2$ matrix, $A^2 - (\\operatorname{tr}A)\\,A + (\\det A)\\,I = 0$, so $A^{-1} = \\dfrac{(\\operatorname{tr}A)\\,I - A}{\\det A}$. Here that is $\\tfrac{6I - A}{5}$, with no need to form the adjugate.",
+      "commonTrap": "Expanding $(A+B)^2$ as a scalar identity, which silently assumes $AB = BA$, and forgetting that $\\det B = -1$ flips the sign of $\\det(AB)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B and D",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 3], [1, 4]]); B = sp.Matrix([[0, 1], [1, 0]]); I = sp.eye(2)\ns1 = A*B != B*A\ns2 = (A*B).det() == -5\ns3 = (A + B)**2 == A**2 + 2*A*B + B**2\ns4 = A.inv() == (6*I - A)/5\nprint(s1, s2, s3, s4)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-cdf"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (using a CDF) in three routine steps: fix the constant by continuity, evaluate the CDF at two points, form a conditional probability; about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Fixing a constant in a CDF by continuity and computing a conditional tail probability P(X > b | X > a) from F",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The time $X$ (in hours) that a build job waits in a shared server's queue is a continuous random variable with cumulative distribution function\n\n$$F(x) = \\begin{cases} 0, & x < 0, \\\\ c\\,(3x^{2} - x^{3}), & 0 \\le x \\le 2, \\\\ 1, & x > 2, \\end{cases}$$\n\nwhere $c$ is a constant.\n\nThe value of $P(X > 1.5 \\mid X > 1)$, rounded off to two decimal places, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.3,
+      "max": 0.32
+    },
+    "solution": {
+      "quick": "Continuity of $F$ at $x=2$ requires $c(12-8)=1$, so $c=\\tfrac14$.\nThen $F(1) = \\tfrac12$ and $F(1.5) = 0.84375$.\n$P(X>1.5 \\mid X>1) = \\dfrac{1-F(1.5)}{1-F(1)} = \\dfrac{0.15625}{0.5} = 0.3125 \\approx 0.31$.",
+      "steps": [
+        {
+          "title": "Determine $c$",
+          "body": "Because $X$ is continuous, $F$ has no jumps. At $x = 2$ the middle piece must join the value $1$:\n\n$$c\\,(3\\cdot 2^{2} - 2^{3}) = 4c = 1 \\quad\\Longrightarrow\\quad c = \\tfrac14.$$\n\nSo $F(x) = \\tfrac14(3x^2 - x^3)$ on $[0, 2]$. It is non-decreasing there, since $F'(x) = \\tfrac34\\,x(2-x) \\ge 0$."
+        },
+        {
+          "title": "Evaluate $F$ at $1$ and $1.5$",
+          "body": "$$F(1) = \\tfrac14(3 - 1) = 0.5,$$\n\n$$F(1.5) = \\tfrac14\\big(3\\cdot 2.25 - 3.375\\big) = \\tfrac14(6.75 - 3.375) = 0.84375.$$"
+        },
+        {
+          "title": "Conditional probability",
+          "body": "Since $\\{X > 1.5\\} \\subset \\{X > 1\\}$,\n\n$$P(X > 1.5 \\mid X > 1) = \\frac{P(X > 1.5)}{P(X > 1)} = \\frac{1 - F(1.5)}{1 - F(1)} = \\frac{0.15625}{0.5} = 0.3125 \\approx 0.31.$$"
+        }
+      ],
+      "finalAnswer": "**0.31**",
+      "commonTrap": "Dropping the condition and reporting $P(X>1.5) = 1 - F(1.5) \\approx 0.16$, or using $F(1.5) - F(1) \\approx 0.34$, which is $P(1 < X \\le 1.5)$ and not a conditional probability."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "5/16 = 0.3125 (0.31)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx, c = sp.symbols('x c')\nF = c*(3*x**2 - x**3)\ncv = sp.solve(sp.Eq(F.subs(x, 2), 1), c)[0]\nF = F.subs(c, cv)\nassert sp.diff(F, x).subs(x, sp.Rational(1, 2)) > 0\np = (1 - F.subs(x, sp.Rational(3, 2))) / (1 - F.subs(x, 1))\nprint(cv, p, float(p), round(float(p), 2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (validity of first-order formulas) needing an independent counter-model or short proof for each of four statements; about 2–3 minutes.",
+    "estimatedTimeSec": 160,
+    "concept": "Validity of first-order formulas: quantifier order, existential quantifier over conjunction, and universal quantifier with implication (counter-models)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $P$ and $Q$ be unary predicate symbols and let $R$ be a binary predicate symbol. As usual in first-order logic, every interpretation has a non-empty domain.\n\nWhich of the following formulas is/are valid, that is, true in every interpretation?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\big(\\exists x\\, P(x) \\wedge \\exists x\\, Q(x)\\big) \\rightarrow \\exists x\\,\\big(P(x) \\wedge Q(x)\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\exists x\\, \\forall y\\, R(x, y) \\rightarrow \\forall y\\, \\exists x\\, R(x, y)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\big(\\forall x\\, P(x) \\rightarrow \\forall x\\, Q(x)\\big) \\rightarrow \\forall x\\,\\big(P(x) \\rightarrow Q(x)\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\forall x\\, \\exists y\\, R(x, y) \\rightarrow \\exists y\\, \\forall x\\, R(x, y)$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "A formula is valid only if no interpretation falsifies it, so each invalid option needs a small counter-model.\nA, C and D are each falsified on a two-element domain, whereas B holds always: a witness $x_0$ with $R(x_0, y)$ for all $y$ also serves as the $x$ for each $y$.\nHence only B is valid.",
+      "steps": [
+        {
+          "title": "Option A",
+          "body": "Take the domain $\\{1, 2\\}$ with $P$ true only at $1$ and $Q$ true only at $2$. Then $\\exists x\\,P(x)$ and $\\exists x\\,Q(x)$ are both true, but no element satisfies $P \\wedge Q$. The antecedent is true and the consequent false, so A is **not valid**. ($\\exists$ distributes over $\\vee$, not over $\\wedge$.)"
+        },
+        {
+          "title": "Option B",
+          "body": "Suppose the antecedent holds, and let $x_0$ satisfy $\\forall y\\, R(x_0, y)$. Fix any $y$. Then $R(x_0, y)$ is true, so $x_0$ witnesses $\\exists x\\, R(x, y)$. As $y$ was arbitrary, $\\forall y\\, \\exists x\\, R(x, y)$ holds. So B is **valid**."
+        },
+        {
+          "title": "Option C",
+          "body": "Take the domain $\\{1, 2\\}$ with $P$ true only at $1$ and $Q$ false everywhere. Then $\\forall x\\, P(x)$ is false, so $\\forall x\\,P(x) \\rightarrow \\forall x\\,Q(x)$ is true. But $P(1) \\rightarrow Q(1)$ is false, so $\\forall x\\,(P(x) \\rightarrow Q(x))$ is false. The formula is falsified, so C is **not valid**. (Only the converse implication is valid.)"
+        },
+        {
+          "title": "Option D",
+          "body": "Take the domain $\\{1, 2\\}$ with $R(x, y)$ true exactly when $x = y$. Every $x$ has some $y$ (namely $y = x$) with $R(x, y)$, so the antecedent is true. But no single $y$ satisfies $R(x, y)$ for both $x = 1$ and $x = 2$, so the consequent is false. D is **not valid**; it is the converse of B.\n\nTherefore only **(B)** is valid."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Falsified on $\\{1,2\\}$ with $P$ true only at $1$ and $Q$ true only at $2$: both existentials hold but $\\exists x\\,(P \\wedge Q)$ fails."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "If $x_0$ is $R$-related to every $y$, then for each $y$ the element $x_0$ is an $x$ with $R(x, y)$, so $\\forall y\\,\\exists x\\,R(x, y)$ follows. It is valid."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Falsified on $\\{1,2\\}$ with $P$ true only at $1$ and $Q$ always false: the antecedent is true (since $\\forall x\\,P(x)$ is false) but $P(1) \\rightarrow Q(1)$ fails."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Falsified on $\\{1,2\\}$ with $R(x,y) \\iff x = y$: each $x$ has a related $y$, but no single $y$ is related to every $x$. This is the invalid converse of B."
+        }
+      ],
+      "commonTrap": "Swapping quantifiers freely: $\\exists\\forall \\Rightarrow \\forall\\exists$ holds but $\\forall\\exists \\Rightarrow \\exists\\forall$ does not. In the same way $\\exists$ distributes over $\\vee$ but not over $\\wedge$, and $\\forall x\\,(P \\rightarrow Q)$ is strictly stronger than $\\forall x\\,P \\rightarrow \\forall x\\,Q$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B only",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\ndef valid(f, n):\n    D = range(n)\n    for P in itertools.product([0, 1], repeat=n):\n        for Q in itertools.product([0, 1], repeat=n):\n            for Rb in itertools.product([0, 1], repeat=n*n):\n                R = lambda x, y: Rb[x*n + y]\n                if not f(D, P, Q, R):\n                    return False\n    return True\nimp = lambda a, b: (not a) or b\nfA = lambda D, P, Q, R: imp(any(P[x] for x in D) and any(Q[x] for x in D), any(P[x] and Q[x] for x in D))\nfB = lambda D, P, Q, R: imp(any(all(R(x, y) for y in D) for x in D), all(any(R(x, y) for x in D) for y in D))\nfC = lambda D, P, Q, R: imp(imp(all(P[x] for x in D), all(Q[x] for x in D)), all(imp(P[x], Q[x]) for x in D))\nfD = lambda D, P, Q, R: imp(all(any(R(x, y) for y in D) for x in D), any(all(R(x, y) for x in D) for y in D))\nfor name, f in zip('ABCD', [fA, fB, fC, fD]):\n    print(name, [valid(f, n) for n in (1, 2, 3)])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-relational-algebra"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several ideas at once (self-product with an inequality, a derived operator applied repeatedly, set difference, a final natural join) and a likely trap (peeling from the wrong end or being off by one level); about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Extremum idiom in relational algebra: a self-product with '<' removes the maximum; nesting it isolates the second-highest value",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A company stores its staff in the relation **Emp**(eid, sal), where eid is the key. Salaries may repeat, and Emp contains at least four distinct salary values. All expressions below use set semantics, and $\\bowtie$ denotes the natural join.\n\nLet $S = \\pi_{sal}(\\text{Emp})$. For a relation $U$ whose only attribute is $sal$, define\n\n$$\\operatorname{Lo}(U) = \\pi_{U_1.sal}\\Big(\\sigma_{U_1.sal \\,<\\, U_2.sal}\\big(\\rho_{U_1}(U) \\times \\rho_{U_2}(U)\\big)\\Big),$$\n\n$$\\operatorname{Hi}(U) = \\pi_{U_2.sal}\\Big(\\sigma_{U_1.sal \\,<\\, U_2.sal}\\big(\\rho_{U_1}(U) \\times \\rho_{U_2}(U)\\big)\\Big),$$\n\neach regarded as a relation with the single attribute $sal$.\n\nWhich one of the following expressions returns exactly those employees whose salary is the second-highest distinct salary value in Emp?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\text{Emp} \\bowtie \\big(S - \\operatorname{Lo}(\\operatorname{Lo}(S))\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\text{Emp} \\bowtie \\big(\\operatorname{Hi}(S) - \\operatorname{Hi}(\\operatorname{Hi}(S))\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\text{Emp} \\bowtie \\big(\\operatorname{Lo}(S) - \\operatorname{Lo}(\\operatorname{Lo}(\\operatorname{Lo}(S)))\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\text{Emp} \\bowtie \\big(\\operatorname{Lo}(S) - \\operatorname{Lo}(\\operatorname{Lo}(S))\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$\\operatorname{Lo}(U)$ keeps the values of $U$ that are smaller than some other value, so it removes the maximum of $U$; $\\operatorname{Hi}(U)$ removes the minimum.\nWith distinct salaries $s_1 > s_2 > \\dots > s_k$: $\\operatorname{Lo}(S) = \\{s_2, \\dots, s_k\\}$ and $\\operatorname{Lo}(\\operatorname{Lo}(S)) = \\{s_3, \\dots, s_k\\}$, so their difference is $\\{s_2\\}$.\nJoining this salary with Emp returns the employees earning $s_2$.",
+      "steps": [
+        {
+          "title": "What $\\operatorname{Lo}$ and $\\operatorname{Hi}$ compute",
+          "body": "The selection $U_1.sal < U_2.sal$ keeps pairs $(a, b)$ of values of $U$ with $a < b$.\n\n- $\\operatorname{Lo}(U)$ projects the smaller member $a$: the values that have a strictly larger partner, that is, **all values except the maximum**.\n- $\\operatorname{Hi}(U)$ projects the larger member $b$: the values that have a strictly smaller partner, that is, **all values except the minimum**."
+        },
+        {
+          "title": "Apply the operators repeatedly",
+          "body": "Let the distinct salaries be $s_1 > s_2 > \\dots > s_k$ with $k \\ge 4$. Each application of $\\operatorname{Lo}$ removes the current maximum:\n\n$$\\operatorname{Lo}(S) = \\{s_2, \\dots, s_k\\},\\quad \\operatorname{Lo}^2(S) = \\{s_3, \\dots, s_k\\},\\quad \\operatorname{Lo}^3(S) = \\{s_4, \\dots, s_k\\}.$$\n\nEach application of $\\operatorname{Hi}$ removes the current minimum: $\\operatorname{Hi}(S) = \\{s_1, \\dots, s_{k-1}\\}$ and $\\operatorname{Hi}^2(S) = \\{s_1, \\dots, s_{k-2}\\}$."
+        },
+        {
+          "title": "Salary set returned by each option",
+          "body": "| Option | Salary set | Meaning |\n| --- | --- | --- |\n| A | $S - \\operatorname{Lo}^2(S) = \\{s_1, s_2\\}$ | highest and second-highest |\n| B | $\\operatorname{Hi}(S) - \\operatorname{Hi}^2(S) = \\{s_{k-1}\\}$ | second-**lowest** |\n| C | $\\operatorname{Lo}(S) - \\operatorname{Lo}^3(S) = \\{s_2, s_3\\}$ | second- and third-highest |\n| D | $\\operatorname{Lo}(S) - \\operatorname{Lo}^2(S) = \\{s_2\\}$ | second-highest |\n\nFor instance, with $S = \\{90, 70, 50, 30\\}$ the four sets are $\\{90, 70\\}$, $\\{50\\}$, $\\{70, 50\\}$ and $\\{70\\}$."
+        },
+        {
+          "title": "Join back to Emp",
+          "body": "The natural join $\\text{Emp} \\bowtie X$ on the attribute $sal$ keeps exactly the employee tuples whose salary lies in $X$. For $X = \\{s_2\\}$ these are precisely the employees with the second-highest distinct salary, whatever the ties.\n\nThe correct choice is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$S - \\operatorname{Lo}^2(S)$ removes everything except the top two salary values, so it returns the employees earning the highest **or** the second-highest salary."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\operatorname{Hi}$ removes the minimum, not the maximum, so this peels from the bottom and returns the employees with the second-**lowest** salary (which equals $s_2$ only when there are exactly three distinct salaries)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\operatorname{Lo}^3(S)$ removes three levels, so $\\operatorname{Lo}(S) - \\operatorname{Lo}^3(S) = \\{s_2, s_3\\}$: the second- and third-highest salaries, one level too many."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\operatorname{Lo}(S)$ drops $s_1$ and $\\operatorname{Lo}^2(S)$ drops $s_1, s_2$, so the difference is exactly $\\{s_2\\}$; the join then returns the matching employees."
+        }
+      ],
+      "commonTrap": "Reading $\\operatorname{Lo}(S)$ as 'the smaller salaries' or as the maximum itself: it is everything **except** the maximum. Two further slips are peeling from the wrong end with $\\operatorname{Hi}$ (second-lowest instead of second-highest) and being off by one level in the nesting."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import random\nrandom.seed(7)\nlo = lambda U: {a for a in U for b in U if a < b}\nhi = lambda U: {b for a in U for b in U if a < b}\njoin = lambda emp, X: {(e, s) for (e, s) in emp if s in X}\nopts = {\n    'A': lambda S: S - lo(lo(S)),\n    'B': lambda S: hi(S) - hi(hi(S)),\n    'C': lambda S: lo(S) - lo(lo(lo(S))),\n    'D': lambda S: lo(S) - lo(lo(S)),\n}\nhits = {k: 0 for k in opts}; total = 0\nfor _ in range(3000):\n    emp = {(i, random.choice(range(20, 90, 5))) for i in range(random.randint(4, 10))}\n    S = {s for _, s in emp}\n    if len(S) < 4:\n        continue\n    total += 1\n    spec = {(e, s) for e, s in emp if s == sorted(S)[-2]}\n    for k, f in opts.items():\n        hits[k] += join(emp, f(S)) == spec\nprint(total, hits)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-conditional-independence"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (d-separation: forks, colliders and descendants of colliders) checked with a direct path enumeration on a five-node network; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "d-separation in a Bayesian network: blocked forks, unobserved colliders, and colliders opened by observed descendants",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A city's road-safety team models five Boolean variables with a Bayesian network.\n\n| Variable | Meaning |\n| --- | --- |\n| $W$ | the weather is wet |\n| $T$ | traffic is heavy |\n| $V$ | visibility is poor |\n| $A$ | an accident occurs |\n| $D$ | an ambulance is dispatched |\n\nThe network has exactly five directed edges: $W \\to T$, $W \\to V$, $T \\to A$, $V \\to A$ and $A \\to D$.\n\nWhich one of the following independence statements holds for **every** choice of conditional probability tables consistent with this structure? (Here $X \\perp Y \\mid Z$ means that $X$ and $Y$ are conditionally independent given the set of variables $Z$, and $X \\perp Y$ means that they are marginally independent.)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$T \\perp V$"
+      },
+      {
+        "label": "B",
+        "text": "$T \\perp V \\mid W$"
+      },
+      {
+        "label": "C",
+        "text": "$T \\perp V \\mid \\{W, D\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$W \\perp D \\mid T$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "There are two paths between $T$ and $V$: the fork $T \\leftarrow W \\rightarrow V$ and the collider path $T \\rightarrow A \\leftarrow V$.\nGiven $W$, the fork is blocked, and the collider $A$ (with its descendant $D$) is unobserved, so that path is blocked as well.\nHence $T \\perp V \\mid W$ is guaranteed, while the other three statements each have an open path.",
+      "steps": [
+        {
+          "title": "List the paths and the blocking rules",
+          "body": "Between $T$ and $V$ there are two paths:\n\n1. $T \\leftarrow W \\rightarrow V$ (a fork at $W$): open if $W$ is not observed, blocked if $W$ is observed.\n2. $T \\rightarrow A \\leftarrow V$ (a collider at $A$): blocked unless $A$ **or a descendant of $A$** (here $D$) is observed."
+        },
+        {
+          "title": "Test options A and B",
+          "body": "**A** ($T \\perp V$, nothing observed): the fork at $W$ is open, so $T$ and $V$ are dependent through the common cause $W$. Not guaranteed.\n\n**B** ($T \\perp V \\mid W$): the fork is blocked by $W$, and the collider $A$ is unobserved with $D$ unobserved, so path 2 is blocked. Both paths are blocked, so the independence holds for every choice of tables."
+        },
+        {
+          "title": "Test options C and D",
+          "body": "**C** ($T \\perp V \\mid \\{W, D\\}$): $W$ blocks the fork, but observing $D$, a descendant of the collider $A$, opens path 2. So $T$ and $V$ can be dependent. Not guaranteed.\n\n**D** ($W \\perp D \\mid T$): the path $W \\rightarrow V \\rightarrow A \\rightarrow D$ contains no observed node ($T$ is not on it), so it is open. Not guaranteed.\n\nThe correct choice is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "With nothing observed, the fork $T \\leftarrow W \\rightarrow V$ is open: wet weather makes both heavy traffic and poor visibility more likely, so $T$ and $V$ are dependent."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Observing $W$ blocks the fork, and the collider path through $A$ stays blocked because neither $A$ nor $D$ is observed. Both paths are blocked."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Observing $D$, a descendant of the collider $A$, opens the path $T \\rightarrow A \\leftarrow V$ even though $W$ is observed, so $T$ and $V$ can be dependent."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Conditioning on $T$ does not block the path $W \\rightarrow V \\rightarrow A \\rightarrow D$, which has no observed node on it."
+        }
+      ],
+      "commonTrap": "Forgetting that observing a **descendant** of a collider (here $D$, below $A$) unblocks the collider just as observing the collider itself does, and so wrongly accepting option C."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: T is independent of V given W",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nimport numpy as np\nparents = {'W': [], 'T': ['W'], 'V': ['W'], 'A': ['T', 'V'], 'D': ['A']}\ndef ancestors(nodes):\n    out, stack = set(nodes), list(nodes)\n    while stack:\n        for p in parents[stack.pop()]:\n            if p not in out:\n                out.add(p); stack.append(p)\n    return out\ndef d_sep(x, y, z):\n    keep = ancestors({x, y} | set(z))\n    und = {n: set() for n in keep}\n    for c in keep:\n        ps = [p for p in parents[c] if p in keep]\n        for p in ps:\n            und[c].add(p); und[p].add(c)\n        for p, q in itertools.combinations(ps, 2):\n            und[p].add(q); und[q].add(p)\n    seen, stack = {x}, [x]\n    while stack:\n        for m in und[stack.pop()]:\n            if m not in z and m not in seen:\n                seen.add(m); stack.append(m)\n    return y not in seen\ntests = {'A': ('T', 'V', []), 'B': ('T', 'V', ['W']), 'C': ('T', 'V', ['W', 'D']), 'D': ('W', 'D', ['T'])}\nprint({k: d_sep(*v) for k, v in tests.items()})\nnames = 'WTVAD'; rng = np.random.default_rng(1)\ndef joint():\n    cpt = {v: rng.uniform(0.05, 0.95, size=(2,)*len(parents[v])) for v in names}\n    J = np.zeros((2,)*5)\n    for a in itertools.product([0, 1], repeat=5):\n        s = dict(zip(names, a)); pr = 1.0\n        for v in names:\n            p1 = cpt[v][tuple(s[p] for p in parents[v])]\n            pr *= p1 if s[v] else 1 - p1\n        J[a] = pr\n    return J\ndef cmi(J, x, y, z):\n    ax = {v: i for i, v in enumerate(names)}\n    keep = [ax[x], ax[y]] + [ax[v] for v in z]\n    P = J.sum(axis=tuple(i for i in range(5) if i not in keep))\n    order = sorted(keep); pos = {a: i for i, a in enumerate(order)}\n    P = np.transpose(P, [pos[k] for k in keep])\n    pz = P.sum(axis=(0, 1), keepdims=True); pxz = P.sum(axis=1, keepdims=True); pyz = P.sum(axis=0, keepdims=True)\n    return float((P*np.log(P*pz/(pxz*pyz))).sum())\nbest = {k: 0.0 for k in tests}\nfor _ in range(300):\n    J = joint()\n    for k, v in tests.items():\n        best[k] = max(best[k], abs(cmi(J, *v)))\nprint({k: round(b, 6) for k, b in best.items()})",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (covariance from raw data, and PCA reconstruction error equals the discarded eigenvalue) with routine 2×2 arithmetic and a quadratic with integer roots; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "PCA on raw data: sample covariance, eigenvalues, and total squared reconstruction error after keeping one component",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A coffee roaster measures two quantities on each of five roast batches: the roasting time $x_1$ (minutes) and a colour index $x_2$.\n\n| Batch | 1 | 2 | 3 | 4 | 5 |\n| --- | --- | --- | --- | --- | --- |\n| $x_1$ | 8 | 6 | 9 | 4 | 8 |\n| $x_2$ | 2 | 0 | 1 | 8 | 4 |\n\nPrincipal component analysis is carried out by an eigen-decomposition of the sample covariance matrix of the mean-centred data (divisor $n - 1$). Each batch $\\mathbf{x}_i$ is then projected onto the line through the sample mean along the first principal component, giving the reconstruction $\\hat{\\mathbf{x}}_i$.\n\nThe total squared reconstruction error $\\sum_{i=1}^{5} \\lVert \\mathbf{x}_i - \\hat{\\mathbf{x}}_i \\rVert^{2}$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 8,
+      "max": 8
+    },
+    "solution": {
+      "quick": "The mean is $(7, 3)$ and the sample covariance matrix is $\\begin{bmatrix} 4 & -4 \\\\ -4 & 10 \\end{bmatrix}$ with eigenvalues $12$ and $2$.\nKeeping one component discards the smaller eigenvalue, and the total squared error over the $n$ points is $(n-1)\\lambda_2 = 4 \\times 2$.\nHence the total squared reconstruction error is $8$.",
+      "steps": [
+        {
+          "title": "Centre the data and form the covariance matrix",
+          "body": "The means are $\\bar x_1 = \\tfrac{8+6+9+4+8}{5} = 7$ and $\\bar x_2 = \\tfrac{2+0+1+8+4}{5} = 3$. The centred points are\n\n$$(1,-1),\\ (-1,-3),\\ (2,-2),\\ (-3,5),\\ (1,1).$$\n\nTheir sums of squares and products are $\\sum x_1^2 = 16$, $\\sum x_2^2 = 40$ and $\\sum x_1x_2 = -16$, so with divisor $n - 1 = 4$\n\n$$\\Sigma = \\begin{bmatrix} 4 & -4 \\\\ -4 & 10 \\end{bmatrix}.$$"
+        },
+        {
+          "title": "Eigenvalues of $\\Sigma$",
+          "body": "The trace is $14$ and the determinant is $40 - 16 = 24$, so\n\n$$\\lambda^2 - 14\\lambda + 24 = 0 \\quad\\Longrightarrow\\quad \\lambda_1 = 12,\\ \\lambda_2 = 2.$$\n\nThe first principal direction solves $(\\Sigma - 12I)\\mathbf{v} = 0$, giving $\\mathbf{v}_1 = \\tfrac{1}{\\sqrt5}(1, -2)$; the second is $\\mathbf{v}_2 = \\tfrac{1}{\\sqrt5}(2, 1)$."
+        },
+        {
+          "title": "Reconstruction error",
+          "body": "Projecting onto $\\mathbf{v}_1$ leaves, for each point, only its component along $\\mathbf{v}_2$ as the error, so\n\n$$\\sum_i \\lVert \\mathbf{x}_i - \\hat{\\mathbf{x}}_i \\rVert^2 = \\sum_i (\\mathbf{v}_2^\\top \\mathbf{c}_i)^2 = (n-1)\\,\\lambda_2 = 4 \\times 2 = 8.$$\n\nDirect check: the scores $\\mathbf{v}_2^\\top \\mathbf{c}_i$ are $\\tfrac{1}{\\sqrt5}(1,\\,-5,\\,2,\\,-1,\\,3)$, whose squares add up to $\\tfrac{1 + 25 + 4 + 1 + 9}{5} = \\tfrac{40}{5} = 8$."
+        }
+      ],
+      "finalAnswer": "**8**",
+      "commonTrap": "Reporting the covariance eigenvalue $\\lambda_2 = 2$ itself: the eigenvalues of $\\Sigma$ are variances (already divided by $n-1 = 4$), while the question asks for a **sum** over five points, which is $(n-1)\\lambda_2 = 8$. Another slip is to use the larger eigenvalue ($12$ or $48$) instead of the discarded one."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "8",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX = np.array([[8, 2], [6, 0], [9, 1], [4, 8], [8, 4]], float)\nmu = X.mean(0); C = X - mu\nS = np.cov(X.T)\nw, V = np.linalg.eigh(S)\nv1 = V[:, np.argmax(w)]\nproj = mu + np.outer(C @ v1, v1)\nprint(mu, S.tolist(), w, round(((X - proj)**2).sum(), 6))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (BCNF of decomposed relations) in three routine checks, each needing attribute closures under the implied dependencies; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "BCNF test of decomposed relations using dependencies implied by F (projection of F+), including a dependency that passes through an omitted attribute",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E)$ with the set of functional dependencies\n\n$$F = \\{\\, B \\to A,\\;\\; A \\to C,\\;\\; B \\to D,\\;\\; C \\to E \\,\\}.$$\n\nThe relation is decomposed into three relations $R_1(A, D, E)$, $R_2(B, C, D)$ and $R_3(B, D, E)$. A functional dependency $X \\to Y$ is said to hold in $R_i$ if $X \\cup Y \\subseteq R_i$ and $X \\to Y$ is implied by $F$ (that is, it belongs to $F^{+}$).\n\nThe number of relations among $R_1$, $R_2$ and $R_3$ that are in BCNF is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2,
+      "max": 2
+    },
+    "solution": {
+      "quick": "Attribute closures under $F$: $B^+ = \\{A,B,C,D,E\\}$, $A^+ = \\{A,C,E\\}$, $C^+ = \\{C,E\\}$, and $D^+ = \\{D\\}$, $E^+ = \\{E\\}$.\nIn $R_1(A, D, E)$ the implied dependency $A \\to E$ (through $C$) has a left side that is not a superkey, so $R_1$ is not in BCNF.\nIn $R_2$ and $R_3$ the only non-trivial dependencies have $B$ as left side, and $B$ is a superkey of both, so exactly $2$ relations are in BCNF.",
+      "steps": [
+        {
+          "title": "Attribute closures under $F$",
+          "body": "From $B \\to A \\to C \\to E$ and $B \\to D$: $B^+ = \\{A, B, C, D, E\\}$, so $B$ is a key of $R$. The other closures are $A^+ = \\{A, C, E\\}$, $C^+ = \\{C, E\\}$, $D^+ = \\{D\\}$ and $E^+ = \\{E\\}$.\n\nA relation $R_i$ is in BCNF if, for every $X \\subseteq R_i$, either $X^+ \\cap R_i = X$ or $X^+ \\supseteq R_i$ (that is, every non-trivial implied dependency has a superkey of $R_i$ on the left)."
+        },
+        {
+          "title": "$R_1(A, D, E)$",
+          "body": "$A^+ \\cap R_1 = \\{A, E\\}$, so $A \\to E$ holds in $R_1$ (it is implied via $C$, an attribute that is not in $R_1$). But $A^+ \\cap R_1 \\ne R_1$: $A$ does not determine $D$, so $A$ is not a superkey of $R_1$ (the key is $AD$). The non-trivial dependency $A \\to E$ violates BCNF, so **$R_1$ is not in BCNF**."
+        },
+        {
+          "title": "$R_2(B, C, D)$ and $R_3(B, D, E)$",
+          "body": "In $R_2$: $B^+ \\cap R_2 = \\{B, C, D\\}$, so $B$ is a superkey. The other subsets give nothing new: $C^+ \\cap R_2 = \\{C\\}$, $D^+ \\cap R_2 = \\{D\\}$ and $\\{C, D\\}^+ \\cap R_2 = \\{C, D\\}$. So **$R_2$ is in BCNF**.\n\nIn $R_3$: $B^+ \\cap R_3 = \\{B, D, E\\}$, so $B$ is a superkey, while $D^+ \\cap R_3 = \\{D\\}$, $E^+ \\cap R_3 = \\{E\\}$ and $\\{D, E\\}^+ \\cap R_3 = \\{D, E\\}$. So **$R_3$ is in BCNF**.\n\nExactly two relations, $R_2$ and $R_3$, are in BCNF."
+        }
+      ],
+      "finalAnswer": "**2**",
+      "commonTrap": "Using only the dependencies of $F$ whose attributes all lie inside a relation. That test finds no dependency at all inside $R_1$ (both $A \\to C$ and $C \\to E$ involve $C$), so it calls $R_1$ BCNF and gives $3$. The dependency $A \\to E$ must be recovered from $F^{+}$ by taking closures."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2 (R2 and R3 are in BCNF; R1 is not)",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nF = [('B', 'A'), ('A', 'C'), ('B', 'D'), ('C', 'E')]\ndef closure(X):\n    X = set(X); ch = True\n    while ch:\n        ch = False\n        for l, r in F:\n            if set(l) <= X and r not in X:\n                X.add(r); ch = True\n    return X\ndef bcnf(Ri):\n    Ri = set(Ri)\n    for n in range(1, len(Ri)):\n        for X in itertools.combinations(sorted(Ri), n):\n            c = closure(X) & Ri\n            if c > set(X) and c != Ri:\n                return False\n    return True\nrels = ['ADE', 'BCD', 'BDE']\nprint([bcnf(r) for r in rels], sum(bcnf(r) for r in rels))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-systems"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (consistency of a parametric linear system) in three routine steps: find where the determinant vanishes, then test consistency at each root by row relations; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Parametric 3×3 linear system: singular values of the parameter and consistency (rank test) deciding between no solution and infinitely many",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the system of linear equations in the real unknowns $x$, $y$, $z$, where $a$ is a real parameter:\n\n$$\\begin{aligned} 2x + a\\,y + 2z &= 8 \\\\ a\\,x + 2y - 2z &= 1 \\\\ -x + y + 4z &= 7 \\end{aligned}$$\n\nThe system has infinitely many solutions for exactly one real value of $a$. That value of $a$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "The determinant of the coefficient matrix is $-4(a-3)(a+2)$, so the solution is unique unless $a = 3$ or $a = -2$.\nFor $a = -2$ the first two equations add to $0 = 9$, so there is no solution.\nFor $a = 3$ the relation $\\text{Eq}_1 - \\text{Eq}_2 - \\text{Eq}_3 = 0$ holds on both sides ($8 - 1 - 7 = 0$), so the system is consistent with rank $2$ and has infinitely many solutions: $a = 3$.",
+      "steps": [
+        {
+          "title": "Where the coefficient matrix is singular",
+          "body": "$$\\det\\begin{bmatrix} 2 & a & 2 \\\\ a & 2 & -2 \\\\ -1 & 1 & 4 \\end{bmatrix} = 2(8 + 2) - a(4a - 2) + 2(a + 2) = -4a^2 + 4a + 24 = -4(a-3)(a+2).$$\n\nFor $a \\ne 3, -2$ the determinant is non-zero and the solution is unique. Only $a = 3$ and $a = -2$ can give no solution or infinitely many."
+        },
+        {
+          "title": "Case $a = -2$",
+          "body": "The first two equations become $2x - 2y + 2z = 8$ and $-2x + 2y - 2z = 1$. Adding them gives $0 = 9$, a contradiction. The system is inconsistent: **no solution**."
+        },
+        {
+          "title": "Case $a = 3$",
+          "body": "The equations are $2x + 3y + 2z = 8$, $3x + 2y - 2z = 1$ and $-x + y + 4z = 7$. Here\n\n$$\\text{Eq}_1 - \\text{Eq}_2 - \\text{Eq}_3:\\quad (2-3+1)x + (3-2-1)y + (2+2-4)z = 0 = 8 - 1 - 7,$$\n\nso one equation is redundant and the system is consistent, with rank $2 < 3$. Solving, $x = y + 4z - 7$ from $\\text{Eq}_3$, then $\\text{Eq}_1$ gives $y = 4.4 - 2z$ and $x = 2z - 2.6$. Substituting into $\\text{Eq}_2$ gives $1 = 1$ for every $z$. The solutions $(2z - 2.6,\\ 4.4 - 2z,\\ z)$ form a line: **infinitely many solutions**.\n\nSo the required value is $a = 3$."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "commonTrap": "Solving $\\det = 0$ and stopping there: both $a = 3$ and $a = -2$ make the coefficient matrix singular, but only one of them keeps the system consistent. The other gives no solution at all."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\na = sp.symbols('a')\nA = sp.Matrix([[2, a, 2], [a, 2, -2], [-1, 1, 4]]); b = sp.Matrix([8, 1, 7])\nprint(sp.factor(A.det()))\nfor r in sp.solve(A.det(), a):\n    Ar = A.subs(a, r)\n    print(r, Ar.rank(), Ar.row_join(b).rank())",
+      "notes": ""
+    }
+  }
+]

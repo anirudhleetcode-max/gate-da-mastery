@@ -27,7 +27,10 @@
     "whenToUse": "Counting superkeys once the candidate keys are known (find the keys first with attribute closure). \"How many attribute sets functionally determine all attributes?\" asks for the same count.",
     "commonMistake": "Adding $2^{n-|K_1|} + 2^{n-|K_2|}$ without subtracting the sets that contain **both** keys, which are counted twice. When the keys share attributes, the overlap term uses $|K_1 \\cup K_2|$, not $|K_1| + |K_2|$.",
     "example": "$R(A,B,C,D,E)$ with candidate keys $\\{A\\}$ and $\\{B,C\\}$, so $n = 5$:\n\n$$\n2^{5-1} + 2^{5-2} - 2^{5-3} = 16 + 8 - 4 = 20 \\text{ superkeys}.\n$$\n\nThe 4 subtracted sets are the supersets of $\\{A,B,C\\}$, which were counted once for each key. With the overlapping keys $\\{A,B\\}$ and $\\{B,C\\}$ instead: $2^{3} + 2^{3} - 2^{5-3} = 8 + 8 - 4 = 12$, since $|\\{A,B\\} \\cup \\{B,C\\}| = 3$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-keys-integrity-constraints",
+      "c-dbw-functional-dependencies"
+    ]
   },
   {
     "id": "f-dbw-er-to-relations",
@@ -61,7 +64,9 @@
     "whenToUse": "Questions asking for the minimum number of relations needed to represent an ER diagram (in 1NF), or on which side a foreign key must go.",
     "commonMistake": "Creating a separate table for every 1:N or 1:1 relationship (it is absorbed into the N side, or either side), or trying to absorb an M:N relationship into one entity's table (that needs a multivalued column or repeats data). Forgetting that a multivalued attribute needs its own table in 1NF.",
     "example": "Strong entity sets Student, Course, Faculty; weak entity set Guardian (owner Student); Enrolls is M:N between Student and Course; Advises is 1:N from Faculty to Student; Student has a multivalued attribute phone.\n\n$$\nT_{\\min} = 3 + 1 + 1 + 0 + 1 - 0 = 6\n$$\n\nTables: Student (with the advisor's faculty id as a foreign key), Course, Faculty, Guardian, Enrolls(student id, course id) and StudentPhone(student id, phone).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-er-model"
+    ]
   },
   {
     "id": "f-dbw-referential-integrity",
@@ -91,7 +96,9 @@
     "whenToUse": "Deciding whether an insert, delete or update is allowed, and counting how many tuples an `ON DELETE CASCADE` delete removes: follow the chain of references (including self-references) until no new tuple is affected.",
     "commonMistake": "Thinking that deleting from the referencing table or inserting into the referenced table can violate referential integrity (neither can). With a self-referencing `ON DELETE CASCADE`, stopping after the direct children instead of deleting the whole subtree. Treating a `NULL` foreign key as a violation: it is allowed unless the column is also declared `NOT NULL`.",
     "example": "Emp(eid, mgr), where mgr references Emp(eid) `ON DELETE CASCADE`, holds (1, NULL), (2, 1), (3, 1), (4, 2), (5, 2), (6, 5), (7, 3).\n\n- Deleting eid 2 deletes 4 and 5 (they reference 2), then 6 (it references 5): **4 tuples** are removed (2, 4, 5, 6) and 1, 3, 7 remain.\n- Deleting eid 1 instead removes all 7 tuples.\n- Inserting (8, 9) is rejected because there is no employee 9; inserting (8, NULL) is accepted.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-keys-integrity-constraints"
+    ]
   },
   {
     "id": "f-dbw-ra-cardinality-bounds",
@@ -117,7 +124,11 @@
     "whenToUse": "Minimum/maximum row-count questions about a query, checking whether a claimed result size is possible, and sanity checks on joins and set operations.",
     "commonMistake": "Assuming a projection keeps all $r$ tuples (it removes duplicates unless $L$ contains a key), taking $r + s$ as the size of $R \\cup S$ (that is only the upper bound), and using $r - s$ as the size of $R - S$ (only a lower bound, and it may be negative). In SQL, forgetting that `SELECT` without `DISTINCT` keeps duplicates.",
     "example": "$R$ and $S$ are union-compatible, $r = 5$, $s = 3$, and they share 2 tuples:\n\n$$\n|R \\cup S| = 5 + 3 - 2 = 6, \\quad |R \\cap S| = 2, \\quad |R - S| = 3, \\quad |S - R| = 1, \\quad |R \\times S| = 15.\n$$\n\nEmp has 40 tuples and Dept 6; Emp.dno is a non-null foreign key to Dept's primary key dno. Then $|\\text{Emp} \\bowtie \\text{Dept}| = 40$ exactly, while $|\\text{Emp} \\times \\text{Dept}| = 240$. If 2 departments have no employees, the full outer join has $40 + 2 = 42$ tuples.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-relational-algebra",
+      "c-dbw-sql-queries",
+      "c-dbw-sql-aggregation-nulls"
+    ]
   },
   {
     "id": "f-dbw-division",
@@ -147,7 +158,10 @@
     "whenToUse": "Any query with \"all\", \"every\" or \"each\" (suppliers who supply every red part, students enrolled in all courses of a department). Also for recognizing a calculus or SQL expression with $\\forall$ or a double `NOT EXISTS` as division.",
     "commonMistake": "Using a join such as $\\pi_A(R \\bowtie S)$, which returns the values paired with **at least one** $B$ in $S$ (a \"some\" query, not an \"all\" query). Forgetting the outer $\\pi_A(R) - \\ldots$ step, which leaves exactly the *non*-answers.",
     "example": "Takes(sid, cid) = {(1, DB), (1, ML), (2, DB), (3, DB), (3, ML), (3, AI)} and Core(cid) = {DB, ML}.\n\n1. $\\pi_{\\text{sid}}(\\text{Takes}) = \\{1, 2, 3\\}$.\n2. $\\{1, 2, 3\\} \\times \\text{Core}$ has 6 pairs; removing those present in Takes leaves $\\{(2, \\text{ML})\\}$.\n3. Projecting gives $\\{2\\}$, so $\\text{Takes} \\div \\text{Core} = \\{1, 2, 3\\} - \\{2\\} = \\{1, 3\\}$.\n\nCheck: $2 \\le \\lfloor 6/2 \\rfloor = 3$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-relational-algebra",
+      "c-dbw-tuple-relational-calculus"
+    ]
   },
   {
     "id": "f-dbw-sql-nulls-aggregates",
@@ -173,7 +187,10 @@
     "whenToUse": "Predicting a query's output on a table with `NULL`s: the number of rows a `WHERE` clause keeps, the values of aggregates, the effect of `NOT IN`, and whether `AVG` equals `SUM` divided by the row count.",
     "commonMistake": "Assuming `WHERE A > 10` and `WHERE NOT (A > 10)` together return every row (rows whose `A` is `NULL` appear in neither), writing `A = NULL` instead of `A IS NULL`, and dividing `SUM(A)` by `COUNT(*)` to get the average.",
     "example": "Column sal has the six values 100, 250, NULL, 300, NULL, 150.\n\n- `COUNT(*)` $= 6$, `COUNT(sal)` $= 4$, `SUM(sal)` $= 800$, `AVG(sal)` $= 800/4 = 200$ (not $800/6 \\approx 133.3$).\n- `WHERE sal > 200` keeps 250 and 300 (2 rows); `WHERE NOT (sal > 200)` keeps 100 and 150 (2 rows). The 2 `NULL` rows are in neither result, and $2 + 2 \\ne 6$.\n- `WHERE sal > 200 OR sal IS NULL` keeps 4 rows.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-sql-queries",
+      "c-dbw-sql-aggregation-nulls"
+    ]
   },
   {
     "id": "f-dbw-attribute-closure",
@@ -207,7 +224,10 @@
     "whenToUse": "Checking whether an FD is implied by $F$, finding candidate keys and prime attributes, and as the inner step of the normal-form, lossless-join and dependency-preservation tests.",
     "commonMistake": "Stopping after one pass over the FDs (an FD skipped early may fire after later additions), and calling a superkey a candidate key without checking minimality. Also: $XY \\to Z$ does **not** imply $X \\to Z$.",
     "example": "$R(A,B,C,D,E)$, $F = \\{A \\to B,\\ B \\to C,\\ CD \\to E\\}$.\n\n$(AD)^+$: start with $\\{A, D\\}$; $A \\to B$ adds $B$; $B \\to C$ adds $C$; $CD \\to E$ adds $E$. So $(AD)^+ = ABCDE = R$ and $AD$ is a superkey.\n\nMinimality: $A^+ = ABC$ and $D^+ = D$, neither equals $R$. Since $A$ and $D$ appear on no right-hand side they are in every key, so $AD$ is the **only** candidate key, and there are $2^{5-2} = 8$ superkeys.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-functional-dependencies",
+      "c-dbw-normal-forms"
+    ]
   },
   {
     "id": "f-dbw-normal-form-conditions",
@@ -237,7 +257,9 @@
     "whenToUse": "Finding the highest normal form of a relation: compute **all** candidate keys, list the prime attributes, then test the FDs against BCNF, then 3NF, then 2NF.",
     "commonMistake": "Testing normal forms before finding all candidate keys (an attribute may be prime through a key you missed), and calling a partial dependency a 2NF violation when its right-hand side is prime: 2NF and 3NF restrict only dependencies whose right-hand side is non-prime.",
     "example": "$R(A,B,C,D)$, $F = \\{AB \\to C,\\ C \\to D,\\ D \\to A\\}$.\n\n- $B$ is on no right-hand side, so it is in every key; $B^+ = B$. Then $(AB)^+ = ABCD$, $(BC)^+ = BCDA$, $(BD)^+ = BDAC$, so the candidate keys are $AB$, $BC$, $BD$ and **all four attributes are prime**.\n- BCNF: $C^+ = ACD \\ne R$, so $C \\to D$ violates BCNF.\n- 3NF: every right-hand side ($C$, $D$, $A$) is prime, so every FD passes.\n\nHighest normal form: **3NF**.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-normal-forms"
+    ]
   },
   {
     "id": "f-dbw-decomposition-tests",
@@ -267,7 +289,9 @@
     "whenToUse": "Questions asking whether a decomposition is lossless, dependency-preserving, both or neither, and checking a BCNF or 3NF decomposition you produced.",
     "commonMistake": "Checking only that $R_1 \\cap R_2$ is non-empty (a common attribute is necessary but not sufficient: it must determine a whole side), and declaring an FD lost because it does not appear verbatim in any fragment. It may still follow from the fragments' FDs, so use the closure test.",
     "example": "$R(A,B,C)$ with $F = \\{AB \\to C,\\ C \\to B\\}$ (candidate keys $AB$ and $AC$), decomposed into $R_1(A,C)$ and $R_2(B,C)$.\n\n- Lossless: $R_1 \\cap R_2 = \\{C\\}$ and $C^+ = BC \\supseteq R_2$, so the decomposition is **lossless**.\n- $C \\to B$ lies inside $R_2$: preserved.\n- $AB \\to C$: start $Z = AB$. Through $R_1$: $(Z \\cap AC)^+ \\cap AC = A^+ \\cap AC = A$. Through $R_2$: $(Z \\cap BC)^+ \\cap BC = B^+ \\cap BC = B$. $Z$ stays $AB$, which does not contain $C$, so $AB \\to C$ is **not preserved**.\n\nThis is the classic case of a lossless BCNF decomposition that loses a dependency. Splitting instead into $(A,B)$ and $(B,C)$ would be **lossy**, since $B^+ = B$ contains neither side.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-normal-forms"
+    ]
   },
   {
     "id": "f-dbw-index-access-cost",
@@ -317,7 +341,9 @@
     "whenToUse": "Any \"how many block accesses\" question on file organization and indexing, where record, key and pointer sizes are given and you need the number of blocks, index levels or the cost of a lookup.",
     "commonMistake": "Rounding the blocking factor up (a partial record does not fit, so use the floor) or the number of blocks down (use the ceiling); making a primary index dense (it has one entry per **block**, not per record); and forgetting the $+1$ for reading the data block itself.",
     "example": "$r = 50{,}000$ records of $R = 120$ bytes, block size $B = 2048$ bytes, key $V = 10$ bytes, block pointer $P = 6$ bytes.\n\n- $\\text{bfr} = \\lfloor 2048/120 \\rfloor = 17$ and $b = \\lceil 50000/17 \\rceil = 2942$ blocks.\n- Binary search on the sorted file: $\\lceil \\log_2 2942 \\rceil = 12$ block accesses.\n- Primary index: $\\text{fo} = \\lfloor 2048/16 \\rfloor = 128$, $r_1 = 2942$, $b_1 = \\lceil 2942/128 \\rceil = 23$ blocks; a single-level lookup costs $\\lceil \\log_2 23 \\rceil + 1 = 6$.\n- Multilevel: level 2 needs $\\lceil 23/128 \\rceil = 1$ block, so $t = 2 = \\lceil \\log_{128} 2942 \\rceil$ and a lookup costs $2 + 1 = 3$.\n- Dense secondary index on a key: $r_1 = 50000$, levels of $391 \\to 4 \\to 1$ blocks, so $t = 3$ and a lookup costs 4.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-file-organization-indexing"
+    ]
   },
   {
     "id": "f-dbw-bplus-tree",
@@ -363,7 +389,9 @@
     "whenToUse": "Computing the order of B-tree or B+ tree nodes from block, key and pointer sizes, and the minimum or maximum number of keys, or the height, for a given number of records.",
     "commonMistake": "Mixing conventions (maximum keys vs maximum pointers vs minimum degree), giving a leaf only $p - 1$ keys when the question defines the leaf capacity separately, and applying the half-full minimum to the root (a non-leaf root may have just 2 children).",
     "example": "$B = 1024$ bytes, $V = 12$, $P = 8$, $P_r = 8$.\n\n- Internal node: $8p + 12(p - 1) \\le 1024 \\Rightarrow 20p \\le 1036 \\Rightarrow p = 51$.\n- Leaf: $20L + 8 \\le 1024 \\Rightarrow L = \\lfloor 1016/20 \\rfloor = 50$.\n- B-tree node: $8p + 20(p - 1) \\le 1024 \\Rightarrow 28p \\le 1044 \\Rightarrow p = 37$.\n\nHeight for $K = 1{,}000{,}000$ keys with $p = 51$, $L = 50$: 3 levels hold at most $51^2 \\cdot 50 = 130{,}050$ keys and 4 levels at most $51^3 \\cdot 50 = 6{,}632{,}550$, so at least 4 levels are needed. With minimum occupancy, 5 levels need only $2 \\cdot 26^3 \\cdot 25 = 878{,}800 \\le 10^6$ keys but 6 levels need $2 \\cdot 26^4 \\cdot 25 = 22{,}848{,}800$, so the height is 4 or 5.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-bplus-trees"
+    ]
   },
   {
     "id": "f-dbw-data-normalization",
@@ -397,7 +425,9 @@
     "whenToUse": "Preprocessing questions that give a value together with the attribute's range, or its mean and standard deviation, and questions on which method suits outliers or an unknown range.",
     "commonMistake": "Forgetting to add $\\mathit{new\\_min}_A$ back when the target range is not $[0, 1]$; choosing $j$ too small in decimal scaling (for $\\max |v| = 1000$, $j = 4$, because $1000/10^3 = 1$ is not below 1); mixing the population and sample standard deviations.",
     "example": "An attribute ranges from 20 to 180.\n\n- Min–max of $v = 116$ to $[0, 1]$: $\\frac{116 - 20}{180 - 20} = \\frac{96}{160} = 0.6$. To $[-1, 1]$: $0.6 \\times 2 + (-1) = 0.2$.\n- z-score with $\\bar A = 80$ and $\\sigma_A = 16$: $\\frac{116 - 80}{16} = 2.25$.\n- Decimal scaling for values in $[-452, 1375]$: $\\max |v| = 1375$ and $1375/10^3 = 1.375 \\ge 1$, so $j = 4$; $1375 \\mapsto 0.1375$ and $-452 \\mapsto -0.0452$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-data-transformation"
+    ]
   },
   {
     "id": "f-dbw-binning",
@@ -431,7 +461,9 @@
     "whenToUse": "Questions that give a (sorted) list of values and ask for the bins, or for the values after smoothing by bin means, medians or boundaries.",
     "commonMistake": "Confusing the two schemes (equal-width fixes the interval length, equal-frequency fixes the count per bin), putting $\\max$ into a non-existent bin $k$, and smoothing by boundaries with the global minimum and maximum instead of each bin's own.",
     "example": "Sorted data 5, 7, 12, 16, 18, 23, 28, 33, 41 with $k = 3$.\n\n- Equal-width: $w = (41 - 5)/3 = 12$, bins $[5, 17)$, $[17, 29)$, $[29, 41]$, giving $\\{5, 7, 12, 16\\}$, $\\{18, 23, 28\\}$, $\\{33, 41\\}$.\n- Equal-frequency: $\\{5, 7, 12\\}$, $\\{16, 18, 23\\}$, $\\{28, 33, 41\\}$.\n- Smoothing the equal-frequency bins by means: $8, 8, 8 \\mid 19, 19, 19 \\mid 34, 34, 34$.\n- Smoothing by boundaries: $5, 5, 12 \\mid 16, 16, 23 \\mid 28, 28, 41$ (for example, 33 is 5 away from 28 and 8 away from 41).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-data-transformation"
+    ]
   },
   {
     "id": "f-dbw-sampling",
@@ -461,7 +493,9 @@
     "whenToUse": "Questions on the number of possible samples, the probability that a given tuple is included, repeats under sampling with replacement, or how many tuples each stratum contributes.",
     "commonMistake": "Using $n/N$ for sampling **with** replacement (the true probability $1 - (1 - 1/N)^n$ is slightly smaller, because repeated draws are wasted), and counting ordered sequences $N(N-1)\\cdots(N-n+1)$ instead of subsets $\\binom{N}{n}$ for SRSWOR.",
     "example": "$N = 1000$ tuples and a sample of $n = 50$.\n\n- SRSWOR: each tuple is included with probability $50/1000 = 0.05$.\n- SRSWR: $1 - 0.999^{50} = 0.0488$ (to 4 decimal places), and the expected number of distinct tuples is $1000 \\times 0.0488 \\approx 48.8$.\n- Strata of sizes 600, 300 and 100 with proportional allocation contribute $50 \\times 0.6 = 30$, $50 \\times 0.3 = 15$ and $50 \\times 0.1 = 5$ tuples.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-data-transformation"
+    ]
   },
   {
     "id": "f-dbw-haar-wavelet-compression",
@@ -487,7 +521,9 @@
     "whenToUse": "Questions that ask for the Haar coefficients of a short sequence, for the data reconstructed from truncated coefficients, or for a compression ratio.",
     "commonMistake": "Mixing the sign conventions $d = (a - b)/2$ and $d = (b - a)/2$ (pick one and reconstruct with it), transforming the detail coefficients again instead of only the averages, and inverting the compression ratio.",
     "example": "Data $[6, 2, 5, 5, 8, 4, 1, 3]$:\n\n- Level 1 pairs: averages $[4, 5, 6, 2]$, details $[2, 0, 2, -1]$.\n- Level 2: averages $[4.5, 4]$, details $[-0.5, 2]$.\n- Level 3: average $[4.25]$, detail $[0.25]$.\n\nCoefficients: $[4.25,\\ 0.25,\\ -0.5,\\ 2,\\ 2,\\ 0,\\ 2,\\ -1]$. Keeping only those with magnitude at least 1 leaves 5 non-zero values out of 8: a compression ratio of $8/5 = 1.6$ (counting stored values and ignoring the cost of recording their positions). Reconstruction check for the first pair: $s = 4$, $d = 2$ gives $a = 6$, $b = 2$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-data-transformation"
+    ]
   },
   {
     "id": "f-dbw-attribute-dissimilarity",
@@ -517,7 +553,9 @@
     "whenToUse": "Classifying an attribute's type (which statistics and operations make sense), and computing dissimilarity or similarity for nominal, binary or ordinal data, e.g. as input to k-NN or clustering.",
     "commonMistake": "Counting the 0–0 matches $t$ for asymmetric binary attributes (rare-event records then look almost identical), treating ordinal codes 1, 2, 3 as ratio-scaled without rescaling, and averaging nominal codes (a mean PIN code is meaningless). Interval data have no true zero, so 20 °C is not \"twice as hot\" as 10 °C.",
     "example": "Two patients with six asymmetric binary test results, $i = (1, 0, 1, 1, 0, 0)$ and $j = (1, 1, 0, 1, 0, 0)$: $q = 2$, $r = 1$, $s = 1$, $t = 2$.\n\n- Asymmetric: $d = \\frac{1 + 1}{2 + 1 + 1} = 0.5$, and the Jaccard similarity is $2/4 = 0.5$.\n- Treated as symmetric: $d = \\frac{2}{6} \\approx 0.333$.\n\nAn ordinal grade with $M_f = 3$ states (fair, good, excellent): \"good\" has rank 2, so $z = \\frac{2 - 1}{3 - 1} = 0.5$. Two objects that agree on 1 of 4 nominal attributes have $d = \\frac{4 - 1}{4} = 0.75$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-data-types"
+    ]
   },
   {
     "id": "f-dbw-cube-cuboids-cells",
@@ -543,7 +581,9 @@
     "whenToUse": "Counting the cuboids (group-bys) that a full data cube materializes, bounding the number of cells of a small cube, and tracking how roll-up, slice or dice change a cube.",
     "commonMistake": "Using $2^n$ when the dimensions have hierarchies, counting the level \"all\" inside $L_i$ and then adding 1 again, and leaving the apex (grand-total) or base cuboid out of the count.",
     "example": "Dimensions time (day, month, quarter, year: $L = 4$), item (item, brand, type: $L = 3$) and location (city, state, country: $L = 3$):\n\n$$\n(4 + 1)(3 + 1)(3 + 1) = 80 \\text{ cuboids}, \\qquad \\text{versus } 2^3 = 8 \\text{ without hierarchies}.\n$$\n\nA 3-D cube without hierarchies and with $|D_1| = 4$, $|D_2| = 5$, $|D_3| = 3$ has at most $4 \\cdot 5 \\cdot 3 = 60$ base cells and at most $5 \\cdot 6 \\cdot 4 = 120$ cells in all, so up to $120 - 60 = 60$ aggregate cells.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-data-cube-olap"
+    ]
   },
   {
     "id": "f-dbw-measure-categories",
@@ -573,6 +613,8 @@
     "whenToUse": "Deciding whether a measure can be rolled up from sub-aggregates (and which sub-aggregates to store), and classifying a given measure as distributive, algebraic or holistic.",
     "commonMistake": "Averaging the averages of pieces of unequal size (combine sums and counts instead), taking the median of the medians as the median, and calling `avg` distributive (it needs two distributive sub-aggregates, so it is algebraic).",
     "example": "Two cells hold $\\{2, 4, 6\\}$ and $\\{8, 10\\}$. Store (count, sum, sum of squares) for each: $(3, 12, 56)$ and $(2, 18, 164)$.\n\n- Rolled up: count $5$, sum $30$, sum of squares $220$.\n- avg $= 30/5 = 6$, whereas the average of the two cell averages is $(4 + 9)/2 = 6.5$ (wrong).\n- Population variance $= 220/5 - 6^2 = 44 - 36 = 8$.\n- The median of all five values is 6, but the median of the cell medians 4 and 9 is 6.5: the median needs the raw values (holistic).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-dbw-measures"
+    ]
   }
 ]

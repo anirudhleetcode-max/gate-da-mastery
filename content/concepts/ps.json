@@ -1,0 +1,527 @@
+[
+  {
+    "id": "c-ps-counting",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-counting"
+    ],
+    "title": "Counting: permutations and combinations",
+    "inOfficialSyllabus": true,
+    "definition": "**Counting** finds the size of a finite set of outcomes without listing them. Two principles underlie everything:\n\n- **Multiplication principle**: if a task is a sequence of $k$ stages with $n_1, n_2, \\dots, n_k$ choices at the successive stages (the number of choices at a stage not depending on which choices were made earlier), the task can be done in $n_1 n_2 \\cdots n_k$ ways.\n- **Addition principle**: if the outcomes split into disjoint cases, the total is the sum of the case counts.\n\nA **permutation** is an ordered arrangement of $r$ objects chosen from $n$ distinct objects without repetition: ${}^{n}P_{r} = \\frac{n!}{(n-r)!}$. A **combination** is an unordered selection of $r$ of the $n$ objects: $\\binom{n}{r} = \\frac{n!}{r!\\,(n-r)!}$ for $0 \\le r \\le n$ (with $0! = 1$).",
+    "intuition": "Ask two questions before reaching for a formula: **does order matter?** and **is repetition allowed?** A podium (gold, silver, bronze) cares about order; a committee does not. Choosing a combination is the same as choosing a permutation and then forgetting the order, and each combination of $r$ objects appears $r!$ times among the permutations. That is why $\\binom{n}{r} = {}^{n}P_{r}/r!$.\n\nWhen direct counting gets messy, count the **complement** (\"at least one\" = total − \"none\") or split into disjoint **cases**. Counting feeds straight into probability: when all outcomes are equally likely, $P(A) = |A|/|S|$.",
+    "math": "The four basic ways of selecting $r$ items from $n$ distinct types:\n\n| | order matters | order does not matter |\n|---|---|---|\n| without repetition | ${}^{n}P_{r} = \\dfrac{n!}{(n-r)!}$ | $\\dbinom{n}{r}$ |\n| with repetition | $n^{r}$ | $\\dbinom{n+r-1}{r}$ |\n\nKey results:\n\n- **Multiset permutations.** $n$ objects of which $n_1$ are identical of type 1, …, $n_k$ identical of type $k$ ($n_1+\\cdots+n_k = n$) have $\\dfrac{n!}{n_1!\\,n_2!\\cdots n_k!}$ distinct arrangements, because permuting identical objects among themselves produces nothing new.\n- **Circular arrangements** of $n$ distinct objects: $(n-1)!$, since rotations of the same circle are identified.\n- **Stars and bars.** The equation $x_1+\\cdots+x_k=n$ has $\\binom{n+k-1}{k-1}$ solutions in non-negative integers and $\\binom{n-1}{k-1}$ solutions with every $x_i \\ge 1$. Lower bounds $x_i \\ge a_i$ are handled by substituting $y_i = x_i - a_i$.\n- **Identities.** $\\binom{n}{r} = \\binom{n}{n-r}$; Pascal's rule $\\binom{n}{r} = \\binom{n-1}{r-1} + \\binom{n-1}{r}$; $\\sum_{r=0}^{n}\\binom{n}{r} = 2^n$ (the number of subsets of an $n$-element set), of which $2^n - 1$ are non-empty.\n- **Functions** from a $k$-element set to an $n$-element set: $n^k$ in total, ${}^{n}P_{k}$ of them one-to-one ($k \\le n$), and $n!$ bijections when $k = n$. Functions with a structural property (for example $f(f(x)) = x$) are counted by decomposing them into cycles or pairs and counting the ways to choose those pieces.\n- **Inclusion–exclusion** corrects overlapping cases: $|A \\cup B| = |A| + |B| - |A \\cap B|$.",
+    "example": "**(a) Arrangements with repeated letters.** The word STATISTICS has 10 letters: S three times, T three times, I twice, A and C once each. The number of distinct arrangements is\n\n$$\n\\frac{10!}{3!\\,3!\\,2!\\,1!\\,1!} = \\frac{3\\,628\\,800}{72} = 50\\,400.\n$$\n\n**(b) A probability from counting.** One of these arrangements is chosen uniformly at random. What is the probability that it starts **and** ends with S? Fix an S at each end; the remaining 8 letters (S once, T three times, I twice, A, C) can be arranged in $\\frac{8!}{3!\\,2!} = 3360$ ways, so\n\n$$\nP = \\frac{3360}{50\\,400} = \\frac{1}{15}.\n$$\n\nSequential check: $P(\\text{first is S}) = \\frac{3}{10}$ and $P(\\text{last is S} \\mid \\text{first is S}) = \\frac{2}{9}$, giving $\\frac{3}{10}\\cdot\\frac{2}{9} = \\frac{1}{15}$.\n\n**(c) \"At least one\" by complement.** A team of 4 is chosen from 5 data scientists and 4 engineers. The number of teams with at least one engineer is $\\binom{9}{4} - \\binom{5}{4} = 126 - 5 = 121$.\n\n**(d) Stars and bars with lower bounds.** Distribute 12 identical tokens among 4 children so that each child gets at least 2. With $y_i = x_i - 2 \\ge 0$ the equation becomes $y_1+y_2+y_3+y_4 = 4$, which has $\\binom{4+3}{3} = 35$ solutions (compared with $\\binom{15}{3} = 455$ without the lower bound).",
+    "gateRelevance": "Counting is examined on its own (\"how many arrangements, functions or subsets…\", for example as a NAT with an integer answer) and as the engine of classical-probability questions (MCQ or NAT). Typical patterns: selections with an \"at least\" or \"at most\" condition, arrangements with identical objects, integer solutions of $x_1+\\cdots+x_k=n$ (stars and bars), counting subsets with a property using $2^n$, and counting functions or bijections that satisfy a structural constraint.\n\nBe clear about what is equally likely. \"A solution chosen uniformly from all solutions\" is a different experiment from \"each of $n$ distinguishable balls is placed independently in a random box\" — in the second experiment the stars-and-bars solutions are **not** equally likely. Check whether objects are distinct or identical, and whether order matters, before choosing a formula.",
+    "commonMistakes": [
+      "Using ${}^{n}P_{r}$ when order does not matter, or $\\binom{n}{r}$ when it does. Ask: would swapping two chosen items give a different outcome?",
+      "Forgetting to divide by $n_i!$ for identical objects, e.g. counting the arrangements of STATISTICS as $10!$.",
+      "Counting \"at least one engineer\" by first fixing one engineer and then choosing the rest freely ($4\\times\\binom{8}{3} = 224$ instead of $121$). Teams with several engineers get counted several times; use the complement or disjoint cases.",
+      "Treating stars-and-bars solutions as equally likely when the experiment places distinguishable objects independently; the solutions are equally likely only if the problem says a solution is chosen uniformly.",
+      "Off-by-one errors in stars and bars: non-negative solutions use $\\binom{n+k-1}{k-1}$, positive solutions use $\\binom{n-1}{k-1}$."
+    ],
+    "formulaIds": [
+      "f-ps-permutations",
+      "f-ps-combinations",
+      "f-ps-stars-and-bars",
+      "f-ps-classical-probability"
+    ],
+    "relatedConceptIds": [
+      "c-ps-sample-space-axioms",
+      "c-ps-bernoulli-binomial-uniform"
+    ]
+  },
+  {
+    "id": "c-ps-sample-space-axioms",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-sample-space",
+      "ps-axioms"
+    ],
+    "title": "Sample spaces, events and the probability axioms",
+    "inOfficialSyllabus": true,
+    "definition": "A **random experiment** has outcomes that cannot be predicted with certainty. Its **sample space** $S$ (also written $\\Omega$) is the set of all possible outcomes, and an **event** is a subset of $S$. Events combine by set operations: $A \\cup B$ ($A$ or $B$), $A \\cap B$ ($A$ and $B$), $A^c$ (not $A$) and $A \\setminus B = A \\cap B^c$.\n\nA **probability** is a function $P$ on events that satisfies Kolmogorov's axioms:\n\n1. $P(A) \\ge 0$ for every event $A$;\n2. $P(S) = 1$;\n3. for pairwise disjoint events $A_1, A_2, \\dots$ (that is, $A_i \\cap A_j = \\emptyset$ for $i \\ne j$), $P\\big(\\bigcup_i A_i\\big) = \\sum_i P(A_i)$.",
+    "intuition": "The sample space is the list of everything that could happen; an event is a yes/no question about the outcome. The axioms say that probabilities behave like areas: never negative, total area 1, and areas of non-overlapping pieces add. Every other rule — complements, inclusion–exclusion, bounds — is a consequence.\n\nChoosing the sample space well is half the work. For two dice, use the 36 **ordered** pairs, which are equally likely. The 11 possible sums are **not** equally likely, so $P(\\text{sum} = 7) = 6/36$, not $1/11$.",
+    "math": "Consequences of the axioms:\n\n- $P(\\emptyset) = 0$ and $P(A^c) = 1 - P(A)$, hence $0 \\le P(A) \\le 1$.\n- Monotonicity: $A \\subseteq B \\Rightarrow P(A) \\le P(B)$.\n- $P(A \\setminus B) = P(A) - P(A \\cap B)$.\n- Inclusion–exclusion:\n\n$$\nP(A \\cup B) = P(A) + P(B) - P(A \\cap B),\n$$\n\n$$\nP(A\\cup B\\cup C) = P(A)+P(B)+P(C) - P(A\\cap B) - P(A\\cap C) - P(B\\cap C) + P(A\\cap B\\cap C).\n$$\n\n- Exactly one of $A, B$: $P(A) + P(B) - 2P(A \\cap B)$.\n- De Morgan: $(A\\cup B)^c = A^c \\cap B^c$ and $(A\\cap B)^c = A^c \\cup B^c$; in particular $P(\\text{at least one}) = 1 - P(\\text{none})$.\n- Union bound (Boole's inequality): $P\\big(\\bigcup_i A_i\\big) \\le \\sum_i P(A_i)$.\n- Bounds when only $P(A)$ and $P(B)$ are known:\n\n$$\n\\max\\big(0,\\ P(A)+P(B)-1\\big) \\le P(A\\cap B) \\le \\min\\big(P(A),\\ P(B)\\big),\n$$\n\n$$\n\\max\\big(P(A),\\ P(B)\\big) \\le P(A\\cup B) \\le \\min\\big(1,\\ P(A)+P(B)\\big).\n$$\n\n**Classical probability.** If $S$ is finite and all outcomes are equally likely, then $P(A) = |A|/|S|$. This is a special case of the axioms and is valid only under the equally-likely assumption. For an uncountable sample space (an interval, a region of the plane), probabilities come from lengths, areas or densities instead.",
+    "example": "Roll two fair dice. $S = \\{(i,j) : i, j \\in \\{1,\\dots,6\\}\\}$ has 36 equally likely ordered outcomes.\n\n- $A$ = \"the sum is 8\" $= \\{(2,6),(3,5),(4,4),(5,3),(6,2)\\}$, so $P(A) = 5/36$.\n- $B$ = \"at least one die shows 6\". By the complement rule, $P(B) = 1 - (5/6)^2 = 11/36$.\n- $A \\cap B = \\{(2,6),(6,2)\\}$, so $P(A\\cap B) = 2/36$.\n\nBy inclusion–exclusion,\n\n$$\nP(A\\cup B) = \\frac{5 + 11 - 2}{36} = \\frac{14}{36} = \\frac{7}{18}, \\qquad P(\\text{neither}) = 1 - \\frac{7}{18} = \\frac{11}{18}.\n$$\n\n**At least one in repeated trials.** The probability of at least one six in 4 rolls of a die is $1 - (5/6)^4 = 1 - \\frac{625}{1296} \\approx 0.5177$.\n\n**Bounds.** If all we know is $P(A) = 0.7$ and $P(B) = 0.5$, then $0.2 \\le P(A\\cap B) \\le 0.5$ and $0.7 \\le P(A\\cup B) \\le 1$. The lower bound $0.2$ is attained when $A \\cup B = S$, and the upper bound $0.5$ when $B \\subseteq A$.",
+    "gateRelevance": "Typically examined through short MCQ/NAT computations: write down the sample space, identify the event, and use complements or inclusion–exclusion (\"at least one\" over $n$ independent trials, \"exactly one of three events\", the probability that two described events occur together). MSQs test which statements follow from the axioms, and range questions ask for the smallest or largest possible value of $P(A\\cap B)$ or $P(A \\cup B)$ given the individual probabilities.\n\nWatch for described events that cannot occur together — their intersection has probability 0 — and for listed outcomes that are not equally likely.",
+    "commonMistakes": [
+      "Applying $|A|/|S|$ to outcomes that are not equally likely, such as the sum of two dice or the number of heads in several tosses.",
+      "Adding the probabilities of overlapping events without subtracting $P(A\\cap B)$; the sum $P(A)+P(B)$ can even exceed 1.",
+      "Using unordered outcomes as the sample space for distinguishable dice or coins — $(2,6)$ and $(6,2)$ are different outcomes.",
+      "Computing \"at least one\" by adding the per-trial probabilities instead of using $1 - P(\\text{none})$.",
+      "Treating the bound $P(A\\cap B) \\ge P(A)+P(B)-1$ as the value of $P(A\\cap B)$; it is only a lower bound, and it is replaced by 0 when $P(A)+P(B) \\le 1$."
+    ],
+    "formulaIds": [
+      "f-ps-classical-probability",
+      "f-ps-axioms-complement",
+      "f-ps-addition-rule"
+    ],
+    "relatedConceptIds": [
+      "c-ps-counting",
+      "c-ps-independent-vs-mutually-exclusive",
+      "c-ps-conditional-joint-marginal"
+    ]
+  },
+  {
+    "id": "c-ps-independent-vs-mutually-exclusive",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-independent",
+      "ps-mutually-exclusive"
+    ],
+    "title": "Independent events vs mutually exclusive events",
+    "inOfficialSyllabus": true,
+    "definition": "Events $A$ and $B$ are **mutually exclusive** (disjoint) if they cannot occur together: $A \\cap B = \\emptyset$. Then $P(A\\cap B) = 0$ and $P(A \\cup B) = P(A) + P(B)$.\n\nEvents $A$ and $B$ are **independent** if\n\n$$\nP(A\\cap B) = P(A)\\,P(B),\n$$\n\nequivalently $P(A\\mid B) = P(A)$ when $P(B) > 0$. Events $A_1, \\dots, A_n$ are **mutually independent** if the product rule holds for **every** subcollection: $P(A_{i_1}\\cap\\cdots\\cap A_{i_k}) = P(A_{i_1})\\cdots P(A_{i_k})$ for every $k$ with $2 \\le k \\le n$ and all distinct indices $i_1, \\dots, i_k$. **Pairwise** independence requires this only for pairs.",
+    "intuition": "Mutual exclusivity is a property of the **sets**: the events never overlap. Independence is a property of **information**: learning that $B$ happened does not change how likely $A$ is. The two ideas are nearly opposite. If $A$ and $B$ are disjoint and both possible, learning that $B$ happened tells you for certain that $A$ did not — the strongest possible dependence.\n\nIndependence usually comes from the physical set-up (separate tosses, separate machines) and is used to **multiply** probabilities; mutual exclusivity is used to **add** them.",
+    "math": "- **Disjoint implies dependent (for events of positive probability).** If $P(A) > 0$, $P(B) > 0$ and $A \\cap B = \\emptyset$, then $P(A\\cap B) = 0 \\ne P(A)P(B)$. Two events can be both disjoint and independent only if one of them has probability 0.\n- **Complements.** If $A$ and $B$ are independent, so are $A$ and $B^c$, $A^c$ and $B$, and $A^c$ and $B^c$. Proof of the first: $P(A\\cap B^c) = P(A) - P(A\\cap B) = P(A)\\big(1 - P(B)\\big) = P(A)P(B^c)$.\n- **Union of independent events:**\n\n$$\nP(A_1\\cup\\cdots\\cup A_n) = 1 - \\prod_{i=1}^{n}\\big(1 - P(A_i)\\big),\n$$\n\nwhereas for pairwise disjoint events $P(A_1\\cup\\cdots\\cup A_n) = \\sum_i P(A_i)$. For two independent events, $P(A\\cup B) = P(A) + P(B) - P(A)P(B)$.\n- **Pairwise is weaker than mutual.** Three events need four product conditions (three pairs and the triple); $n$ events need $2^n - n - 1$. Pairwise independence does not imply mutual independence (see the example).\n- **Independent trials.** For independent repetitions, the probability of a particular sequence of results is the product of the per-trial probabilities; this produces the binomial and geometric distributions.\n- **Random variables.** $X$ and $Y$ are independent when $P(X \\in A,\\ Y \\in B) = P(X \\in A)\\,P(Y \\in B)$ for all sets $A, B$. For discrete variables this means $p_{X,Y}(x,y) = p_X(x)\\,p_Y(y)$ in **every** cell of the joint table. Variables built from overlapping sets of trials (for example, a row sum and a column sum of a random matrix, which share one entry) are generally dependent.",
+    "example": "Roll one fair die, $S = \\{1,\\dots,6\\}$.\n\n- $A = \\{2,4,6\\}$ (even) and $B = \\{1,2,3,4\\}$. Then $A\\cap B = \\{2,4\\}$, so $P(A\\cap B) = \\frac{2}{6} = \\frac13$, and $P(A)P(B) = \\frac12\\cdot\\frac23 = \\frac13$. The events are **independent**, even though they overlap.\n- $C = \\{1,3,5\\}$ (odd) is disjoint from $A$: $P(A\\cap C) = 0 \\ne \\frac12\\cdot\\frac12$. The events are **mutually exclusive and therefore dependent**.\n\n**Pairwise but not mutually independent.** Toss two fair coins. Let $E_1$ = \"first toss is H\", $E_2$ = \"second toss is H\" and $E_3$ = \"the two tosses agree\". Each event has probability $\\frac12$, and each pairwise intersection is the single outcome HH, with probability $\\frac14 = \\frac12\\cdot\\frac12$. But\n\n$$\nP(E_1\\cap E_2\\cap E_3) = P(\\text{HH}) = \\frac14 \\ne \\frac18 = P(E_1)P(E_2)P(E_3).\n$$\n\n**Reliability.** Three components work independently with probabilities $0.9$, $0.8$ and $0.7$.\n\n- In **series** (all must work): $0.9 \\times 0.8 \\times 0.7 = 0.504$.\n- In **parallel** (at least one must work): $1 - (0.1)(0.2)(0.3) = 1 - 0.006 = 0.994$.",
+    "gateRelevance": "Examined as conceptual MCQs/MSQs (\"which statements about disjoint or independent events are true\") and inside numerical problems where independence lets you multiply probabilities across repeated trials or separate components. Typical traps: an intersection of two described events that is actually impossible (probability 0), assuming disjoint events are independent, assuming pairwise independence gives mutual independence, and multiplying probabilities of events that share an underlying trial. Independence of events is also the basis of independence of random variables, used when computing $E[XY]$, $\\operatorname{Var}(X+Y)$ and joint probabilities involving sums of Bernoulli variables.",
+    "commonMistakes": [
+      "Believing disjoint events are independent. If both have positive probability, disjoint events are always dependent.",
+      "Checking independence with $P(A\\cup B) = P(A)+P(B)$ — that is the test for mutual exclusivity, not for independence.",
+      "Concluding that three events are mutually independent from the three pairwise checks; the triple product condition must also hold.",
+      "Multiplying probabilities of events that share an underlying trial (for example, a row and a column of a random 0/1 matrix share one entry), which are not independent.",
+      "Using $P(A\\cup B) = P(A)+P(B)$ for independent events; the correct formula is $P(A)+P(B)-P(A)P(B)$."
+    ],
+    "formulaIds": [
+      "f-ps-independent-events",
+      "f-ps-addition-rule",
+      "f-ps-axioms-complement"
+    ],
+    "relatedConceptIds": [
+      "c-ps-sample-space-axioms",
+      "c-ps-conditional-joint-marginal",
+      "c-ps-bernoulli-binomial-uniform"
+    ]
+  },
+  {
+    "id": "c-ps-conditional-joint-marginal",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-marginal-joint"
+    ],
+    "title": "Joint, marginal and conditional probability",
+    "inOfficialSyllabus": true,
+    "definition": "For events $A$ and $B$:\n\n- the **joint probability** $P(A\\cap B)$ is the probability that both occur;\n- a **marginal probability** such as $P(A)$ is the probability of one event on its own, obtained by summing joint probabilities over a partition $B_1, \\dots, B_k$ of $S$: $P(A) = \\sum_i P(A\\cap B_i)$;\n- the **conditional probability** of $A$ given $B$, defined when $P(B) > 0$, is\n\n$$\nP(A\\mid B) = \\frac{P(A\\cap B)}{P(B)}.\n$$\n\nFor discrete random variables the same ideas apply cell by cell: the joint PMF is $p_{X,Y}(x,y) = P(X=x, Y=y)$, the marginal PMF is $p_X(x) = \\sum_y p_{X,Y}(x,y)$, and the conditional PMF is $p_{Y\\mid X}(y\\mid x) = p_{X,Y}(x,y)/p_X(x)$ for $p_X(x) > 0$.",
+    "intuition": "Conditioning on $B$ means \"we now know that $B$ happened\": discard every outcome outside $B$ and rescale what is left so that it totals 1. In a joint probability table, a conditional distribution is one row (or column) divided by its total, and the marginals are the totals written in the margins — hence the name.\n\nThe multiplication rule reads the definition backwards: the probability that a sequence of things happens is the probability of the first step times the conditional probability of each next step given everything before it.",
+    "math": "- **Multiplication (chain) rule:**\n\n$$\nP(A\\cap B) = P(B)\\,P(A\\mid B) = P(A)\\,P(B\\mid A),\n$$\n\n$$\nP(A_1\\cap A_2\\cap\\cdots\\cap A_n) = P(A_1)\\,P(A_2\\mid A_1)\\cdots P(A_n\\mid A_1\\cap\\cdots\\cap A_{n-1}).\n$$\n\n- **Law of total probability.** If $B_1,\\dots,B_k$ partition $S$ (pairwise disjoint, union $S$, each $P(B_i)>0$), then\n\n$$\nP(A) = \\sum_{i=1}^{k} P(A\\mid B_i)\\,P(B_i).\n$$\n\n- **Conditional probability is a probability.** For a fixed $B$, $P(\\cdot\\mid B)$ satisfies the axioms, so $P(A^c\\mid B) = 1 - P(A\\mid B)$ and inclusion–exclusion holds given $B$. In general, however, $P(A\\mid B^c) \\ne 1 - P(A\\mid B)$ and $P(A\\mid B) \\ne P(B\\mid A)$.\n- **Independence** is the special case $P(A\\mid B) = P(A)$. For random variables, $X$ and $Y$ are independent iff $p_{X,Y}(x,y) = p_X(x)\\,p_Y(y)$ in **every** cell; a single failing cell proves dependence.\n- **Sampling without replacement** is handled by the chain rule, because each draw changes the composition of what remains. By symmetry, the $k$-th draw has the same marginal distribution as the first.\n- **Conditioning on an event of a random variable**, e.g. $P(X > s + t\\mid X > s) = P(X > s + t)/P(X > s)$, because $\\{X > s+t\\} \\subseteq \\{X > s\\}$ for $t \\ge 0$.",
+    "example": "A joint PMF of $X \\in \\{0,1,2\\}$ and $Y \\in \\{0,1\\}$, with the marginals in the margins:\n\n| | $Y=0$ | $Y=1$ | $p_X(x)$ |\n|---|---|---|---|\n| $X=0$ | 0.10 | 0.20 | 0.30 |\n| $X=1$ | 0.15 | 0.25 | 0.40 |\n| $X=2$ | 0.05 | 0.25 | 0.30 |\n| $p_Y(y)$ | 0.30 | 0.70 | 1.00 |\n\n- $P(Y=1\\mid X=2) = \\dfrac{0.25}{0.30} = \\dfrac56 \\approx 0.833$ (divide by the **row** total).\n- $P(X=2\\mid Y=1) = \\dfrac{0.25}{0.70} = \\dfrac{5}{14} \\approx 0.357$ (divide by the **column** total) — a different number from the previous line.\n- $P(X\\ge1\\mid Y=1) = \\dfrac{0.25+0.25}{0.70} = \\dfrac57 \\approx 0.714$.\n- Independence? $p_X(0)\\,p_Y(0) = 0.30\\times0.30 = 0.09 \\ne 0.10 = p_{X,Y}(0,0)$, so $X$ and $Y$ are **dependent**.\n\n**Chain rule.** An urn holds 4 red and 6 blue balls; 3 are drawn without replacement.\n\n$$\nP(\\text{all red}) = \\frac{4}{10}\\cdot\\frac{3}{9}\\cdot\\frac{2}{8} = \\frac{24}{720} = \\frac{1}{30},\n$$\n\nwhich agrees with the counting answer $\\binom{4}{3}\\big/\\binom{10}{3} = 4/120$. By symmetry, $P(\\text{second ball red}) = 4/10$ even though the colour of the first ball is not observed.",
+    "gateRelevance": "A tool used throughout the subject. It is examined directly (read a conditional probability off a joint table or a verbal description; NAT with rounding) and inside Bayes, conditional-expectation and conditional-PDF questions. Typical patterns: joint PMF tables, sometimes with an unknown constant fixed by normalisation; conditional probabilities of events defined by a function of two variables such as $X+Y$ or $\\max(X,Y)$; sequential draws without replacement; and conditioning on a tail event of a continuous variable (memorylessness of the exponential). Traps: dividing by the wrong marginal, and confusing $P(A\\mid B)$ with $P(B\\mid A)$.",
+    "commonMistakes": [
+      "Dividing by the wrong total: $P(Y=y\\mid X=x)$ divides by the row marginal $p_X(x)$, not by a column marginal or by 1.",
+      "Confusing $P(A\\mid B)$ with $P(B\\mid A)$ (the prosecutor's fallacy).",
+      "Writing $P(A\\mid B^c) = 1 - P(A\\mid B)$; the correct complement identity is $P(A^c\\mid B) = 1 - P(A\\mid B)$.",
+      "Declaring independence after checking a single cell of a joint table; every cell must factor.",
+      "Treating draws without replacement as independent trials."
+    ],
+    "formulaIds": [
+      "f-ps-conditional-probability",
+      "f-ps-marginal-probability",
+      "f-ps-total-probability"
+    ],
+    "relatedConceptIds": [
+      "c-ps-bayes-theorem",
+      "c-ps-independent-vs-mutually-exclusive",
+      "c-ps-joint-conditional-pdf",
+      "c-ps-conditional-expectation"
+    ]
+  },
+  {
+    "id": "c-ps-bayes-theorem",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-bayes"
+    ],
+    "title": "Law of total probability and Bayes' theorem",
+    "inOfficialSyllabus": true,
+    "definition": "Let $A_1,\\dots,A_n$ be a **partition** of the sample space (pairwise mutually exclusive, together exhaustive, each with $P(A_i) > 0$) and let $B$ be an event with $P(B) > 0$. **Bayes' theorem** states\n\n$$\nP(A_i\\mid B) = \\frac{P(B\\mid A_i)\\,P(A_i)}{\\sum_{j=1}^{n} P(B\\mid A_j)\\,P(A_j)},\n$$\n\nwhere the denominator equals $P(B)$ by the **law of total probability**. $P(A_i)$ is called the **prior**, $P(B\\mid A_i)$ the **likelihood** and $P(A_i\\mid B)$ the **posterior**.",
+    "intuition": "Bayes' theorem turns \"how likely is the evidence if the cause is $A_i$?\" into \"how likely is the cause $A_i$, now that we have seen the evidence?\". Picture a probability tree: the first branching chooses the cause (prior probabilities) and the second decides whether the evidence appears (likelihoods). $P(B)$ is the total weight of all paths that end in the evidence; the posterior of $A_i$ is the share of that weight that comes through the $A_i$ branch.\n\nWhen a cause is rare, even strong evidence can leave its posterior modest — the **base-rate effect**.",
+    "math": "**Derivation.** Apply the definition of conditional probability twice: $P(A_i\\cap B) = P(A_i\\mid B)\\,P(B) = P(B\\mid A_i)\\,P(A_i)$. Divide by $P(B)$ and expand $P(B) = \\sum_j P(B\\mid A_j)P(A_j)$.\n\n**Two-hypothesis form:**\n\n$$\nP(A\\mid B) = \\frac{P(B\\mid A)P(A)}{P(B\\mid A)P(A) + P(B\\mid A^c)P(A^c)}.\n$$\n\n**Odds form.** With odds $O(A) = P(A)/P(A^c)$,\n\n$$\nO(A\\mid B) = O(A)\\times\\frac{P(B\\mid A)}{P(B\\mid A^c)},\n$$\n\nthat is, posterior odds = prior odds × likelihood ratio. Convert back with $P = O/(1+O)$.\n\n**Sequential evidence.** If $B_1$ and $B_2$ are **conditionally independent** given each hypothesis, then $P(B_1\\cap B_2\\mid A) = P(B_1\\mid A)\\,P(B_2\\mid A)$, and updating on both at once gives the same answer as updating on $B_1$ and then using that posterior as the prior for $B_2$. The same assumption underlies the naive Bayes classifier.\n\n**Checks.** The posteriors over a partition sum to 1. The posterior of $A_i$ exceeds its prior exactly when $P(B\\mid A_i) > P(B)$. For densities, $f_{Y\\mid X}(y\\mid x) = f_{X\\mid Y}(x\\mid y)\\,f_Y(y)/f_X(x)$.",
+    "example": "20% of incoming e-mails are spam. A filter flags 90% of spam and 5% of legitimate mail. An e-mail is flagged ($F$); how likely is it to be spam?\n\n**Total probability:**\n\n$$\nP(F) = 0.9\\times0.2 + 0.05\\times0.8 = 0.18 + 0.04 = 0.22.\n$$\n\n**Bayes:**\n\n$$\nP(\\text{spam}\\mid F) = \\frac{0.18}{0.22} = \\frac{9}{11} \\approx 0.818.\n$$\n\n**Not flagged:** $P(\\text{spam}\\mid F^c) = \\dfrac{0.1\\times0.2}{1-0.22} = \\dfrac{0.02}{0.78} \\approx 0.0256$.\n\n**A second filter**, conditionally independent of the first given the e-mail's type and with the same rates, also flags it. In odds form the prior odds are $0.2/0.8 = 0.25$ and each flag has likelihood ratio $0.9/0.05 = 18$, so\n\n$$\nO(\\text{spam}\\mid F_1, F_2) = 0.25\\times18\\times18 = 81, \\qquad P(\\text{spam}\\mid F_1, F_2) = \\frac{81}{82} \\approx 0.988.\n$$\n\nDirect check: $\\dfrac{0.2(0.9)^2}{0.2(0.9)^2 + 0.8(0.05)^2} = \\dfrac{0.162}{0.164} \\approx 0.988$.",
+    "gateRelevance": "The classic NAT/MCQ pattern is a two-stage experiment (choose a box, machine, source or condition with given prior probabilities, then observe an outcome) followed by a question about the first stage given the outcome, usually rounded to two or three decimal places. Variants give the complement's probability or state the conditional probabilities in words, use a three-way partition, add a second observation, or ask for the probability of a further observation after updating. The same reasoning drives the naive Bayes classifier (Machine Learning) and inference in Bayesian networks (Artificial Intelligence). Traps: leaving out the $A^c$ branch of $P(B)$ and reporting $P(B\\mid A)$ when $P(A\\mid B)$ is asked.",
+    "commonMistakes": [
+      "Reporting the likelihood $P(B\\mid A)$ as the answer instead of the posterior $P(A\\mid B)$.",
+      "Leaving out a branch of the partition (for example the $A^c$ term) when computing $P(B)$.",
+      "Mixing up a given probability and its complement: if a question gives $P(A^c)$, the prior is $P(A) = 1 - P(A^c)$.",
+      "Multiplying the likelihoods of two observations without the conditional-independence assumption, or re-using the original prior after the first update in a sequential calculation.",
+      "Ignoring the base rate: a test that is right 90% of the time does not make a positive result 90% reliable when the condition is rare."
+    ],
+    "formulaIds": [
+      "f-ps-bayes-theorem",
+      "f-ps-total-probability",
+      "f-ps-conditional-probability"
+    ],
+    "relatedConceptIds": [
+      "c-ps-conditional-joint-marginal",
+      "c-ps-sample-space-axioms",
+      "c-ps-joint-conditional-pdf"
+    ]
+  },
+  {
+    "id": "c-ps-central-tendency-dispersion",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-central-tendency"
+    ],
+    "title": "Mean, median, mode and standard deviation",
+    "inOfficialSyllabus": true,
+    "definition": "For data $x_1,\\dots,x_n$ with sorted values $x_{(1)} \\le \\cdots \\le x_{(n)}$ (1-indexed):\n\n- **mean** $\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i$;\n- **median** $x_{((n+1)/2)}$ if $n$ is odd, and $\\frac12\\big(x_{(n/2)} + x_{(n/2+1)}\\big)$ if $n$ is even;\n- **mode**: the most frequent value (there may be more than one);\n- **variance**: the population variance $\\sigma^2 = \\frac1N\\sum_{i=1}^{N} (x_i-\\mu)^2$ for a whole population of size $N$, or the sample variance $s^2 = \\frac{1}{n-1}\\sum_{i=1}^{n} (x_i - \\bar{x})^2$ for a sample;\n- **standard deviation**: $\\sigma = \\sqrt{\\sigma^2}$ or $s = \\sqrt{s^2}$, in the same units as the data.\n\nFor a random variable, the mean is $E[X]$, a median $m$ satisfies $P(X\\le m)\\ge\\frac12$ and $P(X\\ge m)\\ge\\frac12$, and a mode is a value that maximises the PMF or PDF.",
+    "intuition": "The mean is the balance point of the data, the median is the middle value and the mode is the most common value. The mean uses every value, so a single extreme value can drag it far; the median depends only on the order, so it is **robust** to outliers. In right-skewed data (a long tail of large values, such as incomes) the mean is typically larger than the median.\n\nThe standard deviation measures the typical distance from the mean. Dividing by $n-1$ in the sample variance compensates for measuring deviations from $\\bar{x}$, which is fitted to the same data and therefore sits closer to the data than the true mean does.",
+    "math": "- **Deviations sum to zero:** $\\sum_i (x_i - \\bar{x}) = 0$.\n- **Computational shortcut:** $\\sum_i (x_i-\\bar{x})^2 = \\sum_i x_i^2 - n\\bar{x}^2$.\n- **Optimality:** $c = \\bar{x}$ minimises $\\sum_i (x_i - c)^2$, and a median minimises $\\sum_i |x_i - c|$.\n- **Linear transformation** $y_i = a x_i + b$: $\\bar{y} = a\\bar{x} + b$; the median and mode transform in the same way; $s_y = |a|\\,s_x$ and $s_y^2 = a^2 s_x^2$. A shift changes the centre but not the spread.\n- **Updating and pooling means:** adding one value $x_{\\text{new}}$ gives $\\bar{x}' = \\dfrac{n\\bar{x} + x_{\\text{new}}}{n+1}$; two groups of sizes $n_1, n_2$ pool as $\\dfrac{n_1\\bar{x}_1 + n_2\\bar{x}_2}{n_1+n_2}$.\n- **Pairwise-difference identity:**\n\n$$\n\\sum_{i=1}^{n}\\sum_{j=1}^{n}(x_i - x_j)^2 = 2n\\sum_{i=1}^{n}(x_i - \\bar{x})^2 .\n$$\n\nWrite $x_i - x_j = (x_i - \\bar{x}) - (x_j - \\bar{x})$ and expand; the cross term vanishes because the deviations sum to zero. Hence $s^2 = \\frac{1}{2n(n-1)}\\sum_i\\sum_j (x_i-x_j)^2$.\n- **Unbiasedness:** for i.i.d. data with variance $\\sigma^2$, $E[s^2] = \\sigma^2$, whereas the divisor-$n$ version has expectation $\\frac{n-1}{n}\\sigma^2$.",
+    "example": "Data ($n = 9$): $12, 7, 3, 7, 15, 9, 10, 7, 20$.\n\n- **Mean:** the sum is $90$, so $\\bar{x} = 10$.\n- **Median:** sorted, the data are $3, 7, 7, 7, 9, 10, 12, 15, 20$; the 5th value is $9$.\n- **Mode:** $7$ (it appears three times).\n- **Variance:** the deviations are $2, -3, -7, -3, 5, -1, 0, -3, 10$, and their squares sum to $4+9+49+9+25+1+0+9+100 = 206$. Shortcut check: $\\sum x_i^2 = 1106$ and $1106 - 9(10)^2 = 206$.\n  - population version: $\\sigma^2 = 206/9 \\approx 22.89$, $\\sigma \\approx 4.784$;\n  - sample version: $s^2 = 206/8 = 25.75$, $s \\approx 5.074$.\n\n**Add an outlier** $x_{10} = 30$: the new mean is $\\frac{9(10) + 30}{10} = 12$, while the median only moves to $\\frac{9+10}{2} = 9.5$.\n\n**Transform** the original data by $y = 2x - 5$: $\\bar{y} = 15$, median $13$, mode $9$ and $s_y = 2(5.074) \\approx 10.15$.\n\n**Identity check:** $\\sum_i\\sum_j (x_i-x_j)^2 = 2(9)(206) = 3708$.",
+    "gateRelevance": "Typically examined as a short NAT computation or an MCQ comparing measures. Typical patterns: update a mean after adding or removing data points; recover a variance from sums such as $\\sum x_i$ and $\\sum x_i^2$ or from a double sum of squared pairwise differences; the effect of a linear transformation on the mean, median and standard deviation; comparing the mean, median and mode of skewed data or of a distribution (the median of a continuous distribution solves $F(m) = 1/2$).\n\nTraps: the sample ($n-1$) versus population ($n$) divisor — use exactly the expression the question defines — and forgetting to sort before taking the median.",
+    "commonMistakes": [
+      "Using the wrong divisor: read whether the question's expression divides by $n$ or by $n-1$ and use that one.",
+      "Taking the median of unsorted data, or using position $n/2$ when $n$ is odd.",
+      "Reporting the frequency of the mode instead of the modal value.",
+      "Thinking that adding a constant changes the standard deviation, or that multiplying the data by $a$ multiplies the variance by $a$ (it is $a^2$).",
+      "Averaging group means without weighting them by the group sizes when pooling."
+    ],
+    "formulaIds": [
+      "f-ps-mean-median-mode",
+      "f-ps-variance-standard-deviation"
+    ],
+    "relatedConceptIds": [
+      "c-ps-covariance-correlation",
+      "c-ps-random-variables-expectation",
+      "c-ps-pmf-pdf-cdf"
+    ]
+  },
+  {
+    "id": "c-ps-covariance-correlation",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-correlation-covariance"
+    ],
+    "title": "Covariance and correlation",
+    "inOfficialSyllabus": true,
+    "definition": "The **covariance** of random variables $X$ and $Y$ with means $\\mu_X$ and $\\mu_Y$ is\n\n$$\n\\operatorname{Cov}(X,Y) = E\\big[(X-\\mu_X)(Y-\\mu_Y)\\big] = E[XY] - E[X]\\,E[Y].\n$$\n\nThe (Pearson) **correlation coefficient** rescales the covariance by the standard deviations (both assumed positive):\n\n$$\n\\rho_{X,Y} = \\frac{\\operatorname{Cov}(X,Y)}{\\sigma_X\\,\\sigma_Y}, \\qquad -1 \\le \\rho_{X,Y} \\le 1.\n$$\n\nFor paired data $(x_i, y_i)$, the sample covariance is $s_{xy} = \\frac{1}{n-1}\\sum_i (x_i - \\bar{x})(y_i - \\bar{y})$ and the sample correlation is\n\n$$\nr = \\frac{\\sum_i (x_i-\\bar{x})(y_i-\\bar{y})}{\\sqrt{\\sum_i (x_i-\\bar{x})^2}\\,\\sqrt{\\sum_i (y_i-\\bar{y})^2}}\n$$\n\n(the divisors cancel, so it does not matter whether $n$ or $n-1$ is used, as long as the same one is used throughout).",
+    "intuition": "Covariance asks: when $X$ is above its mean, is $Y$ usually above its mean too (positive), below it (negative), or neither (close to zero)? Its size depends on the units, so it is hard to interpret on its own. Correlation removes the units and lands in $[-1, 1]$: $\\pm1$ means the points lie exactly on a line, and $0$ means there is no **linear** trend.\n\nCorrelation is blind to non-linear relationships: if $X$ is symmetric about 0, then $Y = X^2$ is completely determined by $X$ and yet has zero correlation with it.",
+    "math": "- **Properties:** $\\operatorname{Cov}(X,X) = \\operatorname{Var}(X)$; $\\operatorname{Cov}(X,Y) = \\operatorname{Cov}(Y,X)$; $\\operatorname{Cov}(aX+b,\\ cY+d) = ac\\operatorname{Cov}(X,Y)$; bilinearity, e.g. $\\operatorname{Cov}(X+Z,\\ Y) = \\operatorname{Cov}(X,Y) + \\operatorname{Cov}(Z,Y)$; a constant has zero covariance with everything.\n- **Variance of sums and differences:**\n\n$$\n\\operatorname{Var}(X \\pm Y) = \\operatorname{Var}(X) + \\operatorname{Var}(Y) \\pm 2\\operatorname{Cov}(X,Y),\n$$\n\nso $\\operatorname{Cov}(X,Y) = \\frac14\\big[\\operatorname{Var}(X+Y) - \\operatorname{Var}(X-Y)\\big]$.\n- **Correlation under linear maps** (with $a, c \\ne 0$): $\\rho(aX+b,\\ cY+d) = \\operatorname{sign}(ac)\\,\\rho(X,Y)$. It is unchanged by shifts and by positive rescaling, and its sign flips if exactly one scale factor is negative.\n- **Bounds:** by the Cauchy–Schwarz inequality, $|\\operatorname{Cov}(X,Y)| \\le \\sigma_X\\sigma_Y$, so $|\\rho| \\le 1$, with $|\\rho| = 1$ iff $Y = aX + b$ with probability 1 for some constants $a \\ne 0$, $b$.\n- **Independent versus uncorrelated:** independence $\\Rightarrow$ $E[XY] = E[X]E[Y]$ $\\Rightarrow$ $\\operatorname{Cov}(X,Y) = 0$. The converse fails in general (it does hold for jointly normal variables).\n- **Indicators:** for events $A$ and $B$, $\\operatorname{Cov}(I_A, I_B) = P(A\\cap B) - P(A)P(B)$.\n- **Via conditioning:** $E[XY] = E\\big[X\\,E[Y\\mid X]\\big]$, which is useful when $Y$ is specified through its conditional distribution given $X$.",
+    "example": "**Sample correlation.** Data: $x = 1,2,3,4,5$ and $y = 2,4,5,4,5$, so $\\bar{x} = 3$ and $\\bar{y} = 4$.\n\n| $x_i-\\bar{x}$ | $-2$ | $-1$ | $0$ | $1$ | $2$ |\n|---|---|---|---|---|---|\n| $y_i-\\bar{y}$ | $-2$ | $0$ | $1$ | $0$ | $1$ |\n\n$\\sum (x_i-\\bar{x})(y_i-\\bar{y}) = 4 + 0 + 0 + 0 + 2 = 6$, $\\sum (x_i-\\bar{x})^2 = 10$ and $\\sum (y_i-\\bar{y})^2 = 6$. Hence\n\n$$\ns_{xy} = \\frac{6}{4} = 1.5, \\qquad r = \\frac{6}{\\sqrt{10\\times6}} = \\frac{6}{\\sqrt{60}} \\approx 0.775.\n$$\n\n**Transform** $u = 3x + 1$ and $v = -2y + 7$: $s_{uv} = (3)(-2)(1.5) = -9$ and $r_{uv} \\approx -0.775$ (same magnitude, sign flipped).\n\n**Uncorrelated but dependent.** Let $X$ be uniform on $\\{-1, 0, 1\\}$ and $Y = X^2$. Then $E[X] = 0$ and $E[XY] = E[X^3] = \\frac{(-1) + 0 + 1}{3} = 0$, so $\\operatorname{Cov}(X,Y) = 0 - 0\\cdot E[Y] = 0$. Yet $Y$ is a function of $X$: $P(Y=0\\mid X=0) = 1 \\ne P(Y=0) = \\frac13$.",
+    "gateRelevance": "Examined as NAT computations of $\\operatorname{Cov}$ or $\\rho$ — from a joint PMF, from indicator variables defined on coin or die experiments, from paired data, or from a conditional specification via $E[XY] = E[X\\,E[Y\\mid X]]$ — and as MCQ/MSQ property checks: the effect of shifting and scaling, sign flips, recovering the covariance from $\\operatorname{Var}(X+Y)$ and $\\operatorname{Var}(X-Y)$, and \"zero correlation does not imply independence\". A classic trap is a dependence that is purely non-linear and symmetric, which gives a correlation of exactly 0. Covariance also underlies linear regression and PCA (covariance matrices) in the Machine Learning subject.",
+    "commonMistakes": [
+      "Concluding independence from zero covariance or zero correlation.",
+      "Forgetting that $\\operatorname{Cov}(aX, cY) = ac\\operatorname{Cov}(X,Y)$ can change sign, or thinking that a shift changes the covariance.",
+      "Writing $\\operatorname{Var}(X - Y) = \\operatorname{Var}(X) - \\operatorname{Var}(Y)$; variances add, and it is the covariance term whose sign changes.",
+      "Dividing by the variances instead of the standard deviations when computing $\\rho$.",
+      "Mixing divisors when computing $r$ from summary statistics (a covariance with divisor $n$ but standard deviations with divisor $n-1$); the divisors must match so that they cancel."
+    ],
+    "formulaIds": [
+      "f-ps-covariance",
+      "f-ps-correlation-coefficient",
+      "f-ps-variance-of-sum"
+    ],
+    "relatedConceptIds": [
+      "c-ps-central-tendency-dispersion",
+      "c-ps-random-variables-expectation",
+      "c-ps-conditional-expectation",
+      "c-ps-independent-vs-mutually-exclusive"
+    ]
+  },
+  {
+    "id": "c-ps-random-variables-expectation",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-random-variables"
+    ],
+    "title": "Random variables, expectation and variance",
+    "inOfficialSyllabus": true,
+    "definition": "A **random variable** is a function $X: S \\to \\mathbb{R}$ that assigns a real number to each outcome of an experiment. It is **discrete** if it takes finitely or countably many values (described by a PMF) and **continuous** if it has a probability density (PDF). Its **expectation** is the probability-weighted average\n\n$$\nE[X] = \\sum_x x\\,p_X(x) \\quad\\text{or}\\quad E[X] = \\int_{-\\infty}^{\\infty} x\\,f_X(x)\\,dx,\n$$\n\nprovided the sum or integral converges absolutely. Its **variance** is $\\operatorname{Var}(X) = E\\big[(X - E[X])^2\\big] = E[X^2] - (E[X])^2$, and its **standard deviation** is $\\sigma_X = \\sqrt{\\operatorname{Var}(X)}$.",
+    "intuition": "A random variable is a measurement taken on a random outcome: the number of heads, the larger of two dice, the waiting time for a bus. Once you know its distribution, you can forget the underlying sample space.\n\nThe expectation is the long-run average over many independent repetitions — the balance point of the distribution. The variance is the long-run average squared distance from that balance point. Expectation is **linear**, which makes it the most powerful tool in the subject: the expected total is the sum of the expected parts, whatever the dependence between them.",
+    "math": "- **LOTUS (law of the unconscious statistician):** $E[g(X)] = \\sum_x g(x)\\,p_X(x)$ or $\\int g(x) f_X(x)\\,dx$; there is no need to find the distribution of $g(X)$. In general $E[g(X)] \\ne g(E[X])$; for example $E[X^2] \\ge (E[X])^2$.\n- **Linearity:** $E[aX + bY + c] = aE[X] + bE[Y] + c$ for **any** $X, Y$, independent or not.\n- **Indicator method:** if $X = \\sum_i I_{A_i}$ counts how many of the events $A_i$ occur, then $E[X] = \\sum_i P(A_i)$.\n- **Variance rules:** $\\operatorname{Var}(aX + b) = a^2\\operatorname{Var}(X)$ and $\\operatorname{Var}(X + Y) = \\operatorname{Var}(X) + \\operatorname{Var}(Y) + 2\\operatorname{Cov}(X,Y)$.\n- **Independent $X$ and $Y$:** $E[XY] = E[X]E[Y]$, $\\operatorname{Var}(X \\pm Y) = \\operatorname{Var}(X) + \\operatorname{Var}(Y)$, and\n\n$$\n\\operatorname{Var}(XY) = E[X^2]\\,E[Y^2] - (E[X]\\,E[Y])^2 = \\sigma_X^2\\sigma_Y^2 + \\mu_X^2\\sigma_Y^2 + \\mu_Y^2\\sigma_X^2 .\n$$\n\n- **Sample mean** of i.i.d. $X_1,\\dots,X_n$ with mean $\\mu$ and variance $\\sigma^2$: $E[\\bar{X}] = \\mu$ and $\\operatorname{Var}(\\bar{X}) = \\sigma^2/n$. So $\\bar{X}$ is an **unbiased** estimator of $\\mu$ whose variance shrinks as $n$ grows. For Bernoulli data, $\\hat{p} = \\bar{X}$ has $E[\\hat{p}] = p$ and $\\operatorname{Var}(\\hat{p}) = p(1-p)/n$.\n- **Tail-sum formula** for a random variable taking values in $\\{0, 1, 2, \\dots\\}$: $E[X] = \\sum_{k\\ge1} P(X \\ge k)$.",
+    "example": "**PMF and moments.** Roll two fair dice and let $X$ be the larger of the two numbers. Since $P(X \\le k) = (k/6)^2$, we get $P(X = k) = \\frac{k^2 - (k-1)^2}{36} = \\frac{2k-1}{36}$ for $k = 1,\\dots,6$:\n\n| $k$ | 1 | 2 | 3 | 4 | 5 | 6 |\n|---|---|---|---|---|---|---|\n| $P(X=k)$ | 1/36 | 3/36 | 5/36 | 7/36 | 9/36 | 11/36 |\n\n$$\nE[X] = \\frac{1 + 6 + 15 + 28 + 45 + 66}{36} = \\frac{161}{36} \\approx 4.472, \\qquad E[X^2] = \\frac{1 + 12 + 45 + 112 + 225 + 396}{36} = \\frac{791}{36},\n$$\n\n$$\n\\operatorname{Var}(X) = \\frac{791}{36} - \\left(\\frac{161}{36}\\right)^2 = \\frac{2555}{1296} \\approx 1.971 .\n$$\n\n**Indicators.** Ten people's hats are handed back in a uniformly random order. With $I_i = 1$ if person $i$ gets their own hat, $P(I_i = 1) = \\frac{1}{10}$, so the expected number of people who get their own hat is $10 \\times \\frac{1}{10} = 1$ — even though the $I_i$ are dependent.\n\n**Product of independent variables.** Let $X$ and $Y$ be independent with $E[X] = 2$, $\\operatorname{Var}(X) = 1$, $E[Y] = 3$ and $\\operatorname{Var}(Y) = 4$. Then $E[X^2] = 1 + 4 = 5$, $E[Y^2] = 4 + 9 = 13$ and\n\n$$\n\\operatorname{Var}(XY) = 5\\times13 - (2\\times3)^2 = 65 - 36 = 29 .\n$$\n\nThe expanded form agrees: $1\\cdot4 + 2^2\\cdot4 + 3^2\\cdot1 = 4 + 16 + 9 = 29$.",
+    "gateRelevance": "Underlies most probability questions. Typical patterns: define a random variable from an experiment and find its PMF, mean or variance (often NAT); use linearity or indicators to find an expected count without the full distribution; the variance of linear combinations and of products of independent variables; MSQs on properties of the sample mean or of an estimator such as $\\hat{p}$ (unbiasedness, variance proportional to $1/n$); and moments of named distributions (for example $E[Z^2]$ and $E[Z^4]$ for a standard normal). Traps: $\\operatorname{Var}(aX+b) = a^2\\operatorname{Var}(X)$, not $a\\operatorname{Var}(X)$, and $E[g(X)] \\ne g(E[X])$ for non-linear $g$.",
+    "commonMistakes": [
+      "Writing $\\operatorname{Var}(aX + b) = a\\operatorname{Var}(X) + b$; the correct rule is $\\operatorname{Var}(aX+b) = a^2\\operatorname{Var}(X)$.",
+      "Assuming linearity of expectation needs independence — it does not. Only the variance-of-a-sum and product rules need independence (or zero covariance).",
+      "Computing $E[X^2]$ as $(E[X])^2$, or $E[1/X]$ as $1/E[X]$.",
+      "Using $\\operatorname{Var}(XY) = \\operatorname{Var}(X)\\operatorname{Var}(Y)$ for independent variables; the correct formula has the extra terms $\\mu_X^2\\sigma_Y^2 + \\mu_Y^2\\sigma_X^2$.",
+      "Forgetting that $\\operatorname{Var}(\\bar{X}) = \\sigma^2/n$ (not $\\sigma^2$, and not $\\sigma/n$)."
+    ],
+    "formulaIds": [
+      "f-ps-expectation",
+      "f-ps-variance-rv",
+      "f-ps-variance-of-sum"
+    ],
+    "relatedConceptIds": [
+      "c-ps-pmf-pdf-cdf",
+      "c-ps-conditional-expectation",
+      "c-ps-covariance-correlation",
+      "c-ps-bernoulli-binomial-uniform"
+    ]
+  },
+  {
+    "id": "c-ps-conditional-expectation",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation"
+    ],
+    "title": "Conditional expectation and conditional variance",
+    "inOfficialSyllabus": true,
+    "definition": "The **conditional expectation** of $X$ given $Y = y$ is the mean of the conditional distribution of $X$ given $Y = y$:\n\n$$\nE[X\\mid Y=y] = \\sum_x x\\,p_{X\\mid Y}(x\\mid y) \\quad\\text{or}\\quad \\int_{-\\infty}^{\\infty} x\\,f_{X\\mid Y}(x\\mid y)\\,dx .\n$$\n\nWriting $g(y) = E[X\\mid Y=y]$, the random variable $E[X\\mid Y] = g(Y)$ is a **function of $Y$**, not a number. The **conditional variance** is\n\n$$\n\\operatorname{Var}(X\\mid Y) = E\\big[(X - E[X\\mid Y])^2 \\mid Y\\big] = E[X^2\\mid Y] - \\big(E[X\\mid Y]\\big)^2,\n$$\n\nwhich is also a function of $Y$.",
+    "intuition": "Split the population into groups according to the value of $Y$ and compute the average of $X$ within each group: that is $E[X\\mid Y=y]$. Averaging the group averages, weighted by the group probabilities, gives back the overall average — the **tower rule**.\n\nVariance splits the same way: the total spread of $X$ is the average spread **within** the groups plus the spread **between** the group averages. This is the idea behind \"explained\" and \"unexplained\" variance in regression and analysis of variance.",
+    "math": "- **Law of total expectation (tower rule):** $E\\big[E[X\\mid Y]\\big] = E[X]$. Discrete form: $E[X] = \\sum_y E[X\\mid Y=y]\\,P(Y=y)$; for a partition of events, $E[X] = \\sum_i E[X\\mid A_i]\\,P(A_i)$.\n- **Law of total variance:**\n\n$$\n\\operatorname{Var}(X) = E\\big[\\operatorname{Var}(X\\mid Y)\\big] + \\operatorname{Var}\\big(E[X\\mid Y]\\big).\n$$\n\n- **Taking out what is known:** $E[h(Y)\\,X\\mid Y] = h(Y)\\,E[X\\mid Y]$; hence $E[XY] = E\\big[Y\\,E[X\\mid Y]\\big]$.\n- **Independence:** if $X$ and $Y$ are independent, $E[X\\mid Y] = E[X]$, a constant.\n- **Best predictor:** among all functions $h$, $h(Y) = E[X\\mid Y]$ minimises the mean squared error $E\\big[(X - h(Y))^2\\big]$.\n- **First-step analysis:** to find an expected waiting time, condition on what happens at the first step. For the number of trials $T$ up to and including the first success in independent trials with success probability $p$: $E[T] = 1 + (1-p)\\,E[T]$, so $E[T] = 1/p$.\n- **Random sums:** if $S = X_1 + \\cdots + X_N$, where the $X_i$ are i.i.d. with mean $\\mu$ and variance $\\sigma^2$ and independent of the count $N$, then $E[S\\mid N] = N\\mu$ and $\\operatorname{Var}(S\\mid N) = N\\sigma^2$, so\n\n$$\nE[S] = E[N]\\,\\mu, \\qquad \\operatorname{Var}(S) = E[N]\\,\\sigma^2 + \\mu^2\\operatorname{Var}(N).\n$$",
+    "example": "**(a) First-step analysis.** A fair coin is tossed until the pattern HT (a head immediately followed by a tail) first appears. Let $e_0$ be the expected number of further tosses from the start, and $e_H$ the expected number of further tosses when the last toss was H and the pattern is not yet complete.\n\n- From state H, a T finishes the pattern and an H leaves us in state H: $e_H = 1 + \\frac12(0) + \\frac12 e_H$, so $e_H = 2$.\n- From the start, an H moves us to state H and a T leaves us at the start: $e_0 = 1 + \\frac12 e_H + \\frac12 e_0$, so $\\frac12 e_0 = 1 + 1$ and $e_0 = 4$.\n\n**(b) Random sum.** The number of customers $N$ in an hour is equally likely to be 1, 2 or 3. Each customer spends an amount with mean 10 and variance 4, independently of $N$ and of the other customers. Let $S$ be the total amount spent.\n\n- $E[N] = 2$ and $\\operatorname{Var}(N) = \\frac{(1-2)^2 + 0 + (3-2)^2}{3} = \\frac23$.\n- $E[S] = E\\big[E[S\\mid N]\\big] = E[10N] = 20$.\n- Within-group term: $E\\big[\\operatorname{Var}(S\\mid N)\\big] = E[4N] = 8$. Between-group term: $\\operatorname{Var}\\big(E[S\\mid N]\\big) = \\operatorname{Var}(10N) = 100\\times\\frac23 \\approx 66.67$.\n\n$$\n\\operatorname{Var}(S) = 8 + 66.67 \\approx 74.67 \\quad \\left(\\text{exactly } \\tfrac{224}{3}\\right).\n$$\n\nThe between-group term dominates: most of the uncertainty comes from not knowing how many customers arrive.",
+    "gateRelevance": "Examined as conceptual MCQs (what $E[E[X\\mid Y]]$ equals; the fact that $E[X\\mid Y]$ is a random variable) and as multi-step numerical questions: $E[Y\\mid X=x]$ from a joint density on a non-rectangular region, expected waiting times by first-step analysis, and the law of total variance for mixtures and two-stage experiments (a random number of trials, a randomly chosen coin or batch). It also powers covariance calculations when $Y$ is specified through its conditional distribution given $X$. Traps: dropping the between-group term $\\operatorname{Var}(E[X\\mid Y])$, and using the wrong limits for the conditional density.",
+    "commonMistakes": [
+      "Treating $E[X\\mid Y]$ as a number; it is a function of $Y$, and $E[X\\mid Y=y]$ is its value at $y$.",
+      "Computing $\\operatorname{Var}(X)$ as the average of the conditional variances only, forgetting the between-group term $\\operatorname{Var}(E[X\\mid Y])$.",
+      "Integrating $x\\,f_{X,Y}(x,y)$ instead of $x\\,f_{X\\mid Y}(x\\mid y)$ to get $E[X\\mid Y=y]$ — divide by the marginal $f_Y(y)$ first.",
+      "In first-step analysis, forgetting to count the current step (the \"1 +\") or moving to the wrong state when a partial pattern is broken.",
+      "Writing $\\operatorname{Var}(S) = E[N]\\,\\sigma^2$ for a random sum and omitting $\\mu^2\\operatorname{Var}(N)$."
+    ],
+    "formulaIds": [
+      "f-ps-total-expectation-variance",
+      "f-ps-conditional-pdf",
+      "f-ps-expectation"
+    ],
+    "relatedConceptIds": [
+      "c-ps-random-variables-expectation",
+      "c-ps-joint-conditional-pdf",
+      "c-ps-conditional-joint-marginal",
+      "c-ps-covariance-correlation"
+    ]
+  },
+  {
+    "id": "c-ps-pmf-pdf-cdf",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-pmf",
+      "ps-pdf",
+      "ps-cdf"
+    ],
+    "title": "PMF, PDF and CDF",
+    "inOfficialSyllabus": true,
+    "definition": "The **cumulative distribution function** (CDF) of any random variable $X$ is $F_X(x) = P(X \\le x)$ for every real $x$.\n\n- A **discrete** random variable has a **probability mass function** (PMF) $p_X(x) = P(X = x)$ with $p_X(x) \\ge 0$ and $\\sum_x p_X(x) = 1$. Its CDF is the step function $F_X(x) = \\sum_{t \\le x} p_X(t)$.\n- A **continuous** random variable has a **probability density function** (PDF) $f_X(x) \\ge 0$ with $\\int_{-\\infty}^{\\infty} f_X(x)\\,dx = 1$ and $P(a \\le X \\le b) = \\int_a^b f_X(x)\\,dx$. Its CDF $F_X(x) = \\int_{-\\infty}^{x} f_X(t)\\,dt$ is continuous, and $f_X(x) = F_X'(x)$ wherever the derivative exists.",
+    "intuition": "A PMF places point masses on individual values. A PDF spreads probability along the line like sand, and probability is the **area** under it. So for a continuous variable any single point has probability 0, and a density value can exceed 1 — it is probability per unit length, not a probability.\n\nThe CDF works for every kind of random variable: it accumulates probability from the left. It rises from 0 to 1, jumps where there is a point mass, and climbs smoothly where probability is spread out. Many questions become easy once they are written in terms of $F$.",
+    "math": "**Properties of every CDF:** non-decreasing; right-continuous; $\\lim_{x\\to-\\infty}F(x) = 0$ and $\\lim_{x\\to\\infty}F(x) = 1$. Conversely, every function with these four properties is the CDF of some random variable.\n\n**Reading probabilities from $F$**, with $F(x^-) = \\lim_{t \\uparrow x}F(t)$:\n\n$$\nP(a < X \\le b) = F(b) - F(a), \\qquad P(X = x) = F(x) - F(x^-), \\qquad P(X < x) = F(x^-), \\qquad P(X > x) = 1 - F(x).\n$$\n\nFor a discrete $X$ the jump sizes are the PMF values, so $<$ versus $\\le$ matters. For a continuous $X$ it does not. A CDF can also be **mixed**: jumps plus continuous increase.\n\n**Quantiles.** A median $m$ satisfies $P(X \\le m) \\ge \\frac12$ and $P(X \\ge m) \\ge \\frac12$; for a continuous, strictly increasing $F$, solve $F(m) = \\frac12$. More generally the $p$-quantile solves $F(x_p) = p$.\n\n**Normalising.** A PMF or PDF given up to a constant $c$ is fixed by $\\sum p_X = 1$ or $\\int f_X = 1$, taken over the **support** only.\n\n**Functions of $X$ (the CDF method).** For $Y = g(X)$, write $F_Y(y) = P(g(X) \\le y)$ as an event about $X$, evaluate it with $F_X$, and differentiate to get $f_Y$. For strictly monotone $g$ this gives\n\n$$\nf_Y(y) = f_X\\big(g^{-1}(y)\\big)\\left|\\frac{d}{dy}g^{-1}(y)\\right| .\n$$\n\nA continuous $X$ can produce a discrete $Y$: for $Y = \\lfloor X \\rfloor$, $P(Y = k) = P(k \\le X < k+1) = F_X(k+1) - F_X(k)$.",
+    "example": "**Discrete.** $p_X(x) = c(5 - x)$ for $x = 1, 2, 3, 4$. Normalising: $c(4 + 3 + 2 + 1) = 10c = 1$, so $c = 0.1$.\n\n| $x$ | 1 | 2 | 3 | 4 |\n|---|---|---|---|---|\n| $p_X(x)$ | 0.4 | 0.3 | 0.2 | 0.1 |\n| $F_X(x)$ | 0.4 | 0.7 | 0.9 | 1.0 |\n\n- $F_X(2.5) = 0.7$ (the CDF is flat between support points). $P(X < 3) = F_X(3^-) = 0.7$, whereas $P(X \\le 3) = 0.9$.\n- $P(2 \\le X \\le 3) = F_X(3) - F_X(1) = 0.9 - 0.4 = 0.5$.\n- $E[X] = 0.4 + 0.6 + 0.6 + 0.4 = 2$ and $E[X^2] = 0.4 + 1.2 + 1.8 + 1.6 = 5$, so $\\operatorname{Var}(X) = 5 - 4 = 1$.\n\n**Continuous.** $f_X(x) = x/2$ for $0 \\le x \\le 2$ and 0 otherwise. Then $\\int_0^2 \\frac{x}{2}\\,dx = 1$ and $F_X(x) = \\frac{x^2}{4}$ on $[0, 2]$.\n\n- Median: $\\frac{m^2}{4} = \\frac12$, so $m = \\sqrt{2} \\approx 1.414$.\n- $P(0.5 \\le X \\le 1.5) = \\frac{1.5^2 - 0.5^2}{4} = \\frac{2}{4} = 0.5$.\n- $E[X] = \\int_0^2 \\frac{x^2}{2}\\,dx = \\frac43$ and $E[X^2] = \\int_0^2 \\frac{x^3}{2}\\,dx = 2$, so $\\operatorname{Var}(X) = 2 - \\frac{16}{9} = \\frac29$.\n- $Y = X^2$: for $0 \\le y \\le 4$, $F_Y(y) = P(X \\le \\sqrt{y}) = \\frac{y}{4}$ (using $X \\ge 0$), so $Y \\sim \\text{Uniform}(0, 4)$.",
+    "gateRelevance": "Often examined through the CDF: find a parameter from a given median or quantile; compute $P(X \\in A)$ from a piecewise CDF, including events such as $X^2 \\le a$ or $\\lvert X\\rvert > a$ that must first be rewritten as intervals; normalise a PMF or PDF that contains an unknown constant; and derive the distribution of a transformed variable, including discretisations such as $\\lfloor X \\rfloor$. MSQs test CDF properties (right-continuity, jumps equal to point masses, monotonicity, limits) for discrete or mixed variables. Traps: $P(X < x)$ versus $P(X \\le x)$ for discrete variables, and treating a density value as a probability.",
+    "commonMistakes": [
+      "Treating $f_X(x)$ as $P(X = x)$; for a continuous variable $P(X = x) = 0$, and a density may exceed 1.",
+      "Ignoring a jump in a discrete or mixed CDF: $P(X < x) = F(x^-)$, which differs from $F(x)$ when there is a point mass at $x$.",
+      "Normalising over the wrong range — sum or integrate only over the support.",
+      "Solving $X^2 \\le a$ as $X \\le \\sqrt{a}$ alone; for a variable that can be negative it is $-\\sqrt{a} \\le X \\le \\sqrt{a}$.",
+      "Thinking a CDF must be continuous or strictly increasing; it only needs to be non-decreasing and right-continuous with limits 0 and 1."
+    ],
+    "formulaIds": [
+      "f-ps-pmf",
+      "f-ps-pdf-cdf",
+      "f-ps-expectation"
+    ],
+    "relatedConceptIds": [
+      "c-ps-random-variables-expectation",
+      "c-ps-bernoulli-binomial-uniform",
+      "c-ps-uniform-exponential-poisson",
+      "c-ps-joint-conditional-pdf"
+    ]
+  },
+  {
+    "id": "c-ps-bernoulli-binomial-uniform",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named"
+    ],
+    "title": "Discrete uniform, Bernoulli and binomial distributions",
+    "inOfficialSyllabus": true,
+    "definition": "- **Discrete uniform** on the integers $\\{a, a+1, \\dots, b\\}$ ($n = b - a + 1$ values): $P(X = k) = \\frac1n$; $E[X] = \\frac{a+b}{2}$ and $\\operatorname{Var}(X) = \\frac{n^2-1}{12}$.\n- **Bernoulli$(p)$:** $P(X = 1) = p$ and $P(X = 0) = 1 - p$; $E[X] = p$ and $\\operatorname{Var}(X) = p(1-p)$.\n- **Binomial$(n, p)$:** the number of successes in $n$ **independent** Bernoulli$(p)$ trials,\n\n$$\nP(X = k) = \\binom{n}{k}p^k(1-p)^{n-k}, \\quad k = 0, 1, \\dots, n, \\qquad E[X] = np, \\qquad \\operatorname{Var}(X) = np(1-p).\n$$",
+    "intuition": "The discrete uniform is a fair die with $n$ faces. A Bernoulli variable is a single yes/no trial coded as 1/0. A binomial count adds up $n$ such trials: $\\binom{n}{k}$ counts which of the trials are the successes, and $p^k(1-p)^{n-k}$ is the probability of any one particular sequence with $k$ successes.\n\nCheck the four binomial conditions before using it: a fixed number of trials, two outcomes per trial, independent trials, and the same $p$ on every trial. Sampling **without** replacement from a small population breaks independence (that gives the hypergeometric distribution instead).",
+    "math": "- **Mean and variance via indicators.** $X = X_1 + \\cdots + X_n$ with $X_i$ i.i.d. Bernoulli$(p)$, so $E[X] = \\sum_i E[X_i] = np$ and, by independence, $\\operatorname{Var}(X) = \\sum_i \\operatorname{Var}(X_i) = np(1-p)$. For a Bernoulli variable $X_i^2 = X_i$, so $E[X_i^2] = p$.\n- **Discrete uniform on $\\{1,\\dots,n\\}$:** $E[X] = \\frac{n+1}{2}$ and $E[X^2] = \\frac{(n+1)(2n+1)}{6}$, giving $\\operatorname{Var}(X) = \\frac{n^2-1}{12}$. Shifting the support leaves the variance unchanged; values spaced $c$ apart multiply it by $c^2$.\n- **Symmetry:** if $X \\sim \\text{Bin}(n, p)$ then $n - X \\sim \\text{Bin}(n, 1-p)$; for $p = \\frac12$ the PMF is symmetric about $n/2$.\n- **Mode** (for $0 < p < 1$): $\\lfloor (n+1)p \\rfloor$; when $(n+1)p$ is an integer, both $(n+1)p$ and $(n+1)p - 1$ are modes.\n- **Sums:** independent $\\text{Bin}(n_1, p)$ and $\\text{Bin}(n_2, p)$ variables add to $\\text{Bin}(n_1 + n_2, p)$ — only when the $p$ is the **same**.\n- **Sample proportion:** $\\hat{p} = X/n$ has $E[\\hat{p}] = p$ and $\\operatorname{Var}(\\hat{p}) = \\frac{p(1-p)}{n}$.\n- **Approximations:** for large $n$ and small $p$, $\\text{Bin}(n,p) \\approx \\text{Poisson}(np)$; for large $n$ with $np(1-p)$ not small, $\\text{Bin}(n,p) \\approx N\\big(np,\\ np(1-p)\\big)$ by the central limit theorem.\n- **Geometric** (a supporting distribution, not named in the syllabus): the number of trials up to and including the first success has $P(T = k) = (1-p)^{k-1}p$ for $k = 1, 2, \\dots$ and $E[T] = 1/p$.",
+    "example": "A student guesses all 8 questions of a quiz, each with 4 options, independently at random: $X \\sim \\text{Bin}(8, 0.25)$.\n\n- $P(X = 2) = \\binom82(0.25)^2(0.75)^6 = 28 \\times 0.0625 \\times 0.17798 \\approx 0.3115$.\n- $P(X \\ge 2) = 1 - P(X = 0) - P(X = 1) = 1 - 0.75^8 - 8(0.25)(0.75)^7 \\approx 1 - 0.1001 - 0.2670 = 0.6329$.\n- $E[X] = 8 \\times 0.25 = 2$ and $\\operatorname{Var}(X) = 8 \\times 0.25 \\times 0.75 = 1.5$.\n- Mode: $\\lfloor 9 \\times 0.25 \\rfloor = \\lfloor 2.25 \\rfloor = 2$.\n- Proportion correct $\\hat{p} = X/8$: $E[\\hat{p}] = 0.25$ and $\\operatorname{Var}(\\hat{p}) = \\frac{0.25 \\times 0.75}{8} \\approx 0.0234$.\n\n**Discrete uniform.** For a fair die ($n = 6$), $E[X] = 3.5$ and $\\operatorname{Var}(X) = \\frac{36 - 1}{12} = \\frac{35}{12} \\approx 2.917$. For $Y = 2X$ (values $2, 4, \\dots, 12$), $E[Y] = 7$ and $\\operatorname{Var}(Y) = 4 \\times \\frac{35}{12} = \\frac{35}{3}$.",
+    "gateRelevance": "Typical patterns: the mean and variance of a count of successes (draws with replacement, coin tosses, random 0/1 entries of a matrix or string); the probability of \"at least $k$\" successes; the mean and variance of the sample proportion $\\hat{p}$ (MSQ statements about unbiasedness and variance); sums of Bernoulli variables that share some trials (overlapping row and column counts are **not** independent); and the normal approximation to a binomial via the CLT. Traps: using the binomial for draws without replacement, adding binomials with different $p$, and using $np$ as the variance.",
+    "commonMistakes": [
+      "Using $\\operatorname{Var}(X) = np$ (the Poisson rule); for the binomial it is $np(1-p)$.",
+      "Applying the binomial to draws without replacement from a small population.",
+      "Adding binomial variables with different success probabilities and calling the result binomial.",
+      "Forgetting the $\\binom{n}{k}$ factor, i.e. computing the probability of one particular sequence instead of all arrangements of $k$ successes.",
+      "Using $\\frac{n^2-1}{12}$ with $n$ equal to the largest value instead of the number of values, or forgetting the factor $c^2$ when the values are spaced $c$ apart."
+    ],
+    "formulaIds": [
+      "f-ps-discrete-uniform",
+      "f-ps-binomial",
+      "f-ps-pmf"
+    ],
+    "relatedConceptIds": [
+      "c-ps-random-variables-expectation",
+      "c-ps-pmf-pdf-cdf",
+      "c-ps-uniform-exponential-poisson",
+      "c-ps-clt-confidence-intervals",
+      "c-ps-counting"
+    ]
+  },
+  {
+    "id": "c-ps-joint-conditional-pdf",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-conditional-pdf"
+    ],
+    "title": "Joint, marginal and conditional PDFs",
+    "inOfficialSyllabus": true,
+    "definition": "Continuous random variables $X$ and $Y$ have a **joint PDF** $f_{X,Y}(x,y) \\ge 0$ with $\\iint f_{X,Y}(x,y)\\,dx\\,dy = 1$ and $P\\big((X,Y) \\in A\\big) = \\iint_A f_{X,Y}(x,y)\\,dx\\,dy$ for regions $A$ of the plane. The **marginal PDFs** are\n\n$$\nf_X(x) = \\int_{-\\infty}^{\\infty} f_{X,Y}(x,y)\\,dy, \\qquad f_Y(y) = \\int_{-\\infty}^{\\infty} f_{X,Y}(x,y)\\,dx .\n$$\n\nThe **conditional PDF** of $Y$ given $X = x$, defined where $f_X(x) > 0$, is\n\n$$\nf_{Y\\mid X}(y\\mid x) = \\frac{f_{X,Y}(x,y)}{f_X(x)},\n$$\n\nand $P(Y \\in B \\mid X = x) = \\int_B f_{Y\\mid X}(y\\mid x)\\,dy$.",
+    "intuition": "The joint density is a surface over the plane, and probability is the volume under it. Fixing $X = x$ slices the surface along a vertical line. The slice has the right **shape** for the conditional distribution but the wrong total area, so we divide by that area — which is exactly the marginal density $f_X(x)$.\n\nAlthough $P(X = x) = 0$ for a continuous $X$, conditioning on $X = x$ still makes sense: it is the limit of conditioning on $X$ lying in a tiny interval around $x$.",
+    "math": "- **Support first.** Write the region where $f_{X,Y} > 0$ as inequalities and let them set the integration limits. On a triangle such as $0 < x < y < 1$: for a fixed $x$, $y$ runs from $x$ to 1; for a fixed $y$, $x$ runs from 0 to $y$.\n- **A conditional PDF is a density in the free variable:** $\\int f_{Y\\mid X}(y\\mid x)\\,dy = 1$ for each fixed $x$.\n- **Multiplication rule and Bayes' rule for densities:** $f_{X,Y}(x,y) = f_X(x)\\,f_{Y\\mid X}(y\\mid x)$ and $f_{X\\mid Y}(x\\mid y) = \\dfrac{f_{Y\\mid X}(y\\mid x)\\,f_X(x)}{f_Y(y)}$. Two-stage models (\"$X$ is uniform, and given $X = x$, $Y$ has some distribution depending on $x$\") are built this way.\n- **Independence:** $X$ and $Y$ are independent iff $f_{X,Y}(x,y) = f_X(x)\\,f_Y(y)$ for all $(x, y)$ (up to sets of zero area), equivalently $f_{Y\\mid X}(y\\mid x) = f_Y(y)$. The support must then be a product set $A\\times B$ (a rectangle when the marginal supports are intervals); a triangular support always means dependence.\n- **Conditional expectation:** $E[Y\\mid X = x] = \\int y\\,f_{Y\\mid X}(y\\mid x)\\,dy$, and the tower rule gives $E[Y] = \\int E[Y\\mid X=x]\\,f_X(x)\\,dx$.\n- **Probabilities of regions:** for independent $X$ and $Y$, $P(X > Y) = \\iint_{x > y} f_X(x)\\,f_Y(y)\\,dx\\,dy$. With uniform densities this is (area of the region inside the rectangle) / (area of the rectangle).",
+    "example": "Let $f_{X,Y}(x,y) = 3y$ on $0 < x < y < 1$ and 0 elsewhere. Check: $\\int_0^1\\!\\int_0^{y} 3y\\,dx\\,dy = \\int_0^1 3y^2\\,dy = 1$.\n\n**Marginals.**\n\n$$\nf_X(x) = \\int_x^1 3y\\,dy = \\tfrac32(1 - x^2), \\quad 0 < x < 1; \\qquad f_Y(y) = \\int_0^y 3y\\,dx = 3y^2, \\quad 0 < y < 1 .\n$$\n\n**$X$ given $Y = y$:** $f_{X\\mid Y}(x\\mid y) = \\dfrac{3y}{3y^2} = \\dfrac1y$ on $0 < x < y$, i.e. Uniform$(0, y)$, so $E[X\\mid Y = y] = y/2$.\n\n**$Y$ given $X = 0.5$:** $f_{Y\\mid X}(y\\mid 0.5) = \\dfrac{3y}{\\frac32(1 - 0.25)} = \\dfrac{3y}{1.125} = \\dfrac{8y}{3}$ on $0.5 < y < 1$.\n\n- $E[Y\\mid X = 0.5] = \\int_{0.5}^{1} y\\cdot\\frac{8y}{3}\\,dy = \\frac{8}{9}\\big(1 - 0.125\\big) = \\frac79 \\approx 0.778$.\n- $P(Y > 0.75\\mid X = 0.5) = \\int_{0.75}^{1}\\frac{8y}{3}\\,dy = \\frac43\\big(1 - 0.5625\\big) = \\frac{7}{12} \\approx 0.583$.\n\n**Tower-rule check:** $E[X] = \\int_0^1 x\\cdot\\tfrac32(1 - x^2)\\,dx = \\frac38$, and $E\\big[E[X\\mid Y]\\big] = E[Y/2] = \\frac12\\int_0^1 y\\cdot3y^2\\,dy = \\frac38$. The two agree.\n\n**Independent uniforms.** Let $X \\sim U(0,1)$ and $Y \\sim U(0,2)$ be independent. The joint density is $\\frac12$ on the rectangle $[0,1]\\times[0,2]$, and the region $\\{y < x\\}$ inside it is a triangle of area $\\frac12$, so $P(X > Y) = \\frac12 \\times \\frac12 = \\frac14$.",
+    "gateRelevance": "Typically examined as multi-step NATs: given a joint density (often on a triangular region) or a two-stage specification, find a marginal, a conditional density, a conditional probability or $E[Y\\mid X = x]$; and probabilities such as $P(X \\ge Y)$ for independent continuous variables, computed as areas or double integrals. It also feeds covariance and correlation questions in which $Y$ is defined through its conditional distribution given $X$. Traps: wrong integration limits on non-rectangular supports, forgetting to divide by the marginal, and declaring independence because the formula factorises although the support does not.",
+    "commonMistakes": [
+      "Integrating over the whole unit square instead of the actual support (for example using $0 < y < 1$ when the support is $x < y < 1$).",
+      "Using the joint density as if it were the conditional density, without dividing by the marginal $f_X(x)$.",
+      "Concluding independence because $f_{X,Y}(x,y)$ is a product of a function of $x$ and a function of $y$, while the support is not a rectangle.",
+      "Forgetting that after conditioning on $X = x$, the support of the conditional density usually depends on $x$."
+    ],
+    "formulaIds": [
+      "f-ps-conditional-pdf",
+      "f-ps-marginal-probability",
+      "f-ps-total-expectation-variance"
+    ],
+    "relatedConceptIds": [
+      "c-ps-conditional-expectation",
+      "c-ps-conditional-joint-marginal",
+      "c-ps-pmf-pdf-cdf",
+      "c-ps-covariance-correlation"
+    ]
+  },
+  {
+    "id": "c-ps-uniform-exponential-poisson",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-continuous-named"
+    ],
+    "title": "Uniform, exponential and Poisson distributions",
+    "inOfficialSyllabus": true,
+    "definition": "- **Continuous uniform** $X \\sim U(a, b)$: $f_X(x) = \\frac{1}{b-a}$ on $[a,b]$; $F_X(x) = \\frac{x-a}{b-a}$ on $[a,b]$; $E[X] = \\frac{a+b}{2}$ and $\\operatorname{Var}(X) = \\frac{(b-a)^2}{12}$.\n- **Exponential** $X \\sim \\text{Exp}(\\lambda)$ with **rate** $\\lambda > 0$: $f_X(x) = \\lambda e^{-\\lambda x}$ and $F_X(x) = 1 - e^{-\\lambda x}$ for $x \\ge 0$; $E[X] = \\frac1\\lambda$ and $\\operatorname{Var}(X) = \\frac{1}{\\lambda^2}$.\n- **Poisson** $N \\sim \\text{Poisson}(\\lambda)$: $P(N = k) = \\dfrac{e^{-\\lambda}\\lambda^k}{k!}$ for $k = 0, 1, 2, \\dots$; $E[N] = \\operatorname{Var}(N) = \\lambda$.\n\nThe Poisson is a **discrete** distribution; the official syllabus lists it in the same phrase as the continuous distributions, and it pairs naturally with the exponential.",
+    "intuition": "Uniform: every point of an interval is equally likely, so probability is proportional to length. Exponential: the waiting time for an event that happens at a constant rate and has no memory — a component that has survived so far is as good as new. Poisson: the number of such events in a fixed window.\n\nThe exponential and the Poisson describe the same **Poisson process** from two angles. If events occur at rate $\\lambda$ per unit time, the count in a window of length $t$ is $\\text{Poisson}(\\lambda t)$ and the gaps between events are $\\text{Exp}(\\lambda)$. \"No event before time $t$\" is one event seen both ways: $P(T > t) = P(N_t = 0) = e^{-\\lambda t}$.",
+    "math": "**Exponential.**\n\n- Survival function $P(X > x) = e^{-\\lambda x}$; median $\\frac{\\ln 2}{\\lambda}$ (natural logarithm), which is smaller than the mean $\\frac1\\lambda$ (right skew).\n- **Memoryless:** for $s, t \\ge 0$,\n\n$$\nP(X > s + t\\mid X > s) = \\frac{e^{-\\lambda(s+t)}}{e^{-\\lambda s}} = e^{-\\lambda t} = P(X > t).\n$$\n\nIt is the only continuous distribution with this property.\n- **Rate from a tail probability:** $P(X > x_0) = q$ gives $\\lambda = \\dfrac{-\\ln q}{x_0}$.\n- **Minimum:** for independent $X_i \\sim \\text{Exp}(\\lambda_i)$, $\\min_i X_i \\sim \\text{Exp}\\big(\\sum_i \\lambda_i\\big)$.\n- **Discretisation:** $\\lfloor X \\rfloor$ is geometric on $\\{0, 1, 2, \\dots\\}$ with $P(\\lfloor X\\rfloor = k) = e^{-\\lambda k}\\big(1 - e^{-\\lambda}\\big)$.\n- **Second moment:** $E[X^2] = \\frac{2}{\\lambda^2}$.\n\n**Poisson.**\n\n- Independent Poissons add: $\\text{Poisson}(\\lambda_1) + \\text{Poisson}(\\lambda_2) \\sim \\text{Poisson}(\\lambda_1 + \\lambda_2)$.\n- Rescaling the window rescales the mean: 3 events per hour means $\\lambda = 1.5$ for a 30-minute window.\n- Binomial limit: $\\text{Bin}(n, p) \\to \\text{Poisson}(\\lambda)$ as $n \\to \\infty$ with $np = \\lambda$ held fixed.\n- For an integer $n$, $\\text{Poisson}(n)$ is a sum of $n$ independent $\\text{Poisson}(1)$ variables, so for large $n$ it is approximately $N(n, n)$ by the central limit theorem.\n\n**Uniform.** $P(c \\le X \\le d) = \\frac{d - c}{b - a}$ for $[c,d] \\subseteq [a,b]$. For two independent uniforms, probabilities of joint events are ratios of areas.",
+    "example": "Requests reach a server as a Poisson process with rate 2 per minute.\n\n- **Count in one minute:** $N \\sim \\text{Poisson}(2)$, so $P(N = 3) = e^{-2}\\dfrac{2^3}{3!} = \\dfrac{4}{3}e^{-2} \\approx 0.1804$.\n- **At least one request in 30 seconds:** the window has mean $2 \\times 0.5 = 1$, so $P(N_{0.5} \\ge 1) = 1 - e^{-1} \\approx 0.6321$.\n- **Waiting time** $T \\sim \\text{Exp}(2)$ (in minutes): $E[T] = 0.5$, median $\\frac{\\ln 2}{2} \\approx 0.347$, and $P(T > 1) = e^{-2} \\approx 0.1353$ — the same as $P(N_1 = 0)$.\n- **Memorylessness:** $P(T > 1.5\\mid T > 0.5) = P(T > 1) = e^{-2} \\approx 0.1353$.\n\n**Rate from a tail probability.** If a lifetime $X$ is exponential with $P(X > 3) = 0.2$, then $e^{-3\\lambda} = 0.2$, so $\\lambda = \\frac{\\ln 5}{3} \\approx 0.5365$ and $E[X] = \\frac{3}{\\ln 5} \\approx 1.864$.\n\n**Uniform.** For $X \\sim U(2, 8)$: $P(3 \\le X \\le 5) = \\frac{2}{6} = \\frac13$, $E[X] = 5$ and $\\operatorname{Var}(X) = \\frac{36}{12} = 3$.",
+    "gateRelevance": "Typically examined through short MCQ/NAT computations and statement checks. Typical patterns: solve for $\\lambda$ from a tail probability or from a relation between the mean and the variance; memorylessness, $P(X > s + t\\mid X > s)$; the mean-equals-variance property of the Poisson (often inside a statement-checking MCQ/MSQ); probabilities for independent uniforms via areas; discretising an exponential; and the CLT applied to Poisson sums. Traps: the rate-versus-mean parameterisation (\"exponential with mean $\\theta$\" means rate $1/\\theta$) and using a Poisson rate for the wrong window length.",
+    "commonMistakes": [
+      "Confusing the rate and mean parameterisations: if the question says \"exponential with mean $\\theta$\", the rate is $1/\\theta$ and $P(X > x) = e^{-x/\\theta}$.",
+      "Using $\\operatorname{Var}(X) = \\frac1\\lambda$ for the exponential; it is $\\frac{1}{\\lambda^2}$. (It is the Poisson whose variance equals its mean.)",
+      "Not rescaling the Poisson mean when the time window changes.",
+      "Computing $P(X > s + t)$ when $P(X > s + t\\mid X > s)$ is asked; by memorylessness the conditional probability equals $P(X > t)$.",
+      "Using $\\log_{10}$ instead of the natural logarithm when solving $e^{-\\lambda x} = q$."
+    ],
+    "formulaIds": [
+      "f-ps-continuous-uniform",
+      "f-ps-exponential",
+      "f-ps-poisson"
+    ],
+    "relatedConceptIds": [
+      "c-ps-pmf-pdf-cdf",
+      "c-ps-bernoulli-binomial-uniform",
+      "c-ps-normal-t-chi-squared",
+      "c-ps-clt-confidence-intervals",
+      "c-ps-joint-conditional-pdf"
+    ]
+  },
+  {
+    "id": "c-ps-normal-t-chi-squared",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-continuous-named"
+    ],
+    "title": "Normal, standard normal, t and chi-squared distributions",
+    "inOfficialSyllabus": true,
+    "definition": "- **Normal** $X \\sim N(\\mu, \\sigma^2)$: $f_X(x) = \\dfrac{1}{\\sigma\\sqrt{2\\pi}}\\exp\\!\\left(-\\dfrac{(x-\\mu)^2}{2\\sigma^2}\\right)$ for all real $x$, with mean $\\mu$ and variance $\\sigma^2$.\n- **Standard normal** $Z = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1)$, with PDF $\\phi$ and CDF $\\Phi$; $P(X \\le x) = \\Phi\\big(\\frac{x-\\mu}{\\sigma}\\big)$.\n- **Chi-squared** with $k$ degrees of freedom: $Q = Z_1^2 + \\cdots + Z_k^2 \\sim \\chi^2_k$ for i.i.d. $Z_i \\sim N(0,1)$; $E[Q] = k$ and $\\operatorname{Var}(Q) = 2k$.\n- **Student's t** with $\\nu$ degrees of freedom: $T = \\dfrac{Z}{\\sqrt{V/\\nu}} \\sim t_\\nu$ for independent $Z \\sim N(0,1)$ and $V \\sim \\chi^2_\\nu$.",
+    "intuition": "The normal is the bell curve that emerges whenever many small independent effects add up (the central limit theorem). Standardising turns any normal question into a question about the single table $\\Phi$.\n\nThe chi-squared and t distributions are the normal's offspring that appear when you estimate from a sample. Squared standardised errors add up to a chi-squared. Replacing an unknown $\\sigma$ by the sample standard deviation adds uncertainty, so the t density has **heavier tails** and a lower peak than the standard normal; as the degrees of freedom grow, it approaches $N(0,1)$.",
+    "math": "**Normal.**\n\n- Symmetric about $\\mu$ (mean = median = mode); $\\Phi(0) = 0.5$ and $\\Phi(-z) = 1 - \\Phi(z)$.\n- $aX + b \\sim N(a\\mu + b,\\ a^2\\sigma^2)$ for $a \\ne 0$; sums of independent normals are normal, with means added and variances added.\n- About 68.3%, 95.4% and 99.7% of the probability lies within 1, 2 and 3 standard deviations of the mean. Key values: $\\Phi(1.645) \\approx 0.95$, $\\Phi(1.96) \\approx 0.975$, $\\Phi(2.576) \\approx 0.995$.\n- Moments of $Z$: $E[Z] = E[Z^3] = 0$, $E[Z^2] = 1$ and $E[Z^4] = 3$, so $\\operatorname{Var}(Z^2) = 3 - 1 = 2$ (consistent with $Z^2 \\sim \\chi^2_1$).\n- Peak height $\\phi(0) = \\frac{1}{\\sqrt{2\\pi}} \\approx 0.399$.\n\n**Chi-squared.** Supported on $[0, \\infty)$ and right-skewed; independent chi-squared variables add their degrees of freedom; $\\chi^2_2$ is the exponential distribution with rate $\\frac12$.\n\n**t.** Symmetric about 0; $E[T] = 0$ for $\\nu > 1$, and $\\operatorname{Var}(T) = \\frac{\\nu}{\\nu - 2} > 1$ for $\\nu > 2$. $t_1$ is the Cauchy distribution: its peak height is $\\frac1\\pi \\approx 0.318$ and it has no mean. As $\\nu \\to \\infty$, $t_\\nu \\to N(0,1)$.\n\n**Samples from a normal population.** For $X_1,\\dots,X_n$ i.i.d. $N(\\mu, \\sigma^2)$, with sample mean $\\bar{X}$ and sample variance $S^2$ (divisor $n-1$):\n\n$$\n\\bar{X} \\sim N\\!\\left(\\mu, \\frac{\\sigma^2}{n}\\right), \\qquad \\frac{(n-1)S^2}{\\sigma^2} \\sim \\chi^2_{n-1}, \\qquad \\frac{\\bar{X} - \\mu}{S/\\sqrt{n}} \\sim t_{n-1},\n$$\n\nand $\\bar{X}$ and $S^2$ are independent. Consequences: $E[S^2] = \\sigma^2$ and $\\operatorname{Var}(S^2) = \\frac{2\\sigma^4}{n-1}$.",
+    "example": "**Normal probabilities.** Let $X \\sim N(50, 16)$, so $\\sigma = 4$.\n\n- $P(X > 55) = 1 - \\Phi\\big(\\frac{55 - 50}{4}\\big) = 1 - \\Phi(1.25) \\approx 1 - 0.8944 = 0.1056$.\n- 90th percentile: $x = 50 + 1.2816 \\times 4 \\approx 55.13$, since $\\Phi(1.2816) \\approx 0.90$.\n\n**Sample mean.** For $n = 16$ observations from $N(\\mu, 9)$, $\\bar{X} \\sim N(\\mu, \\frac{9}{16})$ with standard deviation $0.75$, so\n\n$$\nP\\big(\\lvert\\bar{X} - \\mu\\rvert < 1.5\\big) = P(\\lvert Z\\rvert < 2) = 2\\Phi(2) - 1 \\approx 0.9545 .\n$$\n\n**Sample variance.** $\\frac{15 S^2}{9} \\sim \\chi^2_{15}$, so $E[S^2] = \\frac{9}{15}\\times15 = 9$ and $\\operatorname{Var}(S^2) = \\left(\\frac{9}{15}\\right)^2 \\times 2(15) = 10.8$, matching $\\frac{2\\sigma^4}{n-1} = \\frac{2\\times81}{15}$.\n\n**Building $\\chi^2$ and $t$.** With $Z, Z_1, Z_2, Z_3$ i.i.d. $N(0,1)$: $Q = Z_1^2 + Z_2^2 + Z_3^2 \\sim \\chi^2_3$, with $E[Q] = 3$ and $\\operatorname{Var}(Q) = 6$; and $T = Z/\\sqrt{Q/3} \\sim t_3$, with $\\operatorname{Var}(T) = \\frac{3}{3-2} = 3$.",
+    "gateRelevance": "Typical patterns: standardisation (NAT probabilities using given $\\Phi$ values), moment facts (for example $\\operatorname{Var}(Z^2)$ or $E[Z^4]$), and statement-checking MSQs about the sampling distributions of $\\bar{X}$ and $S^2$ for normal data, about how the $t$ and normal densities compare (symmetry, peak height, tails, the limit as $\\nu \\to \\infty$), and about the mean and variance of chi-squared variables. These distributions are also the reference distributions for confidence intervals and for the z-, t- and chi-squared tests. Traps: dividing by $\\sigma^2$ instead of $\\sigma$, and using $n$ instead of $n - 1$ degrees of freedom.",
+    "commonMistakes": [
+      "Standardising with the variance: $Z = (X - \\mu)/\\sigma$, not $(X - \\mu)/\\sigma^2$. Check whether the second parameter in $N(\\mu, \\cdot)$ is $\\sigma^2$ or $\\sigma$.",
+      "Sign errors with symmetry: $P(Z > -z) = \\Phi(z)$ and $P(Z < -z) = 1 - \\Phi(z)$.",
+      "Using $n$ degrees of freedom for $(n-1)S^2/\\sigma^2$ or for the one-sample t statistic; both have $n - 1$.",
+      "Assuming the t-distribution has variance 1, or that $t_1$ has a mean; $\\operatorname{Var}(t_\\nu) = \\nu/(\\nu-2)$ only for $\\nu > 2$, and $t_1$ (Cauchy) has no mean.",
+      "Writing $\\operatorname{Var}(\\chi^2_k) = k$; the variance is $2k$ and the mean is $k$."
+    ],
+    "formulaIds": [
+      "f-ps-normal",
+      "f-ps-t-distribution",
+      "f-ps-chi-squared-distribution"
+    ],
+    "relatedConceptIds": [
+      "c-ps-clt-confidence-intervals",
+      "c-ps-hypothesis-tests",
+      "c-ps-uniform-exponential-poisson",
+      "c-ps-random-variables-expectation"
+    ]
+  },
+  {
+    "id": "c-ps-clt-confidence-intervals",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-clt",
+      "ps-confidence-interval"
+    ],
+    "title": "Central limit theorem and confidence intervals",
+    "inOfficialSyllabus": true,
+    "definition": "**Central limit theorem (CLT).** Let $X_1, X_2, \\dots$ be i.i.d. with mean $\\mu$ and finite variance $\\sigma^2 > 0$, and let $S_n = \\sum_{i=1}^n X_i$ and $\\bar{X}_n = S_n/n$. Then\n\n$$\n\\frac{\\bar{X}_n - \\mu}{\\sigma/\\sqrt{n}} = \\frac{S_n - n\\mu}{\\sigma\\sqrt{n}} \\xrightarrow{\\ d\\ } N(0, 1) \\quad \\text{as } n \\to \\infty,\n$$\n\nwhatever the shape of the distribution of the $X_i$.\n\n**Confidence interval.** A $100(1-\\alpha)\\%$ confidence interval for a parameter $\\theta$ is an interval $[L, U]$ computed from the sample such that, before the data are observed, $P(L \\le \\theta \\le U) = 1 - \\alpha$ (exactly or approximately). For a population mean with known $\\sigma$ it is $\\bar{x} \\pm z_{\\alpha/2}\\,\\sigma/\\sqrt{n}$, where $z_{\\alpha/2}$ is the upper $\\alpha/2$ point of $N(0,1)$.",
+    "intuition": "Averaging cancels randomness: the sample mean has the same centre $\\mu$, but its spread shrinks like $\\sigma/\\sqrt{n}$, and its shape becomes normal as $n$ grows even when the individual values are skewed or discrete. That is why normal tables answer questions about sums of dice, counts of successes or total waiting times.\n\nA confidence interval turns this around. Since $\\bar{X}$ is usually within about two standard errors of $\\mu$, the interval $\\bar{x} \\pm 2\\,\\text{SE}$ usually contains $\\mu$. The \"95%\" describes how often the **procedure** succeeds over repeated samples; $\\mu$ itself is a fixed number.",
+    "math": "**Using the CLT.** For large $n$: $\\bar{X}_n \\approx N\\big(\\mu, \\frac{\\sigma^2}{n}\\big)$ and $S_n \\approx N(n\\mu,\\ n\\sigma^2)$.\n\n- **Binomial:** $\\text{Bin}(n,p)$ is a sum of $n$ Bernoulli$(p)$ variables, so it is approximately $N\\big(np,\\ np(1-p)\\big)$.\n- **Poisson:** $\\text{Poisson}(n)$ is a sum of $n$ independent $\\text{Poisson}(1)$ variables, so it is approximately $N(n, n)$.\n- **Continuity correction** for integer-valued sums: $P(S_n \\ge k) \\approx P\\Big(Z \\ge \\frac{k - 0.5 - n\\mu}{\\sigma\\sqrt{n}}\\Big)$.\n- The CLT needs a finite variance. For exactly normal data, $\\bar{X}$ is exactly normal for every $n$.\n\n**Confidence intervals for a mean** (two-sided, level $1-\\alpha$):\n\n$$\n\\sigma \\text{ known: } \\ \\bar{x} \\pm z_{\\alpha/2}\\frac{\\sigma}{\\sqrt{n}}, \\qquad \\sigma \\text{ unknown, normal data: } \\ \\bar{x} \\pm t_{\\alpha/2,\\,n-1}\\frac{s}{\\sqrt{n}} .\n$$\n\nDerivation: $P\\Big(-z_{\\alpha/2} \\le \\frac{\\bar{X} - \\mu}{\\sigma/\\sqrt{n}} \\le z_{\\alpha/2}\\Big) = 1 - \\alpha$; rearrange the two inequalities to isolate $\\mu$.\n\n- $z_{\\alpha/2} = 1.645$, $1.96$ and $2.576$ for 90%, 95% and 99% confidence.\n- **Width** $= 2z_{\\alpha/2}\\,\\sigma/\\sqrt{n}$: wider for higher confidence and narrower for larger $n$ (quadrupling $n$ halves the width).\n- **Sample size** for a margin of error $E$: $n = \\big\\lceil (z_{\\alpha/2}\\,\\sigma/E)^2 \\big\\rceil$.\n- **Proportion** (large $n$): $\\hat{p} \\pm z_{\\alpha/2}\\sqrt{\\hat{p}(1-\\hat{p})/n}$.\n- **Duality with tests:** a two-sided level-$\\alpha$ z-test (or t-test) rejects $H_0: \\mu = \\mu_0$ exactly when $\\mu_0$ lies outside the corresponding $100(1-\\alpha)\\%$ interval.",
+    "example": "**CLT for a sum of dice.** Roll a fair die 100 times and let $S$ be the total. One roll has $\\mu = 3.5$ and $\\sigma^2 = \\frac{35}{12}$, so $E[S] = 350$, $\\operatorname{Var}(S) = \\frac{3500}{12} \\approx 291.67$ and $\\operatorname{SD}(S) \\approx 17.08$. With a continuity correction,\n\n$$\nP(S \\ge 380) \\approx P\\left(Z \\ge \\frac{379.5 - 350}{17.08}\\right) = P(Z \\ge 1.727) \\approx 0.042 .\n$$\n\nThe exact value, obtained by convolving the distributions of the 100 dice, is also about $0.042$.\n\n**Confidence interval, $\\sigma$ known.** $n = 25$, $\\bar{x} = 78.2$, $\\sigma = 10$, 95% level. The standard error is $10/\\sqrt{25} = 2$, so\n\n$$\n78.2 \\pm 1.96\\times2 = 78.2 \\pm 3.92 = [74.28,\\ 82.12] .\n$$\n\n**$\\sigma$ unknown** (normal data, $s = 10$): $t_{0.025,24} \\approx 2.064$, so $78.2 \\pm 4.128 \\approx [74.07,\\ 82.33]$ — wider, reflecting the extra uncertainty from estimating $\\sigma$.\n\n**Sample size** for a margin of 2 with $\\sigma = 10$ at 95%: $n = \\lceil (1.96\\times10/2)^2 \\rceil = \\lceil 96.04 \\rceil = 97$.\n\n**Proportion.** $\\hat{p} = 0.4$ from $n = 400$: $0.4 \\pm 1.96\\sqrt{0.24/400} \\approx 0.4 \\pm 0.048$, i.e. about $[0.352,\\ 0.448]$.",
+    "gateRelevance": "The CLT is examined through approximations of sums and averages (of Bernoulli, Poisson, exponential or uniform variables), through limits of probabilities or sums that can be recognised as the CDF of a standardised sum, and through statement-checking MCQs about the sampling distribution of $\\bar{X}$. Confidence-interval questions typically ask for an interval or its width from summary data (z- or t-based), the sample size needed for a target margin, or how the width responds to $n$ and to the confidence level. Traps: using $\\sigma$ instead of $\\sigma/\\sqrt{n}$, using $z_\\alpha$ instead of $z_{\\alpha/2}$, and misreading what the confidence level means.",
+    "commonMistakes": [
+      "Standardising $\\bar{X}$ with $\\sigma$ instead of the standard error $\\sigma/\\sqrt{n}$, or a sum $S_n$ with $n\\sigma$ instead of $\\sigma\\sqrt{n}$.",
+      "Saying \"there is a 95% probability that $\\mu$ lies in $[74.28, 82.12]$\". Once the data are observed, the interval either contains $\\mu$ or it does not; the 95% refers to the procedure.",
+      "Using $z_\\alpha$ (1.645) instead of $z_{\\alpha/2}$ (1.96) for a two-sided 95% interval.",
+      "Using $z$ critical values with $s$ for a small normal sample, where $t_{n-1}$ critical values are required.",
+      "Believing the CLT makes each individual $X_i$ normal, or applying it to a distribution without a finite variance."
+    ],
+    "formulaIds": [
+      "f-ps-central-limit-theorem",
+      "f-ps-confidence-interval-mean",
+      "f-ps-normal"
+    ],
+    "relatedConceptIds": [
+      "c-ps-normal-t-chi-squared",
+      "c-ps-hypothesis-tests",
+      "c-ps-bernoulli-binomial-uniform",
+      "c-ps-random-variables-expectation"
+    ]
+  },
+  {
+    "id": "c-ps-hypothesis-tests",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-hypothesis-tests"
+    ],
+    "title": "Hypothesis testing: z-test, t-test and chi-squared test",
+    "inOfficialSyllabus": true,
+    "definition": "A **hypothesis test** decides between a **null hypothesis** $H_0$ (the default claim, e.g. $\\mu = \\mu_0$) and an **alternative** $H_1$ (e.g. $\\mu \\ne \\mu_0$, $\\mu > \\mu_0$ or $\\mu < \\mu_0$) using a **test statistic** whose distribution under $H_0$ is known. At **significance level** $\\alpha$, $H_0$ is rejected when the statistic falls in a critical region that has probability $\\alpha$ under $H_0$ — equivalently, when the **p-value** (the probability under $H_0$ of a result at least as extreme as the one observed) is at most $\\alpha$.\n\n- **z-test:** $z = \\dfrac{\\bar{x} - \\mu_0}{\\sigma/\\sqrt{n}}$, distributed as $N(0,1)$ under $H_0$ ($\\sigma$ known; exact for normal data, approximate for large $n$).\n- **t-test:** $t = \\dfrac{\\bar{x} - \\mu_0}{s/\\sqrt{n}}$, distributed as $t_{n-1}$ under $H_0$ (normal data, $\\sigma$ unknown).\n- **Chi-squared test:** $\\chi^2 = \\sum \\dfrac{(O - E)^2}{E}$ over categories, approximately $\\chi^2_{\\text{df}}$ under $H_0$ (goodness of fit or independence).",
+    "intuition": "A test is a proof by contradiction with a tolerance for error: assume $H_0$, then ask whether the data would be surprising if it were true. If the observed statistic lies so far in the tail that such a result would occur less than a fraction $\\alpha$ of the time under $H_0$, reject $H_0$.\n\nThe z- and t-statistics measure how many standard errors the sample mean lies from the hypothesised mean. The chi-squared statistic measures how far the observed counts are from the counts that $H_0$ predicts, with each squared gap scaled by the expected count.",
+    "math": "**Errors.** A Type I error rejects a true $H_0$ (probability $\\alpha$); a Type II error fails to reject a false $H_0$ (probability $\\beta$). The power is $1 - \\beta$. For a fixed $n$, lowering $\\alpha$ raises $\\beta$; increasing $n$ can lower both.\n\n**Rejection rules** at level $\\alpha$:\n\n| alternative | z-test rejects when | t-test rejects when |\n|---|---|---|\n| $\\mu \\ne \\mu_0$ | $\\lvert z\\rvert > z_{\\alpha/2}$ | $\\lvert t\\rvert > t_{\\alpha/2,\\,n-1}$ |\n| $\\mu > \\mu_0$ | $z > z_\\alpha$ | $t > t_{\\alpha,\\,n-1}$ |\n| $\\mu < \\mu_0$ | $z < -z_\\alpha$ | $t < -t_{\\alpha,\\,n-1}$ |\n\nThe two-sided p-value of the z-test is $2\\big(1 - \\Phi(\\lvert z\\rvert)\\big)$.\n\n**Two-sample and paired versions.** Known variances: $z = \\dfrac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{\\sigma_1^2/n_1 + \\sigma_2^2/n_2}}$. Equal but unknown variances (normal data): the pooled $t = \\dfrac{\\bar{x}_1 - \\bar{x}_2}{s_p\\sqrt{1/n_1 + 1/n_2}}$ with $s_p^2 = \\dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2}$ and $n_1 + n_2 - 2$ degrees of freedom. Paired data: a one-sample t-test on the differences $d_i$, with $n - 1$ degrees of freedom.\n\n**Chi-squared tests** are right-tailed: reject $H_0$ when $\\chi^2 > \\chi^2_{\\alpha,\\,\\text{df}}$.\n\n- Goodness of fit with $k$ categories and $m$ parameters estimated from the data: $\\text{df} = k - 1 - m$.\n- Independence in an $r\\times c$ contingency table: $E_{ij} = \\dfrac{R_i\\,C_j}{N}$ (row total × column total / grand total) and $\\text{df} = (r-1)(c-1)$.\n- The chi-squared approximation needs reasonably large expected counts (a common rule of thumb is $E \\ge 5$ in every cell).\n- For a normal variance, $\\chi^2 = (n-1)s^2/\\sigma_0^2$ with $n - 1$ degrees of freedom under $H_0: \\sigma^2 = \\sigma_0^2$.",
+    "example": "**One-sample t-test.** A machine should fill packets with 50 g. A sample of $n = 9$ packets has $\\bar{x} = 52.4$ g and $s = 3.0$ g; assume the fill weights are normal. Test $H_0: \\mu = 50$ against $H_1: \\mu > 50$ at $\\alpha = 0.05$.\n\n$$\nt = \\frac{52.4 - 50}{3.0/\\sqrt{9}} = \\frac{2.4}{1.0} = 2.4, \\qquad \\text{df} = 8, \\qquad t_{0.05,\\,8} \\approx 1.860 .\n$$\n\nSince $2.4 > 1.860$, reject $H_0$: the data give evidence of over-filling (one-sided p-value $\\approx 0.022$). Had $\\sigma = 3$ been known, the z-test would give $z = 2.4 > 1.645$ and the same conclusion.\n\n**Chi-squared test of independence.** 100 students are classified by study mode and result:\n\n| | Pass | Fail | Total |\n|---|---|---|---|\n| Online | 30 | 20 | 50 |\n| Offline | 20 | 30 | 50 |\n| Total | 50 | 50 | 100 |\n\nUnder independence every expected count is $E_{ij} = \\frac{50\\times50}{100} = 25$. Each cell contributes $\\frac{(\\pm5)^2}{25} = 1$, so $\\chi^2 = 4$ with $\\text{df} = (2-1)(2-1) = 1$. Since $4 > \\chi^2_{0.05,\\,1} \\approx 3.841$, independence is rejected at the 5% level (p-value $\\approx 0.046$).",
+    "gateRelevance": "Typical question patterns: computing a test statistic from summary data and comparing it with a supplied critical value; choosing the right test (z versus t versus chi-squared; one-sample versus paired versus two-sample); getting the degrees of freedom right; and conceptual MCQs/MSQs on $\\alpha$, p-values, Type I and Type II errors, and one- versus two-sided alternatives. Traps: one-sided versus two-sided critical values, $n$ versus $n - 1$ degrees of freedom, dividing by $O$ instead of $E$ in the chi-squared statistic, and applying the chi-squared formula to proportions instead of counts.",
+    "commonMistakes": [
+      "Using the two-sided critical value for a one-sided alternative or vice versa (1.96 versus 1.645 at the 5% level).",
+      "Treating \"fail to reject $H_0$\" as proof that $H_0$ is true.",
+      "Wrong degrees of freedom: $n - 1$ for a one-sample or paired t-test, $n_1 + n_2 - 2$ for the pooled two-sample t-test, $k - 1 - m$ for goodness of fit and $(r-1)(c-1)$ for independence.",
+      "Dividing by the observed count $O$ instead of the expected count $E$, or using percentages instead of counts in the chi-squared statistic.",
+      "Interpreting the p-value as the probability that $H_0$ is true; it is a probability computed assuming $H_0$ is true."
+    ],
+    "formulaIds": [
+      "f-ps-z-and-t-tests",
+      "f-ps-chi-squared-test"
+    ],
+    "relatedConceptIds": [
+      "c-ps-clt-confidence-intervals",
+      "c-ps-normal-t-chi-squared"
+    ]
+  }
+]
