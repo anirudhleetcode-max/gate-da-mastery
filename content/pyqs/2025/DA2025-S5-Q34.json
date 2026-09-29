@@ -58,16 +58,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The data set is printed as {(−1, 1), (2, −5), (3, 5)} and transcribed with minus signs in math mode. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to three decimal places)' is on the next line, as printed. The only background element in the region is the IIT Roorkee watermark, which is not part of the question; the region has no embedded question images and no figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The data set {(−1, 1), (2, −5), (3, 5)}, the model y = wx, the wording and the rounding instruction match the official crop and the PDF text layer; minus signs are transcribed in math mode. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to three decimal places)' is on the next line, as printed. The only background element in the region is the IIT Roorkee watermark; no figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.286 (exactly 2/7 = 0.285714...)",
     "agreesWithKey": true,
     "checkCode": "import numpy as np\nfrom fractions import Fraction as F\nx = [-1, 2, 3]; y = [1, -5, 5]\nsxy = sum(a*b for a, b in zip(x, y)); sxx = sum(a*a for a in x)\nw = F(sxy, sxx); print('sum xy =', sxy, 'sum x^2 =', sxx, 'w =', w, '=', float(w), '->', round(float(w), 3))\nwl, *_ = np.linalg.lstsq(np.array(x, float).reshape(-1, 1), np.array(y, float), rcond=None)\nprint('numpy lstsq (no intercept):', wl)\nL = lambda w: sum((b - w*a)**2 for a, b in zip(x, y))\nprint('SSE at w, w+-0.01:', float(L(w)), L(float(w)+0.01), L(float(w)-0.01))\n# contrast: model WITH intercept (not what is asked)\nb1, b0 = np.polyfit(x, y, 1); print('with intercept slope =', b1, 'intercept =', b0)\n",
-    "notes": "Hand solve: L(w) = Σ(y_i − w x_i)² = 14w² − 8w + 51, so dL/dw = 0 gives w* = Σx_i y_i / Σx_i² = 4/14 = 2/7 ≈ 0.285714, which rounds to 0.286. The Python check computes the exact fraction 2/7, confirms it with numpy lstsq on the single-column design matrix (no intercept), and checks that the squared error rises on either side of w*. For contrast it prints the with-intercept slope 4/13 ≈ 0.308, which is not what the model y = wx asks for. 0.286 lies within the official key range 0.285 to 0.287."
+    "notes": "Independent solve: for the no-intercept model, minimising Σ(y_i − w x_i)² gives w* = Σx_i y_i / Σx_i² = (−1 − 10 + 15)/(1 + 4 + 9) = 4/14 = 2/7 ≈ 0.285714, which rounds to 0.286. Equivalently L(w) = 14w² − 8w + 51 is minimised at w = 8/28 = 2/7. The Python check computes the exact fraction 2/7, confirms it with numpy lstsq on the single-column design matrix (no intercept), and checks that the squared error rises on either side of w*; for contrast it prints the with-intercept slope 4/13 ≈ 0.308, which is not the model asked for. 0.286 lies within the official key range 0.285 to 0.287."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

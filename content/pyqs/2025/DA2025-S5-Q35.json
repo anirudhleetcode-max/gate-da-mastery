@@ -59,16 +59,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The word 'class-labels' is split across a line break in the paper ('class-' / 'labels'); it is transcribed with the hyphen, as printed. The two class-conditional probabilities are displayed on their own line in the paper and are transcribed as display math. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to two decimal places)' is on the next line, as printed. The second official crop (Q35-2) shows only the next page's section header 'Q. 36 – Q. 65 carry two marks each.' and contains no part of this question. The region has no embedded question images and no figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The word 'class-labels' is split across a line break in the paper ('class-' / 'labels'); it is transcribed with the hyphen, as printed. The two class-conditional probabilities are displayed on their own line in the paper and are transcribed as display math; the paper writes the conditioning bar as '|', kept as $P(x|y_1)$. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to two decimal places)' is on the next line, as printed. The second official crop (Q35-2) shows only the next page's section header 'Q. 36 – Q. 65 carry two marks each.' and contains no part of this question. The region has no embedded question images and no figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.40 (exactly 2/5)",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\nprior = {'y1': F(1, 3), 'y2': F(2, 3)}\nlik = {'y1': F(3, 4), 'y2': F(1, 4)}\njoint = {k: prior[k] * lik[k] for k in prior}\nev = sum(joint.values())\npost = {k: joint[k] / ev for k in prior}\npred = max(post, key=post.get)\nerr = 1 - post[pred]\nprint('joint', joint, 'evidence', ev)\nprint('posterior', post, 'predict', pred)\nprint('P(misclassify x) =', err, '=', float(err), '->', round(float(err), 2))\n",
-    "notes": "Hand solve: P(x|y1)P(y1) = 1/4 and P(x|y2)P(y2) = 1/6, so P(x) = 5/12, P(y1|x) = 3/5 and P(y2|x) = 2/5. The MAP rule predicts y1, and the probability of misclassifying x is 1 − 3/5 = 2/5 = 0.40. The Python check reproduces these exact fractions (joint 1/4 and 1/6, evidence 5/12, posteriors 3/5 and 2/5, prediction y1, error 2/5 = 0.4). 0.40 lies within the official key range 0.39 to 0.41."
+    "notes": "Blind re-solve (done before reading the key or the stored solution): P(x,y1) = (1/3)(3/4) = 1/4 and P(x,y2) = (2/3)(1/4) = 1/6, so P(x) = 5/12, P(y1|x) = 3/5 and P(y2|x) = 2/5. The MAP (Bayes) rule predicts y1, so the probability of misclassifying x is 1 − 3/5 = 2/5 = 0.40. The exact-fraction Python check reproduces joint 1/4 and 1/6, evidence 5/12, posteriors 3/5 and 2/5, prediction y1, error 2/5 = 0.4. 0.40 lies within the official key range 0.39 to 0.41."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

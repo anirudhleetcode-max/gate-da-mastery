@@ -75,3 +75,6 @@ export function pyqTitle(m: { year?: number; questionNumber?: number }): string 
 
 /** Official section ranges of a DA paper: GA is Q.1–Q.10, the subject section follows. */
 export const GA_LAST_QUESTION = 10;
+
+/** The DA paper was introduced in GATE 2024; no DA paper exists before it. */
+export const DA_FIRST_YEAR = 2024;

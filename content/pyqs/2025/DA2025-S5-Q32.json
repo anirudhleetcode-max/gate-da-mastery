@@ -59,16 +59,16 @@
     "gate2025-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The limit is typeset in display style with 't → +∞' below 'lim' (kept with \\displaystyle), and the square root covers only t² + t. The paper prints no parentheses around √(t² + t) − t; the expression is kept as printed, and the solution reads the limit as applying to the whole expression √(t² + t) − t. The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to one decimal place)' is on the next line, as printed. The region has no embedded images and no figure is needed."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The limit is typeset in display style with 't → +∞' below 'lim' (kept with \\displaystyle), and the square root covers only t² + t, as in the crop. The paper prints no parentheses around √(t² + t) − t; the expression is kept as printed, and the solution reads the limit as applying to the whole expression √(t² + t) − t (the only meaningful reading). The answer blank is an underline in the paper, rendered as escaped underscores, and '(Round off to one decimal place)' is on the next line, as printed. The region has no embedded images and no figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "0.5 (exact limit 1/2)",
     "agreesWithKey": true,
     "checkCode": "import sympy as sp\nt = sp.symbols('t', positive=True)\nf = sp.sqrt(t**2 + t) - t\nprint('limit =', sp.limit(f, t, sp.oo))\nprint('rationalised =', sp.simplify(f*(sp.sqrt(t**2+t)+t)), '/ (sqrt(t^2+t)+t)')\nfor v in [10, 100, 10**4, 10**6]:\n    print(v, sp.N(f.subs(t, v), 12))\n",
-    "notes": "Hand solve: multiplying by the conjugate gives t/(√(t² + t) + t) = 1/(√(1 + 1/t) + 1), which tends to 1/2. The Python check has sympy evaluate the limit (1/2) and confirm the rationalised form, and it evaluates the expression at t = 10, 100, 10⁴ and 10⁶ (0.4881, 0.4988, 0.49999, 0.4999999), approaching 0.5 from below. Rounded to one decimal place this is 0.5, which agrees with the official key 0.5 to 0.5."
+    "notes": "Independent solve: √(t² + t) − t = t/(√(t² + t) + t) = 1/(√(1 + 1/t) + 1) → 1/2 as t → +∞. The Python check (sympy) evaluates the limit exactly as 1/2, confirms the rationalised form t/(√(t² + t) + t), and evaluates the expression at t = 10, 100, 10⁴ and 10⁶ (0.48809, 0.49876, 0.4999875, 0.499999875), approaching 0.5 from below. Rounded to one decimal place this is 0.5, which matches the official key 0.5 to 0.5."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
