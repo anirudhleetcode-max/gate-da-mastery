@@ -1,0 +1,818 @@
+[
+  {
+    "id": "M19-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-lu"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (solving a linear system through an LU factorisation) with three linked routine steps: eliminating to obtain $L$ and $U$, forward substitution and back substitution, all with small integers; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Solving $A\\mathbf{x}=\\mathbf{b}$ with $A=LU$: forward substitution $L\\mathbf{y}=\\mathbf{b}$ gives the intermediate vector $\\mathbf{y}=U\\mathbf{x}$, and back substitution $U\\mathbf{x}=\\mathbf{y}$ then gives $\\mathbf{x}$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The linear system $A\\mathbf{x} = \\mathbf{b}$ has\n\n$$A = \\begin{bmatrix} 2 & -2 & -1 \\\\ 4 & -3 & -5 \\\\ -6 & 7 & 2 \\end{bmatrix}, \\qquad \\mathbf{b} = \\begin{bmatrix} -3 \\\\ -7 \\\\ 10 \\end{bmatrix}.$$\n\nThe matrix $A$ is factorised as $A = LU$, where $L$ is lower triangular with every diagonal entry equal to $1$, $U$ is upper triangular, and no row interchanges are needed. The system is then solved in two stages: $L\\mathbf{y} = \\mathbf{b}$ by forward substitution, followed by $U\\mathbf{x} = \\mathbf{y}$ by back substitution.\n\nThe solution $\\mathbf{x} = (x_1,\\ x_2,\\ x_3)^{\\top}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(9,\\ 8,\\ 5)^{\\top}$"
+      },
+      {
+        "label": "B",
+        "text": "$(-3,\\ -1,\\ 2)^{\\top}$"
+      },
+      {
+        "label": "C",
+        "text": "$(1,\\ 2,\\ 1)^{\\top}$"
+      },
+      {
+        "label": "D",
+        "text": "$(-4,\\ -4,\\ 3)^{\\top}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Elimination gives the multipliers $l_{21}=2$, $l_{31}=-3$, $l_{32}=1$, so $L=\\begin{bmatrix}1&0&0\\\\2&1&0\\\\-3&1&1\\end{bmatrix}$ and $U=\\begin{bmatrix}2&-2&-1\\\\0&1&-3\\\\0&0&2\\end{bmatrix}$.\nForward substitution gives $\\mathbf{y}=(-3,-1,2)^{\\top}$ and back substitution gives $\\mathbf{x}=(1,2,1)^{\\top}$.",
+      "steps": [
+        {
+          "title": "Factorise $A=LU$",
+          "body": "Eliminate below the first pivot $2$: $R_2\\leftarrow R_2-2R_1$ gives $(0,\\ 1,\\ -3)$, so $l_{21}=2$; $R_3\\leftarrow R_3+3R_1$ gives $(0,\\ 1,\\ -1)$, so $l_{31}=-3$.\n\nEliminate below the second pivot $1$: $R_3\\leftarrow R_3-1\\cdot R_2$ gives $(0,\\ 0,\\ 2)$, so $l_{32}=1$. Hence\n\n$$L=\\begin{bmatrix}1&0&0\\\\2&1&0\\\\-3&1&1\\end{bmatrix},\\qquad U=\\begin{bmatrix}2&-2&-1\\\\0&1&-3\\\\0&0&2\\end{bmatrix}.$$"
+        },
+        {
+          "title": "Forward substitution $L\\mathbf{y}=\\mathbf{b}$",
+          "body": "- $y_1=-3$.\n- $2y_1+y_2=-7 \\Rightarrow y_2=-7+6=-1$.\n- $-3y_1+y_2+y_3=10 \\Rightarrow 9-1+y_3=10 \\Rightarrow y_3=2$.\n\nSo $\\mathbf{y}=(-3,\\ -1,\\ 2)^{\\top}$."
+        },
+        {
+          "title": "Back substitution $U\\mathbf{x}=\\mathbf{y}$",
+          "body": "- $2x_3=2 \\Rightarrow x_3=1$.\n- $x_2-3x_3=-1 \\Rightarrow x_2=-1+3=2$.\n- $2x_1-2x_2-x_3=-3 \\Rightarrow 2x_1=-3+4+1=2 \\Rightarrow x_1=1$."
+        },
+        {
+          "title": "Check in the original system",
+          "body": "$A\\mathbf{x}=(2-4-1,\\ 4-6-5,\\ -6+14+2)^{\\top}=(-3,\\ -7,\\ 10)^{\\top}=\\mathbf{b}$, so $\\mathbf{x}=(1,2,1)^{\\top}$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is what results from skipping the forward substitution and solving $U\\mathbf{x}=\\mathbf{b}$ directly: $x_3=5$, $x_2=-7+15=8$, $x_1=(-3+16+5)/2=9$. The right-hand side of the second stage must be $\\mathbf{y}$, not $\\mathbf{b}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the intermediate vector $\\mathbf{y}=U\\mathbf{x}$ from the forward substitution. It still has to be pushed through $U\\mathbf{x}=\\mathbf{y}$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Back substitution on $U\\mathbf{x}=(-3,-1,2)^{\\top}$ gives $(1,2,1)^{\\top}$, and $A(1,2,1)^{\\top}=\\mathbf{b}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This comes from adding the multipliers instead of subtracting them in the forward substitution ($y_2=-7+2(-3)=-13$, $y_3=10+9-13=6$) and then back-substituting. The forward equations are $y_2=b_2-l_{21}y_1$ and $y_3=b_3-l_{31}y_1-l_{32}y_2$."
+        }
+      ],
+      "shortcut": "Because $A$ and $\\mathbf{b}$ are fully given, test the candidates in the second equation $4x_1-3x_2-5x_3=-7$: option A gives $-13$, B gives $-19$, D gives $-19$, and only C gives $4-6-5=-7$.",
+      "commonTrap": "Stopping after the forward substitution and reporting $\\mathbf{y}$, or back-substituting $\\mathbf{b}$ (instead of $\\mathbf{y}$) into $U$. A second trap is a sign slip with the negative multiplier $l_{31}=-3$, which is the entry that $R_3+3R_1$ removes."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: x = (1, 2, 1)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA=np.array([[2,-2,-1],[4,-3,-5],[-6,7,2]],float); b=np.array([-3,-7,10],float)\nn=3; L=np.eye(n); U=A.copy()\nfor k in range(n-1):                                   # Doolittle elimination, no row swaps\n    for i in range(k+1,n):\n        L[i,k]=U[i,k]/U[k,k]; U[i]-=L[i,k]*U[k]\nassert np.allclose(L@U,A)\ny=np.linalg.solve(L,b); x=np.linalg.solve(U,y)\nprint(L.tolist(),U.tolist(),y,x,np.linalg.solve(U,b))  # last: skipping forward substitution",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-random-variables"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (expectation and variance of a discrete random variable) with four routine steps: normalising the pmf, computing $E[X]$ and $E[X^2]$, forming $\\mathrm{Var}(X)$ and scaling by a linear transformation; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Variance of a discrete random variable, $\\mathrm{Var}(X)=E[X^2]-(E[X])^2$, and its behaviour under a linear map, $\\mathrm{Var}(aX+b)=a^2\\,\\mathrm{Var}(X)$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A help-desk system assigns every incoming ticket a priority level $X \\in \\{1, 2, 3, 4\\}$, and the probability of level $k$ is inversely proportional to $k$, that is,\n\n$$P(X = k) = \\frac{c}{k}, \\qquad k = 1, 2, 3, 4,$$\n\nwhere $c$ is a constant. The handling cost of a ticket, in hundreds of rupees, is $C = 3X - 2$.\n\nThe variance of $C$, rounded off to two decimal places, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 10.01,
+      "max": 10.03
+    },
+    "solution": {
+      "quick": "The pmf must sum to $1$, so $c\\left(1+\\tfrac12+\\tfrac13+\\tfrac14\\right)=1$ and $c=\\tfrac{12}{25}$.\nThen $E[X]=4c=1.92$ and $E[X^2]=10c=4.8$, so $\\mathrm{Var}(X)=4.8-1.92^2=1.1136$.\nSince $\\mathrm{Var}(3X-2)=9\\,\\mathrm{Var}(X)$, the variance of $C$ is $10.0224\\approx 10.02$.",
+      "steps": [
+        {
+          "title": "Normalise the pmf",
+          "body": "$\\sum_{k=1}^{4} \\dfrac{c}{k}=c\\left(1+\\dfrac12+\\dfrac13+\\dfrac14\\right)=c\\cdot\\dfrac{25}{12}=1$, so $c=\\dfrac{12}{25}=0.48$. The probabilities are $0.48,\\ 0.24,\\ 0.16,\\ 0.12$ for $k=1,2,3,4$."
+        },
+        {
+          "title": "First and second moments of $X$",
+          "body": "$E[X]=\\sum_k k\\cdot\\dfrac{c}{k}=4c=1.92$.\n\n$E[X^2]=\\sum_k k^2\\cdot\\dfrac{c}{k}=c(1+2+3+4)=10c=4.8$."
+        },
+        {
+          "title": "Variance of $X$",
+          "body": "$\\mathrm{Var}(X)=E[X^2]-(E[X])^2=4.8-1.92^2=4.8-3.6864=1.1136$."
+        },
+        {
+          "title": "Variance of $C=3X-2$",
+          "body": "Adding the constant $-2$ does not change the spread, and the factor $3$ scales the variance by $3^2$:\n\n$\\mathrm{Var}(C)=9\\,\\mathrm{Var}(X)=9\\times 1.1136=10.0224\\approx 10.02$."
+        }
+      ],
+      "finalAnswer": "**10.02** (accepted range 10.01 to 10.03)",
+      "shortcut": "With $P(X=k)=c/k$ every $k\\cdot P(X=k)$ equals $c$ and every $k^2\\cdot P(X=k)$ equals $ck$, so $E[X]=4c$ and $E[X^2]=c(1+2+3+4)=10c$ follow without tabulating the pmf.",
+      "commonTrap": "Using $\\mathrm{Var}(3X-2)=3\\,\\mathrm{Var}(X)$ (giving $3.34$) or $9\\,\\mathrm{Var}(X)-2$ instead of squaring the multiplier and ignoring the shift. Another slip is treating $c$ as $\\tfrac14$ (uniform) without normalising the $1/k$ weights."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "10.02",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\np={k:F(1,k) for k in range(1,5)}; s=sum(p.values()); p={k:v/s for k,v in p.items()}\nE=lambda f:sum(f(k)*v for k,v in p.items())\nvar=E(lambda k:(3*k-2)**2)-E(lambda k:3*k-2)**2\nprint(float(var))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-clustering-algorithms",
+      "ml-kmeans"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Lloyd's $k$-means iterations) applied to eight one-dimensional points in two short runs, plus an SSE comparison and a medoid check, each needing two to three routine steps; about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "$k$-means (Lloyd's algorithm) converges to a local minimum of the SSE that depends on the initial centroids, and a $k$-medoids centre is the cluster member with the smallest total distance (the median in one dimension), not the point nearest the mean.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The response times (in ms) of eight API calls are\n\n$$10,\\quad 12,\\quad 15,\\quad 30,\\quad 33,\\quad 37,\\quad 41,\\quad 90.$$\n\n$k$-means clustering with $k = 2$ is run on these one-dimensional data using the absolute difference as the distance. In every iteration each value is assigned to the nearer centroid, and then each centroid is replaced by the mean of the values assigned to it; the algorithm stops when an assignment step leaves every assignment unchanged. The sum of squared errors (SSE) of a clustering is the sum, over all values, of the squared distance between the value and the centroid of its cluster.\n\n**Run 1** starts with the centroids $12$ and $33$. **Run 2** starts with the centroids $10$ and $90$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Run 1 stops with the centroids $12.33$ and $46.2$ (rounded off to two decimal places)."
+      },
+      {
+        "label": "B",
+        "text": "Run 2 stops with the clusters $\\{10, 12, 15, 30, 33, 37, 41\\}$ and $\\{90\\}$."
+      },
+      {
+        "label": "C",
+        "text": "The final SSE of Run 1 is smaller than the final SSE of Run 2."
+      },
+      {
+        "label": "D",
+        "text": "In the final clustering of Run 1, suppose the centre of the cluster containing $90$ were required to be a value of that cluster that minimises the sum of absolute distances to all values of that cluster (as in $k$-medoids). That centre would be $41$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "Run 1 (centroids $12$, $33$) settles on $\\{10,12,15\\}$ and $\\{30,33,37,41,90\\}$ with centroids $12.33$ and $46.2$; Run 2 (centroids $10$, $90$) isolates the outlier, giving $\\{10,\\dots,41\\}$ and $\\{90\\}$.\nThe SSEs are about $2479.5$ (Run 1) and $981.7$ (Run 2), so C is false; the $k$-medoid centre of $\\{30,33,37,41,90\\}$ is its median $37$, so D is false.",
+      "steps": [
+        {
+          "title": "Run 1 from $(12, 33)$",
+          "body": "The midpoint of the centroids is $22.5$, so $10,12,15$ join centroid $12$ and $30,33,37,41,90$ join centroid $33$. The update gives $\\dfrac{37}{3}=12.33$ and $\\dfrac{231}{5}=46.2$. The new midpoint is $\\dfrac{12.33+46.2}{2}=29.27$; the value $30$ is above it, so it stays with the second centroid and no assignment changes. Run 1 stops with clusters $\\{10,12,15\\}$, $\\{30,33,37,41,90\\}$ and centroids $12.33$, $46.2$. Statement A holds."
+        },
+        {
+          "title": "Run 2 from $(10, 90)$",
+          "body": "The midpoint is $50$, so every value up to $41$ joins centroid $10$ and only $90$ joins centroid $90$. The update gives $\\dfrac{178}{7}=25.43$ and $90$; the new midpoint is $57.7$, so the assignment is unchanged. Run 2 stops with $\\{10,12,15,30,33,37,41\\}$ and $\\{90\\}$. Statement B holds."
+        },
+        {
+          "title": "Compare the SSEs",
+          "body": "Run 1: cluster $\\{10,12,15\\}$ contributes $2.33^2+0.33^2+2.67^2=12.67$; cluster $\\{30,33,37,41,90\\}$ contributes $16.2^2+13.2^2+9.2^2+5.2^2+43.8^2=2466.8$. Total $\\approx 2479.47$.\n\nRun 2: $\\sum x^2=5508$ and $\\dfrac{178^2}{7}=4526.29$ give $981.71$ for the big cluster, and $0$ for $\\{90\\}$. Total $\\approx 981.71$.\n\nRun 1 is stuck in a worse local minimum, so its SSE is larger. Statement C is false."
+        },
+        {
+          "title": "Medoid of $\\{30,33,37,41,90\\}$",
+          "body": "Sum of absolute distances from each member: $30\\to 81$, $33\\to 72$, $37\\to 68$, $41\\to 72$, $90\\to 219$. The minimum is at $37$, the median of the cluster. The value nearest the mean $46.2$ is $41$, but its total distance ($72$) is larger than that of $37$ ($68$). Statement D is false."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "After the first update the centroids are $37/3=12.33$ and $231/5=46.2$, and the second assignment step (dividing point $29.27$) changes nothing, so these are the final centroids."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "With centroids $10$ and $90$ only $90$ is closer to the second centroid; the updated centroids $25.43$ and $90$ leave that partition unchanged."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Run 1 ends with SSE $\\approx 2479.5$ against $\\approx 981.7$ for Run 2, so Run 1's SSE is larger. The two runs reach different local minima, which is why $k$-means depends on its initial centroids."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The best member is $37$ (total distance $68$), not $41$ (total $72$). In one dimension a $k$-medoids centre of an odd-sized cluster is its median; the value closest to the mean need not be the medoid."
+        }
+      ],
+      "commonTrap": "Assuming that $k$-means always reaches the global minimum of the SSE, so that any two runs must agree, and taking the data value nearest to the centroid as the medoid instead of the value with the least total distance."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX=[10,12,15,30,33,37,41,90]\ndef km(c):\n    c=[float(v) for v in c]; prev=None\n    while True:\n        lab=[int(abs(x-c[1])<abs(x-c[0])) for x in X]\n        assert all(abs(abs(x-c[0])-abs(x-c[1]))>1e-9 for x in X)\n        if lab==prev: break\n        prev=lab; c=[np.mean([x for x,l in zip(X,lab) if l==k]) for k in (0,1)]\n    return lab,c,sum((x-c[l])**2 for x,l in zip(X,lab))\nfor init in [(12,33),(10,90)]: print(init,km(init))\ncl=[30,33,37,41,90]; print({m:sum(abs(m-x) for x in cl) for m in cl})",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (PCA through the eigen-decomposition of a $2\\times2$ covariance matrix with the symmetric form $\\begin{bmatrix}a&b\\\\b&a\\end{bmatrix}$), with single-step checks of the direction, the variance, the retained fraction and the trace; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "PCA on a covariance matrix: eigenvectors give the principal directions, eigenvalues give the variances along them, the fraction retained is $\\lambda_1/\\sum\\lambda_i$, and the eigenvalues add up to $\\operatorname{tr}(\\Sigma)$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two mean-centred measurements of leaves in a botanical survey, the length $x_1$ and the width $x_2$, have the sample covariance matrix\n\n$$\\Sigma = \\begin{bmatrix} 10 & 6 \\\\ 6 & 10 \\end{bmatrix}.$$\n\nPrincipal component analysis (PCA) is applied through the eigen-decomposition of $\\Sigma$, without rescaling either measurement. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The first principal component points along $(1,\\ 1)^{\\top}$ (up to sign and scale)."
+      },
+      {
+        "label": "B",
+        "text": "The variance of the data along the first principal component is $16$."
+      },
+      {
+        "label": "C",
+        "text": "Keeping only the first principal component retains $75\\%$ of the total variance."
+      },
+      {
+        "label": "D",
+        "text": "The variances of the data along the two principal components add up to $20$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$\\det(\\Sigma-\\lambda I)=(10-\\lambda)^2-36=0$ gives $\\lambda_1=16$ with eigenvector $(1,1)^{\\top}$ and $\\lambda_2=4$ with eigenvector $(1,-1)^{\\top}$.\nSo A and B are true; the first component keeps $16/20=80\\%$ (not $75\\%$), and $16+4=20=\\operatorname{tr}(\\Sigma)$.",
+      "steps": [
+        {
+          "title": "Eigenvalues",
+          "body": "$\\det(\\Sigma-\\lambda I)=(10-\\lambda)^2-6^2=0 \\Rightarrow 10-\\lambda=\\pm 6 \\Rightarrow \\lambda_1=16,\\ \\lambda_2=4$."
+        },
+        {
+          "title": "Eigenvectors",
+          "body": "For $\\lambda_1=16$: $(\\Sigma-16I)\\mathbf{v}=\\begin{bmatrix}-6&6\\\\6&-6\\end{bmatrix}\\mathbf{v}=\\mathbf{0}$ gives $\\mathbf{v}\\propto(1,1)^{\\top}$. For $\\lambda_2=4$: $\\begin{bmatrix}6&6\\\\6&6\\end{bmatrix}\\mathbf{v}=\\mathbf{0}$ gives $\\mathbf{v}\\propto(1,-1)^{\\top}$. The first principal component is the eigenvector of the larger eigenvalue, so it points along $(1,1)^{\\top}$."
+        },
+        {
+          "title": "Variances and retained fraction",
+          "body": "The variance along a principal component equals its eigenvalue: $16$ along the first and $4$ along the second. The total variance is $16+4=20=10+10=\\operatorname{tr}(\\Sigma)$. Keeping one component retains $\\dfrac{16}{20}=0.80=80\\%$."
+        },
+        {
+          "title": "Verdicts",
+          "body": "A true; B true; C false because $80\\%\\ne 75\\%$; D true because the eigenvalues sum to the trace."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The eigenvector for the larger eigenvalue $16$ solves $-6v_1+6v_2=0$, that is $\\mathbf{v}\\propto(1,1)^{\\top}$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The variance along a principal direction is the corresponding eigenvalue, and the larger eigenvalue is $16$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The retained fraction is $\\lambda_1/(\\lambda_1+\\lambda_2)=16/20=80\\%$. A figure of $75\\%$ does not arise from these eigenvalues."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Rotating to the principal axes preserves the total variance: $16+4=20=\\operatorname{tr}(\\Sigma)=10+10$."
+        }
+      ],
+      "shortcut": "For a matrix of the form $\\begin{bmatrix}a&b\\\\b&a\\end{bmatrix}$ the eigenvectors are always $(1,1)^{\\top}$ and $(1,-1)^{\\top}$, with eigenvalues $a+b=16$ and $a-b=4$; the trace $2a=20$ gives the total variance at once.",
+      "commonTrap": "Reporting the retained fraction with the wrong denominator, or treating the diagonal entry $10$ as the variance along a principal direction; the variances along principal directions are the eigenvalues ($16$ and $4$), not the entries of $\\Sigma$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS=np.array([[10,6],[6,10]],float)\nw,V=np.linalg.eigh(S); w=w[::-1]; V=V[:,::-1]\nprint(w, V[:,0], w[0]/w.sum(), w.sum(), np.trace(S))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-indexing"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (sizing a multilevel dense secondary index) with a chain of three floor/ceiling computations, one per level, and a likely trap in the rounding of the blocking factor; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Multilevel index sizing: entries per block $\\lfloor B/e\\rfloor$, blocks per level $\\lceil n/\\lfloor B/e\\rfloor\\rceil$, and each higher level indexes the blocks of the level below until a single block remains.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A file stores 120,000 fixed-length records of an `ORDERS` relation in no particular order. A **dense secondary index** on the unique attribute `order_no` is built as a multilevel index:\n\n- the first level has one entry (search key, record pointer) for every record;\n- every higher level has one entry (search key, block pointer) for every block of the level immediately below it;\n- levels are added until the topmost level fits in a single block.\n\nThe disk block size is $1024$ bytes, a search key takes $12$ bytes, and both a record pointer and a block pointer take $8$ bytes. Index entries are not spanned across blocks, and every index block, except possibly the last block of a level, is filled with as many entries as it can hold.\n\nThe total number of blocks occupied by the index, over all its levels, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2401,
+      "max": 2401
+    },
+    "solution": {
+      "quick": "Each entry takes $12+8=20$ bytes, so a block holds $\\lfloor 1024/20\\rfloor=51$ entries.\nLevel 1 needs $\\lceil 120000/51\\rceil=2353$ blocks, level 2 needs $\\lceil 2353/51\\rceil=47$ blocks and level 3 needs $\\lceil 47/51\\rceil=1$ block, which is the top.\nTotal $=2353+47+1=2401$.",
+      "steps": [
+        {
+          "title": "Entries per index block",
+          "body": "Every entry, whether (key, record pointer) or (key, block pointer), takes $12+8=20$ bytes. Because entries are not spanned, a block holds $\\lfloor 1024/20\\rfloor=\\lfloor 51.2\\rfloor=51$ entries."
+        },
+        {
+          "title": "Level 1 (dense, one entry per record)",
+          "body": "$120000$ entries need $\\lceil 120000/51\\rceil=\\lceil 2352.94\\rceil=2353$ blocks."
+        },
+        {
+          "title": "Level 2 (one entry per level-1 block)",
+          "body": "$2353$ entries need $\\lceil 2353/51\\rceil=\\lceil 46.14\\rceil=47$ blocks."
+        },
+        {
+          "title": "Level 3 and the total",
+          "body": "$47$ entries fit in one block ($47\\le 51$), so level 3 is the single-block top level and no further level is needed. The index has $2353+47+1=2401$ blocks."
+        }
+      ],
+      "finalAnswer": "**2401**",
+      "commonTrap": "Not rounding the blocking factor down (using $1024/20=51.2$ entries per block), which changes every ceiling, or stopping one level early and counting $2353+47=2400$ blocks instead of including the one-block top level."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2401",
+      "agreesWithKey": true,
+      "checkCode": "import math\nbfr=1024//(12+8); n=120000; tot=0\nwhile True:\n    b=math.ceil(n/bfr); tot+=b; print(b)\n    if b==1: break\n    n=b\nprint(bfr,tot)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-transformation"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (equal-width discretisation followed by smoothing by bin boundaries) with three routine steps: computing the width and bins, replacing each value by its nearer boundary, and summing; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Equal-width discretisation (width $(\\max-\\min)/k$) followed by smoothing by bin boundaries, where each value moves to the nearer of its bin's minimum and maximum; unlike smoothing by bin means, this does not preserve the sum of the data.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The waiting times (in minutes) recorded for ten patients at a clinic are\n\n$$6,\\quad 9,\\quad 13,\\quad 16,\\quad 22,\\quad 25,\\quad 29,\\quad 35,\\quad 41,\\quad 48.$$\n\nThe attribute is discretised into $3$ **equal-width** bins: the range from the minimum to the maximum value is split into three intervals of equal width, and each interval contains its left end but not its right end, except that the last interval also contains the maximum. The values are then smoothed **by bin boundaries**: in each bin the smallest and the largest value of that bin are the bin boundaries, and every value is replaced by the nearer of the two boundaries of its own bin.\n\nThe sum of the ten smoothed values is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$235$"
+      },
+      {
+        "label": "B",
+        "text": "$242$"
+      },
+      {
+        "label": "C",
+        "text": "$244$"
+      },
+      {
+        "label": "D",
+        "text": "$245$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The width is $(48-6)/3=14$, giving the bins $\\{6,9,13,16\\}$, $\\{22,25,29\\}$ and $\\{35,41,48\\}$.\nSmoothing by boundaries gives $6,6,16,16,\\ 22,22,29,\\ 35,35,48$, whose sum is $235$.",
+      "steps": [
+        {
+          "title": "Equal-width bins",
+          "body": "Width $=\\dfrac{48-6}{3}=14$, so the intervals are $[6,20)$, $[20,34)$ and $[34,48]$. The bins are $\\{6,9,13,16\\}$, $\\{22,25,29\\}$ and $\\{35,41,48\\}$."
+        },
+        {
+          "title": "Smooth by bin boundaries",
+          "body": "- Bin 1, boundaries $6$ and $16$: $6\\to6$; $9\\to6$ (distances $3$ and $7$); $13\\to16$ (distances $7$ and $3$); $16\\to16$.\n- Bin 2, boundaries $22$ and $29$: $22\\to22$; $25\\to22$ (distances $3$ and $4$); $29\\to29$.\n- Bin 3, boundaries $35$ and $48$: $35\\to35$; $41\\to35$ (distances $6$ and $7$); $48\\to48$."
+        },
+        {
+          "title": "Add up",
+          "body": "The smoothed values are $6,6,16,16,22,22,29,35,35,48$, and\n\n$6+6+16+16=44$, $\\ 22+22+29=73$, $\\ 35+35+48=118$, so the sum is $44+73+118=235$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The nearer-boundary replacements $6,6,16,16,22,22,29,35,35,48$ add up to $235$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the sum when every value is replaced by the median of its bin ($11$, $25$, $41$): $4\\cdot11+3\\cdot25+3\\cdot41=242$. That is smoothing by bin medians, not by boundaries."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$244$ is the sum of the original data. Smoothing by bin **means** keeps this sum unchanged, but smoothing by bin boundaries moves values to the ends of their bins and does not."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This results from using equal-frequency bins of sizes $3,3,4$ (boundary values $6,13$; $16,25$; $29,48$) instead of equal-width bins, which gives $6,6,13,16,25,25,29,29,48,48$ and a sum of $245$."
+        }
+      ],
+      "commonTrap": "Mixing up the smoothing methods: bin means preserve the total ($244$), so a student who remembers that fact may pick it here, whereas bin boundaries change the total. A second slip is putting $41$ with the upper boundary $48$; it is nearer to $35$ (distance $6$) than to $48$ (distance $7$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: 235",
+      "agreesWithKey": true,
+      "checkCode": "d=[6,9,13,16,22,25,29,35,41,48]; k=3; lo,hi=min(d),max(d); w=(hi-lo)/k\nbins=[[] for _ in range(k)]\nfor v in d: bins[min(int((v-lo)//w),k-1)].append(v)\nout=[]\nfor b in bins:\n    l,h=min(b),max(b)\n    for v in b: assert v-l!=h-v or l==h; out.append(l if v-l<h-v else h)\nprint(w,bins,out,sum(out),sum(d))\nimport statistics as st\nprint(sum(st.median(b)*len(b) for b in bins))\ne=[d[:3],d[3:6],d[6:]]; o2=[]\nfor b in e:\n    l,h=min(b),max(b)\n    for v in b: assert v-l!=h-v or l==h; o2.append(l if v-l<h-v else h)\nprint(o2,sum(o2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-concept-hierarchies"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a concept hierarchy needs a many-to-one mapping from each level to the next), checked directly against eight table rows for four candidate chains; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "A concept hierarchy $L_1<L_2<L_3$ requires each value of a level to roll up to exactly one value of the next level (a many-to-one mapping), which can be tested from the dimension table.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The `Store` dimension table of a retail data warehouse currently holds the following rows.\n\n| store | city | state | zone |\n|---|---|---|---|\n| S1 | Pune | Maharashtra | West |\n| S2 | Nagpur | Maharashtra | Central |\n| S3 | Mumbai | Maharashtra | West |\n| S4 | Surat | Gujarat | West |\n| S5 | Indore | Madhya Pradesh | Central |\n| S6 | Bhopal | Madhya Pradesh | Central |\n| S7 | Pune | Maharashtra | West |\n| S8 | Raipur | Chhattisgarh | Central |\n\nA chain of levels $L_1 < L_2 < L_3$ is a valid concept hierarchy for this table if every value of $L_1$ occurring in the table is associated with exactly one value of $L_2$, and every value of $L_2$ occurring in the table is associated with exactly one value of $L_3$, so that values can be rolled up level by level.\n\nWhich one of the following is a valid concept hierarchy for the `Store` dimension?",
+    "options": [
+      {
+        "label": "A",
+        "text": "city $<$ state $<$ zone"
+      },
+      {
+        "label": "B",
+        "text": "store $<$ zone $<$ state"
+      },
+      {
+        "label": "C",
+        "text": "state $<$ city $<$ store"
+      },
+      {
+        "label": "D",
+        "text": "store $<$ city $<$ zone"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "A roll-up link $X<Y$ is valid only if each value of $X$ maps to a single value of $Y$ in the table.\nThe valid links here include store $\\to$ city and city $\\to$ zone, but not state $\\to$ zone (Maharashtra lies in both West and Central) or zone $\\to$ state.\nOnly store $<$ city $<$ zone uses valid links throughout.",
+      "steps": [
+        {
+          "title": "Test the mapping between levels",
+          "body": "| Link | Each lower value has one higher value? | Reason |\n|---|---|---|\n| store $\\to$ city | yes | every store row has a single city |\n| city $\\to$ state | yes | each city sits in one state |\n| city $\\to$ zone | yes | Pune, Mumbai, Surat map to West; Nagpur, Indore, Bhopal, Raipur map to Central |\n| state $\\to$ zone | **no** | Maharashtra is West (Pune, Mumbai) and Central (Nagpur) |\n| zone $\\to$ state | **no** | West holds Maharashtra and Gujarat; Central holds four states |\n| state $\\to$ city | **no** | Maharashtra contains Pune, Nagpur and Mumbai |"
+        },
+        {
+          "title": "Check each chain",
+          "body": "- A: city $<$ state $<$ zone needs state $\\to$ zone, which fails.\n- B: store $<$ zone $<$ state needs zone $\\to$ state, which fails.\n- C: state $<$ city $<$ store goes from the coarse level to the fine level, so it needs state $\\to$ city, which fails.\n- D: store $<$ city $<$ zone needs store $\\to$ city and city $\\to$ zone, and both hold."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only D is a valid concept hierarchy. Note that city rolls up to both state and zone, so the two upper levels form separate paths above city rather than one chain."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "state $\\to$ zone is not many-to-one in this table: the state Maharashtra is associated with both West (Pune, Mumbai) and Central (Nagpur)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "zone $\\to$ state fails: the zone West contains stores in both Maharashtra and Gujarat, and Central spans four states."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The chain runs from the coarse level down to the fine level. A state has several cities and a city has several stores (Pune has S1 and S7), so the mappings are one-to-many."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Each store has one city, and each city belongs to exactly one zone, so values roll up store $\\to$ city $\\to$ zone without ambiguity."
+        }
+      ],
+      "commonTrap": "Judging the hierarchy from general geography (a zone is bigger than a state, so state $<$ zone must be valid) instead of from the data actually stored. Here Maharashtra straddles two zones, so the mapping from state to zone is not many-to-one."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "rows=[(\"S1\",\"Pune\",\"Maharashtra\",\"West\"),(\"S2\",\"Nagpur\",\"Maharashtra\",\"Central\"),(\"S3\",\"Mumbai\",\"Maharashtra\",\"West\"),(\"S4\",\"Surat\",\"Gujarat\",\"West\"),\n(\"S5\",\"Indore\",\"Madhya Pradesh\",\"Central\"),(\"S6\",\"Bhopal\",\"Madhya Pradesh\",\"Central\"),(\"S7\",\"Pune\",\"Maharashtra\",\"West\"),(\"S8\",\"Raipur\",\"Chhattisgarh\",\"Central\")]\nix={'store':0,'city':1,'state':2,'zone':3}\ndef fd(a,b):\n    m={}\n    for r in rows: m.setdefault(r[ix[a]],set()).add(r[ix[b]])\n    return all(len(v)==1 for v in m.values())\nopts={'A':['city','state','zone'],'B':['store','zone','state'],'C':['state','city','store'],'D':['store','city','zone']}\nprint([k for k,c in opts.items() if fd(c[0],c[1]) and fd(c[1],c[2])])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-sampling"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (approximate inference by sampling in a three-node chain network) with four statements, each needing one or two short probability computations (a weight, a retention rate, a Gibbs conditional) and one conceptual check; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Sampling-based inference in a Bayesian network: rejection sampling retains a fraction $P(\\mathbf{e})$ of prior samples, likelihood weighting weights each sample by the CPT entries of the evidence variables only, and Gibbs sampling resamples a variable from its conditional given its Markov blanket.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A smart-irrigation controller is modelled by a Bayesian network over three Boolean variables: $R$ (it rained in the catchment area), $S$ (the soil-moisture sensor reads wet) and $P$ (the irrigation pump runs). The only edges are $R \\to S$ and $S \\to P$, and the conditional probabilities are:\n\n| Quantity | Value |\n|---|---|\n| $P(R=1)$ | $0.3$ |\n| $P(S=1 \\mid R=1)$ | $0.9$ |\n| $P(S=1 \\mid R=0)$ | $0.2$ |\n| $P(P=1 \\mid S=1)$ | $0.1$ |\n| $P(P=1 \\mid S=0)$ | $0.6$ |\n\n(Here $1$ = true and $0$ = false.) The query is $P(R=1 \\mid P=1)$, with the evidence $P=1$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "In likelihood weighting, a generated sample with $R=1$ and $S=1$ is given the weight $P(S=1 \\mid R=1)\\cdot P(P=1 \\mid S=1)=0.09$."
+      },
+      {
+        "label": "B",
+        "text": "In likelihood weighting, the estimate of $P(R=1 \\mid P=1)$ is the fraction of the generated samples that have $R=1$, every sample counting equally."
+      },
+      {
+        "label": "C",
+        "text": "If $N$ complete samples are drawn from the prior distribution of the network and every sample with $P=0$ is rejected, the expected number of retained samples is $0.395\\,N$."
+      },
+      {
+        "label": "D",
+        "text": "When Gibbs sampling resamples $S$ with $R=1$ and $P=1$ held fixed, it sets $S=1$ with probability $0.9$, the value of $P(S=1 \\mid R=1)$ in the table."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Likelihood weighting samples $R$ and $S$ from their CPTs and multiplies in only the evidence CPT $P(P=1\\mid S)$, so A and B are false.\nRejection sampling keeps a fraction $P(P=1)=0.41\\cdot0.1+0.59\\cdot0.6=0.395$, so C is true.\nGibbs resampling of $S$ must also account for its child $P$: $P(S=1\\mid R=1,P=1)=0.09/0.15=0.6$, so D is false.",
+      "steps": [
+        {
+          "title": "Likelihood weighting (statements A and B)",
+          "body": "The non-evidence variables $R$ and $S$ are sampled in topological order from their CPTs; the evidence variable $P$ is fixed at $1$ and contributes the weight $P(P=1\\mid S)$: $0.1$ when the sampled $S=1$ and $0.6$ when $S=0$. The sampled value of $S$ is not multiplied into the weight, so a sample with $S=1$ has weight $0.1$, not $0.09$. The estimate is $\\sum_i w_i\\,\\mathbf{1}[R_i=1]\\big/\\sum_i w_i$, a weighted fraction. The unweighted fraction of samples with $R=1$ tends to the prior $0.3$, whereas the true posterior is $0.045/0.395\\approx0.114$. Statements A and B are false."
+        },
+        {
+          "title": "Rejection sampling (statement C)",
+          "body": "First $P(S=1)=0.3\\cdot0.9+0.7\\cdot0.2=0.27+0.14=0.41$. Then\n\n$P(P=1)=0.41\\cdot0.1+0.59\\cdot0.6=0.041+0.354=0.395$.\n\nA prior sample is consistent with the evidence with probability $P(P=1)$, so the expected number retained is $0.395\\,N$. Statement C is true."
+        },
+        {
+          "title": "Gibbs sampling (statement D)",
+          "body": "$S$ is resampled from its distribution given its Markov blanket (its parent $R$ and its child $P$):\n\n$P(S=1\\mid R=1,P=1)\\propto P(S=1\\mid R=1)\\,P(P=1\\mid S=1)=0.9\\cdot0.1=0.09$,\n\n$P(S=0\\mid R=1,P=1)\\propto P(S=0\\mid R=1)\\,P(P=1\\mid S=0)=0.1\\cdot0.6=0.06$.\n\nNormalising, $P(S=1\\mid R=1,P=1)=\\dfrac{0.09}{0.15}=0.6\\ne0.9$. Statement D is false."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Only the evidence variable contributes to the weight, and it contributes $P(P=1\\mid S=1)=0.1$. The value of $S$ is sampled from $P(S\\mid R)$, so $P(S=1\\mid R=1)$ must not be multiplied in again."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The samples have unequal weights ($0.1$ or $0.6$), and the estimate is the weight-normalised sum. The unweighted fraction of samples with $R=1$ estimates the prior $P(R=1)=0.3$, not the posterior $\\approx0.114$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "A prior sample agrees with the evidence with probability $P(P=1)=0.395$, so on average $0.395\\,N$ of the $N$ samples are kept."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The conditional for the Gibbs step must include the child $P$: $P(S=1\\mid R=1,P=1)\\propto0.9\\cdot0.1$ against $0.1\\cdot0.6$, giving $0.6$. Using $P(S=1\\mid R=1)=0.9$ ignores the evidence."
+        }
+      ],
+      "commonTrap": "Multiplying the CPT entries of sampled variables into the likelihood weight (only the evidence variables contribute), and using a variable's own CPT $P(S\\mid R)$ as the Gibbs conditional, which forgets that the child $P$ is part of its Markov blanket."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nimport random\npR=F(3,10); pS={1:F(9,10),0:F(1,5)}; pP={1:F(1,10),0:F(3,5)}\npS1=pR*pS[1]+(1-pR)*pS[0]; pP1=pS1*pP[1]+(1-pS1)*pP[0]\npost=pR*(pS[1]*pP[1]+(1-pS[1])*pP[0])/pP1\ngib=pS[1]*pP[1]/(pS[1]*pP[1]+(1-pS[1])*pP[0])\nprint(float(pS1),float(pP1),float(post),float(gib))\nrandom.seed(0); N=400000; acc=0; unw=0; sw=0; swr=0\nfor _ in range(N):\n    r=random.random()<0.3; s=random.random()<(0.9 if r else 0.2)\n    acc+= random.random()<(0.1 if s else 0.6)   # prior sample agrees with P=1\n    w=0.1 if s else 0.6; unw+=r; sw+=w; swr+=w*r\nprint(acc/N, unw/N, swr/sw)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-maxima-minima"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several concepts (local extrema of a cubic, the effect of the modulus, counting real roots by comparing a level with the extreme values) and a likely trap at the two boundary levels $m=5$ and $m=27$; about 4 minutes.",
+    "estimatedTimeSec": 260,
+    "concept": "Counting real solutions of $|g(x)|=m$ for a cubic $g$: compare the levels $\\pm m$ with the local maximum and local minimum values of $g$, remembering that touching a local extremum gives a repeated (not extra) root.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $g(x) = x^3 - 3x^2 - 9x$ for $x \\in \\mathbb{R}$. For an integer $m$, consider the equation\n\n$$|g(x)| = m.$$\n\nThe number of integer values of $m$ for which this equation has exactly four distinct real solutions is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 21,
+      "max": 21
+    },
+    "solution": {
+      "quick": "$g'(x)=3(x+1)(x-3)$, so $g$ has local maximum $g(-1)=5$ and local minimum $g(3)=-27$.\n$|g(x)|=m$ means $g(x)=m$ or $g(x)=-m$. Counting roots of each level against the values $5$ and $-27$ gives exactly four solutions in total only for $5<m<27$.\nThe integers $6,7,\\dots,26$ give $21$ values.",
+      "steps": [
+        {
+          "title": "Turning points of $g$",
+          "body": "$g'(x)=3x^2-6x-9=3(x+1)(x-3)$. Hence $g$ increases up to $x=-1$, decreases on $(-1,3)$ and increases after $x=3$, with local maximum $g(-1)=-1-3+9=5$ and local minimum $g(3)=27-27-27=-27$."
+        },
+        {
+          "title": "Number of solutions of $g(x)=c$",
+          "body": "A cubic with local maximum $5$ and local minimum $-27$ takes a value $c$ this many times:\n\n| level $c$ | distinct solutions of $g(x)=c$ |\n|---|---|\n| $c>5$ or $c<-27$ | $1$ |\n| $c=5$ or $c=-27$ | $2$ (one is a repeated root at a turning point) |\n| $-27<c<5$ | $3$ |"
+        },
+        {
+          "title": "Combine the two levels $c=m$ and $c=-m$",
+          "body": "For $m>0$ the two equations $g(x)=m$ and $g(x)=-m$ have no common solution, so their counts add.\n\n- $0<m<5$: $m\\in(-27,5)$ and $-m\\in(-27,5)$, so $3+3=6$ solutions.\n- $m=5$: $g=5$ gives $2$ and $g=-5$ gives $3$, so $5$ solutions.\n- $5<m<27$: $g=m$ gives $1$ (since $m>5$) and $g=-m$ gives $3$ (since $-27<-m<-5$), so $4$ solutions.\n- $m=27$: $g=27$ gives $1$ and $g=-27$ gives $2$, so $3$ solutions.\n- $m>27$: $1+1=2$ solutions. Also $m=0$ gives the $3$ roots of $g$, and $m<0$ gives none."
+        },
+        {
+          "title": "Count the integers",
+          "body": "Exactly four solutions occur precisely for $5<m<27$. The integers are $6,7,\\dots,26$, and there are $26-6+1=21$ of them."
+        }
+      ],
+      "finalAnswer": "**21**",
+      "shortcut": "Sketch $|g|$: the graph is $g$ with its negative parts reflected upward. The horizontal line at height $m$ cuts it four times exactly when it lies above the small hump (peak $5$) and below the large hump (peak $27$).",
+      "commonTrap": "Treating the boundary levels like interior ones. At $m=5$ the line touches the top of the small hump and gives $5$ solutions, and at $m=27$ it touches the top of the large hump and gives $3$ solutions, so neither $m=5$ nor $m=27$ counts; including them gives $23$. Using $g$ instead of $|g|$, or forgetting that the modulus reflects the negative parts of $g$ upward, also changes the counts."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "21",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x'); g=x**3-3*x**2-9*x\ndef n(m):\n    if m<0: return 0\n    p=sp.expand((g-m)*(g+m))\n    return sp.Poly(sp.sqf_part(p),x).count_roots()   # distinct real roots of |g|=m\nms=[m for m in range(-5,60) if n(m)==4]\nprint(ms[0],ms[-1],len(ms),{m:n(m) for m in (0,1,4,5,6,26,27,28)})",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M19-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-19",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (tracing a loop with enumerate, a membership test and a generator expression) with direct, single-step updates over three short strings; about 2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "Tracing a Python loop with enumerate, a membership test on a string of vowels, a generator expression inside sum, and max applied to map(len, ...).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef score(word):\n    total = 0\n    for i, ch in enumerate(word):\n        if ch in \"aeiou\":\n            total += i\n        else:\n            total -= 1\n    return total\n\nwords = [\"data\", \"science\", \"gate\"]\nprint(sum(score(w) for w in words) + max(map(len, words)))\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 18,
+      "max": 18
+    },
+    "solution": {
+      "quick": "A vowel at index $i$ adds $i$ to the score and any other letter subtracts $1$.\nThe scores are $2$ for \"data\", $7$ for \"science\" and $2$ for \"gate\", which sum to $11$; the longest word has $7$ letters, so the program prints $11+7=18$.",
+      "steps": [
+        {
+          "title": "Understand score()",
+          "body": "`enumerate(word)` yields (index, letter). If the letter is one of `a, e, i, o, u`, the index is added to `total`; otherwise `1` is subtracted."
+        },
+        {
+          "title": "Trace the three words",
+          "body": "| word | letters (index: effect) | score |\n|---|---|---|\n| data | d0: $-1$, a1: $+1$, t2: $-1$, a3: $+3$ | $2$ |\n| science | s0: $-1$, c1: $-1$, i2: $+2$, e3: $+3$, n4: $-1$, c5: $-1$, e6: $+6$ | $7$ |\n| gate | g0: $-1$, a1: $+1$, t2: $-1$, e3: $+3$ | $2$ |"
+        },
+        {
+          "title": "Combine",
+          "body": "`sum(score(w) for w in words)` $=2+7+2=11$. `max(map(len, words))` $=\\max(4,7,4)=7$. The printed value is $11+7=18$."
+        }
+      ],
+      "finalAnswer": "**18**",
+      "commonTrap": "Adding the letter's position counted from $1$ instead of the Python index counted from $0$ (for example scoring the vowels of \"data\" at positions 2 and 4 instead of at indices 1 and 3), or forgetting that consonants subtract $1$ rather than leaving the total unchanged."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "18",
+      "agreesWithKey": true,
+      "checkCode": "def score(word):\n    total = 0\n    for i, ch in enumerate(word):\n        if ch in \"aeiou\":\n            total += i\n        else:\n            total -= 1\n    return total\nwords = [\"data\", \"science\", \"gate\"]\nprint([score(w) for w in words], sum(score(w) for w in words) + max(map(len, words)))",
+      "notes": ""
+    }
+  }
+]

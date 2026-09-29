@@ -13,7 +13,7 @@ import path from "node:path";
 
 const base = process.argv[2] ?? "http://localhost:3100";
 const DEFAULT_ROUTES = [
-  "/", "/syllabus", "/subjects", "/subjects/ml", "/subjects/ml/topics/ml-supervised", "/pyqs", "/pyqs/browse",
+  "/", "/syllabus", "/subjects", "/subjects/ml", "/subjects/ml/topics/ml-regression", "/pyqs", "/pyqs/browse",
   "/pyqs/papers/DA-2026-S8", "/questions/DA2026-S8-Q36", "/questions/DA2024-S1-Q14", "/mocks", "/mocks/mock-01",
   "/practice", "/today", "/progress", "/weightage", "/revision", "/errors", "/bookmarks", "/search?q=eigenvalue",
   "/concepts", "/formulas", "/formulas/la", "/strategy", "/strategy/timer", "/roadmap", "/sources", "/settings", "/this-route-does-not-exist",

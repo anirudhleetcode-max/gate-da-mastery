@@ -65,7 +65,7 @@ export function FormulaCard({ f, concepts }: { f: CompiledFormula; concepts: { i
         </div>
       </div>
       <div className="space-y-4 px-4 py-4 sm:px-5">
-        <FormulaMath html={f.html.formula} name={f.name} className="rounded-lg border border-border bg-surface-2/50 px-3 py-1" />
+        <FormulaMath html={f.html.formula} name={f.name} className="rounded-lg border border-border bg-surface-2/50 px-3 py-1 group-data-[compact=true]/book:mb-0" />
         <div className={cn("space-y-4", DETAIL)}>
           <Part title="Meaning">
             <ServerRichHtml html={f.html.meaning} />

@@ -139,17 +139,17 @@ export default async function MockIntroPage({ params }: Params) {
                   </div>
                   <div className="min-w-0">
                     <h3 className="mb-2 text-sm font-medium text-fg">Subject distribution</h3>
-                    <table className="w-full text-sm">
+                    <table className="w-full table-fixed text-sm">
                       <caption className="sr-only">Questions and marks per subject</caption>
                       <thead>
                         <tr className="text-left text-xs text-fg-3">
                           <th scope="col" className="pb-1 pr-2 font-medium">
                             Subject
                           </th>
-                          <th scope="col" className="px-2 pb-1 text-right font-medium">
+                          <th scope="col" className="w-20 px-2 pb-1 text-right font-medium">
                             Questions
                           </th>
-                          <th scope="col" className="pb-1 pl-2 text-right font-medium">
+                          <th scope="col" className="w-14 pb-1 pl-2 text-right font-medium">
                             Marks
                           </th>
                         </tr>

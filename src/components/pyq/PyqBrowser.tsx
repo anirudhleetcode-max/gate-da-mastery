@@ -271,7 +271,7 @@ export function PyqBrowser({ rows, papers, taxonomy }: PyqBrowserProps) {
               <span className="tnum font-semibold text-fg">{filtered.length}</span> of <span className="tnum">{rows.length}</span> questions
               <span className="text-fg-3"> · {marksLabel(marks)}</span>
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <label htmlFor="pyq-sort" className="text-sm text-fg-3">
                 Sort
               </label>
@@ -279,7 +279,7 @@ export function PyqBrowser({ rows, papers, taxonomy }: PyqBrowserProps) {
                 id="pyq-sort"
                 value={filters.sort}
                 onChange={(e) => apply({ ...filters, sort: e.target.value as SortKey })}
-                className="h-10 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg"
+                className="h-10 min-w-0 max-w-full rounded-lg border border-border bg-surface px-2.5 text-sm text-fg"
               >
                 {SORTS.map((s) => (
                   <option key={s} value={s}>
