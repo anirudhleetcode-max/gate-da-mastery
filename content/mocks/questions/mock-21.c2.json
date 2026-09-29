@@ -53,12 +53,12 @@
       "commonTrap": "Plugging the average batch size $E[N] = 3.7$ into a single binomial, $3.7 \\cdot \\frac{2}{3.7}\\left(1 - \\frac{2}{3.7}\\right) \\approx 0.92$. This silently replaces $E[1/N]$ by $1/E[N]$, which is wrong (Jensen's inequality). Another slip is adding a non-zero $\\mathrm{Var}(E[S \\mid N])$ term even though $E[S \\mid N]$ is constant."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.8133 (= 61/75), rounds to 0.81",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.81 (exact 61/75 = 0.8133)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nfrom math import comb\npN={2:F(1,10),3:F(1,2),5:F(2,5)}\nd={}\nfor n,pn in pN.items():\n    p=F(2,n)\n    for k in range(n+1): d[k]=d.get(k,0)+pn*comb(n,k)*p**k*(1-p)**(n-k)\nm=sum(k*v for k,v in d.items()); v=sum(k*k*w for k,w in d.items())-m*m\nprint(m, v, float(v))  # 2 61/75 0.8133",
-      "notes": ""
+      "checkCode": "# Independent check: exact enumeration of the joint law of (N, S)\nfrom fractions import Fraction as F\nfrom math import comb\npN = {2: F(1, 10), 3: F(1, 2), 5: F(2, 5)}\nm1 = m2 = F(0)\nfor n, pn in pN.items():\n    q = F(2, n)\n    for s in range(n + 1):\n        w = pn * comb(n, s) * q**s * (1 - q)**(n - s)\n        m1 += w * s\n        m2 += w * s * s\nvar = m2 - m1**2\nprint(m1, var, round(float(var), 2))  # 2 61/75 0.81",
+      "notes": "Blind solve (law of total variance with Bin(n,2/n) conditional variance 2-4/n, E[S|N]=2 constant) gave 61/75 = 0.8133; exact rational enumeration of the joint law agrees. Key 0.80 to 0.82 is tight and contains 0.81. Rounding stated in stem. Steps, final answer, trap and difficulty (HARD: non-obvious constant conditional mean plus E[1/N] versus 1/E[N] trap) checked; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -175,12 +175,12 @@
       "commonTrap": "Assuming that `seen={}` creates a new empty dictionary on each call. That leads to option (A). Even students who know the rule often answer `False` for `c is a`, forgetting that the function returns the shared object itself, not a copy."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "4 2 2 True (option D), from running the exact program",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D: prints 4 2 2 True",
       "agreesWithKey": true,
-      "checkCode": "def tally(word, seen={}):\n    for ch in word:\n        seen[ch] = seen.get(ch, 0) + 1\n    return seen\n\na = tally(\"level\")\nb = tally(\"eel\", {})\nc = tally(\"vee\")\nprint(a[\"e\"], a[\"v\"], b[\"e\"], c is a)  # 4 2 2 True",
-      "notes": ""
+      "checkCode": "# Independent check: run the exact program, and inspect the shared default object\ndef tally(word, seen={}):\n    for ch in word:\n        seen[ch] = seen.get(ch, 0) + 1\n    return seen\n\na = tally(\"level\")\nb = tally(\"eel\", {})\nc = tally(\"vee\")\nprint(a[\"e\"], a[\"v\"], b[\"e\"], c is a)  # 4 2 2 True\nprint(tally.__defaults__[0] is a, a, b)  # True {'l': 2, 'e': 4, 'v': 2} {'e': 2, 'l': 1}",
+      "notes": "Blind trace of the mutable default argument gave a[e]=4, a[v]=2, b[e]=2, c is a True (D); running the exact program confirms. Option verdicts A/B/C incorrect and D correct verified by reproducing each wrong reading (A fresh dict per call, B shared dict also updated by 'eel', C counts right but identity False). Steps and final answer consistent with key; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -217,9 +217,9 @@
     ],
     "type": "NAT",
     "marks": 1,
-    "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD — combines record size (including a deletion marker), usable block space after the header, the unspanned blocking factor with floor/ceiling and a spanned block count; three separate traps each change the answer; about 3–4 minutes.",
-    "estimatedTimeSec": 210,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one storage concept (blocking factor) applied to two linked organisations with routine arithmetic (record size, usable space, floor and ceiling, block counts); slips such as ignoring the header or the deletion marker are tempting but each step is short; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
     "concept": "Blocking factor and block counts for unspanned versus spanned organisation of fixed-length records",
     "conceptIds": [],
     "formulaIds": [],
@@ -259,12 +259,12 @@
       "commonTrap": "Three slips each give a different number: ignoring the 48-byte header (using 2048 bytes) gives $4286 - 4278 = 8$; forgetting the deletion marker (72-byte records) gives $4445 - 4320 = 125$; rounding $120000/27$ down to 4444 gives 64."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "65 (unspanned 4445 blocks, spanned 4380 blocks)",
       "agreesWithKey": true,
-      "checkCode": "from math import ceil\nr=120000; R=8+6+20+20+8+10+1; U=2048-48\nbfr=U//R; un=ceil(r/bfr); sp=ceil(r*R/U)\nprint(R,bfr,un,sp,un-sp)  # 73 27 4445 4380 65",
-      "notes": ""
+      "checkCode": "# Independent check: byte-level accounting, brute-force the largest bfr that fits\nfrom math import ceil\nfields = [8, 6, 20, 20, 8, 10]\nR = sum(fields) + 1                      # 73 bytes incl. deletion marker\nU = 2048 - 48                            # 2000 usable bytes per block\nr = 120000\nbfr = max(k for k in range(1, 100) if k * R <= U)\nunspanned = ceil(r / bfr)\nspanned = -(-(r * R) // U)               # integer ceiling of total bytes / usable\nprint(R, bfr, unspanned, spanned, unspanned - spanned)  # 73 27 4445 4380 65\n# trap values: no header -> 8, no deletion marker -> 125\ndef diff(R, U):\n    b = U // R\n    return ceil(r / b) - ceil(r * R / U)\nprint(diff(73, 2048), diff(72, 2000))  # 8 125",
+      "notes": "Blind solve: record 73 B, usable 2000 B, bfr 27, unspanned 4445, spanned 4380, saving 65; brute-force Python agrees and confirms the three trap values in the solution (8, 125, 64). Stem states the deletion marker is part of every record, the header is per block and no continuation pointers are needed, so the answer is unambiguous. Only change: difficulty relabelled HARD -> MODERATE (one storage concept with two linked organisations and routine arithmetic, about 2-2.5 min, fits the MODERATE rubric rather than HARD) with rationale and estimatedTimeSec (210 -> 150) updated; answer, key and solution steps unchanged. Still within one level of the blueprint slot (HARD)."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -377,12 +377,12 @@
       "commonTrap": "Believing that observing a downstream effect (here $C$) makes its causes independent. For a collider the opposite holds: conditioning on the common effect, or on any of its descendants, makes independent causes dependent."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A (a numeric check with random CPTs: only L ⊥ F holds; B, C and D fail)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A (only L independent of F with nothing observed)",
       "agreesWithKey": true,
-      "checkCode": "import itertools,random\nrandom.seed(7)\npL,pF=random.random(),random.random()\npT={(l,f):random.random() for l in(0,1) for f in(0,1)}; pC={t:random.random() for t in(0,1)}\nb=lambda p,x:p if x else 1-p\nJ={k:b(pL,k[0])*b(pF,k[1])*b(pT[k[:2]],k[2])*b(pC[k[2]],k[3]) for k in itertools.product((0,1),repeat=4)}\nV='LFTC'\nP=lambda **kw:sum(p for k,p in J.items() if all(k[V.index(n)]==v for n,v in kw.items()))\ndef ind(X,Y,Z):\n    for zs in itertools.product((0,1),repeat=len(Z)):\n        z=dict(zip(Z,zs))\n        for x,y in itertools.product((0,1),repeat=2):\n            if abs(P(**{X:x,Y:y},**z)*P(**z)-P(**{X:x},**z)*P(**{Y:y},**z))>1e-12: return False\n    return True\nprint(ind('L','F',[]),ind('L','F',['C']),ind('L','C',[]),ind('F','C',['L']))  # True False False False",
-      "notes": ""
+      "checkCode": "# Independent check: exhaustive numeric test over many random CPT sets (L->T, F->T, T->C)\nimport itertools, numpy as np\nrng = np.random.default_rng(1)\ndef joint(pL, pF, pT, pC):\n    J = np.zeros((2, 2, 2, 2))            # axes: L, F, T, C\n    for l, f, t, c in itertools.product((0, 1), repeat=4):\n        p = (pL if l else 1 - pL) * (pF if f else 1 - pF)\n        p *= pT[l, f] if t else 1 - pT[l, f]\n        p *= pC[t] if c else 1 - pC[t]\n        J[l, f, t, c] = p\n    return J\ndef indep(J, X, Y, Z):\n    for z in itertools.product((0, 1), repeat=len(Z)):\n        idx = [slice(None)] * 4\n        for ax, v in zip(Z, z): idx[ax] = v\n        sub = J[tuple(idx)]\n        rem = [a for a in range(4) if a not in Z]\n        keep = [a for a in rem if a in (X, Y)]\n        m = sub.sum(axis=tuple(i for i, a in enumerate(rem) if a not in (X, Y)))\n        if m.sum() == 0: continue\n        m = m / m.sum()\n        if not np.allclose(m, np.outer(m.sum(1), m.sum(0)), atol=1e-10): return False\n    return True\nL, F, T, C = range(4)\nok = dict.fromkeys(\"ABCD\", True)\nfor _ in range(300):\n    J = joint(rng.random(), rng.random(), rng.random((2, 2)), rng.random(2))\n    ok[\"A\"] &= indep(J, L, F, [])\n    ok[\"B\"] &= indep(J, L, F, [C])\n    ok[\"C\"] &= indep(J, L, C, [])\n    ok[\"D\"] &= indep(J, F, C, [L])\nprint(ok)  # only A holds for every random CPT set: {'A': True, 'B': False, 'C': False, 'D': False}",
+      "notes": "Blind d-separation analysis: T is a collider on L->T<-F, C is a descendant of T; so only (A) is guaranteed. (B) fails by explaining away, (C) and (D) fail via open chains. A numeric test over 300 random CPT sets confirms only A holds universally. Key A unique; option verdicts and steps consistent; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -501,12 +501,12 @@
       "commonTrap": "Treating nullity like rank and assuming it is unchanged by transposition. Rank is shared by $A$ and $A^\\top$, but nullity is (number of columns) $-$ rank, so it is 3 for $A$ and 2 for $A^\\top$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C, D (rank 2; nullities 3, 2, 3; Ax = 0)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA=sp.Matrix([[1,2,0,1,3],[2,4,1,3,7],[3,6,1,4,10],[1,2,1,2,4]])\nr=A.rank()\nprint(r, 5-r, 4-r, (A*sp.Matrix([3,0,1,0,-1])).T, 5-(A.T*A).rank())  # 2 3 2 [0,0,0,0] 3",
-      "notes": ""
+      "checkCode": "# Independent check: numeric rank + null-space test (numpy) cross-checked with exact rank (sympy)\nimport numpy as np, sympy as sp\nA = np.array([[1,2,0,1,3],[2,4,1,3,7],[3,6,1,4,10],[1,2,1,2,4]])\nr = np.linalg.matrix_rank(A)\nx = np.array([3,0,1,0,-1])\nprint(r, A.shape[1]-r, A.shape[0]-r, A@x, A.shape[1]-np.linalg.matrix_rank(A.T@A))  # 2 3 2 [0 0 0 0] 3\nprint(sp.Matrix(A.tolist()).rank(), len(sp.Matrix(A.tolist()).nullspace()), len(sp.Matrix(A.T.tolist()).nullspace()), len((sp.Matrix(A.T.tolist())*sp.Matrix(A.tolist())).nullspace()))  # 2 3 2 3",
+      "notes": "Blind solve: R3=R1+R2, R4=R2-R1 so rank 2; nullity(A)=3, nullity(A^T)=4-2=2, A x=0 for the given x, N(A^T A)=N(A) so nullity 3 => (A), (C), (D). numpy and exact sympy checks agree. Verdicts and steps consistent; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -624,12 +624,12 @@
       "commonTrap": "Treating every stationary point as an extremum and ignoring the endpoints. A student who takes $x = 0$ as the minimum gets a max $-$ min difference of about 1.34 and wrongly marks both (A) and (D)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B, C (critical points 0 and 3; f(−1) = −2.718, f(0) = 0, f(3) = 1.344, f(5) = 0.842; max − min = 4.063)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B, C (max 27e^-3 at x=3; min -e at x=-1; range 4.0625; x=0 not an extremum)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp, math\nx=sp.symbols('x'); f=x**3*sp.exp(-x)\nprint(sp.factor(sp.diff(f,x)), sp.solve(sp.diff(f,x),x))\nv={p:float(f.subs(x,p)) for p in (-1,0,3,5)}; print(v)\nprint(float(sp.diff(f,x).subs(x,-0.1))>0, float(sp.diff(f,x).subs(x,0.1))>0)  # f' > 0 on both sides of 0\nprint(max(v.values())-min(v.values()))  # 4.0625 > 3",
-      "notes": ""
+      "checkCode": "# Independent check: dense grid + symbolic derivative on [-1, 5]\nimport numpy as np, sympy as sp\nxs = np.linspace(-1, 5, 1_200_001); fv = xs**3 * np.exp(-xs)\nprint(xs[fv.argmax()], fv.max(), 27*np.exp(-3))   # 3.0 1.3442... 1.3442...\nprint(xs[fv.argmin()], fv.min(), -np.e)           # -1.0 -2.718... -2.718...\nprint(fv.max() - fv.min())                        # 4.0625... (> 3)\nx = sp.symbols('x'); d = sp.diff(x**3*sp.exp(-x), x)\nprint(sp.factor(d), [float(d.subs(x, t)) > 0 for t in (-0.5, -0.01, 0.01, 1, 2.9)], float(d.subs(x, 4)) < 0)  # f' >= 0 through 0\n# local-min test at 0: f(0-h) < f(0) < f(0+h)  => 0 is not a local minimum\nh = 1e-2; f = lambda t: t**3*np.exp(-t); print(f(-h) < f(0) < f(h))  # True",
+      "notes": "Blind solve: f'=x^2(3-x)e^-x; x=0 is a stationary inflection (not a minimum); global max 27e^-3 at x=3; global min -e at x=-1; max-min = 4.0625 > 3 => (B), (C). Dense-grid and symbolic checks agree. Verdicts and steps consistent; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -706,12 +706,12 @@
       "commonTrap": "Keeping the two eigenvectors of the correlated $2 \\times 2$ block (eigenvalues 7 and 2) and dropping the third axis gives an error of $1^2 = 1$. Forgetting to subtract the mean (projecting $\\mathbf{x}$ itself) gives $0.20$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "3.2 (= 16/5)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "3.20 (exact 16/5)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nS=np.array([[6,2,0],[2,3,0],[0,0,4]],float); mu=np.array([1,2,-1.]); x=np.array([5,2,0.])\nw,V=np.linalg.eigh(S); W=V[:,np.argsort(w)[::-1][:2]]\nxh=mu+W@W.T@(x-mu)\nprint(sorted(w,reverse=True), xh, np.sum((x-xh)**2))  # [7,4,2] [4.2 3.6 0] 3.2",
-      "notes": ""
+      "checkCode": "# Independent check: eigendecomposition and reconstruction with numpy\nimport numpy as np\nS = np.array([[6,2,0],[2,3,0],[0,0,4]], float); mu = np.array([1,2,-1.]); x = np.array([5,2,0.])\nw, V = np.linalg.eigh(S)                 # ascending eigenvalues\norder = np.argsort(w)[::-1]\nW = V[:, order[:2]]                      # two largest-variance directions\nxh = mu + W @ W.T @ (x - mu)\nprint(w[order], xh, ((x - xh)**2).sum())  # [7. 4. 2.] [4.2 3.6 0. ] 3.2\nu3 = V[:, order[2]]; print((u3 @ (x - mu))**2)  # 3.2 (discarded-component check)",
+      "notes": "Blind solve: eigenvalues 7, 4, 2; discarded direction (1,-2,0)/sqrt5; x-mu=(4,0,1); error = 16/5 = 3.20 (reconstruction (4.2, 3.6, 0), direct norm 0.64+2.56 = 3.20). Independent numpy eigendecomposition agrees. Key 3.19 to 3.21 is tight around the exact value and rounding is stated. Trap values in the solution (1 and 0.20) also checked; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -788,12 +788,12 @@
       "commonTrap": "Reporting the unconditional probability $P(K = 7) \\approx 0.27$, or swapping the roles of $p$ and $1 - p$ (treating 0.75 as the drop probability), which gives a very different, tiny value."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.3934 (= 24/61), rounds to 0.39",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.39 (exact 24/61 = 0.3934)",
       "agreesWithKey": true,
-      "checkCode": "from math import comb\nfrom fractions import Fraction as F\npm=lambda k: comb(8,k)*F(3,4)**k*F(1,4)**(8-k)\nr=pm(7)/sum(pm(k) for k in (6,7,8))\nprint(r, float(r))  # 24/61 0.3934",
-      "notes": ""
+      "checkCode": "# Independent check: exact rational arithmetic and a Monte Carlo cross-check\nfrom fractions import Fraction as F\nfrom math import comb\nimport numpy as np\npm = lambda k: comb(8, k) * F(3, 4)**k * F(1, 4)**(8 - k)\nans = pm(7) / (pm(6) + pm(7) + pm(8))\nprint(ans, float(ans), round(float(ans), 2))  # 24/61 0.3934... 0.39\nK = np.random.default_rng(3).binomial(8, 0.75, 2_000_000)\nprint((K == 7).sum() / (K >= 6).sum())        # ~0.393",
+      "notes": "Blind solve: K~Bin(8,0.75), P(K=7|K>=6) = 24/61 = 0.3934 => 0.39. Exact rational arithmetic and a Monte Carlo cross-check agree. Key 0.38 to 0.40 contains 0.39 and rounding is stated in the stem. Steps, arithmetic (44469, 17496, 24/61) checked; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -908,12 +908,12 @@
       "commonTrap": "Marking (C) and rejecting (D) from the slogan 'A\\* is optimal, greedy is not', without checking that the guarantee needs an admissible heuristic. Here $h(C)$ overestimates, and tracing both searches shows the reverse outcome."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "D (A* returns S-A-G, cost 10; greedy returns S-B-C-G, cost 9 = optimum; h(C)=7 > h*(C)=4)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D (h(C)=7>4 so not admissible/consistent; A* returns S-A-G cost 10; greedy returns S-B-C-G cost 9)",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nE=[('S','A',1),('A','G',9),('S','B',3),('B','C',2),('C','G',4),('A','B',3)]\nh={'S':8,'A':8,'B':5,'C':7,'G':0}; g={}\nfor u,v,c in E: g.setdefault(u,{})[v]=c; g.setdefault(v,{})[u]=c\ndef dist(t):\n    d={t:0}; q=[(0,t)]\n    while q:\n        du,u=heapq.heappop(q)\n        if du>d[u]: continue\n        for v,c in g[u].items():\n            if du+c<d.get(v,1e9): d[v]=du+c; heapq.heappush(q,(d[v],v))\n    return d\nhs=dist('G')\ndef search(key):\n    fr=[(key(0,'S'),'S',0,'S')]; closed=set()\n    while fr:\n        f,u,gu,p=heapq.heappop(fr)  # ties -> alphabetical\n        if u in closed: continue\n        if u=='G': return gu,p\n        closed.add(u)\n        for v,c in g[u].items():\n            if v not in closed: heapq.heappush(fr,(key(gu+c,v),v,gu+c,p+v))\nprint(hs, [n for n in h if h[n]>hs[n]], [(u,v) for u in g for v in g[u] if h[u]>g[u][v]+h[v]])\nprint('A*',search(lambda G,v:G+h[v]),'greedy',search(lambda G,v:h[v]))  # A* (10,'SAG') greedy (9,'SBCG')",
-      "notes": ""
+      "checkCode": "# Independent check: shortest paths, admissibility, consistency, and both searches\nimport heapq\nedges = {('S','A'):1, ('S','B'):3, ('A','B'):3, ('A','G'):9, ('B','C'):2, ('C','G'):4}\nadj = {}\nfor (u, v), c in edges.items():\n    adj.setdefault(u, {})[v] = c; adj.setdefault(v, {})[u] = c\nh = {'S':8, 'A':8, 'B':5, 'C':7, 'G':0}\n\ndef dist(src):\n    d = {src: 0}; pq = [(0, src)]\n    while pq:\n        du, u = heapq.heappop(pq)\n        if du > d[u]: continue\n        for v, c in adj[u].items():\n            if du + c < d.get(v, 1e9): d[v] = du + c; heapq.heappush(pq, (d[v], v))\n    return d\n\nhs = dist('G')\nprint(hs, 'admissible:', all(h[n] <= hs[n] for n in h),\n      'consistent:', all(h[u] <= c + h[v] for u in adj for v, c in adj[u].items()))\n\ndef search(use_g):\n    # graph search: goal test on selection, ties broken alphabetically by node name\n    fr = [(h['S'], 'S', 0, 'S')]; closed = set()\n    while fr:\n        _, u, g, path = heapq.heappop(fr)\n        if u in closed: continue\n        if u == 'G': return g, path\n        closed.add(u)\n        for v, c in sorted(adj[u].items()):\n            if v not in closed:\n                heapq.heappush(fr, ((g + c if use_g else 0) + h[v], v, g + c, path + v))\n\nprint('A*', search(True), 'greedy', search(False))  # A* (10, 'SAG'); greedy (9, 'SBCG'); optimum is 9 via SBCG",
+      "notes": "Blind solve: h*(S,A,B,C)=(9,9,6,4), so h(C)=7>4 makes h inadmissible and inconsistent ((A),(B) false); A* graph search expands S, B, A and selects G via S-A-G cost 10 (f(G)=10 < f(C)=12) so it is not least-cost ((C) false); greedy expands S, B, C, G and returns S-B-C-G cost 9 = optimum ((D) true). Result is the same with or without re-opening closed nodes and tie-breaking never matters. Independent Python agrees. Key D unique; no change needed."
     },
     "review": {
       "status": "SELF_CHECKED",

@@ -23,7 +23,7 @@ import { SUBJECT_SHORT } from "@/lib/labels";
 import { cn, formatDate, plural } from "@/lib/utils";
 import type { ReviewConcept, ReviewFormula } from "./types";
 import { GradeResult, RecallGrader } from "./RecallGrader";
-import { GRADE_LABEL, KIND_LABEL, relativeDay } from "./shared";
+import { GRADE_LABEL, KIND_LABEL, dueLabel, isWithdrawnMockQuestion } from "./shared";
 
 type Outcome = { kind: "graded"; grade: RecallGrade; nextReview: string } | { kind: "skipped" } | { kind: "removed" } | { kind: "unavailable" };
 
@@ -35,6 +35,7 @@ export function RevisionSession({
   concepts,
   formulas,
   topicName,
+  availableMocks,
   onExit,
 }: {
   title: string;
@@ -46,6 +47,8 @@ export function RevisionSession({
   concepts: ReadonlyMap<string, ReviewConcept>;
   formulas: ReadonlyMap<string, ReviewFormula>;
   topicName: ReadonlyMap<string, string>;
+  /** Mocks currently available; questions of other mocks are known to be withdrawn. */
+  availableMocks: ReadonlySet<string>;
   onExit: () => void;
 }) {
   const [index, setIndex] = useState(0);
@@ -60,8 +63,8 @@ export function RevisionSession({
   // Warm the HTTP cache with the next question so moving on is instant.
   useEffect(() => {
     const next = keys[index + 1];
-    if (next?.startsWith("question:")) void fetch(`/api/questions/${encodeURIComponent(next.slice(9))}`).catch(() => undefined);
-  }, [index, keys]);
+    if (next?.startsWith("question:") && !isWithdrawnMockQuestion(next.slice(9), availableMocks)) void fetch(`/api/questions/${encodeURIComponent(next.slice(9))}`).catch(() => undefined);
+  }, [index, keys, availableMocks]);
 
   const record = (key: string, o: Outcome) => setOutcomes((prev) => ({ ...prev, [key]: o }));
   const next = () => setIndex((i) => i + 1);
@@ -149,6 +152,7 @@ export function RevisionSession({
           concepts={concepts}
           formulas={formulas}
           topicName={topicName}
+          availableMocks={availableMocks}
           onOutcome={(o) => record(key, o)}
           onNext={next}
           isLast={index === keys.length - 1}
@@ -162,11 +166,16 @@ export function RevisionSession({
 
 type Fetch = { status: "loading" } | { status: "ok"; q: QuestionPayload } | { status: "missing" } | { status: "error"; offline: boolean };
 
-function useQuestionPayload(id: string | null) {
-  const [state, setState] = useState<Fetch>({ status: "loading" });
+/**
+ * Loads a question payload. The server's availability gate is the source of
+ * truth (404 = not served); a question of a mock this page already knows is
+ * withdrawn is reported unavailable without a request.
+ */
+function useQuestionPayload(id: string | null, knownWithdrawn: boolean) {
+  const [state, setState] = useState<Fetch>(() => (knownWithdrawn ? { status: "missing" } : { status: "loading" }));
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    if (!id) return;
+    if (!id || knownWithdrawn) return;
     const ctrl = new AbortController();
     (async () => {
       try {
@@ -179,7 +188,7 @@ function useQuestionPayload(id: string | null) {
       }
     })();
     return () => ctrl.abort();
-  }, [id, attempt]);
+  }, [id, attempt, knownWithdrawn]);
   const retry = () => {
     setState({ status: "loading" });
     setAttempt((a) => a + 1);
@@ -195,6 +204,7 @@ function SessionItem({
   concepts,
   formulas,
   topicName,
+  availableMocks,
   onOutcome,
   onNext,
   isLast,
@@ -206,6 +216,7 @@ function SessionItem({
   concepts: ReadonlyMap<string, ReviewConcept>;
   formulas: ReadonlyMap<string, ReviewFormula>;
   topicName: ReadonlyMap<string, string>;
+  availableMocks: ReadonlySet<string>;
   onOutcome: (o: Outcome) => void;
   onNext: () => void;
   isLast: boolean;
@@ -217,7 +228,7 @@ function SessionItem({
   const nextRef = useRef<HTMLButtonElement>(null);
   const kind = item?.kind ?? (itemKey.split(":")[0] as RevisionItemRow["kind"]);
   const refId = item?.refId ?? itemKey.slice(kind.length + 1);
-  const { state, retry } = useQuestionPayload(kind === "question" ? refId : null);
+  const { state, retry } = useQuestionPayload(kind === "question" ? refId : null, kind === "question" && isWithdrawnMockQuestion(refId, availableMocks));
   const graded = outcome?.kind === "graded" ? outcome : null;
 
   useEffect(() => {
@@ -375,8 +386,7 @@ function SessionItem({
             )}
             {item ? (
               <span className="ml-auto text-xs text-fg-3">
-                Scheduled {item.nextReview <= today ? "for " : ""}
-                {relativeDay(item.nextReview, today)}
+                {dueLabel(item.nextReview, today).text}
                 {item.reviewCount ? ` · reviewed ${plural(item.reviewCount, "time")}` : " · first review"}
                 {item.confidence ? ` · last: ${GRADE_LABEL[item.confidence]}` : ""}
               </span>

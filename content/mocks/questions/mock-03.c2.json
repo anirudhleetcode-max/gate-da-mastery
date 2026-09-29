@@ -82,15 +82,16 @@
         }
       ],
       "shortcut": "For $f(x)=x^3-3ax+2$ the critical points are $x=\\pm\\sqrt a$, and the local minimum is at $x=+\\sqrt a$. So $\\sqrt a = 2$, $a = 4$, and the local minimum value is $f(\\sqrt a) = 2 - 2a\\sqrt a = 2 - 16 = -14$.",
-      "commonTrap": "Answering with the parameter $a=4$ or with the local maximum value $f(-2)=18$, or solving $3x^2 - 3a = 0$ incorrectly as $a = x = 2$ (which leads to $-2$)."
+      "commonTrap": "Answering with the parameter $a=4$ or with the local maximum value $f(-2)=18$, or solving $3x^2 - 3a = 0$ incorrectly as $a = x = 2$ (which leads to $-2$).",
+      "teaching": "A local minimum of a smooth function is a point where the graph stops falling and starts rising. There the tangent line is horizontal, so the derivative vanishes: $f'(c)=0$. This **critical-point condition** is necessary but not sufficient, because a horizontal tangent also occurs at a local maximum or at a flat inflection point.\n\nTo tell them apart, use the **second-derivative test**. If $f'(c)=0$ and $f''(c)>0$, the graph curves upward like a cup, so $c$ is a local minimum. If $f''(c)<0$, it curves downward like a cap, so $c$ is a local maximum. If $f''(c)=0$ the test is silent and you must look at the sign of $f'$ on both sides.\n\nHere the function contains an unknown constant $a$. The statement \"local minimum at $x=2$\" supplies one equation, $f'(2)=0$, and that pins down $a$. Once $a$ is known the function is completely specified, so the value at the minimum is found by substituting $x=2$ into $f$. The question asks for the *value of the function* at the minimum, not the location $x=2$ and not the parameter $a$.\n\nIn this question: $f'(x)=3x^2-3a$, so $12-3a=0$ and $a=4$. Then $f(x)=x^3-12x+2$ has critical points $x=\\pm 2$, with $f''(2)=12>0$ (minimum) and $f''(-2)=-12<0$ (maximum). The local minimum value is $f(2)=8-24+2=-14$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "a = 4; f''(2) = 12 > 0; local minimum value f(2) = -14",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C: a = 4 (from f'(2)=0), f''(2)=12>0, local minimum value f(2) = -14",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx,a=sp.symbols('x a'); f=x**3-3*a*x+2\na0=sp.solve(sp.diff(f,x).subs(x,2),a)[0]; g=f.subs(a,a0)\nprint(a0, sp.diff(g,x,2).subs(x,2), g.subs(x,2), g.subs(x,-2))  # 4 12 -14 18",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx, a = sp.symbols('x a', real=True)\nf = x**3 - 3*a*x + 2\na0 = sp.solve(sp.diff(f, x).subs(x, 2), a)\ng = f.subs(a, a0[0])\nprint(a0, sp.solve(sp.diff(g, x), x), sp.diff(g, x, 2).subs(x, 2))\nval = g.subs(x, 2)\nprint(val, {k: v for k, v in {'A': 18, 'B': 4, 'C': -14, 'D': -2}.items() if v == val})",
+      "notes": "Blind solve: f'(2)=12-3a=0 gives a=4; f(x)=x^3-12x+2 has critical points x=+-2 with f''(2)=12>0 (min) and f''(-2)=-12<0 (max); f(2)=-14, matching key C. Independent Python reproduces a=4, critical points, f''(2)=12 and f(2)=-14 and matches the value against the four options only at C. Distractors traced: 18 = f(-2) (the local maximum), 4 = parameter a, -2 = f(2) with the wrong a=2. Only a=4 satisfies f'(2)=0, so the stem has one defensible answer. Steps, finalAnswer and optionAnalysis verdicts are correct; EASY/1 mark/70 s is honest; subject/topic (co / co-optimization / co-maxima-minima) fits. solution.teaching added to match the repository's solution-quality standard. No correctness edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -199,15 +200,16 @@
           "explanation": "Wrongly demands $\\ln(x-2) > 0$. A negative denominator is perfectly acceptable, so the points $2 < x < 3$ belong to the domain."
         }
       ],
-      "commonTrap": "Checking only the square root ($x \\ge 2$) and forgetting the logarithm and the zero of the denominator, or keeping $x=2$ because $\\sqrt 0$ is defined."
+      "commonTrap": "Checking only the square root ($x \\ge 2$) and forgetting the logarithm and the zero of the denominator, or keeping $x=2$ because $\\sqrt 0$ is defined.",
+      "teaching": "The domain of a function given by a formula is the set of real inputs for which every operation in the formula is defined. Check each risky operation separately, then keep only the inputs that satisfy all the conditions at once (their intersection).\n\nThree operations cause trouble in real arithmetic. A square root $\\sqrt{u}$ needs $u\\ge 0$; zero is allowed because $\\sqrt 0=0$. A natural logarithm $\\ln u$ needs $u>0$ strictly, since $\\ln$ is undefined at $0$ and at negative numbers. A fraction $\\frac{N}{D}$ needs $D\\ne 0$; the numerator may be zero or negative without any problem.\n\nNotice the difference in strictness: the square root allows $u=0$ but the logarithm does not, so whenever both act on the same expression the logarithm gives the tighter condition. Also remember that a logarithm can be negative (for $0<u<1$ we have $\\ln u<0$). A negative denominator is perfectly fine; only the value exactly $0$ is forbidden, and $\\ln u=0$ exactly when $u=1$.\n\nIn this question the same expression $u=x-2$ appears throughout. The square root gives $u\\ge 0$, the logarithm gives $u>0$, and the denominator gives $\\ln u\\ne 0$, i.e. $u\\ne 1$, i.e. $x\\ne 3$. Intersecting these gives $x>2$ and $x\\ne 3$, which is $(2,3)\\cup(3,\\infty)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Domain is (2,3) U (3,inf): defined exactly for x>2, x != 3",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B: (2,3) U (3,inf) (x>2 from the logarithm, x != 3 from ln(x-2) != 0)",
       "agreesWithKey": true,
-      "checkCode": "import math\ndef ok(t):\n    try: math.sqrt(t-2)/math.log(t-2); return True\n    except (ValueError, ZeroDivisionError): return False\nprint([t for t in (1.9,2,2.5,3,3.5,10) if ok(t)])  # [2.5, 3.5, 10]",
-      "notes": ""
+      "checkCode": "import math\ndef defined(t):\n    try:\n        math.sqrt(t - 2) / math.log(t - 2)\n        return True\n    except (ValueError, ZeroDivisionError):\n        return False\npts = [1.5, 2, 2.0001, 2.5, 2.9999, 3, 3.0001, 4, 100]\nprint([t for t in pts if defined(t)])\nopts = {'A': lambda t: 2 <= t < 3 or t > 3, 'B': lambda t: 2 < t < 3 or t > 3, 'C': lambda t: t > 2, 'D': lambda t: t > 3}\nprint([k for k, m in opts.items() if all(m(t) == defined(t) for t in pts)])",
+      "notes": "Blind solve: sqrt needs x>=2, ln needs x>2 (so x=2 is excluded), denominator ln(x-2) != 0 excludes x=3; domain (2,3) U (3,inf), matching key B. Independent Python evaluates the expression with math.sqrt/math.log at probe points (1.5, 2, 2.0001, 2.5, 2.9999, 3, 3.0001, 4, 100) and finds it defined exactly for x>2, x != 3; only option B's set agrees at every probe. Distractors traced: A keeps x=2 (ln 0), C keeps x=3 (division by ln 1 = 0), D wrongly demands ln(x-2)>0. Unique answer; steps and optionAnalysis correct; EASY/1 mark/75 s honest; topic/subtopic (co-limits-continuity / co-functions, functions of a single variable) fits. solution.teaching added to match the repository standard. No correctness edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -317,15 +319,16 @@
         }
       ],
       "shortcut": "Concavity elimination: $f''(8) < 0$ means the tangent line lies above the curve, so $P_2(8.6) < 2.05$. This removes A and C immediately. Only the size of the quadratic correction, $\\tfrac12 f''(8)(0.6)^2 = -0.00125$ (not $-0.0025$), then decides between B and D.",
-      "commonTrap": "Dropping the $\\tfrac{1}{2!}$ factor in the quadratic term, or taking $f''(8)$ as positive; the cube root is concave for $x>0$, so the quadratic correction is negative."
+      "commonTrap": "Dropping the $\\tfrac{1}{2!}$ factor in the quadratic term, or taking $f''(8)$ as positive; the cube root is concave for $x>0$, so the quadratic correction is negative.",
+      "teaching": "The Taylor polynomial of degree $n$ of $f$ about $x=a$ is the polynomial that matches $f$ and its first $n$ derivatives at $a$:\n\n$$\nP_n(x)=\\sum_{k=0}^{n}\\frac{f^{(k)}(a)}{k!}(x-a)^k .\n$$\n\nNear $a$, the graph of $P_1$ is the tangent line, and $P_2$ adds the curvature, so it hugs the graph more closely. This is the standard way to approximate a value that is hard to compute (here $\\sqrt[3]{8.6}$) from information at a nearby \"nice\" point (here $8$, whose cube root is exactly $2$).\n\nThe procedure is mechanical: choose the centre $a$, compute $f(a)$, $f'(a)$, $f''(a)$, write $P_2$, and substitute the distance $h=x-a$. Two errors are very common: forgetting the factor $\\frac{1}{2!}$ in front of $f''(a)$, and getting the sign of $f''$ wrong. For $f(x)=x^{1/3}$ the power rule gives $f'(x)=\\tfrac13x^{-2/3}$ and $f''(x)=-\\tfrac29x^{-5/3}$. The minus sign reflects that the cube root is concave for $x>0$, so the tangent line lies above the curve and the quadratic correction must be negative.\n\nIn this question $a=8$ and $h=0.6$, with $f(8)=2$, $f'(8)=\\tfrac1{12}$ and $f''(8)=-\\tfrac1{144}$. Therefore $P_2(8.6)=2+0.05-\\tfrac12\\cdot\\tfrac{0.36}{144}=2+0.05-0.00125=2.04875$, which is very close to the true value $\\sqrt[3]{8.6}\\approx 2.04880$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "P2(8.6) = 1639/800 = 2.04875 (exact cube root of 8.6 is 2.04880)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D: P2(8.6) = 2 + 0.6/12 - 0.36/288 = 1639/800 = 2.04875",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=sp.cbrt(x); h=sp.Rational(3,5)\nP=sum(sp.diff(f,x,k).subs(x,8)*h**k/sp.factorial(k) for k in range(3))\nprint(P, float(P), 8.6**(1/3))  # 1639/800 2.04875 2.0487996",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', positive=True)\nf = sp.cbrt(x)\nP = sum(sp.diff(f, x, k).subs(x, 8) * sp.Rational(3, 5)**k / sp.factorial(k) for k in range(3))\nprint(P, float(P), float(sp.Rational(43, 5)**sp.Rational(1, 3)))\nopts = {'A': '2.05000', 'B': '2.04750', 'C': '2.05125', 'D': '2.04875'}\nprint([k for k, v in opts.items() if sp.Rational(v) == P])",
+      "notes": "Blind solve: f(8)=2, f'(8)=1/12, f''(8)=-1/144, so P2(8.6)=2+0.05-0.00125=2.04875, matching key D. Independent Python (sympy derivatives, exact rational arithmetic) gives 1639/800 = 2.04875 and matches option D as an exact rational; true cube root of 8.6 is 2.0487996, so D is also the closest option, no conflict. Distractors traced: A = tangent line only, B = missing 1/2! (-0.0025), C = sign error on f''. The question asks for the polynomial value, so exactly one option is correct. Steps, quick, finalAnswer, optionAnalysis verified; MODERATE/2 marks/150 s honest; topic co-taylor / co-taylor-series fits. solution.teaching added to match the repository standard. No correctness edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -364,7 +367,7 @@
     "marks": 2,
     "difficulty": "EASY",
     "difficultyRationale": "Platform-estimated: EASY — one concept (single-variable optimisation) with a one-line model and a quadratic to differentiate; about 1.5 minutes for a prepared student.",
-    "estimatedTimeSec": 100,
+    "estimatedTimeSec": 90,
     "concept": "Single-variable optimisation: maximising profit (revenue minus cost) for a linear demand curve",
     "conceptIds": [],
     "formulaIds": [],
@@ -435,15 +438,16 @@
         }
       ],
       "shortcut": "$\\Pi(p) = (p-100)(2000-4p)$ is a downward parabola with roots $p = 100$ (zero margin) and $p = 500$ (zero subscribers). Its maximum lies at the midpoint of the roots, $p = 300$.",
-      "commonTrap": "Maximising revenue $p\\,N(p)$ (which gives $p = 250$) instead of profit, i.e. forgetting that every subscriber also costs 100 rupees to serve."
+      "commonTrap": "Maximising revenue $p\\,N(p)$ (which gives $p = 250$) instead of profit, i.e. forgetting that every subscriber also costs 100 rupees to serve.",
+      "teaching": "To optimise a quantity that depends on one variable, write it as a function of that variable, find where the derivative is zero, and confirm with the second derivative (or by comparing endpoints) that the point is a maximum or a minimum. In business problems the quantity is usually profit:\n\n$$\n\\text{profit} = \\text{revenue} - \\text{cost} = (\\text{price} - \\text{unit cost}) \\times \\text{quantity sold}.\n$$\n\nHere the quantity sold depends on the price through the demand curve $N(p)=2000-4p$. Raising the price earns more per subscriber but loses subscribers, and the best price balances the two effects.\n\nBe careful: maximising *revenue* $p\\,N(p)$ and maximising *profit* are different problems whenever each customer carries a cost. Here the cost of 100 rupees per subscriber pushes the best price upward, because the service prefers fewer subscribers, each paying more, over many subscribers who barely cover their cost. Always read exactly what is being maximised.\n\nSince $\\Pi(p)=(p-100)(2000-4p)$ is a quadratic with a negative leading coefficient, its graph is a downward parabola with its maximum at the vertex. For a factored quadratic the vertex lies midway between the two roots $p=100$ (zero margin) and $p=500$ (zero subscribers), i.e. at $p=300$. Calculus gives the same result: $\\Pi'(p)=-8p+2400=0$. Finally check that the answer lies in the allowed range $0\\le p\\le 500$; it does, and there are $N(300)=800$ subscribers."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "p = 300 (profit 160000; revenue-only optimum would be 250)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "A: p = 300 (profit (p-100)(2000-4p) maximal, 160000 rupees at 800 subscribers)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\np=sp.symbols('p'); P=(p-100)*(2000-4*p)\np0=sp.solve(sp.diff(P,p),p)[0]\nprint(p0, P.subs(p,p0), sp.diff(P,p,2), P.subs(p,0), P.subs(p,500))  # 300 160000 -8 -200000 0\nprint(max(range(0,501), key=lambda t:(t-100)*(2000-4*t)))  # 300",
-      "notes": ""
+      "checkCode": "import sympy as sp\np = sp.symbols('p', real=True)\nprofit = (p - 100) * (2000 - 4 * p)\ncrit = sp.solve(sp.diff(profit, p), p)\nprint(crit, sp.diff(profit, p, 2), profit.subs(p, crit[0]))\nbest = max(range(0, 501), key=lambda t: (t - 100) * (2000 - 4 * t))\nprint(best, {k: (v - 100) * (2000 - 4 * v) for k, v in {'A': 300, 'B': 250, 'C': 200, 'D': 350}.items()})",
+      "notes": "Blind solve: profit = (p-100)(2000-4p), derivative -8p+2400=0 gives p=300 (in [0,500], second derivative -8<0), matching key A. Independent Python solves the derivative symbolically, brute-forces integer prices 0..500 (argmax 300) and tabulates profit for all four options (A 160000, B 150000, C 120000, D 150000): only A is maximal. Distractors traced: B = revenue-only optimum, C = cost added instead of subtracted, D = revenue optimum plus cost. Unique answer; steps and optionAnalysis correct. Metadata fix: estimatedTimeSec lowered from 100 to 90 so it matches the stated 'about 1.5 minutes' and the EASY rubric (<= 1.5 min); EASY label kept (one concept, one-line model, quadratic with a midpoint-of-roots shortcut). solution.teaching added to match the repository standard. No answer or option changes."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -553,15 +557,16 @@
         }
       ],
       "shortcut": "For a $1^\\infty$ form, $\\lim u(x)^{v(x)} = e^{\\lim v(x)\\,(u(x) - 1)}$. Here $v\\,(u-1) = 2x \\cdot \\dfrac{4}{x-1} \\to 8$, giving $e^{8}$ directly.",
-      "commonTrap": "Treating $1^\\infty$ as $1$, or replacing $x-1$ by $x$ in the base, which discards the contribution of the $-1$ and gives $e^{6}$."
+      "commonTrap": "Treating $1^\\infty$ as $1$, or replacing $x-1$ by $x$ in the base, which discards the contribution of the $-1$ and gives $e^{6}$.",
+      "teaching": "A limit of the form $1^\\infty$ (base tending to $1$, exponent tending to $\\infty$) is *indeterminate*. The base is slightly bigger than $1$, and multiplying that tiny excess by a huge exponent can give any finite positive number, $0$, or $\\infty$. It is not automatically $1$.\n\nThe classical example is $\\left(1+\\frac1n\\right)^n\\to e$. The general rule that follows from it is: if $u(x)\\to 0$ and $v(x)\\to\\infty$, then\n\n$$\n\\lim\\,(1+u)^{v} = e^{\\lim u\\,v},\n$$\n\nprovided the product $uv$ has a limit. The reason is $\\ln(1+u)\\approx u$ for small $u$, so $\\ln\\big[(1+u)^v\\big]=v\\ln(1+u)\\approx uv$.\n\nThe recipe is therefore: (1) write the base as $1+u$ by splitting off the $1$; (2) multiply $u$ by the exponent; (3) take the limit of that product and place it in the exponent of $e$.\n\nIn this question the base is $\\frac{x+3}{x-1}=1+\\frac{4}{x-1}$, so $u=\\frac{4}{x-1}$ and $u\\cdot v=\\frac{4}{x-1}\\cdot 2x=\\frac{8x}{x-1}\\to 8$. Hence the limit is $e^{8}$. Do not simplify $\\frac{x+3}{x-1}$ to $\\frac{x+3}{x}$: the $-1$ in the denominator raises the excess from about $\\frac3x$ to about $\\frac4x$, which changes the answer from $e^{6}$ to $e^{8}$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "e^8 (approx 2980.96)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C: e^8 (ln L = lim 2x*4/(x-1) = 8)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp, math\nx=sp.symbols('x', positive=True)\nprint(sp.limit(((x+3)/(x-1))**(2*x), x, sp.oo))  # exp(8)\nX=1e6; print(((X+3)/(X-1))**(2*X), math.exp(8))  # ~2980.93 (finite-x) 2980.958",
-      "notes": ""
+      "checkCode": "import sympy as sp\nfrom mpmath import mp, mpf, exp\nx = sp.symbols('x', positive=True)\nprint(sp.limit(((x + 3) / (x - 1))**(2 * x), x, sp.oo))\nmp.dps = 50\nfor X in (mpf(10)**3, mpf(10)**6, mpf(10)**9):\n    print(mp.nstr(((X + 3) / (X - 1))**(2 * X), 12))\nprint(mp.nstr(exp(8), 12), {k: mp.nstr(exp(v), 8) for k, v in {'A': 4, 'B': 6, 'C': 8}.items()})",
+      "notes": "Blind solve: base = 1+4/(x-1), so ln L = lim 2x*4/(x-1) = 8 and L = e^8, matching key C. Independent Python: sympy limit gives exp(8); high-precision mpmath evaluation at X=1e3, 1e6, 1e9 gives 2957.26, 2980.93, 2980.958 converging to e^8 = 2980.95799 (e^4 = 54.6 and e^6 = 403.4 are far away). Distractors traced: A = e^6*e^-2 (multiplying instead of dividing), B = e^6 (replacing x-1 by x), D = treating 1^inf as 1. Unique answer; steps (including the two-standard-limits cross-check), optionAnalysis, shortcut and trap correct; MODERATE/2 marks/140 s honest; topic co-limits-continuity / co-limits fits. solution.teaching added to match the repository standard. No correctness edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -671,15 +676,16 @@
         }
       ],
       "shortcut": "Since $\\dfrac{d^n}{dx^n}\\cos 2x = 2^n\\cos\\!\\left(2x + \\tfrac{n\\pi}{2}\\right)$, the sixth derivative of $\\cos 2x$ is $64\\cos(2x + 3\\pi) = -64\\cos 2x$. Multiplying by $-\\tfrac12$ gives $f^{(6)}(x) = 32\\cos 2x$, so $f^{(6)}(0) = 32$.",
-      "commonTrap": "Reading off the coefficient of $x^6$ and stopping there (forgetting $f^{(n)}(0) = n!\\,c_n$), or losing the factor $\\tfrac12$ or the sign when using $\\sin^2 x = \\tfrac12(1-\\cos 2x)$."
+      "commonTrap": "Reading off the coefficient of $x^6$ and stopping there (forgetting $f^{(n)}(0) = n!\\,c_n$), or losing the factor $\\tfrac12$ or the sign when using $\\sin^2 x = \\tfrac12(1-\\cos 2x)$.",
+      "teaching": "A Maclaurin series is the Taylor series about $0$: $f(x)=\\sum_{n\\ge 0}c_n x^n$, and its coefficients are tied to the derivatives at $0$ by\n\n$$\nc_n=\\frac{f^{(n)}(0)}{n!}, \\qquad\\text{equivalently}\\qquad f^{(n)}(0)=n!\\,c_n .\n$$\n\nThis is powerful: if you can find the series of $f$ by any route (a known series, an identity, a substitution), you can read off any derivative at $0$ without differentiating repeatedly. The factor $n!$ is where students slip; the coefficient itself is not the derivative.\n\nFor $\\sin^2 x$, differentiating six times with the product rule would be tedious. Instead use the identity $\\sin^2x=\\frac{1-\\cos 2x}{2}$ together with the standard series $\\cos t=1-\\frac{t^2}{2!}+\\frac{t^4}{4!}-\\frac{t^6}{6!}+\\cdots$ at $t=2x$. The powers of $2$ come from $(2x)^n=2^nx^n$.\n\nTake the $x^6$ term: $\\cos 2x$ contributes $-\\frac{2^6}{6!}x^6=-\\frac{64}{720}x^6=-\\frac{4}{45}x^6$, and multiplying by $-\\frac12$ gives $c_6=\\frac{2}{45}$. Therefore $f^{(6)}(0)=6!\\cdot\\frac{2}{45}=720\\cdot\\frac{2}{45}=32$.\n\nAs a check, differentiating $\\frac12-\\frac12\\cos 2x$ six times gives $f^{(6)}(x)=32\\cos 2x$, which equals $32$ at $x=0$. Answering $\\frac{2}{45}$ (the coefficient) is the classic slip."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "f^(6)(0) = 32 (Maclaurin coefficient of x^6 is 2/45; 720*2/45 = 32)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B: f^(6)(0) = 6! * (2/45) = 32 (f^(6)(x) = 32 cos 2x)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=sp.sin(x)**2\nprint(sp.diff(f,x,6).subs(x,0), sp.series(f,x,0,8).removeO().coeff(x,6))  # 32 2/45",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.sin(x)**2\nd6 = sp.diff(f, x, 6).subs(x, 0)\nc6 = sp.series(f, x, 0, 8).removeO().coeff(x, 6)\nprint(d6, c6, sp.factorial(6) * c6)\nprint(sp.simplify(sp.diff(f, x, 6) - 32 * sp.cos(2 * x)))\nprint({k: v for k, v in {'A': sp.Rational(2, 45), 'B': 32, 'C': 64, 'D': -32}.items() if v == d6})",
+      "notes": "Blind solve: sin^2 x = (1-cos 2x)/2, so f^(6)(x) = -(1/2)(-64 cos 2x) = 32 cos 2x and f^(6)(0) = 32, matching key B. Independent Python: sympy sixth derivative at 0 = 32; series coefficient of x^6 = 2/45 and 6!*2/45 = 32; simplify(f^(6) - 32 cos 2x) = 0; only option B equals 32. Distractors traced: A = coefficient 2/45 (forgot 6!), C = dropped the 1/2, D = sign error. Unique answer with no convention dependence (derivative value, not coefficient, is asked). Steps, direct-differentiation cross-check, optionAnalysis correct; MODERATE/2 marks/150 s honest; topic co-taylor / co-taylor-series fits. solution.teaching added to match the repository standard. No correctness edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -717,7 +723,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one topic (extrema) but three statements need separate checks, including a critical point where the second-derivative test is inconclusive and a local-versus-global distinction; about 2.5 minutes for a prepared student.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one topic (extrema) with four statements settled by three routine analyses (sign of $f'$ for A and B, closed-interval comparison for C, end behaviour for D), including a critical point where the second-derivative test is inconclusive and a local-versus-global distinction; about 2.5–3 minutes for a prepared student.",
     "estimatedTimeSec": 170,
     "concept": "Local and global extrema of a polynomial: first-derivative test when f'' = 0, closed-interval minimum, end behaviour",
     "conceptIds": [],
@@ -797,15 +803,16 @@
         }
       ],
       "shortcut": "For statement A, factor $f(x) = x^4(x-5)$: near $x=0$ the factor $x^4\\ge 0$ and $x-5<0$, so $f(x)\\le 0 = f(0)$. That proves a local maximum directly, without any derivative test.",
-      "commonTrap": "Concluding from $f''(0)=0$ that $x=0$ is not an extremum (or is an inflection point); the second-derivative test is inconclusive there and the first-derivative sign change shows a local maximum. Another slip is treating the local minimum at $x=4$ as a global minimum on $\\mathbb{R}$."
+      "commonTrap": "Concluding from $f''(0)=0$ that $x=0$ is not an extremum (or is an inflection point); the second-derivative test is inconclusive there and the first-derivative sign change shows a local maximum. Another slip is treating the local minimum at $x=4$ as a global minimum on $\\mathbb{R}$.",
+      "teaching": "**Local versus global extrema.** A point $c$ is a *local maximum* if $f(c)\\ge f(x)$ for all $x$ near $c$, and a *local minimum* if $f(c)\\le f(x)$ for all $x$ near $c$. A *global* (absolute) minimum is a point where $f$ takes its smallest value over the whole domain. These are different questions.\n\n**Finding local extrema.** First solve $f'(x)=0$ for the candidates. Then classify each one with the **first-derivative test** (sign of $f'$ just left and right of $c$: $+$ to $-$ is a maximum, $-$ to $+$ is a minimum, no change is neither) or with the **second-derivative test** ($f''(c)>0$ minimum, $f''(c)<0$ maximum). The second-derivative test is inconclusive when $f''(c)=0$; then rely on the sign change of $f'$, or look directly at $f$ near $c$.\n\n**Global extrema.** On a closed interval $[p,q]$ a continuous function attains its minimum and maximum (Extreme Value Theorem), so compare $f$ at the critical points inside the interval and at both endpoints. On all of $\\mathbb R$ there is no such guarantee and you must also examine the end behaviour. A polynomial of odd degree tends to $-\\infty$ at one end and $+\\infty$ at the other, so it has no global minimum and no global maximum, however many local extrema it has.\n\nFor $f(x)=x^5-5x^4=x^4(x-5)$: $f'(x)=5x^3(x-4)$ has signs $+,-,+$ across $x=0$ and $x=4$. So $x=0$ is a local maximum (even though $f''(0)=0$) and $x=4$ is a local minimum with $f(4)=-256$. On $[-2,5]$ the values $-112,\\,0,\\,-256,\\,0$ give minimum $-256$. On $\\mathbb R$, $f(x)\\to-\\infty$ as $x\\to-\\infty$, so there is no global minimum."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, C, D correct; B false. f'=5x^3(x-4); f''(0)=0, f''(4)=320; min on [-2,5] is -256; f->-inf as x->-inf",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "A, C, D (B false: x=4 is a local minimum)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=x**5-5*x**4\nprint(sp.factor(sp.diff(f,x)), sp.diff(f,x,2).subs(x,0), sp.diff(f,x,2).subs(x,4))  # 5*x**3*(x-4) 0 320\nprint([f.subs(x,v) for v in (-2,0,4,5)])  # [-112, 0, -256, 0] -> min -256\nprint(sp.limit(f,x,-sp.oo), sp.limit(f,x,sp.oo))  # -oo oo\nprint(all((t*0.001)**4*((t*0.001)-5)<=0 for t in range(-500,501)))  # f<=0=f(0) near 0 -> local max",
-      "notes": ""
+      "checkCode": "import sympy as sp, numpy as np\nx = sp.symbols('x', real=True)\nf = x**5 - 5*x**4\nprint(sp.factor(sp.diff(f, x)), [sp.diff(f, x, 2).subs(x, c) for c in (0, 4)])\nfp = sp.lambdify(x, sp.diff(f, x)); F = sp.lambdify(x, f)\nprint([int(np.sign(fp(t))) for t in (-1, 1, 3, 5)])\nprint(all(F(t) < F(0) for t in (-0.5, -0.1, 0.1, 0.5, 1)), all(F(t) > F(4) for t in (3, 3.5, 3.9, 4.1, 4.5, 5)))\nxs = np.linspace(-2, 5, 700001)\nprint(F(xs).min(), xs[F(xs).argmin()], [f.subs(x, v) for v in (-2, 0, 4, 5)])\nprint(sp.limit(f, x, -sp.oo), sp.limit(f, x, sp.oo))",
+      "notes": "Blind solve: f'=5x^3(x-4), sign +,-,+ so x=0 is a local max (f''(0)=0 makes the second-derivative test inconclusive, but f=x^4(x-5)<0 near 0) and x=4 a local min (f''(4)=320); f(-2)=-112, f(0)=0, f(4)=-256, f(5)=0 gives minimum -256 on [-2,5]; f->-inf as x->-inf so no global minimum. Statements A, C, D true, B false, matching key A,C,D. Independent Python checks the sign pattern of f', f'' at 0 and 4, local comparisons near 0 and 4, a 700001-point grid minimum on [-2,5] (-256 at x=4) and the limits at -inf/+inf. Each statement is unambiguous under the standard definitions of local/global extremum. Steps and optionAnalysis correct. Metadata fix: difficultyRationale said 'three statements need separate checks' for a four-statement MSQ; reworded to four statements settled by three analyses and to 'about 2.5-3 minutes' (estimate 170 s). MODERATE kept (A and B share one sign analysis, so the MSQ uplift does not apply). solution.teaching added to match the repository standard. No answer or option changes."
     },
     "review": {
       "status": "SELF_CHECKED",

@@ -50,12 +50,12 @@
       "commonTrap": "Reducing $6$ to $2$ and then substituting $t = 2$ into $t^2 + t$ (giving $6$ instead of $2$), which leads to $10.5$. Since the base interval is half-open, the point $2$ must be moved one more period to $-2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "6.5",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "6.5 (s(9.5)=3.75, s(-7.5)=0.75, s(6)=s(-2)=2)",
       "agreesWithKey": true,
-      "checkCode": "def s(t):\n    r = (t + 2) % 4 - 2   # reduce into the base interval [-2, 2)\n    return r * r + r\nprint(s(9.5) + s(-7.5) + s(6))",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\ndef s_base(r):                     # formula valid only on the half-open base interval [-2, 2)\n    assert -2 <= r < 2\n    return r * r + r\ndef s(t):\n    t = F(t)\n    r = t - 4 * ((t + 2) // 4)     # exact reduction into [-2, 2)\n    return s_base(r)\ntotal = s(F(19, 2)) + s(F(-15, 2)) + s(6)\nprint(s(F(19, 2)), s(F(-15, 2)), s(6), total, float(total))   # 15/4 3/4 2 13/2 6.5\n# periodicity spot-check: s(t + 4k) == s(t) and s(2) == s(-2) == 2\nassert all(s(F(t) + 4 * k) == s(t) for t in (-2, F(-1, 3), 0, F(3, 2)) for k in (-3, 1, 5))\nassert s(2) == s(-2) == 2 and total == F(13, 2)",
+      "notes": "Blind hand solve reduced each argument into [-2, 2): 9.5->1.5, -7.5->0.5, 6->-2 (2 is excluded from the half-open base interval), giving 3.75 + 0.75 + 2 = 6.5, matching the key. Exact-Fraction Python confirms 13/2 and periodicity. Audited stem (exact value asked, so the single-point NAT range 6.5 to 6.5 is right), 4-step solution, the 10.5 trap, EASY label and topic (functions of a single variable, co-limits-continuity); no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -171,12 +171,12 @@
       "commonTrap": "Treating the coefficient $a_n$ as if it were the derivative $f^{(n)}(0)$ (option A), and assuming that a series obtained from logarithm expansions converges for all $x$ (option C) instead of checking the radius of convergence."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B, D",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B, D (f'''(0)=4 not 2/3; a5=2/5; radius of convergence 1; f is odd so f^(4)(0)=0)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx, n = sp.symbols('x n', positive=True)\nf = sp.log((1 + x) / (1 - x))\nser = sp.series(f, x, 0, 8).removeO()\na5 = ser.coeff(x, 5)\nd3 = sp.diff(f, x, 3).subs(x, 0)\nd4 = sp.diff(f, x, 4).subs(x, 0)\n# ratio of consecutive non-zero coefficients (a_{2k+3} / a_{2k+1}) -> 1/R^2\nlim = sp.limit((2 / (2*n + 3)) / (2 / (2*n + 1)), n, sp.oo)\nR = 1 / sp.sqrt(lim)\ntruth = {'A': d3 == sp.Rational(2, 3), 'B': a5 == sp.Rational(2, 5), 'C': R == sp.oo, 'D': d4 == 0}\nprint(', '.join(k for k, v in truth.items() if v))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.log((1 + x) / (1 - x))\nser = sp.Poly(sp.series(f, x, 0, 9).removeO(), x)\na = lambda n: ser.coeff_monomial(x**n)\nd = lambda n: sp.diff(f, x, n).subs(x, 0)\nprint([a(n) for n in range(8)])                        # [0, 2, 0, 2/3, 0, 2/5, 0, 2/7]\nprint(\"f3(0) =\", d(3), \" a5 =\", a(5), \" f4(0) =\", d(4))\n# radius of convergence from the general term 2/(2k+1) * x^(2k+1)\nk = sp.symbols('k', positive=True)\nlim = sp.limit(sp.Abs((2 / (2*k + 3)) / (2 / (2*k + 1))), k, sp.oo)   # ratio of coefficients -> 1/R^2\nradius = 1 / sp.sqrt(lim)\n# partial sums at x = 1.5 blow up, at x = 0.5 they converge to f(0.5) = ln 3\nps = lambda xv, N: sum(2 * sp.Rational(xv) ** (2*j + 1) / (2*j + 1) for j in range(N))\nprint(\"R =\", radius, float(ps('1/2', 40)), float(f.subs(x, sp.Rational(1, 2))), float(ps('3/2', 60)) > 1e6)\ntruth = {'A': d(3) == sp.Rational(2, 3), 'B': a(5) == sp.Rational(2, 5), 'C': radius == sp.oo, 'D': d(4) == 0}\nprint(sorted(k_ for k_, v in truth.items() if v))     # ['B', 'D']",
+      "notes": "Blind solve: f = 2(x + x^3/3 + x^5/5 + ...) gives a5 = 2/5 (B true), f'''(0) = 3!*a3 = 4 != 2/3 (A false), radius of convergence 1 so (C) false, f odd so f^(4)(0) = 0 (D true); matches the key {B, D}. Sympy confirms series, derivatives and radius, and partial sums diverge at x = 1.5. Audited stem (no second defensible reading of any statement), solution steps, all four optionAnalysis verdicts, shortcut/trap, MODERATE label and topic; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -251,12 +251,12 @@
       "commonTrap": "Reporting a critical *point* or the value $f(1) = 7$ instead of the difference, or misclassifying $x = 1$ because the sign of $f''$ was computed incorrectly. Since both minima give the same value $4$, no further comparison of minima is needed."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "3",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "3 (local max f(1)=7; local minima f(0)=f(2)=4)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = 3*x**4 - 12*x**3 + 12*x**2 + 4\ncrit = sp.solve(sp.diff(f, x), x)\nd2 = sp.diff(f, x, 2)\nmx = [f.subs(x, c) for c in crit if d2.subs(x, c) < 0]\nmn = [f.subs(x, c) for c in crit if d2.subs(x, c) > 0]\nassert len(mx) == 1\nprint(mx[0] - min(mn))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', real=True)\nf = 3*x**4 - 12*x**3 + 12*x**2 + 4\ncrit = sp.solve(sp.diff(f, x), x)\ninfo = [(c, f.subs(x, c), sp.diff(f, x, 2).subs(x, c)) for c in crit]\nprint(info)                                   # [(0, 4, 24), (1, 7, -12), (2, 4, 24)]\nmaxima = [v for c, v, s in info if s < 0]\nminima = [v for c, v, s in info if s > 0]\nassert len(maxima) == 1                       # exactly one local maximum, as the stem states\nprint(maxima[0] - min(minima))                # 3\n# independent numeric scan for local extrema on a fine grid\nimport numpy as np\nxs = np.linspace(-3, 5, 800001); ys = 3*xs**4 - 12*xs**3 + 12*xs**2 + 4\ni = np.arange(1, len(xs) - 1)\nlmax = ys[i][(ys[i] > ys[i-1]) & (ys[i] > ys[i+1])]\nlmin = ys[i][(ys[i] < ys[i-1]) & (ys[i] < ys[i+1])]\nprint(round(lmax.max() - lmin.min(), 6))      # 3.0",
+      "notes": "Blind solve: f' = 12x(x-1)(x-2); f'' = 24, -12, 24 at 0, 1, 2, so the single local maximum is f(1) = 7 and both local minima equal 4; 7 - 4 = 3, matching the key. Sympy plus an independent numeric grid scan of local extrema agree. The stem's claim of exactly one local maximum is true, and the tie between the two minima does not make 'smallest local minimum' ambiguous. Audited solution, shortcut f = 4 + 3x^2(x-2)^2, single-point integer NAT range, EASY label and topic; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -330,12 +330,12 @@
       "commonTrap": "Using $1 - \\cos 2x \\approx \\dfrac{x^2}{2}$ (forgetting that the argument is $2x$, so the leading term is $\\dfrac{(2x)^2}{2} = 2x^2$), which gives $9$; or approximating $e^{3x} - 1 \\approx 3x$ and concluding that the numerator is $0$ (the numerator's first non-zero term is quadratic)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2.25",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2.25 (9/4)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nL = sp.limit((sp.exp(3*x) - 1 - 3*x) / (1 - sp.cos(2*x)), x, 0)\nprint(L, float(L))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\ng = (sp.exp(3*x) - 1 - 3*x) / (1 - sp.cos(2*x))\nL = sp.limit(g, x, 0)\nprint(L, float(L))                            # 9/4 2.25\n# leading-term check and numerical check from both sides\nprint(sp.series(sp.exp(3*x) - 1 - 3*x, x, 0, 4), sp.series(1 - sp.cos(2*x), x, 0, 5))\nfor h in (1e-2, 1e-3, 1e-4, -1e-3):\n    print(h, float(g.subs(x, sp.Float(h, 30))))   # approaches 2.25 from both sides\nassert L == sp.Rational(9, 4) and round(float(L), 2) == 2.25",
+      "notes": "Blind solve: numerator ~ (9/2)x^2 and denominator ~ 2x^2, so the limit is 9/4 = 2.25, matching the key; two-sided numeric evaluation and sympy limit agree. Stem states rounding to two decimals and the exact value 2.25 lies inside the key range 2.24 to 2.26 (tight, allows the stated rounding). Audited series and L'Hopital cross-check steps, trap text (9 if 1 - cos 2x taken as x^2/2 is correct), EASY label and topic; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -448,12 +448,12 @@
       "commonTrap": "Forgetting that $t = -2x$ contributes $(-2)^3 = -8$ (giving $\\tfrac{5}{16}$, or $\\tfrac58$ if the factor is taken as $2$), or using the exponent $+\\tfrac12$ instead of $-\\tfrac12$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A (5/2)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = (1 - 2*x)**sp.Rational(-1, 2)\nprint(sp.series(f, x, 0, 5).removeO().coeff(x, 3), sp.diff(f, x, 3).subs(x, 0) / 6)",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = (1 - 2*x)**sp.Rational(-1, 2)\nc = [sp.series(f, x, 0, 6).removeO().coeff(x, n) for n in range(5)]\nprint(c)                                      # [1, 1, 3/2, 5/2, 35/8]\nprint(sp.diff(f, x, 3).subs(x, 0) / sp.factorial(3), sp.binomial(6, 3) / 2**3)   # 5/2 5/2\nopts = {'A': sp.Rational(5, 2), 'B': sp.Rational(5, 16), 'C': sp.Rational(5, 8), 'D': -sp.Rational(1, 2)}\nprint([k for k, v in opts.items() if v == c[3]])   # ['A']",
+      "notes": "Blind solve: coefficients of (1-u)^(-1/2) are 1, 1/2, 3/8, 5/16 in u = 2x, so c3 = 5/16 * 8 = 5/2, matching the key (C(6,3)/2^3 = 20/8 check). Sympy series and f'''(0)/3! agree. Audited the binomial-coefficient step, the f' f'' f''' cross-check, all four optionAnalysis verdicts and distractor derivations (5/16 forgets 2^3, 5/8 uses factor 2, -1/2 comes from exponent +1/2), EASY label and topic; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -525,15 +525,15 @@
       ],
       "finalAnswer": "**2880**",
       "shortcut": "$A(x) = 5x(48 - x)$ is a downward parabola with roots $x = 0$ and $x = 48$, so its maximum is at the midpoint $x = 24$, giving $A = 5 \\cdot 24 \\cdot 24 = 2880$.",
-      "commonTrap": "Miscounting the fences that have length $x$. Ignoring the partitions ($2x + y = 240$) gives $7200$; counting only two partitions ($4x + y = 240$), or treating all four outer sides as fenced, gives $3600$. There are $2$ sides and $3$ partitions, so $5x + y = 240$."
+      "commonTrap": "Miscounting the fences that have length $x$. Ignoring the partitions ($2x + y = 240$) gives $7200$; counting only two partitions ($4x + y = 240$) gives $3600$; and fencing the wall side as well ($5x + 2y = 240$) gives $1440$. There are $2$ sides and $3$ partitions, so $5x + y = 240$, and no fence is needed along the wall."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2880",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "2880 (perpendicular fences 5a, front b, 5a + b = 240, a = 24, b = 120)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x', positive=True)\nA = x * (240 - 5*x)                      # 5x + y = 240\nxs = sp.solve(sp.diff(A, x), x)[0]\nbrute = max(t/100 * (240 - 5*t/100) for t in range(1, 4800))   # grid check over 0 < x < 48\nprint(xs, A.subs(x, xs), round(brute, 4))",
-      "notes": ""
+      "checkCode": "import sympy as sp\n# perpendicular fences (2 sides + 3 partitions) have length a; the front fence has length b: 5a + b = 240\na = sp.symbols('a', positive=True)\narea = a * (240 - 5*a)\na_star = sp.solve(sp.diff(area, a), a)[0]\nprint(a_star, 240 - 5*a_star, area.subs(a, a_star))          # 24 120 2880\nassert sp.diff(area, a, 2) < 0\n# brute-force over integer/half-integer splits, using all the fencing\nbest = max((a_ * (240 - 5*a_), a_) for a_ in [i / 4 for i in range(1, 192)])\nprint(best)                                                  # (2880.0, 24.0)\n# sanity: the 4 compartments are each (a_star)*(b/4) = 24*30 = 720 and 4*720 = 2880\nprint(4 * (a_star * (240 - 5*a_star) / 4))",
+      "notes": "Blind solve: 2 sides + 3 partitions = 5 fences of length a plus front b, 5a + b = 240, A = a(240 - 5a) is maximal at a = 24, b = 120, A = 2880, matching the key; sympy and a brute-force scan agree. The stem is unambiguous (all fencing used, partitions equal to a side). Corrected during verification: the commonTrap text said that treating all four outer sides as fenced gives 3600, but fencing the wall side too (5a + 2b = 240) gives 1440 (3600 arises only for 2a + 2b = 240 with no partitions); rewrote the trap with the computed values 7200, 3600 and 1440. Question, answer and steps unchanged."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -645,12 +645,12 @@
       "commonTrap": "Assuming that $\\max\\{g, h\\}$ always has a corner at the point where $g = h$. A corner appears only if the graphs cross with different slopes. Here $g - h = (x-1)^2$ never changes sign, so the maximum is just $x^2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C (f(x) = x^2 everywhere, differentiable, f'(1) = 2, f' = 2x continuous)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x', real=True)\nprint(sp.factor(x**2 - (2*x - 1)))          # (x - 1)**2 >= 0, so f(x) = x**2 everywhere\nf = lambda t: max(t**2, 2*t - 1)\nh = sp.Rational(1, 10**6)\nright = (f(1 + h) - f(1)) / h\nleft = (f(1) - f(1 - h)) / h\nprint(float(left), float(right))            # both ~ 2 -> differentiable at 1 with f'(1) = 2\nprint(sp.diff(x**2, x))                     # 2*x, continuous",
-      "notes": ""
+      "checkCode": "import sympy as sp, numpy as np\nx = sp.symbols('x', real=True)\nprint(sp.factor(x**2 - (2*x - 1)))                          # (x - 1)**2  -> never negative\nxs = np.linspace(-10, 10, 200001)\nprint(np.max(np.abs(np.maximum(xs**2, 2*xs - 1) - xs**2)))    # 0.0 -> f(x) = x**2 everywhere\nf = lambda t: max(t**2, 2*t - 1)\nfor h in (1e-3, 1e-5, 1e-7):\n    print((f(1 + h) - f(1)) / h, (f(1) - f(1 - h)) / h)      # both -> 2\nfp = sp.diff(x**2, x)\nprint(fp, sp.limit(fp, x, 1) == fp.subs(x, 1) == 2)          # 2*x True (f' continuous, f'(1) = 2)\ntruth = {'A': False,                                         # f is continuous (equal to x**2)\n         'B': False,                                         # one-sided derivatives agree\n         'C': True,\n         'D': False}                                         # f' = 2x is continuous\nprint([k for k, v in truth.items() if v])                    # ['C']",
+      "notes": "Blind solve: x^2 - (2x - 1) = (x - 1)^2 >= 0, so max{x^2, 2x - 1} = x^2 for all x (the line is tangent at x = 1, no corner); hence f is differentiable everywhere with f'(1) = 2 and f' = 2x continuous, so only (C) is true, matching the key. Sympy and numeric one-sided difference quotients (both -> 2) agree. Audited steps, all four optionAnalysis verdicts (the x^2 sin(1/x) remark on D is accurate), corner-at-crossing trap, EASY label and topic; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -763,12 +763,12 @@
       "commonTrap": "Losing a term when shifting the index: $\\sum_{n \\ge 0}\\dfrac{n}{n!}$ equals $e$ (the $n = 0$ term is $0$, and $\\sum_{n\\ge1}\\dfrac{1}{(n-1)!}$ is the *full* series for $e$), not $e - 1$. Also forgetting that the sum begins at $n = 0$, which contributes the term $\\dfrac{2}{0!} = 2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B (3e)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nn = sp.symbols('n', integer=True, nonnegative=True)\nS = sp.summation((n + 2) / sp.factorial(n), (n, 0, sp.oo))\npartial = sum((k + 2) / sp.factorial(k) for k in range(40))\nprint(S, sp.N(S), sp.N(partial))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nn = sp.symbols('n', integer=True, nonnegative=True)\nS = sp.summation((n + 2) / sp.factorial(n), (n, 0, sp.oo))\npartial = sum(sp.Rational(k + 2, sp.factorial(k)) for k in range(40))\nprint(S, sp.N(S), sp.N(partial))                            # 3*E 8.15484548537714 8.15484548537714\nopts = {'A': 2*sp.E, 'B': 3*sp.E, 'C': 3*sp.E - 1, 'D': 3*sp.E - 2}\nprint([k for k, v in opts.items() if sp.simplify(v - S) == 0])   # ['B']\nprint({k: float(v) for k, v in opts.items()})               # distractors differ from 8.1548",
+      "notes": "Blind solve: sum (n + 2)/n! = sum n/n! + 2 sum 1/n! = e + 2e = 3e (the n = 0 term of n/n! is 0 and sum_{n>=1} 1/(n-1)! = e), matching the key. Sympy summation, a 40-term partial sum (8.15485) and distractor values (2e = 5.44, 3e-1 = 7.15, 3e-2 = 6.15) agree. Audited steps, the term-by-term numeric check, all four optionAnalysis explanations (each distractor maps to a real index-shift or missing-term error), EASY label and topic; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",

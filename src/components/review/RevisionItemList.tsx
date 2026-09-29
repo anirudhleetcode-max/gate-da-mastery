@@ -18,6 +18,8 @@ export interface RowContext {
   weakTopics: ReadonlySet<string>;
   highWeight: ReadonlyMap<string, { marks: number }>;
   availableMocks: ReadonlySet<string>;
+  /** false when a concept/formula item is no longer in the library. */
+  inLibrary: (item: RevisionItemRow) => boolean;
   onReview: (key: string) => void;
   onRemove: (key: string) => Promise<void>;
   canEdit: boolean;
@@ -53,6 +55,7 @@ function RevisionItem({ item, ctx }: { item: RevisionItemRow; ctx: RowContext })
   const topic = item.topicId ? ctx.topicName.get(item.topicId) : undefined;
   const high = item.topicId ? ctx.highWeight.get(item.topicId) : undefined;
   const withdrawn = item.kind === "question" && isWithdrawnMockQuestion(item.refId, ctx.availableMocks);
+  const missing = item.kind !== "question" && !ctx.inLibrary(item);
   const forgotten = isFrequentlyForgotten(item);
   return (
     <li className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-start">
@@ -68,7 +71,7 @@ function RevisionItem({ item, ctx }: { item: RevisionItemRow; ctx: RowContext })
             </Badge>
           ) : null}
         </div>
-        {withdrawn ? (
+        {withdrawn || missing ? (
           <p className="mt-1 font-medium text-fg">{item.title}</p>
         ) : (
           <Link href={revisionHref(item)} className="mt-1 inline-block font-medium text-fg hover:underline">
@@ -89,6 +92,7 @@ function RevisionItem({ item, ctx }: { item: RevisionItemRow; ctx: RowContext })
         {withdrawn ? (
           <p className="mt-1 text-xs text-warning">Temporarily unavailable: its mock test is being re-verified. It returns once every question in that mock has passed review.</p>
         ) : null}
+        {missing ? <p className="mt-1 text-xs text-warning">This {KIND_LABEL[item.kind].toLowerCase()} is not in the library right now, so its page cannot be opened. You can still review it from memory or remove it.</p> : null}
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
         {confirm ? (

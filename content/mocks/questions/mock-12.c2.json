@@ -90,12 +90,12 @@
       "commonTrap": "Treating \"mutually exclusive\" as \"independent\" and answering $P(D) = 0.22$, or multiplying $P(D)P(S^c)$ instead of dividing by $P(S^c)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.25",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) 0.250",
       "agreesWithKey": true,
-      "checkCode": "PS, PU = 0.12, 0.34\nPD = PU - PS          # disjoint: P(S∩D)=0\nprint(round(PD/(1-PS), 4))  # D ⊆ S^c -> 0.25",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nPS, PSD = F(12, 100), F(34, 100)\nPD = PSD - PS                      # S and D disjoint: P(S and D) = 0\nans = PD / (1 - PS)                # D is inside S^c, so P(D and S^c) = P(D)\nprint(PD, ans, float(ans))         # 11/50 1/4 0.25 -> (C)\n# distractors: (A) P(D); (B) P(D)P(S^c) (wrong independence); (D) P(D | S or D)\nprint(float(PD), round(float(PD * (1 - PS)), 3), round(float(PD / PSD), 3))  # 0.22 0.194 0.647",
+      "notes": "Blind solve: disjoint events give P(D) = 0.34 - 0.12 = 0.22, and D lies inside S^c, so P(D | S^c) = 0.22/0.88 = 0.25 (C), matching the key. Exact-fraction Python gives 1/4 and reproduces the three distractors (0.22 = P(D), 0.194 = P(D)P(S^c), 0.647 = P(D | S or D)). The stem states that the detector never labels a reading as both, so P(S and D) = 0 is given and the answer is unique. Steps, final answer, option verdicts, difficulty (MODERATE, two linked steps) and topic all check out; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -212,12 +212,12 @@
       "commonTrap": "Forgetting that observing a **descendant** of a collider (here $U$, below $T$) also opens the collider, which makes (A) or (C) look correct."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Only E ⊥ U | T is d-separated (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B) only E _|_ U | T",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nE=[('L','T'),('N','T'),('T','U'),('L','E')]\ndef anc(S):\n  S=set(S)\n  while True:\n    n={a for a,b in E if b in S}-S\n    if not n: return S\n    S|=n\ndef dsep(X,Y,Z):\n  A=anc(X|Y|Z); G={frozenset(e) for e in E if set(e)<=A}\n  for m in A:\n    for p,q in itertools.combinations([a for a,b in E if b==m and a in A],2): G.add(frozenset((p,q)))\n  seen=set(X); st=list(X)\n  while st:\n    u=st.pop()\n    for e in G:\n      if u in e:\n        v=next(iter(e-{u}))\n        if v not in Z and v not in seen: seen.add(v); st.append(v)\n  return not seen&Y\nfor o,(X,Y,Z) in zip('ABCD',[('L','N','U'),('E','U','T'),('E','N','U'),('L','U','E')]): print(o,dsep({X},{Y},{Z}))  # only B True",
-      "notes": ""
+      "checkCode": "import itertools, random\nrandom.seed(7)\nb = lambda p, v: p if v else 1 - p\ndef joint():\n    pL, pN = random.uniform(.1, .9), random.uniform(.1, .9)\n    pT = {(l, n): random.uniform(.05, .95) for l in (0, 1) for n in (0, 1)}\n    pU = {t: random.uniform(.05, .95) for t in (0, 1)}\n    pE = {l: random.uniform(.05, .95) for l in (0, 1)}\n    return {(l, n, t, u, e): b(pL, l) * b(pN, n) * b(pT[l, n], t) * b(pU[t], u) * b(pE[l], e)\n            for l, n, t, u, e in itertools.product((0, 1), repeat=5)}\nIDX = dict(L=0, N=1, T=2, U=3, E=4)\ndef gap(J, x, y, z):  # max |P(x,y|z) - P(x|z)P(y|z)| over all value assignments\n    P = lambda **kw: sum(p for k, p in J.items() if all(k[IDX[a]] == v for a, v in kw.items()))\n    g = 0\n    for zv in itertools.product((0, 1), repeat=len(z)):\n        zz = dict(zip(z, zv)); pz = P(**zz)\n        for xv, yv in itertools.product((0, 1), repeat=2):\n            g = max(g, abs(P(**zz, **{x: xv, y: yv}) / pz - P(**zz, **{x: xv}) / pz * P(**zz, **{y: yv}) / pz))\n    return g\nfor seed in range(3):                                   # random CPTs consistent with the DAG\n    J = joint()\n    for o, (x, y, z) in zip('ABCD', [('L', 'N', 'U'), ('E', 'U', 'T'), ('E', 'N', 'U'), ('L', 'U', 'E')]):\n        print(seed, o, 'independent' if gap(J, x, y, z) < 1e-12 else 'DEPENDENT', round(gap(J, x, y, z), 5))\n# Only B is independent for every CPT (A, C, D are dependent for generic CPTs) -> (B)",
+      "notes": "Blind solve by d-separation: the only E-U path is E<-L->T->U, blocked by observing chain node T (B holds). A and C have the collider T opened by its observed descendant U, and D has the unobserved chain L->T->U, so all three fail. Python on random CPTs consistent with the DAG (3 seeds, full enumeration of the 32-row joint) shows A, C and D dependent and B independent to machine precision, agreeing with the key. Verified the path claims in the steps (e.g. the only L-N path is L->T<-N, the only E-N path is E<-L->T<-N) and the option analysis; no edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -288,17 +288,17 @@
         }
       ],
       "finalAnswer": "**0.78** (accepted range 0.77 to 0.79)",
-      "teaching": "A joint PMF assigns a probability to every pair $(x, y)$, and all entries must be non-negative and sum to 1. That single constraint pins down an unknown constant such as $c$.\n\nAny event involving $X$ and $Y$, such as $X + Y \\ge 4$, is just a set of cells in the table; its probability is the sum of those cells. A conditional probability $P(A \\mid B) = P(A \\cap B)/P(B)$ then means: restrict attention to the cells of $B$, and ask what fraction of their total mass also lies in $A$. The marginal $P(X = 3)$ (a row sum) is a different quantity and is not needed here.\n\nIn this table, the event $X + Y \\ge 4$ carries mass $0.45$, and $0.35$ of it sits in the $X = 3$ row, giving $7/9$. High failed-login counts come mostly from multi-device users.",
+      "teaching": "A joint PMF assigns a probability to every pair $(x, y)$, and all entries must be non-negative and sum to 1. That single constraint pins down an unknown constant such as $c$.\n\nAny event involving $X$ and $Y$, such as $X + Y \\ge 4$, is just a set of cells in the table; its probability is the sum of those cells. A conditional probability $P(A \\mid B) = P(A \\cap B)/P(B)$ then means: restrict attention to the cells of $B$, and ask what fraction of their total mass also lies in $A$. The marginal $P(X = 3)$ (a row sum) is a different quantity and is not needed here.\n\nIn this table, the event $X + Y \\ge 4$ carries mass $0.45$, and $0.35$ of it sits in the $X = 3$ row, giving $7/9$. So among employee-days on which the number of devices plus the number of failed attempts reaches 4, about 78% involve three devices.",
       "shortcut": "Work in hundredths: after $c = 10$, the event cells are $10, 15, 20$ (total 45) and the $X = 3$ cells are $15, 20$ (total 35), so the answer is $35/45 = 7/9$.",
       "commonTrap": "Reversing the conditioning and dividing by the row total $P(X = 3) = 0.40$ (giving $0.875$), or forgetting the cell $(2, 2)$ in the event (giving $1$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "0.7778 (= 7/9), rounds to 0.78",
       "agreesWithKey": true,
-      "checkCode": "J={(1,0):.15,(1,1):.05,(1,2):.05,(2,0):.15,(2,2):.10,(3,0):.05,(3,1):.15}\nc=(1-sum(J.values()))/3; J[(2,1)]=c; J[(3,2)]=2*c\nB=sum(v for (x,y),v in J.items() if x+y>=4); AB=sum(v for (x,y),v in J.items() if x+y>=4 and x==3)\nprint(round(c,4), round(AB/B,4))  # 0.1 0.7778",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nJ = {(1, 0): F(15, 100), (1, 1): F(5, 100), (1, 2): F(5, 100), (2, 0): F(15, 100), (2, 2): F(10, 100),\n     (3, 0): F(5, 100), (3, 1): F(15, 100)}\nc = (1 - sum(J.values())) / 3          # 3c = 1 - 0.70\nJ[(2, 1)], J[(3, 2)] = c, 2 * c\nassert sum(J.values()) == 1\nden = sum(p for (x, y), p in J.items() if x + y >= 4)\nnum = sum(p for (x, y), p in J.items() if x + y >= 4 and x == 3)\nprint(c, den, num, num / den, round(float(num / den), 2))   # 1/10 9/20 7/20 7/9 0.78\n# common wrong answers: divide by P(X=3); drop cell (2,2)\nprint(float(num / sum(p for (x, y), p in J.items() if x == 3)))   # 0.875",
+      "notes": "Blind solve: 0.70 + 3c = 1 gives c = 0.10; the cells with X+Y >= 4 are (2,2), (3,1), (3,2) with mass 0.45, of which 0.35 has X = 3, so the answer is 7/9 = 0.778, i.e. 0.78 to two decimals. Exact-fraction Python agrees; the stored range 0.77 to 0.79 contains the rounded value and the exact value and is tight enough to reject 0.875 (wrong conditioning) and 1 (missing cell). Fixed: the last sentence of the teaching text called the event 'high failed-login counts', but X+Y >= 4 mixes devices and failed attempts; it now states the 78% figure correctly. Key, steps and metadata were correct."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -412,12 +412,12 @@
       "commonTrap": "Using $S_{yy}$ in place of $S_{xx}$ (regressing the wrong way round), or dropping the intercept and using the uncentred ratio $\\sum xy / \\sum x^2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "b0 = 1.2, b1 = 1.6 (D)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(D) y = 1.2 + 1.6x",
       "agreesWithKey": true,
-      "checkCode": "x=[1,2,3,4,5]; y=[3,4,6,8,9]\nmx=sum(x)/5; my=sum(y)/5\nb1=sum((a-mx)*(b-my) for a,b in zip(x,y))/sum((a-mx)**2 for a in x)\nprint(round(my-b1*mx,4), round(b1,4))  # 1.2 1.6",
-      "notes": ""
+      "checkCode": "import numpy as np\nx = np.array([1, 2, 3, 4, 5.]); y = np.array([3, 4, 6, 8, 9.])\nA = np.c_[np.ones_like(x), x]\nb0, b1 = np.linalg.lstsq(A, y, rcond=None)[0]           # OLS with intercept\nprint(round(b0, 4), round(b1, 4))                        # 1.2 1.6 -> (D)\nsxy, sxx, syy = ((x - x.mean()) * (y - y.mean())).sum(), ((x - x.mean()) ** 2).sum(), ((y - y.mean()) ** 2).sum()\nprint(sxy, sxx, syy, syy / sxy, y.mean() - (syy / sxy) * x.mean())   # 16 10 26 1.625 1.125 (option B = x-on-y line)\nprint((x * y).sum() / (x * x).sum())                     # 1.9273 (option C = through origin)\nfor name, (a, s) in dict(A=(1.6, 1.2), B=(1.125, 1.625), C=(0, 1.927), D=(1.2, 1.6)).items():\n    print(name, 'SSE =', round(((y - (a + s * x)) ** 2).sum(), 4))   # D has the smallest SSE",
+      "notes": "Blind solve: x-bar = 3, y-bar = 6, Sxy = 16, Sxx = 10, so slope 1.6 and intercept 1.2 (D), matching the key. numpy least squares agrees; SSE is 0.4 for D against 0.406 (B, the x-on-y line), 1.71 (C, through the origin) and 5.2 (A, swapped coefficients), so D is the unique OLS line. Checked the distractor derivations in the option analysis (Syy/Sxy = 26/16 = 1.625 with intercept 1.125 gives option B; sum xy / sum x^2 = 106/55 = 1.927 gives option C). No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -534,12 +534,12 @@
       "commonTrap": "Choosing the cheapest outgoing edge at each step (a greedy walk) instead of always finalising the vertex with the smallest tentative distance from $S$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "d(T) = 10 via S-B-A-C-T (C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) S->B->A->C->T, length 10",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nE={'S':[('A',4),('B',1)],'B':[('A',2),('C',9),('D',7)],'A':[('C',5),('D',2)],'C':[('T',2)],'D':[('T',7)],'T':[]}\nd={'S':0}; par={}; pq=[(0,'S')]; done=set()\nwhile pq:\n  du,u=heapq.heappop(pq)\n  if u in done: continue\n  done.add(u)\n  for v,w in E[u]:\n    if du+w<d.get(v,1e9): d[v]=du+w; par[v]=u; heapq.heappush(pq,(d[v],v))\np=['T']\nwhile p[-1]!='S': p.append(par[p[-1]])\nprint(d['T'], p[::-1])  # 10 ['S','B','A','C','T']",
-      "notes": ""
+      "checkCode": "import heapq\nW = {('S','A'): 4, ('S','B'): 1, ('B','A'): 2, ('A','C'): 5, ('B','C'): 9, ('A','D'): 2, ('B','D'): 7, ('C','T'): 2, ('D','T'): 7}\nadj = {}\nfor (u, v), w in W.items(): adj.setdefault(u, []).append((v, w))\ndist, par, pq, done = {'S': 0}, {}, [(0, 'S')], set()\nwhile pq:\n    d, u = heapq.heappop(pq)\n    if u in done: continue\n    done.add(u)\n    for v, w in adj.get(u, []):\n        if d + w < dist.get(v, 1e9): dist[v], par[v] = d + w, u; heapq.heappush(pq, (d + w, v))\np = ['T']\nwhile p[-1] != 'S': p.append(par[p[-1]])\nprint(dist['T'], p[::-1])                                # 10 ['S','B','A','C','T'] -> (C)\ndef paths(u, seen):                                       # brute force: every simple S->T path\n    if u == 'T': yield [u], 0; return\n    for v, w in adj.get(u, []):\n        for q, c in paths(v, seen | {v}): yield [u] + q, c + w\nfor q, c in sorted(paths('S', {'S'}), key=lambda t: t[1]): print(c, '->'.join(q))   # 10 is the unique minimum",
+      "notes": "Blind solve: d(B) = 1, d(A) = min(4, 3) = 3, d(D) = 5, d(C) = 8, d(T) = min(8+2, 5+7) = 10 via S->B->A->C->T (C), matching the key. Python Dijkstra and brute-force enumeration of all six simple S-T paths agree: lengths 10, 11, 12, 12, 13, 15, so the optimum is unique and options A (11), B (12) and D (12) have the lengths stated in the solution. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -656,12 +656,12 @@
       "commonTrap": "Confusing the median (8) with the mode (7), or computing the median without first sorting the data (the unsorted 4th and 5th values are 9 and 10)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "mean 9, median 8, mode 7, pvariance 12, median after change 8 -> A, C, D",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A), (C), (D)",
       "agreesWithKey": true,
-      "checkCode": "import statistics as s\nd=[4,7,7,9,10,12,7,16]; d2=[40 if v==16 else v for v in d]\nprint(s.mean(d), s.median(d), s.mode(d), s.pvariance(d), s.median(d2))  # 9 8.0 7 12 8.0",
-      "notes": ""
+      "checkCode": "import statistics as s\nd = [4, 7, 7, 9, 10, 12, 7, 16]\nd2 = [40 if v == 16 else v for v in d]\nprint(sorted(d), s.mean(d), s.median(d), s.multimode(d), s.pvariance(d), round(s.variance(d), 2))\n# 9 8.0 [7] 12 13.71  ->  A: 9 > 8 True; B: mode 7 != 8 False; C: pvariance 12 True\nprint(s.median(d2), s.median(d2) == s.median(d))         # 8.0 True  -> D True   => (A), (C), (D)",
+      "notes": "Blind solve: sorted data 4,7,7,7,9,10,12,16 gives mean 9, median 8, mode 7, population variance 96/8 = 12; replacing 16 by 40 leaves the two middle values 7 and 9, so the median stays 8. Hence A, C, D true and B false, matching the key. Python statistics confirms every figure (sample variance 13.71 is not offered as an option, so there is no ambiguity about the n = 8 divisor, which the stem states). No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -775,12 +775,12 @@
       "commonTrap": "Using $P(X = 3) = 0.4^2 \\times 0.6 = 0.096$ (forgetting that a failed third attempt also gives $X = 3$), or applying the uncapped geometric formulas."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "E[X] = 1.56, Var(X) = 0.5664 (D)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(D) (1.56, 0.5664)",
       "agreesWithKey": true,
-      "checkCode": "p=0.6; pm={1:p,2:(1-p)*p,3:(1-p)**2}\nEX=sum(k*v for k,v in pm.items()); EX2=sum(k*k*v for k,v in pm.items())\nprint(round(sum(pm.values()),4), round(EX,4), round(EX2,4), round(EX2-EX**2,4))  # 1.0 1.56 3.0 0.5664",
-      "notes": ""
+      "checkCode": "import random\np = 0.6\npmf = {1: p, 2: (1 - p) * p, 3: (1 - p) ** 2}            # third attempt is made whether or not it succeeds\nE = sum(k * v for k, v in pmf.items()); E2 = sum(k * k * v for k, v in pmf.items())\nprint(round(sum(pmf.values()), 6), round(E, 4), round(E2, 4), round(E2 - E * E, 4))   # 1.0 1.56 3.0 0.5664 -> (D)\nrandom.seed(3); xs = []\nfor _ in range(400000):                                  # direct simulation of the stopping rule\n    k = 0\n    while True:\n        k += 1\n        if random.random() < p or k == 3: break\n    xs.append(k)\nm = sum(xs) / len(xs); print(round(m, 3), round(sum((v - m) ** 2 for v in xs) / len(xs), 3))   # ~1.56 ~0.566\nprint(1 / p, (1 - p) / p ** 2, E2 - E)                    # uncapped geometric 1.6667 1.1111 (A); 3.00-1.56=1.44 (C)",
+      "notes": "Blind solve: P(X=1) = 0.6, P(X=2) = 0.24, P(X=3) = 0.16 (third attempt happens regardless of outcome), E[X] = 1.56, E[X^2] = 3.00, Var = 3 - 2.4336 = 0.5664 (D), matching the key. Python PMF and a 400,000-run simulation of the stopping rule agree (about 1.56 and 0.567); distractors reproduce the uncapped geometric values (A), E[X^2] (B) and E[X^2] - E[X] (C). No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -851,16 +851,16 @@
         }
       ],
       "finalAnswer": "**2**",
-      "teaching": "Normal forms are tested FD by FD, and the tests depend on the candidate keys. BCNF requires the left-hand side of every non-trivial FD to be a superkey. 3NF relaxes this: a non-superkey LHS is allowed when every attribute it determines is **prime**, meaning it belongs to some candidate key. So the workflow is always: (1) find all candidate keys using attribute closures, (2) collect the prime attributes, (3) check each FD.\n\nTo find keys quickly, start with attributes that never appear on a right-hand side; they must be in every key. Then extend them one attribute at a time and compute closures.\n\nHere, missing the second key $BC$ is the usual error. Without it, $C$ looks non-prime and $BC \\to D$ looks like a violation. Finding both keys makes $A$ and $C$ prime, leaving only the transitive chain $D \\to E \\to G$ in violation.",
-      "commonTrap": "Counting BCNF violations instead (3, by including $C \\to A$), or finding only the key $AB$ and wrongly flagging $BC \\to D$ (also giving 3)."
+      "teaching": "Normal forms are tested FD by FD, and the tests depend on the candidate keys. BCNF requires the left-hand side of every non-trivial FD to be a superkey. 3NF relaxes this: a non-superkey LHS is allowed when every attribute it determines is **prime**, meaning it belongs to some candidate key. So the workflow is always: (1) find all candidate keys using attribute closures, (2) collect the prime attributes, (3) check each FD.\n\nTo find keys quickly, start with attributes that never appear on a right-hand side; they must be in every key. Then extend them one attribute at a time and compute closures.\n\nHere, missing the second key $BC$ is the usual error. If you find only $AB$, $BC$ is not recognised as a superkey and $BC \\to D$ looks like a violation (its right-hand side $D$ is non-prime), even though $BC^+$ contains every attribute. Recognising both keys makes $BC$ a superkey and $A$ prime (so $C \\to A$ passes), leaving only the transitive chain $D \\to E \\to G$ in violation.",
+      "commonTrap": "Counting BCNF violations instead (3, by including $C \\to A$), or overlooking that $BC$ is also a key ($BC^+$ is all of $R$) and wrongly flagging $BC \\to D$ (also giving 3)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "2 (candidate keys AB, BC; violators D->E, E->G)",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nR='ABCDEG'; F=[('AB','C'),('C','A'),('BC','D'),('D','E'),('E','G')]\ndef cl(X):\n  X=set(X)\n  while True:\n    n={r for l,r in F if set(l)<=X}-X\n    if not n: return X\n    X|=n\nSK=[set(c) for k in range(1,7) for c in itertools.combinations(R,k) if cl(c)==set(R)]\nCK=[s for s in SK if not any(t<s for t in SK)]; prime=set().union(*CK)\nprint(sorted(''.join(sorted(k)) for k in CK), sum(1 for l,r in F if cl(l)!=set(R) and r not in prime))  # ['AB','BC'] 2",
-      "notes": ""
+      "checkCode": "import itertools\nR = set('ABCDEG'); F = [('AB', 'C'), ('C', 'A'), ('BC', 'D'), ('D', 'E'), ('E', 'G')]\ndef cl(X):\n    X = set(X)\n    while True:\n        n = {a for l, r in F if set(l) <= X for a in r} - X\n        if not n: return X\n        X |= n\nsk = [set(c) for k in range(1, 7) for c in itertools.combinations(sorted(R), k) if cl(c) == R]   # all superkeys\nkeys = [s for s in sk if not any(t < s for t in sk)]                                              # minimal ones\nprime = set().union(*keys)\nprint(sorted(''.join(sorted(k)) for k in keys), sorted(prime))                                    # ['AB','BC'] ['A','B','C']\nbad3 = [(l, r) for l, r in F if cl(l) != R and not set(r) - set(l) <= prime]\nbadB = [(l, r) for l, r in F if cl(l) != R]\nprint(len(bad3), bad3, '| BCNF violations:', len(badB))                                           # 2 [D->E, E->G] | 3",
+      "notes": "Blind solve: B is on no right-hand side so it is in every key; AB+ = BC+ = all attributes, so the keys are exactly AB and BC and the prime attributes are A, B, C. AB->C, BC->D have superkey left sides, C->A has a prime right side, and D->E, E->G violate 3NF, giving 2, matching the key. Python enumeration of all superkeys/minimal keys and the per-FD test gives 2 (and 3 BCNF violations, as the solution says). The stem defines the 3NF test explicitly and restricts the count to the FDs listed in F, so the integer answer is unique. Fixed: the teaching paragraph and common-trap text attributed the false BC->D violation to C being non-prime, which is irrelevant (BC->D is only flagged if BC is not recognised as a superkey); both now say so correctly. Key, steps and metadata were correct."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -981,12 +981,12 @@
       "commonTrap": "Mixing up the maximum values of the two measures (Gini tops out at 0.5 for two classes, entropy at 1 bit), or reversing the bias–variance behaviour of deep trees."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A true, B true (H=1, Gini=0.5), C false, D false -> A, B",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A), (B)",
       "agreesWithKey": true,
-      "checkCode": "import math, random\nH=lambda p:-sum(x*math.log2(x) for x in p if x>0); G=lambda p:1-sum(x*x for x in p)\nprint(H([1,0]),G([1,0]),H([.5,.5]),G([.5,.5]))  # 0 0 1.0 0.5\nrandom.seed(1); mn=1\nfor _ in range(20000):\n  n1,n2=random.randint(1,20),random.randint(1,20); a,b=random.randint(0,n1),random.randint(0,n2)\n  ig=H([(a+b)/(n1+n2),1-(a+b)/(n1+n2)])-(n1*H([a/n1,1-a/n1])+n2*H([b/n2,1-b/n2]))/(n1+n2); mn=min(mn,ig)\nprint(mn>=-1e-12)  # True: information gain never negative",
-      "notes": ""
+      "checkCode": "import math, random\nH = lambda p: -sum(x * math.log2(x) for x in p if x > 0)\nG = lambda p: 1 - sum(x * x for x in p)\nprint(H([1, 0]), G([1, 0]), H([.5, .5]), G([.5, .5]))     # 0 0 1.0 0.5  -> A true, B true\nrandom.seed(1); worst = 1\nfor _ in range(200000):                                   # information gain of random 2-way splits\n    n1, n2 = random.randint(1, 30), random.randint(1, 30); a, b = random.randint(0, n1), random.randint(0, n2)\n    q = (a + b) / (n1 + n2)\n    ig = H([q, 1 - q]) - (n1 * H([a / n1, 1 - a / n1]) + n2 * H([b / n2, 1 - b / n2])) / (n1 + n2)\n    worst = min(worst, ig)\nprint(worst >= -1e-12, worst)                              # True: gain is never negative -> C false\n# D is conceptual: a fully grown (pure-leaf) tree has zero training error -> low bias, high variance -> D false",
+      "notes": "Blind solve: a pure node has H = 0 and Gini = 0 (A true); a 5/5 node has H = 1 bit and Gini = 0.5 (B true); information gain is never negative because entropy is concave (C false); a fully grown tree has low bias and high variance (D false). Matches the key A, B. Python confirms the impurity values and that the information gain of 200,000 random two-way splits is never below -1e-16 (floating-point zero). D is a standard conceptual result and is stated unambiguously in the solution. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -1103,12 +1103,12 @@
       "commonTrap": "Assuming that an admissible heuristic always makes A* optimal and answering cost 7. That guarantee holds for tree search or for graph search with re-opening; closed-list graph search without re-opening also needs consistency."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Order S,B,C,A,D,G; returned cost 9 (A)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "S, B, C, A, D, G; cost 9 (A)",
       "agreesWithKey": true,
-      "checkCode": "E={'S':[('A',2),('B',1)],'A':[('C',1),('D',6)],'B':[('C',4),('G',9)],'C':[('D',2)],'D':[('G',2)],'G':[]}\nh={'S':3,'A':5,'B':2,'C':1,'D':2,'G':0}\ng={'S':0}; F={'S'}; closed=set(); order=[]\nwhile F:\n  u=min(F,key=lambda n:g[n]+h[n]); F.remove(u); order.append(u)\n  if u=='G': break\n  closed.add(u)\n  for v,w in E[u]:\n    if v in closed: continue   # no re-opening\n    if v not in F or g[u]+w<g[v]: g[v]=g[u]+w; F.add(v)\nprint(order, g['G'])  # ['S','B','C','A','D','G'] 9",
-      "notes": ""
+      "checkCode": "E = {('S','A'): 2, ('S','B'): 1, ('A','C'): 1, ('A','D'): 6, ('B','C'): 4, ('B','G'): 9, ('C','D'): 2, ('D','G'): 2}\nh = {'S': 3, 'A': 5, 'B': 2, 'C': 1, 'D': 2, 'G': 0}\nadj = {}\nfor (u, v), w in E.items(): adj.setdefault(u, []).append((v, w))\ndef astar(reopen):\n    g, par, front, closed, seq = {'S': 0}, {'S': None}, {'S': h['S']}, set(), []\n    while front:\n        fs = sorted(front.items(), key=lambda kv: kv[1])\n        assert len(fs) == 1 or fs[0][1] != fs[1][1], 'tie'       # the stem says no ties arise\n        n = fs[0][0]; del front[n]; seq.append(n)\n        if n == 'G': break                                        # goal test on selection\n        closed.add(n)\n        for v, w in adj.get(n, []):\n            ng = g[n] + w\n            if v in closed:\n                if reopen and ng < g[v]: g[v], par[v] = ng, n; closed.discard(v); front[v] = ng + h[v]\n                continue\n            if v not in g or ng < g[v]: g[v], par[v] = ng, n; front[v] = ng + h[v]\n    path = ['G']\n    while par[path[-1]]: path.append(par[path[-1]])\n    return seq, g['G'], path[::-1]\nprint(astar(False))   # (['S','B','C','A','D','G'], 9, ['S','B','C','D','G'])  -> (A), as specified (no re-opening)\nprint(astar(True))    # (['S','B','C','A','C','D','G'], 7, ['S','A','C','D','G']) -> option D's behaviour (re-opening)\n# h*(n) = 7,5,8,4,2,0 >= h(n): admissible; h(A)=5 > c(A,C)+h(C)=2: inconsistent",
+      "notes": "Blind solve of the specified rules (goal test on selection, update on cheaper frontier path, no re-opening): S(3); B(3), then C(f=6), A(7), D(9), G(f=10 updated to 9 via D). Selected order S, B, C, A, D, G and returned path S->B->C->D->G with cost 9 (A), matching the key. Python simulation agrees, asserts that no f-ties occur, and shows that re-opening would give option D's sequence with cost 7, and that greedy best-first gives option C, so each distractor corresponds to a distinct misreading and only A follows the stated rules. h is admissible (h* = 7,5,8,4,2,0) but inconsistent on A->C, as the solution states. No edits required."
     },
     "review": {
       "status": "SELF_CHECKED",

@@ -14,8 +14,8 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — two linked agreement rules (a parenthetical 'along with' phrase does not change the subject; 'neither … nor' takes the verb of the nearer subject) must both be applied, with a plural-attraction trap in each blank; about 1 minute.",
-    "estimatedTimeSec": 60,
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked agreement rules (a parenthetical 'along with' phrase does not change the subject; 'neither … nor' takes the verb of the nearer subject) must both be applied, with a plural-attraction trap in each blank; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
     "concept": "Subject–verb agreement with an intervening 'along with' phrase and with the correlative 'neither … nor'.",
     "conceptIds": [],
     "formulaIds": [],
@@ -85,11 +85,11 @@
       "commonTrap": "Letting the noun nearest the blank decide the verb in the first clause (\"assistants … have\"), and then switching strategy in the second clause by assuming that *neither … nor* always takes a singular verb."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation",
-      "independentAnswer": "(A) has ; are — first clause subject 'The chief engineer' (singular); 'neither … nor' agrees with nearer subject 'her assistants' (plural).",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve agrees with key",
+      "independentAnswer": "(A) has ; are",
       "agreesWithKey": true,
-      "notes": ""
+      "notes": "Blind grammar re-solve (no computation needed): 'along with' phrase is parenthetical so the subject 'The chief engineer' is singular -> has; 'neither...nor' takes the verb of the nearer subject 'her assistants' (plural) -> are. Matches the key, one defensible answer. Metadata calibration only: estimatedTimeSec 60->90 and rationale 'about 1.5 minutes' so the MODERATE label is consistent with the rubric time band."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -203,12 +203,12 @@
       "commonTrap": "Picking Northgate because it gained the most rentals (576). The question asks for the **percentage** increase, which divides the gain by the March base."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Mill Road, 27.5% (Lakeview 20%, Northgate 24%, Riverside 25%) → (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B) Mill Road, 27.5% (Lakeview 20%, Northgate 24%, Riverside 25%)",
       "agreesWithKey": true,
-      "checkCode": "d={'Lakeview':(1250,1500),'Mill Road':(880,1122),'Northgate':(2400,2976),'Riverside':(640,800)}\npct={k:100*(a-m)/m for k,(m,a) in d.items()}\nprint(pct, max(pct,key=pct.get))",
-      "notes": ""
+      "checkCode": "d={'Lakeview':(1250,1500),'Mill Road':(880,1122),'Northgate':(2400,2976),'Riverside':(640,800)}\ng={k:b/a for k,(a,b) in d.items()}\nprint(g, max(g,key=g.get))",
+      "notes": "Blind re-solve and growth-factor check agree: 1.2, 1.275, 1.24, 1.25. Unique maximum. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -321,12 +321,12 @@
       "commonTrap": "Stopping at the first valid schedule found (for example R, P, S, T, Q) and choosing an option that is true there, such as (A) or (C), without checking that the other schedule (R, T, S, P, Q) also satisfies every condition."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Valid schedules with S on Wednesday: RPSTQ and RTSPQ; only 'Q on Friday' holds in both → (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B) Q presents on Friday",
       "agreesWithKey": true,
-      "checkCode": "from itertools import permutations\nS=[]\nfor p in permutations('PQRST'):\n    d={x:i for i,x in enumerate(p)}  # 0=Mon ... 4=Fri\n    if d['Q']>d['R'] and abs(d['P']-d['T'])==2 and d['S'] not in (0,4) and abs(d['R']-d['S'])!=1 and d['S']==2:\n        S.append(p)\nopts={'A':lambda p:p.index('P')==1,'B':lambda p:p.index('Q')==4,'C':lambda p:p.index('T')==3,'D':lambda p:p.index('P')>p.index('T')}\nprint(S, [L for L,f in opts.items() if all(f(p) for p in S)])",
-      "notes": ""
+      "checkCode": "from itertools import permutations\nok=[]\nfor p in permutations('PQRST'):\n    pos={s:i for i,s in enumerate(p)}  # 0=Mon .. 4=Fri\n    if pos['Q']>pos['R'] and abs(pos['P']-pos['T'])==2 and pos['S'] not in (0,4) and abs(pos['R']-pos['S'])!=1:\n        ok.append(pos)\nw=[s for s in ok if s['S']==2]\nprint(len(w), {'A':all(s['P']==1 for s in w),'B':all(s['Q']==4 for s in w),'C':all(s['T']==3 for s in w),'D':all(s['P']>s['T'] for s in w)})",
+      "notes": "Brute force over all 120 permutations: exactly two schedules satisfy all four conditions with S on Wednesday (R,P,S,T,Q and R,T,S,P,Q); only option B holds in both. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -441,12 +441,12 @@
       "commonTrap": "Assuming the three panels are independent of each other, which gives the prior rate $0.19$. They are independent only once the plant is known; when the plant is unknown, earlier defectives are evidence about it."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "157/490 ≈ 0.3204 → closest option 0.32 (C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) 157/490 = 0.3204 (closest to 0.32)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nprior=[F(1,2),F(3,10),F(1,5)]; p=[F(1,10),F(1,5),F(2,5)]\nE2=sum(a*q**2 for a,q in zip(prior,p)); E3=sum(a*q**3 for a,q in zip(prior,p))\nprint(E3/E2, float(E3/E2))",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nimport random\npri={'X':F(1,2),'Y':F(3,10),'Z':F(1,5)}; p={'X':F(1,10),'Y':F(1,5),'Z':F(2,5)}\nexact=sum(pri[k]*p[k]**3 for k in pri)/sum(pri[k]*p[k]**2 for k in pri)\nrandom.seed(1); hit=tot=0; pf={k:float(v) for k,v in p.items()}\nfor _ in range(1_000_000):\n    k=random.choices('XYZ',[.5,.3,.2])[0]\n    a,b,c=(random.random()<pf[k] for _ in range(3))\n    if a and b: tot+=1; hit+=c\nprint(exact, float(exact), hit/tot)",
+      "notes": "Exact Fraction computation 157/490 = 0.32041 and a 1M-sample Monte Carlo (0.3208) agree. Distractors 0.19 (prior), 0.26 (one observation) and 0.65 (posterior of Z) verified as intended and are all clearly farther from 0.3204. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -560,12 +560,12 @@
       "commonTrap": "Dividing $26 - 14$ by 2 instead of 4 (forgetting that the cross term changes by $2\\operatorname{Cov}$ in *each* expression), or taking $\\operatorname{Var}(Y)$ as $26 - 4$ without removing the covariance contribution."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Cov = 3, Var(Y) = 16, rho = 0.375 → (C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) 0.375 (Cov = 3, Var(Y) = 16)",
       "agreesWithKey": true,
-      "checkCode": "import math\nvx,vs,vd=4,26,14\ncov=(vs-vd)/4; vy=(vs+vd)/2-vx\nprint(cov, vy, cov/math.sqrt(vx*vy))",
-      "notes": ""
+      "checkCode": "import numpy as np\nvx,vs,vd=4,26,14\ncov=(vs-vd)/4; vy=(vs+vd)/2-vx\nprint(cov, vy, cov/np.sqrt(vx*vy), vx+vy+2*cov, vx+vy-2*cov)",
+      "notes": "Independent derivation and Python agree; Var(X+-Y) reconstructed as 26 and 14. Distractor values 0.188, 0.320, 0.750 verified as the stated misconceptions. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -603,7 +603,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD — requires tracing three rounds of Lloyd's algorithm in which the assignment changes twice, and the non-obvious insight that the algorithm stops at a local optimum (SSE 64) rather than the visually natural global optimum (SSE 58); strong traps at every stage; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: HARD — requires tracing three rounds of Lloyd's algorithm in which the centroids move twice before the third round confirms convergence, and the non-obvious insight that the algorithm stops at a local optimum (SSE 64) rather than the visually natural global optimum (SSE 58); strong traps at every stage; about 3 minutes.",
     "estimatedTimeSec": 180,
     "concept": "Lloyd's k-means iterations from a given initialisation, convergence to a local (not global) optimum, and the SSE objective.",
     "conceptIds": [],
@@ -683,12 +683,12 @@
       "commonTrap": "Eyeballing the data, seeing the big gap between 7 and 15, and answering with the global optimum (58). k-means only guarantees a local optimum, and the answer depends on the stated initialisation."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Converges to centroids 9 and 23, SSE = 64 (global optimum 58 not reached) → (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B) 64 (final centroids 9 and 23, clusters {5,7,15} and {21,23,25})",
       "agreesWithKey": true,
-      "checkCode": "X=[5,7,15,21,23,25]; c=[21,23]; prev=None\nwhile True:\n    a=[min(range(2),key=lambda k:abs(x-c[k])) for x in X]\n    if a==prev: break\n    prev=a; c=[sum(x for x,k in zip(X,a) if k==j)/a.count(j) for j in range(2)]\nsse=sum((x-c[k])**2 for x,k in zip(X,a))\nbest=min(sum((x-sum(X[:s])/s)**2 for x in X[:s])+sum((x-sum(X[s:])/(6-s))**2 for x in X[s:]) for s in range(1,6))\nprint(c, sse, best)",
-      "notes": ""
+      "checkCode": "import numpy as np\nX=np.array([5,7,15,21,23,25.]); c=np.array([21.,23.]); prev=None\nwhile True:\n    a=np.abs(X[:,None]-c[None,:]).argmin(1)\n    if prev is not None and (a==prev).all(): break\n    prev=a; c=np.array([X[a==k].mean() for k in (0,1)])\nsse=((X-c[a])**2).sum()\nbest=min(sum(((X[m]-X[m].mean())**2).sum() for m in (mask, ~mask)) for s in range(1,63) for mask in [np.array([(s>>i)&1==1 for i in range(6)])])\nprint(c, a, sse, best)",
+      "notes": "Traced Lloyd's algorithm independently: centroids (21,23) -> (12,24) -> (9,23), third pass leaves assignments unchanged; no distance ties occur at any step. SSE 64. Brute force over all 62 two-way partitions gives global optimum 58, confirming the local-optimum distractor. Distractors 94 (old centroids 12,24) and 166 (after iteration 1) verified. Metadata calibration only: difficultyRationale wording 'assignment changes twice' -> 'centroids move twice' (the assignment changes only once after the first pass)."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -764,12 +764,12 @@
       "commonTrap": "Reporting the Maclaurin coefficient $11/30 \\approx 0.37$ instead of the derivative (forgetting to multiply by $5!$), or dropping the $\\tfrac{2}{3}x^4 \\cdot x$ cross term, which gives $120\\left(\\tfrac{1}{5} - \\tfrac{1}{2}\\right) = -36$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "44",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols('x')\nprint(sp.diff(sp.exp(2*x)*sp.log(1+x),x,5).subs(x,0))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx=sp.symbols('x')\nf=sp.exp(2*x)*sp.log(1+x)\nprint(sp.diff(f,x,5).subs(x,0), 120*sp.series(f,x,0,6).removeO().coeff(x,5))",
+      "notes": "Series product coefficient 11/30 times 5! = 44; sympy 5th derivative at 0 and Leibniz sum 80-80+80-60+24 agree. Exact integer, point range [44,44] is appropriate, no rounding involved. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -889,12 +889,12 @@
       "commonTrap": "Accepting (C) because every consecutive vertex is reachable from some earlier vertex. DFS cannot abandon f while f still has an unvisited neighbour (e). Also, mistaking the level-by-level BFS order (B) for a DFS order."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Valid DFS discovery orders among options: A, D",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A), (D)",
       "agreesWithKey": true,
-      "checkCode": "adj={v:set() for v in 'abcdefg'}\nfor u,w in 'ab ac bd cd ce df ef fg'.split(): adj[u].add(w); adj[w].add(u)\ndef is_dfs(s):\n    seen={s[0]}; st=[s[0]]\n    for v in s[1:]:\n        while st and not adj[st[-1]]-seen: st.pop()\n        if not st or v in seen or v not in adj[st[-1]]: return False\n        seen.add(v); st.append(v)\n    return True\nprint([L for L,s in zip('ABCD',['abdfecg','acbdefg','acdfgbe','acefdbg']) if is_dfs(s)])",
-      "notes": ""
+      "checkCode": "adj={'a':'bc','b':'ad','c':'ade','d':'bcf','e':'cf','f':'deg','g':'f'}\ndef orders(stack,seen,out,res):\n    while stack and not [u for u in adj[stack[-1]] if u not in seen]: stack=stack[:-1]\n    if not stack: res.add(''.join(out)); return\n    for u in adj[stack[-1]]:\n        if u not in seen: orders(stack+[u],seen|{u},out+[u],res)\nres=set(); orders(['a'],{'a'},['a'],res)\nprint(len(res), [L for L,s in zip('ABCD',['abdfecg','acbdefg','acdfgbe','acefdbg']) if s in res])",
+      "notes": "Exhaustive enumeration of all DFS discovery orders from a (9 orders, recursive form; the push-all-neighbours iterative form gives the same set): A and D are members; B is BFS-like (b is not adjacent to c) and C backtracks past f while e is unvisited. Adjacency lists are symmetric. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
@@ -970,12 +970,12 @@
       "commonTrap": "Raising the diagonal entries to the fourth power ($3^4 + 3^4 + 0^4 = 162$) or the trace ($6^4 = 1296$). Neither is valid: $\\operatorname{tr}(A^4)$ is the sum of the fourth powers of the **eigenvalues**, not of the diagonal entries."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Eigenvalues 1, 1, 4; trace(A^4) = 258",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "258 (eigenvalues 1, 1, 4)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA=sp.Matrix([[3,1,1],[4,3,2],[-2,-1,0]])\nprint(A.eigenvals(), (A**4).trace())",
-      "notes": ""
+      "checkCode": "import numpy as np, sympy as sp\nA=np.array([[3,1,1],[4,3,2],[-2,-1,0]])\nM=sp.Matrix(A.tolist())\nprint(np.trace(np.linalg.matrix_power(A,4)), (M**4).trace(), M.eigenvals(), sum(l**4 for l in np.linalg.eigvals(A)))",
+      "notes": "Characteristic polynomial l^3-6l^2+9l-4 = (l-1)^2(l-4); direct matrix power via numpy and sympy gives trace(A^4) = 258 = 1+1+256. Exact integer, point range [258,258]. Nothing changed."
     },
     "review": {
       "status": "SELF_CHECKED",
