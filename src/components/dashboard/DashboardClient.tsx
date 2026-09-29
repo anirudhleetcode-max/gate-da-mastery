@@ -14,9 +14,8 @@ import { Stat } from "@/components/ui/Stat";
 import { ProgressBar } from "@/components/ui/Progress";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
-import { BarList, ChartFrame } from "@/components/charts/Charts";
 import { mockProgress, type MockInfo, type MockProgress } from "./mocks";
-import { MockScoreChart, PageSkeleton, StorageUnavailable, pct0 } from "./parts";
+import { MockScoreChart, PageSkeleton, PyqCompletion, StorageUnavailable, pct0 } from "./parts";
 import { dayToDate, dueLabel, useLoadStatus, useToday } from "./useStudentData";
 
 export interface ExamContext {
@@ -203,9 +202,8 @@ function LibraryFact({ label, value, hint }: { label: string; value: number; hin
   return (
     <div className="min-w-0">
       <dt className="text-xs text-fg-3">{label}</dt>
-      <dd className="tnum text-lg font-semibold text-fg">
-        {value} {hint ? <span className="text-xs font-normal text-fg-3">{hint}</span> : null}
-      </dd>
+      <dd className="tnum text-lg font-semibold text-fg">{value}</dd>
+      {hint ? <dd className="text-xs text-fg-3">{hint}</dd> : null}
     </div>
   );
 }
@@ -223,7 +221,7 @@ function QuickActions({ mp, dueToday }: { mp: MockProgress; dueToday: number }) 
       emphasis: true,
     });
   }
-  items.push({ href: "/today", icon: CalendarCheck, title: "Today's set", body: "Questions, a concept and formulas picked for today" });
+  items.push({ href: "/today", icon: CalendarCheck, title: "Today's set", body: "Questions, a concept and formulas chosen for today" });
   items.push({ href: "/practice", icon: Dumbbell, title: "Practice now", body: "Build a set by subject, topic and difficulty" });
   if (mp.next) items.push({ href: `/mocks/${mp.next.id}`, icon: Timer, title: `Next: Mock ${mp.next.number}`, body: `${mp.next.shortTitle} · ${mp.next.durationMinutes} min` });
   else items.push({ href: "/mocks", icon: Timer, title: "Mock tests", body: mp.taken ? "You have taken every available mock" : "See all mock tests" });
@@ -231,7 +229,7 @@ function QuickActions({ mp, dueToday }: { mp: MockProgress; dueToday: number }) 
 
   return (
     <nav aria-label="Quick actions">
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
         {items.map((it) => {
           const Icon = it.icon;
           return (
@@ -248,7 +246,7 @@ function QuickActions({ mp, dueToday }: { mp: MockProgress; dueToday: number }) 
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold text-fg">{it.title}</span>
-                  <span className="block truncate text-xs text-fg-3">{it.body}</span>
+                  <span className="line-clamp-2 block text-xs text-fg-3">{it.body}</span>
                 </span>
                 <ArrowRight aria-hidden className="h-4 w-4 shrink-0 text-fg-3" />
               </Link>
@@ -269,13 +267,13 @@ function OverallStats({ model, mp }: { model: ProgressModel; mp: MockProgress })
       <h2 id="overall" className="mb-3 text-base font-semibold text-fg">
         Overall progress
       </h2>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
-        <Stat label="Questions solved" value={o.questionsSolved} hint="distinct questions answered" />
-        <Stat label="PYQs completed" value={<>{o.pyqDone}<span className="text-base font-normal text-fg-3"> / {o.pyqTotal}</span></>} hint={o.pyqTotal ? `${pct(o.pyqDone / o.pyqTotal)} of loaded PYQs` : "no PYQs loaded"} />
-        <Stat label="Mocks completed" value={<>{mp.taken}<span className="text-base font-normal text-fg-3"> / {mp.totalMocks}</span></>} hint={mp.submittedAttempts ? plural(mp.submittedAttempts, "submitted attempt") : "none submitted yet"} />
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+        <Stat label="Questions solved" value={o.questionsSolved} hint="distinct questions" />
+        <Stat label="PYQs completed" value={<>{o.pyqDone}<span className="text-base font-normal text-fg-3"> / {o.pyqTotal}</span></>} hint={o.pyqTotal ? `${pct(o.pyqDone / o.pyqTotal, 0)} of loaded PYQs` : "no PYQs loaded"} />
+        <Stat label="Mocks completed" value={<>{mp.taken}<span className="text-base font-normal text-fg-3"> / {mp.totalMocks}</span></>} hint={mp.submittedAttempts ? plural(mp.submittedAttempts, "attempt") : "none submitted yet"} />
         <Stat label="Accuracy" value={pct(o.accuracy)} hint={o.attempted ? `${o.correct} of ${o.attempted} correct` : "no answers yet"} />
-        <Stat label="Avg mock score" value={mp.avgRatio === null ? "—" : pct(mp.avgRatio)} hint={mp.avgRatio === null ? "submit a mock to see this" : "of max marks, all attempts"} />
-        <Stat label="Study streak" value={plural(o.streak, "day")} hint={`${plural(o.studyDays, "study day")} in total`} />
+        <Stat label="Avg mock score" value={mp.avgRatio === null ? "—" : pct(mp.avgRatio)} hint={mp.avgRatio === null ? "no mock submitted yet" : "of max marks"} />
+        <Stat label="Study streak" value={plural(o.streak, "day")} hint={`${plural(o.studyDays, "day")} studied`} />
       </div>
     </section>
   );
@@ -286,7 +284,7 @@ function OverallStats({ model, mp }: { model: ProgressModel; mp: MockProgress })
 function SubjectProgress({ model, catalog, className }: { model: ProgressModel; catalog: Catalog; className?: string }) {
   const bySubject = new Map(model.subjects.map((s) => [s.subjectId, s]));
   return (
-    <Card className={className}>
+    <Card className={cn("lg:self-start", className)}>
       <CardHeader title="Subject progress" description="Bars show official PYQs attempted; accuracy counts every answer you submitted in the subject." action={<Link href="/progress" className="text-sm font-medium text-accent-text hover:underline">Details</Link>} />
       <ul className="divide-y divide-border">
         {catalog.subjects.map((cs) => {
@@ -294,16 +292,16 @@ function SubjectProgress({ model, catalog, className }: { model: ProgressModel; 
           if (!s) return null;
           const sid = cs.id as SubjectId;
           return (
-            <li key={cs.id} className="grid grid-cols-1 gap-x-4 gap-y-1.5 px-4 py-3 sm:grid-cols-[minmax(0,14rem)_1fr_7.5rem] sm:items-center sm:px-5">
-              <Link href={`/subjects/${cs.id}`} className="flex min-w-0 items-center gap-2 text-sm font-medium text-fg hover:underline">
+            <li key={cs.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-4 py-3 sm:grid-cols-[minmax(0,12rem)_1fr_6.5rem] sm:px-5">
+              <Link href={`/subjects/${cs.id}`} title={cs.name} className="flex min-w-0 items-center gap-2 text-sm font-medium text-fg hover:underline">
                 <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: SUBJECT_COLOR[sid] }} />
-                <span className="truncate">{cs.name}</span>
+                <span className="truncate">{SUBJECT_SHORT[sid] ?? cs.name}</span>
               </Link>
-              <div className="flex items-center gap-2">
+              <div className="col-span-2 flex items-center gap-2 sm:order-2 sm:col-span-1">
                 {s.pyqTotal ? (
                   <>
                     <ProgressBar value={s.pyqDone} max={s.pyqTotal} label={`${cs.name}: PYQs attempted`} className="flex-1" />
-                    <span className="tnum w-16 shrink-0 text-right text-xs text-fg-3">
+                    <span className="tnum w-[5.5rem] shrink-0 whitespace-nowrap text-right text-xs text-fg-3">
                       {s.pyqDone}/{s.pyqTotal} PYQs
                     </span>
                   </>
@@ -311,9 +309,10 @@ function SubjectProgress({ model, catalog, className }: { model: ProgressModel; 
                   <span className="text-xs text-fg-3">No PYQs loaded for this subject</span>
                 )}
               </div>
-              <div className="tnum text-sm sm:text-right">
+              <div className="tnum order-first col-start-2 row-start-1 text-right text-sm sm:order-3 sm:col-start-3">
                 <span className="font-semibold text-fg">{pct(s.accuracy, 0)}</span>{" "}
                 <span className="text-xs text-fg-3">{s.attempted ? `of ${s.attempted}` : "no answers"}</span>
+                <span className="sr-only"> answers correct</span>
               </div>
             </li>
           );
@@ -335,7 +334,7 @@ function WeakAreas({ model }: { model: ProgressModel }) {
             {model.weak.map((w) => (
               <li key={w.topicId} className="flex items-center gap-3 px-4 py-2.5 sm:px-5">
                 <div className="min-w-0 flex-1">
-                  <Link href={`/subjects/${w.subjectId}/topics/${w.topicId}`} className="block truncate text-sm font-medium text-fg hover:underline">
+                  <Link href={`/subjects/${w.subjectId}/topics/${w.topicId}`} title={w.name} className="block truncate text-sm font-medium text-fg hover:underline">
                     {w.name}
                   </Link>
                   <p className="tnum text-xs text-fg-3">
@@ -401,32 +400,5 @@ function UpcomingRevision({ items, today }: { items: RevisionItemRow[]; today: s
         )}
       </CardBody>
     </Card>
-  );
-}
-
-// ------------------------------------------------------------------ PYQ completion
-
-function PyqCompletion({ model }: { model: ProgressModel }) {
-  const rows = model.subjects.filter((s) => s.pyqTotal > 0);
-  if (!rows.length) return null;
-  return (
-    <ChartFrame
-      title="PYQ completion by subject"
-      description="Share of each subject's loaded official PYQs you have attempted."
-      table={{ columns: ["Subject", "Attempted", "Loaded PYQs", "Completion"], rows: rows.map((s) => [s.name, s.pyqDone, s.pyqTotal, pct(s.pyqDone / s.pyqTotal)]) }}
-    >
-      <BarList
-        ariaLabel="PYQ completion by subject"
-        max={1}
-        data={rows.map((s) => ({
-          key: s.subjectId,
-          label: SUBJECT_SHORT[s.subjectId as SubjectId] ?? s.name,
-          value: s.pyqDone / s.pyqTotal,
-          display: `${s.pyqDone}/${s.pyqTotal}`,
-          detail: pct(s.pyqDone / s.pyqTotal),
-          color: SUBJECT_COLOR[s.subjectId as SubjectId],
-        }))}
-      />
-    </ChartFrame>
   );
 }

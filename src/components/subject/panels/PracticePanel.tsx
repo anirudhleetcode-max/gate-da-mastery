@@ -23,7 +23,14 @@ export function PracticePanel({ data, model, status }: PanelProps) {
   return (
     <div className="space-y-5">
       <Card>
-        <CardHeader title="Quick start" description={`A session of mixed ${s.name} questions: ${plural(data.pyqs.length, "official PYQ")} and ${plural(practiceTotal, "original practice question")} in the pool.`} />
+        <CardHeader
+          title="Quick start"
+          description={
+            practiceTotal
+              ? `A session of mixed ${s.name} questions from ${plural(data.pyqs.length, "official PYQ")} and ${plural(practiceTotal, "original practice question")}.`
+              : `A session of ${s.name} questions from its ${plural(data.pyqs.length, "official PYQ")} (no original practice questions for this subject yet).`
+          }
+        />
         <CardBody className="flex flex-wrap gap-2">
           <ButtonLink href={`/practice?subject=${s.id}&count=10`} variant="primary">
             <Dumbbell aria-hidden className="h-4 w-4" /> Practice 10 questions

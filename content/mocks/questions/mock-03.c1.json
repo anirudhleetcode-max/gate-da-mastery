@@ -1,0 +1,634 @@
+[
+  {
+    "id": "M03-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-functions"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single idea (reduce each argument modulo the period into the base interval) with one half-open-endpoint trap and three short evaluations; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Evaluating a periodic extension of a function defined on a half-open base interval.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A periodic signal $s(t)$ is defined on one period by\n\n$$\ns(t) = t^2 + t, \\qquad -2 \\le t < 2,\n$$\n\nand is extended to all real $t$ by $s(t + 4) = s(t)$. The value of $s(9.5) + s(-7.5) + s(6)$ is ________.\n\n(Give the exact value; no rounding is needed.)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 6.5,
+      "max": 6.5
+    },
+    "solution": {
+      "quick": "Shift each argument by a multiple of the period $4$ into the base interval $[-2, 2)$: $9.5 \\to 1.5$, $-7.5 \\to 0.5$, and $6 \\to -2$ (the value $2$ is excluded from the interval, so $6$ is *not* sent to $2$).\nThen $s = 3.75,\\ 0.75,\\ 2$, and the sum is $6.5$.",
+      "steps": [
+        {
+          "title": "Reduce every argument into [-2, 2)",
+          "body": "Write $t = 4k + r$ with $k$ an integer and $r \\in [-2, 2)$; then $s(t) = s(r)$.\n\n- $9.5 = 4\\cdot 2 + 1.5$, so $r = 1.5$.\n- $-7.5 = 4\\cdot(-2) + 0.5$, so $r = 0.5$.\n- $6 = 4\\cdot 2 - 2$, so $r = -2$. (Writing $6 = 4\\cdot 1 + 2$ is not allowed, because $r = 2$ lies outside $[-2, 2)$.)"
+        },
+        {
+          "title": "Evaluate the base formula at each reduced point",
+          "body": "$$\ns(1.5) = 1.5^2 + 1.5 = 3.75, \\qquad s(0.5) = 0.5^2 + 0.5 = 0.75, \\qquad s(-2) = (-2)^2 + (-2) = 2.\n$$"
+        },
+        {
+          "title": "Add",
+          "body": "$$\ns(9.5) + s(-7.5) + s(6) = 3.75 + 0.75 + 2 = 6.5.\n$$"
+        },
+        {
+          "title": "Why the endpoint matters",
+          "body": "The formula $t^2 + t$ is valid only for $-2 \\le t < 2$. Because $s$ is periodic, $s(2) = s(-2) = 2$, whereas the formula would give $2^2 + 2 = 6$ at $t = 2$. Using it there would produce $3.75 + 0.75 + 6 = 10.5$, which is wrong."
+        }
+      ],
+      "finalAnswer": "**6.5**",
+      "commonTrap": "Reducing $6$ to $2$ and then substituting $t = 2$ into $t^2 + t$ (giving $6$ instead of $2$), which leads to $10.5$. Since the base interval is half-open, the point $2$ must be moved one more period to $-2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6.5",
+      "agreesWithKey": true,
+      "checkCode": "def s(t):\n    r = (t + 2) % 4 - 2   # reduce into the base interval [-2, 2)\n    return r * r + r\nprint(s(9.5) + s(-7.5) + s(6))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one series (obtained by combining two standard logarithm expansions) but four independent checks (coefficient, derivative-versus-coefficient, symmetry and radius of convergence), each routine; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Maclaurin series of ln((1+x)/(1-x)): coefficients versus derivatives f^(n)(0) = n! a_n, parity, and radius of convergence.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x) = \\ln\\dfrac{1 + x}{1 - x}$ for $-1 < x < 1$, and let $\\displaystyle\\sum_{n=0}^{\\infty} a_n x^n$ be its Maclaurin series. Here $f^{(n)}$ denotes the $n^{\\text{th}}$ derivative of $f$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$f'''(0) = \\dfrac{2}{3}$"
+      },
+      {
+        "label": "B",
+        "text": "$a_5 = \\dfrac{2}{5}$"
+      },
+      {
+        "label": "C",
+        "text": "The Maclaurin series of $f$ converges for every real number $x$."
+      },
+      {
+        "label": "D",
+        "text": "$f^{(4)}(0) = 0$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$f(x) = \\ln(1+x) - \\ln(1-x) = 2\\left(x + \\dfrac{x^3}{3} + \\dfrac{x^5}{5} + \\cdots\\right)$: only odd powers survive, and $a_{2k+1} = \\dfrac{2}{2k+1}$.\nSo $a_5 = 2/5$ (B true) and $f^{(4)}(0) = 4!\\,a_4 = 0$ (D true), but $f'''(0) = 3!\\cdot\\tfrac23 = 4 \\ne \\tfrac23$ (A false). The radius of convergence is $1$, not $\\infty$ (C false).",
+      "steps": [
+        {
+          "title": "Build the series from two standard expansions",
+          "body": "$$\n\\ln(1+x) = x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\frac{x^4}{4} + \\frac{x^5}{5} - \\cdots, \\qquad\n\\ln(1-x) = -x - \\frac{x^2}{2} - \\frac{x^3}{3} - \\frac{x^4}{4} - \\frac{x^5}{5} - \\cdots\n$$\n\nSubtracting, the even-power terms cancel and the odd-power terms double:\n\n$$\nf(x) = 2x + \\frac{2x^3}{3} + \\frac{2x^5}{5} + \\cdots = \\sum_{k=0}^{\\infty} \\frac{2}{2k+1}\\,x^{2k+1}.\n$$\n\nHence $a_1 = 2,\\ a_3 = \\tfrac23,\\ a_5 = \\tfrac25$ and $a_n = 0$ for every even $n$."
+        },
+        {
+          "title": "Convert coefficients to derivatives",
+          "body": "Since $a_n = \\dfrac{f^{(n)}(0)}{n!}$, we have $f^{(n)}(0) = n!\\,a_n$.\n\n- $f'''(0) = 3!\\cdot\\dfrac{2}{3} = 4$, so statement (A), which says $\\tfrac23$, is false. (The value $\\tfrac23$ is the coefficient $a_3$, not the derivative.)\n- $f^{(4)}(0) = 4!\\cdot a_4 = 0$, so statement (D) is true.\n- $a_5 = \\dfrac{2}{5}$, so statement (B) is true (and $f^{(5)}(0) = 120\\cdot\\tfrac25 = 48$)."
+        },
+        {
+          "title": "Radius of convergence",
+          "body": "In $\\sum \\dfrac{2}{2k+1}x^{2k+1}$, the ratio of consecutive non-zero terms has absolute value $\\dfrac{2k+1}{2k+3}\\,|x|^2 \\to |x|^2$. By the ratio test the series converges for $|x| < 1$ and diverges for $|x| > 1$; the radius of convergence is $1$. (At $x = \\pm 1$ the terms behave like $\\pm\\dfrac{2}{2k+1}$, a harmonic-type series, which diverges.) The function itself is defined only on $(-1, 1)$. So statement (C) is false."
+        },
+        {
+          "title": "Conclusion",
+          "body": "(A) false, (B) true, (C) false, (D) true."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $\\tfrac23$ is the Maclaurin coefficient $a_3$. The derivative is $f'''(0) = 3!\\,a_3 = 4$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. The $x^5$ terms are $\\tfrac{x^5}{5}$ from $\\ln(1+x)$ and $+\\tfrac{x^5}{5}$ from $-\\ln(1-x)$, giving $a_5 = \\tfrac{2}{5}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. The ratio test gives radius of convergence $1$; the series diverges for $|x| > 1$ (and $f$ is not even defined there)."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. $f$ is an odd function, so $a_4 = 0$ and hence $f^{(4)}(0) = 4!\\,a_4 = 0$."
+        }
+      ],
+      "shortcut": "$f(-x) = \\ln\\dfrac{1-x}{1+x} = -f(x)$, so $f$ is odd and every even-order derivative at $0$ vanishes. This settles (D) at once.",
+      "commonTrap": "Treating the coefficient $a_n$ as if it were the derivative $f^{(n)}(0)$ (option A), and assuming that a series obtained from logarithm expansions converges for all $x$ (option C) instead of checking the radius of convergence."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, D",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx, n = sp.symbols('x n', positive=True)\nf = sp.log((1 + x) / (1 - x))\nser = sp.series(f, x, 0, 8).removeO()\na5 = ser.coeff(x, 5)\nd3 = sp.diff(f, x, 3).subs(x, 0)\nd4 = sp.diff(f, x, 4).subs(x, 0)\n# ratio of consecutive non-zero coefficients (a_{2k+3} / a_{2k+1}) -> 1/R^2\nlim = sp.limit((2 / (2*n + 3)) / (2 / (2*n + 1)), n, sp.oo)\nR = 1 / sp.sqrt(lim)\ntruth = {'A': d3 == sp.Rational(2, 3), 'B': a5 == sp.Rational(2, 5), 'C': R == sp.oo, 'D': d4 == 0}\nprint(', '.join(k for k, v in truth.items() if v))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-maxima-minima"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (first- and second-derivative tests) applied to a quartic whose derivative factorises immediately; three critical points and three short evaluations; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Classifying critical points of a quartic with the second-derivative test and comparing local extreme values.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be defined by\n\n$$\nf(x) = 3x^4 - 12x^3 + 12x^2 + 4 .\n$$\n\nThe function $f$ has exactly one local maximum. The local maximum value of $f$ exceeds the smallest local minimum value of $f$ by ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "$f'(x) = 12x(x-1)(x-2)$, so the critical points are $0, 1, 2$. The second derivative $f''(x) = 36x^2 - 72x + 24$ is $24, -12, 24$ there, so $x = 0, 2$ are local minima and $x = 1$ is the local maximum.\n$f(1) = 7$ and $f(0) = f(2) = 4$, so the difference is $7 - 4 = 3$.",
+      "steps": [
+        {
+          "title": "Critical points",
+          "body": "$$\nf'(x) = 12x^3 - 36x^2 + 24x = 12x\\,(x^2 - 3x + 2) = 12x(x-1)(x-2).\n$$\n\n$f'(x) = 0$ gives $x = 0,\\ 1,\\ 2$."
+        },
+        {
+          "title": "Second-derivative test",
+          "body": "$$\nf''(x) = 36x^2 - 72x + 24.\n$$\n\n| $x$ | $f''(x)$ | Nature |\n|---|---|---|\n| $0$ | $24 > 0$ | local minimum |\n| $1$ | $36 - 72 + 24 = -12 < 0$ | local maximum |\n| $2$ | $144 - 144 + 24 = 24 > 0$ | local minimum |"
+        },
+        {
+          "title": "Extreme values",
+          "body": "$$\nf(0) = 4, \\qquad f(1) = 3 - 12 + 12 + 4 = 7, \\qquad f(2) = 48 - 96 + 48 + 4 = 4.\n$$\n\nThe local maximum value is $7$; both local minimum values equal $4$, so the smallest is $4$."
+        },
+        {
+          "title": "Difference",
+          "body": "$7 - 4 = 3$."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "shortcut": "Note that $f(x) = 4 + 3x^2(x-2)^2 \\ge 4$, with equality at $x = 0$ and $x = 2$ (the two minima). Between them the bump $3x^2(x-2)^2$ peaks at $x = 1$ with value $3$, so $f(1) = 7$ and the difference is $3$.",
+      "commonTrap": "Reporting a critical *point* or the value $f(1) = 7$ instead of the difference, or misclassifying $x = 1$ because the sign of $f''$ was computed incorrectly. Since both minima give the same value $4$, no further comparison of minima is needed."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = 3*x**4 - 12*x**3 + 12*x**2 + 4\ncrit = sp.solve(sp.diff(f, x), x)\nd2 = sp.diff(f, x, 2)\nmx = [f.subs(x, c) for c in crit if d2.subs(x, c) < 0]\nmn = [f.subs(x, c) for c in crit if d2.subs(x, c) > 0]\nassert len(mx) == 1\nprint(mx[0] - min(mn))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-limits"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (a 0/0 limit resolved with standard expansions or two applications of L'Hôpital's rule) and a short computation; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Limit of a 0/0 form using the leading terms of standard series (or repeated L'Hôpital's rule).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The value of\n\n$$\n\\lim_{x \\to 0} \\frac{e^{3x} - 1 - 3x}{1 - \\cos 2x}\n$$\n\nis ________ (rounded off to **two** decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2.24,
+      "max": 2.26
+    },
+    "solution": {
+      "quick": "Both numerator and denominator vanish at $0$ to second order: $e^{3x} - 1 - 3x \\approx \\tfrac{9}{2}x^2$ and $1 - \\cos 2x \\approx 2x^2$.\nThe limit is $\\dfrac{9/2}{2} = \\dfrac{9}{4} = 2.25$.",
+      "steps": [
+        {
+          "title": "Identify the form",
+          "body": "At $x = 0$: numerator $= e^0 - 1 - 0 = 0$ and denominator $= 1 - \\cos 0 = 0$, so the limit is of the form $0/0$."
+        },
+        {
+          "title": "Expand both parts to the first non-zero term",
+          "body": "$$\ne^{3x} = 1 + 3x + \\frac{(3x)^2}{2} + \\frac{(3x)^3}{6} + \\cdots \\ \\Longrightarrow\\ e^{3x} - 1 - 3x = \\frac{9}{2}x^2 + O(x^3),\n$$\n\n$$\n\\cos 2x = 1 - \\frac{(2x)^2}{2} + \\frac{(2x)^4}{24} - \\cdots \\ \\Longrightarrow\\ 1 - \\cos 2x = 2x^2 - O(x^4).\n$$"
+        },
+        {
+          "title": "Divide",
+          "body": "$$\n\\frac{e^{3x} - 1 - 3x}{1 - \\cos 2x} = \\frac{\\tfrac{9}{2}x^2 + O(x^3)}{2x^2 - O(x^4)} = \\frac{\\tfrac{9}{2} + O(x)}{2 - O(x^2)} \\longrightarrow \\frac{9/2}{2} = \\frac{9}{4}.\n$$"
+        },
+        {
+          "title": "Cross-check with L'Hôpital's rule",
+          "body": "First application: $\\dfrac{3e^{3x} - 3}{2\\sin 2x}$, still $0/0$. Second application: $\\dfrac{9e^{3x}}{4\\cos 2x} \\to \\dfrac{9}{4}$ as $x \\to 0$. Both methods give $2.25$."
+        }
+      ],
+      "finalAnswer": "**2.25**",
+      "commonTrap": "Using $1 - \\cos 2x \\approx \\dfrac{x^2}{2}$ (forgetting that the argument is $2x$, so the leading term is $\\dfrac{(2x)^2}{2} = 2x^2$), which gives $9$; or approximating $e^{3x} - 1 \\approx 3x$ and concluding that the numerator is $0$ (the numerator's first non-zero term is quadratic)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2.25",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nL = sp.limit((sp.exp(3*x) - 1 - 3*x) / (1 - sp.cos(2*x)), x, 0)\nprint(L, float(L))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (binomial series with a scaled argument) needing a single generalised-binomial-coefficient evaluation and one substitution; about 1 minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Coefficient extraction from the binomial series (1 + t)^alpha after the substitution t = -2x.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The Maclaurin series of $f(x) = (1 - 2x)^{-1/2}$, valid for $|x| < \\tfrac{1}{2}$, is $\\displaystyle\\sum_{n=0}^{\\infty} c_n x^n$. The value of $c_3$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{5}{2}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{5}{16}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{5}{8}$"
+      },
+      {
+        "label": "D",
+        "text": "$-\\dfrac{1}{2}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Use $(1+t)^{\\alpha} = \\sum_k \\binom{\\alpha}{k} t^k$ with $\\alpha = -\\tfrac12$ and $t = -2x$. Here $\\binom{-1/2}{3} = -\\tfrac{5}{16}$ and $(-2x)^3 = -8x^3$, so $c_3 = -\\tfrac{5}{16}\\cdot(-8) = \\tfrac52$: **(A)**.",
+      "steps": [
+        {
+          "title": "Binomial series",
+          "body": "For $|t| < 1$,\n\n$$\n(1 + t)^{\\alpha} = \\sum_{k=0}^{\\infty} \\binom{\\alpha}{k} t^k, \\qquad \\binom{\\alpha}{k} = \\frac{\\alpha(\\alpha - 1)\\cdots(\\alpha - k + 1)}{k!}.\n$$\n\nHere $(1 - 2x)^{-1/2}$ corresponds to $\\alpha = -\\tfrac{1}{2}$ and $t = -2x$."
+        },
+        {
+          "title": "Generalised binomial coefficient for k = 3",
+          "body": "$$\n\\binom{-1/2}{3} = \\frac{\\left(-\\tfrac12\\right)\\left(-\\tfrac32\\right)\\left(-\\tfrac52\\right)}{3!} = \\frac{-\\tfrac{15}{8}}{6} = -\\frac{5}{16}.\n$$"
+        },
+        {
+          "title": "Substitute t = -2x",
+          "body": "$$\n\\binom{-1/2}{3}\\,t^3 = -\\frac{5}{16}\\,(-2x)^3 = -\\frac{5}{16}\\cdot(-8x^3) = \\frac{5}{2}\\,x^3,\n$$\n\nso $c_3 = \\dfrac{5}{2}$."
+        },
+        {
+          "title": "Cross-check by differentiation",
+          "body": "$f'(x) = (1-2x)^{-3/2}$, $f''(x) = 3(1-2x)^{-5/2}$, $f'''(x) = 15(1-2x)^{-7/2}$, so $f'''(0) = 15$ and $c_3 = \\dfrac{f'''(0)}{3!} = \\dfrac{15}{6} = \\dfrac{5}{2}$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. $c_3 = \\binom{-1/2}{3}(-2)^3 = \\left(-\\tfrac{5}{16}\\right)(-8) = \\tfrac52$, confirmed by $f'''(0)/3! = 15/6$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $\\tfrac{5}{16}$ is the magnitude of the coefficient of $t^3$ in $(1+t)^{-1/2}$ (equivalently of $u^3$ in $(1-u)^{-1/2}$). The factor $2^3 = 8$ coming from $t = -2x$ has been left out."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $\\tfrac{5}{8} = \\tfrac{5}{16}\\cdot 2$ scales the coefficient by $2$ instead of $2^3 = 8$; the substitution $t = -2x$ raises the factor $-2$ to the third power."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $-\\tfrac12$ is what one gets with exponent $+\\tfrac12$: the $u^3$ coefficient of $(1-u)^{1/2}$ is $-\\tfrac1{16}$, and $-\\tfrac{1}{16}\\cdot 8 = -\\tfrac12$. The exponent here is $-\\tfrac12$."
+        }
+      ],
+      "shortcut": "For $(1-u)^{-1/2}$ the coefficient of $u^k$ is $\\dfrac{\\binom{2k}{k}}{4^k}$; for $k = 3$ this is $\\dfrac{20}{64} = \\dfrac{5}{16}$. With $u = 2x$, multiply by $2^3 = 8$ to get $\\dfrac{5}{2}$.",
+      "commonTrap": "Forgetting that $t = -2x$ contributes $(-2)^3 = -8$ (giving $\\tfrac{5}{16}$, or $\\tfrac58$ if the factor is taken as $2$), or using the exponent $+\\tfrac12$ instead of $-\\tfrac12$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (5/2)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = (1 - 2*x)**sp.Rational(-1, 2)\nprint(sp.series(f, x, 0, 5).removeO().coeff(x, 3), sp.diff(f, x, 3).subs(x, 0) / 6)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-single-var-optimization"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (eliminate a variable using the fencing constraint, then maximise a single-variable quadratic) with a direct set-up and short arithmetic; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Maximising the area of a rectangle under a fencing-length constraint by reducing to one variable.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A rectangular pen is to be built against a long straight wall, so no fence is needed along the wall. The pen consists of two side fences and one front fence (parallel to the wall), together with three partition fences, each perpendicular to the wall and equal in length to a side fence, which divide the pen into four equal compartments.\n\nA total of $240$ m of fencing is available, and all of it is used. The maximum possible area of the pen, in square metres, is ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2880,
+      "max": 2880
+    },
+    "solution": {
+      "quick": "Let $x$ be the length of each fence perpendicular to the wall (there are $2 + 3 = 5$ of them) and $y$ the front fence: $5x + y = 240$, so $A(x) = x(240 - 5x)$.\n$A'(x) = 240 - 10x = 0 \\Rightarrow x = 24$, $y = 120$, $A''<0$. The maximum area is $24 \\times 120 = 2880\\ \\text{m}^2$.",
+      "steps": [
+        {
+          "title": "Set up the constraint",
+          "body": "Let $x$ be the length (in m) of each fence perpendicular to the wall and $y$ the length of the front fence. The perpendicular fences are the $2$ sides and the $3$ partitions, that is $5$ fences of length $x$, plus one fence of length $y$:\n\n$$\n5x + y = 240 \\ \\Longrightarrow\\ y = 240 - 5x, \\qquad 0 < x < 48.\n$$"
+        },
+        {
+          "title": "Area as a function of x",
+          "body": "$$\nA(x) = x\\,y = x(240 - 5x) = 240x - 5x^2.\n$$"
+        },
+        {
+          "title": "Maximise",
+          "body": "$$\nA'(x) = 240 - 10x = 0 \\ \\Longrightarrow\\ x = 24 \\in (0, 48), \\qquad A''(x) = -10 < 0,\n$$\n\nso $x = 24$ gives a maximum. As $x \\to 0^+$ or $x \\to 48^-$, $A \\to 0$, so this is the maximum over the whole interval."
+        },
+        {
+          "title": "Maximum area",
+          "body": "With $x = 24$: $y = 240 - 120 = 120$, and\n\n$$\nA_{\\max} = 24 \\times 120 = 2880 \\ \\text{m}^2.\n$$"
+        }
+      ],
+      "finalAnswer": "**2880**",
+      "shortcut": "$A(x) = 5x(48 - x)$ is a downward parabola with roots $x = 0$ and $x = 48$, so its maximum is at the midpoint $x = 24$, giving $A = 5 \\cdot 24 \\cdot 24 = 2880$.",
+      "commonTrap": "Miscounting the fences that have length $x$. Ignoring the partitions ($2x + y = 240$) gives $7200$; counting only two partitions ($4x + y = 240$), or treating all four outer sides as fenced, gives $3600$. There are $2$ sides and $3$ partitions, so $5x + y = 240$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2880",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', positive=True)\nA = x * (240 - 5*x)                      # 5x + y = 240\nxs = sp.solve(sp.diff(A, x), x)[0]\nbrute = max(t/100 * (240 - 5*t/100) for t in range(1, 4800))   # grid check over 0 < x < 48\nprint(xs, A.subs(x, xs), round(brute, 4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-continuity-differentiability"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (differentiability of a maximum of two functions) resolved by a single algebraic observation, $x^2 - (2x-1) = (x-1)^2 \\ge 0$, with a corner-at-the-crossing trap; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Differentiability of f(x) = max{g(x), h(x)}: a crossing gives a corner, a tangential touching does not.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be defined by\n\n$$\nf(x) = \\max\\{\\, x^2,\\ 2x - 1 \\,\\}.\n$$\n\nWhich one of the following statements is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$f$ is not continuous at $x = 1$."
+      },
+      {
+        "label": "B",
+        "text": "$f$ is continuous at $x = 1$ but not differentiable at $x = 1$."
+      },
+      {
+        "label": "C",
+        "text": "$f$ is differentiable at every real $x$, and $f'(1) = 2$."
+      },
+      {
+        "label": "D",
+        "text": "$f$ is differentiable at every real $x$, but $f'$ is not continuous at $x = 1$."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$x^2 - (2x - 1) = (x - 1)^2 \\ge 0$ for all real $x$, so the maximum is always $x^2$: $f(x) = x^2$ on all of $\\mathbb{R}$.\nHence $f$ is differentiable everywhere with $f'(x) = 2x$ (continuous), and $f'(1) = 2$: **(C)**.",
+      "steps": [
+        {
+          "title": "Compare the two expressions",
+          "body": "$$\nx^2 - (2x - 1) = x^2 - 2x + 1 = (x - 1)^2 \\ge 0 \\quad \\text{for every real } x.\n$$\n\nSo $x^2 \\ge 2x - 1$ always, with equality only at $x = 1$."
+        },
+        {
+          "title": "Simplify f",
+          "body": "Because $x^2$ is never smaller than $2x - 1$, $\\max\\{x^2, 2x - 1\\} = x^2$ for all $x$. The line $y = 2x - 1$ is the tangent to $y = x^2$ at $x = 1$: the two graphs *touch* there; they do not cross."
+        },
+        {
+          "title": "Differentiability",
+          "body": "$f(x) = x^2$ is a polynomial, so it is continuous and differentiable at every real $x$, with $f'(x) = 2x$. This derivative is continuous everywhere, and $f'(1) = 2$. Equivalently, the left and right derivatives at $x = 1$ are both $2$."
+        },
+        {
+          "title": "Eliminate",
+          "body": "(A) and (B) are false because $f$ is continuous and differentiable at $x = 1$; (D) is false because $f'(x) = 2x$ is continuous; (C) is the only true statement."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. The maximum of two continuous functions is continuous; here $f(x) = x^2$ is continuous everywhere."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. A corner is expected where the two graphs *cross*, but here they only touch at $x = 1$ (double root of $x^2 = 2x - 1$). The one-sided derivatives at $1$ are both $2$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. $f(x) = x^2$ for all $x$, so $f$ is differentiable everywhere and $f'(1) = 2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $f'(x) = 2x$ is continuous at every point, including $x = 1$. Such behaviour occurs for functions like $x^2\\sin(1/x)$, not here."
+        }
+      ],
+      "commonTrap": "Assuming that $\\max\\{g, h\\}$ always has a corner at the point where $g = h$. A corner appears only if the graphs cross with different slopes. Here $g - h = (x-1)^2$ never changes sign, so the maximum is just $x^2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', real=True)\nprint(sp.factor(x**2 - (2*x - 1)))          # (x - 1)**2 >= 0, so f(x) = x**2 everywhere\nf = lambda t: max(t**2, 2*t - 1)\nh = sp.Rational(1, 10**6)\nright = (f(1 + h) - f(1)) / h\nleft = (f(1) - f(1 - h)) / h\nprint(float(left), float(right))            # both ~ 2 -> differentiable at 1 with f'(1) = 2\nprint(sp.diff(x**2, x))                     # 2*x, continuous",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (recognising the series of e^x at x = 1 after splitting the general term and shifting the index) with a two-line computation; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Summing an infinite series by recognising the Maclaurin series of e^x (including the index shift n/n! = 1/(n-1)!).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The value of the infinite series\n\n$$\n\\sum_{n=0}^{\\infty} \\frac{n + 2}{n!}\n$$\n\n(with $0! = 1$) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2e$"
+      },
+      {
+        "label": "B",
+        "text": "$3e$"
+      },
+      {
+        "label": "C",
+        "text": "$3e - 1$"
+      },
+      {
+        "label": "D",
+        "text": "$3e - 2$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Split $\\dfrac{n+2}{n!} = \\dfrac{n}{n!} + \\dfrac{2}{n!}$. Since $e = \\sum_{n\\ge 0} \\dfrac{1}{n!}$ and $\\dfrac{n}{n!} = \\dfrac{1}{(n-1)!}$ for $n \\ge 1$, we get $\\sum_{n \\ge 0}\\dfrac{n}{n!} = e$.\nHence the sum is $e + 2e = 3e$: **(B)**.",
+      "steps": [
+        {
+          "title": "Recall the series of e^x at x = 1",
+          "body": "$$\ne^x = \\sum_{n=0}^{\\infty} \\frac{x^n}{n!} \\quad\\Longrightarrow\\quad \\sum_{n=0}^{\\infty} \\frac{1}{n!} = e.\n$$"
+        },
+        {
+          "title": "Split the general term",
+          "body": "$$\n\\sum_{n=0}^{\\infty} \\frac{n+2}{n!} = \\sum_{n=0}^{\\infty} \\frac{n}{n!} + 2\\sum_{n=0}^{\\infty} \\frac{1}{n!}.\n$$\n\nThe second sum equals $2e$."
+        },
+        {
+          "title": "Evaluate the first sum with an index shift",
+          "body": "The $n = 0$ term of $\\dfrac{n}{n!}$ is $0$. For $n \\ge 1$, $\\dfrac{n}{n!} = \\dfrac{1}{(n-1)!}$, so\n\n$$\n\\sum_{n=0}^{\\infty} \\frac{n}{n!} = \\sum_{n=1}^{\\infty} \\frac{1}{(n-1)!} = \\sum_{m=0}^{\\infty} \\frac{1}{m!} = e.\n$$"
+        },
+        {
+          "title": "Combine and check numerically",
+          "body": "The sum is $e + 2e = 3e \\approx 8.155$. Direct check of the first terms: $2 + 3 + 2 + 0.833 + 0.25 + 0.058 + 0.011 + 0.002 + \\cdots \\approx 8.155$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $2e \\approx 5.44$ is the value of the similar series $\\sum_{n \\ge 0} \\dfrac{n+1}{n!}$, not of the given one. The first two terms of the given series alone add up to $2 + 3 = 5$, and the remaining terms (all positive, starting with $2$) push the total well above $2e$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. $\\sum \\dfrac{n}{n!} = e$ and $2\\sum \\dfrac{1}{n!} = 2e$, so the total is $3e$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $3e - 1$ results from evaluating $\\sum_{n \\ge 0}\\dfrac{n}{n!}$ as $e - 1$, i.e. wrongly discarding a term when shifting the index. The shifted sum $\\sum_{m\\ge 0}\\dfrac{1}{m!}$ still starts at $m = 0$ and equals $e$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. $3e - 2$ results from starting the second sum at $n = 1$, which drops its $n = 0$ term $\\dfrac{2}{0!} = 2$. The given series starts at $n = 0$, so $\\sum_{n \\ge 0}\\dfrac{2}{n!} = 2e$ in full."
+        }
+      ],
+      "shortcut": "Differentiating $\\sum \\dfrac{x^n}{n!} = e^x$ and multiplying by $x$ gives $\\sum \\dfrac{n\\,x^n}{n!} = x e^x$; at $x = 1$ this is $e$. Adding $2e$ from the constant part gives $3e$.",
+      "commonTrap": "Losing a term when shifting the index: $\\sum_{n \\ge 0}\\dfrac{n}{n!}$ equals $e$ (the $n = 0$ term is $0$, and $\\sum_{n\\ge1}\\dfrac{1}{(n-1)!}$ is the *full* series for $e$), not $e - 1$. Also forgetting that the sum begins at $n = 0$, which contributes the term $\\dfrac{2}{0!} = 2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (3e)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nn = sp.symbols('n', integer=True, nonnegative=True)\nS = sp.summation((n + 2) / sp.factorial(n), (n, 0, sp.oo))\npartial = sum((k + 2) / sp.factorial(k) for k in range(40))\nprint(S, sp.N(S), sp.N(partial))",
+      "notes": ""
+    }
+  }
+]

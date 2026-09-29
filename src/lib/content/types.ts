@@ -57,6 +57,8 @@ export interface QuestionMeta {
   testId?: string;
   /** Overall verification badge (the weakest of source / transcription / answer / solution). */
   verification: VerificationStatus;
+  /** Original questions only: review pipeline status. */
+  reviewStatus?: "DRAFT" | "SELF_CHECKED" | "VERIFIED" | "NEEDS_REVIEW";
 }
 
 export interface CompiledQuestion extends QuestionMeta {
@@ -150,7 +152,7 @@ export interface ContentBundle {
   papers: ExamPaper[];
   pattern: ExamPattern | null;
   questions: CompiledQuestion[];
-  mocks: (MockTest & { totalMarks: number; available: boolean })[];
+  mocks: (MockTest & { totalMarks: number; verifiedCount: number; available: boolean })[];
   concepts: CompiledConcept[];
   formulas: CompiledFormula[];
   strategy: CompiledStrategy[];

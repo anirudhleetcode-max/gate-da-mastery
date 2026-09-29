@@ -1,4 +1,5 @@
 "use client";
+import { useId } from "react";
 import { Lightbulb, AlertTriangle, Zap } from "lucide-react";
 import type { QuestionHtml } from "@/lib/content/types";
 import { RichHtml } from "@/components/ui/RichHtml";
@@ -7,16 +8,19 @@ import { useSetting } from "@/lib/userdata/hooks";
 
 export type ExplanationLevel = "quick" | "detailed" | "teaching";
 
-export function SolutionPanel({ html, correctAnswerText }: { html: QuestionHtml; correctAnswerText: string }) {
+export function SolutionPanel({ html, correctAnswerText, headingLevel = "h2" }: { html: QuestionHtml; correctAnswerText: string; headingLevel?: "h2" | "h3" | "h4" }) {
+  const hid = useId();
+  const H = headingLevel;
+  const Sub = headingLevel === "h2" ? "h3" : "h4";
   const [level, setLevel] = useSetting<ExplanationLevel>("explanationLevel", "detailed");
   const hasTeaching = Boolean(html.teaching);
   const effective: ExplanationLevel = level === "teaching" && !hasTeaching ? "detailed" : level;
   return (
-    <section aria-labelledby="solution-heading" className="space-y-5">
+    <section aria-labelledby={hid} className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="solution-heading" className="text-lg font-semibold text-fg">
+        <H id={hid} className="text-lg font-semibold text-fg">
           Solution
-        </h2>
+        </H>
         <Segmented
           label="Explanation level"
           size="sm"
@@ -54,7 +58,7 @@ export function SolutionPanel({ html, correctAnswerText }: { html: QuestionHtml;
 
       {html.optionAnalysis?.length ? (
         <div>
-          <h3 className="mb-2 font-semibold text-fg">Why each option is right or wrong</h3>
+          <Sub className="mb-2 font-semibold text-fg">Why each option is right or wrong</Sub>
           <ul className="space-y-2">
             {html.optionAnalysis.map((o) => (
               <li key={o.label} className="flex gap-3 rounded-lg border border-border px-3 py-2">

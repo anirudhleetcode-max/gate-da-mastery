@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { useStorageValue } from "@/lib/useStorage";
 // Type-only import: it ties this key to the question page's constant at compile time
 // (tsc fails if they ever differ) without bundling QuestionView and KaTeX into list pages.
-import type { NAV_LIST_KEY as QuestionPageNavListKey } from "@/app/(app)/questions/[id]/QuestionPageClient";
+import { NAV_LIST_KEY } from "@/lib/navList";
 
-export const NAV_LIST_KEY: typeof QuestionPageNavListKey = "gate-da-nav-list";
+export { NAV_LIST_KEY };
 
 /**
  * Returns a function that stores the ordered id list the student is browsing,

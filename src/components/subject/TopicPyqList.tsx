@@ -41,7 +41,7 @@ export function TopicPyqList({ rows, topicName }: { rows: QuestionMeta[]; topicN
               paperText={`GATE ${q.year}${q.examDate ? ` · ${formatDate(q.examDate)}` : ""}${q.session ? ` · Session ${q.session}` : ""}`}
               onNavigate={() => storeNavList(ids)}
               className={i === rows.length - 1 ? "border-b-0" : undefined}
-              trailing={<BookmarkButton kind="question" refId={q.id} title={pyqTitle(q)} subjectId={q.subjectId} compact className="h-10 w-10 justify-center px-0" />}
+              trailing={<BookmarkButton kind="question" refId={q.id} title={pyqTitle(q)} label={pyqTitle(q)} subjectId={q.subjectId} compact className="h-10 w-10 justify-center px-0" />}
             />
           </li>
         ))}

@@ -283,8 +283,30 @@ export type Pyq = z.infer<typeof Pyq>;
 // Original questions (mock + practice)
 // ---------------------------------------------------------------------------
 
+/**
+ * Review pipeline for original (mock/practice) questions:
+ *   DRAFT → SELF_CHECKED (author's computational check) → independent solve +
+ *   answer comparison + solution review (agent) → duplicate + metadata checks
+ *   (deterministic, scripts/content/mock-review.ts) → VERIFIED | NEEDS_REVIEW.
+ * Only VERIFIED questions count as verified or appear in available mocks.
+ */
+export const ReviewStatus = z.enum(["DRAFT", "SELF_CHECKED", "VERIFIED", "NEEDS_REVIEW"]);
+export type ReviewStatus = z.infer<typeof ReviewStatus>;
+
+export const ReviewRecord = z.object({
+  status: ReviewStatus,
+  /** Individual gate results, e.g. { independentSolve: true, duplicate: true, metadata: true }. */
+  checks: z.record(z.string(), z.boolean()),
+  /** true when the independent verifier changed the question/answer/solution. */
+  fixed: z.boolean(),
+  notes: z.string().default(""),
+  reviewedAt: IsoDate,
+});
+export type ReviewRecord = z.infer<typeof ReviewRecord>;
+
 export const OriginalQuestion = QuestionBase.extend({
   origin: z.enum(["ORIGINAL_PRACTICE", "MOCK_TEST"]),
+  review: ReviewRecord.optional(),
   sourceType: z.literal("PLATFORM_CREATED"),
   testId: z.string().optional(),
   questionNumber: z.number().int().positive().optional(),

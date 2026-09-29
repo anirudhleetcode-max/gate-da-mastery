@@ -1,7 +1,16 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
 
 /* ------------------------------------------------------------------ tokens */
 :root {
@@ -13,12 +22,12 @@
   --border-strong: #c5cbd6;
   --text: #141821;
   --text-2: #465061;
-  --text-3: #6b7485;
+  --text-3: #5d6676;
   --accent: #2f56d6;
   --accent-hover: #2446b6;
   --accent-soft: #e8edfd;
   --accent-text: #2446b6;
-  --success: #14804a;
+  --success: #0f7040;
   --success-soft: #e3f4ea;
   --danger: #c0352b;
   --danger-soft: #fbe9e7;

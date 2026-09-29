@@ -113,7 +113,7 @@ export function PyqsPanel({ data }: PanelProps) {
                         state={pyqState(statuses.get(q.id))}
                         onNavigate={() => storeNavList(ids)}
                         className={i === sess.rows.length - 1 ? "border-b-0" : undefined}
-                        trailing={<BookmarkButton kind="question" refId={q.id} title={pyqTitle(q)} subjectId={q.subjectId} compact className="h-10 w-10 justify-center px-0" />}
+                        trailing={<BookmarkButton kind="question" refId={q.id} title={pyqTitle(q)} label={pyqTitle(q)} subjectId={q.subjectId} compact className="h-10 w-10 justify-center px-0" />}
                       />
                     </li>
                   ))}

@@ -1,0 +1,691 @@
+[
+  {
+    "id": "M03-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-maxima-minima"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (first- and second-derivative tests) in a short chain: find the parameter from $f'(2)=0$, then evaluate; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 70,
+    "concept": "Local extrema of a cubic: fixing a parameter from a critical-point condition and evaluating the local minimum value",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The function $f(x) = x^3 - 3ax + 2$, where $a$ is a real constant, has a local minimum at $x = 2$.\n\nThe local minimum value of $f$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$18$"
+      },
+      {
+        "label": "B",
+        "text": "$4$"
+      },
+      {
+        "label": "C",
+        "text": "$-14$"
+      },
+      {
+        "label": "D",
+        "text": "$-2$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "A local minimum at $x=2$ forces $f'(2)=3(2)^2-3a=0$, so $a=4$ and $f(x)=x^3-12x+2$.\nThen $f''(2)=12>0$ confirms a local minimum, and $f(2)=8-24+2=-14$.",
+      "steps": [
+        {
+          "title": "Use the critical-point condition",
+          "body": "$f'(x) = 3x^2 - 3a$. A local minimum at $x=2$ requires $f'(2)=0$:\n\n$$\n3(2)^2 - 3a = 12 - 3a = 0 \\;\\Rightarrow\\; a = 4 .\n$$"
+        },
+        {
+          "title": "Check the nature of the critical points",
+          "body": "With $a=4$: $f(x) = x^3 - 12x + 2$, $f'(x) = 3x^2 - 12 = 3(x-2)(x+2)$, so the critical points are $x=\\pm 2$.\n\n$f''(x) = 6x$, hence $f''(2) = 12 > 0$ (local minimum, consistent with the given information) and $f''(-2) = -12 < 0$ (local maximum)."
+        },
+        {
+          "title": "Evaluate f at the local minimum",
+          "body": "$$\nf(2) = 2^3 - 12(2) + 2 = 8 - 24 + 2 = -14 .\n$$\n\nThe value at the other critical point, $f(-2) = -8 + 24 + 2 = 18$, is the local **maximum** value and is not what is asked."
+        }
+      ],
+      "finalAnswer": "**(C)** $-14$",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$18 = f(-2)$ is the local maximum value, attained at the other critical point $x=-2$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$4$ is the value of the parameter $a$, not the local minimum value of $f$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$a = 4$ and $f(2) = 8 - 24 + 2 = -14$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$-2 = f(2)$ evaluated with $a = 2$, which comes from wrongly solving $x^2 = a$ as $a = x = 2$; the correct condition $12 - 3a = 0$ gives $a = 4$."
+        }
+      ],
+      "shortcut": "For $f(x)=x^3-3ax+2$ the critical points are $x=\\pm\\sqrt a$, and the local minimum is at $x=+\\sqrt a$. So $\\sqrt a = 2$, $a = 4$, and the local minimum value is $f(\\sqrt a) = 2 - 2a\\sqrt a = 2 - 16 = -14$.",
+      "commonTrap": "Answering with the parameter $a=4$ or with the local maximum value $f(-2)=18$, or solving $3x^2 - 3a = 0$ incorrectly as $a = x = 2$ (which leads to $-2$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "a = 4; f''(2) = 12 > 0; local minimum value f(2) = -14",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx,a=sp.symbols('x a'); f=x**3-3*a*x+2\na0=sp.solve(sp.diff(f,x).subs(x,2),a)[0]; g=f.subs(a,a0)\nprint(a0, sp.diff(g,x,2).subs(x,2), g.subs(x,2), g.subs(x,-2))  # 4 12 -14 18",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-functions"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (domain restrictions of a real function) with three routine conditions checked in a single pass; about 1 minute for a prepared student.",
+    "estimatedTimeSec": 75,
+    "concept": "Domain of a real function combining a square root, a logarithm and a non-vanishing denominator",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The domain of the real-valued function\n\n$$\nf(x) = \\frac{\\sqrt{x-2}}{\\ln(x-2)}\n$$\n\n(where $\\ln$ is the natural logarithm) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$[2, 3) \\cup (3, \\infty)$"
+      },
+      {
+        "label": "B",
+        "text": "$(2, 3) \\cup (3, \\infty)$"
+      },
+      {
+        "label": "C",
+        "text": "$(2, \\infty)$"
+      },
+      {
+        "label": "D",
+        "text": "$(3, \\infty)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Three conditions must hold: $x-2\\ge 0$ (square root), $x-2>0$ (logarithm) and $\\ln(x-2)\\ne 0$, i.e. $x\\ne 3$ (denominator).\nTogether they give $x>2$ and $x\\ne 3$, i.e. $(2,3)\\cup(3,\\infty)$.",
+      "steps": [
+        {
+          "title": "Restriction from the square root",
+          "body": "$\\sqrt{x-2}$ is real only if $x - 2 \\ge 0$, i.e. $x \\ge 2$."
+        },
+        {
+          "title": "Restriction from the logarithm",
+          "body": "$\\ln(x-2)$ is defined only if $x - 2 > 0$, i.e. $x > 2$. This is stricter than the previous condition: at $x = 2$ the numerator $\\sqrt 0 = 0$ is fine but $\\ln 0$ does not exist, so $x=2$ is excluded."
+        },
+        {
+          "title": "Restriction from the denominator",
+          "body": "The denominator must be non-zero: $\\ln(x-2) \\ne 0 \\iff x - 2 \\ne 1 \\iff x \\ne 3$. At $x=3$ the expression would be $\\sqrt{1}/0$, which is undefined.\n\nNote that $\\ln(x-2)$ is allowed to be negative (for $2 < x < 3$); only the value $0$ is forbidden. For example $f(2.5) = \\sqrt{0.5}/\\ln 0.5 \\approx -1.02$ is defined."
+        },
+        {
+          "title": "Intersect the conditions",
+          "body": "$x > 2$ and $x \\ne 3$, so\n\n$$\n\\text{Dom}(f) = (2, 3) \\cup (3, \\infty).\n$$"
+        }
+      ],
+      "finalAnswer": "**(B)** $(2,3)\\cup(3,\\infty)$",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Includes $x = 2$, where $\\ln(x-2) = \\ln 0$ is undefined, so $f(2)$ does not exist."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Keeps $x>2$ (square root and logarithm) and removes $x=3$ (denominator $\\ln 1 = 0$)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Includes $x = 3$, where the denominator $\\ln(1) = 0$ makes $f$ undefined."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Wrongly demands $\\ln(x-2) > 0$. A negative denominator is perfectly acceptable, so the points $2 < x < 3$ belong to the domain."
+        }
+      ],
+      "commonTrap": "Checking only the square root ($x \\ge 2$) and forgetting the logarithm and the zero of the denominator, or keeping $x=2$ because $\\sqrt 0$ is defined."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "Domain is (2,3) U (3,inf): defined exactly for x>2, x != 3",
+      "agreesWithKey": true,
+      "checkCode": "import math\ndef ok(t):\n    try: math.sqrt(t-2)/math.log(t-2); return True\n    except (ValueError, ZeroDivisionError): return False\nprint([t for t in (1.9,2,2.5,3,3.5,10) if ok(t)])  # [2.5, 3.5, 10]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Taylor polynomial about a non-zero point) with two fractional-power derivatives and careful arithmetic; about 2.5 minutes for a prepared student.",
+    "estimatedTimeSec": 150,
+    "concept": "Quadratic Taylor polynomial about a non-zero point used to approximate a cube root",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $P_2(x)$ be the Taylor polynomial of degree 2 of $f(x) = x^{1/3}$ about $x = 8$.\n\nThe value of $P_2(8.6)$, which approximates $\\sqrt[3]{8.6}$, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2.05000$"
+      },
+      {
+        "label": "B",
+        "text": "$2.04750$"
+      },
+      {
+        "label": "C",
+        "text": "$2.05125$"
+      },
+      {
+        "label": "D",
+        "text": "$2.04875$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "With $a=8$: $f(8)=2$, $f'(8)=\\tfrac1{12}$, $f''(8)=-\\tfrac1{144}$ and $x-a=0.6$.\n$P_2(8.6) = 2 + \\tfrac{0.6}{12} - \\tfrac12\\cdot\\tfrac{0.36}{144} = 2 + 0.05 - 0.00125 = 2.04875$.",
+      "steps": [
+        {
+          "title": "Write the degree-2 Taylor polynomial",
+          "body": "$$\nP_2(x) = f(a) + f'(a)(x-a) + \\frac{f''(a)}{2!}(x-a)^2, \\qquad a = 8,\\; x - a = 0.6 .\n$$"
+        },
+        {
+          "title": "Compute the derivatives at $x = 8$",
+          "body": "$f(8) = 8^{1/3} = 2$.\n\n$f'(x) = \\tfrac13 x^{-2/3}$, so $f'(8) = \\tfrac13 \\cdot \\tfrac{1}{8^{2/3}} = \\tfrac13\\cdot\\tfrac14 = \\tfrac1{12}$.\n\n$f''(x) = -\\tfrac29 x^{-5/3}$, so $f''(8) = -\\tfrac29 \\cdot \\tfrac{1}{8^{5/3}} = -\\tfrac29\\cdot\\tfrac1{32} = -\\tfrac1{144}$."
+        },
+        {
+          "title": "Substitute",
+          "body": "$$\nP_2(8.6) = 2 + \\frac{1}{12}(0.6) + \\frac{1}{2}\\left(-\\frac{1}{144}\\right)(0.6)^2 = 2 + 0.05 - \\frac{0.36}{288} = 2 + 0.05 - 0.00125 .\n$$"
+        },
+        {
+          "title": "Result and sanity check",
+          "body": "$P_2(8.6) = 2.04875$. The exact value is $\\sqrt[3]{8.6} \\approx 2.04880$, so the approximation is accurate to about $5\\times10^{-5}$. The tangent-line value $2.05$ overshoots because $f$ is concave ($f''<0$), and the negative quadratic term corrects it downward."
+        }
+      ],
+      "finalAnswer": "**(D)** $2.04875$",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$2.05000 = f(8) + f'(8)(0.6)$ is only the linear (tangent-line) approximation; the quadratic term has been left out."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Uses $f''(8)(0.6)^2 = -0.0025$ without the factor $\\tfrac1{2!}$, so the correction is twice too large: $2.05 - 0.0025 = 2.0475$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Gets the sign of $f''(8)$ wrong (the cube root is concave for $x>0$, so $f''(8)<0$) and adds $0.00125$ instead of subtracting it."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$2 + 0.05 - 0.00125 = 2.04875$."
+        }
+      ],
+      "shortcut": "Concavity elimination: $f''(8) < 0$ means the tangent line lies above the curve, so $P_2(8.6) < 2.05$. This removes A and C immediately. Only the size of the quadratic correction, $\\tfrac12 f''(8)(0.6)^2 = -0.00125$ (not $-0.0025$), then decides between B and D.",
+      "commonTrap": "Dropping the $\\tfrac{1}{2!}$ factor in the quadratic term, or taking $f''(8)$ as positive; the cube root is concave for $x>0$, so the quadratic correction is negative."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "P2(8.6) = 1639/800 = 2.04875 (exact cube root of 8.6 is 2.04880)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=sp.cbrt(x); h=sp.Rational(3,5)\nP=sum(sp.diff(f,x,k).subs(x,8)*h**k/sp.factorial(k) for k in range(3))\nprint(P, float(P), 8.6**(1/3))  # 1639/800 2.04875 2.0487996",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-single-var-optimization"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (single-variable optimisation) with a one-line model and a quadratic to differentiate; about 1.5 minutes for a prepared student.",
+    "estimatedTimeSec": 100,
+    "concept": "Single-variable optimisation: maximising profit (revenue minus cost) for a linear demand curve",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A streaming service finds that at a monthly subscription price of $p$ rupees ($0 \\le p \\le 500$) it has $N(p) = 2000 - 4p$ subscribers. Serving each subscriber costs the service 100 rupees per month, and there are no other costs.\n\nTreating $p$ as a continuous variable, the price $p$ that maximises the monthly profit is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$p = 300$"
+      },
+      {
+        "label": "B",
+        "text": "$p = 250$"
+      },
+      {
+        "label": "C",
+        "text": "$p = 200$"
+      },
+      {
+        "label": "D",
+        "text": "$p = 350$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Profit $\\Pi(p) = (p-100)(2000-4p) = -4p^2 + 2400p - 200000$.\n$\\Pi'(p) = -8p + 2400 = 0 \\Rightarrow p = 300$, and $\\Pi'' = -8 < 0$, so this is the maximum ($\\Pi(300) = 160000$).",
+      "steps": [
+        {
+          "title": "Build the profit function",
+          "body": "Each subscriber contributes $p - 100$ rupees per month after serving cost, so\n\n$$\n\\Pi(p) = (p - 100)(2000 - 4p) = 2000p - 4p^2 - 200000 + 400p = -4p^2 + 2400p - 200000 .\n$$"
+        },
+        {
+          "title": "Find the critical point",
+          "body": "$$\n\\Pi'(p) = -8p + 2400 = 0 \\;\\Rightarrow\\; p = 300 ,\n$$\n\nwhich lies inside $[0, 500]$."
+        },
+        {
+          "title": "Confirm it is a maximum",
+          "body": "$\\Pi''(p) = -8 < 0$, so $p = 300$ is a maximum. The endpoint values are $\\Pi(0) = -200000$ and $\\Pi(500) = 400 \\times 0 = 0$, both below $\\Pi(300) = 200 \\times 800 = 160000$."
+        },
+        {
+          "title": "Compare with the other options",
+          "body": "$\\Pi(250) = 150 \\times 1000 = 150000$, $\\Pi(200) = 100 \\times 1200 = 120000$, $\\Pi(350) = 250 \\times 600 = 150000$. All are smaller than $160000$, so the profit-maximising price is $p = 300$."
+        }
+      ],
+      "finalAnswer": "**(A)** $p = 300$",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\Pi'(p) = 0$ at $p = 300$ and $\\Pi''<0$; the maximum profit is $160000$ rupees."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$p = 250$ maximises the revenue $p(2000-4p)$ and ignores the serving cost; the profit there is only $150000$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Comes from adding the cost instead of subtracting it (using $(p+100)(2000-4p)$); the actual profit at $p=200$ is only $120000$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Adds the unit cost to the revenue-maximising price ($250 + 100$), which has no basis in $\\Pi'(p)=0$: $\\Pi'(350) = -400 \\ne 0$ and the profit is $150000$."
+        }
+      ],
+      "shortcut": "$\\Pi(p) = (p-100)(2000-4p)$ is a downward parabola with roots $p = 100$ (zero margin) and $p = 500$ (zero subscribers). Its maximum lies at the midpoint of the roots, $p = 300$.",
+      "commonTrap": "Maximising revenue $p\\,N(p)$ (which gives $p = 250$) instead of profit, i.e. forgetting that every subscriber also costs 100 rupees to serve."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "p = 300 (profit 160000; revenue-only optimum would be 250)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\np=sp.symbols('p'); P=(p-100)*(2000-4*p)\np0=sp.solve(sp.diff(P,p),p)[0]\nprint(p0, P.subs(p,p0), sp.diff(P,p,2), P.subs(p,0), P.subs(p,500))  # 300 160000 -8 -200000 0\nprint(max(range(0,501), key=lambda t:(t-100)*(2000-4*t)))  # 300",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-limits"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the $1^\\infty$ indeterminate form) needing a rewrite of the base and a logarithm/standard-limit step; about 2 minutes for a prepared student.",
+    "estimatedTimeSec": 140,
+    "concept": "Limit of a $1^\\infty$ indeterminate form at infinity using $\\lim (1+u)^v = e^{\\lim uv}$",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The value of\n\n$$\n\\lim_{x \\to \\infty} \\left( \\frac{x+3}{x-1} \\right)^{2x}\n$$\n\nis",
+    "options": [
+      {
+        "label": "A",
+        "text": "$e^{4}$"
+      },
+      {
+        "label": "B",
+        "text": "$e^{6}$"
+      },
+      {
+        "label": "C",
+        "text": "$e^{8}$"
+      },
+      {
+        "label": "D",
+        "text": "$1$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The base tends to $1$ and the exponent to $\\infty$ ($1^\\infty$ form). Write the base as $1 + \\dfrac{4}{x-1}$.\nThen $\\ln L = \\lim 2x\\cdot\\dfrac{4}{x-1} = 8$, so $L = e^{8}$.",
+      "steps": [
+        {
+          "title": "Identify the form",
+          "body": "As $x \\to \\infty$, $\\dfrac{x+3}{x-1} \\to 1$ while $2x \\to \\infty$, so this is the indeterminate form $1^\\infty$. Let $L$ be the limit and take logarithms:\n\n$$\n\\ln L = \\lim_{x\\to\\infty} 2x \\,\\ln\\!\\left(\\frac{x+3}{x-1}\\right).\n$$"
+        },
+        {
+          "title": "Rewrite the base as $1 + u$",
+          "body": "$$\n\\frac{x+3}{x-1} = 1 + \\frac{4}{x-1}, \\qquad u = \\frac{4}{x-1} \\to 0 .\n$$\n\nSince $\\ln(1+u) \\sim u$ as $u \\to 0$,\n\n$$\n\\ln L = \\lim_{x\\to\\infty} 2x \\cdot \\frac{4}{x-1} = \\lim_{x\\to\\infty} \\frac{8x}{x-1} = 8 .\n$$"
+        },
+        {
+          "title": "Exponentiate",
+          "body": "$L = e^{8}$."
+        },
+        {
+          "title": "Cross-check with two standard limits",
+          "body": "$\\left(1 + \\tfrac{3}{x}\\right)^{2x} \\to e^{6}$ and $\\left(1 - \\tfrac{1}{x}\\right)^{2x} \\to e^{-2}$. The original expression is the quotient of these, so the limit is $\\dfrac{e^{6}}{e^{-2}} = e^{8}$."
+        }
+      ],
+      "finalAnswer": "**(C)** $e^{8}$",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Multiplies the two standard limits ($e^{6}\\cdot e^{-2}$) instead of dividing by the denominator's limit $e^{-2}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Replaces $x-1$ by $x$ in the base, keeping only the numerator's contribution $e^{6}$ and losing the extra $e^{2}$ from the denominator."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\ln L = \\lim 2x\\cdot\\frac{4}{x-1} = 8$, so $L = e^{8}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$1^\\infty$ is indeterminate, not equal to $1$. The base approaches $1$ like $1 + 4/x$, slowly enough that the power $2x$ produces the finite factor $e^{8}$."
+        }
+      ],
+      "shortcut": "For a $1^\\infty$ form, $\\lim u(x)^{v(x)} = e^{\\lim v(x)\\,(u(x) - 1)}$. Here $v\\,(u-1) = 2x \\cdot \\dfrac{4}{x-1} \\to 8$, giving $e^{8}$ directly.",
+      "commonTrap": "Treating $1^\\infty$ as $1$, or replacing $x-1$ by $x$ in the base, which discards the contribution of the $-1$ and gives $e^{6}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "e^8 (approx 2980.96)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp, math\nx=sp.symbols('x', positive=True)\nprint(sp.limit(((x+3)/(x-1))**(2*x), x, sp.oo))  # exp(8)\nX=1e6; print(((X+3)/(X-1))**(2*X), math.exp(8))  # ~2980.93 (finite-x) 2980.958",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Maclaurin coefficients versus derivative values) linked to a trigonometric identity, in three routine steps; about 2.5 minutes for a prepared student.",
+    "estimatedTimeSec": 150,
+    "concept": "Reading a higher derivative at 0 from a Maclaurin series: $f^{(n)}(0) = n!\\,c_n$",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x) = \\sin^2 x$. The value of the sixth derivative $f^{(6)}(0)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{2}{45}$"
+      },
+      {
+        "label": "B",
+        "text": "$32$"
+      },
+      {
+        "label": "C",
+        "text": "$64$"
+      },
+      {
+        "label": "D",
+        "text": "$-32$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Use $\\sin^2 x = \\tfrac12(1 - \\cos 2x) = x^2 - \\tfrac{x^4}{3} + \\tfrac{2x^6}{45} - \\cdots$, so the coefficient of $x^6$ is $c_6 = \\tfrac{2}{45}$.\nThen $f^{(6)}(0) = 6!\\,c_6 = 720\\cdot\\tfrac{2}{45} = 32$.",
+      "steps": [
+        {
+          "title": "Rewrite with the double-angle identity",
+          "body": "$$\n\\sin^2 x = \\frac{1 - \\cos 2x}{2}.\n$$"
+        },
+        {
+          "title": "Expand $\\cos 2x$ and simplify",
+          "body": "$$\n\\cos 2x = 1 - \\frac{(2x)^2}{2!} + \\frac{(2x)^4}{4!} - \\frac{(2x)^6}{6!} + \\cdots = 1 - 2x^2 + \\frac{2x^4}{3} - \\frac{4x^6}{45} + \\cdots\n$$\n\n$$\n\\sin^2 x = \\frac12\\left(2x^2 - \\frac{2x^4}{3} + \\frac{4x^6}{45} - \\cdots\\right) = x^2 - \\frac{x^4}{3} + \\frac{2x^6}{45} - \\cdots\n$$\n\nso the coefficient of $x^6$ is $c_6 = \\dfrac{2}{45}$."
+        },
+        {
+          "title": "Convert the coefficient to a derivative",
+          "body": "In a Maclaurin series $f(x) = \\sum c_n x^n$ with $c_n = \\dfrac{f^{(n)}(0)}{n!}$, hence\n\n$$\nf^{(6)}(0) = 6!\\, c_6 = 720 \\cdot \\frac{2}{45} = 32 .\n$$"
+        },
+        {
+          "title": "Cross-check by direct differentiation",
+          "body": "Write $f(x) = \\tfrac12 - \\tfrac12\\cos 2x$. Then $f' = \\sin 2x$, $f'' = 2\\cos 2x$, $f''' = -4\\sin 2x$, $f^{(4)} = -8\\cos 2x$, $f^{(5)} = 16\\sin 2x$ and $f^{(6)} = 32\\cos 2x$, so $f^{(6)}(0) = 32$."
+        }
+      ],
+      "finalAnswer": "**(B)** $32$",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac{2}{45}$ is the Maclaurin **coefficient** $c_6$ of $x^6$, not the derivative; the factor $6! = 720$ has been forgotten."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$f^{(6)}(0) = 6!\\cdot\\tfrac{2}{45} = 32$, confirmed by differentiating $\\tfrac12 - \\tfrac12\\cos 2x$ six times."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Drops the factor $\\tfrac12$ of the identity (effectively differentiating $-\\cos 2x$ or using $2^6$ directly)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Sign error: the sixth derivative of $\\cos 2x$ is $-64\\cos 2x$, but $f$ carries $-\\tfrac12\\cos 2x$, so the two negatives combine to a positive $+32$."
+        }
+      ],
+      "shortcut": "Since $\\dfrac{d^n}{dx^n}\\cos 2x = 2^n\\cos\\!\\left(2x + \\tfrac{n\\pi}{2}\\right)$, the sixth derivative of $\\cos 2x$ is $64\\cos(2x + 3\\pi) = -64\\cos 2x$. Multiplying by $-\\tfrac12$ gives $f^{(6)}(x) = 32\\cos 2x$, so $f^{(6)}(0) = 32$.",
+      "commonTrap": "Reading off the coefficient of $x^6$ and stopping there (forgetting $f^{(n)}(0) = n!\\,c_n$), or losing the factor $\\tfrac12$ or the sign when using $\\sin^2 x = \\tfrac12(1-\\cos 2x)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "f^(6)(0) = 32 (Maclaurin coefficient of x^6 is 2/45; 720*2/45 = 32)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=sp.sin(x)**2\nprint(sp.diff(f,x,6).subs(x,0), sp.series(f,x,0,8).removeO().coeff(x,6))  # 32 2/45",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M03-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-03",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-maxima-minima"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one topic (extrema) but three statements need separate checks, including a critical point where the second-derivative test is inconclusive and a local-versus-global distinction; about 2.5 minutes for a prepared student.",
+    "estimatedTimeSec": 170,
+    "concept": "Local and global extrema of a polynomial: first-derivative test when f'' = 0, closed-interval minimum, end behaviour",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x) = x^5 - 5x^4$ for $x \\in \\mathbb{R}$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$f$ has a local maximum at $x = 0$."
+      },
+      {
+        "label": "B",
+        "text": "$f$ has a local maximum at $x = 4$."
+      },
+      {
+        "label": "C",
+        "text": "The minimum value of $f$ over the closed interval $[-2, 5]$ is $-256$."
+      },
+      {
+        "label": "D",
+        "text": "$f$ has no absolute (global) minimum on $\\mathbb{R}$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$f'(x) = 5x^3(x-4)$ changes sign from $+$ to $-$ at $x=0$ (local maximum, even though $f''(0)=0$) and from $-$ to $+$ at $x=4$ (local minimum, $f(4)=-256$).\nOn $[-2,5]$: $f(-2)=-112$, $f(0)=0$, $f(4)=-256$, $f(5)=0$, so the minimum is $-256$. Since $f(x)\\to-\\infty$ as $x\\to-\\infty$, there is no global minimum on $\\mathbb R$. Correct: A, C, D.",
+      "steps": [
+        {
+          "title": "Find the critical points",
+          "body": "$$\nf'(x) = 5x^4 - 20x^3 = 5x^3(x-4) = 0 \\;\\Rightarrow\\; x = 0 \\text{ or } x = 4 .\n$$"
+        },
+        {
+          "title": "Classify them with the sign of $f'$",
+          "body": "- $x<0$: $x^3<0$ and $x-4<0$, so $f'>0$ (increasing).\n- $0<x<4$: $x^3>0$ and $x-4<0$, so $f'<0$ (decreasing).\n- $x>4$: $f'>0$ (increasing).\n\nSo $f'$ changes from $+$ to $-$ at $x=0$: **local maximum**, with $f(0)=0$ (also visible from $f(x)=x^4(x-5)\\le 0$ near $0$). It changes from $-$ to $+$ at $x=4$: **local minimum**, with $f(4)=4^4(-1)=-256$.\n\nSecond-derivative check: $f''(x) = 20x^3 - 60x^2$ gives $f''(0)=0$ (the test is inconclusive, but the first-derivative test above settles it) and $f''(4) = 1280 - 960 = 320 > 0$ (local minimum, not maximum)."
+        },
+        {
+          "title": "Minimum on the closed interval $[-2, 5]$",
+          "body": "Compare the critical points inside the interval with the endpoints:\n\n| $x$ | $-2$ | $0$ | $4$ | $5$ |\n| --- | --- | --- | --- | --- |\n| $f(x)$ | $-112$ | $0$ | $-256$ | $0$ |\n\nThe smallest value is $-256$, attained at $x=4$."
+        },
+        {
+          "title": "Behaviour on all of $\\mathbb{R}$",
+          "body": "$f(x) = x^4(x-5)$. As $x\\to-\\infty$, $x^4\\to+\\infty$ while $x-5\\to-\\infty$, so $f(x)\\to-\\infty$. Hence $f$ is unbounded below and has no absolute minimum on $\\mathbb R$; the local minimum $-256$ at $x=4$ is not global."
+        },
+        {
+          "title": "Verdict on the statements",
+          "body": "A is true, B is false (the point $x=4$ is a local minimum), C is true, D is true."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$f'$ changes from $+$ to $-$ at $x=0$, so it is a local maximum ($f(0)=0$), even though the second-derivative test fails there ($f''(0)=0$)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "At $x=4$, $f'$ changes from $-$ to $+$ and $f''(4)=320>0$, so it is a local minimum, not a maximum."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The candidates $f(-2)=-112$, $f(0)=0$, $f(4)=-256$, $f(5)=0$ give minimum $-256$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$f(x)\\to-\\infty$ as $x\\to-\\infty$ (odd degree, positive leading coefficient), so $f$ has no absolute minimum on $\\mathbb R$."
+        }
+      ],
+      "shortcut": "For statement A, factor $f(x) = x^4(x-5)$: near $x=0$ the factor $x^4\\ge 0$ and $x-5<0$, so $f(x)\\le 0 = f(0)$. That proves a local maximum directly, without any derivative test.",
+      "commonTrap": "Concluding from $f''(0)=0$ that $x=0$ is not an extremum (or is an inflection point); the second-derivative test is inconclusive there and the first-derivative sign change shows a local maximum. Another slip is treating the local minimum at $x=4$ as a global minimum on $\\mathbb{R}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D correct; B false. f'=5x^3(x-4); f''(0)=0, f''(4)=320; min on [-2,5] is -256; f->-inf as x->-inf",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x'); f=x**5-5*x**4\nprint(sp.factor(sp.diff(f,x)), sp.diff(f,x,2).subs(x,0), sp.diff(f,x,2).subs(x,4))  # 5*x**3*(x-4) 0 320\nprint([f.subs(x,v) for v in (-2,0,4,5)])  # [-112, 0, -256, 0] -> min -256\nprint(sp.limit(f,x,-sp.oo), sp.limit(f,x,sp.oo))  # -oo oo\nprint(all((t*0.001)**4*((t*0.001)-5)<=0 for t in range(-500,501)))  # f<=0=f(0) near 0 -> local max",
+      "notes": ""
+    }
+  }
+]

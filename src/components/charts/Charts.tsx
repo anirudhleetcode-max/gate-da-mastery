@@ -208,12 +208,9 @@ export function GroupedColumns({ categories, series, height = 240, formatValue =
                       width={barW + 2}
                       height={height - padT - padB}
                       fill="transparent"
-                      tabIndex={0}
-                      aria-label={`${c}, ${s.label}: ${formatValue(v)}`}
+                      aria-hidden="true"
                       onMouseEnter={() => setTip({ x: x + barW / 2, y: top, c: ci, s: si })}
                       onMouseLeave={() => setTip(null)}
-                      onFocus={() => setTip({ x: x + barW / 2, y: top, c: ci, s: si })}
-                      onBlur={() => setTip(null)}
                     />
                   </g>
                 );

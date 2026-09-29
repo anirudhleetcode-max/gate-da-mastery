@@ -14,6 +14,7 @@ export function BookmarkButton({
   snapshot,
   className,
   compact = false,
+  label,
 }: {
   kind: BookmarkKind;
   refId: string;
@@ -22,6 +23,8 @@ export function BookmarkButton({
   snapshot?: { html: string; href: string };
   className?: string;
   compact?: boolean;
+  /** Accessible name context, e.g. "Q.12, GATE DA 2026" (important in compact list rows). */
+  label?: string;
 }) {
   const { db } = useUserData();
   const keys = useBookmarkKeys();
@@ -38,6 +41,7 @@ export function BookmarkButton({
         className,
       )}
       title={on ? "Remove bookmark" : "Bookmark"}
+      aria-label={label ? `${on ? "Remove bookmark" : "Bookmark"}: ${label}` : undefined}
     >
       {on ? <BookmarkCheck aria-hidden className="h-4 w-4" /> : <Bookmark aria-hidden className="h-4 w-4" />}
       {compact ? <span className="sr-only">{on ? "Bookmarked" : "Bookmark"}</span> : on ? "Bookmarked" : "Bookmark"}

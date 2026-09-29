@@ -54,7 +54,7 @@ export function TopicMastery({ catalog, topicId }: { catalog: Catalog; topicId: 
           ) : (
             <p className="text-lg font-semibold text-fg">Not enough data</p>
           )}
-          <MasteryBadge mastery={m} />
+          {m.score !== null ? <MasteryBadge mastery={m} /> : null}
         </div>
         <p className="text-sm text-fg-2">
           {m.score !== null

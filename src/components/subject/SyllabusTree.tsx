@@ -24,12 +24,12 @@ interface RowProgress {
 
 /** Row grid: toggle · name · PYQs · practice · completion · accuracy · mastery · revision. */
 const ROW_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-x-2 md:grid-cols-[2.5rem_minmax(0,1fr)_3.5rem_4.25rem_5.25rem_5rem_8.5rem_5.5rem]";
-const METRICS = "col-start-2 mt-1.5 grid grid-cols-3 gap-x-3 gap-y-2 md:contents";
+const METRICS = "col-start-2 mt-1.5 grid grid-cols-4 gap-x-2 gap-y-1.5 md:contents";
 
 function Cell({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (
     <div className={cn("min-w-0 text-sm", className)}>
-      <span className="block text-[0.68rem] font-medium uppercase tracking-wide text-fg-3 md:sr-only">{label}</span>
+      <span className="block truncate text-[0.7rem] font-medium text-fg-3 md:sr-only">{label}</span>
       <span className="block">{children}</span>
     </div>
   );
@@ -53,7 +53,7 @@ function Metrics({ pyqs, pyqHref, practice, p, status }: { pyqs: number; pyqHref
         <span className={cn("tnum", practice ? "text-fg" : "text-fg-3")}>{practice}</span>
       </Cell>
       <Cell label="Completion">
-        {ready ? (
+        {ready && pyqs ? (
           <span className="tnum text-fg" title="Official PYQs you have attempted">
             {p.pyqDone}/{pyqs}
           </span>
@@ -74,7 +74,7 @@ function Metrics({ pyqs, pyqHref, practice, p, status }: { pyqs: number; pyqHref
           dash
         )}
       </Cell>
-      <Cell label="Your topic mastery" className="col-span-2 md:col-span-1">
+      <Cell label="Your topic mastery" className="col-span-3 md:col-span-1">
         {ready ? <MasteryBadge mastery={p.mastery} /> : dash}
       </Cell>
       <Cell label="Revision">

@@ -30,6 +30,7 @@ import type {
   SearchDoc,
 } from "./types";
 import { computeWeightage } from "@/lib/weightage/compute";
+import { stemPreview } from "@/components/pyq/preview";
 
 export interface RawContent {
   syllabus: unknown;
@@ -133,10 +134,8 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
     shortcut: md(q.solution.shortcut, q.id, "shortcut"),
     commonTrap: md(q.solution.commonTrap, q.id, "commonTrap"),
   });
-  const preview = (stem: string) => {
-    const p = markdownToPlain(stem);
-    return p.length > 200 ? `${p.slice(0, 197)}…` : p;
-  };
+  // Previews keep math operators (built from the compiled HTML's LaTeX).
+  const preview = (_stem: string, html: string) => stemPreview(html, 200);
 
   for (const { file, data } of raw.pyqs) {
     const q = parse(Pyq, data, file);
@@ -162,6 +161,8 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
       }
     }
     const srcStatus = weakest(...q.sourceIds.map((s) => sourceById.get(s)?.verificationStatus));
+    const html = renderQuestion(q);
+    const renderedStem = html.stem;
     addQ({
       id: q.id,
       origin: "OFFICIAL_PYQ",
@@ -172,7 +173,7 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
       marks: q.marks,
       difficulty: q.difficulty,
       estimatedTimeSec: q.estimatedTimeSec,
-      preview: preview(q.stem),
+      preview: preview(q.stem, renderedStem),
       year: q.year,
       paperId: q.paperId,
       examDate: paper.examDate,
@@ -181,7 +182,7 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
       questionNumber: q.questionNumber,
       section: q.section,
       verification: weakest(srcStatus, q.transcription.status, q.answerVerification.status, q.solutionStatus),
-      html: renderQuestion(q),
+      html,
       answer: q.answer,
       difficultyRationale: q.difficultyRationale,
       conceptIds: q.conceptIds,
@@ -204,9 +205,14 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
     if (!arr) return;
     for (const q of arr) {
       issues.push(...validateQuestionSemantics(q, tax, { figureExists: opts.figureExists }));
+      const html = renderQuestion(q);
+      const renderedStem = html.stem;
+      // Review pipeline status (DRAFT → SELF_CHECKED → VERIFIED | NEEDS_REVIEW); see src/lib/content/review.ts.
+      const reviewStatus = q.review?.status ?? (q.answerVerification.status === "NEEDS_REVIEW" ? "NEEDS_REVIEW" : "SELF_CHECKED");
       addQ({
         id: q.id,
         origin: q.origin,
+        reviewStatus,
         subjectId: q.subjectId,
         topicId: q.topicId,
         subtopicIds: q.subtopicIds,
@@ -214,12 +220,13 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
         marks: q.marks,
         difficulty: q.difficulty,
         estimatedTimeSec: q.estimatedTimeSec,
-        preview: preview(q.stem),
+        preview: preview(q.stem, renderedStem),
         testId: q.testId,
         questionNumber: q.questionNumber,
         section: q.section,
-        verification: q.answerVerification.status,
-        html: renderQuestion(q),
+        // Only a question that passed every review gate counts as verified.
+        verification: reviewStatus === "VERIFIED" ? "VERIFIED" : reviewStatus === "NEEDS_REVIEW" ? "NEEDS_REVIEW" : "PARTIALLY_VERIFIED",
+        html,
         answer: q.answer,
         difficultyRationale: q.difficultyRationale,
         concept: q.concept,
@@ -242,13 +249,15 @@ export function compileContent(raw: RawContent, opts: CompileOptions = {}): { bu
     if (missing.length) err(t.id, `${missing.length} question(s) missing (e.g. ${missing.slice(0, 3).join(", ")})`);
     for (const q of qs) if (q && q.testId !== t.id) err(t.id, `question ${q.id} has testId ${q.testId}`);
     const totalMarks = qs.reduce((s, q) => s + (q?.marks ?? 0), 0);
+    const verifiedCount = qs.filter((q) => q?.reviewStatus === "VERIFIED").length;
     if (t.tier === "FULL_GATE" && !missing.length) {
       if (t.questionIds.length !== 65) err(t.id, "full GATE simulation must have 65 questions");
       if (totalMarks !== 100) err(t.id, `full GATE simulation must total 100 marks (got ${totalMarks})`);
       const ga = qs.filter((q) => q?.section === "GA");
       if (ga.length !== 10 || ga.reduce((s, q) => s + (q?.marks ?? 0), 0) !== 15) err(t.id, "GA section must be 10 questions / 15 marks");
     }
-    return { ...t, totalMarks, available: missing.length === 0 };
+    // A mock is available to students only when every question is present AND verified.
+    return { ...t, totalMarks, verifiedCount, available: missing.length === 0 && verifiedCount === t.questionIds.length };
   });
   if (mocks.length && mocks.length !== 50) warn("mocks/tests.json", `expected 50 mock tests, found ${mocks.length}`);
   const numbers = new Set(mocks.map((m) => m.number));

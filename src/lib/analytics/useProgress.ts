@@ -41,7 +41,8 @@ export interface ProgressModel {
 export function buildProgressModel(catalog: Catalog, attempts: AttemptRow[], revision: RevisionItemRow[], now: Date): Omit<ProgressModel, "ready"> {
   const scored = attempts.filter((a) => a.status !== "not_scored");
   const pyqIds = new Set(Object.values(catalog.pyqIdsByTopic).flat());
-  const doneIds = new Set(scored.filter((a) => a.status === "correct" || a.status === "incorrect").map((a) => a.questionId));
+  // "Done" = submitted (correct, incorrect, or a marks-to-all question), same rule as the PYQ pages.
+  const doneIds = new Set(attempts.filter((a) => a.status === "correct" || a.status === "incorrect" || a.status === "not_scored").map((a) => a.questionId));
   const pyqDone = [...doneIds].filter((id) => pyqIds.has(id)).length;
   const today = localDay(now);
   const days = new Set(attempts.map((a) => a.day));

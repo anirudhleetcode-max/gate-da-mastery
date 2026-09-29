@@ -177,7 +177,7 @@ export function WeightageTable({ w, subjectName }: { w: WeightageSummary; subjec
         <span className="tnum">{formatMarks(w.marksMean)}</span>); {subjectName} appeared in {w.papersAppeared} of {w.totalPapers}.
       </p>
       <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full min-w-[26rem] text-sm">
+        <table className="w-full text-sm">
           <caption className="sr-only">Historical estimate: {subjectName} questions and marks in each official GATE DA paper</caption>
           <thead>
             <tr className="border-b border-border bg-surface-2 text-left text-xs text-fg-3">
@@ -190,7 +190,7 @@ export function WeightageTable({ w, subjectName }: { w: WeightageSummary; subjec
               <th scope="col" className="px-3 py-2 text-right font-medium">
                 Marks
               </th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">
+              <th scope="col" className="hidden whitespace-nowrap px-3 py-2 text-right font-medium sm:table-cell">
                 MCQ / MSQ / NAT
               </th>
             </tr>
@@ -205,12 +205,15 @@ export function WeightageTable({ w, subjectName }: { w: WeightageSummary; subjec
                   <span className="block text-xs font-normal text-fg-3">
                     {r.examDate ? formatDate(r.examDate) : ""}
                     {r.session ? ` · Session ${r.session}` : ""}
-                    {r.paperLoaded < r.paperTotal ? ` · ${r.paperLoaded} of ${r.paperTotal} questions classified` : ""}
+                    {r.paperLoaded < r.paperTotal ? ` · ${r.paperLoaded} of ${r.paperTotal} classified` : ""}
+                  </span>
+                  <span className="tnum block text-xs font-normal text-fg-3 sm:hidden">
+                    MCQ {r.byType.MCQ} · MSQ {r.byType.MSQ} · NAT {r.byType.NAT}
                   </span>
                 </th>
                 <td className="tnum px-3 py-2 text-right text-fg-2">{r.questions}</td>
                 <td className="tnum px-3 py-2 text-right font-semibold text-fg">{formatMarks(r.marks)}</td>
-                <td className="tnum px-3 py-2 text-right text-fg-3">
+                <td className="tnum hidden px-3 py-2 text-right text-fg-3 sm:table-cell">
                   {r.byType.MCQ} / {r.byType.MSQ} / {r.byType.NAT}
                 </td>
               </tr>

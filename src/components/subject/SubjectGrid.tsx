@@ -56,13 +56,17 @@ export function SubjectGrid({ subjects, catalog }: { subjects: SubjectCardData[]
               <div className="mt-2 rounded-md bg-surface-2 px-2.5 py-2 text-xs">
                 <p className="font-medium text-fg-3">Historical weightage (estimate)</p>
                 {s.weightage ? (
-                  <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-fg-2">
-                    <span className="tnum font-semibold text-fg">{marksRange(s.weightage.marksMin, s.weightage.marksMax)}</span>
-                    <span>per paper · {plural(s.weightage.papers, "paper")}</span>
-                    <Badge tone={variationTone(s.weightage.variation)} title="Year-to-year variation in marks">
-                      {s.weightage.variation === "Insufficient data" ? "Too few papers" : `${s.weightage.variation} variation`}
-                    </Badge>
-                  </p>
+                  <>
+                    <p className="mt-0.5 text-sm text-fg-2">
+                      <span className="tnum font-semibold text-fg">{marksRange(s.weightage.marksMin, s.weightage.marksMax)}</span> per paper
+                    </p>
+                    <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-fg-3">
+                      <span className="tnum">{plural(s.weightage.papers, "paper")}</span>
+                      <Badge tone={variationTone(s.weightage.variation)} title="Year-to-year variation in marks">
+                        {s.weightage.variation === "Insufficient data" ? "Too few papers" : `${s.weightage.variation} variation`}
+                      </Badge>
+                    </p>
+                  </>
                 ) : (
                   <p className="mt-0.5 text-fg-3">No classified official questions yet.</p>
                 )}

@@ -25,7 +25,11 @@ export function WeakAreasPanel({ data, model, status }: PanelProps) {
       return { topic: t, attempted, correct, accuracy: attempted ? correct / attempted : null, lower: wilsonLower(correct, attempted) };
     });
   }, [data.topics, model.topics]);
-  const answered = rows.filter((r) => r.attempted > 0).sort((a, b) => a.lower - b.lower || (a.accuracy ?? 0) - (b.accuracy ?? 0) || b.attempted - a.attempted);
+  // Topics with enough answers to judge come first (weakest by Wilson lower bound); the rest follow, most answered first.
+  const judged = (r: (typeof rows)[number]) => (r.attempted >= WEAK_MIN_ATTEMPTS ? 0 : 1);
+  const answered = rows
+    .filter((r) => r.attempted > 0)
+    .sort((a, b) => judged(a) - judged(b) || (judged(a) ? b.attempted - a.attempted : a.lower - b.lower || (a.accuracy ?? 0) - (b.accuracy ?? 0)));
   const untouched = rows.filter((r) => r.attempted === 0);
 
   if (status !== "ready") return <DataStatusNote status={status} />;
@@ -47,8 +51,9 @@ export function WeakAreasPanel({ data, model, status }: PanelProps) {
   return (
     <div className="space-y-5">
       <p className="text-sm text-fg-3">
-        Topics you have answered, weakest first. The ranking uses the lower bound of the 95% Wilson interval for your accuracy, so a topic with few answers is not judged on luck: 1 correct out of 5 ranks as
-        weaker than 0 out of 1. A topic is marked weak once it has {WEAK_MIN_ATTEMPTS} or more answers below {pct(WEAK_THRESHOLD, 0)} accuracy.
+        Topics you have answered, weakest first. Topics with {WEAK_MIN_ATTEMPTS} or more answers are ranked by the lower bound of the 95% Wilson interval for your accuracy, which is cautious with small
+        samples: 2 correct out of 3 ranks below 7 out of 10 although both are close to 70%. A topic is marked weak when its accuracy is below {pct(WEAK_THRESHOLD, 0)}; topics with fewer answers are listed
+        last.
       </p>
       <ol className="overflow-hidden rounded-[var(--radius)] border border-border bg-surface">
         {answered.map((r, i) => {

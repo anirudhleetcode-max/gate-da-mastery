@@ -9,8 +9,8 @@ import { useMockAttempts } from "@/lib/userdata/hooks";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ButtonLink } from "@/components/ui/Button";
 
-/** Prev/next navigation within the list the student came from (stored by list views in sessionStorage). */
-export const NAV_LIST_KEY = "gate-da-nav-list";
+import { NAV_LIST_KEY } from "@/lib/navList";
+export { NAV_LIST_KEY };
 
 export function QuestionPageClient({ payload }: { payload: QuestionPayload }) {
   const [raw] = useStorageValue(NAV_LIST_KEY, "session");
