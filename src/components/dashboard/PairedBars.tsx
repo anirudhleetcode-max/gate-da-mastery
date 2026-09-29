@@ -23,6 +23,8 @@ export function PairedBars({
   data,
   aLabel,
   bLabel,
+  aShort,
+  bShort,
   aColor,
   bColor,
   format,
@@ -31,6 +33,9 @@ export function PairedBars({
   data: PairedDatum[];
   aLabel: string;
   bLabel: string;
+  /** Short visible tags beside the values (e.g. "Then" / "Now"), so the pair never relies on colour alone. */
+  aShort: string;
+  bShort: string;
   aColor: string;
   bColor: string;
   format: (v: number) => string;
@@ -55,17 +60,20 @@ export function PairedBars({
           </span>
           <span className="space-y-1">
             {([
-              ["a", d.a, aColor, aLabel, d.aText],
-              ["b", d.b, bColor, bLabel, d.bText],
-            ] as const).map(([k, v, color, label, text]) => (
+              ["a", d.a, aColor, aLabel, aShort, d.aText],
+              ["b", d.b, bColor, bLabel, bShort, d.bText],
+            ] as const).map(([k, v, color, label, short, text]) => (
               <span key={k} className="flex items-center gap-2">
                 <span className="relative block h-2.5 flex-1">
                   {v !== null ? (
                     <span className="absolute inset-y-0 left-0 rounded-r-[4px]" style={{ width: `${Math.max(0, Math.min(1, v)) * 100}%`, minWidth: 2, background: color }} />
                   ) : null}
                 </span>
-                <span className="tnum w-28 shrink-0 text-right text-xs text-fg-2">
+                <span className="tnum w-32 shrink-0 whitespace-nowrap text-right text-xs text-fg-2">
                   <span className="sr-only">{label}: </span>
+                  <span aria-hidden className="text-fg-3">
+                    {short}{" "}
+                  </span>
                   {text ?? (v === null ? "no data" : format(v))}
                 </span>
               </span>

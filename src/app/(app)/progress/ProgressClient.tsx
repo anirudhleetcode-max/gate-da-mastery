@@ -277,7 +277,7 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
               title={`Weak-area trend: now vs ${WEAK_WINDOW_DAYS} days ago`}
               description={`Accuracy in each topic that is weak now or was weak on ${shortDate(weakTrend.cutoff)}, from the answers you had given by then; "of 5" is the number of answers. ${weakTrend.thenCount} weak then, ${weakTrend.nowCount} weak now.`}
               legend={[
-                { label: `${WEAK_WINDOW_DAYS} days ago`, color: "var(--ord-1)" },
+                { label: `Then (${WEAK_WINDOW_DAYS} days ago)`, color: "var(--ord-1)" },
                 { label: "Now", color: "var(--ord-2)" },
               ]}
               table={{
@@ -289,6 +289,8 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
                 ariaLabel="Accuracy per weak topic, 30 days ago and now"
                 aLabel={`${WEAK_WINDOW_DAYS} days ago`}
                 bLabel="Now"
+                aShort="Then"
+                bShort="Now"
                 aColor="var(--ord-1)"
                 bColor="var(--ord-2)"
                 format={(v) => pct0(v)}
@@ -304,9 +306,30 @@ export function ProgressClient({ catalog, mocks }: { catalog: Catalog; mocks: Mo
               />
             </ChartFrame>
           ) : weakTrend.rows.length ? (
-            <EmptyState title={`${plural(weakTrend.nowCount, "weak topic")} now; no comparison yet`}>
-              The comparison with {WEAK_WINDOW_DAYS} days ago needs answers from before {shortDate(weakTrend.cutoff)}. Until then, sort the topic table below by accuracy to see your current weak topics.
-            </EmptyState>
+            <Card>
+              <CardHeader
+                as="h3"
+                title={`Weak topics now (${weakTrend.nowCount})`}
+                description={`At least 3 answers and under 70% accuracy, weakest first. The comparison with ${WEAK_WINDOW_DAYS} days ago appears once you have answers from before ${shortDate(weakTrend.cutoff)}.`}
+              />
+              <ul className="divide-y divide-border">
+                {weakTrend.rows.map((r) => (
+                  <li key={r.id} className="flex items-center gap-3 px-4 py-2.5 sm:px-5">
+                    <div className="min-w-0 flex-1">
+                      <Link href={`/subjects/${r.subjectId}/topics/${r.id}`} className="line-clamp-2 text-sm font-medium text-fg hover:underline">
+                        {r.name}
+                      </Link>
+                      <p className="tnum text-xs text-fg-3">
+                        {SUBJECT_SHORT[r.subjectId as SubjectId] ?? r.subjectId} · {r.now === null ? "no answers" : `${pct0(r.now)} of ${r.nowN} correct`}
+                      </p>
+                    </div>
+                    <ButtonLink href={`/practice?topic=${encodeURIComponent(r.id)}&count=10`} size="sm" className="max-sm:h-10" aria-label={`Practise ${r.name}`}>
+                      Practise
+                    </ButtonLink>
+                  </li>
+                ))}
+              </ul>
+            </Card>
           ) : (
             <EmptyState title="No weak topics">
               A topic counts as weak once you have given at least 3 answers in it with under 70% accuracy. None of your topics meets that today{weakTrend.hasHistory ? ` or did ${WEAK_WINDOW_DAYS} days ago` : ""}.

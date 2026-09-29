@@ -230,7 +230,7 @@ export function TodayClient({ pool, concepts, formulas, taxonomy }: { pool: Pool
                     variant="primary"
                     size="sm"
                     className="max-sm:h-10"
-                    aria-label={done.length ? `Continue today's questions, ${remaining.length} left` : "Start today's questions"}
+                    aria-label={done.length ? undefined : "Start today's questions"}
                     onClick={() => startSession(done.length ? remaining : plan.questionIds, "Today's questions")}
                   >
                     <Play aria-hidden className="h-3.5 w-3.5" /> {done.length ? `Continue (${remaining.length} left)` : "Start"}
