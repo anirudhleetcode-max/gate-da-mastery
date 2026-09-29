@@ -88,12 +88,12 @@
       "commonTrap": "Applying the single-linkage rule (minimum distance) out of habit: it sends $C$ to $\\{D,E\\}$ at distance $4$. Under complete linkage every candidate distance is a maximum, so recompute each one from the original table."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C: C is merged with {A,B} at distance 6",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C: C is merged with {A, B} at distance 6",
       "agreesWithKey": true,
-      "checkCode": "D={('A','B'):2,('A','C'):6,('A','D'):9,('A','E'):10,('B','C'):5,('B','D'):8,('B','E'):9,('C','D'):4,('C','E'):7,('D','E'):3}\nd=lambda x,y:D.get((x,y),D.get((y,x)))\ndef run(agg):\n    cl=[frozenset(c) for c in 'ABCDE']\n    for step in range(1,5):\n        dist=lambda P,Q:agg(d(x,y) for x in P for y in Q)\n        P,Q=min(((P,Q) for i,P in enumerate(cl) for Q in cl[i+1:]),key=lambda pq:dist(*pq))\n        print(agg.__name__,step,sorted(P),sorted(Q),dist(P,Q)); cl=[c for c in cl if c not in(P,Q)]+[P|Q]\nrun(max); run(min)",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\nfrom scipy.spatial.distance import squareform\nD=np.array([[0,2,6,9,10],[2,0,5,8,9],[6,5,0,4,7],[9,8,4,0,3],[10,9,7,3,0]],float)\nprint(linkage(squareform(D),'complete'))  # rows: merged ids, height, size; ids 5,6,7 = new clusters\n# expected: (0,1)@2 -> id5={A,B}; (3,4)@3 -> id6={D,E}; (2,5)@6 -> C joins {A,B}; (6,7)@10\n",
+      "notes": "Blind solve (merges A-B@2, D-E@3, then C joins {A,B}@6) matches the key. scipy complete-linkage confirms the merge order and heights. Audited: steps, all four option verdicts, difficulty (MODERATE, about 1.7 min) and blueprint slot. No changes."
     }
   },
   {
@@ -179,18 +179,18 @@
         {
           "label": "D",
           "verdict": "incorrect",
-          "explanation": "$\\tfrac67$ comes from normalising over $[0,2]$ only, which gives $c=\\tfrac12$ and ignores the mass on $[-1,0)$. Then $\\dfrac{3/4}{7/8}=\\tfrac67$."
+          "explanation": "$\\tfrac67$ comes from the wrong constant $c=\\tfrac12$ (normalising over $[0,2]$ only and forgetting $\\int_{-1}^{0}$) used in an otherwise correct calculation: $P(X>1)=\\tfrac12\\cdot\\tfrac32=\\tfrac34$ and $P(X^2>\\tfrac14)=1-\\tfrac{c}{4}=\\tfrac78$, so the ratio is $\\dfrac{3/4}{7/8}=\\tfrac67$. With the correct $c=\\tfrac25$ the ratio is $\\tfrac23$."
         }
       ],
       "commonTrap": "Forgetting that $X$ takes negative values. Either the normalising integral is done over $[0,2]$ only (giving $c=\\tfrac12$), or $X^2>\\tfrac14$ is read as $X>\\tfrac12$ and the left tail $X<-\\tfrac12$ is dropped."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "B: 2/3",
       "agreesWithKey": true,
-      "checkCode": "from scipy.integrate import quad\nf=lambda x:abs(x)\nc=1/quad(f,-1,2,points=[0])[0]\nnum=c*quad(f,1,2)[0]\nden=c*(quad(f,-1,-.5)[0]+quad(f,.5,2)[0])\nprint(c,num,den,num/den)",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx=sp.symbols('x'); h=sp.Rational(1,2)\nc=1/(sp.integrate(-x,(x,-1,0))+sp.integrate(x,(x,0,2)))\nnum=c*sp.integrate(x,(x,1,2))\nden=c*(sp.integrate(-x,(x,-1,-h))+sp.integrate(x,(x,h,2)))\nprint(c,num,den,num/den)  # 2/5 3/5 9/10 2/3\n# distractors: c=1/2 wrong constant -> (3/4)/(7/8)=6/7 ; dropping left tail -> (3/5)/(3/4)=4/5\n",
+      "notes": "Blind solve (c=2/5, P(X>1)=3/5, P(X^2>1/4)=9/10, ratio 2/3) matches the key; sympy confirms. Key, stem and options unchanged. Fixed the option D explanation: it attributed 6/7 to normalising over [0,2] only, but that route gives 4/5 (option C); 6/7 actually arises from the wrong constant c=1/2 used in an otherwise correct calculation, and the explanation now shows this."
     }
   },
   {
@@ -282,12 +282,12 @@
       "commonTrap": "Using $z=1.96$ or the divisor $n$ for the standard deviation. Both give an interval that is too narrow, and both produce plausible-looking distractors, so check that the degrees of freedom are $n-1=7$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A: (40.09, 44.91)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\na=np.array([41,45,38,44,47,40,43,42]);n=len(a);m=a.mean();s=a.std(ddof=1)\nh=2.365*s/n**.5\nprint(m,s,round(m-h,2),round(m+h,2))",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy import stats\na=np.array([41,45,38,44,47,40,43,42.]);n=len(a);m=a.mean();s=a.std(ddof=1);se=s/np.sqrt(n)\nfor t in (2.365, stats.t.ppf(0.975,n-1)):\n    print(round(m-t*se,2),round(m+t*se,2))   # (40.09, 44.91) for both the table value and the exact quantile\nprint('z:',round(m-1.96*se,2),round(m+1.96*se,2),' ddof=0:',round(m-2.365*a.std()/np.sqrt(n),2),round(m+2.365*a.std()/np.sqrt(n),2),' no sqrt(n):',round(m-2.365*s,2),round(m+2.365*s,2))\n",
+      "notes": "Blind solve (mean 42.5, sum of squares 58, s=2.8785, t7=2.365, margin 2.407) matches the key. Endpoints round to (40.09, 44.91) with both the tabulated t and the exact quantile, so the rounding is robust. Distractor intervals B (z=1.96), C (divisor n) and D (no sqrt(n)) reproduced. No changes."
     }
   },
   {
@@ -384,12 +384,12 @@
       "commonTrap": "Assuming that the direction orthogonal to PC1 inside the $x_1x_2$-plane must be PC2. Components are ranked by eigenvalue, and the decoupled feature $x_3$ (variance $3$) beats the residual direction of the $2\\times2$ block (eigenvalue $1$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C, D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nS=np.array([[5,2,0],[2,2,0],[0,0,3]],float);w,V=np.linalg.eigh(S);o=w.argsort()[::-1];w=w[o];V=V[:,o]\nprint('eigenvalues',w.round(6)); print('PC rows',V.T.round(3)); print('cumulative',(w.cumsum()/w.sum()).round(3))\nu=np.array([1,-2,0])/5**.5; print('u S u',round(u@S@u,6))",
-      "notes": ""
+      "checkCode": "import numpy as np\nS=np.array([[5,2,0],[2,2,0],[0,0,3]],float)\nw,V=np.linalg.eigh(S); o=np.argsort(w)[::-1]; w=w[o]; V=V[:,o]\nprint(w, (w.cumsum()/w.sum()))          # [6 3 1] , [0.6 0.9 1.0]\nprint(np.round(V.T,3))                   # PC1 ∝ (2,1,0), PC2 = e3, PC3 ∝ (1,-2,0)\nu=np.array([1,-2,0])/np.sqrt(5); print(u@S@u)   # 1.0\n",
+      "notes": "Blind solve (eigenvalues 6, 3, 1; PC1 along (2,1,0); PC2 = e3; 90% for two components; variance along (1,-2,0)/sqrt5 equals 1) matches the key A, C, D. numpy eigh confirms. Unique eigenvalues, so directions are unambiguous. No changes."
     }
   },
   {
@@ -477,12 +477,12 @@
       "commonTrap": "Forgetting the early exit (so every unsuccessful search seems to cost 7 steps) or forgetting that the element that triggers the exit is itself counted."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D: 2 21",
       "agreesWithKey": true,
-      "checkCode": "def probe(a, key):\n    steps = 0\n    for x in a:\n        steps += 1\n        if x == key:\n            return True, steps\n        if x > key:\n            break\n    return False, steps\n\na = [3, 8, 12, 15, 21, 27, 30]\nhits = 0\ntotal = 0\nfor key in [12, 10, 30, 1, 40]:\n    found, s = probe(a, key)\n    if found:\n        hits += 1\n    total += s\nprint(hits, total)",
-      "notes": ""
+      "checkCode": "def probe(a,key):\n    steps=0\n    for x in a:\n        steps+=1\n        if x==key: return True,steps\n        if x>key: break\n    return False,steps\na=[3,8,12,15,21,27,30]\nres=[probe(a,k) for k in [12,10,30,1,40]]\nprint(res, sum(f for f,_ in res), sum(s for _,s in res))  # hits 2, total 21\n",
+      "notes": "Blind trace gives (True,3), (False,3), (True,7), (False,1), (False,7): output 2 21. Executing the program confirms. Distractor arithmetic (31, 19, hits 4) reproduced. No changes."
     }
   },
   {
@@ -538,12 +538,12 @@
       "commonTrap": "Reading the size of $M$ ($5\\times5$) as its rank, or taking the number of rows of $A$ ($4$) as its rank without checking for a dependent row."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "from sympy import Matrix\nA=Matrix([[1,2,0,1,3],[0,1,1,2,1],[2,1,-1,0,2],[-1,3,3,5,3]])\nprint(A.rank(),(A.T*A).rank(),(A[0,:]+2*A[1,:]-A[2,:]-A[3,:]).is_zero_matrix)",
-      "notes": ""
+      "checkCode": "import numpy as np, sympy as sp\nA=np.array([[1,2,0,1,3],[0,1,1,2,1],[2,1,-1,0,2],[-1,3,3,5,3]])\nprint(np.linalg.matrix_rank(A), np.linalg.matrix_rank(A.T@A), sp.Matrix(A.tolist()).rank(), (sp.Matrix(A.T@A)).rank())  # 3 3 3 3\n",
+      "notes": "Blind row reduction (row 4 = row 1 + 2 row 2 - row 3) gives rank(A)=3 and rank(A^T A)=3. numpy and exact sympy agree. Integer NAT, so no rounding is needed; range [3,3] is appropriate. No changes."
     }
   },
   {
@@ -635,12 +635,12 @@
       "commonTrap": "Stopping after summing out the variables and forgetting either the prior $P(F)$ or the final normalisation by $P(N=1)$. Setting the unobserved $S$ to a fixed value instead of summing it out is the other frequent slip."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A: 0.222",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nPF,PS={1:.1,0:.9},{1:.3,0:.7}\nPA={(1,1):.95,(1,0):.8,(0,1):.4,(0,0):.05}\nPN={1:.9,0:.2}\ndef J(f,s,a,n):\n    pa=PA[f,s] if a else 1-PA[f,s]; pn=PN[a] if n else 1-PN[a]\n    return PF[f]*PS[s]*pa*pn\nnum=sum(J(1,s,a,1) for s,a in product((0,1),(0,1)))\nden=sum(J(f,s,a,1) for f,s,a in product((0,1),(0,1),(0,1)))\nprint(num,den,round(num/den,3))",
-      "notes": ""
+      "checkCode": "# brute-force joint over (F,S,A) with N=1 fixed, independent of the variable-elimination order\nPA={(1,1):.95,(1,0):.8,(0,1):.4,(0,0):.05}\ndef joint(F,S,A):\n    pf=.1 if F else .9; ps=.3 if S else .7\n    pa=PA[F,S] if A else 1-PA[F,S]\n    return pf*ps*pa*(.9 if A else .2)\nnum=sum(joint(1,S,A) for S in (0,1) for A in (0,1))\nden=sum(joint(F,S,A) for F in (0,1) for S in (0,1) for A in (0,1))\nprint(num,den,round(num/den,3))  # 0.07915 0.3568 0.222\n",
+      "notes": "Blind variable elimination (tau2(1)=0.7915, tau2(0)=0.3085) gives 0.07915/0.3568 = 0.2218, which rounds to 0.222. A brute-force joint computation confirms; distractors 0.079, 0.264 and 0.720 reproduced. No changes."
     }
   },
   {
@@ -695,12 +695,12 @@
       "commonTrap": "Choosing $2$ integration tests first and then any $2$ of the remaining $9$ tests, $\\binom52\\binom92=360$. This counts every set with three or more integration tests more than once."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "215",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nprint(sum(1 for c in combinations(range(11),4) if sum(i>=6 for i in c)>=2))",
-      "notes": ""
+      "checkCode": "from itertools import combinations\nfrom math import comb\nprint(sum(1 for c in combinations(range(11),4) if sum(i>=6 for i in c)>=2), comb(11,4)-comb(6,4)-5*comb(6,3))  # 215 215\n",
+      "notes": "Blind case split 150+60+5 = 215 and the complement 330-15-100 = 215 both match the key; exhaustive enumeration of all 330 sets confirms. Integer NAT, range [215,215] is appropriate. No changes."
     }
   },
   {
@@ -755,12 +755,12 @@
       "commonTrap": "Dropping the sign of a multiplier. Since $R_3$ is *increased* by $2R_1$, the entry is $\\ell_{31}=-2$ and not $+2$; using $+2$ gives $y_3=-26$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "-2",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA=np.array([[2,4,-2],[6,13,-3],[-4,-6,9]],float);b=np.array([6,25,0.])\nL=np.eye(3);U=A.copy()\nfor k in range(3):\n    for i in range(k+1,3):\n        L[i,k]=U[i,k]/U[k,k];U[i]-=L[i,k]*U[k]\ny=np.linalg.solve(L,b);x=np.linalg.solve(U,y)\nprint(L.tolist(),U.tolist(),np.allclose(L@U,A),y.round(6).tolist(),x.round(6).tolist())",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA=sp.Matrix([[2,4,-2],[6,13,-3],[-4,-6,9]]); b=sp.Matrix([6,25,0])\nL,U,perm=A.LUdecomposition()\nprint(perm, L.tolist(), U.tolist(), (L*U==A), L.solve(b).T, U.solve(L.solve(b)).T)  # [] ... y=(6,7,-2), x=(3,1,2)\n",
+      "notes": "Blind LU (l21=3, l31=-2, l32=2, U33=-1) and forward substitution give y=(6,7,-2), so y3=-2; sympy LU confirms and back substitution returns x=(3,1,2). L with unit diagonal is unique, so the answer is unambiguous. Integer NAT, range [-2,-2]. No changes."
     }
   },
   {
@@ -856,12 +856,12 @@
       "commonTrap": "Assuming that every pair of time levels can be rolled into one another because both are 'calendar' levels. Week and month are incomparable in this hierarchy, so week totals cannot be rolled up to months."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B, C",
       "agreesWithKey": true,
-      "checkCode": "import datetime as dt, random\ndays=[dt.date(2026,1,1)+dt.timedelta(i) for i in range(365)]\nwk=lambda d:d-dt.timedelta(d.weekday())\nwm={}\nfor d in days: wm.setdefault(wk(d),set()).add(d.month)\nprint('weeks spanning 2 months:',sum(len(v)>1 for v in wm.values()))  # >0, so week->month is not a function (A false)\nbrand=lambda i:i//3; state=lambda s:s//2\nrandom.seed(1)\nbase={(i,d,s):random.randint(1,50) for i in range(6) for d in days[:40] for s in range(4)}\ndef rollup(c):\n    out={}\n    for (i,d,s),v in c.items(): k=(brand(i),d.year,state(s)); out[k]=out.get(k,0)+v\n    return out\nalt=dict(base); alt[(0,days[0],0)]+=5; alt[(1,days[0],0)]-=5   # items 0 and 1 belong to the same brand\nprint('same coarse cuboid from different base cuboids:',rollup(base)==rollup(alt) and base!=alt)  # D false",
-      "notes": ""
+      "checkCode": "import datetime as dt\n# (A) weeks (Mon-Sun) are not nested in months, so week->month is not a function\ndays=[dt.date(2026,1,1)+dt.timedelta(i) for i in range(365)]\nwm={}\nfor d in days: wm.setdefault(d-dt.timedelta(d.weekday()),set()).add(d.month)\nprint('weeks spanning 2 months:',sum(len(v)>1 for v in wm.values()))   # >0 => A false\n# (D) two different base cuboids with the same (brand,year,state) roll-up => the coarse cuboid cannot determine the base\nbrand=lambda i:i//3\nbase={(0,0):5,(1,0):5}; alt={(0,0):7,(1,0):3}      # items 0,1 share brand 0\nagg=lambda c:sum(c.values())\nprint(agg(base)==agg(alt) and base!=alt)                             # True => D false\n# (B)/(C): roll-up path item->brand, day->month->quarter->year, store->city->state exists (B true); quarter->month reverses an arrow (drill-down, C true)\n",
+      "notes": "Blind analysis: A false (calendar weeks straddle months, so week->month is not an arrow), B true, C true (quarter->month is a drill-down), D false (a coarse cuboid cannot recover the finer base cells). Matches the key B, C. The Python check confirms that weeks span two months and that different base data give the same coarse cuboid. No changes."
     }
   }
 ]
