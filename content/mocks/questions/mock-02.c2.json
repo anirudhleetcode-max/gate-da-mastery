@@ -89,12 +89,36 @@
       "commonTrap": "Stopping after the first stage and reporting $7$, or getting the sign of a multiplier wrong. Remember that $R_3 - (-2)R_1 = R_3 + 2R_1$ and that $R_3 - 3R_2$ must make the $(3,2)$ entry exactly zero."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "-5.0 (third pivot); option C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "-5 (third pivot); option C",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA=np.array([[1,2,-1],[3,8,1],[-2,2,9]],float); U=A.copy()\nfor j in range(2):\n    for i in range(j+1,3): U[i]-=U[i,j]/U[j,j]*U[j]\nprint(U[2,2])  # -5.0",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[1,2,-1],[3,8,1],[-2,2,9]])\nU = A.copy()\nfor j in range(2):\n    for i in range(j+1, 3):\n        U[i,:] = U[i,:] - (U[i,j]/U[j,j])*U[j,:]   # no row interchanges\nprint(U.tolist(), U[2,2])                            # third pivot -5\nopts = {\"A\": 7, \"B\": -10, \"C\": -5, \"D\": 19}\nprint([k for k,v in opts.items() if v == U[2,2]], A.det())  # ['C'] -10 (= product of pivots)",
+      "notes": "Blind solve (R2-3R1=[0,2,4], R3+2R1=[0,6,7], R3-3R2=[0,0,-5]) gave third pivot -5, matching key C. Python check reproduces U exactly; distractors traced: 7 = stage-1 entry only, -10 = det A (pivot product), 19 = sign error (+3R2). Cofactor determinant in the solution re-verified (-10). Stem unambiguous (no row interchanges, order of elimination stated); topic/subtopic (linear systems / Gaussian elimination) fine; MODERATE with ~100 s is honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "d509c34a70b201bc",
+        "verification": "be02cbe1dc00f4b7"
+      }
     }
   },
   {
@@ -149,12 +173,36 @@
       "commonTrap": "Reporting the eigenvalue $\\lambda = 8$ instead of $a$. Another slip is to assume the state stays the same ($\\lambda = 1$) and solve $3a + 6 = 3$ to get $a = -1$. But \"a scalar multiple\" allows any $\\lambda$, and the second component forces $\\lambda = 8$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "a = 6 (with λ = 8)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "a = 6 (lambda = 8)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\na,l=sp.symbols('a l'); A=sp.Matrix([[a,3],[2,5]]); x=sp.Matrix([3,2])\nprint(sp.solve(list(A*x-l*x),[a,l]))  # {a: 6, l: 8}",
-      "notes": ""
+      "checkCode": "import sympy as sp\na, lam = sp.symbols('a lam', real=True)\nA = sp.Matrix([[a,3],[2,5]]); x0 = sp.Matrix([3,2])\nsol = sp.solve(list(A*x0 - lam*x0), [a, lam], dict=True)\nprint(sol)                                   # [{a: 6, lam: 8}]  (unique)\nA6 = A.subs(a, 6)\nprint(A6*x0, A6.eigenvals())                 # Matrix([[24],[16]]) {8: 1, 3: 1}",
+      "notes": "Blind solve (A x0 = (3a+6, 16) = lambda(3,2) gives lambda=8, a=6) matches key. Python solve returns the single solution a=6, lambda=8, so the answer is unique; with a=6 the eigenvalues are 3 and 8 as the solution states. Exact integer answer, so the NAT range 6 to 6 is appropriate (no rounding involved). EASY / ~60 s is honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "3279c018adaefc14",
+        "verification": "987e2a451dfafb2e"
+      }
     }
   },
   {
@@ -247,12 +295,36 @@
       "commonTrap": "Concluding that the rank is $3$ because no column is a multiple of another. Having no proportional pair of columns does not make the columns independent: a column can be a combination of two others, as $f_3 = 2f_1 - f_2$ is here."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2; option B",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX=np.array([[1,2,0],[3,1,5],[0,4,-4],[2,2,2]])\nprint(np.linalg.matrix_rank(X))  # 2",
-      "notes": ""
+      "checkCode": "import numpy as np, sympy as sp\nX = sp.Matrix([[1,2,0],[3,1,5],[0,4,-4],[2,2,2]])\nprint(X.rank(), np.linalg.matrix_rank(np.array(X.tolist(), float)))   # 2 2\nf1, f2, f3 = X[:,0], X[:,1], X[:,2]\nprint(f3 == 2*f1 - f2)                                                # True: column relation\nprint(X.rref()[0].tolist())                                           # two non-zero rows",
+      "notes": "Blind solve (column relation f3 = 2 f1 - f2, f1 and f2 not proportional) gives rank 2, matching key B. Python (sympy exact rank, numpy rank, RREF and the explicit column relation) agrees. Distractors: 1 (columns not proportional), 3 (number of features), 4 (impossible, rank <= min(4,3)). EASY is honest for a 2-mark item. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "4a7d3d344485436b",
+        "verification": "1e4c9587856bbf1f"
+      }
     }
   },
   {
@@ -346,12 +418,36 @@
       "commonTrap": "Computing $\\ell_{32}$ from the original entries ($7/1$) instead of from the matrix after stage 1 ($6/3$), or storing the negated multipliers in $L$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "L = [[1,0,0],[2,1,0],[-1,2,1]]; option D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA=np.array([[3,-1,2],[6,1,3],[-3,7,1]],float); L=np.eye(3); U=A.copy()\nfor j in range(2):\n    for i in range(j+1,3): L[i,j]=U[i,j]/U[j,j]; U[i]-=L[i,j]*U[j]\nprint(L, np.allclose(L@U,A))  # L rows [1,0,0],[2,1,0],[-1,2,1]; True",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[3,-1,2],[6,1,3],[-3,7,1]])\nL, U, perm = A.LUdecomposition()\nprint(L.tolist(), U.tolist(), perm, L*U == A)          # L=[[1,0,0],[2,1,0],[-1,2,1]], no swaps\nh = sp.Rational(1,2)\nopts = {\n \"A\": sp.Matrix([[1,0,0],[2,1,0],[-1,h,1]]),\n \"B\": sp.Matrix([[1,0,0],[-2,1,0],[1,-2,1]]),\n \"C\": sp.Matrix([[1,0,0],[2,1,0],[-1,7,1]]),\n \"D\": sp.Matrix([[1,0,0],[2,1,0],[-1,2,1]]),\n}\n# L is unique for nonsingular A (leading minors 3, 9, 45 all non-zero) -> exactly one option equals it\nprint([k for k, M in opts.items() if M == L])                        # ['D']\nprint([k for k, M in opts.items() if (M.inv()*A).is_upper])          # ['D'] (M^-1 A upper triangular)",
+      "notes": "Blind solve (multipliers 2, -1 then 2 from the updated matrix) gave L with sub-diagonal 2, -1, 2, matching key D. Python LU (no swaps), plus a test that only option D makes L^-1 A upper triangular, agree; leading principal minors 3, 9, 45 are non-zero so the unit-lower L is unique and only one option can be right. Distractor explanations re-checked numerically (A: inverted ratio, B: negated multipliers, C: 7/1 from the original matrix). MODERATE / ~140 s is honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "7ca37d382f4ad59a",
+        "verification": "dc69c330f5aaf4c2"
+      }
     }
   },
   {
@@ -445,12 +541,36 @@
       "commonTrap": "Dropping the alternating sign on the $(1,2)$ cofactor, which produces a quadratic with no real roots. The other trap is believing that any three polynomials in the 3-dimensional space $\\mathcal{P}_2$ must be dependent."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "k in {-3, 2}; option A",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nk=sp.symbols('k'); M=sp.Matrix([[1,k,0],[0,1,k],[1,-1,-6]])\nprint(sp.factor(M.det()), sp.solve(M.det(),k))  # (k - 2)*(k + 3) [-3, 2]",
-      "notes": ""
+      "checkCode": "import sympy as sp\nk = sp.symbols('k', real=True)\nM = sp.Matrix([[1,k,0],[0,1,k],[1,-1,-6]])   # coordinates in basis {1, x, x^2}\nd = sp.factor(M.det()); print(d, sp.solve(M.det(), k))   # (k - 2)*(k + 3) [-3, 2]\nprint([M.subs(k, v).rank() for v in (2, -3, -2, 3, 0)])    # [2, 2, 3, 3, 3]\nx = sp.symbols('x')\np1, p2, p3 = 1 + k*x, x + k*x**2, 1 - x - 6*x**2\nprint(sp.expand((p1 - 3*p2).subs(k, 2) - p3), sp.expand((p1 + 2*p2).subs(k, -3) - p3))   # 0 0\nopts = {\"A\": {2,-3}, \"B\": {-2,3}, \"C\": \"all\", \"D\": set()}\nprint([n for n, s in opts.items() if s == set(sp.solve(M.det(), k))])                     # ['A']",
+      "notes": "Blind solve (determinant of coordinate vectors = k^2 + k - 6 = (k-2)(k+3)) gave k in {2, -3}, matching key A. Python confirms the factorisation, rank drops to 2 only at k = 2 and k = -3, and explicit dependence relations hold at both values; -2 and 3 (option B) give rank 3. Distractor reasoning (sign slip in factoring; 'any 3 vectors in P2 are dependent'; cofactor sign error giving no real roots) re-checked. EASY is honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "46be413c938c4c0a",
+        "verification": "c087f606db1a3bb0"
+      }
     }
   },
   {
@@ -543,12 +663,36 @@
       "commonTrap": "Finding a vector orthogonal to $\\mathbf{r}_1$ and $\\mathbf{r}_2$ but choosing its sign arbitrarily, which gives option A with $\\det R = -1$. Also watch the minus sign on the middle component of the cross product."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "r3 = (1/3)(-2, -1, 2); det R = 1; option C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "r3 = (1/3)(-2, -1, 2); det R = +1; option C",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nr1=np.array([2,-2,1])/3; r2=np.array([1,2,2])/3; r3=np.cross(r1,r2)\nR=np.vstack([r1,r2,r3]); print(np.round(3*r3), np.allclose(R.T@R,np.eye(3)), round(np.linalg.det(R),6))  # [-2 -1 2] True 1.0",
-      "notes": ""
+      "checkCode": "import sympy as sp\nr1 = sp.Matrix([2,-2,1])/3; r2 = sp.Matrix([1,2,2])/3\ncands = {\n \"A\": sp.Matrix([2,1,-2])/3,\n \"B\": sp.Matrix([-2,1,2])/3,\n \"C\": sp.Matrix([-2,-1,2])/3,\n \"D\": sp.Matrix([-2,-1,2]),\n}\ngood = []\nfor name, r3 in cands.items():\n    R = sp.Matrix.vstack(r1.T, r2.T, r3.T)\n    orth = (R.T*R == sp.eye(3))\n    print(name, orth, R.det())\n    if orth and R.det() == 1: good.append(name)\nprint(good, r1.cross(r2).T)          # ['C'];  cross product = (-2/3, -1/3, 2/3)",
+      "notes": "Blind solve (r3 = +/- r1 x r2 = +/- (1/3)(-2,-1,2); det = +1 selects +) gave option C, matching key. Python tests every option for R^T R = I and det R = +1: A is orthogonal with det -1 (reflection), B is not orthogonal, D has length 3 (det 3); only C satisfies both, so the answer is unique. Two linked ideas (cross product + determinant sign), so MODERATE / ~140 s is honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "3711ce83b775dd0a",
+        "verification": "eeb0ef8125351665"
+      }
     }
   },
   {
@@ -604,12 +748,36 @@
       "commonTrap": "Reporting one of the weights (for example $w_2 = 3$) instead of the prediction, or making a substitution slip such as writing $w_3 = 7 - w_2$ instead of $7 - 2w_2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "w = (2, 3, 1); y_hat = 12.0",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "y_hat = 12 (w = (2, 3, 1))",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX=np.array([[1,1,0],[0,2,1],[2,1,1]],float); y=np.array([5,7,8],float)\nw=np.linalg.solve(X,y); print(w, w@np.array([1,3,1]))  # [2. 3. 1.] 12.0",
-      "notes": ""
+      "checkCode": "import sympy as sp\nX = sp.Matrix([[1,1,0],[0,2,1],[2,1,1]]); y = sp.Matrix([5,7,8])\nprint(X.det())                                    # 3 -> non-singular, unique weights\nw = X.LUsolve(y); print(w.T)                      # Matrix([[2, 3, 1]])\nprint((sp.Matrix([[1,3,1]])*w)[0])                # 12\n# shortcut: (1,3,1) = row1 + row2 and the model has no intercept -> 5 + 7\nprint(sp.Matrix([[1,3,1]]) == X[0,:] + X[1,:], y[0] + y[1])   # True 12",
+      "notes": "Blind solve (w = (2,3,1) by substitution; prediction 2 + 9 + 1) gave 12, matching key. Python exact solve agrees; coefficient determinant 3 so the weights are unique, and the linearity shortcut (input = example 1 + example 2, so 5 + 7) confirms 12. Exact integer answer, so the NAT range 12 to 12 is appropriate. EASY is honest (with the shortcut it is very quick). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "17c255f86b972212",
+        "verification": "efd270e49fb517d3"
+      }
     }
   }
 ]

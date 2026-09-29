@@ -68,7 +68,7 @@
         {
           "label": "A",
           "verdict": "incorrect",
-          "explanation": "$4 = \\min(m, n)$ is the best-case lower bound, reached only if every element of one list is smaller than the first element of the other. Here the lists interleave, so more comparisons are needed."
+          "explanation": "$4 = \\min(m, n)$ is the best-case lower bound, reached only if the shorter list is output completely before any element of the longer list. Here the lists interleave ($5$, $9$ and $12$ are output before $15$ and $21$), so more comparisons are needed."
         },
         {
           "label": "B",
@@ -90,12 +90,36 @@
       "commonTrap": "Quoting the worst-case formula $m + n - 1 = 8$ as if it were the exact count for every input, or counting a comparison for each copied leftover element (giving 9)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "7 comparisons (option B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "7 comparisons; option B",
       "agreesWithKey": true,
-      "checkCode": "A=[3,8,15,21]; B=[5,9,12,30,41]\ni=j=c=0\nwhile i<len(A) and j<len(B):\n    c+=1\n    if A[i]<=B[j]: i+=1\n    else: j+=1\nprint(c)  # 7",
-      "notes": ""
+      "checkCode": "L1 = [3, 8, 15, 21]; L2 = [5, 9, 12, 30, 41]\ndef merge_count(a, b):\n    out, comps, i, j = [], 0, 0, 0\n    while i < len(a) and j < len(b):\n        comps += 1\n        if a[i] <= b[j]: out.append(a[i]); i += 1      # tie -> first list\n        else: out.append(b[j]); j += 1\n    out += a[i:] + b[j:]                                 # leftovers copied with no comparison\n    return comps, out\nc, out = merge_count(L1, L2)\nopts = {\"A\": 4, \"B\": 7, \"C\": 8, \"D\": 9}\nprint(c, out == sorted(L1 + L2), [k for k, v in opts.items() if v == c])   # 7 True ['B']\nleftover = sum(1 for x in L2 if x > L1[-1])              # L2 elements still waiting when L1 empties\nprint(len(L1) + len(L2) - leftover)                      # 7 (shortcut: m + n - leftover)",
+      "notes": "Blind trace (3v5, 8v5, 8v9, 15v9, 15v12, 15v30, 21v30; L1 then empty, 30 and 41 copied free) gives 7, matching key B; own Python merge counter agrees and its output equals sorted(L1+L2). Stem is unambiguous (tie rule and no-comparison-for-leftovers both stated). FIXED: option A's explanation said min(m,n) is reached when 'every element of one list is smaller than the first element of the other', which is false for the longer list (that gives n = 5 comparisons); reworded to 'the shorter list is output completely first'. Answer, steps, other option verdicts unchanged. Topic/subtopic (mergesort merge step) and EASY / ~75 s are honest."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "f13ae0752c0e2e87",
+        "verification": "cd74f54bee142e51"
+      }
     }
   },
   {
@@ -177,7 +201,7 @@
         {
           "label": "C",
           "verdict": "incorrect",
-          "explanation": "This order arises if C is wrongly treated as already visited when the search reaches E (C was only *seen* in A's neighbour list, not visited), so E goes to G first and C is reached last through F. Under the stated rule, E's first unvisited neighbour is C."
+          "explanation": "This order arises only if the search skips C when it reaches E (for example, leaving C for later because it also appears in A's list) and goes to G first; C is then entered from F at the very end. The stated rule forbids that: C is still unvisited when E examines it, so the search must recurse into C immediately, before G."
         },
         {
           "label": "D",
@@ -185,15 +209,39 @@
           "explanation": "This is what an iterative DFS gives when it pushes all neighbours in alphabetical order onto a stack and pops the last one pushed; that reverses the neighbour order and violates the stated rule."
         }
       ],
-      "commonTrap": "Treating C as visited as soon as it appears in A's neighbour list. In DFS a vertex counts as visited only when the search actually enters it, so at E the vertex C is still unvisited and must be entered before G. Another slip is writing the breadth-first order, which here happens to be alphabetical."
+      "commonTrap": "Skipping C at E because C also appears in A's neighbour list and \"can wait until the search backtracks to A\". In DFS a vertex is visited by whichever recursive call reaches it first, and C is still unvisited when E examines it, so C must be entered before G. Another slip is writing the breadth-first order, which here happens to be alphabetical."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, B, D, E, C, F, G (option B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "A, B, D, E, C, F, G; option B",
       "agreesWithKey": true,
-      "checkCode": "adj={'A':'BC','B':'ADE','C':'AEF','D':'B','E':'BCG','F':'CG','G':'EF'}\nseen=[]\ndef dfs(u):\n    seen.append(u)\n    for v in adj[u]:\n        if v not in seen: dfs(v)\ndfs('A'); print(', '.join(seen))  # A, B, D, E, C, F, G",
-      "notes": ""
+      "checkCode": "adj = {\"A\": \"BC\", \"B\": \"ADE\", \"C\": \"AEF\", \"D\": \"B\", \"E\": \"BCG\", \"F\": \"CG\", \"G\": \"EF\"}\nassert all(u in adj[v] for u in adj for v in adj[u])     # undirected: adjacency is symmetric\ndef dfs_order(start):\n    visited, order = set(), []\n    def visit(u):\n        visited.add(u); order.append(u)\n        for v in adj[u]:                                  # alphabetical, recurse at once if unvisited\n            if v not in visited: visit(v)\n    visit(start); return order\nopts = {\"A\": \"ABCDEFG\", \"B\": \"ABDECFG\", \"C\": \"ABDEGFC\", \"D\": \"ACFGEBD\"}\no = \"\".join(dfs_order(\"A\"))\nprint(o, [k for k, v in opts.items() if v == o])         # ABDECFG ['B']",
+      "notes": "Blind recursive DFS from A gives A, B, D, E, C, F, G, matching key B; own Python DFS (with a symmetry assert on the adjacency lists) agrees and only option B matches. Distractors traced: A = BFS order, D = DFS with reversed neighbour order. FIXED: the option C explanation and the commonTrap said C was 'treated as visited', but that mistake would make C never entered (it cannot then appear last via F); reworded to the actual error that yields option C (skipping C at E, entering it late from F). Answer unchanged. Stem unambiguous (neighbour order and 'recurse immediately' rule stated); EASY / ~75 s and topic (graph traversals) are honest."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "7d3553a14f385ce5",
+        "verification": "934095037bf53088"
+      }
     }
   },
   {
@@ -248,12 +296,36 @@
       "commonTrap": "Assuming `seq += extra` behaves like `seq = seq + extra` (no effect on the caller) gives $60 + 2 + 3 = 65$; assuming the second line also changes the caller's list gives $60 + 6 + 17 = 83$. Only the in-place `+=` reaches `p` and `q`."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "74",
       "agreesWithKey": true,
-      "checkCode": "def grow(seq, extra):\n    seq += extra\n    seq = seq + extra\n    return len(seq)\np = [1, 2]\nq = p\nr = grow(q, [3, 4])\nprint(r * 10 + len(p) + sum(q))  # 74",
-      "notes": ""
+      "checkCode": "src = '''\ndef grow(seq, extra):\n    seq += extra\n    seq = seq + extra\n    return len(seq)\np = [1, 2]\nq = p\nr = grow(q, [3, 4])\nval = r * 10 + len(p) + sum(q)\n'''\nenv = {}\nexec(src, env)\nprint(env[\"val\"], env[\"p\"] is env[\"q\"], env[\"p\"], env[\"r\"])        # 74 True [1, 2, 3, 4] 6\n# distractors: += behaving like rebinding (65) and both lines mutating (83)\nprint(6 * 10 + 2 + 3, 6 * 10 + 6 + 17)",
+      "notes": "Blind trace: p, q and seq name one list; `seq += extra` extends it in place to [1, 2, 3, 4]; `seq = seq + extra` builds a new 6-element list bound only to the local name, so r = 6; len(p) = 4, sum(q) = 10 -> 60 + 4 + 10 = 74, matching the key. Python exec of the program agrees (p is q, p == [1, 2, 3, 4]); the commonTrap values 65 (+= treated as rebinding) and 83 (second line also mutating) recomputed correctly. Integer NAT, so the exact range 74 to 74 needs no rounding note. MODERATE / 150 s is honest (aliasing plus += versus +). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "dfa0907c72cef73e",
+        "verification": "0ded24df4607855d"
+      }
     }
   },
   {
@@ -308,12 +380,36 @@
       "commonTrap": "Assuming every even-position node is removed, including the last node 7, gives $3 + 10 + 12 + 9 = 34$. The loop needs **two** nodes after `p`, so it stops at 9 and 7 stays. Another slip is reading the list in table-row order (N1, N2, …) instead of following `next` from `head`."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "41",
       "agreesWithKey": true,
-      "checkCode": "class Node:\n    def __init__(s, d): s.data, s.next = d, None\nT={'N1':(12,'N5'),'N2':(7,None),'N3':(25,'N6'),'N4':(3,'N3'),'N5':(18,'N8'),'N6':(10,'N7'),'N7':(4,'N1'),'N8':(9,'N2')}\nN={k:Node(v[0]) for k,v in T.items()}\nfor k,v in T.items(): N[k].next = N[v[1]] if v[1] else None\nhead=N['N4']; p=head\nwhile p.next is not None and p.next.next is not None:\n    p.next = p.next.next\n    p = p.next\ns=0; p=head\nwhile p: s+=p.data; p=p.next\nprint(s)  # 41",
-      "notes": ""
+      "checkCode": "data = {1: 12, 2: 7, 3: 25, 4: 3, 5: 18, 6: 10, 7: 4, 8: 9}\nnxt  = {1: 5, 2: None, 3: 6, 4: 3, 5: 8, 6: 7, 7: 1, 8: 2}\ndef chain(h):\n    out = []\n    while h is not None: out.append(h); h = nxt[h]\n    return out\nassert sorted(chain(4)) == list(range(1, 9))             # all 8 nodes are on the list\np = 4\nwhile nxt[p] is not None and nxt[nxt[p]] is not None:\n    nxt[p] = nxt[nxt[p]]\n    p = nxt[p]\nr = chain(4)\nprint(r, sum(data[n] for n in r))                         # [4, 6, 1, 8, 2] 41",
+      "notes": "Blind: following next from N4 gives 3, 25, 10, 4, 12, 18, 9, 7; the loop unlinks 25, 4, 18 and stops at 9 (only one node after it), leaving 3, 10, 12, 9, 7 -> 41, matching the key. Independent array-based Python model gives reachable chain [N4, N6, N1, N8, N2] and 41; it also asserts all 8 nodes lie on the original chain (no cycle or orphan). The commonTrap value 34 (every even-position node removed) recomputed. Integer NAT, exact range 41 to 41. EASY (blueprint slot) is acceptable for a short pointer trace. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "a86d4f37ed831154",
+        "verification": "3f64d2bbe1aa962a"
+      }
     }
   },
   {
@@ -406,12 +502,36 @@
       "commonTrap": "Computing the cost of the given order (3.30) instead of optimising the arrangement, or using 0-based positions and forgetting the comparison that finds the key (1.10)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2.10 (option B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2.10; option B",
       "agreesWithKey": true,
-      "checkCode": "from itertools import permutations\np=[0.05,0.30,0.10,0.40,0.15]\nprint(round(min(sum((i+1)*x for i,x in enumerate(o)) for o in permutations(p)),4))  # 2.1",
-      "notes": ""
+      "checkCode": "from itertools import permutations\nprob = {\"V\": 0.05, \"W\": 0.30, \"X\": 0.10, \"Y\": 0.40, \"Z\": 0.15}\nassert abs(sum(prob.values()) - 1) < 1e-12\ncost = lambda order: sum((pos + 1) * prob[c] for pos, c in enumerate(order))\nbest = min(permutations(prob), key=cost)\nprint(\"\".join(best), round(cost(best), 4))               # YWZXV 2.1\nprint(round(cost(\"VWXYZ\"), 4), round(sum(pos * prob[c] for pos, c in enumerate(best)), 4), round(sum(range(1, 6)) / 5, 4))  # 3.3 1.1 3.0\nopts = {\"A\": 1.10, \"B\": 2.10, \"C\": 3.00, \"D\": 3.30}\nprint([k for k, v in opts.items() if abs(v - cost(best)) < 1e-9])   # ['B']",
+      "notes": "Blind: order by non-increasing probability Y, W, Z, X, V gives 0.40 + 0.60 + 0.45 + 0.40 + 0.25 = 2.10, matching key B. Python brute force over all 120 arrangements gives minimum 2.1 at YWZXV; distractors reproduced (current order 3.30 = D, 0-based positions 1.10 = A, uniform 3.00 = C). Probabilities sum to 1 and the stem says the search stops at the match with one comparison per element, so the cost at position i is exactly i (no last-position shortcut ambiguity). Options are exact values, no rounding needed. EASY / 100 s acceptable. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "d564074afe2b5799",
+        "verification": "fb6206c8f8a96828"
+      }
     }
   },
   {
@@ -505,12 +625,36 @@
       "commonTrap": "Mixing up comparisons with swaps: bubble sort always makes 15 comparisons on 6 elements but only 8 swaps. For selection sort, the trap is assuming exactly $n - 1$ swaps even though the code skips the swap when the minimum is already in place."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "(B, S) = (8, 4) (option C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B, S) = (8, 4); option C",
       "agreesWithKey": true,
-      "checkCode": "def bubble_swaps(a):\n    n, swaps = len(a), 0\n    for i in range(n - 1):\n        for j in range(n - 1 - i):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n                swaps += 1\n    return swaps\ndef selection_swaps(a):\n    n, swaps = len(a), 0\n    for i in range(n - 1):\n        m = i\n        for j in range(i + 1, n):\n            if a[j] < a[m]:\n                m = j\n        if m != i:\n            a[i], a[m] = a[m], a[i]\n            swaps += 1\n    return swaps\nprint(bubble_swaps([6, 2, 9, 4, 1, 7]), selection_swaps([6, 2, 9, 4, 1, 7]))  # 8 4",
-      "notes": ""
+      "checkCode": "a0 = [6, 2, 9, 4, 1, 7]\ndef bubble(a):\n    a = a[:]; sw = 0\n    for end in range(len(a) - 1, 0, -1):\n        for j in range(end):\n            if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; sw += 1\n    return sw\ndef selection(a):\n    a = a[:]; sw = 0\n    for i in range(len(a) - 1):\n        m = min(range(i, len(a)), key=lambda k: (a[k], k))\n        if m != i: a[i], a[m] = a[m], a[i]; sw += 1\n    return sw\ninv = sum(1 for i in range(6) for j in range(i + 1, 6) if a0[i] > a0[j])\n# cycles of the permutation index -> sorted position\ntarget = {i: sorted(a0).index(a0[i]) for i in range(6)}\nseen, cyc = set(), 0\nfor i in range(6):\n    if i not in seen:\n        cyc += 1\n        while i not in seen: seen.add(i); i = target[i]\nB, S = bubble(a0), selection(a0)\nprint((B, S), inv, 6 - cyc)                               # (8, 4) 8 4\nopts = {\"A\": (8, 5), \"B\": (4, 4), \"C\": (8, 4), \"D\": (15, 4)}\nprint([k for k, v in opts.items() if v == (B, S)])        # ['C']",
+      "notes": "Blind: bubble swaps = inversions of [6, 2, 9, 4, 1, 7] = 3 + 1 + 3 + 1 + 0 = 8; selection sort swaps at i = 0, 2, 3, 4 but not i = 1, so S = 4 -> (8, 4), matching key C. Python (own bubble and selection implementations, inversion count, and permutation-cycle count n - c = 6 - 2 = 4) all agree; only option C matches. Pass-by-pass bubble trace table (4, 2, 1, 1, 0 swaps) and selection trace re-checked, and the cycle shortcut is valid (each selection swap splits one cycle). Distractors: 5 counts a swap at i = 1, 4 = first-pass swaps, 15 = comparisons. MODERATE / 170 s is honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "f62961bf6f11de94",
+        "verification": "7431f2ac355c8fe3"
+      }
     }
   },
   {
@@ -565,12 +709,36 @@
       "commonTrap": "Stopping as soon as T receives its first label (12 via D → T), or choosing a route with few roads, such as S → A → C → T (12). A label is final only when its vertex is settled with the smallest tentative distance; T's label later drops to 9."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "9",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nE=[('S','A',4),('S','B',1),('B','A',2),('A','C',5),('B','C',8),('B','D',6),('A','D',2),('D','C',1),('C','T',3),('D','T',7)]\nadj={}\nfor u,v,w in E: adj.setdefault(u,[]).append((v,w))\nd={'S':0}; pq=[(0,'S')]; done=set()\nwhile pq:\n    du,u=heapq.heappop(pq)\n    if u in done: continue\n    done.add(u)\n    for v,w in adj.get(u,[]):\n        if du+w<d.get(v,float('inf')): d[v]=du+w; heapq.heappush(pq,(du+w,v))\nprint(d['T'])  # 9",
-      "notes": ""
+      "checkCode": "from itertools import permutations\nE = {(\"S\",\"A\"):4, (\"S\",\"B\"):1, (\"B\",\"A\"):2, (\"A\",\"C\"):5, (\"B\",\"C\"):8, (\"B\",\"D\"):6, (\"A\",\"D\"):2, (\"D\",\"C\"):1, (\"C\",\"T\"):3, (\"D\",\"T\"):7}\nV = \"SABCDT\"\n# Bellman-Ford (independent of Dijkstra) + exhaustive enumeration of simple S->T paths\nd = {v: float(\"inf\") for v in V}; d[\"S\"] = 0\nfor _ in range(len(V) - 1):\n    for (u, v), w in E.items():\n        if d[u] + w < d[v]: d[v] = d[u] + w\nbest = float(\"inf\")\nmid = \"ABCD\"\nfor k in range(len(mid) + 1):\n    for perm in permutations(mid, k):\n        path = (\"S\",) + perm + (\"T\",)\n        if all(e in E for e in zip(path, path[1:])): best = min(best, sum(E[e] for e in zip(path, path[1:])))\nprint(d[\"T\"], best)                                       # 9 9",
+      "notes": "Blind: S -> B (1) -> A (3) -> D (5) -> C (6) -> T (9); other routes 12 (S-A-C-T), 14 (S-B-D-T) are longer. Python (Bellman-Ford plus exhaustive enumeration of all simple S-to-T paths) gives 9; the Dijkstra trace table in the solution (settle order S, B, A, D, C, T and every tentative label) re-checked. Directed graph, non-negative weights, so the answer is unique; integer NAT with exact range 9 to 9. EASY / 100 s acceptable. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "06a2e8565a021082",
+        "verification": "842d596c16b73baa"
+      }
     }
   }
 ]

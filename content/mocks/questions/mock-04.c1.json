@@ -90,12 +90,36 @@
       "commonTrap": "Believing that `a = a + [...]` and `b += a` behave alike. For lists, `+` builds a new object (caller unaffected) whereas `+=` mutates in place (caller affected)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "[1, 2] [3, 1, 2, 1] -> (C)",
       "agreesWithKey": true,
-      "checkCode": "def f(a, b):\n    a = a + [len(b)]\n    b += a\n    return a, b\n\nx = [1, 2]\ny = [3]\np, q = f(x, y)\nprint(x, y)",
-      "notes": ""
+      "checkCode": "# Run the program verbatim and also track object identity\ndef f(a, b):\n    a = a + [len(b)]      # rebinding: new list\n    b += a                # list.__iadd__: in-place on the caller's object\n    return a, b\n\nx = [1, 2]; y = [3]\nix, iy = id(x), id(y)\np, q = f(x, y)\nprint(x, y)               # [1, 2] [3, 1, 2, 1]  -> (C)\nassert id(x) == ix and id(y) == iy and q is y and p == [1, 2, 1]\nopts = {\"A\": ([1, 2, 1], [3, 1, 2, 1]), \"B\": ([1, 2], [3]),\n        \"C\": ([1, 2], [3, 1, 2, 1]), \"D\": ([1, 2], [3, [1, 2, 1]])}\nprint([k for k, v in opts.items() if v == (x, y)])   # ['C']",
+      "notes": "Blind trace (a + [len(b)] rebinds the local name to a new list; b += a extends the caller's y in place) gave [1, 2] [3, 1, 2, 1], option (C), matching the key. Python run verifies the output and object identity. Audited stem, four-step solution, option analysis (each distractor maps to a genuine misconception), difficulty (MODERATE) and topic (pdsa-python); no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "dae807b160a9ebeb",
+        "verification": "1cada6c12e90bf81"
+      }
     }
   },
   {
@@ -184,12 +208,36 @@
       "commonTrap": "Using the first popped value as the *left* operand. That gives $5 - 9$ and $2 / 4$ instead of $9 - 5$ and $4 / 2$, producing the distractors $-1$, $9$ or $5$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "15",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "15 -> (B)",
       "agreesWithKey": true,
-      "checkCode": "def ev(expr):\n    st = []\n    for t in expr.split():\n        if t in '+-*/':\n            r = st.pop(); l = st.pop()   # first pop is the RIGHT operand\n            st.append({'+': l + r, '-': l - r, '*': l * r, '/': l / r}[t])\n        else:\n            st.append(int(t))\n    return st\nprint(ev('9 5 - 4 2 / * 7 +'))   # [15.0]",
-      "notes": ""
+      "checkCode": "from fractions import Fraction\nimport operator as op\nops = {\"+\": op.add, \"-\": op.sub, \"*\": op.mul, \"/\": op.truediv}\ndef ev(expr, swap=()):\n    st = []\n    for i, t in enumerate(expr.split()):\n        if t in ops:\n            r = st.pop(); l = st.pop()          # first pop = right operand\n            st.append(ops[t](r, l) if i in swap else ops[t](l, r))\n        else:\n            st.append(Fraction(int(t)))\n    assert len(st) == 1\n    return st[0]\ne = \"9 5 - 4 2 / * 7 +\"\nprint(ev(e))                       # 15  -> (B)\n# distractors come from swapping operand order at '-' (index 2) and/or '/' (index 5)\nprint(ev(e, swap={2}), ev(e, swap={5}), ev(e, swap={2, 5}))   # -1, 9, 5 -> (A), (C), (D)",
+      "notes": "Blind stack trace gave 15 (operand order at - and / handled as left = second pop), matching the key. Python evaluator with exact fractions agrees, and swapping operand order at - and / reproduces exactly the distractors -1, 9 and 5. Stem states that / is exact division, so no ambiguity. Trace table, option analysis, difficulty (EASY) and subtopic (pdsa-stacks) audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "cd2edb181e35afac",
+        "verification": "90fb8e957529a5ed"
+      }
     }
   },
   {
@@ -283,12 +331,36 @@
       "commonTrap": "Using $\\frac{n+1}{2} = 3$ out of habit, or computing the cost of the given order (3.35) without rearranging."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2.15",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2.15 (order R4, R2, R5, R1, R3) -> (D)",
       "agreesWithKey": true,
-      "checkCode": "from itertools import permutations\np = [0.10, 0.25, 0.05, 0.40, 0.20]          # current order R1..R5\nE = lambda order: sum((i + 1) * x for i, x in enumerate(order))\nprint(round(E(p), 2))                                           # current: 3.35\nprint(round(min(E(o) for o in permutations(p)), 2))             # minimum: 2.15\nprint(round(E(sorted(p, reverse=True)), 2), round(E(sorted(p)), 2))  # 2.15 3.85",
-      "notes": ""
+      "checkCode": "from itertools import permutations\np = [0.10, 0.25, 0.05, 0.40, 0.20]        # R1..R5 in current order\ncost = lambda order: sum((i + 1) * x for i, x in enumerate(order))\nbest = min(permutations(range(5)), key=lambda o: cost([p[k] for k in o]))\nprint(round(cost(p), 4))                                   # 3.35 (current order)\nprint(round(cost([p[k] for k in best]), 4), [f\"R{k+1}\" for k in best])   # 2.15 R4 R2 R5 R1 R3\nprint(round(max(cost([p[k] for k in o]) for o in permutations(range(5))), 4))  # 3.85 (worst)\nprint(round(cost([0.2] * 5), 4))                           # 3.0 (uniform formula (n+1)/2)",
+      "notes": "Blind solve (E = sum of position x probability, minimised by sorting probabilities in decreasing order) gave 2.15, matching the key. Brute force over all 120 permutations confirms the minimum 2.15; the current order costs 3.35 (option A), the worst order 3.85 (option B) and the uniform formula 3.00 (option C). Probabilities sum to 1 and comparison counting is defined in the stem. Adjacent-swap argument, difficulty (MODERATE) and topic audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "ddb43b321c406487",
+        "verification": "60fdeef66717873a"
+      }
     }
   },
   {
@@ -385,12 +457,36 @@
       "commonTrap": "Assuming selection sort is stable because it is simple, or thinking its comparison count drops on sorted input (that is true of insertion sort, not selection sort)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B, C, D",
       "agreesWithKey": true,
-      "checkCode": "import random\ndef ins(a):\n    a = a[:]; c = 0\n    for j in range(1, len(a)):\n        k = a[j]; i = j - 1\n        while i >= 0:\n            c += 1\n            if a[i] > k: a[i + 1] = a[i]; i -= 1\n            else: break\n        a[i + 1] = k\n    return c\ndef sel(a, key=lambda v: v):\n    a = a[:]; c = 0\n    for i in range(len(a) - 1):\n        m = i\n        for j in range(i + 1, len(a)):\n            c += 1\n            if key(a[j]) < key(a[m]): m = j\n        a[i], a[m] = a[m], a[i]\n    return a, c\ndef bub(a):\n    a = a[:]; s = 0\n    for i in range(len(a) - 1):\n        for j in range(len(a) - 1 - i):\n            if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; s += 1\n    return s\ninv = lambda a: sum(a[i] > a[j] for i in range(len(a)) for j in range(i + 1, len(a)))\nprint(sel([(2, 'a'), (2, 'b'), (1, 'c')], key=lambda v: v[0])[0])  # 2b before 2a -> A false\nfor n in range(2, 9):\n    assert ins(list(range(n))) == n - 1                              # B true\n    for _ in range(300):\n        a = [random.randint(0, 5) for _ in range(n)]\n        assert sel(a)[1] == n * (n - 1) // 2                         # C true\n        assert bub(a) == inv(a)                                      # D true\nprint('B, C, D')",
-      "notes": ""
+      "checkCode": "import itertools\ndef selection(A):                       # returns (sorted list, comparisons); elements are (key, tag)\n    A = A[:]; c = 0\n    for i in range(len(A) - 1):\n        m = i\n        for j in range(i + 1, len(A)):\n            c += 1\n            if A[j][0] < A[m][0]: m = j\n        A[i], A[m] = A[m], A[i]\n    return A, c\ndef insertion_cmps(A):\n    A = A[:]; c = 0\n    for i in range(1, len(A)):\n        k = A[i]; j = i - 1\n        while j >= 0:\n            c += 1\n            if A[j] > k: A[j + 1] = A[j]; j -= 1\n            else: break\n        A[j + 1] = k\n    return c\ndef bubble_swaps(A):\n    A = A[:]; s = 0\n    for i in range(len(A) - 1):\n        for j in range(len(A) - 1 - i):\n            if A[j] > A[j + 1]: A[j], A[j + 1] = A[j + 1], A[j]; s += 1\n    return s\ninv = lambda A: sum(A[i] > A[j] for i in range(len(A)) for j in range(i + 1, len(A)))\nstable_A = True; B = C = D = True\nfor n in range(2, 8):\n    for vals in itertools.product(range(3), repeat=n):          # exhaustive, with duplicates\n        T = [(v, i) for i, v in enumerate(vals)]\n        out, c = selection(T)\n        if any(out[i][0] == out[i + 1][0] and out[i][1] > out[i + 1][1] for i in range(n - 1)): stable_A = False\n        C &= (c == n * (n - 1) // 2)\n        D &= (bubble_swaps(list(vals)) == inv(list(vals)))\n        if list(vals) == sorted(vals): B &= (insertion_cmps(list(vals)) == n - 1)\nprint({\"A\": stable_A, \"B\": B, \"C\": C, \"D\": D})   # {'A': False, 'B': True, 'C': True, 'D': True} -> B, C, D",
+      "notes": "Blind evaluation gave B, C, D true and A false, matching the key. Exhaustive Python check over all inputs with duplicates for n = 2..7: swap-based selection sort is unstable (counterexample [2a, 2b, 1]), insertion sort on sorted input makes exactly n - 1 comparisons, selection sort always makes n(n - 1)/2, and bubble-sort swaps equal the inversion count. Stem fixes the stability statement to the swap-based variant and defines comparison and inversion, so each statement has a definite truth value. Solution steps, option verdicts, difficulty (EASY, recall-level statements) and topic audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "233d08d310b282a7",
+        "verification": "ac220a0a65be1114"
+      }
     }
   },
   {
@@ -444,12 +540,36 @@
       "commonTrap": "Setting the degree sum equal to $|E| = 19$ instead of $2|E| = 38$, which gives a negative value for $d$, or dividing the leftover 6 by the wrong number of vertices."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "2",
       "agreesWithKey": true,
-      "checkCode": "E = 19\nknown = [4] * 5 + [3] * 4\nd = (2 * E - sum(known)) / 3\nprint(d)   # 2.0\n# graphicality check (Havel-Hakimi) for 4,4,4,4,4,3,3,3,3,2,2,2\nseq = sorted(known + [int(d)] * 3, reverse=True)\nwhile seq and seq[0] > 0:\n    k = seq.pop(0)\n    assert k <= len(seq)\n    seq = sorted([x - 1 for x in seq[:k]] + seq[k:], reverse=True)\n    assert min(seq) >= 0\nprint('graphical')",
-      "notes": ""
+      "checkCode": "from itertools import combinations\nV, E = 12, 19\nknown = [4] * 5 + [3] * 4\nd = (2 * E - sum(known)) / 3\nprint(d)                                     # 2.0\nseq = known + [int(d)] * 3\n# Erdos-Gallai test that a simple graph with this degree sequence exists\ns = sorted(seq, reverse=True)\nassert sum(s) % 2 == 0 and all(sum(s[:k]) <= k * (k - 1) + sum(min(x, k) for x in s[k:]) for k in range(1, len(s) + 1))\n# and no other integer d works (sum must be even and equal 2E = 38)\nprint([x for x in range(0, V) if sum(known) + 3 * x == 2 * E])   # [2]",
+      "notes": "Blind solve by the handshaking lemma (2 x 19 = 38 = 32 + 3d) gave d = 2, matching the key. Python confirms d = 2 is the only integer solution and that the sequence 4^5, 3^4, 2^3 is graphical (Erdos-Gallai), so a simple graph with 12 nodes and 19 edges exists. Exact integer answer, so the NAT range 2 to 2 is appropriate and no rounding is needed. Solution, difficulty (EASY) and topic audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "186051150a16589f",
+        "verification": "e712c9eb74c1e138"
+      }
     }
   },
   {
@@ -545,12 +665,36 @@
       "commonTrap": "Breaking the count ties by first-occurrence order (giving `['t', 's', 'a']`), which is what happens if the second element `c` of the sort key is overlooked."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B, D (lines: ['t', 'a', 'i'] / liit / 6; d['z'] raises KeyError)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B, D (output lines: ['t', 'a', 'i'] / liit / 6; d['z'] raises KeyError)",
       "agreesWithKey": true,
-      "checkCode": "s = \"statistical\"\nd = {}\nfor ch in s:\n    d[ch] = d.get(ch, 0) + 1\nt = sorted(d, key=lambda c: (-d[c], c))\nprint(t[:3])\nprint(s[::-3])\nprint(len(d))\ntry:\n    print(d['z'])\nexcept KeyError:\n    print('KeyError')   # so option A is false",
-      "notes": ""
+      "checkCode": "s = \"statistical\"\nd = {}\nfor ch in s:\n    d[ch] = d.get(ch, 0) + 1\nt = sorted(d, key=lambda c: (-d[c], c))\nline1, line2, line3 = str(t[:3]), s[::-3], str(len(d))\nprint(line1); print(line2); print(line3)     # ['t', 'a', 'i'] / liit / 6\ntry:\n    d['z']; A = True\nexcept KeyError:\n    A = False\ntruth = {\"A\": A,\n         \"B\": line1 == \"['t', 'a', 'i']\",\n         \"C\": line3 == \"11\",\n         \"D\": line2 == \"liit\"}\nprint(truth)                                 # only B and D are True\n# manual slice check: indices 10, 7, 4, 1\nassert \"\".join(s[i] for i in range(len(s) - 1, -1, -3)) == line2",
+      "notes": "Blind trace gave counts t:3, a:2, i:2, s:2, c:1, l:1, so line 1 is ['t', 'a', 'i'], line 2 is liit (indices 10, 7, 4, 1), line 3 is 6, and d['z'] raises KeyError. Hence only (B) and (D) are true, matching the key. Python run of the program and of each statement agrees. Solution steps, option verdicts, the tie-break trap, difficulty (MODERATE) and topic audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "47df99c790133f39",
+        "verification": "e196356d87cce9ed"
+      }
     }
   },
   {
@@ -643,12 +787,36 @@
       "commonTrap": "Forgetting the wrap-around at the end of the array, or treating the queue as LIFO and answering 70 for the next dequeue."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "(4, 30)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(4, 30) -> (A)",
       "agreesWithKey": true,
-      "checkCode": "N = 7\nQ = [None] * N; front = 5; count = 0\ndef enqueue(x):\n    global count\n    Q[(front + count) % N] = x; count += 1\ndef dequeue():\n    global front, count\n    v = Q[front]; front = (front + 1) % N; count -= 1; return v\nfor x in (10, 20, 30, 40): enqueue(x)\ndequeue(); dequeue()\nfor x in (50, 60, 70): enqueue(x)\nprint(Q.index(70), Q[front])   # 4 30",
-      "notes": ""
+      "checkCode": "N = 7\nQ = [None] * N; front, count = 5, 0\nlog = []\ndef enqueue(x):\n    global count\n    idx = (front + count) % N\n    Q[idx] = x; count += 1; log.append((x, idx))\ndef dequeue():\n    global front, count\n    v = Q[front]; front = (front + 1) % N; count -= 1; return v\nfor x in (10, 20, 30, 40): enqueue(x)\na, b = dequeue(), dequeue()\nfor x in (50, 60, 70): enqueue(x)\nidx70 = dict(log)[70]\nprint(log, (a, b))\nprint((idx70, dequeue()))                    # (4, 30) -> (A)",
+      "notes": "Blind trace with front = 5, count = 0 (enqueue slots 5, 6, 0, 1; two dequeues return 10 and 20 and leave front = 0, count = 2; then 50, 60, 70 go to slots 2, 3, 4) gave (4, 30), matching the key. Python simulation of the stated operations agrees. Each distractor was reproduced from its stated misconception ((6, 30) ignoring front = 5, (2, 10) not advancing front, (4, 70) LIFO reading). Solution, difficulty (EASY) and subtopic (pdsa-queues) audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "5f1ca9241362fae5",
+        "verification": "9bcb5811f375556c"
+      }
     }
   },
   {
@@ -737,12 +905,36 @@
       "commonTrap": "Stopping the trace when the interval shrinks to one element, or computing the midpoint as a ceiling. Both change the sequence of probed elements."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "prints 31 53 42 47, returns -1 -> (B)",
       "agreesWithKey": true,
-      "checkCode": "def bsearch(A, key):\n    lo, hi = 0, len(A) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        print(A[mid], end=\" \")\n        if A[mid] == key:\n            return mid\n        elif A[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n\nA = [3, 8, 11, 17, 20, 26, 31, 35, 42, 47, 53, 58, 64, 70]\nr = bsearch(A, 45)\nprint()\nprint(r)   # prints 31 53 42 47, returns -1",
-      "notes": ""
+      "checkCode": "import io, contextlib\nA = [3, 8, 11, 17, 20, 26, 31, 35, 42, 47, 53, 58, 64, 70]\ndef bsearch(A, key):\n    lo, hi = 0, len(A) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        print(A[mid], end=\" \")\n        if A[mid] == key: return mid\n        elif A[mid] < key: lo = mid + 1\n        else: hi = mid - 1\n    return -1\nbuf = io.StringIO()\nwith contextlib.redirect_stdout(buf):\n    r = bsearch(A, 45)\nprint(repr(buf.getvalue().strip()), r)       # '31 53 42 47' -1 -> (B)\nassert 45 not in A",
+      "notes": "Blind trace of the loop (mid = 6, 10, 8, 9 printing 31 53 42 47; then lo = 9 > hi = 8) gave prints 31 53 42 47 and returns -1, matching the key. Python run agrees. Distractor (C) reproduces the ceiling-midpoint trace and (D) the wrong return value, as the option analysis states. Solution trace, difficulty (EASY) and subtopic (pdsa-binary-search) audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "d443abe90d1bb72b",
+        "verification": "e01bccaf80234fe7"
+      }
     }
   }
 ]

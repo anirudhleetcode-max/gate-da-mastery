@@ -59,6 +59,30 @@
       "agreesWithKey": true,
       "checkCode": "from fractions import Fraction as F\nimport numpy as np\nprior = {'P': F(1, 2), 'Q': F(3, 10), 'R': F(1, 5)}\nerr = {'P': F(2, 100), 'Q': F(5, 100), 'R': F(10, 100)}\njoint = {k: prior[k] * err[k] for k in prior}   # P(annotator and wrong)\npw = sum(joint.values())\npost = joint['R'] / pw\nprint(pw, post, round(float(post), 2))  # 9/200 4/9 0.44\n# Monte Carlo cross-check of the posterior\nrng = np.random.default_rng(1)\na = rng.choice(3, size=5_000_000, p=[0.5, 0.3, 0.2])\nwrong = rng.random(a.size) < np.array([0.02, 0.05, 0.10])[a]\nmc = (a[wrong] == 2).mean()\nprint(round(mc, 3)); assert abs(mc - 4 / 9) < 0.005  # about 0.444\n# distractors: likelihood 0.10, prior 0.20, joint 0.020 are all outside 0.43 to 0.45",
       "notes": "Blind solve by Bayes' theorem: P(W) = 0.5(0.02) + 0.3(0.05) + 0.2(0.10) = 0.045 and P(R|W) = 0.020/0.045 = 4/9 = 0.444, so 0.44, matching the key. A simulation with 5 million images agrees. Audited stem (priors are shares of the dataset, one annotator per image, rounding to two decimals stated), solution steps, natural-frequency shortcut, difficulty and topic mapping. The NAT range 0.43 to 0.45 allows one unit of last-digit slack and excludes the likelihood (0.10), prior (0.20) and joint (0.020) distractors. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "935c196eb158fd69",
+        "verification": "2c3b2f82256ba028"
+      }
     }
   },
   {
@@ -154,6 +178,30 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nS = np.array([[4.0, 6.0], [6.0, 25.0]])          # covariance matrix of (X, Y)\nA = np.array([[-2.0, 0.0], [0.0, 5.0]])          # U = 3 - 2X, V = 5Y + 1 (shifts drop out)\nC = A @ S @ A.T\nprint(C[0, 1], C[0, 1] / np.sqrt(C[0, 0] * C[1, 1]))  # -60.0 -0.6\nrng = np.random.default_rng(0)\nxy = rng.multivariate_normal([0, 0], S, 1_000_000)\nu, v = 3 - 2 * xy[:, 0], 5 * xy[:, 1] + 1\nprint(round(np.corrcoef(u, v)[0, 1], 3))            # about -0.6\nprint(6 / (4 * 25))  # 0.06 -> distractor (D) is this value with a minus sign",
       "notes": "Blind solve: Cov(U,V) = (-2)(5)(6) = -60, sd(U) = 4, sd(V) = 25, so rho = -60/100 = -0.6, matching the key (B). Also confirmed via rho(X,Y) = 6/(2*5) = 0.6 (a valid correlation) with the sign flipped because exactly one scale factor is negative; matrix and Monte Carlo checks agree. Audited option analysis (A is the covariance, C drops the sign, D divides by variances), verdicts, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "0ab466973586a4c9",
+        "verification": "c7baadc52213ac2c"
+      }
     }
   },
   {
@@ -253,6 +301,30 @@
       "agreesWithKey": true,
       "checkCode": "from fractions import Fraction as F\nfrom math import comb\npx = {1: F(2, 10), 2: F(5, 10), 3: F(3, 10)}\njoint = {(x, y): p * comb(x, y) * F(1, 2) ** x for x, p in px.items() for y in range(x + 1)}\nassert sum(joint.values()) == 1\nEY = sum(y * p for (x, y), p in joint.items())\nEY2 = sum(y * y * p for (x, y), p in joint.items())\nprint(EY, EY2, EY2 - EY ** 2, float(EY2 - EY ** 2))  # 21/20 7/4 259/400 0.6475\nEX = sum(x * p for x, p in px.items()); VX = sum(x * x * p for x, p in px.items()) - EX ** 2\nprint(float(EX / 4), float(VX / 4), float(EX / 4 + VX / 4))  # 0.525 0.1225 0.6475 (law of total variance)",
       "notes": "Blind solve: E[X] = 2.1, Var(X) = 0.49; E[Var(Y|X)] = 2.1/4 = 0.525 and Var(E[Y|X]) = 0.49/4 = 0.1225, so Var(Y) = 0.6475, matching the key (D). Exact enumeration of the joint pmf of (X,Y) with Fractions gives 259/400. Audited option analysis (A = within term only, B = between term only, C = E[Y^2] without subtracting the squared mean; all four values are distinct and each is reproduced by the code), the E[Y^2] cross-check step, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "50747cb13d0297af",
+        "verification": "2f2d8257c1dd928a"
+      }
     }
   },
   {
@@ -313,6 +385,30 @@
       "agreesWithKey": true,
       "checkCode": "from math import comb\np = 0.8\npmf = [comb(6, k) * p ** k * (1 - p) ** (6 - k) for k in range(7)]\nprint(pmf[5], pmf[6], pmf[5] + pmf[6], round(pmf[5] + pmf[6], 3))  # 0.393216 0.262144 0.65536 0.655\nprint(1 - sum(pmf[:5]))  # complement route, same value\nimport numpy as np\nmc = (np.random.default_rng(2).random((2_000_000, 6)) < p).sum(axis=1) >= 5\nprint(mc.mean()); assert abs(mc.mean() - 0.65536) < 0.003  # about 0.655",
       "notes": "Blind solve: X ~ Binomial(6, 0.8), P(X>=5) = 6(0.8)^5(0.2) + (0.8)^6 = 0.393216 + 0.262144 = 0.65536, so 0.655, matching the key. Complement route and a 2 million-trial simulation agree. Audited stem (independence and rounding to three decimals stated), solution steps, trap arithmetic (0.32768 without the binomial coefficient), difficulty and topic mapping. The NAT range 0.654 to 0.656 is tight, contains 0.65536, and excludes the common wrong values 0.32768, 0.393 and 0.262. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "cba5f38ae304f61d",
+        "verification": "50d4c8885a2169a5"
+      }
     }
   },
   {
@@ -418,6 +514,30 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nfrom scipy import stats\nT = stats.expon(scale=5)                     # mean 5 hours\nA = np.isclose(T.sf(7) / T.sf(3), np.exp(-7 / 5))              # False: it equals exp(-4/5)\nB = np.isclose(stats.poisson(3 * 20 / 60).pmf(0), np.exp(-1))  # True\nC = np.isclose(stats.norm(10, 2).sf(12), stats.norm.sf(1))     # True (sd = sqrt(4) = 2)\nchi = stats.chi2(3)\nD = np.isclose(chi.mean(), 3) and np.isclose(chi.var(), 3)     # False: Var = 6\nprint(T.sf(7) / T.sf(3), np.exp(-4 / 5), chi.mean(), chi.var())\nz = np.random.default_rng(0).standard_normal((1_000_000, 3)); s = (z ** 2).sum(axis=1)\nprint(round(s.mean(), 2), round(s.var(), 2))  # about 3 and 6\nprint([k for k, v in zip('ABCD', [A, B, C, D]) if v])  # ['B', 'C']",
       "notes": "Blind solve: (A) false, memorylessness gives P(T>4) = e^(-4/5), and e^(-7/5) is the unconditional P(T>7); (B) true, 20 minutes at rate 3 per hour is Poisson(1), so P(N=0) = e^(-1); (C) true, sigma = 2 so P(W>12) = P(Z>1); (D) false, S ~ chi-squared(3) has mean 3 but variance 6. Key is B, C, matching. Each statement is checked numerically with scipy and by simulation. Audited option analysis verdicts, traps, difficulty (MODERATE for four short routine checks on four distributions) and topic mapping; each statement is unambiguously true or false, so no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "4c8adbaf3bca379d",
+        "verification": "61110e4271e38f3d"
+      }
     }
   },
   {
@@ -516,6 +636,30 @@
       "agreesWithKey": true,
       "checkCode": "import math\nfrom scipy import stats\nxbar, sigma, n = 212, 40, 64\nse = sigma / math.sqrt(n)\nfor name, z in [('z0.025', 1.96), ('z0.05', 1.645), ('z0.005', 2.576)]:\n    print(name, round(xbar - z * se, 3), round(xbar + z * se, 3))\n# (202.2, 221.8) for z0.025 = 1.96 ; (203.775, 220.225) for 1.645 ; (199.12, 224.88) for 2.576\nprint(round(xbar - 1.96 * sigma, 1), round(xbar + 1.96 * sigma, 1))  # (133.6, 290.4): sigma used instead of sigma/sqrt(n)\nprint([round(stats.norm.isf(a), 3) for a in (0.025, 0.05, 0.005)])  # 1.96 1.645 2.576 confirm the table values\nprint(stats.norm.cdf(1.96) - stats.norm.cdf(-1.96), stats.norm.cdf(1.645) - stats.norm.cdf(-1.645))  # 0.95 vs 0.90 coverage",
       "notes": "Blind solve: standard error = 40/sqrt(64) = 5, two-sided 95% needs z_0.025 = 1.96, margin 9.8, interval (202.2, 221.8), matching the key (A). Python reproduces every option: B is the 90% interval from z_0.05 = 1.645, C is the 99% interval from z_0.005 = 2.576, D uses sigma instead of sigma/sqrt(n); each option is a two-sided interval at a different confidence level, so only A is a 95% interval. Audited stem (sigma known, normality of the sample mean and the z definitions given), solution steps, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "c5b916b4f5c7db30",
+        "verification": "1bcba4cd235d3b50"
+      }
     }
   },
   {
@@ -610,6 +754,30 @@
       "agreesWithKey": true,
       "checkCode": "import itertools\nfrom fractions import Fraction as F\nprob = {}\nfor seq in itertools.product('GD', repeat=3):        # 3 chips, each G or D with prob 1/2\n    rec = ''\n    for ch in seq:\n        rec += ch\n        if ch == 'D':\n            break                                    # stopping rule: stop at first defective\n    prob[rec] = prob.get(rec, 0) + F(1, 8)\nS = sorted(prob)\nevent = [o for o in S if 'D' in o]\nprint(S, len(S), event, len(event), prob)\nA = len(S) == 8\nB = set(S) == {'D', 'GD', 'GGD'}\nC = len(S) == 4 and len(event) == 3\nD = len(S) == 4 and len(set(prob.values())) == 1\nprint([k for k, v in zip('ABCD', [A, B, C, D]) if v])  # ['C']",
       "notes": "Blind solve: the tree with the stopping rule gives S = {D, GD, GGD, GGG}, so 4 outcomes, and the event 'a defective chip is found' = {D, GD, GGD} has 3 outcomes, matching the key (C). A is wrong because testing stops early, B omits GGG, and D is wrong because the probabilities are 1/2, 1/4, 1/8, 1/8. The stem defines an outcome as the recorded sequence, which removes any 8-outcome reading of A. Audited option analysis, solution steps, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "7d1ce7774bfb0ee6",
+        "verification": "10b6846780937450"
+      }
     }
   }
 ]

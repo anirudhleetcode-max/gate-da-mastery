@@ -77,7 +77,7 @@
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "This is **DFS** with alphabetical successor order: it dives $S \\to A \\to C \\to G$ and returns cost $1 + 2 + 8 = 11$. UCS never follows depth; it always takes the lowest-$g$ node."
+          "explanation": "This is **DFS** trying successors in alphabetical order ($A$ before $B$ before $G$): it dives $S \\to A \\to C \\to G$ and returns cost $1 + 2 + 8 = 11$. UCS never follows depth; it always takes the lowest-$g$ node."
         },
         {
           "label": "C",
@@ -94,12 +94,36 @@
       "commonTrap": "Stopping as soon as $G$ is *generated* (from $S$, cost 12), or keeping the first frontier entry for a node instead of replacing it with a cheaper one. Both give cost 12 instead of the optimal 8."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "C: order S,A,C,B,D,G; path S-B-D-G, cost 8",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nE={'S':[('A',1),('B',4),('G',12)],'A':[('C',2),('D',5)],'B':[('D',1)],'C':[('G',8)],'D':[('G',3)],'G':[]}\npq=[(0,'S',['S'])]; best={'S':0}; done=set(); order=[]\nwhile pq:\n    g,n,p=heapq.heappop(pq)\n    if n in done: continue\n    done.add(n); order.append(n)\n    if n=='G': print(order,g,p); break\n    for m,c in E[n]:\n        if m not in done and g+c<best.get(m,1e9):\n            best[m]=g+c; heapq.heappush(pq,(g+c,m,p+[m]))\n# -> ['S','A','C','B','D','G'] 8 ['S','B','D','G']",
-      "notes": ""
+      "checkCode": "# Independent check: UCS graph search (goal test on removal, frontier replacement, no re-expansion)\nE={'S':{'A':1,'B':4,'G':12},'A':{'C':2,'D':5},'B':{'D':1},'C':{'G':8},'D':{'G':3},'G':{}}\nfrontier={'S':(0,('S',))}; closed=set(); order=[]\nwhile frontier:\n    n=min(frontier,key=lambda k:(frontier[k][0],k)); g,path=frontier.pop(n); order.append(n)\n    if n=='G': break\n    closed.add(n)\n    for m,c in E[n].items():\n        if m not in closed and (m not in frontier or g+c<frontier[m][0]): frontier[m]=(g+c,path+(m,))\nopts={'A':(list('SABG'),12),'B':(list('SACG'),11),'C':(list('SACBDG'),8),'D':(list('SACBDG'),12)}\nprint(order,g,path,[k for k,v in opts.items() if v==(order,g)])\nassert [k for k,v in opts.items() if v==(order,g)]==['C']\n# cross-check: cheapest S-G path by exhaustive enumeration\ndef paths(u,c=0,p=('S',)):\n    if u=='G': yield c,p\n    for v,w in E[u].items(): yield from paths(v,c+w,p+(v,))\nprint(sorted(paths('S')))  # cheapest = 8 via S-B-D-G\nassert min(paths('S'))[0]==g==8",
+      "notes": "Blind hand trace of UCS (goal test on removal, frontier replacement) gave removals S(0),A(1),C(3),B(4),D(5),G(8), path S-B-D-G cost 8 = key (C). Verifier's own Python (UCS with replacement + exhaustive S-G path enumeration: 8, 9, 11, 12) agrees; A, B and D each fail (A/B are BFS/DFS-style orders with costs 12/11; D has the right order but the wrong cost 12). No tie-breaks arise, so the answer is unique. Key, stem and options unchanged; only tightened option (B) analysis to say DFS tries successors in alphabetical order. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "36c888b43a70e313",
+        "verification": "7a18d7fa6388b057"
+      }
     }
   },
   {
@@ -193,12 +217,36 @@
       "commonTrap": "Treating $\\to$ as associative and choosing $(P \\to Q) \\to R$. Regrouping is valid for $\\land$ and $\\lor$ but not for $\\to$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nrule=lambda P,Q,R: imp(P,imp(Q,R))\nopts={'A':lambda P,Q,R: imp(imp(P,Q),R),'B':lambda P,Q,R: imp(P and Q,R),\n      'C':lambda P,Q,R: imp(P or Q,R),'D':lambda P,Q,R: imp(P,Q) and imp(Q,R)}\nprint([k for k,f in opts.items() if all(rule(*t)==f(*t) for t in product([False,True],repeat=3))])  # ['B']",
-      "notes": ""
+      "checkCode": "# Independent check: truth-table equivalence with P -> (Q -> R)\nfrom itertools import product\nimp=lambda a,b:(not a) or b\nrule=lambda P,Q,R:imp(P,imp(Q,R))\nopts={'A':lambda P,Q,R:imp(imp(P,Q),R),'B':lambda P,Q,R:imp(P and Q,R),\n      'C':lambda P,Q,R:imp(P or Q,R),'D':lambda P,Q,R:imp(P,Q) and imp(Q,R)}\nrows=list(product([False,True],repeat=3))\neq=[k for k,f in opts.items() if all(f(*r)==rule(*r) for r in rows)]\nprint(eq, 'rule falsified only at', [r for r in rows if not rule(*r)])\nassert eq==['B']",
+      "notes": "Blind solve: P->(Q->R) = (P and Q)->R (exportation); truth-table check over all 8 rows shows only (B) is equivalent (rule is falsified only at P=T,Q=T,R=F). Key, solution steps, option verdicts and EASY label are correct; nothing changed. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "8afa970c35c2dca4",
+        "verification": "4b7d652fa6c81cc6"
+      }
     }
   },
   {
@@ -295,12 +343,36 @@
       "commonTrap": "Treating the collider like a chain node, and so believing that conditioning on the common effect $S$ (or on its descendant $U$) *blocks* the path. For a collider it is the reverse: observing $S$ or $U$ **opens** the path."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C (only O ⊥ T is d-separated)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C",
       "agreesWithKey": true,
-      "checkCode": "import itertools\npar={'O':set(),'N':set(),'S':{'O','N'},'U':{'S'},'T':{'N'}}\ndef anc(X):\n    r=set(X); st=list(X)\n    while st:\n        for p in par[st.pop()]:\n            if p not in r: r.add(p); st.append(p)\n    return r\ndef dsep(X,Y,Z):  # ancestral moral graph criterion\n    A=anc(X|Y|Z); adj={n:set() for n in A}\n    for n in A:\n        ps=[p for p in par[n] if p in A]\n        for p in ps: adj[n].add(p); adj[p].add(n)\n        for p,q in itertools.combinations(ps,2): adj[p].add(q); adj[q].add(p)\n    seen=set(X); st=list(X)\n    while st:\n        for m in adj[st.pop()]:\n            if m not in Z and m not in seen: seen.add(m); st.append(m)\n    return not (seen & Y)\nprint(dsep({'O'},{'N'},{'U'}), dsep({'O'},{'T'},{'S'}), dsep({'O'},{'T'},set()), dsep({'U'},{'T'},set()))\n# -> False False True False",
-      "notes": ""
+      "checkCode": "# Independent check: (1) active-trail enumeration for d-separation, (2) numeric test with random CPTs\nimport itertools, numpy as np\nedges=[('O','S'),('N','S'),('S','U'),('N','T')]\nnodes='ONSUT'\nch={n:[b for a,b in edges if a==n] for n in nodes}; pa={n:[a for a,b in edges if b==n] for n in nodes}\nnbr={n:set(ch[n])|set(pa[n]) for n in nodes}\ndef desc(n):\n    out=set(); st=[n]\n    while st:\n        for c in ch[st.pop()]:\n            if c not in out: out.add(c); st.append(c)\n    return out\ndef active(path,Z):   # path = list of nodes; every interior node must be non-blocking\n    for i in range(1,len(path)-1):\n        a,b,c=path[i-1],path[i],path[i+1]\n        collider=(a in pa[b]) and (c in pa[b])\n        if collider:\n            if b not in Z and not (desc(b)&Z): return False\n        elif b in Z: return False\n    return True\ndef dsep(x,y,Z):\n    def walk(p):\n        if p[-1]==y: yield p; return\n        for m in nbr[p[-1]]:\n            if m not in p: yield from walk(p+[m])\n    return not any(active(p,Z) for p in walk([x]))\nres={'A':dsep('O','N',{'U'}),'B':dsep('O','T',{'S'}),'C':dsep('O','T',set()),'D':dsep('U','T',set())}\nprint(res); assert [k for k,v in res.items() if v]==['C']\n# numeric: random CPTs -> exact joint; test independence\nrng=np.random.default_rng(3)\ndef joint():\n    pO,pN=rng.random(2); pS=rng.random((2,2)); pU=rng.random(2); pT=rng.random(2); J=np.zeros((2,)*5)\n    for o,n,s,u,t in itertools.product((0,1),repeat=5):\n        J[o,n,s,u,t]=(pO if o else 1-pO)*(pN if n else 1-pN)*(pS[o,n] if s else 1-pS[o,n])*(pU[s] if u else 1-pU[s])*(pT[n] if t else 1-pT[n])\n    return J\nJ=joint(); ax={v:i for i,v in enumerate(nodes)}\ndef indep(x,y,z):\n    keep=[x,y]+list(z); other=tuple(i for v,i in ax.items() if v not in keep)\n    M=J.sum(axis=other); srt=sorted(keep,key=lambda v:ax[v]); M=np.transpose(M,[srt.index(v) for v in keep])\n    for zz in itertools.product((0,1),repeat=len(z)):\n        sub=M[(slice(None),slice(None))+zz]; sub=sub/sub.sum()\n        if not np.allclose(sub,np.outer(sub.sum(1),sub.sum(0))): return False\n    return True\nnum={'A':indep('O','N','U'),'B':indep('O','T','S'),'C':indep('O','T',''),'D':indep('U','T','')}\nprint(num); assert num==res",
+      "notes": "Blind d-separation: the only O-T path O->S<-N->T is blocked at the unobserved collider S, so O independent of T holds; O-N|U and O-T|S open the collider (S or its descendant U observed), and U-T is connected via the open chain/fork U<-S<-N->T. Verifier's own Python (active-trail enumeration with collider/descendant rule, plus numeric independence test on random CPTs) agrees: only (C) is guaranteed. Nothing changed. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "fec6d84db067a3de",
+        "verification": "f47580f296bdfcc6"
+      }
     }
   },
   {
@@ -355,12 +427,36 @@
       "commonTrap": "Applying the consistency (triangle) condition instead of admissibility, which gives 6. Or following the route through $D$ because $h(D) = 2$ looks closest to the goal, which gives the overestimate 8 (the true cheapest cost from $C$ is 7, via $E$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "7",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nE=[('S','A',3),('S','B',4),('A','C',2),('B','C',1),('A','G',11),('C','D',6),('C','E',2),('D','G',2),('E','G',5)]\nadj={}\nfor u,v,w in E: adj.setdefault(u,[]).append((v,w)); adj.setdefault(v,[]).append((u,w))\nd={'G':0}; pq=[(0,'G')]\nwhile pq:\n    g,n=heapq.heappop(pq)\n    if g>d[n]: continue\n    for m,w in adj[n]:\n        if g+w<d.get(m,1e9): d[m]=g+w; heapq.heappush(pq,(g+w,m))\nh={'S':10,'A':8,'B':6,'D':2,'E':4,'G':0}\nassert all(h[n]<=d[n] for n in h)\nprint(d['C'])  # 7",
-      "notes": ""
+      "checkCode": "# Independent check: h*(n) by Floyd-Warshall on the undirected graph; largest integer k with h(n) <= h*(n) for all n\nimport itertools\nE=[('S','A',3),('S','B',4),('A','C',2),('B','C',1),('A','G',11),('C','D',6),('C','E',2),('D','G',2),('E','G',5)]\nV='SABCDEG'; INF=10**9\nd={(u,v):(0 if u==v else INF) for u in V for v in V}\nfor u,v,w in E: d[u,v]=d[v,u]=min(d[u,v],w)\nfor k,i,j in itertools.product(V,V,V): d[i,j]=min(d[i,j],d[i,k]+d[k,j])\nhstar={n:d[n,'G'] for n in V}\nbase={'S':10,'A':8,'B':6,'D':2,'E':4,'G':0}\nadm=lambda k:all(h<=hstar[n] for n,h in {**base,'C':k}.items())\nbest=max(k for k in range(-5,40) if adm(k))\nprint(hstar,best)\nassert best==7 and adm(7) and not adm(8)",
+      "notes": "Blind solve: h*(C)=min(2+5,6+2,2+11)=7 via C-E-G; every other node already satisfies h<=h* (h*: S12, A9, B8, D2, E5), so the largest integer k is 7. Verifier's own Python (Floyd-Warshall h*, scan of k) agrees: k=7 admissible, k=8 not. Integer answer, so no rounding is needed and the range 7 to 7 is appropriate. The teaching remark that consistency alone would force k=6 also checks out. Nothing changed. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "70f8f3bfbfc8c1ac",
+        "verification": "2cfbec55446c5418"
+      }
     }
   },
   {
@@ -426,7 +522,7 @@
         },
         {
           "title": "Option (D): counterexample",
-          "body": "Take the same two employees but with **no** reporting relations at all. The statement is false ($e$ reports to nobody). In (D), for $x = e$ choose $y = e$: $M(e)$ is false, so $M(e) \\to R(e, e)$ is true and the existential is satisfied. (D) is true here, so it is not equivalent. **Incorrect.**"
+          "body": "Take the same two employees but with **no** reporting relations at all. The statement is false ($e$ reports to nobody). In (D), for $x = e$ choose $y = e$: $M(e)$ is false, so $M(e) \\to R(e, e)$ is true and the existential is satisfied; for $x = m$ the antecedent $\\neg M(m)$ is false, so the implication holds. (D) is true here, so it is not equivalent. **Incorrect.**"
         }
       ],
       "finalAnswer": "**(A), (C)**",
@@ -456,12 +552,36 @@
       "commonTrap": "Using $\\to$ inside the existential, as in (D). $\\exists y\\,(M(y) \\to R(x,y))$ is true as soon as any non-manager exists, so it does not force $x$ to report to a manager."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "A, C",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nok={k:True for k in 'ABCD'}\nfor n in range(1,4):\n    D=range(n); P=[(x,y) for x in D for y in D]\n    for mv in product([0,1],repeat=n):\n        for rv in product([0,1],repeat=n*n):\n            M=dict(zip(D,mv)); R=dict(zip(P,rv))\n            t=all(imp(not M[x],any(M[y] and R[x,y] for y in D)) for x in D)\n            f={'A':t,\n               'B':all(any((not M[x]) and M[y] and R[x,y] for y in D) for x in D),\n               'C':not any((not M[x]) and all(imp(M[y],not R[x,y]) for y in D) for x in D),\n               'D':all(imp(not M[x],any(imp(M[y],R[x,y]) for y in D)) for x in D)}\n            for k in f:\n                if f[k]!=t: ok[k]=False\nprint(sorted(k for k in ok if ok[k]))  # ['A','C']",
-      "notes": ""
+      "checkCode": "# Independent check: exhaustive model comparison (all structures with 1-3 employees) against the intended reading\nfrom itertools import product\nfor n in (1,2,3):\n    D=range(n); bad=set('ABCD')\n    for Mv in product((0,1),repeat=n):\n        for Rv in product((0,1),repeat=n*n):\n            M=lambda x:Mv[x]; R=lambda x,y:Rv[x*n+y]\n            target=all(M(x) or any(M(y) and R(x,y) for y in D) for x in D)\n            f={'A':all(M(x) or any(M(y) and R(x,y) for y in D) for x in D),\n               'B':all(any((not M(x)) and M(y) and R(x,y) for y in D) for x in D),\n               'C':not any((not M(x)) and all((not M(y)) or (not R(x,y)) for y in D) for x in D),\n               'D':all(M(x) or any((not M(y)) or R(x,y) for y in D) for x in D)}\n            bad-={k for k,v in f.items() if v!=target}\n    print(n,sorted(bad))\n    # 'bad' now holds options that matched the target in every model\nassert sorted(bad)==['A','C']",
+      "notes": "Blind translation: 'every non-manager reports to a manager' = forall x (not M(x) -> exists y (M(y) and R(x,y))) = (A); (C) is its 'no counterexample' form (negation pushed inward); (B) forces everyone to be a non-manager; (D) uses exists with -> and is satisfied by any non-manager y. Verifier's own Python (exhaustive models with 1-3 employees) confirms exactly A and C are equivalent to the intended statement. Key, stem and options unchanged; only completed the (D) counterexample step by adding that x=m satisfies (D) vacuously. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "efc40158a841022b",
+        "verification": "5ef7052e8bf5c4bb"
+      }
     }
   },
   {
@@ -562,12 +682,36 @@
       "commonTrap": "Thinking that a different elimination order gives a different (approximate) answer. The order changes only the factor sizes, and hence the time and memory, never the exact result."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B, D",
       "agreesWithKey": true,
-      "checkCode": "import itertools, random\nrandom.seed(7)\ndef cpt(ch,pa=None):\n    if pa is None: p=random.random(); return ((ch,),{(1,):p,(0,):1-p})\n    t={}\n    for v in (0,1): p=random.random(); t[(v,1)]=p; t[(v,0)]=1-p\n    return ((pa,ch),t)\nfs=[cpt('F'),cpt('C','F'),cpt('D','C'),cpt('T','D')]\ndef mult(f,g):\n    sc=tuple(dict.fromkeys(f[0]+g[0])); t={}\n    for v in itertools.product((0,1),repeat=len(sc)):\n        a=dict(zip(sc,v)); t[v]=f[1][tuple(a[x] for x in f[0])]*g[1][tuple(a[x] for x in g[0])]\n    return (sc,t)\ndef sumout(f,x):\n    sc=tuple(y for y in f[0] if y!=x); t={}\n    for v,p in f[1].items():\n        a=dict(zip(f[0],v)); k=tuple(a[y] for y in sc); t[k]=t.get(k,0)+p\n    return (sc,t)\ndef ve(order):\n    cur=list(fs); scopes=[]\n    for x in order:\n        inv=[f for f in cur if x in f[0]]; cur=[f for f in cur if x not in f[0]]\n        p=inv[0]\n        for g in inv[1:]: p=mult(p,g)\n        n=sumout(p,x); scopes.append(n[0]); cur.append(n)\n    return scopes,cur[0][1][(1,)]\nprint(ve('FCD'), ve('DCF'))   # scopes [(C),(D),(T)] vs [(C,T),(F,T),(T)]; same P(T=1)\nprint(sumout(fs[3],'T')[1])  # {(0,):1.0,(1,):1.0}",
-      "notes": ""
+      "checkCode": "# Independent check: variable elimination on F->C->D->T with random CPTs, tracking factor scopes\nimport numpy as np\nrng=np.random.default_rng(11)\ndef cpt():\n    p=rng.random(2); return np.stack([1-p,p],axis=1)      # rows: parent value, cols: child value\npF=rng.random(); PF=np.array([1-pF,pF]); PCF,PDC,PTD=cpt(),cpt(),cpt()\ndef ve(order):\n    fac=[(('F',),PF),(('F','C'),PCF),(('C','D'),PDC),(('D','T'),PTD)]; scopes=[]\n    for x in order:\n        inv=[f for f in fac if x in f[0]]; fac=[f for f in fac if x not in f[0]]\n        sc=tuple(dict.fromkeys(v for f in inv for v in f[0]))\n        letters={v:chr(97+i) for i,v in enumerate(sc)}\n        expr=','.join(''.join(letters[v] for v in f[0]) for f in inv)+'->'+''.join(letters[v] for v in sc if v!=x)\n        new=(tuple(v for v in sc if v!=x),np.einsum(expr,*[f[1] for f in inv])); fac.append(new); scopes.append(new[0])\n    return scopes,fac[0][1]\ns1,p1=ve('FCD'); s2,p2=ve('DCF')\nprint(s1,s2,p1,p2)\nassert all(len(s)==1 for s in s1)                 # (A) true\nassert len(s2[0])==2 and set(s2[0])=={'C','T'}    # (B) true\nassert np.allclose(p1,p2)                         # (C) false\nassert np.allclose(PTD.sum(axis=1),1)             # (D) true\nprint('A,B,D')",
+      "notes": "Blind solve: order F,C,D creates f(C), f(D), f(T), all one-variable, so (A) is true; order D,C,F first creates g(C,T), two variables, so (B) is true; VE is exact so the order never changes P(T), so (C) is false; sum over T of P(T|D) is 1 for each D, so (D) is true. Verifier's own Python (einsum VE with scope tracking on random CPTs) agrees. Nothing changed. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "1687e3992a387398",
+        "verification": "38b04fdbfe899ad1"
+      }
     }
   },
   {
@@ -656,12 +800,36 @@
       "commonTrap": "Heading for the largest leaf (10) or applying max/min at the wrong levels. Always label each level MAX or MIN from the root down before backing up values."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C (value 7)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C (minimax value 7)",
       "agreesWithKey": true,
-      "checkCode": "tree=[[[7,1],[9,4]],[[2,10],[6,3]]]\ndef mm(n,is_max):\n    if isinstance(n,int): return n\n    v=[mm(c,not is_max) for c in n]\n    return max(v) if is_max else min(v)\nprint(mm(tree,True))  # 7",
-      "notes": ""
+      "checkCode": "# Independent check: minimax with explicit MAX/MIN levels (root MAX, then MIN, then MAX, then leaves)\ntree={'L1':{'X1':[7,1],'X2':[9,4]},'L2':{'X3':[2,10],'X4':[6,3]}}\nX={x:max(v) for L in tree.values() for x,v in L.items()}           # MAX level\nL={l:min(X[x] for x in xs) for l,xs in tree.items()}               # MIN level\nroot=max(L.values())                                               # MAX root\nprint(X,L,root)\nopts={'A':3,'B':6,'C':7,'D':10}\nassert [k for k,v in opts.items() if v==root]==['C']",
+      "notes": "Blind solve: MAX level X=(7,9,10,6), MIN level L=(7,6), MAX root=7 = (C). Distractors: 3 (levels swapped, root MIN), 6 (root treated as MIN), 10 (largest leaf). Verifier's own Python agrees. Nothing changed. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "f49fcf153f350693",
+        "verification": "f1b13ce621f76b3a"
+      }
     }
   },
   {
@@ -716,12 +884,36 @@
       "commonTrap": "Reading sentence 2 as just $S \\to A$ and dropping the $(D \\lor M)$ part, which gives 8 (the extra assignment $(\\text{T}, \\text{F}, \\text{F}, \\text{T})$ is counted wrongly). Forgetting sentence 3 gives 9."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "7",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nKB=lambda A,D,M,S: imp(A and D,S) and imp(S,A and (D or M)) and (A or M)\nprint(sum(KB(*t) for t in product([False,True],repeat=4)))  # 7",
-      "notes": ""
+      "checkCode": "# Independent check: brute-force model count over all 16 assignments of (A,D,M,S)\nfrom itertools import product\nimp=lambda a,b:(not a) or b\nmodels=[(A,D,M,S) for A,D,M,S in product((0,1),repeat=4)\n        if imp(A and D,S) and imp(S,A and (D or M)) and (A or M)]\nprint(len(models),models)\nassert len(models)==7",
+      "notes": "Blind solve by case split on A and D: A=F gives 2 models, A=T,D=T gives 2, A=T,D=F gives 3, total 7. Verifier's own Python enumerating all 16 assignments gives 7 models. The trap counts in the solution also check out (dropping the (D or M) part gives 8, dropping sentence 3 gives 9). Integer count, so no rounding is needed and the range 7 to 7 is appropriate. Nothing changed. checkCode is the verifier's independent script."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "f47cc99794e860d9",
+        "verification": "ce946a69ba778796"
+      }
     }
   }
 ]

@@ -91,12 +91,32 @@
       "commonTrap": "Reporting the minimiser $x = 5$ instead of the minimum value $T(5) = 20$, or applying AM–GM as $\\sqrt{ab}$ without the factor 2 (giving 10)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "20 (minimiser x = 5); option C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "20 (minimiser x = 5, T(5) = 10 + 10 = 20); option C",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x', positive=True)\nT = 2*x + 50/x\nc = sp.solve(sp.diff(T, x), x)\nprint(c, T.subs(x, c[0]), sp.diff(T, x, 2).subs(x, c[0]))  # [5] 20 4/5",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy.optimize import minimize_scalar\nf = lambda x: 2*x + 50/x\nr = minimize_scalar(f, bounds=(1e-3, 1e3), method='bounded', options={'xatol': 1e-10})\nxs = np.linspace(0.01, 100, 1_000_001)          # brute-force grid over x > 0\nprint(round(r.x, 3), round(r.fun, 6), round(float(f(xs).min()), 4))  # 5.0 20.0 20.0\nassert abs(r.fun - 20) < 1e-6 and abs(f(xs).min() - 20) < 1e-4\n",
+      "notes": "Blind solve (derivative test and AM-GM cross-check) gave minimum value 20 at x = 5, matching the key. Audited stem (asks for the minimum value, not the minimiser), steps, option analysis (5 = minimiser, 10 = AM-GM without the factor 2, 52 = sign slip giving T(25)), difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -189,12 +209,32 @@
       "commonTrap": "Replacing the set difference by the selection `genre <> 'Drama'`, which returns viewers who watched *some* non-drama title (5) instead of viewers who watched *no* drama (3)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3 (Bilal, Divya, Emeka); option A",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nc = sqlite3.connect(':memory:')\nc.execute('create table Watch(viewer, title_id)'); c.execute('create table Title(title_id, genre)')\nc.executemany('insert into Watch values(?,?)', [('Asha','t1'),('Asha','t4'),('Bilal','t2'),('Chen','t3'),('Chen','t5'),('Divya','t2'),('Divya','t4'),('Emeka','t5'),('Farah','t1'),('Gopal','t3')])\nc.executemany('insert into Title values(?,?)', [('t1','Drama'),('t2','Comedy'),('t3','Drama'),('t4','Comedy'),('t5','Documentary')])\nr = c.execute(\"select viewer from Watch except select viewer from Watch natural join Title where genre='Drama'\").fetchall()\nprint(len(r), r)  # 3",
-      "notes": ""
+      "checkCode": "watch = [('Asha','t1'),('Asha','t4'),('Bilal','t2'),('Chen','t3'),('Chen','t5'),('Divya','t2'),('Divya','t4'),('Emeka','t5'),('Farah','t1'),('Gopal','t3')]\ntitle = [('t1','Drama'),('t2','Comedy'),('t3','Drama'),('t4','Comedy'),('t5','Documentary')]\njoined = {(v, t, g) for (v, t) in watch for (t2, g) in title if t == t2}       # natural join on title_id\ndrama_viewers = {v for (v, t, g) in joined if g == 'Drama'}                   # pi_viewer(sigma_genre='Drama')\nresult = {v for (v, t) in watch} - drama_viewers                              # set difference\nprint(len(result), sorted(result))  # 3 ['Bilal', 'Divya', 'Emeka']\nassert len(result) == 3\n",
+      "notes": "Blind solve (7 viewers minus the 4 who watched a Drama) gave 3, matching the key. Set semantics and the natural join on title_id are unambiguous. Audited steps, option analysis (4 = subtracted set, 5 = genre != Drama viewers, 6 = row-level difference), difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -287,12 +327,32 @@
       "commonTrap": "Multiplying the prior $P(C = 1)$ into the weight (giving 0.028), or using $P(A = 1 \\mid C = 1)$ although the evidence is $A = 0$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.28; option B",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.28 = 0.7 x 0.4; option B",
       "agreesWithKey": true,
-      "checkCode": "pT = {1: 0.7, 0: 0.2}; pA = {1: 0.6, 0: 0.05}\nw = lambda c: pT[c] * (1 - pA[c])   # evidence T=1, A=0\nprint(round(w(1), 4))              # 0.28\nprint(round(0.1*w(1) / (0.1*w(1) + 0.9*w(0)), 4))  # exact posterior 0.1407",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nfrom itertools import product\npC = {1: F(1,10), 0: F(9,10)}\npT1 = {1: F(7,10), 0: F(2,10)}     # P(T=1 | C)\npA1 = {1: F(6,10), 0: F(5,100)}    # P(A=1 | C)\n# likelihood weighting: C is sampled (not weighted); evidence T=1, A=0 contribute their CPT entries\nw = {c: pT1[c] * (1 - pA1[c]) for c in (0, 1)}\nprint(w[1], float(w[1]), w[0], float(w[0]))   # 7/25 0.28 19/100 0.19\n# cross-check: exact posterior by enumeration equals the weighted-average estimator's limit\njoint = {c: pC[c] * w[c] for c in (0, 1)}\nprint(float(joint[1] / sum(joint.values())))  # 0.1407...\nassert w[1] == F(28, 100)\n",
+      "notes": "Blind solve gave weight = P(T=1|C=1) P(A=0|C=1) = 0.7 x 0.4 = 0.28, matching the key; the stem states that C is sampled and T, A are fixed evidence, so the convention is explicit. Audited steps, option analysis (0.028 includes the prior, 0.42 uses A=1, 0.19 is the C=0 weight), difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -347,12 +407,32 @@
       "commonTrap": "Forgetting to wrap around after slot 10 (and wrongly declaring the table full or using index 11), or overlooking that 23 already occupies slot 1 and answering 1."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "2",
       "agreesWithKey": true,
-      "checkCode": "m = 11; tab = [None]*m\nfor k in [42, 19, 31, 23, 64, 53]:\n    i = k % m\n    while tab[i] is not None: i = (i + 1) % m\n    tab[i] = k\nprint(tab, tab.index(53))  # [64, 23, 53, None, None, None, None, None, 19, 42, 31] 2",
-      "notes": ""
+      "checkCode": "table = [None] * 11\nprobes = {}\nfor k in [42, 19, 31, 23, 64, 53]:\n    i, n = k % 11, 1\n    while table[i] is not None:\n        i, n = (i + 1) % 11, n + 1\n    table[i], probes[k] = k, n\nprint(table, table.index(53), probes)  # [64, 23, 53, None, None, None, None, None, 19, 42, 31] 2 {...}\nassert table.index(53) == 2\n",
+      "notes": "Blind trace of linear probing (42->9, 19->8, 31->10, 23->1, 64->0 via wrap-around, 53 probes 9,10,0,1 and lands in 2) gave 2, matching the key. Exact integer answer, so the NAT range 2 to 2 is appropriate. Audited steps, final table, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -407,12 +487,32 @@
       "commonTrap": "Using the formula $(n+1)/2 = 5.5$ for $n = 10$, or averaging over all ten positions or occurrences (e.g. picking a random array element gives $38/10 = 3.8$) instead of over the six distinct values with first-occurrence costs."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "4.8333 (29/6)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "4.83 (29/6 = 4.8333)",
       "agreesWithKey": true,
-      "checkCode": "class K:  # counts evaluations of a[i] == key\n    n = 0\n    def __init__(s, v): s.v = v\n    def __eq__(s, o): K.n += 1; return s.v == o.v\ndef linear_search(a, key):\n    for i in range(len(a)):\n        if a[i] == key:\n            return i\n    return -1\nraw = [4, 8, 4, 1, 6, 8, 4, 2, 9, 6]; a = [K(x) for x in raw]; tot = 0\nfor v in sorted(set(raw)):\n    K.n = 0; linear_search(a, K(v)); tot += K.n\nprint(tot / len(set(raw)))  # 4.8333...",
-      "notes": ""
+      "checkCode": "a = [4, 8, 4, 1, 6, 8, 4, 2, 9, 6]\ndef cost(key):                     # number of times a[i] == key is evaluated\n    n = 0\n    for i in range(len(a)):\n        n += 1\n        if a[i] == key:\n            break\n    return n\nvals = sorted(set(a))\ncosts = {v: cost(v) for v in vals}\ne = sum(costs.values()) / len(vals)\nprint(costs, e, round(e, 2))       # {1: 4, 2: 8, 4: 1, 6: 5, 8: 2, 9: 9} 4.8333... 4.83\nassert round(e, 2) == 4.83\n",
+      "notes": "Blind solve (cost = first index + 1 for each distinct value: 4, 8, 1, 5, 2, 9; mean 29/6) gave 4.8333, matching the key. Rounding to two decimals is stated in the stem and the accepted range 4.82 to 4.84 brackets both 4.83 and 4.8333. Audited steps, trap figures (5.5 and 3.8) and difficulty; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -499,15 +599,35 @@
           "explanation": "$\\mathbf{h} = (0, 2, 1.5)$ and $\\hat{y} = 4 - 1.5 + 0.5 = 3.0$."
         }
       ],
-      "commonTrap": "Forgetting to apply ReLU (letting the $-1$ pass through, giving 0.0) or adding the hidden bias after the activation instead of before it."
+      "commonTrap": "Forgetting to apply ReLU (letting the $-1$ pass through, giving 0.0), dropping the hidden biases $\\mathbf{b}^{(1)}$ (giving 8.0), or dropping the output bias $b^{(2)}$ (giving 2.5)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "3.0; option D",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "3.0 (h = (0, 2, 1.5)); option D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nx = np.array([1., 3.]); W1 = np.array([[2., -1.], [1., 1.], [-1., .5]]); b1 = np.array([0., -2., 1.])\nw2 = np.array([3., 2., -1.]); b2 = .5\nh = np.maximum(W1 @ x + b1, 0)\nprint(h, w2 @ h + b2)  # [0. 2. 1.5] 3.0",
-      "notes": ""
+      "checkCode": "import numpy as np\nW1 = np.array([[2, -1], [1, 1], [-1, 0.5]]); b1 = np.array([0, -2, 1])\nw2 = np.array([3, 2, -1]); b2 = 0.5; x = np.array([1, 3])\nz = W1 @ x + b1; h = np.maximum(0, z); y = w2 @ h + b2\nprint(z, h, y)                                        # [-1.  2.  1.5] [0.  2.  1.5] 3.0\nprint(w2 @ z + b2, w2 @ np.maximum(0, W1 @ x) + b2, w2 @ h)  # distractors: 0.0 (no ReLU), 8.0 (no hidden bias), 2.5 (no output bias)\nassert y == 3.0\n",
+      "notes": "Blind forward pass (z = (-1, 2, 1.5), h = (0, 2, 1.5), y = 3.0) matched the key. Corrected the commonTrap text: adding the hidden bias after ReLU also gives 3.0 for this input (coincidence), so it is not a trap that leads to a wrong option; the trap now lists only the mistakes that produce the distractors (no ReLU -> 0.0, no hidden bias -> 8.0, no output bias -> 2.5). Option analysis, steps, difficulty and topic mapping otherwise correct."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -563,12 +683,32 @@
       "commonTrap": "Treating 0.46 as $P(\\text{at least one}) = 0.3 + p - 0.3p$, which gives $p \\approx 0.23$, or adding $0.3 + p = 0.46$ as if the events were mutually exclusive, which gives $p = 0.16$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.4",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.40 (p = 2/5)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\np = sp.symbols('p')\nprint(sp.solve(sp.Rational(3, 10)*(1 - p) + sp.Rational(7, 10)*p - sp.Rational(46, 100), p))  # [2/5]",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nimport sympy as sp\npa = F(3, 10)\n# brute force over a fine grid of p: P(exactly one) = P(A)(1-p) + (1-P(A))p\nhits = [F(k, 1000) for k in range(1001) if pa * (1 - F(k, 1000)) + (1 - pa) * F(k, 1000) == F(46, 100)]\np = sp.symbols('p'); sol = sp.solve(sp.Rational(3, 10) + sp.Rational(1, 1) * p - 2 * sp.Rational(3, 10) * p - sp.Rational(46, 100), p)\nprint(hits, sol)   # [Fraction(2, 5)] [2/5]  (unique root: the equation is linear with slope 0.4)\nassert hits == [F(2, 5)] and sol == [sp.Rational(2, 5)]\n",
+      "notes": "Blind solve (0.3(1-p) + 0.7p = 0.46, linear with slope 0.4) gave p = 0.4 uniquely, matching the key; independence is stated in the stem. Accepted range 0.39 to 0.41 covers the stated two-decimal rounding. Audited steps, shortcut and trap values (0.23 and 0.16) and difficulty; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -665,12 +805,32 @@
       "commonTrap": "Confusing the likelihood $P(E \\mid \\text{Alpha}) = 0.04$ with the posterior $P(\\text{Alpha} \\mid E)$, or assuming Gamma (highest escalation rate) must be the most likely source of an escalated query without weighting by the traffic shares."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, C (P(E)=0.08; posteriors 0.25/0.375/0.375; P(Gamma|E^c)=0.1848)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A, C (P(E) = 0.08; posteriors 0.25/0.375/0.375; P(Gamma|E^c) = 17/92 = 0.1848)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\npr = {'Alpha': F(1, 2), 'Beta': F(3, 10), 'Gamma': F(1, 5)}\ne = {'Alpha': F(4, 100), 'Beta': F(10, 100), 'Gamma': F(15, 100)}\nPE = sum(pr[k]*e[k] for k in pr)\npost = {k: pr[k]*e[k]/PE for k in pr}\ngc = pr['Gamma']*(1 - e['Gamma'])/(1 - PE)\nprint(PE == F(8, 100), post['Alpha'] == F(4, 100), post['Beta'] == post['Gamma'], gc > F(1, 5), float(gc))\n# True False True False 0.1847... -> A, C",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nshare = {'Alpha': F(50, 100), 'Beta': F(30, 100), 'Gamma': F(20, 100)}\nesc = {'Alpha': F(4, 100), 'Beta': F(10, 100), 'Gamma': F(15, 100)}\n# full joint distribution over (chatbot, escalated?)\njoint = {(b, e): share[b] * (esc[b] if e else 1 - esc[b]) for b in share for e in (True, False)}\nP = lambda pred: sum(p for (b, e), p in joint.items() if pred(b, e))\nPE = P(lambda b, e: e)\ncond = lambda pa, pb: P(lambda b, e: pa(b, e) and pb(b, e)) / P(pb)\nA = PE == F(8, 100)\nB = cond(lambda b, e: b == 'Alpha', lambda b, e: e) == F(4, 100)\nC = cond(lambda b, e: b == 'Beta', lambda b, e: e) == cond(lambda b, e: b == 'Gamma', lambda b, e: e)\ngc = cond(lambda b, e: b == 'Gamma', lambda b, e: not e)\nD = gc > F(20, 100)\nprint(A, B, C, D, float(gc))  # True False True False 0.18478...  -> correct statements: A, C\nassert (A, B, C, D) == (True, False, True, False)\n",
+      "notes": "Blind solve gave P(E) = 0.08 (A true), P(Alpha|E) = 0.25 (B false), P(Beta|E) = P(Gamma|E) = 0.375 exactly (C true), P(Gamma|E^c) = 17/92 = 0.1848 < 0.20 (D false), matching the key A, C. Verified with exact fractions so the equality in C is not a floating-point artefact. Audited steps, option verdicts, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   }
 ]

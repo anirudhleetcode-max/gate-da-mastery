@@ -55,12 +55,36 @@
       "commonTrap": "Answering **4** by leaving `PhoneNo` inside Rider (a multivalued column breaks 1NF). The other common wrong answer is **6**, from creating a separate HomeDock table even though a many-to-one relationship with total participation on the many side folds into Bike as a foreign key."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "5",
       "agreesWithKey": true,
-      "checkCode": "# entity -> list of multivalued attributes\nents = {'Station': [], 'Bike': [], 'Rider': ['PhoneNo']}\n# relationship -> (cardinality, many side participates totally?)\nrels = {'HomeDock': ('M:1', True), 'Favourite': ('M:N', None)}\nn = len(ents) + sum(len(mv) for mv in ents.values())\nfor card, total in rels.values():\n    if card == 'M:N' or (card == 'M:1' and not total):\n        n += 1  # own table; M:1 with total participation folds into the many side\nprint(n)",
-      "notes": ""
+      "checkCode": "# Build the actual relational schema from the ER description, then count the tables.\nentities = {'Station': (['StationID'], ['Address'], []),\n            'Bike':    (['BikeID'],    ['Model'],   []),\n            'Rider':   (['RiderID'],   ['Name'],    ['PhoneNo'])}\ntables = {}\nfor e, (key, attrs, multivalued) in entities.items():\n    tables[e] = key + attrs\n    for m in multivalued:                      # 1NF: multivalued attribute -> own table\n        tables[e + '_' + m] = key + [m]\ntables['Bike'].append('StationID')             # HomeDock: many-to-one, total on Bike -> foreign key, never NULL\ntables['Favourite'] = ['RiderID', 'StationID'] # many-to-many -> own table\nprint(len(tables))",
+      "notes": "Blind solve gave 5 tables (Station, Bike with the HomeDock foreign key, Rider, RiderPhone, Favourite); the stem conditions (1NF, no NULLs, no redundancy, merge where possible) leave exactly one minimum. Solution, trap analysis, difficulty and taxonomy audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "83730d31a71371e5",
+        "verification": "fc602267c58c2dd4"
+      }
     }
   },
   {
@@ -153,12 +177,36 @@
       "commonTrap": "Dropping Kabir because he never appears in Certified. Set difference keeps every tuple of the left operand that is absent from the right operand, whether or not it joins with anything."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "['Kabir', 'Meera']",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B ({Meera, Kabir})",
       "agreesWithKey": true,
-      "checkCode": "pilot = {1: 'Asha', 2: 'Ravi', 3: 'Meera', 4: 'Kabir'}\ncert = [(1, 'A320'), (1, 'B737'), (2, 'B737'), (3, 'A320'), (3, 'ATR72')]\nleft = set(pilot.values())\nright = {pilot[p] for p, a in cert if a == 'B737' and p in pilot}\nprint(sorted(left - right))",
-      "notes": ""
+      "checkCode": "# Evaluate the relational algebra expression on the instances.\nPilot = [(1, 'Asha'), (2, 'Ravi'), (3, 'Meera'), (4, 'Kabir')]            # (PID, Name)\nCertified = [(1, 'A320'), (1, 'B737'), (2, 'B737'), (3, 'A320'), (3, 'ATR72')]  # (PID, Aircraft)\nsel = [t for t in Certified if t[1] == 'B737']\njoined = [(p, n, a) for (p, n) in Pilot for (p2, a) in sel if p == p2]      # natural join on PID\nresult = {n for (_, n) in Pilot} - {n for (_, n, _) in joined}\nopts = {'A': {'Asha', 'Ravi'}, 'B': {'Meera', 'Kabir'}, 'C': {'Meera'}, 'D': {'Kabir'}}\nprint([k for k, v in opts.items() if v == result])",
+      "notes": "Blind evaluation gives {Meera, Kabir}. Names are unique in the instance, so the projection is unambiguous. Steps, option verdicts, difficulty and taxonomy audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "35695c68251856e4",
+        "verification": "5f2c33921b2f98ac"
+      }
     }
   },
   {
@@ -259,12 +307,36 @@
       "commonTrap": "Calling $C \\to D$ a transitive dependency that breaks 3NF. The 3NF test exempts any FD whose right side is prime, and $D$ belongs to the candidate key $BD$. You only see this if you find **all** candidate keys, not just $AB$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "['A', 'C']",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A, C",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\ndef clo(X, F):\n    X = set(X); ch = True\n    while ch:\n        ch = False\n        for l, r in F:\n            if set(l) <= X and not set(r) <= X: X |= set(r); ch = True\n    return X\ndef keys(U, F):\n    sk = [set(c) for k in range(1, len(U)+1) for c in combinations(U, k) if clo(c, F) >= set(U)]\n    return [k for k in sk if not any(o < k for o in sk)]\ndef nf(U, F):  # (2NF, 3NF, BCNF) using every X -> a in the closure\n    K = keys(U, F); P = set().union(*K); r = [True]*3\n    for k in range(1, len(U)+1):\n        for X in combinations(U, k):\n            if clo(X, F) >= set(U): continue\n            for a in clo(X, F) - set(X):\n                r[2] = False\n                if a not in P:\n                    r[1] = False\n                    if any(set(X) < kk for kk in K): r[0] = False\n    return r\nF = [('AB','C'), ('C','D'), ('D','A'), ('B','E')]\nK = keys('ABCDE', F); P = set().union(*K)\nres = {'A': {'B','D'} in K, 'B': nf('ABCDE', F)[0],\n       'C': nf('ABCD', F[:3])[1:] == [True, False],\n       'D': not clo('C', F) >= set('ABCDE') and 'D' not in P}\nprint(sorted(k for k, v in res.items() if v))",
-      "notes": ""
+      "checkCode": "from itertools import combinations\nU = 'ABCDE'\nF = [('AB', 'C'), ('C', 'D'), ('D', 'A'), ('B', 'E')]\ndef clo(X, F):\n    X = set(X)\n    while True:\n        new = {a for l, r in F if set(l) <= X for a in r} - X\n        if not new: return X\n        X |= new\ndef cand_keys(U, F):\n    sup = [frozenset(c) for n in range(1, len(U) + 1) for c in combinations(U, n) if clo(c, F) >= set(U)]\n    return [k for k in sup if not any(o < k for o in sup)]\ndef violates(U, F, kind):\n    K = cand_keys(U, F); P = set().union(*K)\n    for l, r in F:\n        for a in set(r) - set(l):                       # non-trivial part of the FD\n            superkey = clo(l, F) >= set(U)\n            if kind == 'BCNF' and not superkey: return True\n            if kind == '3NF' and not superkey and a not in P: return True\n            if kind == '2NF' and a not in P and any(set(l) < k for k in K): return True\n    return False\nK = cand_keys(U, F); P = set().union(*K)\nans = {'A': frozenset('BD') in K,\n       'B': not violates(U, F, '2NF'),\n       'C': not violates('ABCD', F[:3], '3NF') and violates('ABCD', F[:3], 'BCNF'),\n       'D': clo('C', F) < set(U) and 'D' not in P}      # C -> D: C not a superkey and D non-prime?\nprint(sorted(''.join(sorted(k)) for k in K), sorted(k for k, v in ans.items() if v))",
+      "notes": "Blind solve: keys AB, BC, BD; E is the only non-prime attribute. B->E is a partial dependency (not 2NF); C->D is allowed in 3NF because D is prime; R' is 3NF but not BCNF. Exactly one defensible answer set (A, C). Steps, option verdicts and metadata audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "8b90006d9d1e4a86",
+        "verification": "781a4132ad9d123c"
+      }
     }
   },
   {
@@ -353,12 +425,36 @@
       "commonTrap": "Dividing the total file size by the block size (giving 879). That calculation assumes records can straddle blocks. With unspanned records, take the floor to get bfr first, then the ceiling to get the number of blocks."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "883",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D (883)",
       "agreesWithKey": true,
-      "checkCode": "import math\nn, rec, blk = 30000, 120, 4096\nbfr = blk // rec\nprint(math.ceil(n / bfr))",
-      "notes": ""
+      "checkCode": "import math\nrecords, rec_len, block = 30000, 120, 4096\nbfr = block // rec_len                   # unspanned: whole records only\nblocks = math.ceil(records / bfr)\n# brute-force cross-check: fill blocks one record at a time\nused, cur = 1, 0\nfor _ in range(records):\n    if cur + rec_len > block: used += 1; cur = 0\n    cur += rec_len\nassert used == blocks\nopts = {'A': 858, 'B': 879, 'C': 882, 'D': 883}\nprint(bfr, blocks, [k for k, v in opts.items() if v == blocks])",
+      "notes": "Blind solve: bfr = floor(4096/120) = 34, blocks = ceil(30000/34) = 883. Distractors 858 (bfr 35), 879 (spanned) and 882 (floor) each match a distinct error. Solution audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "26bac2f385d9bbc2",
+        "verification": "d9da299b39e82b6e"
+      }
     }
   },
   {
@@ -452,12 +548,36 @@
       "commonTrap": "Deciding the scale from how the values look rather than what they mean. Numeric station codes are still nominal, and Celsius readings, though numeric and with a zero, are only interval-scaled."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check (rule encoding of standard scale definitions)",
-      "independentAnswer": "['A']",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A",
       "agreesWithKey": true,
-      "checkCode": "# (order meaningful, equal-unit differences, true zero) for each attribute\nprops = {'P': (True, True, False), 'Q': (True, False, False),\n         'R': (False, False, False), 'S': (True, True, True)}\ndef scale(o, d, z):\n    return 'Nominal' if not o else 'Ordinal' if not d else 'Ratio' if z else 'Interval'\ngot = {a: scale(*v) for a, v in props.items()}\nopts = {'A': 'Interval Ordinal Nominal Ratio', 'B': 'Ratio Ordinal Nominal Ratio',\n        'C': 'Interval Nominal Ordinal Ratio', 'D': 'Interval Ordinal Interval Ratio'}\nprint([k for k, v in opts.items() if v.split() == [got[a] for a in 'PQRS']])",
-      "notes": ""
+      "checkCode": "# Encode which operations are meaningful for each attribute, then take the strongest scale supported.\nmeaningful = {                       # (equality, order, difference, ratio)\n    'P': (True, True, True, False),  # Celsius: equal units, arbitrary zero\n    'Q': (True, True, False, False), # ordered categories, gaps undefined\n    'R': (True, False, False, False),# station code: identifier only\n    'S': (True, True, True, True),   # concentration: true zero\n}\ndef scale(eq, order, diff, ratio):\n    return 'Ratio' if ratio else 'Interval' if diff else 'Ordinal' if order else 'Nominal'\ngot = [scale(*meaningful[a]) for a in 'PQRS']\nopts = {'A': ['Interval', 'Ordinal', 'Nominal', 'Ratio'], 'B': ['Ratio', 'Ordinal', 'Nominal', 'Ratio'],\n        'C': ['Interval', 'Nominal', 'Ordinal', 'Ratio'], 'D': ['Interval', 'Ordinal', 'Interval', 'Ratio']}\nprint(got, [k for k, v in opts.items() if v == got])",
+      "notes": "Blind classification: Celsius is interval, category is ordinal, station code is nominal, PM2.5 is ratio. Only option A matches; the other options each contain one standard misclassification. Difficulty MODERATE kept because it matches the blueprint slot and sits at about 1.5-2 min. Solution audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "c30572121d3feb60",
+        "verification": "f1d1a0dd8273f671"
+      }
     }
   },
   {
@@ -554,12 +674,36 @@
       "commonTrap": "Treating the schema labels as mutually exclusive, e.g. thinking that a warehouse with a snowflaked dimension cannot also be a fact constellation. Another trap is thinking that each fact table needs its own copy of a shared dimension."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check (schema graph encoding)",
-      "independentAnswer": "['B', 'C', 'D']",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B, C, D",
       "agreesWithKey": true,
-      "checkCode": "from collections import deque\nfk = {'Sales': ['DateDim', 'Store', 'Product'], 'Shipments': ['DateDim', 'Warehouse', 'Product'],\n      'Product': ['Brand']}\nfacts = ['Sales', 'Shipments']\ncopies_of_datedim = 1                      # one DateDim table listed, referenced by both facts\ngalaxy = len(facts) > 1 and bool(set(fk['Sales']) & set(fk['Shipments']))\nsnowflaked_product = 'Brand' in fk.get('Product', [])\ndef path(a, b):\n    Qu, seen = deque([[a]]), {a}\n    while Qu:\n        p = Qu.popleft()\n        if p[-1] == b: return p\n        for n in fk.get(p[-1], []):\n            if n not in seen: seen.add(n); Qu.append(p + [n])\nres = {'A': copies_of_datedim == 2, 'B': galaxy, 'C': snowflaked_product,\n       'D': path('Sales', 'Brand') == ['Sales', 'Product', 'Brand']}\nprint(sorted(k for k, v in res.items() if v))",
-      "notes": ""
+      "checkCode": "# Foreign-key graph of the listed tables.\ntables = {'Sales': ['DateDim', 'Store', 'Product'], 'Shipments': ['DateDim', 'Warehouse', 'Product'],\n          'DateDim': [], 'Store': [], 'Warehouse': [], 'Product': ['Brand'], 'Brand': []}\nfacts = ['Sales', 'Shipments']\ndims = [t for t in tables if t not in facts]\nshared = set(tables['Sales']) & set(tables['Shipments'])          # dimensions referenced by both facts\nconstellation = len(facts) > 1 and len(shared) > 0                # (B)\nsnowflaked = [d for d in dims if any(x in dims for x in tables[d])]   # dimensions that reference another dimension\ndef join_tables(src, dst):                                        # tables on the FK path src -> dst\n    if src == dst: return [src]\n    for nxt in tables[src]:\n        p = join_tables(nxt, dst)\n        if p: return [src] + p\n    return None\npath = join_tables('Sales', 'Brand')\nans = {'A': not ('DateDim' in tables['Sales'] and 'DateDim' in tables['Shipments']),  # two copies needed only if the facts could not share one\n       'B': constellation,\n       'C': 'Product' in snowflaked,\n       'D': path == ['Sales', 'Product', 'Brand']}\nprint(sorted(shared), snowflaked, path, sorted(k for k, v in ans.items() if v))",
+      "notes": "Blind solve: A false (conformed dimensions are shared), B true (two facts share DateDim and Product), C true (Product -> Brand snowflake), D true (Sales -> Product -> Brand join path). The stem defines the tables fully, so there is no unstated convention. Solution audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "3a7554eb4660c5bd",
+        "verification": "f1d87c845665d018"
+      }
     }
   },
   {
@@ -619,12 +763,36 @@
       "commonTrap": "Adding $32 + 8 = 40$ and forgetting that the 4 sets containing both keys have been counted twice."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "36",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nA = ['TicketNo', 'Hall', 'ShowTime', 'SeatNo', 'Price', 'Customer']\nCK = [{'TicketNo'}, {'Hall', 'ShowTime', 'SeatNo'}]\nprint(sum(1 for k in range(1, len(A)+1) for c in combinations(A, k)\n          if any(ck <= set(c) for ck in CK)))",
-      "notes": ""
+      "checkCode": "from itertools import chain, combinations\nattrs = ['TicketNo', 'Hall', 'ShowTime', 'SeatNo', 'Price', 'Customer']\nkeys = [{'TicketNo'}, {'Hall', 'ShowTime', 'SeatNo'}]\nsubsets = chain.from_iterable(combinations(attrs, n) for n in range(len(attrs) + 1))\nbrute = sum(1 for s in subsets if any(k <= set(s) for k in keys))       # superkey = contains a candidate key\nformula = 2**5 + 2**3 - 2**2                                            # inclusion-exclusion\nassert brute == formula\nprint(brute)",
+      "notes": "Blind count: 2^5 + 2^3 - 2^2 = 36, confirmed by brute force over all 64 attribute subsets. Integer NAT key with an exact range is appropriate. Solution audited and left as authored."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "f10bfb383631e182",
+        "verification": "b4f423e8bfab3cc7"
+      }
     }
   },
   {
@@ -696,7 +864,7 @@
         {
           "label": "A",
           "verdict": "incorrect",
-          "explanation": "This treats $\\exists$ as $\\forall$ (\"every rating is 5 stars\"), which only Night Market meets. Monsoon Diaries needs just one 5-star rating, and it has one (u1)."
+          "explanation": "This reads $\\exists r$ as \"the show has ratings and **all** of them are 5 stars\", which only Night Market meets (u1 and u4 both gave 5). The query needs just one 5-star rating, and Monsoon Diaries has one (u1)."
         },
         {
           "label": "B",
@@ -717,12 +885,36 @@
       "commonTrap": "Reading $\\exists r\\,(\\dots \\text{stars} = 5)$ as \"all ratings are 5 stars\", which wrongly drops Monsoon Diaries. Another trap is including Salt Roads, which has no ratings: it trivially satisfies the $\\neg\\exists$ part but fails the $\\exists$ part."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "['Monsoon Diaries', 'Night Market']",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "C ({Monsoon Diaries, Night Market})",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\ncon = sqlite3.connect(':memory:')\ncon.execute('create table Show(sid int, title text)')\ncon.execute('create table Rating(uid text, sid int, stars int)')\ncon.executemany('insert into Show values(?,?)', [(1,'Monsoon Diaries'), (2,'Code Red'),\n    (3,'Deep Field'), (4,'Night Market'), (5,'Salt Roads')])\ncon.executemany('insert into Rating values(?,?,?)', [('u1',1,5), ('u2',1,3), ('u1',2,5),\n    ('u3',2,1), ('u2',3,4), ('u3',3,2), ('u1',4,5), ('u4',4,5)])\nq = '''select s.title from Show s\n where exists (select * from Rating r where r.sid = s.sid and r.stars = 5)\n   and not exists (select * from Rating q where q.sid = s.sid and q.stars = 1)\n order by s.sid'''\nprint([row[0] for row in con.execute(q)])",
-      "notes": ""
+      "checkCode": "Show = {1: 'Monsoon Diaries', 2: 'Code Red', 3: 'Deep Field', 4: 'Night Market', 5: 'Salt Roads'}\nRating = [('u1', 1, 5), ('u2', 1, 3), ('u1', 2, 5), ('u3', 2, 1), ('u2', 3, 4), ('u3', 3, 2), ('u1', 4, 5), ('u4', 4, 5)]\nresult = {title for sid, title in Show.items()\n          if any(r[1] == sid and r[2] == 5 for r in Rating)          # exists a 5-star rating\n          and not any(q[1] == sid and q[2] == 1 for q in Rating)}    # and no 1-star rating\nopts = {'A': {'Night Market'}, 'B': {'Monsoon Diaries', 'Code Red', 'Night Market'},\n        'C': {'Monsoon Diaries', 'Night Market'}, 'D': {'Monsoon Diaries', 'Deep Field', 'Night Market', 'Salt Roads'}}\nprint(sorted(result), [k for k, v in opts.items() if v == result])",
+      "notes": "Blind evaluation gives {Monsoon Diaries, Night Market}, matching the key. Solution wording tweak: the option A analysis said only Night Market meets the \"every rating is 5 stars\" reading, but a show with no ratings (Salt Roads) meets a bare universal reading vacuously; the analysis now states the intended reading (the show has ratings and all are 5 stars). Answer, stem and options unmodified."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "2d22dfd604cda3ee",
+        "verification": "f371212c035ecb96"
+      }
     }
   }
 ]

@@ -47,6 +47,10 @@ for (const y of fs.readdirSync(path.join(ROOT, "content/pyqs"))) {
 }
 const corpus = [...pyqs, ...loaded.flatMap((l) => l.qs.map((q) => ({ id: q.id, text: reviewText(q), official: false })))];
 
+// mtimes of files this script wrote itself, so its own writes never make a file look "busy".
+const statePath = path.join(ROOT, "generated", "mock-review-state.json");
+const ownWrites: Record<string, number> = fs.existsSync(statePath) ? JSON.parse(fs.readFileSync(statePath, "utf8")) : {};
+
 type Row = { id: string; testId?: string; status: string; fixed: boolean; failures: string[] };
 const rows: Row[] = [];
 const recentMs = 10 * 60 * 1000;
@@ -56,7 +60,9 @@ let skippedBusy = 0;
 for (const { file, qs } of loaded) {
   const testId = qs[0]?.testId;
   if (only && testId && !only.has(testId)) continue;
-  const busy = Date.now() - fs.statSync(file).mtimeMs < recentMs;
+  const mtime = fs.statSync(file).mtimeMs;
+  const rel = path.relative(ROOT, file);
+  const busy = Date.now() - mtime < recentMs && ownWrites[rel] !== mtime;
   let changed = false;
   for (const q of qs) {
     const slot = q.testId ? blueprint[q.testId]?.slots.find((s) => s.q === q.questionNumber) : undefined;
@@ -70,6 +76,7 @@ for (const { file, qs } of loaded) {
       prev.status === record.status &&
       JSON.stringify(prev.checks) === JSON.stringify(record.checks) &&
       prev.notes === record.notes &&
+      prev.fixed === record.fixed &&
       JSON.stringify(prev.verifiedHash) === JSON.stringify(record.verifiedHash);
     if (!same) {
       (q as { review?: typeof record }).review = { ...record, reviewedAt: prev && prev.status === record.status ? prev.reviewedAt : today };
@@ -86,6 +93,7 @@ for (const { file, qs } of loaded) {
     const byId = new Map(qs.map((q) => [q.id, q.review]));
     for (const r of raw) r.review = byId.get(r.id as string);
     fs.writeFileSync(file, JSON.stringify(raw, null, 2) + "\n");
+    ownWrites[rel] = fs.statSync(file).mtimeMs;
     written++;
   }
 }
@@ -127,6 +135,8 @@ const summary = {
   filesSkippedBecauseBusy: skippedBusy,
 };
 if (!dry) {
+  fs.mkdirSync(path.dirname(statePath), { recursive: true });
+  fs.writeFileSync(statePath, JSON.stringify(ownWrites, null, 1) + "\n");
   fs.mkdirSync(path.join(ROOT, "reports"), { recursive: true });
   fs.writeFileSync(path.join(ROOT, "reports/mock-verification.json"), JSON.stringify({ summary, tests: per }, null, 2) + "\n");
   const md = [

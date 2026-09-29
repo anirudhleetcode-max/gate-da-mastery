@@ -58,6 +58,30 @@
       "agreesWithKey": true,
       "checkCode": "from itertools import combinations\nfrom math import comb\n# brute force: a panel = (set of 3 annotators, designated lead in that set)\npanels = {(frozenset(c), lead) for c in combinations(range(7), 3) for lead in c}\nprint(len(panels), comb(7, 3) * 3, 7 * comb(6, 2))  # 105 105 105",
       "notes": "Blind solve (choose the set then the lead: C(7,3)·3, cross-checked as 7·C(6,2) and P(7,3)/2!) gave 105, matching the key. Audited stem (one distinguished role, two identical roles, difference rule stated), solution steps, difficulty and topic mapping; no edits required. Exact integer answer, so the NAT range 105 to 105 is appropriate."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "50b4348886d24193",
+        "verification": "9303dfaa71fce9be"
+      }
     }
   },
   {
@@ -157,6 +181,30 @@
       "agreesWithKey": true,
       "checkCode": "from fractions import Fraction as F\np = {('Dry','On'): F(48,100), ('Dry','Late'): F(12,100), ('Rain','On'): F(16,100), ('Rain','Late'): F(24,100)}\nassert sum(p.values()) == 1\nlate = sum(v for (w, s), v in p.items() if s == 'Late')\nprint(p[('Rain','Late')] / late)  # 2/3  -> (B)\nrain = sum(v for (w, s), v in p.items() if w == 'Rain')\nprint(F(24,100)/late, F(24,100), p[('Rain','Late')]/rain, rain)  # distractors: 6/25 (=0.24), 3/5, 2/5",
       "notes": "Blind solve P(Rain|Late) = 0.24/0.36 = 2/3 matched the key (B). Audited option analysis (each distractor maps to a real error: joint probability, reverse conditional, marginal P(Rain)), verdicts, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "9a870037d62cf9f2",
+        "verification": "91c5d862c2a6e42c"
+      }
     }
   },
   {
@@ -259,6 +307,30 @@
       "agreesWithKey": true,
       "checkCode": "import statistics as st\nfrom fractions import Fraction as F\nx = [12, 15, 11, 15, 40, 13, 15, 14, 11]\nmean, med, modes = F(sum(x), len(x)), st.median(x), st.multimode(x)\nprint(float(mean), med, modes)  # 16.22... 14 [15]\nprint(med < modes[0] < mean)  # True -> median < mode < mean (D)",
       "notes": "Blind solve (sorted data, median 14, mode 15, mean 146/9 ≈ 16.22) gave median < mode < mean, matching the key (D). Data has a unique mode and an odd count, so median, mode and mean are unambiguous. Audited option analysis (A, B, C each explained by a concrete error), difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "9f953cbf55acf6b2",
+        "verification": "08a453e886e293a5"
+      }
     }
   },
   {
@@ -360,6 +432,30 @@
       "agreesWithKey": true,
       "checkCode": "from itertools import product\nfrom collections import Counter\nfrom fractions import Fraction as F\nX = [s.count('H') - s.count('T') for s in map(''.join, product('HT', repeat=3))]\npmf = {k: F(v, 8) for k, v in sorted(Counter(X).items())}\nprint(pmf)  # {-3: 1/8, -1: 3/8, 1: 3/8, 3: 1/8}\nprint('A', len(pmf) == 4, 'B', pmf.get(1, 0) == F(3, 8), 'C', pmf.get(0, 0) == F(3, 8), 'D', sum(v for k, v in pmf.items() if k <= -1) == F(3, 8))\n# A True, B True, C False, D False -> (A), (B)",
       "notes": "Blind solve via X = 2H - 3: support {-3,-1,1,3}, P(X=1)=3/8, P(X=0)=0, P(X≤-1)=1/2, so (A) and (B) are true and (C), (D) false; matched the key. Audited each statement, option verdicts, difficulty (all four statements follow from one pmf, so EASY is honest) and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "c069d087f5272763",
+        "verification": "38fb1abff4ceeff4"
+      }
     }
   },
   {
@@ -460,6 +556,30 @@
       "agreesWithKey": true,
       "checkCode": "import sympy as sp\nc = sp.symbols('c')\nc_val = sp.solve(sum(c * (5 - k) for k in range(1, 5)) - 1, c)[0]\nP = lambda ks: sum(c_val * (5 - k) for k in ks)\nprint(c_val, P([2, 3]) / P([1, 2, 3]))  # 1/10  5/9 -> (C)\nprint(P([2, 3]), P([2, 3, 4]) / P([1, 2, 3]), P([2, 3]) / P([2, 3, 4]))  # distractors 1/2, 2/3, 5/6",
       "notes": "Blind solve (c = 1/10, then (0.3+0.2)/(0.4+0.3+0.2) = 5/9) matched the key (C). Every distractor corresponds to a real slip (P(A∩B) undivided, P(A)/P(B), reversed conditioning). Audited difficulty and topic mapping (ps-pmf lies in the primary topic ps-discrete); no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "50adc814c3c91035",
+        "verification": "4401b4a47cc8d6e7"
+      }
     }
   },
   {
@@ -558,6 +678,30 @@
       "agreesWithKey": true,
       "checkCode": "import sympy as sp\nx, c = sp.symbols('x c', positive=True)\nf = c * x**2 * (3 - x)\nc_val = sp.solve(sp.integrate(f, (x, 0, 3)) - 1, c)[0]\ng = f.subs(c, c_val)\nprint(c_val, sp.integrate(g, (x, 0, 1)))  # 4/27  1/9 -> (A)\nprint(sp.integrate(g, (x, 0, 3)), sp.integrate(g, (x, 1, 3)), sp.integrate(x**2 * (3 - x), (x, 0, 1)))  # 1, 8/9, 3/4",
       "notes": "Blind solve (c = 4/27, P(X≤1) = (4/27)(3/4) = 1/9) matched the key (A). f(x) ≥ 0 on [0,3] so the density is valid. Distractors map to real slips (uniform 1/3, unnormalised 3/4, complement 8/9). Audited difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "90d8d8c8cf67be70",
+        "verification": "bc85b92f92141426"
+      }
     }
   },
   {
@@ -656,6 +800,30 @@
       "agreesWithKey": true,
       "checkCode": "import math\nimport numpy as np\nmu, sigma, n = 120, 24, 36\nprint(mu, sigma / math.sqrt(n), sigma**2 / n, sigma / n)  # 120 4.0 16.0 0.666..  -> SD = 4 (C)\n# simulation with a right-skewed (lognormal) parent having mean 120 ms and SD 24 ms\ns2 = math.log(1 + (sigma / mu) ** 2); m = math.log(mu) - s2 / 2\nrng = np.random.default_rng(0)\nmeans = rng.lognormal(m, math.sqrt(s2), size=(200000, n)).mean(axis=1)\nprint(round(means.mean(), 2), round(means.std(), 2))  # ~120, ~4.0",
       "notes": "Blind solve (standard error σ/√n = 24/6 = 4 ms, mean 120 ms) matched the key (C); a simulation with a right-skewed lognormal parent gave SD ≈ 4.0. Distractors map to real slips (single-call SD, variance 16, σ/n). Audited difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "b96cd79507e4a298",
+        "verification": "3bd38a9a2e2ce2c6"
+      }
     }
   },
   {
@@ -722,6 +890,30 @@
       "agreesWithKey": true,
       "checkCode": "from itertools import product\n# Build a joint distribution over (D, C, T) indicator triples from the seven region masses, then read off P(exactly one)\nD, C, T, DC, DT, CT, DCT = 0.45, 0.40, 0.30, 0.20, 0.15, 0.10, 0.05\nreg = {(1,1,1): DCT, (1,1,0): DC - DCT, (1,0,1): DT - DCT, (0,1,1): CT - DCT}\nreg[(1,0,0)] = D - reg[(1,1,1)] - reg[(1,1,0)] - reg[(1,0,1)]\nreg[(0,1,0)] = C - reg[(1,1,1)] - reg[(1,1,0)] - reg[(0,1,1)]\nreg[(0,0,1)] = T - reg[(1,1,1)] - reg[(1,0,1)] - reg[(0,1,1)]\nreg[(0,0,0)] = 1 - sum(reg.values())\nassert all(v >= -1e-12 for v in reg.values())          # data are consistent\nassert abs(sum(v for k, v in reg.items() if k[0]) - D) < 1e-12 and abs(sum(v for k, v in reg.items() if k[1]) - C) < 1e-12 and abs(sum(v for k, v in reg.items() if k[2]) - T) < 1e-12\nprint(round(sum(v for k, v in reg.items() if sum(k) == 1), 10))  # 0.4\nprint(round((D + C + T) - 2 * (DC + DT + CT) + 3 * DCT, 10))     # 0.4 (inclusion-exclusion cross-check)",
       "notes": "Blind solve (only-D 0.15 + only-C 0.15 + only-T 0.10 = 0.40; also S1 - 2·S2 + 3·S3 = 1.15 - 0.90 + 0.15 = 0.40) matched the key. All seven Venn regions are non-negative and P(union) = 0.75 ≤ 1, so the data are consistent. Stem states rounding to two decimals; the exact value is 0.40 and the accepted range 0.39 to 0.41 (±0.01) follows the platform convention for two-decimal NAT answers. Audited difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "3947ae1dafc258f4",
+        "verification": "30015c5ff7908566"
+      }
     }
   }
 ]

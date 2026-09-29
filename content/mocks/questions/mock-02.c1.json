@@ -52,12 +52,36 @@
       "commonTrap": "Answering $4$ (forgetting $p(1) = 0$), $6$ (using only $p(1) = 0$, i.e. $7 - 1$), or $5$ (counting \"even\" as a single condition). Evenness forces *each* odd-power coefficient to be zero, so it contributes three conditions."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "3",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "3 (even polynomials give 4 free coefficients, p(1) = 0 removes one; basis x^2-1, x^4-1, x^6-1)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x'); a = sp.symbols('a0:7')\np = sum(a[k]*x**k for k in range(7))\neqs = sp.Poly(sp.expand(p - p.subs(x, -x)), x).coeffs() + [p.subs(x, 1)]\nM = sp.Matrix([[sp.diff(e, ak) for ak in a] for e in eqs])\nprint(7 - M.rank())",
-      "notes": ""
+      "checkCode": "import sympy as sp\n# Independent check: sample-point formulation (no symbolic coefficient bookkeeping).\n# p = c0 + c1 x + ... + c6 x^6 ; conditions p(t) - p(-t) = 0 at 6 distinct positive t\n# (an odd polynomial of degree <= 5 with 6 distinct nonzero roots +-t is identically 0) and p(1) = 0.\nts = [sp.Rational(k, 3) for k in (1, 2, 4, 5, 7, 8)]\nrows = [[t**i - (-t)**i for i in range(7)] for t in ts]\nrows.append([1] * 7)  # p(1) = 0\nM = sp.Matrix(rows)\nprint(\"rank of constraints:\", M.rank(), \" dim V =\", 7 - M.rank())\nns = M.nullspace()\nx = sp.symbols(\"x\")\nprint(\"basis:\", [sp.expand(sum(v[i] * x**i for i in range(7))) for v in ns])",
+      "notes": "Blind re-solve matched the key. Stem is unambiguous (polynomial identity p(-x) = p(x); degree at most 6). NAT is an exact integer so no rounding is needed. Steps, shortcut, trap, difficulty (EASY) and blueprint slot audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "4a3631bc4af09c3a",
+        "verification": "51be215a34fefbe0"
+      }
     }
   },
   {
@@ -109,12 +133,36 @@
       "commonTrap": "Assuming that $\\operatorname{tr}(BA)$ and $\\operatorname{tr}(AB)$ must differ because the matrices have different sizes, or making a sign slip in $(AB)_{22} = 4 - 6 - 2$ (for example, taking $(-2) \\cdot 1$ as $+2$ and getting $0$ or $2$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "-2 (tr(BA) = tr(AB) = -2)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA = np.array([[2, -1, 0], [1, 3, -2]])\nB = np.array([[1, 4], [0, -2], [5, 1]])\nprint(np.trace(B @ A), np.trace(A @ B))",
-      "notes": ""
+      "checkCode": "import numpy as np\nA = np.array([[2, -1, 0], [1, 3, -2]])\nB = np.array([[1, 4], [0, -2], [5, 1]])\nprint(\"BA =\", (B @ A).tolist())\nprint(\"tr(BA) =\", int(np.trace(B @ A)), \" tr(AB) =\", int(np.trace(A @ B)))\n# entrywise formula tr(BA) = sum_{i,k} A[i,k] * B[k,i]\nprint(\"sum a_ik b_ki =\", int(sum(A[i, k] * B[k, i] for i in range(2) for k in range(3))))",
+      "notes": "Blind re-solve matched the key. NAT is an exact integer, so no rounding is needed. The solution's BA matrix and both trace routes were re-computed and are right. Difficulty (EASY) and topic audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "49d389a876db3e10",
+        "verification": "b537c2008e658426"
+      }
     }
   },
   {
@@ -212,12 +260,36 @@
       "commonTrap": "Mixing up the two rank conditions: full row rank guarantees *existence*, while full column rank guarantees *uniqueness*. A second trap is treating the solution set of $A\\mathbf{x} = \\mathbf{b}$ with $\\mathbf{b} \\ne \\mathbf{0}$ as if it were closed under addition (option D)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, C (rank 4, nullity 2; random b always consistent; second solution differs; x1+x2 fails)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A, C (rank 4 = rows so always consistent; nullity 2 so never unique; x1 + x2 solves Ax = 2b, not b)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\nA = rng.integers(-5, 6, size=(4, 6)).astype(float)\nr = np.linalg.matrix_rank(A); print('rank', r, 'nullity', 6 - r)\nb = rng.normal(size=4)\nx1 = np.linalg.lstsq(A, b, rcond=None)[0]\nprint('A consistent for random b:', np.allclose(A @ x1, b))\nN = np.linalg.svd(A)[2][r:]            # basis of null space\nx2 = x1 + N.T @ rng.normal(size=6 - r)  # a second, different solution\nprint('B unique?', np.allclose(x1, x2), np.allclose(A @ x2, b))\nprint('D x1+x2 solves Ax=b?', np.allclose(A @ (x1 + x2), b))\nprint('Answer: A, C')",
-      "notes": ""
+      "checkCode": "import sympy as sp, random\nrandom.seed(7)\nn_ok = 0\nwhile n_ok < 200:\n    A = sp.Matrix(4, 6, lambda i, j: random.randint(-3, 3))\n    if A.rank() != 4:\n        continue\n    n_ok += 1\n    b = sp.Matrix(4, 1, lambda i, j: random.randint(-5, 5))\n    if b.is_zero_matrix:\n        b = sp.Matrix([1, 0, 0, 0])\n    assert A.row_join(b).rank() == 4              # (A) consistent for every b\n    assert len(A.nullspace()) == 2                # (C) dim N(A) = 2, so (B) never unique\n    x1 = A.gauss_jordan_solve(b)[0].subs({s: 0 for s in A.gauss_jordan_solve(b)[0].free_symbols})\n    x2 = x1 + A.nullspace()[0]                    # a different solution\n    assert A * x1 == b and A * x2 == b and x1 != x2\n    assert A * (x1 + x2) == 2 * b and (A * (x1 + x2)) != b   # (D) fails since b != 0\nprint(\"200 random rank-4 4x6 matrices: (A) true, (B) false, (C) true (nullity 2), (D) false -> A, C\")",
+      "notes": "Blind re-solve matched the key (A, C). All four statements checked independently (exact arithmetic on 200 random rank-4 4x6 integer matrices). Option verdicts, steps and difficulty (EASY, one-line rank/nullity consequences) audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "769e03fe0a9aa836",
+        "verification": "3c8e14206e11c3b6"
+      }
     }
   },
   {
@@ -311,12 +383,36 @@
       "commonTrap": "Evaluating $-2\\lambda$ at $\\lambda = -1$ as $-2$ instead of $+2$ (giving option D), or computing the eigenvalues of $A^2$ and forgetting the $-2A$ term (option A)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "0, 3, 3 -> (B)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA = np.array([[2, 5, -1], [0, -1, 4], [0, 0, 3]], dtype=float)\nB = A @ A - 2 * A\nprint([float(x) for x in sorted(np.round(np.linalg.eigvals(B).real, 10))])",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 5, -1], [0, -1, 4], [0, 0, 3]])\nB = A**2 - 2 * A\nprint(\"B =\", B.tolist())\nprint(\"eigenvalues of B (with multiplicity):\", B.eigenvals())\nopts = {\"A\": {4: 1, 1: 1, 9: 1}, \"B\": {0: 1, 3: 2}, \"C\": {2: 1, -1: 1, 7: 1}, \"D\": {0: 1, -1: 1, 3: 1}}\nprint(\"matching option:\", [k for k, v in opts.items() if v == B.eigenvals()])",
+      "notes": "Blind re-solve matched the key (B). Distractor derivations in optionAnalysis re-checked (A = lambda^2, C = lambda^2 - 2, D = sign slip at lambda = -1). B is upper triangular with diagonal 0, 3, 3. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "b0bcce6d68691a49",
+        "verification": "3d71af414d91be33"
+      }
     }
   },
   {
@@ -405,12 +501,36 @@
       "commonTrap": "Writing $\\det(3M) = 3\\det(M)$. The scalar multiplies every one of the three rows, so the factor is $3^3 = 27$. Another slip is forgetting to invert $\\det(C)$, which gives $27 \\cdot (-2) \\cdot (-5) = 270$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "67.5 -> (C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "67.5 -> (C) (det C = -2, det(3 C^-1 B^T) = 27 * (1/-2) * (-5))",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA = np.diag([2.0, 1.0, 1.0]); A[0, 1] = 3; A[2, 0] = 1   # det(A) = 2\nB = np.diag([-5.0, 1.0, 1.0]); B[1, 2] = 4              # det(B) = -5\nC = A[[2, 1, 0], :].copy()     # swap rows 1 and 3\nC[1] = C[1] + 4 * C[0]         # add 4 x (new) row 1 to row 2\nprint(round(np.linalg.det(A), 6), round(np.linalg.det(B), 6), round(np.linalg.det(C), 6))\nprint(round(np.linalg.det(3 * np.linalg.inv(C) @ B.T), 6))",
-      "notes": ""
+      "checkCode": "import sympy as sp, random\nrandom.seed(3)\ndef rand_unit_tri(n, lower):\n    M = sp.eye(n)\n    for i in range(n):\n        for j in range(n):\n            if (lower and j < i) or (not lower and j > i):\n                M[i, j] = random.randint(-3, 3)\n    return M\n# Build A, B with exactly det(A) = 2, det(B) = -5 (unit-triangular factors have det 1).\nA = rand_unit_tri(3, True) * sp.diag(2, 1, 1) * rand_unit_tri(3, False)\nB = rand_unit_tri(3, True) * sp.diag(-5, 1, 1) * rand_unit_tri(3, False)\nassert A.det() == 2 and B.det() == -5\nC = A.copy()\nC.row_swap(0, 2)                      # interchange rows 1 and 3\nC[1, :] = C[1, :] + 4 * C[0, :]       # add 4 x (new) row 1 to row 2\nprint(\"det C =\", C.det())\nval = (3 * C.inv() * B.T).det()\nprint(\"det(3 C^-1 B^T) =\", val, \"=\", float(val))\nopts = {\"A\": 16.875, \"B\": -67.5, \"C\": 67.5, \"D\": 7.5}\nprint(\"matching option:\", [k for k, v in opts.items() if sp.Rational(str(v)) == val])",
+      "notes": "Blind re-solve matched the key (C). Row-operation reading is unambiguous (swap rows 1 and 3, then add 4 x new row 1 to row 2, so det C = -2). Distractor values 16.875, -67.5 and 7.5 and the 270 trap re-derived correctly. Difficulty (MODERATE) audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "76bb42fe3a1e2f5a",
+        "verification": "522964fcb0453e83"
+      }
     }
   },
   {
@@ -509,12 +629,36 @@
       "commonTrap": "Adding one-dimensional projections without first checking that the basis vectors are orthogonal. It works here only because $\\mathbf{a}^{\\top}\\mathbf{b} = 0$. Other slips are reporting the squared distance $6$ as the distance, and confusing an orthogonal *projection* matrix with an orthogonal matrix."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, B, D (Pv = (4,0,2,2), dist = sqrt(6) = 2.449, P^T P != I, residual orthogonal to a and b)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A, B, D (Pv = (4,0,2,2), distance = sqrt(6), P^T P = P != I_4, (-1,1,2,0) is orthogonal to a and b)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\na = np.array([1, 1, 0, 1.]); b = np.array([1, -1, 1, 0.]); v = np.array([3, 1, 4, 2.])\nM = np.column_stack([a, b])\nP = M @ np.linalg.inv(M.T @ M) @ M.T\nr = v - P @ v\nprint('a.b =', a @ b)\nprint('A: Pv =', np.round(P @ v, 10))\nprint('B: dist =', np.linalg.norm(r), 'sqrt6 =', np.sqrt(6))\nprint('C: P^T P = I ?', np.allclose(P.T @ P, np.eye(4)), 'trace', round(np.trace(P), 10))\nprint('D: residual =', np.round(r, 10), 'dots', round(r @ a, 10), round(r @ b, 10))\nprint('Answer: A, B, D')",
-      "notes": ""
+      "checkCode": "import sympy as sp\na = sp.Matrix([1, 1, 0, 1]); b = sp.Matrix([1, -1, 1, 0]); v = sp.Matrix([3, 1, 4, 2])\nM = a.row_join(b)\nP = M * (M.T * M).inv() * M.T          # exact rational projection matrix onto W = span{a, b}\nPv = P * v\nr = v - Pv\nprint(\"a.b =\", (a.T * b)[0], \"  Pv =\", Pv.T.tolist()[0])\nprint(\"(A) Pv == (4,0,2,2):\", Pv == sp.Matrix([4, 0, 2, 2]))\nprint(\"(B) squared distance =\", (r.T * r)[0], \" distance = sqrt(\", (r.T * r)[0], \")\")\nprint(\"(C) P^T P == I_4:\", P.T * P == sp.eye(4), \" rank P =\", P.rank(), \" P^T P == P:\", P.T * P == P)\nw = sp.Matrix([-1, 1, 2, 0])\nprint(\"(D) w.a, w.b =\", (w.T * a)[0], (w.T * b)[0], \" -> orthogonal to W:\", (w.T * a)[0] == 0 and (w.T * b)[0] == 0, \"; w == v - Pv:\", w == r)\nprint(\"Answer: A, B, D\")",
+      "notes": "Blind re-solve matched the key (A, B, D). Exact rational check of P, Pv, distance, P^T P and orthogonality. Pythagoras check 30 = 24 + 6 and all four option verdicts verified. Difficulty (MODERATE) audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "8f85833664702c07",
+        "verification": "b27e6be5ef47dab0"
+      }
     }
   },
   {
@@ -608,12 +752,36 @@
       "commonTrap": "Choosing (C) because the zero matrix is singular and scalar multiples of singular matrices stay singular. Containing $O$ and being closed under scaling is not enough: closure under addition fails."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "D (counterexamples confirm A, B, C fail; D closed under 1000 random linear combinations)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D (A lacks the zero matrix, B fails under scaling by 1/2, C fails under addition, D is a homogeneous linear condition)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom fractions import Fraction as F\n# (A) invertible: zero matrix missing\nprint('A zero invertible?', np.linalg.det(np.zeros((2, 2))) != 0)\n# (B) integer entries: 0.5 * I not integer\nprint('B 0.5*I integer?', np.all(np.mod(0.5 * np.eye(2), 1) == 0))\n# (C) det 0: diag(1,0)+diag(0,1)=I\nprint('C sum det =', np.linalg.det(np.diag([1., 0]) + np.diag([0., 1])))\n# (D) a11 + a22 - a12 = 0 is a linear functional -> kernel is a subspace\nf = lambda X: X[0][0] + X[1][1] - X[0][1]\nrng = np.random.default_rng(1); ok = True\nfor _ in range(1000):\n    X = rng.normal(size=(2, 2)); X[0, 1] = X[0, 0] + X[1, 1]\n    Y = rng.normal(size=(2, 2)); Y[0, 1] = Y[0, 0] + Y[1, 1]\n    c, d = rng.normal(size=2)\n    ok &= abs(f(c * X + d * Y)) < 1e-9\nprint('D closed under linear combos:', ok, '; zero in D:', f(np.zeros((2, 2))) == 0)\nprint('Answer: D')",
-      "notes": ""
+      "checkCode": "import sympy as sp\nZ = sp.zeros(2, 2); I = sp.eye(2)\n# (A) invertible matrices: contains the zero matrix?  closed under addition?\nprint(\"A: zero matrix invertible?\", Z.det() != 0, \"| I + (-I) invertible?\", (I + (-I)).det() != 0)\n# (B) integer-entry matrices: closed under multiplication by the real scalar 1/2?\nhalf_I = sp.Rational(1, 2) * I\nprint(\"B: (1/2) I has all-integer entries?\", all(e.is_integer for e in half_I))\n# (C) det = 0: diag(1,0) + diag(0,1)\nS = sp.diag(1, 0) + sp.diag(0, 1)\nprint(\"C: det(diag(1,0)+diag(0,1)) =\", S.det(), \"(both summands have det 0)\")\n# (D) x11 + x22 = x12 : symbolic closure under arbitrary real linear combinations\nx11, x12, x21, x22, y11, y12, y21, y22, al, be = sp.symbols(\"x11 x12 x21 x22 y11 y12 y21 y22 al be\")\nf = lambda a11, a12, a22: a11 + a22 - a12\nXdef = sp.Eq(f(x11, x12, x22), 0); Ydef = sp.Eq(f(y11, y12, y22), 0)\ncomb = f(al * x11 + be * y11, al * x12 + be * y12, al * x22 + be * y22)\nsol = sp.solve([Xdef, Ydef], [x12, y12], dict=True)[0]      # impose membership of X and Y\nprint(\"D: value of defining expression on alpha*X+beta*Y =\", sp.simplify(comb.subs(sol)), \"; zero matrix in D:\", f(0, 0, 0) == 0)\nprint(\"Answer: D\")",
+      "notes": "Blind re-solve matched the key (D). The stem fixes the scalar field to R, so the integer-entry set (B) is unambiguously not a subspace, and exactly one option is a subspace. Counterexamples and the symbolic closure check for D verified. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "55caa7e86e4aed55",
+        "verification": "f2c7d1f14115e085"
+      }
     }
   },
   {
@@ -707,12 +875,36 @@
       "commonTrap": "Stopping at $\\frac{\\mathbf{u}\\mathbf{u}^{\\top}}{\\mathbf{u}^{\\top}\\mathbf{u}}\\mathbf{w}$ (option D), or dividing by $\\lVert\\mathbf{u}\\rVert = 3$ instead of $\\mathbf{u}^{\\top}\\mathbf{u} = 9$, which gives $\\mathbf{w} - \\mathbf{u} = (-1, 2, -1)^{\\top}$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(1/3, 4/3, 1/3) -> (A)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nu = [2, -1, 2]; w = [1, 1, 1]\nuu = sum(x * x for x in u); uw = sum(x * y for x, y in zip(u, w))\nPw = [F(wi) - F(uw, uu) * ui for wi, ui in zip(w, u)]\nprint(uu, uw, [str(t) for t in Pw], 'Pw.u =', sum(p * x for p, x in zip(Pw, u)))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nu = sp.Matrix([2, -1, 2]); w = sp.Matrix([1, 1, 1])\nP = sp.eye(3) - (u * u.T) / (u.T * u)[0]\nPw = P * w\nprint(\"P =\", P.tolist())\nprint(\"P w =\", Pw.T.tolist()[0], \"| u.(Pw) =\", (u.T * Pw)[0], \"| P^2 == P:\", P * P == P, \"| P u =\", (P * u).T.tolist()[0])\nR = sp.Rational\nopts = {\"A\": [R(1, 3), R(4, 3), R(1, 3)], \"B\": [R(5, 3), R(2, 3), R(5, 3)], \"C\": [-R(1, 3), R(5, 3), -R(1, 3)], \"D\": [R(2, 3), -R(1, 3), R(2, 3)]}\nprint(\"matching option:\", [k for k, v in opts.items() if sp.Matrix(v) == Pw])",
+      "notes": "Blind re-solve matched the key (A). Distractors re-derived: B = w + u/3, C = Householder reflection, D = u/3 (removed component). P is idempotent with Pu = 0. Difficulty (EASY) and topic audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "24a9cf126088dba5",
+        "verification": "60ee4d31a6e6b9a7"
+      }
     }
   }
 ]

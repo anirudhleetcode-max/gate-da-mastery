@@ -52,12 +52,36 @@
       "commonTrap": "Using the full-data mean $10$ for every prediction gives the training MSE $12.8$, and dividing the sum of squared deviations by $n - 1 = 4$ gives the sample variance $16$. Neither is the LOOCV estimate: each fold must recompute the mean without the held-out order."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "20.0",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "20 (LOOCV MSE = 100/5 = 20 minutes^2)",
       "agreesWithKey": true,
-      "checkCode": "y=[4,8,12,12,14]\ne=[(y[i]-(sum(y)-y[i])/4)**2 for i in range(5)]\nprint(e, sum(e)/5)  # [56.25, 6.25, 6.25, 6.25, 25.0] 20.0",
-      "notes": ""
+      "checkCode": "import numpy as np\ny = np.array([4, 8, 12, 12, 14], float)\n# brute-force LOOCV: refit the mean predictor without each order, score the held-out one\nerrs = [float((y[i] - np.delete(y, i).mean()) ** 2) for i in range(len(y))]\nloocv = float(np.mean(errs))\n# closed form for a mean predictor: (n/(n-1))^2 * training MSE\nclosed = (len(y) / (len(y) - 1)) ** 2 * float(np.mean((y - y.mean()) ** 2))\nprint(errs, loocv, closed)  # [56.25, 6.25, 6.25, 6.25, 25.0] 20.0 20.0\nassert abs(loocv - 20) < 1e-12 and abs(closed - 20) < 1e-12",
+      "notes": "Blind solve: the held-out prediction is (50 - y_i)/4, giving errors -7.5, -2.5, 2.5, 2.5, 5 and squared errors summing to 100, so LOOCV MSE = 20; cross-checked with (n/(n-1))^2 x training MSE = 25/16 x 12.8 = 20. Own Python brute-force LOOCV agrees. The answer is exactly an integer, so no rounding is needed and the NAT range 20 to 20 is appropriate. The stem is unambiguous (mean of the other four orders, average of five squared errors). Solution steps, table values, shortcut and trap re-checked; MODERATE (five refits, about 2 min) is an honest label; topic ml-model-selection / ml-cross-validation fits. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "b73cfd840a306858",
+        "verification": "56a6b98c2ece0501"
+      }
     }
   },
   {
@@ -153,12 +177,36 @@
       "commonTrap": "Forgetting to clip a negative pre-activation to $0$. Skipping ReLU gives $\\hat{y} = -8$ at $(1, 2)$ and $\\hat{y} = 9$ at $(2, 1)$, which makes (C) look true. Counting weights but not biases gives $6$ parameters, which makes (A) look true."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B, D (params = 9; y(1,2) = -5; y(2,1) = 7; identity net = 8x1 - 9x2 + 2)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B, D (9 parameters; y(1,2) = -5; y(2,1) = 7; identity network = 8x1 - 9x2 + 2)",
       "agreesWithKey": true,
-      "checkCode": "relu=lambda z:max(0,z)\ndef net(x1,x2,a=relu): return 3*a(2*x1-x2-1)-2*a(-x1+3*x2-2)+1\nprint(2*2+2+2*1+1, net(1,2), net(2,1))  # 9 -5 7\nprint(all(net(u,v,lambda z:z)==8*u-9*v+2 for u in range(-5,6) for v in range(-5,6)))  # True",
-      "notes": ""
+      "checkCode": "import itertools, random\nimport sympy as sp\n# parameter count from layer shapes (weights + biases); shapes: 2 -> 2 -> 1\nshapes = [(2, 2), (2, 1)]\nn_params = sum(i * o + o for i, o in shapes)\nrelu = lambda z: max(0, z)\ndef net(x1, x2, act=relu):\n    return 3 * act(2 * x1 - x2 - 1) - 2 * act(-x1 + 3 * x2 - 2) + 1\nA = n_params == 6\nB = net(1, 2) == -5\nC = net(2, 1) == 9\nx1, x2 = sp.symbols(\"x1 x2\")\nlin = sp.expand(net(x1, x2, act=lambda z: z))\nD = sp.simplify(lin - (8 * x1 - 9 * x2 + 2)) == 0\nprint(n_params, net(1, 2), net(2, 1), lin)  # 9 -5 7 8*x1 - 9*x2 + 2\nprint({\"A\": A, \"B\": B, \"C\": C, \"D\": D})      # only B and D are True\nassert [k for k, v in zip(\"ABCD\", (A, B, C, D)) if v] == [\"B\", \"D\"]",
+      "notes": "Blind solve: parameters 2x2+2 + 2x1+1 = 9 (A false, and the stem states that every weight and bias is trainable); y(1,2) = 3*0 - 2*3 + 1 = -5 (B true); y(2,1) = 3*2 - 2*0 + 1 = 7, not 9 (C false); the identity network expands to 8x1 - 9x2 + 2 (D true). Own Python (layer-shape parameter count, forward passes, sympy expansion) gives exactly B and D. Exactly one defensible answer set. optionAnalysis verdicts, the distractor derivations (6 from forgetting biases, 9 from skipping ReLU on h2, -8 from skipping ReLU at (1,2)) and the trap were all re-checked and are correct. MODERATE fits four short independent checks in about 2.5 min. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "7eac54932b73c7f0",
+        "verification": "5252fc07010eaff2"
+      }
     }
   },
   {
@@ -247,12 +295,36 @@
       "commonTrap": "Eyeballing $P_3 = (5, 3)$ as a tie, or as closer to $\\mu_2$, because its $x$-coordinate is midway between $2$ and $8$. Always compute both distances; here the $y$-coordinates decide it ($10$ versus $18$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C: centroids (2.67, 2.67) and (8.00, 6.33)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C: mu1 = (2.67, 2.67), mu2 = (8.00, 6.33) (clusters {P1,P2,P3} and {P4,P5,P6})",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nP=np.array([(1,1),(2,4),(5,3),(7,5),(10,6),(7,8)]); M=np.array([(2,2),(8,6)])\nlab=((P[:,None,:]-M[None])**2).sum(2).argmin(1)\nprint(lab, [P[lab==k].mean(0).round(2).tolist() for k in (0,1)])  # [0 0 0 1 1 1] [[2.67, 2.67], [8.0, 6.33]]",
-      "notes": ""
+      "checkCode": "import numpy as np\nP = np.array([(1, 1), (2, 4), (5, 3), (7, 5), (10, 6), (7, 8)], float)\nmu = np.array([(2, 2), (8, 6)], float)\nd = np.linalg.norm(P[:, None, :] - mu[None, :, :], axis=2)      # Euclidean distances, 6 x 2\nassert (np.abs(d[:, 0] - d[:, 1]) > 1e-9).all()                   # no ties in the assignment step\nlab = d.argmin(axis=1)                                            # assignment step\nnew = np.array([P[lab == k].mean(axis=0) for k in range(2)])      # update step (means of members only)\nprint(lab, new.round(2).tolist())  # [0 0 0 1 1 1] [[2.67, 2.67], [8.0, 6.33]]\nopts = {\"A\": [(1.50, 2.50), (7.25, 5.50)], \"B\": [(2.50, 2.50), (8.00, 6.25)],\n        \"C\": [(2.67, 2.67), (8.00, 6.33)], \"D\": [(2.00, 3.00), (7.00, 6.00)]}\nmatch = [k for k, v in opts.items() if np.allclose(np.array(v), new.round(2))]\nprint(match)  # ['C']\nassert match == [\"C\"]",
+      "notes": "Blind solve: squared distances assign P1, P2, P3 to mu1 (P3: 10 < 18) and P4, P5, P6 to mu2, with no ties; means (8/3, 8/3) and (8, 19/3) round to (2.67, 2.67) and (8.00, 6.33), which is option C. Own numpy Lloyd iteration agrees and matches only option C. Distractors re-derived: A = P3 wrongly placed in cluster 2, B = old centroid included in the mean, D = coordinate-wise medians; none is defensible. All twelve squared distances in the table are correct. EASY is acceptable for a single routine k-means iteration (about 1.5 to 2 min) and matches the blueprint. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "8dbd7edc83217cd6",
+        "verification": "64245e846204864e"
+      }
     }
   },
   {
@@ -346,12 +418,36 @@
       "commonTrap": "Picking the original feature with the largest variance ($x_1$, fraction $2/3$), or pairing the eigenvector of the small eigenvalue, $(1, -2)$, with the large eigenvalue. Always verify that $\\Sigma \\mathbf{v} = \\lambda_1 \\mathbf{v}$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A: eigenvalues 7, 2; PC1 direction (2, 1); fraction 7/9 = 0.7778",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A: PC1 direction proportional to (2, 1); explained fraction 7/9 (eigenvalues 7 and 2)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nw,V=np.linalg.eigh(np.array([[6.,2.],[2.,3.]]))\nprint(w, V[:,-1]/V[1,-1], w[-1]/w.sum())  # [2. 7.] [2. 1.] 0.7778",
-      "notes": ""
+      "checkCode": "import sympy as sp\nS = sp.Matrix([[6, 2], [2, 3]])\n(l1, m1, vs1), (l2, m2, vs2) = sorted(S.eigenvects(), key=lambda t: -t[0])   # largest eigenvalue first\nv = vs1[0] / vs1[0][1]                                                        # scale so v2 = 1\nfrac = l1 / S.trace()\nprint(l1, l2, v.T.tolist(), frac)  # 7 2 [[2, 1]] 7/9\ncands = {\"A\": ((2, 1), sp.Rational(7, 9)), \"B\": ((1, 2), sp.Rational(7, 9)),\n         \"C\": ((1, 0), sp.Rational(2, 3)), \"D\": ((1, -2), sp.Rational(7, 9))}\ndef is_pc1(d):                                   # d is PC1 iff S d = lambda_max d\n    d = sp.Matrix(d)\n    return (S * d - l1 * d) == sp.zeros(2, 1)\nok = [k for k, (d, f) in cands.items() if is_pc1(d) and f == frac]\nprint(ok)  # ['A']\nassert ok == [\"A\"]",
+      "notes": "Blind solve: characteristic polynomial l^2 - 9l + 14 = 0 gives eigenvalues 7 and 2; (S - 7I)v = 0 gives v proportional to (2, 1); explained fraction 7/(7+2) = 7/9. Own sympy eigen-decomposition and an S v = 7 v test on every option agree and leave only option A. Given mean-centred data and the sample covariance matrix, standard covariance-matrix PCA is the only reading, and the correlation-matrix reading would give (1, 1), which is not offered, so there is no ambiguity. optionAnalysis products S(1,2) = (10,8), S(1,0) = (6,2), S(1,-2) = (2,-4) and the shortcut (9 +/- 5)/2 re-checked. MODERATE is honest (two linked steps, about 2.5 min). No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "74ce6e54f3816ba0",
+        "verification": "7061c5470340e356"
+      }
     }
   },
   {
@@ -440,12 +536,36 @@
       "commonTrap": "Averaging the signed residuals ($1/3$), which hides errors that cancel, or forgetting to divide the sum of squares by the number of farms ($9$). Also watch the negative coefficient of $x_2$: using $+2x_2$ gives completely different predictions."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B: residuals [1, -2, 2], MSE = 3.0",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B: residuals 1, -2, 2; MSE = 9/3 = 3.00",
       "agreesWithKey": true,
-      "checkCode": "rows=[(2,1,4,8),(4,3,2,3),(6,2,0,11)]\nr=[y-(4+1.5*a-2*b+0.5*c) for a,b,c,y in rows]\nprint(r, sum(e*e for e in r)/3)  # [1.0, -2.0, 2.0] 3.0",
-      "notes": ""
+      "checkCode": "import numpy as np\nX = np.array([[2, 1, 4], [4, 3, 2], [6, 2, 0]], float)\ny = np.array([8, 3, 11], float)\nyhat = 4 + X @ np.array([1.5, -2.0, 0.5])\ne = y - yhat\nmse = float(np.mean(e ** 2))\nprint(yhat.tolist(), e.tolist(), mse)  # [7.0, 5.0, 9.0] [1.0, -2.0, 2.0] 3.0\nopts = {\"A\": 0.33, \"B\": 3.00, \"C\": 1.67, \"D\": 9.00}\nprint([k for k, v in opts.items() if abs(v - mse) < 0.005])          # ['B']\nprint(round(float(e.mean()), 2), round(float(np.abs(e).mean()), 2), float((e ** 2).sum()))  # 0.33 1.67 9.0  (distractors)\nassert abs(mse - 3.0) < 1e-12",
+      "notes": "Blind solve: predictions 7, 5, 9; residuals 1, -2, 2; MSE = (1 + 4 + 4)/3 = 3.00, option B. Own numpy evaluation agrees and matches only B. Distractors re-derived: A = 0.33 is the mean signed residual, C = 1.67 is the mean absolute error, D = 9 is the sum of squared errors, so no option other than B is defensible. Teaching-mode figures (RMSE 1.73, MAE 5/3) also check out. EASY is honest (direct substitution into three rows, about 1.5 min). No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "fa616e57268ebbe1",
+        "verification": "91dc36a979dab0f2"
+      }
     }
   },
   {
@@ -538,12 +658,36 @@
       "commonTrap": "Comparing only the likelihood products ($0.1875$ versus $0.139$) and predicting Yes. The class prior must multiply the likelihoods; with it, No wins, $1/12 > 3/40$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "D: P(Yes | Day, DB) = 9/19 = 0.4737, predict No",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D: P(Yes | Day, DB) = 9/19 = 0.474, predicted class No",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nD=[('N','DB','Y'),('N','Web','Y'),('D','DB','Y'),('N','DB','Y'),('D','Web','N'),('D','Cache','N'),('N','Cache','N'),('D','DB','N'),('D','Web','N'),('D','Cache','N')]\ns={}\nfor c in 'YN':\n    R=[r for r in D if r[2]==c]; n=len(R)\n    s[c]=F(n,len(D))*F(sum(r[0]=='D' for r in R),n)*F(sum(r[1]=='DB' for r in R),n)\np=s['Y']/(s['Y']+s['N']); print(p, float(p))  # 9/19 0.4737 -> No",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nfrom collections import Counter\nrows = [(\"Night\", \"DB\", \"Yes\"), (\"Night\", \"Web\", \"Yes\"), (\"Day\", \"DB\", \"Yes\"), (\"Night\", \"DB\", \"Yes\"),\n        (\"Day\", \"Web\", \"No\"), (\"Day\", \"Cache\", \"No\"), (\"Night\", \"Cache\", \"No\"), (\"Day\", \"DB\", \"No\"),\n        (\"Day\", \"Web\", \"No\"), (\"Day\", \"Cache\", \"No\")]\nn = len(rows)\ncls = Counter(r[2] for r in rows)\ndef score(c, t, s, prior=True):                    # MLE (no smoothing) naive Bayes, unnormalised\n    k = cls[c]\n    lik = F(sum(r[0] == t and r[2] == c for r in rows), k) * F(sum(r[1] == s and r[2] == c for r in rows), k)\n    return (F(k, n) if prior else 1) * lik\nsy, sn = score(\"Yes\", \"Day\", \"DB\"), score(\"No\", \"Day\", \"DB\")\npost = sy / (sy + sn)\nprint(sy, sn, post, float(post), \"Yes\" if sy > sn else \"No\")   # 3/40 1/12 9/19 0.4736... No\n# distractor values\nly, ln = score(\"Yes\", \"Day\", \"DB\", False), score(\"No\", \"Day\", \"DB\", False)\nprint(float(ly / (ly + ln)), float(sn / (sy + sn)))            # 0.5744 (no prior), 0.5263 (P(No|.))\nexact = [r for r in rows if r[0] == \"Day\" and r[1] == \"DB\"]\nprint(exact)                                                   # lookup-table match: one Yes, one No -> 0.5\nassert post == F(9, 19) and sy < sn",
+      "notes": "Blind solve: priors 0.4 and 0.6; P(Day|Yes) = 1/4, P(DB|Yes) = 3/4, P(Day|No) = 5/6, P(DB|No) = 1/6; scores 3/40 = 0.075 (Yes) and 1/12 = 0.0833 (No); posterior 9/19 = 0.474, so the predicted class is No, option D. Own exact-fraction Python agrees. The stem fixes the estimator (maximum likelihood, no smoothing), so there is a single defensible answer. Distractors re-derived: A = 27/47 = 0.574 drops the priors, B = 0.50 is an exact-row lookup (alerts 3 and 8), C = 10/19 is P(No | Day, DB). MODERATE is honest (two linked steps with a real trap). No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "55d9dab720eb98b5",
+        "verification": "0e9f18f6e0bfdc27"
+      }
     }
   },
   {
@@ -599,12 +743,36 @@
       "commonTrap": "Using the sample variance with divisor $3$ ($10/3 \\approx 3.33$, giving $13.83$), forgetting the irreducible noise ($11.5$), or adding the bias $3$ instead of the squared bias $9$ ($7$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "13.0",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "13 (bias^2 = 9, variance = 2.5, noise = 1.5)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\np=np.array([22,25,21,24]); f=20; s2=1.5\nprint((p.mean()-f)**2 + p.var() + s2, np.mean((p-f)**2) + s2)  # 13.0 13.0",
-      "notes": ""
+      "checkCode": "import numpy as np\nf0, s2 = 20.0, 1.5\npreds = np.array([22, 25, 21, 24], float)\n# exact expectation: average over the 4 equally likely training sets; noise eps = +/- sqrt(s2) with equal prob\n# (mean 0, variance s2), independent of the training set\neps = np.array([-np.sqrt(s2), np.sqrt(s2)])\ndirect = np.mean([((f0 + e) - p) ** 2 for p in preds for e in eps])\ndecomp = (preds.mean() - f0) ** 2 + preds.var() + s2   # bias^2 + variance (divisor 4) + noise\nprint(direct, decomp, (preds.mean() - f0) ** 2, preds.var())   # 13.0 13.0 9.0 2.5\nassert abs(direct - 13) < 1e-9 and abs(decomp - 13) < 1e-9",
+      "notes": "Blind solve: mean prediction 23 so bias^2 = 9; variance with divisor 4 (the four training sets are the whole population, as the stem states) = 2.5; noise 1.5; total 13. Direct check: mean of (f_hat - 20)^2 = 11.5, plus 1.5 = 13. Own Python enumerating the four training sets and the noise gives 13.0 as well. The answer is an exact integer, so no rounding is needed and the NAT range 13 to 13 is appropriate. The stem is unambiguous because it fixes the population-average variance convention. Distractor values in the trap (13.83, 11.5, 7) re-checked. EASY is acceptable for a direct bias-variance-noise substitution. No edits were needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "a2237bc2c24c3ac9",
+        "verification": "f6ffe5e4895f22a5"
+      }
     }
   }
 ]

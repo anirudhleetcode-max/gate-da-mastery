@@ -96,6 +96,26 @@
       "agreesWithKey": true,
       "checkCode": "PS, PU = 0.12, 0.34\nPD = PU - PS          # disjoint: P(S∩D)=0\nprint(round(PD/(1-PS), 4))  # D ⊆ S^c -> 0.25",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -198,6 +218,26 @@
       "agreesWithKey": true,
       "checkCode": "import itertools\nE=[('L','T'),('N','T'),('T','U'),('L','E')]\ndef anc(S):\n  S=set(S)\n  while True:\n    n={a for a,b in E if b in S}-S\n    if not n: return S\n    S|=n\ndef dsep(X,Y,Z):\n  A=anc(X|Y|Z); G={frozenset(e) for e in E if set(e)<=A}\n  for m in A:\n    for p,q in itertools.combinations([a for a,b in E if b==m and a in A],2): G.add(frozenset((p,q)))\n  seen=set(X); st=list(X)\n  while st:\n    u=st.pop()\n    for e in G:\n      if u in e:\n        v=next(iter(e-{u}))\n        if v not in Z and v not in seen: seen.add(v); st.append(v)\n  return not seen&Y\nfor o,(X,Y,Z) in zip('ABCD',[('L','N','U'),('E','U','T'),('E','N','U'),('L','U','E')]): print(o,dsep({X},{Y},{Z}))  # only B True",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -259,6 +299,26 @@
       "agreesWithKey": true,
       "checkCode": "J={(1,0):.15,(1,1):.05,(1,2):.05,(2,0):.15,(2,2):.10,(3,0):.05,(3,1):.15}\nc=(1-sum(J.values()))/3; J[(2,1)]=c; J[(3,2)]=2*c\nB=sum(v for (x,y),v in J.items() if x+y>=4); AB=sum(v for (x,y),v in J.items() if x+y>=4 and x==3)\nprint(round(c,4), round(AB/B,4))  # 0.1 0.7778",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -358,6 +418,26 @@
       "agreesWithKey": true,
       "checkCode": "x=[1,2,3,4,5]; y=[3,4,6,8,9]\nmx=sum(x)/5; my=sum(y)/5\nb1=sum((a-mx)*(b-my) for a,b in zip(x,y))/sum((a-mx)**2 for a in x)\nprint(round(my-b1*mx,4), round(b1,4))  # 1.2 1.6",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -460,6 +540,26 @@
       "agreesWithKey": true,
       "checkCode": "import heapq\nE={'S':[('A',4),('B',1)],'B':[('A',2),('C',9),('D',7)],'A':[('C',5),('D',2)],'C':[('T',2)],'D':[('T',7)],'T':[]}\nd={'S':0}; par={}; pq=[(0,'S')]; done=set()\nwhile pq:\n  du,u=heapq.heappop(pq)\n  if u in done: continue\n  done.add(u)\n  for v,w in E[u]:\n    if du+w<d.get(v,1e9): d[v]=du+w; par[v]=u; heapq.heappush(pq,(d[v],v))\np=['T']\nwhile p[-1]!='S': p.append(par[p[-1]])\nprint(d['T'], p[::-1])  # 10 ['S','B','A','C','T']",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -562,6 +662,26 @@
       "agreesWithKey": true,
       "checkCode": "import statistics as s\nd=[4,7,7,9,10,12,7,16]; d2=[40 if v==16 else v for v in d]\nprint(s.mean(d), s.median(d), s.mode(d), s.pvariance(d), s.median(d2))  # 9 8.0 7 12 8.0",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -661,6 +781,26 @@
       "agreesWithKey": true,
       "checkCode": "p=0.6; pm={1:p,2:(1-p)*p,3:(1-p)**2}\nEX=sum(k*v for k,v in pm.items()); EX2=sum(k*k*v for k,v in pm.items())\nprint(round(sum(pm.values()),4), round(EX,4), round(EX2,4), round(EX2-EX**2,4))  # 1.0 1.56 3.0 0.5664",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -721,6 +861,26 @@
       "agreesWithKey": true,
       "checkCode": "import itertools\nR='ABCDEG'; F=[('AB','C'),('C','A'),('BC','D'),('D','E'),('E','G')]\ndef cl(X):\n  X=set(X)\n  while True:\n    n={r for l,r in F if set(l)<=X}-X\n    if not n: return X\n    X|=n\nSK=[set(c) for k in range(1,7) for c in itertools.combinations(R,k) if cl(c)==set(R)]\nCK=[s for s in SK if not any(t<s for t in SK)]; prime=set().union(*CK)\nprint(sorted(''.join(sorted(k)) for k in CK), sum(1 for l,r in F if cl(l)!=set(R) and r not in prime))  # ['AB','BC'] 2",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -827,6 +987,26 @@
       "agreesWithKey": true,
       "checkCode": "import math, random\nH=lambda p:-sum(x*math.log2(x) for x in p if x>0); G=lambda p:1-sum(x*x for x in p)\nprint(H([1,0]),G([1,0]),H([.5,.5]),G([.5,.5]))  # 0 0 1.0 0.5\nrandom.seed(1); mn=1\nfor _ in range(20000):\n  n1,n2=random.randint(1,20),random.randint(1,20); a,b=random.randint(0,n1),random.randint(0,n2)\n  ig=H([(a+b)/(n1+n2),1-(a+b)/(n1+n2)])-(n1*H([a/n1,1-a/n1])+n2*H([b/n2,1-b/n2]))/(n1+n2); mn=min(mn,ig)\nprint(mn>=-1e-12)  # True: information gain never negative",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -929,6 +1109,26 @@
       "agreesWithKey": true,
       "checkCode": "E={'S':[('A',2),('B',1)],'A':[('C',1),('D',6)],'B':[('C',4),('G',9)],'C':[('D',2)],'D':[('G',2)],'G':[]}\nh={'S':3,'A':5,'B':2,'C':1,'D':2,'G':0}\ng={'S':0}; F={'S'}; closed=set(); order=[]\nwhile F:\n  u=min(F,key=lambda n:g[n]+h[n]); F.remove(u); order.append(u)\n  if u=='G': break\n  closed.add(u)\n  for v,w in E[u]:\n    if v in closed: continue   # no re-opening\n    if v not in F or g[u]+w<g[v]: g[v]=g[u]+w; F.add(v)\nprint(order, g['G'])  # ['S','B','C','A','D','G'] 9",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   }
 ]

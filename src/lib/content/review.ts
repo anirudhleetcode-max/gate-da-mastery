@@ -203,7 +203,8 @@ export function reviewQuestion(q: OriginalQuestion, ctx: ReviewContext): ReviewR
   return {
     status,
     checks,
-    fixed: /corrected during verification/i.test(av.method) || /\b(fixed|corrected|rewrote|changed)\b/i.test(av.notes ?? ""),
+    // The verifier protocol marks every content correction with this phrase ("Nothing changed" must not count).
+    fixed: /corrected during verification/i.test(`${av.method} ${av.notes ?? ""}`),
     notes: failures.join("; "),
     reviewedAt: ctx.today,
     // Sticky: refreshed only when the question (re)reaches VERIFIED.

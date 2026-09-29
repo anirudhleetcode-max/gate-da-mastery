@@ -51,12 +51,36 @@
       "commonTrap": "Using the **median** (2) for Analyst B, which gives $a - b = 1$; the median minimises absolute error, not the misclassification rate. Another slip is assuming both framings must give the same constant (answer 0)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "2",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\ny = np.array([3, 1, 0, 6, 1, 8, 2, 1, 5])\ngrid = np.linspace(0, 8, 8001)\na = grid[np.argmin([np.mean((y - c) ** 2) for c in grid])]   # regression constant\nb = min(set(y.tolist()), key=lambda c: np.sum(y != c))        # 0-1 loss constant label\nprint(round(a - b, 6))",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom collections import Counter\ny = np.array([3, 1, 0, 6, 1, 8, 2, 1, 5])\na = min(np.linspace(0, 8, 8001), key=lambda c: np.mean((y - c) ** 2))   # squared-loss constant\nb = min(set(y.tolist()), key=lambda c: np.mean(y != c))                   # 0-1-loss constant label\nprint(round(a, 6), b, round(a - b, 6), Counter(y.tolist()).most_common(1))  # 3.0 1 2.0 [(1, 3)]\nassert abs((a - b) - 2) < 1e-9",
+      "notes": "Blind solve (mean of the 9 values = 27/9 = 3 for squared loss; mode = 1, three occurrences, for 0-1 loss) gave a - b = 2, matching the key. Audited stem: the mean and the mode are both unique, so a and b are unambiguous. Steps, sanity check (MSE(3) = 60/9, MSE(1) = 96/9, 0-1 error 6/9 vs 8/9), median trap, MODERATE label (two linked ideas plus routine computation, as in the blueprint) and topic mapping are correct; no edits required. Exact integer answer, so the NAT range 2 to 2 is appropriate."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "84431f7ae91a3344",
+        "verification": "f519ca18208f2c12"
+      }
     }
   },
   {
@@ -150,12 +174,36 @@
       "commonTrap": "Reading the coefficient as an effect on the **probability** (option B) or on the log-odds as a multiplier (option D). A coefficient acts additively on log-odds and multiplicatively on odds."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A (odds ratio = 8.0 for every baseline log-odds)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A (odds ratio = 8 for every baseline log-odds)",
       "agreesWithKey": true,
-      "checkCode": "import math\nb1 = math.log(2)\nfor z in [-3, -1, 0.5, 2]:          # log-odds of the first ticket\n    o1, o2 = math.exp(z), math.exp(z + 3 * b1)\n    p1, p2 = o1 / (1 + o1), o2 / (1 + o2)\n    print(round(o2 / o1, 6), round(p2 / p1, 3), round((z + 3 * b1) / z, 3))\n# odds ratio is always 8; probability ratio and log-odds ratio vary",
-      "notes": ""
+      "checkCode": "import math\ns = lambda z: 1 / (1 + math.exp(-z))\nb1 = math.log(2)\nfor b0 in [-3, -1, 0, 2]:                       # arbitrary baseline log-odds (b0 + b2*x2)\n    p1, p2 = s(b0), s(b0 + 3 * b1)\n    odds = (p2 / (1 - p2)) / (p1 / (1 - p1))\n    print(round(odds, 6), round(p2 / p1, 3), round((b0 + 3 * b1) / b0, 3) if b0 else None)\n    assert abs(odds - 8) < 1e-9                 # odds ratio is 8 for every baseline (A); prob/log-odds ratios vary",
+      "notes": "Blind solve (log-odds are linear, so +3 replies adds 3 ln 2 = ln 8 and the odds are multiplied by 8) gave (A), matching the key. Python confirms the odds ratio is 8 for every baseline while the probability ratio and the log-odds ratio vary, so (B), (C) and (D) are not true in general; the stem's 'whatever the common age and beta_0, beta_2' clause makes (A) the only defensible choice. Option analysis, steps, EASY label and topic mapping audited; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "bd82dd53b7df3eb3",
+        "verification": "09a3fcc6ba6d8d86"
+      }
     }
   },
   {
@@ -210,12 +258,36 @@
       "commonTrap": "Forgetting to square the bias (giving $2 + 1.5 + 0.5 = 4.0$), dividing by $n - 1 = 3$ for the variance (giving 6.5), or leaving out the noise term (giving 5.5)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "6.0",
       "agreesWithKey": true,
-      "checkCode": "f, P, s2 = 5, [5, 7, 8, 8], 0.5\nm = sum(P) / len(P)\nbias2 = (m - f) ** 2\nvar = sum((p - m) ** 2 for p in P) / len(P)\nprint(bias2, var, bias2 + var + s2)\nprint(sum((f - p) ** 2 for p in P) / len(P) + s2)  # direct check",
-      "notes": ""
+      "checkCode": "import numpy as np\nf0, sigma2 = 5.0, 0.5\nfhat = np.array([5, 7, 8, 8], float)            # four equally likely training sets\nbias2, var = (fhat.mean() - f0) ** 2, fhat.var()  # np.var divides by 4\nprint(bias2, var, bias2 + var + sigma2)         # 4.0 1.5 6.0\n# direct Monte-Carlo style check: E[(y - fhat)^2] with y = f0 + eps\nrng = np.random.default_rng(1)\nT = rng.integers(0, 4, 2_000_000); eps = rng.normal(0, sigma2 ** 0.5, 2_000_000)\nprint(np.mean((f0 + eps - fhat[T]) ** 2))       # ~ 6.0\nassert abs(bias2 + var + sigma2 - 6.0) < 1e-12",
+      "notes": "Blind solve (mean prediction 7, bias^2 = 4, variance 6/4 = 1.5, noise 0.5) gave 6.0, matching the key; the direct average of (y - fhat)^2 (0.5 + 22/4) and a Monte-Carlo run agree. Audited stem: the divide-by-4 variance convention and the independent noise are stated, so the answer is unique. The NAT range 5.9 to 6.1 is sensible for the stated one-decimal rounding (true value exactly 6.0). Steps, trap arithmetic (4.0, 6.5, 5.5), EASY label and topic mapping are correct; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "434d29f8bb84c000",
+        "verification": "29e453fa41782b76"
+      }
     }
   },
   {
@@ -305,12 +377,36 @@
       "commonTrap": "Applying ReLU to the linear output unit (giving 0), or forgetting the hidden ReLU so the negative pre-activation $-1$ leaks through (giving $-4$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "-2.0 (option B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B (-2)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nW1 = np.array([[1, -3], [0.5, 1]]); b1 = np.array([0, -1])\nw2 = np.array([2, -3]); b2 = 1\nx = np.array([2, 1])\nh = np.maximum(0, W1 @ x + b1)\nprint(h, w2 @ h + b2)",
-      "notes": ""
+      "checkCode": "import numpy as np\nW1 = np.array([[1, -3], [0.5, 1]]); b1 = np.array([0, -1])\nw2 = np.array([2, -3]); b2 = 1; x = np.array([2, 1])\nz = W1 @ x + b1; h = np.maximum(z, 0); y = w2 @ h + b2\nprint(z, h, y)                                  # [-1. 1.] [0. 1.] -2.0\nassert y == -2                                  # option (B)",
+      "notes": "Blind solve (pre-activations (-1, 1), ReLU gives h = (0, 1), output 2(0) - 3(1) + 1 = -2) gave (B), matching the key. Python forward pass agrees. Option analysis verified numerically: (A) -4 = no hidden ReLU, (C) 0 = ReLU on the linear output, (D) 6 = transposed W1. Steps, EASY label and topic mapping are correct; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "06eafa764f2960c7",
+        "verification": "ce126f0ed5b50b20"
+      }
     }
   },
   {
@@ -407,12 +503,36 @@
       "commonTrap": "Marking (D) as correct because each $k$-means step is deterministic. The *steps* are deterministic, but the fixed point reached depends on where the algorithm starts."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A, B (k-means counter-example confirms D is false)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A, B",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX = np.array([[0, 0], [0, 1], [4, 0], [4, 1]], float)\ndef lloyd(C):\n    for _ in range(20):\n        lab = np.argmin(((X[:, None] - C[None]) ** 2).sum(2), 1)\n        C = np.array([X[lab == j].mean(0) for j in range(len(C))])\n    return lab.tolist(), float(((X - C[lab]) ** 2).sum())\nprint(lloyd(np.array([[0, .5], [4, .5]])))   # ([0,0,1,1], 1.0)\nprint(lloyd(np.array([[2., 0], [2, 1]])))    # ([0,1,0,1], 16.0) -> (D) is false",
-      "notes": ""
+      "checkCode": "import numpy as np\n# (D): k-means result depends on the initial centres\nX = np.array([[0, 0], [0, 1], [4, 0], [4, 1]], float)\ndef lloyd(C):\n    C = np.array(C, float)\n    for _ in range(50):\n        lab = np.argmin(((X[:, None] - C[None]) ** 2).sum(2), 1)\n        C = np.array([X[lab == j].mean(0) for j in range(len(C))])\n    return lab.tolist(), float(((X - C[lab]) ** 2).sum())\nr1, r2 = lloyd([[0, .5], [4, .5]]), lloyd([[2, 0], [2, 1]])\nprint(r1, r2)                                   # ([0,0,1,1], 1.0)  ([0,1,0,1], 16.0)\nassert r1[0] != r2[0] and r1[1] != r2[1]        # (D) false\n# (A): a mean of {0,1,10} is not a data point; the medoid always is\npts = np.array([0., 1., 10.]); print(pts.mean(), pts[np.argmin([abs(pts - p).sum() for p in pts])])\n# (B): one agglomerative run gives a dendrogram that can be cut at any number of clusters afterwards\nfrom scipy.cluster.hierarchy import linkage, fcluster\nZ = linkage(np.array([[0.], [1.], [3.], [7.], [15.]]), 'average')       # distinct merge heights\nprint([len(set(fcluster(Z, k, 'maxclust'))) for k in (1, 2, 3, 4, 5)])  # [1, 2, 3, 4, 5]",
+      "notes": "Blind solve gave A and B true, C and D false, matching the key. (A) k-medoids centres are data points while k-means centres are means; (B) agglomerative clustering builds a full dendrogram that is cut afterwards (Python cut gives 1 to 5 clusters from a single run); (C) clustering is unsupervised; (D) a 4-point counter-example run in Python gives WCSS 1 from one start and 16 from another. Audited that no statement is a matter of convention and each has one defensible truth value; the four-point example and its numbers are correct. Steps, verdicts, EASY label and topic mapping are correct; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "8d764f8f44d63051",
+        "verification": "b76c99f453f7174d"
+      }
     }
   },
   {
@@ -502,12 +622,36 @@
       "commonTrap": "Picking (A) because PCA is also \"about variance\". Ranking the *original* readings by variance is selection; PCA finds *new directions* of maximum variance, which is extraction."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nrng = np.random.default_rng(0)\nX = rng.normal(size=(100, 40)) @ rng.normal(size=(40, 40)); Xc = X - X.mean(0)\nVt = np.linalg.svd(Xc, full_matrices=False)[2]; Z = Xc @ Vt[:8].T\nprint(any(np.allclose(Z[:, i], Xc[:, j]) for i in range(8) for j in range(40)))  # False\nprint((np.abs(Vt[:8]) > 1e-8).sum(1))  # each PC mixes all 40 readings",
-      "notes": ""
+      "checkCode": "import numpy as np\nrng = np.random.default_rng(3)\nX = rng.normal(size=(200, 40)) @ rng.normal(size=(40, 40)); Xc = X - X.mean(0)\nVt = np.linalg.svd(Xc, full_matrices=False)[2]; Z = Xc @ Vt[:8].T      # (D) PCA scores\nsel_var = np.argsort(Xc.var(0))[-8:]                                     # (A) variance filter -> original columns\nprint(any(np.allclose(Z[:, i], Xc[:, j]) for i in range(8) for j in range(40)))  # False: PCA scores are new features\nprint(np.count_nonzero(np.abs(Vt[:8]) > 1e-10, axis=1))                  # each PC mixes all 40 readings\nprint(sorted(sel_var.tolist()))                                          # a subset of original reading indices",
+      "notes": "Blind solve gave (D) PCA as the only feature-extraction method: (A) variance filter, (B) backward elimination wrapper and (C) correlation filter all return a subset of the original 40 readings. Python shows PCA scores are not any original column and each of the 8 components mixes all 40 readings. The stem defines extraction as 'not a subset of the original readings', which leaves exactly one option. Steps, option verdicts, EASY label and topic mapping are correct; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "033147d3d25eefe1",
+        "verification": "5af9b279061984f2"
+      }
     }
   },
   {
@@ -598,15 +742,39 @@
         }
       ],
       "shortcut": "The OLS line passes through $(\\bar{x}, \\bar{y}) = (4, 10)$, so $\\hat{y}(5) = 10 + \\hat\\beta_1 \\times (5 - 4) = 11.5$.",
-      "commonTrap": "Mixing up the slope formula as $S_{xx}/S_{xy}$ (the regression of $x$ on $y$ viewed the wrong way), or adding $\\hat\\beta_1 x$ to $\\bar{y}$ instead of to $\\hat\\beta_0$."
+      "commonTrap": "Inverting the slope formula to $S_{xx}/S_{xy}$ (giving $2/3$ instead of $3/2$, hence $\\approx 10.67$), or adding $\\hat\\beta_1 x$ to $\\bar{y}$ instead of to $\\hat\\beta_0$ (giving $17.5$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "11.5 (option C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "C (11.5)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nx = np.array([2, 4, 4, 4, 6.]); y = np.array([7, 9, 10, 11, 13.])\nb1 = ((x - x.mean()) * (y - y.mean())).sum() / ((x - x.mean()) ** 2).sum()\nb0 = y.mean() - b1 * x.mean()\nprint(b1, b0, b0 + b1 * 5)",
-      "notes": ""
+      "checkCode": "import numpy as np\nx = np.array([2, 4, 4, 4, 6.]); y = np.array([7, 9, 10, 11, 13.])\nX = np.column_stack([np.ones_like(x), x])\nbeta, *_ = np.linalg.lstsq(X, y, rcond=None)                             # OLS via least squares\nprint(beta, beta @ [1, 5])                                              # [4. 1.5] 11.5\nassert abs(beta @ [1, 5] - 11.5) < 1e-9                                  # option (C)",
+      "notes": "Blind solve (x-bar = 4, y-bar = 10, Sxy = 12, Sxx = 8, slope 1.5, intercept 4, prediction 11.5) gave (C), matching the key; numpy least squares agrees. The answer, steps and option analysis (7.5 = dropped intercept, 10.67 = inverted slope, 17.5 = uncentred x) are all correct and were verified numerically. Corrected the commonTrap wording: it described the inverted slope Sxx/Sxy as 'the regression of x on y', which is inaccurate (that regression has slope Sxy/Syy); it now simply says the slope formula was inverted, with the resulting values. EASY label and topic mapping are correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "463d3e03dda73c75",
+        "verification": "344c42c53700b282"
+      }
     }
   },
   {
@@ -699,12 +867,36 @@
       "commonTrap": "Ranking neighbours by Manhattan distance (or by eye) and taking $C_4$ as the third neighbour instead of $C_3$, which flips the $k = 3$ prediction to Churn."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "k=1 Churn, k=3 Stay (option D)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D (k = 1 Churn, k = 3 Stay)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom collections import Counter\npts = [((4, 8), 'Churn'), ((8, 6), 'Stay'), ((6, 10), 'Stay'),\n       ((4, 1), 'Churn'), ((10, 10), 'Churn'), ((9, 1), 'Stay')]\nq = np.array([4, 6])\norder = sorted(pts, key=lambda p: np.linalg.norm(np.array(p[0]) - q))\nfor k in (1, 3):\n    print(k, Counter(l for _, l in order[:k]).most_common(1)[0][0])",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom collections import Counter\nP = np.array([[4, 8], [8, 6], [6, 10], [4, 1], [10, 10], [9, 1]], float)\ncls = ['Churn', 'Stay', 'Stay', 'Churn', 'Churn', 'Stay']; q = np.array([4., 6.])\nd = np.sqrt(((P - q) ** 2).sum(1)); order = np.argsort(d)\nprint(d.round(3), [f'C{i+1}' for i in order])                            # no ties in the ranking\nres = {k: Counter(cls[i] for i in order[:k]).most_common(1)[0][0] for k in (1, 3)}\nprint(res)                                                               # {1: 'Churn', 3: 'Stay'} -> (D)\nassert res == {1: 'Churn', 3: 'Stay'} and len(set(d.round(9))) == 6",
+      "notes": "Blind solve (Euclidean distances 2, 4, 4.47, 5, 7.07, 7.21 to C1, C2, C3, C4, C6, C5) gave k = 1 Churn (C1) and k = 3 Stay (C1, C2, C3 vote Churn, Stay, Stay), matching the key (D). All distances are distinct, so there are no ties at k = 1 or k = 3 and the majority vote is never tied. The Manhattan-distance remark and the distractor explanations were checked numerically (Manhattan order C1, C2, C4, C3 would give Churn at k = 3). Steps, verdicts, EASY label and topic mapping are correct; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "964400748fe0ad3d",
+        "verification": "f4008f663eb772c8"
+      }
     }
   }
 ]

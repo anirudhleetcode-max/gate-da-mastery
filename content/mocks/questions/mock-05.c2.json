@@ -52,12 +52,36 @@
       "commonTrap": "Stopping after finding $AD$ and answering 1, which misses that the cycle makes $A$, $B$ and $C$ interchangeable. Another mistake is counting superkeys such as $ABD$ or $ADE$, which are not minimal, as candidate keys."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3 (candidate keys AD, BD, CD)",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nR='ABCDE'; F=[('A','B'),('B','C'),('C','A'),('D','E')]\ndef cl(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nks=[]\nfor k in range(1,6):\n    for c in combinations(R,k):\n        if cl(c)==set(R) and not any(set(x)<=set(c) for x in ks): ks.append(c)\nprint(ks, len(ks))  # [('A','D'),('B','D'),('C','D')] 3",
-      "notes": ""
+      "checkCode": "from itertools import combinations\nattrs = \"ABCDE\"\nfds = [(\"A\", \"B\"), (\"B\", \"C\"), (\"C\", \"A\"), (\"D\", \"E\")]\ndef closure(x):\n    x = set(x)\n    while True:\n        new = {r for l, r in fds if l in x} - x\n        if not new:\n            return x\n        x |= new\nsupers = [set(c) for k in range(1, 6) for c in combinations(attrs, k) if closure(c) == set(attrs)]\nkeys = sorted(\"\".join(sorted(s)) for s in supers if not any(t < s for t in supers))\nprint(keys, len(keys))            # ['AD', 'BD', 'CD'] 3\nprint(sorted(\"\".join(sorted(s)) for s in supers))   # all superkeys, for the 'not minimal' trap\nassert len(keys) == 3",
+      "notes": "Blind attribute-closure solve: D is on no right-hand side so it is in every key, D+ = {D,E} is not the schema, and each of A, B, C (cycle) completes it, giving AD, BD, CD = 3, matching the key. Own Python enumerates all attribute subsets by closure, keeps the minimal superkeys and gets ['AD','BD','CD'] (14 superkeys in total, so the 'non-minimal superkey' trap is real). Integer NAT, exact range 3 to 3 needs no rounding note. Stem is unambiguous (implied-FDs-only assumption stated). EASY / 75 s, topic dbw-normalization and subtopic dbw-normal-forms are honest and match the blueprint slot. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "7a333ac04ce544d6",
+        "verification": "d6cbe2bd5923ec17"
+      }
     }
   },
   {
@@ -155,12 +179,36 @@
       "commonTrap": "Dividing $4096/160 = 25.6$ without taking the floor (that assumes spanned records), or assuming that a secondary index can be sparse just like the primary index."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Primary 1200 entries, secondary 30000 entries -> (A)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A: sparse primary index 1200 entries, dense secondary index 30000 entries",
       "agreesWithKey": true,
-      "checkCode": "import math\nbfr=4096//160            # 25 (unspanned)\nblocks=math.ceil(30000/bfr)  # 1200\nprint(bfr, blocks, 30000)    # primary=1200 (one per block), secondary dense=30000",
-      "notes": ""
+      "checkCode": "import math\nn, rec, blk = 30000, 160, 4096\nbfr = blk // rec                       # unspanned: only whole records fit in a block\nblocks = math.ceil(n / bfr)\nprimary_sparse = blocks                # one anchor entry per data block (file ordered on call_id)\nsecondary_dense = n                    # unique, unordered attribute: one entry per record\n# brute-force packing of records into 4096-byte blocks, no spanning\nused, packed = blk, 0\nfor _ in range(n):\n    if used + rec > blk:\n        packed += 1; used = 0\n    used += rec\nassert packed == blocks\nopts = {\"A\": (1200, 30000), \"B\": (1172, 30000), \"C\": (1200, 1200), \"D\": (30000, 1200)}\nprint(bfr, blocks, [k for k, v in opts.items() if v == (primary_sparse, secondary_dense)])   # 25 1200 ['A']\nprint(math.ceil(n / (blk / rec)))      # 1172: the spanned-records value behind distractor B",
+      "notes": "Blind solve: bfr = floor(4096/160) = 25 (unspanned), 30000/25 = 1200 blocks, so the sparse primary index has 1200 entries; the secondary index on a unique, unordered attribute must be dense, so 30000 entries; matches key A. Own Python (including a brute-force packing of 30000 records into 4096-byte blocks) agrees, and the fractional-bfr value 1172 behind distractor B recomputes correctly. Stem states 'unspanned', 'sparse ... one entry for each data block' and 'unique', so exactly one option is defensible. Option verdicts and explanations checked. EASY / 75 s and dbw-storage / dbw-indexing are honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "519cb3fe92abdd22",
+        "verification": "b9a23c0d8a011d15"
+      }
     }
   },
   {
@@ -258,12 +306,36 @@
       "commonTrap": "Forgetting to add $\\text{new\\_min}$ (giving 1.33) or stopping at the $[0, 1]$ value (0.67). For the z-score, dividing by $n - 1$ instead of $n$ gives 0.45."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "min-max = 0.3333 -> 0.33; z = 0.5 -> (C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(0.33, 0.50); option C",
       "agreesWithKey": true,
-      "checkCode": "import statistics as st\nv=[34,38,40,42,46]; x=42\nmm=(x-min(v))/(max(v)-min(v))*(1-(-1))+(-1)\nz=(x-st.mean(v))/st.pstdev(v)\nprint(round(mm,2), round(z,2))  # 0.33 0.5",
-      "notes": ""
+      "checkCode": "import statistics as st\nv = [34, 38, 40, 42, 46]; x = 42\nlo, hi = -1, 1\nmm = lo + (x - min(v)) * (hi - lo) / (max(v) - min(v))\nz_pop = (x - st.mean(v)) / st.pstdev(v)          # divisor n\nz_smp = (x - st.mean(v)) / st.stdev(v)           # divisor n-1 (distractor)\ngot = (round(mm, 2), round(z_pop, 2))\nopts = {\"A\": (0.67, 0.50), \"B\": (0.33, 0.45), \"C\": (0.33, 0.50), \"D\": (1.33, 0.50)}\nprint(got, [k for k, o in opts.items() if o == got])                # (0.33, 0.5) ['C']\nprint(round(z_smp, 2), round((x - min(v)) / (max(v) - min(v)), 2), round(2 * (x - min(v)) / (max(v) - min(v)), 2))  # 0.45 0.67 1.33",
+      "notes": "Blind solve: min-max to [-1,1] gives -1 + 2*(8/12) = 0.333 -> 0.33; mean 40, population variance 80/5 = 16, sigma 4, z = 2/4 = 0.50; pair (0.33, 0.50) = key C. Own Python agrees; distractors recompute as A = unshifted [0,1] value 0.67, B = sample sigma sqrt(20) giving 0.45, D = unshifted 1.33, so each has a single explained error. Rounding (two decimal places) and the population-sigma convention are both stated in the stem, so no unstated convention remains. MODERATE / 120 s (two linked formulas, routine arithmetic) and dbw-data-transformation are honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "46b283e7a7081397",
+        "verification": "a93d16c7692ecfaf"
+      }
     }
   },
   {
@@ -357,12 +429,36 @@
       "commonTrap": "Forgetting the *all* level (giving 36), or assuming a branching (lattice) hierarchy has fewer usable levels than it actually has (giving 60)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "80 -> (D)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "80; option D",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nlv={'time':['day','month','quarter','year'],'store':['store','city','state'],'product':['sku','brand','category']}\nprint(len(list(product(*[l+['all'] for l in lv.values()]))))  # 80",
-      "notes": ""
+      "checkCode": "from itertools import product\ntime = [\"day\", \"month\", \"quarter\", \"year\"]\nstore = [\"store\", \"city\", \"state\"]\nprod = [\"SKU\", \"brand\", \"category\"]            # brand and category are separate levels above SKU\ncuboids = list(product(time + [\"all\"], store + [\"all\"], prod + [\"all\"]))\nn = len(cuboids)\nopts = {\"A\": 8, \"B\": 36, \"C\": 60, \"D\": 80}\nassert (\"day\", \"store\", \"SKU\") in cuboids and (\"all\", \"all\", \"all\") in cuboids   # base and apex included\nprint(n, [k for k, v in opts.items() if v == n])          # 80 ['D']\nprint(2 ** 3, 4 * 3 * 3, 5 * 4 * 3)                        # 8 36 60: the distractors and how they arise",
+      "notes": "Blind solve: per-dimension choices are levels + all: time 4+1 = 5, store 3+1 = 4, product {SKU, brand, category}+all = 4; 5*4*4 = 80 = key D. Own Python enumerates itertools.product of the level lists (with all) and gets 80, confirming the base (day, store, SKU) and apex (all, all, all) cuboids are included; distractors recompute as A = 2^3, B = 4*3*3 (no all), C = 5*4*3 (product treated as a chain). The stem defines a cuboid as one listed level (or all) per dimension, so the lattice cannot change the count and there is no unstated convention. MODERATE / 120 s and dbw-warehousing / dbw-concept-hierarchies are honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "d802e0b767204740",
+        "verification": "ca6e05f9cd70ce01"
+      }
     }
   },
   {
@@ -459,12 +555,36 @@
       "commonTrap": "Treating `ON DELETE SET NULL` as if it deleted the pickers (and then their picks), or forgetting that the cascade continues from Shelf into Pick."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "6 rows (Warehouse 1, Shelf 2, Picker 0, Pick 3) -> (C)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "6 rows (Warehouse 1, Shelf 2, Picker 0, Pick 3); option C",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nc=sqlite3.connect(':memory:'); c.execute('PRAGMA foreign_keys=ON')\nc.executescript('''CREATE TABLE Warehouse(wid TEXT PRIMARY KEY);\nCREATE TABLE Shelf(sid TEXT PRIMARY KEY, wid TEXT NOT NULL REFERENCES Warehouse(wid) ON DELETE CASCADE);\nCREATE TABLE Picker(pid TEXT PRIMARY KEY, home_wid TEXT REFERENCES Warehouse(wid) ON DELETE SET NULL);\nCREATE TABLE Pick(pid TEXT REFERENCES Picker(pid) ON DELETE CASCADE, sid TEXT REFERENCES Shelf(sid) ON DELETE CASCADE, PRIMARY KEY(pid,sid));\nINSERT INTO Warehouse VALUES('W1'),('W2'),('W3');\nINSERT INTO Shelf VALUES('S1','W1'),('S2','W1'),('S3','W2'),('S4','W3');\nINSERT INTO Picker VALUES('P1','W1'),('P2','W2'),('P3','W1');\nINSERT INTO Pick VALUES('P1','S1'),('P1','S3'),('P2','S2'),('P3','S4'),('P2','S3'),('P3','S2');''')\nT=['Warehouse','Shelf','Picker','Pick']; n=lambda: sum(c.execute(f'select count(*) from {t}').fetchone()[0] for t in T)\nb=n(); c.execute(\"DELETE FROM Warehouse WHERE wid='W1'\"); print(b-n())  # 6",
-      "notes": ""
+      "checkCode": "import sqlite3\n# (1) real engine with foreign keys enforced\ncon = sqlite3.connect(\":memory:\"); con.execute(\"PRAGMA foreign_keys=ON\")\ncon.executescript(\"\"\"\nCREATE TABLE Warehouse (wid CHAR(2) PRIMARY KEY);\nCREATE TABLE Shelf  (sid CHAR(2) PRIMARY KEY, wid CHAR(2) NOT NULL REFERENCES Warehouse(wid) ON DELETE CASCADE);\nCREATE TABLE Picker (pid CHAR(2) PRIMARY KEY, home_wid CHAR(2) REFERENCES Warehouse(wid) ON DELETE SET NULL);\nCREATE TABLE Pick   (pid CHAR(2) REFERENCES Picker(pid) ON DELETE CASCADE, sid CHAR(2) REFERENCES Shelf(sid) ON DELETE CASCADE, PRIMARY KEY (pid, sid));\nINSERT INTO Warehouse VALUES ('W1'),('W2'),('W3');\nINSERT INTO Shelf VALUES ('S1','W1'),('S2','W1'),('S3','W2'),('S4','W3');\nINSERT INTO Picker VALUES ('P1','W1'),('P2','W2'),('P3','W1');\nINSERT INTO Pick VALUES ('P1','S1'),('P1','S3'),('P2','S2'),('P3','S4'),('P2','S3'),('P3','S2');\n\"\"\")\ntables = [\"Warehouse\", \"Shelf\", \"Picker\", \"Pick\"]\ncount = lambda: sum(con.execute(f\"SELECT COUNT(*) FROM {t}\").fetchone()[0] for t in tables)\nbefore = count(); con.execute(\"DELETE FROM Warehouse WHERE wid='W1'\"); deleted = before - count()\nprint(deleted, con.execute(\"SELECT * FROM Picker ORDER BY pid\").fetchall())   # 6 [('P1', None), ('P2', 'W2'), ('P3', None)]\n# (2) hand-rolled propagation, also for the SET NULL -> CASCADE mistake (distractor D)\nshelf = {\"S1\": \"W1\", \"S2\": \"W1\", \"S3\": \"W2\", \"S4\": \"W3\"}\npicker = {\"P1\": \"W1\", \"P2\": \"W2\", \"P3\": \"W1\"}\npick = {(\"P1\", \"S1\"), (\"P1\", \"S3\"), (\"P2\", \"S2\"), (\"P3\", \"S4\"), (\"P2\", \"S3\"), (\"P3\", \"S2\")}\ndef rows_deleted(picker_action):\n    gone_shelf = {s for s, w in shelf.items() if w == \"W1\"}\n    gone_picker = {p for p, w in picker.items() if w == \"W1\"} if picker_action == \"CASCADE\" else set()\n    gone_pick = {t for t in pick if t[1] in gone_shelf or t[0] in gone_picker}\n    return 1 + len(gone_shelf) + len(gone_picker) + len(gone_pick)\nprint(rows_deleted(\"SET NULL\"), rows_deleted(\"CASCADE\"))   # 6 10\nopts = {\"A\": 3, \"B\": 5, \"C\": 6, \"D\": 10}\nprint([k for k, v in opts.items() if v == deleted])        # ['C']",
+      "notes": "Blind trace: W1 row (1); shelves S1, S2 cascade (2); pickers P1, P3 only get home_wid = NULL (0) and stay; Pick rows (P1,S1), (P2,S2), (P3,S2) cascade from the deleted shelves (3); total 6 = key C. Own Python agrees twice: sqlite3 with PRAGMA foreign_keys=ON (before minus after row count = 6, pickers P1/P3 left with NULL) and a hand-rolled propagation, which also gives 10 if SET NULL is mistaken for CASCADE (distractor D), 5 without the W1 row (B) and 3 for the partial counts (A). Stem says the Warehouse row itself is counted, so no ambiguity. EASY / 90 s matches the Foundation-tier blueprint slot (one concept, a short trace). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "b264e1e1fea1fbc2",
+        "verification": "6bb33a30fb4fb4db"
+      }
     }
   },
   {
@@ -523,12 +643,36 @@
       "commonTrap": "Treating NULL ratings as 0 inside `AVG` (Pune average 3, Kochi average 2.8), which lets rides 4 and 9 in and gives 1240. Another mistake is ignoring the correlation and using one overall average ($26/7 \\approx 3.71$), which gives 960."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "810",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nc=sqlite3.connect(':memory:')\nc.execute('CREATE TABLE Rides(ride_id INT, driver TEXT, city TEXT, fare INT, rating INT)')\nc.executemany('INSERT INTO Rides VALUES(?,?,?,?,?)',[(1,'Asha','Pune',220,5),(2,'Bala','Pune',180,3),(3,'Asha','Pune',300,None),(4,'Chen','Pune',150,4),(5,'Bala','Kochi',400,4),(6,'Dev','Kochi',260,None),(7,'Chen','Kochi',310,2),(8,'Dev','Kochi',190,5),(9,'Asha','Kochi',280,3)])\nprint(c.execute('''SELECT SUM(r.fare) FROM Rides r WHERE r.rating > (SELECT AVG(r2.rating) FROM Rides r2 WHERE r2.city = r.city)''').fetchone()[0])  # 810",
-      "notes": ""
+      "checkCode": "import sqlite3\nrows = [(1, \"Asha\", \"Pune\", 220, 5), (2, \"Bala\", \"Pune\", 180, 3), (3, \"Asha\", \"Pune\", 300, None),\n        (4, \"Chen\", \"Pune\", 150, 4), (5, \"Bala\", \"Kochi\", 400, 4), (6, \"Dev\", \"Kochi\", 260, None),\n        (7, \"Chen\", \"Kochi\", 310, 2), (8, \"Dev\", \"Kochi\", 190, 5), (9, \"Asha\", \"Kochi\", 280, 3)]\ncon = sqlite3.connect(\":memory:\")\ncon.execute(\"CREATE TABLE Rides (ride_id INT, driver TEXT, city TEXT, fare INT, rating INT)\")\ncon.executemany(\"INSERT INTO Rides VALUES (?,?,?,?,?)\", rows)\nsql_val = con.execute(\"\"\"SELECT SUM(r.fare) FROM Rides r\n                         WHERE r.rating > (SELECT AVG(r2.rating) FROM Rides r2 WHERE r2.city = r.city)\"\"\").fetchone()[0]\n# hand-rolled three-valued logic: AVG skips NULL; `NULL > x` is UNKNOWN so WHERE drops the row\ndef avg(xs):\n    xs = [x for x in xs if x is not None]\n    return sum(xs) / len(xs)\ncity_avg = {c: avg([r for _, _, cc, _, r in rows if cc == c]) for c in (\"Pune\", \"Kochi\")}\nmanual = sum(f for _, _, c, f, r in rows if r is not None and r > city_avg[c])\nprint(sql_val, manual, city_avg)                        # 810 810 {'Pune': 4.0, 'Kochi': 3.5}\nassert sql_val == manual == 810\n# distractors: NULL treated as 0 inside AVG, and one global average ignoring the correlation\nzero_avg = {c: sum((r or 0) for _, _, cc, _, r in rows if cc == c) / sum(1 for _, _, cc, _, _ in rows if cc == c) for c in city_avg}\nprint(sum(f for _, _, c, f, r in rows if r is not None and r > zero_avg[c]))   # 1240\ng = avg([r for *_, r in rows])\nprint(sum(f for *_, f, r in rows if r is not None and r > g), round(g, 3))     # 960 3.714",
+      "notes": "Blind solve: AVG skips NULL, so Pune avg = (5+3+4)/3 = 4 and Kochi avg = (4+2+5+3)/4 = 3.5; NULL ratings give UNKNOWN and are dropped; qualifying rides are 1 (220), 5 (400), 8 (190) = 810, matching the key. Own Python agrees twice: sqlite3 running the exact query, and a hand-rolled three-valued-logic evaluation; the commonTrap values recompute correctly (NULL treated as 0 gives 1240, one global average 26/7 = 3.714 gives 960). Integer NAT, exact range 810 to 810, no rounding needed. MODERATE / 150 s (correlated subquery plus NULL semantics) and dbw-query-languages / dbw-sql are honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "5580512c4de455e8",
+        "verification": "402a687ec19874e1"
+      }
     }
   },
   {
@@ -621,12 +765,36 @@
       "commonTrap": "Calling `room → building` a partial dependency (and answering 1NF) because its left side is \"smaller than the key\". A partial dependency needs the left side to be a proper subset of a candidate key, and room is not part of the key at all."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "Only key {course_code, section}; no partial dependency; room -> building violates 3NF -> 2NF, (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2NF but not 3NF; option B",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nR=['cc','sec','room','bldg','cap']; F=[(('cc','sec'),('room',)),(('room',),('bldg',)),(('room',),('cap',))]\ndef cl(X):\n    X=set(X); ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            if set(l)<=X and not set(r)<=X: X|=set(r); ch=True\n    return X\nK=[]\nfor k in range(1,6):\n    for c in combinations(R,k):\n        if cl(c)==set(R) and not any(set(x)<=set(c) for x in K): K.append(c)\nP=set().union(*map(set,K))\npartial=any(set(s)<set(k) and (cl(s)-P-set(s)) for k in K for n in range(1,len(k)) for s in combinations(k,n))\nnf3=all(cl(l)==set(R) or set(r)<=P for l,r in F)\nprint(K, 'partial:',partial, '3NF:',nf3)  # [('cc','sec')] partial: False 3NF: False -> 2NF",
-      "notes": ""
+      "checkCode": "from itertools import combinations\nR = [\"course_code\", \"section\", \"room\", \"building\", \"capacity\"]\nfds = [({\"course_code\", \"section\"}, {\"room\"}), ({\"room\"}, {\"building\"}), ({\"room\"}, {\"capacity\"})]\ndef closure(x):\n    x = set(x)\n    while True:\n        new = set().union(*[r for l, r in fds if l <= x]) - x\n        if not new:\n            return x\n        x |= new\nfull = set(R)\nsupers = [set(c) for k in range(1, 6) for c in combinations(R, k) if closure(c) == full]\nkeys = [s for s in supers if not any(t < s for t in supers)]\nprime = set().union(*keys)\n# every non-trivial FD X -> a implied by F (all left sides tried)\nimplied = [(set(X), a) for k in range(1, 5) for X in combinations(R, k) for a in closure(X) - set(X)]\nbcnf = all(closure(X) == full for X, a in implied)\nnf3 = all(closure(X) == full or a in prime for X, a in implied)\npartial = [(X, a) for X, a in implied if a not in prime and any(X < key for key in keys)]\nnf2 = not partial\nlevel = \"BCNF\" if bcnf else \"3NF\" if nf3 else \"2NF\" if nf2 else \"1NF\"\nprint([sorted(k) for k in keys], \"BCNF\", bcnf, \"3NF\", nf3, \"2NF\", nf2, \"->\", level)   # only key {course_code, section}; 2NF\nopts = {\"A\": \"1NF\", \"B\": \"2NF\", \"C\": \"3NF\", \"D\": \"BCNF\"}\nprint([k for k, v in opts.items() if v == level])          # ['B']",
+      "notes": "Blind solve: {course_code, section} is the only candidate key (closure adds room, then building and capacity); no proper subset determines a non-prime attribute, so no partial dependency and 2NF holds; room -> building has a non-superkey left side and a non-prime right side, so 3NF fails; highest normal form 2NF = key B. Own Python computes the keys, the prime set and every implied non-trivial FD X -> a over all left sides, and classifies the schema as 2NF (BCNF False, 3NF False, 2NF True). Stem states atomic values and the implied-FDs-only assumption, so exactly one option is defensible. EASY / 90 s and dbw-normalization / dbw-normal-forms are honest. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "58fd01f6467d51f3",
+        "verification": "fc7d27c5b728d5bc"
+      }
     }
   }
 ]

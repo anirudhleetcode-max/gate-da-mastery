@@ -14,28 +14,28 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the loop invariant of a lower-bound binary search) with two short traces over duplicates; about 2.5 minutes.",
-    "estimatedTimeSec": 150,
-    "concept": "Lower-bound binary search on a sorted list with duplicates: the returned index equals the number of elements strictly smaller than the key.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a lower-bound binary-search loop) needing 2–3 steps: recognise that the loop records mid and keeps searching left, then trace it on three queries; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Lower-bound binary search (leftmost index with a[i] >= x) with duplicates and a -1 sentinel for 'no such index'.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Consider the following Python function and the sorted list `a`.\n\n```python\ndef f(a, x):\n    lo, hi = 0, len(a)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\na = [2, 5, 5, 5, 5, 8, 8, 9, 11, 14, 17, 17, 20]\nprint(f(a, 9) - f(a, 5))\n```\n\nWhat is the output of the program?",
+    "stem": "Consider the following Python program.\n\n```python\ndef h(a, x):\n    lo, hi = 0, len(a) - 1\n    r = -1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            r = mid\n            hi = mid - 1\n    return r\n\na = [2, 4, 4, 7, 7, 7, 9, 12, 12, 15, 18, 21]\nprint(h(a, 7), h(a, 13), h(a, 30))\n```\n\nWhat is the output of the program?",
     "options": [
       {
         "label": "A",
-        "text": "$2$"
+        "text": "`5 8 11`"
       },
       {
         "label": "B",
-        "text": "$4$"
+        "text": "`3 9 12`"
       },
       {
         "label": "C",
-        "text": "$6$"
+        "text": "`3 9 -1`"
       },
       {
         "label": "D",
-        "text": "$7$"
+        "text": "`5 -1 -1`"
       }
     ],
     "answer": {
@@ -43,23 +43,23 @@
       "correct": "C"
     },
     "solution": {
-      "quick": "`f(a, x)` is a lower-bound search: it returns the number of elements of the sorted list that are strictly less than `x` (the leftmost index holding a value $\\ge x$).\nSo `f(a, 9)` $= 7$ and `f(a, 5)` $= 1$, and the difference counts the elements $v$ with $5 \\le v < 9$, namely $5,5,5,5,8,8$. Output: $6$, option **(C)**.",
+      "quick": "The loop is a lower-bound search: whenever `a[mid] >= x` it records `mid` and keeps looking to the left, so `h(a, x)` is the smallest index `i` with `a[i] >= x`, or `-1` if every element is smaller than `x`.\nFor `x = 7` this is index 3, for `x = 13` it is index 9 (the value 15), and for `x = 30` there is no such index. Output `3 9 -1`, option **(C)**.",
       "steps": [
         {
-          "title": "What the loop computes",
-          "body": "Invariant: every element at an index below `lo` is $< x$, and every element at an index $\\ge$ `hi` is $\\ge x$. When `a[mid] < x` the whole prefix up to `mid` is $< x$, so `lo = mid + 1`; otherwise `mid` itself is $\\ge x$, so `hi = mid` (the search does **not** stop at a match, it keeps moving left).\nThe loop ends with `lo == hi`, so `f(a, x)` is the smallest index `i` with `a[i] >= x`, which equals the number of elements smaller than `x`."
+          "title": "What the loop maintains",
+          "body": "If `a[mid] < x`, everything up to `mid` is too small, so `lo = mid + 1`. Otherwise `a[mid] >= x`: `mid` is a candidate answer, it is stored in `r`, and the search continues in `a[lo..mid-1]` for a smaller index. The loop never tests equality, so it does not stop at a match. When it ends, `r` is the leftmost index with `a[i] >= x`; if no probe ever had `a[mid] >= x`, `r` is still `-1`."
         },
         {
-          "title": "Trace f(a, 9)",
-          "body": "Here $n = 13$, so `lo, hi = 0, 13`.\n\n| lo | hi | mid | a[mid] | action |\n| --- | --- | --- | --- | --- |\n| 0 | 13 | 6 | 8 | $8 < 9$, so lo = 7 |\n| 7 | 13 | 10 | 17 | $17 \\ge 9$, so hi = 10 |\n| 7 | 10 | 8 | 11 | $11 \\ge 9$, so hi = 8 |\n| 7 | 8 | 7 | 9 | $9 \\ge 9$, so hi = 7 |\n\nNow `lo == hi == 7`, so `f(a, 9)` returns $7$."
+          "title": "Trace of h(a, 7)",
+          "body": "(lo, hi) = (0, 11): mid = 5, `a[5] = 7` is not less than 7, so r = 5, hi = 4.\n(0, 4): mid = 2, `a[2] = 4 < 7`, so lo = 3.\n(3, 4): mid = 3, `a[3] = 7`, so r = 3, hi = 2.\nNow lo = 3 > hi = 2 and the loop stops. Result: **3**."
         },
         {
-          "title": "Trace f(a, 5)",
-          "body": "| lo | hi | mid | a[mid] | action |\n| --- | --- | --- | --- | --- |\n| 0 | 13 | 6 | 8 | $8 \\ge 5$, so hi = 6 |\n| 0 | 6 | 3 | 5 | $5 \\ge 5$, so hi = 3 |\n| 0 | 3 | 1 | 5 | $5 \\ge 5$, so hi = 1 |\n| 0 | 1 | 0 | 2 | $2 < 5$, so lo = 1 |\n\nNow `lo == hi == 1`, so `f(a, 5)` returns $1$, the index of the **first** 5 even though the first probe that hit a 5 was at index 3."
+          "title": "Trace of h(a, 13)",
+          "body": "(0, 11): mid = 5, `7 < 13`, lo = 6.\n(6, 11): mid = 8, `12 < 13`, lo = 9.\n(9, 11): mid = 10, `18 >= 13`, r = 10, hi = 9.\n(9, 9): mid = 9, `15 >= 13`, r = 9, hi = 8.\nThe loop stops. Result: **9**."
         },
         {
-          "title": "Difference",
-          "body": "$f(a,9) - f(a,5) = 7 - 1 = 6$.\nCross-check: the elements with $5 \\le v < 9$ sit at indices $1,\\dots,6$ (values $5,5,5,5,8,8$), which is $6$ elements. The 9 at index 7 is excluded because `f(a, 9)` is the index of the first 9. The program prints $6$."
+          "title": "Trace of h(a, 30)",
+          "body": "(0, 11): mid = 5, `7 < 30`, lo = 6.\n(6, 11): mid = 8, `12 < 30`, lo = 9.\n(9, 11): mid = 10, `18 < 30`, lo = 11.\n(11, 11): mid = 11, `21 < 30`, lo = 12 > hi = 11.\nThe `else` branch never ran, so `r` keeps its initial value: **-1**.\n\nThe program prints `3 9 -1`."
         }
       ],
       "finalAnswer": "**(C)**",
@@ -67,34 +67,54 @@
         {
           "label": "A",
           "verdict": "incorrect",
-          "explanation": "Counts only the elements strictly between 5 and 9 (the two 8s) and forgets the four 5s. `f(a, 5)` is the index of the *first* 5, so all copies of 5 lie inside the counted range."
+          "explanation": "`5 8 11` is the output of an upper-bound style search that returns the last index with `a[i] <= x`. Here `a[mid] >= x` sends the search to the left, so it finds the first index (3 for `x = 7`), not the last (5)."
         },
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "Counts only the four copies of 5 and forgets the two 8s. This is also what you get if you take `f(a, 5)` to be 3, the first index where a probe hits a 5 ($7 - 3 = 4$)."
+          "explanation": "The first two values are right, but `r` starts at -1 and is overwritten only when some `a[mid] >= x`. Since 30 exceeds every element, it stays -1; the function does not return `len(a) = 12`."
         },
         {
           "label": "C",
           "verdict": "correct",
-          "explanation": "Correct. $f(a,9) = 7$ and $f(a,5) = 1$, so the output is $6$."
+          "explanation": "Matches the traces above: `h(a, 7) = 3`, `h(a, 13) = 9`, `h(a, 30) = -1`."
         },
         {
           "label": "D",
           "verdict": "incorrect",
-          "explanation": "Equals `f(a, 9)` alone, or the number of elements in the closed range $[5, 9]$, which wrongly includes the 9. `f(a, 9)` is the index of the first 9, so the 9 is not counted in the difference."
+          "explanation": "`5 -1 -1` is what an exact-match search would give (7 is hit at index 5 on the first probe; 13 and 30 are absent). This loop does not stop at a match and does not test for equality: it still returns 3 for `x = 7`, and for the absent value 13 it returns 9, the position of the first larger element."
         }
       ],
-      "shortcut": "Recognise `f` as a lower bound (Python's `bisect_left`): `f(a, x)` $=$ number of elements $< x$. Then `f(a, 9) - f(a, 5)` is the number of elements in $[5, 9)$, which you can read straight off the list: $5,5,5,5,8,8$, so $6$.",
-      "commonTrap": "Assuming binary search stops at the first matching element. Because equal elements send the search to the left (`hi = mid`), the function always returns the leftmost position, not the first index probed that holds the key. Taking `f(a, 5)` as 3 leads to $4$ (option B)."
+      "shortcut": "Recognise the pattern `a[mid] < x: lo = mid + 1; else: record mid, hi = mid - 1` as lower-bound. Then read the answers straight off the list: first index with value >= 7 is 3, first index with value >= 13 is 9 (value 15), and no element is >= 30, so -1.",
+      "commonTrap": "Treating the function as an exact-match binary search (return the index when `a[mid] == x`, otherwise -1). The loop has no equality test: it keeps shrinking `hi` past matches to reach the leftmost one, and it returns a position even when `x` is not present."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "C: 6",
+      "independentAnswer": "(C) 3 9 -1",
       "agreesWithKey": true,
-      "checkCode": "def f(a, x):\n    lo, hi = 0, len(a)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x: lo = mid + 1\n        else: hi = mid\n    return lo\na = [2, 5, 5, 5, 5, 8, 8, 9, 11, 14, 17, 17, 20]\nprint(f(a, 9), f(a, 5), f(a, 9) - f(a, 5))  # 7 1 6",
+      "checkCode": "def h(a, x):\n    lo, hi = 0, len(a) - 1\n    r = -1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            r = mid\n            hi = mid - 1\n    return r\na = [2, 4, 4, 7, 7, 7, 9, 12, 12, 15, 18, 21]\nprint(h(a, 7), h(a, 13), h(a, 30))",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -112,83 +132,103 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY — one concept (the subspace test) applied to four standard candidate subsets; direct recall with quick counterexamples; about 1 minute.",
+    "difficultyRationale": "Platform-estimated: EASY — a single concept (the subspace test: zero vector, closure under addition and scalar multiplication) applied to four short conditions; under 1.5 minutes for a prepared student.",
     "estimatedTimeSec": 75,
-    "concept": "Subspace test: a subspace contains 0 and is closed under addition and scalar multiplication (solution sets of homogeneous linear conditions).",
+    "concept": "Subspace test: a subset is a subspace iff it contains 0 and is closed under addition and scalar multiplication.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Let $V = \\mathbb{R}^{2\\times 2}$ be the vector space of all real $2 \\times 2$ matrices under the usual matrix addition and scalar multiplication.\n\nWhich one of the following subsets of $V$ is a subspace of $V$?",
+    "stem": "Let $P_3$ be the real vector space of all polynomials in $x$ with real coefficients and degree at most $3$, under the usual addition and scalar multiplication.\n\nWhich one of the following subsets of $P_3$ is a subspace of $P_3$?",
     "options": [
       {
         "label": "A",
-        "text": "$\\{M \\in V : \\operatorname{tr}(M) = 0\\}$"
+        "text": "$\\{\\,p \\in P_3 : \\deg p = 3\\,\\}$"
       },
       {
         "label": "B",
-        "text": "$\\{M \\in V : \\det(M) = 0\\}$"
+        "text": "$\\{\\,p \\in P_3 : p(0) = 1\\,\\}$"
       },
       {
         "label": "C",
-        "text": "$\\{M \\in V : \\text{every entry of } M \\text{ is non-negative}\\}$"
+        "text": "$\\{\\,p \\in P_3 : p(1) \\ge 0\\,\\}$"
       },
       {
         "label": "D",
-        "text": "$\\{M \\in V : M^2 = M\\}$"
+        "text": "$\\{\\,p \\in P_3 : p(1) = p(2)\\,\\}$"
       }
     ],
     "answer": {
       "kind": "MCQ",
-      "correct": "A"
+      "correct": "D"
     },
     "solution": {
-      "quick": "A subspace must contain the zero matrix and be closed under addition and under scalar multiplication. The trace is a linear function, so $\\operatorname{tr}(M) = 0$ passes all three tests.\nThe others fail: $E_{11} + E_{22} = I$ has $\\det I = 1 \\ne 0$ (B); $-I$ has negative entries (C); $I$ is idempotent but $2I$ is not (D). Answer **(A)**.",
+      "quick": "A subset is a subspace only if it contains the zero polynomial and is closed under addition and scalar multiplication.\n(A), (B) and (C) each fail one of these requirements, while $p(1) = p(2)$ is a homogeneous linear condition, which is preserved by every linear combination. Answer **(D)**.",
       "steps": [
         {
-          "title": "The subspace test",
-          "body": "A non-empty subset $W \\subseteq V$ is a subspace exactly when (i) $0 \\in W$, (ii) $M, N \\in W \\Rightarrow M + N \\in W$, and (iii) $M \\in W,\\ c \\in \\mathbb{R} \\Rightarrow cM \\in W$."
+          "title": "Subspace test",
+          "body": "A non-empty subset $W \\subseteq P_3$ is a subspace iff $\\alpha p + \\beta q \\in W$ for all $p, q \\in W$ and all real $\\alpha, \\beta$. In particular the zero polynomial must lie in $W$ (take $\\alpha = \\beta = 0$)."
         },
         {
-          "title": "Option A: trace zero",
-          "body": "$\\operatorname{tr}(0) = 0$. For $M, N$ with trace $0$ and any scalar $c$: $\\operatorname{tr}(M + N) = \\operatorname{tr}(M) + \\operatorname{tr}(N) = 0$ and $\\operatorname{tr}(cM) = c\\operatorname{tr}(M) = 0$. All three conditions hold, so this set is a subspace (of dimension $3$)."
+          "title": "Eliminate (A), (B), (C)",
+          "body": "(A) $x^3$ and $-x^3 + x$ both have degree 3, but their sum is $x$, which has degree 1. Not closed under addition (also, the zero polynomial does not have degree 3).\n(B) The zero polynomial has $p(0) = 0 \\ne 1$, so $0 \\notin W$.\n(C) $p(x) = 1$ has $p(1) = 1 \\ge 0$, but $(-1)\\cdot p$ has value $-1 < 0$ at $x = 1$. Not closed under scalar multiplication."
         },
         {
-          "title": "Options B, C, D: one counterexample each",
-          "body": "**B (det = 0):** $E_{11} = \\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}$ and $E_{22} = \\begin{bmatrix}0&0\\\\0&1\\end{bmatrix}$ both have determinant $0$, but $E_{11} + E_{22} = I$ has determinant $1$. Not closed under addition.\n**C (non-negative entries):** $I$ belongs to the set, but $(-1)\\cdot I = -I$ has negative entries. Not closed under scalar multiplication.\n**D ($M^2 = M$):** $I^2 = I$, but $(2I)^2 = 4I \\ne 2I$, so $2I$ is not in the set. Not closed under scalar multiplication (or under addition, since $I + I = 2I$)."
+          "title": "Verify (D)",
+          "body": "$0$ satisfies $0 = 0$. If $p(1) = p(2)$ and $q(1) = q(2)$, then $(\\alpha p + \\beta q)(1) = \\alpha p(1) + \\beta q(1) = \\alpha p(2) + \\beta q(2) = (\\alpha p + \\beta q)(2)$. So $W$ is closed under linear combinations and is a subspace. (Writing $p = c_0 + c_1 x + c_2 x^2 + c_3 x^3$, the condition is the single linear equation $c_1 + 3c_2 + 7c_3 = 0$, so $W$ has dimension 3.)"
         }
       ],
-      "finalAnswer": "**(A)**",
+      "finalAnswer": "**(D)**",
       "optionAnalysis": [
         {
           "label": "A",
-          "verdict": "correct",
-          "explanation": "Correct. $\\operatorname{tr}$ is linear, so the trace-zero matrices contain $0$ and are closed under addition and scalar multiplication."
+          "verdict": "incorrect",
+          "explanation": "Polynomials of degree exactly 3 are not closed under addition: $x^3 + (-x^3 + x) = x$ has degree 1. The zero polynomial is also missing."
         },
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "Incorrect. $E_{11}$ and $E_{22}$ are singular, but their sum $I$ is invertible, so the set is not closed under addition."
+          "explanation": "The zero polynomial has $p(0) = 0$, not 1, so the set does not contain the zero vector. It is an affine, not a linear, condition."
         },
         {
           "label": "C",
           "verdict": "incorrect",
-          "explanation": "Incorrect. Multiplying $I$ by the scalar $-1$ gives $-I$, which has negative entries, so the set is not closed under scalar multiplication."
+          "explanation": "An inequality defines a half-space: closed under addition and under non-negative scalars, but multiplying $p(x) = 1$ by $-1$ leaves the set."
         },
         {
           "label": "D",
-          "verdict": "incorrect",
-          "explanation": "Incorrect. $I$ is idempotent, but $2I$ is not ($(2I)^2 = 4I$), so the set fails closure under scalar multiplication and under addition."
+          "verdict": "correct",
+          "explanation": "$p(1) - p(2) = 0$ is a homogeneous linear condition on the coefficients, so it contains 0 and is preserved by every linear combination."
         }
       ],
-      "shortcut": "A subset is a subspace when it is the solution set of homogeneous *linear* conditions. Among the four, only $\\operatorname{tr}(M) = 0$ is a linear homogeneous equation in the entries; $\\det = 0$ and $M^2 = M$ are non-linear, and non-negativity is an inequality.",
-      "commonTrap": "Testing only whether the zero matrix belongs to the set. Options B and D both contain $0$, so passing that check proves nothing: the failure is in closure under addition (B) or scalar multiplication (D)."
+      "shortcut": "A set cut out by homogeneous linear conditions is a subspace. Any condition with a non-zero constant (B), an inequality (C), or a 'degree exactly' requirement (A) breaks the subspace test immediately.",
+      "commonTrap": "Checking only one requirement (for example, that the set is closed under addition) or assuming a set is a subspace because it is described by a single 'nice' condition. The zero vector and scalar multiples by negative numbers are the usual failure points."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "A: trace-zero matrices",
+      "independentAnswer": "(D)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nE11 = np.array([[1,0],[0,0]]); E22 = np.array([[0,0],[0,1]]); I = np.eye(2)\nrng = np.random.default_rng(0); ok = True\nfor _ in range(1000):\n    P = rng.normal(size=(2,2)); Q = rng.normal(size=(2,2)); c = rng.normal()\n    P -= I*np.trace(P)/2; Q -= I*np.trace(Q)/2           # force trace 0\n    ok &= abs(np.trace(P+Q)) < 1e-9 and abs(np.trace(c*P)) < 1e-9\nprint(ok)                                                  # True  -> A closed\nprint(np.linalg.det(E11), np.linalg.det(E22), np.linalg.det(E11+E22))  # 0 0 1 -> B fails\nprint((-I >= 0).all())                                     # False -> C fails\nprint(np.allclose((2*I)@(2*I), 2*I))                       # False -> D fails",
+      "checkCode": "import itertools, random\nev = lambda c, t: sum(ci * t**i for i, ci in enumerate(c))\nS = {'A': lambda c: c[3] != 0, 'B': lambda c: ev(c, 0) == 1,\n     'C': lambda c: ev(c, 1) >= 0, 'D': lambda c: ev(c, 1) == ev(c, 2)}\ngrid = list(itertools.product(range(-3, 4), repeat=4))\ndef is_subspace(f):\n    if not f((0, 0, 0, 0)): return False\n    M = [c for c in grid if f(c)]\n    for _ in range(3000):\n        p, q = random.choice(M), random.choice(M)\n        a, b = random.randint(-4, 4), random.randint(-4, 4)\n        if not f(tuple(a * u + b * v for u, v in zip(p, q))): return False\n    return True\nprint([k for k, f in S.items() if is_subspace(f)])",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -206,48 +246,69 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one algorithm (k-means) executed for three assignment rounds on seven points with routine squared-distance arithmetic and a stopping test; about 3 minutes.",
-    "estimatedTimeSec": 170,
-    "concept": "k-means (Lloyd's algorithm) run to convergence from given initial centroids; value of the within-cluster sum-of-squares objective.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Lloyd's k-means) but three assignment/update rounds on six points with squared distances, followed by an SSE computation; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "k-means (Lloyd's algorithm): iterate assignment and centroid update to convergence, then compute the within-cluster sum of squares.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "The positions (in km) of seven parcel lockers on a city grid are given below.\n\n| Locker | $x$ | $y$ |\n| --- | --- | --- |\n| $L_1$ | 8 | 7 |\n| $L_2$ | 7 | 5 |\n| $L_3$ | 7 | 4 |\n| $L_4$ | 4 | 7 |\n| $L_5$ | 6 | 2 |\n| $L_6$ | 1 | 6 |\n| $L_7$ | 8 | 2 |\n\n$k$-means clustering with $k = 2$ and squared Euclidean distance is run with initial centroids $\\mu_1 = (1, 6)$ and $\\mu_2 = (4, 7)$. In every iteration each locker is first assigned to its nearest centroid, and then each centroid is recomputed as the mean of the lockers assigned to it. The algorithm stops as soon as an iteration leaves every assignment unchanged.\n\nAt termination, let $J = \\sum_{i=1}^{7} \\lVert \\mathbf{x}_i - \\mu_{c(i)} \\rVert^2$ be the sum of the squared distances from each locker to the centroid of its own cluster. The value of $J$ is ________ (rounded off to two decimal places).",
+    "stem": "Six delivery hubs are located at the following coordinates (in km).\n\n| Hub | $x$ | $y$ |\n| --- | --- | --- |\n| H1 | 5 | 10 |\n| H2 | 7 | 2 |\n| H3 | 3 | 9 |\n| H4 | 2 | 9 |\n| H5 | 5 | 8 |\n| H6 | 4 | 2 |\n\nThe hubs are grouped by $k$-means clustering (Lloyd's algorithm) with $k = 2$ and squared Euclidean distance. The initial centroids are the locations of H1 and H3. In every iteration each hub is first assigned to its nearest centroid, and then each centroid is recomputed as the mean of the hubs assigned to it. The algorithm stops as soon as an assignment step leaves every hub in the same cluster as in the previous assignment step.\n\nThe final within-cluster sum of squared distances (the sum, over all six hubs, of the squared distance from the hub to the centroid of its cluster) is ______ km$^2$. Round off to two decimal places.",
     "options": [],
     "answer": {
       "kind": "NAT",
-      "min": 25.79,
-      "max": 25.81
+      "min": 13.24,
+      "max": 13.26
     },
     "solution": {
-      "quick": "Iteration 1 sends every locker except $L_6$ to $\\mu_2$, giving centroids $(1,6)$ and $(6.67, 4.5)$. Iteration 2 moves $L_4$ to the first cluster, giving $(2.5, 6.5)$ and $(7.2, 4)$. Iteration 3 changes nothing, so the algorithm has converged.\n$J = (2.5 + 2.5) + (9.64 + 1.04 + 0.04 + 5.44 + 4.64) = 5 + 20.8 = 25.80$.",
+      "quick": "Start with centroids $(5,10)$ and $(3,9)$. The first assignment gives clusters $\\{H1,H5\\}$ and $\\{H2,H3,H4,H6\\}$, the second moves H3 and H4 into the first cluster, and the third leaves everything unchanged.\nFinal clusters $\\{H1,H3,H4,H5\\}$ with centroid $(3.75, 9)$ and $\\{H2,H6\\}$ with centroid $(5.5, 2)$ give SSE $8.75 + 4.5 = 13.25$.",
       "steps": [
         {
-          "title": "Iteration 1: assign and update",
-          "body": "Squared distances to $\\mu_1 = (1,6)$ and $\\mu_2 = (4,7)$:\n\n| Locker | to $\\mu_1$ | to $\\mu_2$ | cluster |\n| --- | --- | --- | --- |\n| $L_1 (8,7)$ | 50 | 16 | 2 |\n| $L_2 (7,5)$ | 37 | 13 | 2 |\n| $L_3 (7,4)$ | 40 | 18 | 2 |\n| $L_4 (4,7)$ | 10 | 0 | 2 |\n| $L_5 (6,2)$ | 41 | 29 | 2 |\n| $L_6 (1,6)$ | 0 | 10 | 1 |\n| $L_7 (8,2)$ | 65 | 41 | 2 |\n\nCluster 1 $= \\{L_6\\}$, so $\\mu_1 = (1, 6)$. Cluster 2 has six lockers: $\\mu_2 = \\left(\\tfrac{8+7+7+4+6+8}{6}, \\tfrac{7+5+4+7+2+2}{6}\\right) = \\left(\\tfrac{40}{6}, \\tfrac{27}{6}\\right) \\approx (6.667, 4.5)$."
+          "title": "Assignment 1 (centroids (5,10) and (3,9))",
+          "body": "Squared distances to $(5,10)$ / $(3,9)$: H1: 0 / 5; H2: 68 / 65; H3: 5 / 0; H4: 10 / 1; H5: 4 / 5; H6: 65 / 50.\nClusters: $C_1 = \\{H1, H5\\}$, $C_2 = \\{H2, H3, H4, H6\\}$.\nNew centroids: $C_1$: $(5, 9)$; $C_2$: $\\left(\\frac{7+3+2+4}{4}, \\frac{2+9+9+2}{4}\\right) = (4, 5.5)$."
         },
         {
-          "title": "Iteration 2: assign and update",
-          "body": "Squared distances to $\\mu_1 = (1,6)$ and $\\mu_2 = (6.667, 4.5)$:\n$L_1$: $50$ vs $8.03$; $L_2$: $37$ vs $0.36$; $L_3$: $40$ vs $0.36$; $L_4$: $10$ vs $13.36$; $L_5$: $41$ vs $6.69$; $L_6$: $0$ vs $34.36$; $L_7$: $65$ vs $8.03$.\nOnly $L_4$ changes: it now belongs to cluster 1. So cluster 1 $= \\{L_4, L_6\\}$ with $\\mu_1 = \\left(\\tfrac{4+1}{2}, \\tfrac{7+6}{2}\\right) = (2.5, 6.5)$, and cluster 2 $= \\{L_1, L_2, L_3, L_5, L_7\\}$ with $\\mu_2 = \\left(\\tfrac{8+7+7+6+8}{5}, \\tfrac{7+5+4+2+2}{5}\\right) = (7.2, 4.0)$."
+          "title": "Assignment 2 (centroids (5,9) and (4,5.5))",
+          "body": "Squared distances to $(5,9)$ / $(4,5.5)$: H1: 1 / 21.25; H2: 53 / 21.25; H3: 4 / 13.25; H4: 9 / 16.25; H5: 1 / 7.25; H6: 50 / 12.25.\nH3 and H4 change cluster: $C_1 = \\{H1, H3, H4, H5\\}$, $C_2 = \\{H2, H6\\}$. Assignments changed, so continue.\nNew centroids: $C_1$: $\\left(\\frac{5+3+2+5}{4}, \\frac{10+9+9+8}{4}\\right) = (3.75, 9)$; $C_2$: $\\left(\\frac{7+4}{2}, \\frac{2+2}{2}\\right) = (5.5, 2)$."
         },
         {
-          "title": "Iteration 3: convergence check",
-          "body": "Squared distances to $\\mu_1 = (2.5, 6.5)$ and $\\mu_2 = (7.2, 4)$:\n\n| Locker | to $\\mu_1$ | to $\\mu_2$ | cluster |\n| --- | --- | --- | --- |\n| $L_1$ | 30.5 | 9.64 | 2 |\n| $L_2$ | 22.5 | 1.04 | 2 |\n| $L_3$ | 26.5 | 0.04 | 2 |\n| $L_4$ | 2.5 | 19.24 | 1 |\n| $L_5$ | 32.5 | 5.44 | 2 |\n| $L_6$ | 2.5 | 42.44 | 1 |\n| $L_7$ | 50.5 | 4.64 | 2 |\n\nNo assignment changes, so the centroids stay at $(2.5, 6.5)$ and $(7.2, 4)$ and the algorithm stops."
+          "title": "Assignment 3 (convergence check)",
+          "body": "Squared distances to $(3.75, 9)$ / $(5.5, 2)$: H1: 2.5625 / 64.25; H2: 59.5625 / 2.25; H3: 0.5625 / 55.25; H4: 3.0625 / 61.25; H5: 2.5625 / 36.25; H6: 49.0625 / 2.25.\nH1, H3, H4, H5 stay with the first centroid and H2, H6 with the second. No hub changes cluster, so the algorithm stops."
         },
         {
-          "title": "Objective at termination",
-          "body": "Each locker contributes its squared distance to its own final centroid (the smaller entry in the table above):\nCluster 1: $2.5 + 2.5 = 5.00$.\nCluster 2: $9.64 + 1.04 + 0.04 + 5.44 + 4.64 = 20.80$.\n$J = 5.00 + 20.80 = 25.80$."
+          "title": "Within-cluster sum of squares",
+          "body": "Cluster $C_1$: $2.5625 + 0.5625 + 3.0625 + 2.5625 = 8.75$.\nCluster $C_2$: $(7-5.5)^2 + (4-5.5)^2 + 0 + 0 = 2.25 + 2.25 = 4.5$.\nTotal SSE $= 8.75 + 4.5 = 13.25$ km$^2$."
         }
       ],
-      "finalAnswer": "**25.80**",
-      "commonTrap": "Stopping after the first update. With the assignments and centroids of iteration 1 the objective is $J \\approx 36.83$, but $L_4$ is still misassigned; the algorithm only stops after a pass in which no assignment changes."
+      "finalAnswer": "**13.25**",
+      "shortcut": "For a cluster, the SSE about its centroid is $\\sum x^2 - (\\sum x)^2/m$ for each coordinate, added over the coordinates. For $C_1$: $x$: $63 - 15^2/4 = 6.75$; $y$: $326 - 36^2/4 = 2$; for $C_2$: $x$: $65 - 11^2/2 = 4.5$; $y$: $8 - 4^2/2 = 0$. Total $13.25$.",
+      "commonTrap": "Stopping after the first centroid update. The SSE for the first partition $\\{H1,H5\\}$, $\\{H2,H3,H4,H6\\}$ about its own centroids is $65$, a very different number. Convergence is only detected by an assignment step that changes nothing, and here the second assignment moves two hubs."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "25.80",
+      "independentAnswer": "13.25",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nP = np.array([[8,7],[7,5],[7,4],[4,7],[6,2],[1,6],[8,2]], float)\nmu = np.array([[1,6],[4,7]], float); prev = None\nwhile True:\n    lab = ((P[:,None,:] - mu[None])**2).sum(2).argmin(1)\n    if prev is not None and (lab == prev).all(): break\n    prev = lab\n    mu = np.array([P[lab == j].mean(0) for j in range(2)])\nprint(lab, mu.tolist(), round(((P - mu[lab])**2).sum(), 2))  # [1 1 1 0 1 0 1] [[2.5, 6.5], [7.2, 4.0]] 25.8",
+      "checkCode": "from fractions import Fraction as F\nP = [(5, 10), (7, 2), (3, 9), (2, 9), (5, 8), (4, 2)]\nC = [P[0], P[2]]\nd2 = lambda p, c: (p[0] - c[0])**2 + (p[1] - c[1])**2\nprev = None\nwhile True:\n    lab = [0 if d2(p, C[0]) < d2(p, C[1]) else 1 for p in P]\n    assert all(d2(p, C[0]) != d2(p, C[1]) for p in P)\n    if lab == prev: break\n    prev = lab\n    C = [(F(sum(p[0] for p, l in zip(P, lab) if l == j), lab.count(j)),\n          F(sum(p[1] for p, l in zip(P, lab) if l == j), lab.count(j))) for j in (0, 1)]\nsse = sum(d2(p, C[l]) for p, l in zip(P, lab))\nprint(lab, [(str(a), str(b)) for a, b in C], float(sse))",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -265,85 +326,109 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one concept (keys and referential integrity in the relational model) applied to four statements that each need a short check against the instance; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (referential-integrity actions on foreign keys) requiring the effects of SET NULL, CASCADE and NO ACTION to be chained across three tables for each statement; about 2.5 minutes.",
     "estimatedTimeSec": 150,
-    "concept": "Relational model: primary-key and foreign-key constraints, NULL foreign keys, and why keys are schema-level (not instance-level) properties.",
+    "concept": "Referential integrity: ON DELETE SET NULL / CASCADE / NO ACTION, default action on UPDATE, and rollback of a rejected statement.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Consider the relation schema $\\text{Emp}(\\text{EId}, \\text{Name}, \\text{Dept}, \\text{Mgr})$ with primary key $\\text{EId}$. The attribute $\\text{Mgr}$ is a foreign key that references $\\text{Emp}(\\text{EId})$ (the manager of an employee is another tuple of the same relation), and it is not declared NOT NULL. The referential action is NO ACTION: any operation that would leave a dangling foreign-key value is rejected. The current instance of $\\text{Emp}$ is:\n\n| EId | Name | Dept | Mgr |\n| --- | --- | --- | --- |\n| 1 | Asha | HR | NULL |\n| 2 | Bala | IT | 1 |\n| 3 | Chitra | IT | 1 |\n| 4 | Dev | IT | 2 |\n| 5 | Esha | HR | 1 |\n\nWhich of the following statements is/are TRUE?",
+    "stem": "Consider the following schema, in which every foreign key that has no explicit `ON UPDATE` clause uses the default action (the update is rejected if it would leave a dangling reference).\n\n```sql\nCREATE TABLE Dept (DId INT PRIMARY KEY, DName VARCHAR(20));\nCREATE TABLE Emp  (EId INT PRIMARY KEY, EName VARCHAR(20),\n                   DId INT REFERENCES Dept(DId) ON DELETE SET NULL);\nCREATE TABLE Proj (PId VARCHAR(4) PRIMARY KEY, PName VARCHAR(20),\n                   DId INT REFERENCES Dept(DId) ON DELETE CASCADE);\nCREATE TABLE Task (TId VARCHAR(4) PRIMARY KEY,\n                   PId VARCHAR(4) REFERENCES Proj(PId) ON DELETE NO ACTION,\n                   Hours INT);\n```\n\nThe tables contain the following rows.\n\n| Dept.DId | DName |\n| --- | --- |\n| 10 | Sales |\n| 20 | Research |\n| 30 | Legal |\n\n| Emp.EId | EName | DId |\n| --- | --- | --- |\n| 1 | Ravi | 10 |\n| 2 | Sita | 20 |\n| 3 | Tara | 20 |\n| 4 | Uma | 30 |\n| 5 | Vik | NULL |\n\n| Proj.PId | PName | DId |\n| --- | --- | --- |\n| P1 | Alpha | 10 |\n| P2 | Beta | 20 |\n| P3 | Gamma | 30 |\n| P4 | Delta | 30 |\n\n| Task.TId | PId | Hours |\n| --- | --- | --- |\n| T1 | P1 | 5 |\n| T2 | P2 | 8 |\n| T3 | P2 | 3 |\n\nThe DBMS enforces all constraints. Each statement below is executed on the instance shown above (the database is restored before each one), and a rejected statement leaves the database unchanged.\n\nWhich of the following statements is/are TRUE?",
     "options": [
       {
         "label": "A",
-        "text": "Deleting the tuple with $\\text{EId} = 2$ is rejected because it violates referential integrity."
+        "text": "After `DELETE FROM Dept WHERE DId = 30;` the table `Proj` still has four rows, two of which have NULL in `DId`."
       },
       {
         "label": "B",
-        "text": "Inserting the tuple $(6, \\text{Farid}, \\text{IT}, \\text{NULL})$ is rejected because it violates an integrity constraint."
+        "text": "After `DELETE FROM Dept WHERE DId = 30;` exactly two rows of `Emp` have NULL in `DId`."
       },
       {
         "label": "C",
-        "text": "Inserting the tuple $(4, \\text{Gita}, \\text{HR}, 2)$ is rejected because it violates the key constraint."
+        "text": "`UPDATE Dept SET DId = 40 WHERE DId = 10;` succeeds, and the row of Ravi in `Emp` then has `DId = 40`."
       },
       {
         "label": "D",
-        "text": "Since no two tuples in the given instance have the same $\\text{Name}$, $\\{\\text{Name}\\}$ must be a superkey of $\\text{Emp}$."
+        "text": "`DELETE FROM Dept WHERE DId = 20;` is rejected."
       }
     ],
     "answer": {
       "kind": "MSQ",
       "correct": [
-        "A",
-        "C"
+        "B",
+        "D"
       ]
     },
     "solution": {
-      "quick": "Deleting $\\text{EId}=2$ would leave Dev's $\\text{Mgr}=2$ dangling, so it is rejected (A). Inserting $\\text{EId}=4$ again duplicates the primary key, so it is rejected (C).\nA NULL foreign key is legal (Asha already has one), so (B) is accepted, and a key is a property of the schema that a single instance cannot establish, so (D) is false. Answer **(A), (C)**.",
+      "quick": "Deleting department 30 succeeds: Uma's `Emp` row gets `DId = NULL` (SET NULL) and projects P3 and P4 are deleted (CASCADE); no task refers to them. Deleting department 20 would cascade to project P2, which tasks T2 and T3 still reference under NO ACTION, so the whole statement is rejected. An update of `Dept.DId` uses the default action and is rejected too.\nTrue statements: **(B), (D)**.",
       "steps": [
         {
-          "title": "Constraints in force",
-          "body": "Key constraint: no two tuples may have the same $\\text{EId}$, and $\\text{EId}$ cannot be NULL. Referential integrity: every **non-NULL** value of $\\text{Mgr}$ must equal the $\\text{EId}$ of some tuple in $\\text{Emp}$. With NO ACTION, any insertion, update or deletion that breaks either rule is rejected."
+          "title": "Read the referential actions",
+          "body": "`Emp.DId`: ON DELETE SET NULL, so employees of a deleted department get NULL.\n`Proj.DId`: ON DELETE CASCADE, so the projects of a deleted department are deleted too.\n`Task.PId`: ON DELETE NO ACTION, so a project cannot disappear while a task refers to it, and this includes disappearance through a cascade. If any referential check fails, the whole statement is rolled back."
         },
         {
-          "title": "Statements A and C (true)",
-          "body": "**A.** Dev has $\\text{Mgr} = 2$. Deleting the tuple with $\\text{EId} = 2$ would leave that value pointing to no tuple, so the deletion is rejected. (In contrast, deleting $\\text{EId} = 4$ is fine because nobody references 4.)\n**C.** An employee with $\\text{EId} = 4$ (Dev) already exists. Inserting another tuple with $\\text{EId} = 4$ duplicates the primary key, so it is rejected by the key constraint."
+          "title": "DELETE FROM Dept WHERE DId = 30",
+          "body": "Employees with `DId = 30`: Uma, whose `DId` becomes NULL. Vik already had NULL, so `Emp` has **2** rows with NULL in `DId`.\nProjects P3 and P4 are cascade-deleted. No task refers to P3 or P4, so nothing blocks the cascade and the statement succeeds. `Proj` is left with 2 rows (P1 and P2), not four.\nSo (A) is false and (B) is true."
         },
         {
-          "title": "Statements B and D (false)",
-          "body": "**B.** The new tuple has a fresh, non-NULL $\\text{EId} = 6$. Its $\\text{Mgr}$ is NULL, and a NULL foreign-key value does not have to match any tuple (the instance already contains Asha with $\\text{Mgr} = \\text{NULL}$). No constraint is violated, so the insertion is accepted.\n**D.** A superkey is a property of the schema: it must hold in every legal instance. Distinct names in one instance are a coincidence, not a constraint. The tuple $(7, \\text{Bala}, \\text{HR}, 1)$ could legally be inserted, giving two employees named Bala, so $\\{\\text{Name}\\}$ is not a superkey."
+          "title": "UPDATE Dept SET DId = 40 WHERE DId = 10",
+          "body": "No `ON UPDATE` clause is given, so the default (NO ACTION) applies. Ravi (`Emp`) and project P1 (`Proj`) refer to department 10, so changing its key would leave dangling references. The statement is rejected, and Ravi's `DId` stays 10. (C) is false."
+        },
+        {
+          "title": "DELETE FROM Dept WHERE DId = 20",
+          "body": "SET NULL would change Sita's and Tara's `DId`, and the cascade would delete project P2. But tasks T2 and T3 refer to P2 with NO ACTION, so deleting P2 would leave dangling references. The check fails, and the entire `DELETE` is rejected: Dept, Emp and Proj remain unchanged. (D) is true."
         }
       ],
-      "finalAnswer": "**(A), (C)**",
+      "finalAnswer": "**(B), (D)**",
       "optionAnalysis": [
         {
           "label": "A",
-          "verdict": "correct",
-          "explanation": "Correct. Dev's tuple has $\\text{Mgr} = 2$, so removing $\\text{EId} = 2$ would leave a dangling reference, which NO ACTION rejects."
+          "verdict": "incorrect",
+          "explanation": "`Proj.DId` is declared ON DELETE CASCADE, not SET NULL. Projects P3 and P4 are deleted, leaving two rows (P1, P2), none of them with NULL."
         },
         {
           "label": "B",
-          "verdict": "incorrect",
-          "explanation": "Incorrect. $\\text{EId} = 6$ is new and non-NULL, and a NULL in the foreign key $\\text{Mgr}$ is allowed (it is not part of the primary key and is not NOT NULL). The insertion succeeds."
+          "verdict": "correct",
+          "explanation": "Uma's `DId` is set to NULL by the SET NULL action, and Vik's was already NULL, so exactly two `Emp` rows have NULL in `DId`."
         },
         {
           "label": "C",
-          "verdict": "correct",
-          "explanation": "Correct. A tuple with $\\text{EId} = 4$ already exists, so a second one violates the primary-key (uniqueness) constraint."
+          "verdict": "incorrect",
+          "explanation": "There is no `ON UPDATE CASCADE`, so the default action applies and rejects the update because Ravi and project P1 still refer to department 10."
         },
         {
           "label": "D",
-          "verdict": "incorrect",
-          "explanation": "Incorrect. Keys are declared on the schema and must hold for all legal instances; the fact that the current instance has distinct names does not make $\\{\\text{Name}\\}$ a superkey."
+          "verdict": "correct",
+          "explanation": "The delete cascades to project P2, which tasks T2 and T3 still reference under NO ACTION. The violation causes the whole statement to be rejected."
         }
       ],
-      "commonTrap": "Reading a key off the data. Deducing that $\\{\\text{Name}\\}$ is a key because the current names happen to be distinct (D) confuses a property of one instance with a schema-level constraint. A second trap is believing that a NULL foreign key always violates referential integrity (B)."
+      "commonTrap": "Looking only at the tables directly referencing `Dept`. The cascade to `Proj` is itself subject to the constraint from `Task`, and a violation anywhere rolls back the entire statement, including the SET NULL on `Emp`."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "A, C",
+      "independentAnswer": "(B), (D)",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nrows = [(1,'Asha','HR',None),(2,'Bala','IT',1),(3,'Chitra','IT',1),(4,'Dev','IT',2),(5,'Esha','HR',1)]\ndef rejected(sql, args=()):\n    c = sqlite3.connect(':memory:'); c.execute('PRAGMA foreign_keys=ON')\n    c.execute('CREATE TABLE Emp(EId INT PRIMARY KEY, Name TEXT, Dept TEXT, Mgr INT REFERENCES Emp(EId))')\n    c.executemany('INSERT INTO Emp VALUES(?,?,?,?)', rows)\n    try: c.execute(sql, args); return False\n    except sqlite3.IntegrityError: return True\nprint('A', rejected('DELETE FROM Emp WHERE EId=2'))                          # True\nprint('B', rejected('INSERT INTO Emp VALUES(?,?,?,?)', (6,'Farid','IT',None)))  # False\nprint('C', rejected('INSERT INTO Emp VALUES(?,?,?,?)', (4,'Gita','HR',2)))     # True\nprint('D', rejected('INSERT INTO Emp VALUES(?,?,?,?)', (7,'Bala','HR',1)))     # False -> duplicate Name is legal, {Name} is not a superkey",
+      "checkCode": "import sqlite3\nDDL = '''\nCREATE TABLE Dept (DId INT PRIMARY KEY, DName TEXT);\nCREATE TABLE Emp (EId INT PRIMARY KEY, EName TEXT, DId INT REFERENCES Dept(DId) ON DELETE SET NULL);\nCREATE TABLE Proj (PId TEXT PRIMARY KEY, PName TEXT, DId INT REFERENCES Dept(DId) ON DELETE CASCADE);\nCREATE TABLE Task (TId TEXT PRIMARY KEY, PId TEXT REFERENCES Proj(PId) ON DELETE NO ACTION, Hours INT);\nINSERT INTO Dept VALUES (10,'Sales'),(20,'Research'),(30,'Legal');\nINSERT INTO Emp VALUES (1,'Ravi',10),(2,'Sita',20),(3,'Tara',20),(4,'Uma',30),(5,'Vik',NULL);\nINSERT INTO Proj VALUES ('P1','Alpha',10),('P2','Beta',20),('P3','Gamma',30),('P4','Delta',30);\nINSERT INTO Task VALUES ('T1','P1',5),('T2','P2',8),('T3','P2',3);\n'''\ndef run(sql):\n    c = sqlite3.connect(':memory:'); c.executescript(DDL); c.execute('PRAGMA foreign_keys=ON')\n    try: c.execute(sql); ok = True\n    except sqlite3.IntegrityError: ok = False\n    return c, ok\nq = lambda c, s: c.execute(s).fetchall()\nc, ok = run('DELETE FROM Dept WHERE DId=30')\nA = ok and q(c, 'SELECT COUNT(*) FROM Proj')[0][0] == 4 and q(c, 'SELECT COUNT(*) FROM Proj WHERE DId IS NULL')[0][0] == 2\nB = ok and q(c, 'SELECT COUNT(*) FROM Emp WHERE DId IS NULL')[0][0] == 2\nc, ok = run('UPDATE Dept SET DId=40 WHERE DId=10')\nC = ok and q(c, \"SELECT DId FROM Emp WHERE EName='Ravi'\")[0][0] == 40\nc, ok = run('DELETE FROM Dept WHERE DId=20')\nD = not ok and q(c, 'SELECT COUNT(*) FROM Dept')[0][0] == 3 and q(c, 'SELECT COUNT(*) FROM Proj')[0][0] == 4\nprint([k for k, v in zip('ABCD', (A, B, C, D)) if v])",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -361,87 +446,102 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one concept (multiplying Maclaurin series) with three cross terms and sign bookkeeping; routine fractions; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Maclaurin coefficients) with three routine steps: expand both factors, extract the $x^4$ coefficient of the product, convert it to a derivative with $4!$; about 2.5 minutes.",
     "estimatedTimeSec": 150,
-    "concept": "Maclaurin series of a product: coefficient extraction by the Cauchy product of the series of e^x and cos x.",
+    "concept": "Maclaurin series of a product and the relation f^(n)(0) = n! a_n.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "The Maclaurin series of $f(x) = e^{x}\\cos x$ is $\\displaystyle\\sum_{n=0}^{\\infty} a_n x^n$.\n\nThe value of the coefficient $a_5$ is",
+    "stem": "Let $f(x) = \\dfrac{\\ln(1+x)}{1+x}$ for $x > -1$.\n\nThe value of the fourth derivative $f^{(4)}(0)$ is",
     "options": [
       {
         "label": "A",
-        "text": "$\\dfrac{2}{15}$"
+        "text": "$-50$"
       },
       {
         "label": "B",
-        "text": "$\\dfrac{1}{30}$"
+        "text": "$50$"
       },
       {
         "label": "C",
-        "text": "$-\\dfrac{7}{60}$"
+        "text": "$-\\dfrac{25}{12}$"
       },
       {
         "label": "D",
-        "text": "$-\\dfrac{1}{30}$"
+        "text": "$-14$"
       }
     ],
     "answer": {
       "kind": "MCQ",
-      "correct": "D"
+      "correct": "A"
     },
     "solution": {
-      "quick": "Multiply $e^x = 1 + x + \\tfrac{x^2}{2} + \\tfrac{x^3}{6} + \\tfrac{x^4}{24} + \\tfrac{x^5}{120} + \\cdots$ by $\\cos x = 1 - \\tfrac{x^2}{2} + \\tfrac{x^4}{24} - \\cdots$ and collect the $x^5$ terms: $\\tfrac{1}{120} - \\tfrac{1}{12} + \\tfrac{1}{24} = -\\tfrac{4}{120} = -\\tfrac{1}{30}$.\nAnswer **(D)**.",
+      "quick": "Multiply the Maclaurin series $\\ln(1+x) = x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\frac{x^4}{4} + \\cdots$ and $\\frac{1}{1+x} = 1 - x + x^2 - x^3 + \\cdots$. The coefficient of $x^4$ is $a_4 = -\\frac{25}{12}$, and $f^{(4)}(0) = 4!\\,a_4 = -50$. Answer **(A)**.",
       "steps": [
         {
-          "title": "Series of the two factors",
-          "body": "$e^x = 1 + x + \\dfrac{x^2}{2!} + \\dfrac{x^3}{3!} + \\dfrac{x^4}{4!} + \\dfrac{x^5}{5!} + \\cdots$\n$\\cos x = 1 - \\dfrac{x^2}{2!} + \\dfrac{x^4}{4!} - \\cdots$ (only even powers, with alternating signs)."
+          "title": "Maclaurin series of the two factors",
+          "body": "$\\ln(1+x) = x - \\dfrac{x^2}{2} + \\dfrac{x^3}{3} - \\dfrac{x^4}{4} + \\cdots$ and $\\dfrac{1}{1+x} = 1 - x + x^2 - x^3 + x^4 - \\cdots$, both valid for $|x| < 1$."
         },
         {
-          "title": "Collect the coefficient of $x^5$",
-          "body": "A term $x^5$ in the product arises from an $x^j$ term of $e^x$ times an $x^{5-j}$ term of $\\cos x$. Since $\\cos x$ has only even powers, $5 - j \\in \\{0, 2, 4\\}$, so $j \\in \\{5, 3, 1\\}$:\n$$a_5 = \\frac{1}{5!}\\cdot 1 + \\frac{1}{3!}\\cdot\\left(-\\frac{1}{2}\\right) + \\frac{1}{1!}\\cdot\\frac{1}{24} = \\frac{1}{120} - \\frac{1}{12} + \\frac{1}{24}.$$"
+          "title": "Coefficient of x^4 in the product",
+          "body": "Collect all pairs with total degree 4:\n$a_4 = \\left(-\\tfrac14\\right)(1) + \\left(\\tfrac13\\right)(-1) + \\left(-\\tfrac12\\right)(1) + (1)(-1) = -\\tfrac14 - \\tfrac13 - \\tfrac12 - 1 = -\\tfrac{3 + 4 + 6 + 12}{12} = -\\tfrac{25}{12}$."
         },
         {
-          "title": "Simplify",
-          "body": "With denominator $120$: $\\dfrac{1}{120} - \\dfrac{10}{120} + \\dfrac{5}{120} = \\dfrac{-4}{120} = -\\dfrac{1}{30}$."
-        },
-        {
-          "title": "Cross-check with a complex exponential",
-          "body": "Using $e^x\\cos x = \\operatorname{Re}\\,e^{(1+i)x}$, we get $a_n = \\operatorname{Re}\\big[(1+i)^n\\big]/n!$. Since $(1+i)^2 = 2i$ and $(1+i)^4 = -4$, we have $(1+i)^5 = -4(1+i) = -4 - 4i$, whose real part is $-4$. Hence $a_5 = -4/120 = -1/30$, in agreement."
+          "title": "Convert to a derivative",
+          "body": "For a Maclaurin series $f(x) = \\sum a_n x^n$ we have $a_n = f^{(n)}(0)/n!$, so $f^{(4)}(0) = 4!\\, a_4 = 24 \\cdot \\left(-\\tfrac{25}{12}\\right) = -50$.\n\nCross-check: the product series is $\\sum_{n \\ge 1} (-1)^{n+1} H_n x^n$ with harmonic numbers $H_n$, so $a_4 = -H_4 = -\\left(1 + \\tfrac12 + \\tfrac13 + \\tfrac14\\right) = -\\tfrac{25}{12}$."
         }
       ],
-      "finalAnswer": "**(D)**",
+      "finalAnswer": "**(A)**",
       "optionAnalysis": [
         {
           "label": "A",
-          "verdict": "incorrect",
-          "explanation": "Incorrect. $\\tfrac{2}{15} = \\tfrac{1}{120} + \\tfrac{1}{12} + \\tfrac{1}{24}$ uses all plus signs, ignoring that the $x^2$ term of $\\cos x$ is negative."
+          "verdict": "correct",
+          "explanation": "$f^{(4)}(0) = 4! \\cdot a_4 = 24 \\cdot (-25/12) = -50$."
         },
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "Incorrect. It has the right magnitude but the wrong sign, for example from using $(1+i)^4 = +4$ instead of $-4$."
+          "explanation": "Correct magnitude but the wrong sign. The $x^4$ term of $\\ln(1+x)$ is $-x^4/4$, and every product term $c_k \\cdot (-1)^{4-k}$ is negative, so $a_4 < 0$."
         },
         {
           "label": "C",
           "verdict": "incorrect",
-          "explanation": "Incorrect. $\\tfrac{1}{120} - \\tfrac{1}{12} - \\tfrac{1}{24} = -\\tfrac{7}{60}$ uses $-\\tfrac{x^4}{24}$ for $\\cos x$, but the $x^4$ term of $\\cos x$ is $+\\tfrac{x^4}{24}$."
+          "explanation": "This is the coefficient $a_4$, not the derivative. Multiply by $4! = 24$ to get $f^{(4)}(0)$."
         },
         {
           "label": "D",
-          "verdict": "correct",
-          "explanation": "Correct. $\\tfrac{1}{120} - \\tfrac{1}{12} + \\tfrac{1}{24} = -\\tfrac{1}{30}$."
+          "verdict": "incorrect",
+          "explanation": "$-14 = 24 \\cdot (-7/12)$ comes from using only the two highest-degree pairings, $-\\frac14 - \\frac13$, and forgetting the terms $-\\frac12$ and $-1$ from the lower-degree terms of $\\ln(1+x)$."
         }
       ],
-      "shortcut": "Write $e^x\\cos x = \\operatorname{Re}\\,e^{(1+i)x}$, so $a_n = \\operatorname{Re}[(1+i)^n]/n!$. With $(1+i)^4 = -4$, $(1+i)^5 = -4 - 4i$ and therefore $a_5 = -4/120 = -1/30$, with no cross-term bookkeeping.",
-      "commonTrap": "Getting the signs of the cosine series wrong. The signs alternate as $+,-,+,\\dots$, so the $x^4$ term is positive; using a negative sign there gives $-\\tfrac{7}{60}$ (option C), and ignoring all signs gives $\\tfrac{2}{15}$ (option A)."
+      "commonTrap": "Forgetting the factor $4!$ (choosing the coefficient $-25/12$), or truncating the product so that only some of the pairs with total degree 4 are counted. Every term $c_k x^k$ of the logarithm pairs with $(-1)^{4-k}x^{4-k}$ from $1/(1+x)$."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "D: -1/30",
+      "independentAnswer": "(A) -50",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\ns = sp.series(sp.exp(x)*sp.cos(x), x, 0, 7).removeO()\nprint(s.coeff(x, 5), sp.diff(sp.exp(x)*sp.cos(x), x, 5).subs(x, 0)/sp.factorial(5))  # -1/30 -1/30",
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.log(1 + x) / (1 + x)\na4 = sp.series(f, x, 0, 6).removeO().coeff(x, 4)\nprint(sp.diff(f, x, 4).subs(x, 0), a4, sp.factorial(4) * a4)",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -459,48 +559,69 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one concept (block elimination / Schur complement for a partitioned determinant) with a short 2x2 matrix product and determinant; about 2.5 minutes.",
-    "estimatedTimeSec": 150,
-    "concept": "Determinant of a partitioned matrix via the Schur complement: det[[A,B],[C,D]] = det(A) det(D - C A^{-1} B).",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (inverse of a block upper-triangular matrix) with three steps: notice that the trace ignores the off-diagonal block, invert two $2\\times2$ blocks, and add the traces; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Inverse of a block upper-triangular matrix: diagonal blocks of M^{-1} are the inverses of the diagonal blocks.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Consider the $4 \\times 4$ real matrix $M$, partitioned into $2 \\times 2$ blocks,\n$$M = \\begin{bmatrix} I_2 & B \\\\ C & D \\end{bmatrix} = \\left[\\begin{array}{cc|cc} 1 & 0 & 2 & 1 \\\\ 0 & 1 & 0 & 2 \\\\ \\hline 2 & 2 & 3 & 3 \\\\ 1 & 3 & 4 & 3 \\end{array}\\right],$$\nwhere $I_2$ is the $2 \\times 2$ identity matrix.\n\nThe value of $\\det(M)$ is ________.",
+    "stem": "Consider the $4 \\times 4$ real matrix $M$ partitioned into $2 \\times 2$ blocks,\n\n$$M = \\begin{bmatrix} A & B \\\\ O & D \\end{bmatrix}, \\qquad A = \\begin{bmatrix} 2 & 1 \\\\ 3 & 4 \\end{bmatrix}, \\quad B = \\begin{bmatrix} 1 & 2 \\\\ 0 & 5 \\end{bmatrix}, \\quad D = \\begin{bmatrix} 3 & 1 \\\\ 2 & 2 \\end{bmatrix},$$\n\nwhere $O$ is the $2 \\times 2$ zero matrix.\n\nThe trace of $M^{-1}$ is ______. Round off to two decimal places.",
     "options": [],
     "answer": {
       "kind": "NAT",
-      "min": 10,
-      "max": 10
+      "min": 2.44,
+      "max": 2.46
     },
     "solution": {
-      "quick": "Subtract $C$ times the first block-row from the second block-row (this does not change the determinant). The lower-right block becomes the Schur complement $D - C I_2^{-1} B = D - CB$, and the matrix becomes block upper triangular, so $\\det M = \\det(I_2)\\det(D - CB)$.\n$CB = \\begin{bmatrix}4&6\\\\2&7\\end{bmatrix}$, $D - CB = \\begin{bmatrix}-1&-3\\\\2&-4\\end{bmatrix}$, so $\\det M = 4 + 6 = 10$.",
+      "quick": "For a block upper-triangular matrix, $M^{-1} = \\begin{bmatrix} A^{-1} & -A^{-1}BD^{-1} \\\\ O & D^{-1} \\end{bmatrix}$, so $\\operatorname{tr}(M^{-1}) = \\operatorname{tr}(A^{-1}) + \\operatorname{tr}(D^{-1})$ and $B$ plays no role.\nWith $\\det A = 5$ and $\\det D = 4$: $\\frac{6}{5} + \\frac{5}{4} = 2.45$.",
       "steps": [
         {
-          "title": "Block elimination",
-          "body": "From the partition, $B = \\begin{bmatrix}2&1\\\\0&2\\end{bmatrix}$, $C = \\begin{bmatrix}2&2\\\\1&3\\end{bmatrix}$, $D = \\begin{bmatrix}3&3\\\\4&3\\end{bmatrix}$.\nLeft-multiplying by $\\begin{bmatrix} I & 0 \\\\ -C & I \\end{bmatrix}$ (determinant $1$) gives\n$$\\begin{bmatrix} I & 0 \\\\ -C & I \\end{bmatrix}\\begin{bmatrix} I & B \\\\ C & D \\end{bmatrix} = \\begin{bmatrix} I & B \\\\ 0 & D - CB \\end{bmatrix}.$$\nThis is block upper triangular, so $\\det M = \\det(I_2)\\cdot\\det(D - CB) = \\det(D - CB)$."
+          "title": "Invertibility and the block inverse",
+          "body": "$\\det M = \\det A \\cdot \\det D$ for a block triangular matrix. Here $\\det A = 2\\cdot4 - 1\\cdot3 = 5$ and $\\det D = 3\\cdot2 - 1\\cdot2 = 4$, so $\\det M = 20 \\ne 0$ and $M$ is invertible.\nSolving $M\\,N = I$ block by block gives $N = \\begin{bmatrix} A^{-1} & -A^{-1}BD^{-1} \\\\ O & D^{-1} \\end{bmatrix}$."
         },
         {
-          "title": "Compute the Schur complement",
-          "body": "$$CB = \\begin{bmatrix}2&2\\\\1&3\\end{bmatrix}\\begin{bmatrix}2&1\\\\0&2\\end{bmatrix} = \\begin{bmatrix}2\\cdot2+2\\cdot0 & 2\\cdot1+2\\cdot2\\\\ 1\\cdot2+3\\cdot0 & 1\\cdot1+3\\cdot2\\end{bmatrix} = \\begin{bmatrix}4&6\\\\2&7\\end{bmatrix},$$\n$$D - CB = \\begin{bmatrix}3-4 & 3-6\\\\ 4-2 & 3-7\\end{bmatrix} = \\begin{bmatrix}-1&-3\\\\2&-4\\end{bmatrix}.$$"
+          "title": "Trace uses only the diagonal blocks",
+          "body": "The trace of $M^{-1}$ is the sum of the diagonal entries of the two diagonal blocks, so $\\operatorname{tr}(M^{-1}) = \\operatorname{tr}(A^{-1}) + \\operatorname{tr}(D^{-1})$. The off-diagonal block $-A^{-1}BD^{-1}$ (and hence $B$) does not contribute."
         },
         {
-          "title": "Determinant",
-          "body": "$\\det(D - CB) = (-1)(-4) - (-3)(2) = 4 + 6 = 10$, so $\\det M = 10$."
+          "title": "Invert the two 2x2 blocks",
+          "body": "$A^{-1} = \\dfrac{1}{5}\\begin{bmatrix} 4 & -1 \\\\ -3 & 2 \\end{bmatrix}$, so $\\operatorname{tr}(A^{-1}) = \\dfrac{4 + 2}{5} = 1.2$.\n$D^{-1} = \\dfrac{1}{4}\\begin{bmatrix} 2 & -1 \\\\ -2 & 3 \\end{bmatrix}$, so $\\operatorname{tr}(D^{-1}) = \\dfrac{2 + 3}{4} = 1.25$."
         },
         {
-          "title": "Cross-check by row operations",
-          "body": "Apply $R_3 \\leftarrow R_3 - 2R_1 - 2R_2$ and $R_4 \\leftarrow R_4 - R_1 - 3R_2$ (determinant unchanged):\n$R_3 = (2,2,3,3) - 2(1,0,2,1) - 2(0,1,0,2) = (0,0,-1,-3)$ and $R_4 = (1,3,4,3) - (1,0,2,1) - 3(0,1,0,2) = (0,0,2,-4)$.\nThe matrix is now upper block triangular with diagonal blocks $I_2$ and $\\begin{bmatrix}-1&-3\\\\2&-4\\end{bmatrix}$, so $\\det M = 1\\cdot 10 = 10$."
+          "title": "Add",
+          "body": "$\\operatorname{tr}(M^{-1}) = 1.2 + 1.25 = 2.45$."
         }
       ],
-      "finalAnswer": "**10**",
-      "commonTrap": "Treating the blocks as scalars. Using $\\det M = \\det(I_2)\\det(D) - \\det(B)\\det(C)$ gives $-3 - 16 = -19$, and using the Schur complement with the wrong product order, $D - BC$, gives $14$. The correct complement is $D - CB$, because $C$ multiplies $A^{-1}B$ from the left."
+      "finalAnswer": "**2.45**",
+      "shortcut": "For a $2\\times2$ matrix $X$, $\\operatorname{tr}(X^{-1}) = \\operatorname{tr}(X)/\\det X$. So the answer is $\\frac{6}{5} + \\frac{5}{4}$ without writing either inverse.",
+      "commonTrap": "Inverting each block entry-by-entry, using $1/\\operatorname{tr}(A) + 1/\\operatorname{tr}(D)$, or trying to invert the full $4\\times4$ matrix and getting lost in the off-diagonal block. The off-diagonal block never affects the trace of the inverse."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "10",
+      "independentAnswer": "2.45",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nM = np.array([[1,0,2,1],[0,1,0,2],[2,2,3,3],[1,3,4,3]], float)\nB, C, D = M[:2,2:], M[2:,:2], M[2:,2:]\nprint(round(np.linalg.det(M)), round(np.linalg.det(D - C@B)))                                    # 10 10\nprint(round(np.linalg.det(D) - np.linalg.det(B)*np.linalg.det(C)), round(np.linalg.det(D - B@C)))  # -19 14 (wrong formulas)",
+      "checkCode": "import numpy as np\nA = np.array([[2, 1], [3, 4]], float); B = np.array([[1, 2], [0, 5]], float); D = np.array([[3, 1], [2, 2]], float)\nM = np.block([[A, B], [np.zeros((2, 2)), D]])\nprint(round(np.trace(np.linalg.inv(M)), 6), round(np.trace(np.linalg.inv(A)) + np.trace(np.linalg.inv(D)), 6))",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -519,53 +640,64 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD — combines mean-centring, the sample covariance matrix, its eigen-decomposition and the reconstruction-error identity, with a likely n versus n-1 trap; about 4 to 5 minutes.",
-    "estimatedTimeSec": 270,
-    "concept": "PCA with one retained component: mean squared reconstruction error equals (n-1)/n times the sum of the discarded eigenvalues of the sample covariance matrix.",
+    "difficultyRationale": "Platform-estimated: HARD — combines three ideas (PCA as eigen-decomposition of the sample covariance, reconstruction error equals the discarded variance, and the $n-1$ scaling), needs the eigenvalues of a $3\\times3$ matrix from its characteristic cubic, and has a likely off-by-one trap; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "PCA reconstruction error: the total squared error of a rank-k reconstruction equals (n-1) times the sum of the discarded eigenvalues of the sample covariance matrix.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "A data set has five observations of three features $(x_1, x_2, x_3)$:\n\n| Observation | $x_1$ | $x_2$ | $x_3$ |\n| --- | --- | --- | --- |\n| 1 | 2 | 4 | 3 |\n| 2 | 3 | 7 | 2 |\n| 3 | 4 | 8 | 4 |\n| 4 | 5 | 5 | 4 |\n| 5 | 6 | 6 | 2 |\n\nPrincipal component analysis (PCA) is performed using the sample covariance matrix with divisor $n - 1$. Let $\\bar{\\mathbf{x}}$ be the mean vector, $\\mathbf{z}_i = \\mathbf{x}_i - \\bar{\\mathbf{x}}$, and let $\\mathbf{v}_1$ be the unit-norm first principal component. Every observation is projected onto $\\mathbf{v}_1$ and reconstructed in the original three-dimensional space as\n$$\\hat{\\mathbf{x}}_i = \\bar{\\mathbf{x}} + (\\mathbf{z}_i^\\top \\mathbf{v}_1)\\,\\mathbf{v}_1 .$$\n\nThe mean squared reconstruction error $\\dfrac{1}{5}\\displaystyle\\sum_{i=1}^{5} \\lVert \\mathbf{x}_i - \\hat{\\mathbf{x}}_i \\rVert^2$ is ________ (rounded off to two decimal places).",
+    "stem": "A data set has $n = 21$ observations of three features. After mean-centring, the sample covariance matrix (computed with divisor $n - 1$) is\n\n$$S = \\begin{bmatrix} 15 & 6 & 0 \\\\ 6 & 18 & 6 \\\\ 0 & 6 & 21 \\end{bmatrix}.$$\n\nPrincipal component analysis (PCA) is applied: each centred observation $\\mathbf{x}_i \\in \\mathbb{R}^3$ is projected onto the subspace spanned by the first two principal components and then mapped back to $\\mathbb{R}^3$, giving the reconstruction $\\hat{\\mathbf{x}}_i$.\n\nThe total squared reconstruction error $\\displaystyle\\sum_{i=1}^{21} \\lVert \\mathbf{x}_i - \\hat{\\mathbf{x}}_i \\rVert^2$ is ______.",
     "options": [],
     "answer": {
       "kind": "NAT",
-      "min": 2.39,
-      "max": 2.41
+      "min": 180,
+      "max": 180
     },
     "solution": {
-      "quick": "The centred data give the sample covariance matrix $S = \\begin{bmatrix}2.5&0.5&0\\\\0.5&2.5&0\\\\0&0&1\\end{bmatrix}$ with eigenvalues $3, 2, 1$ and $\\mathbf{v}_1 = (1,1,0)^\\top/\\sqrt{2}$.\nThe total squared reconstruction error is $(n-1)(\\lambda_2 + \\lambda_3) = 4 \\times 3 = 12$, so the mean over the five observations is $12/5 = 2.40$.",
+      "quick": "The eigenvalues of $S$ are $27, 18, 9$. Because $\\sum_i \\mathbf{x}_i\\mathbf{x}_i^\\top = (n-1)S$, projecting onto the top two principal components discards exactly $(n-1)\\lambda_3$ of the total squared norm.\nError $= 20 \\times 9 = 180$.",
       "steps": [
         {
-          "title": "Centre the data",
-          "body": "Column means: $\\bar{x}_1 = 20/5 = 4$, $\\bar{x}_2 = 30/5 = 6$, $\\bar{x}_3 = 15/5 = 3$. The centred columns are\n$c_1 = (-2,-1,0,1,2)$, $c_2 = (-2,1,2,-1,0)$, $c_3 = (0,-1,1,1,-1)$ (one entry per observation)."
+          "title": "Eigenvalues of S",
+          "body": "$\\operatorname{tr}S = 15 + 18 + 21 = 54$. The sum of the principal $2\\times2$ minors is $(15\\cdot18 - 36) + (15\\cdot21 - 0) + (18\\cdot21 - 36) = 234 + 315 + 342 = 891$. $\\det S = 15(18\\cdot21 - 36) - 6(6\\cdot21 - 0) = 15\\cdot342 - 6\\cdot126 = 4374$.\nCharacteristic equation: $\\lambda^3 - 54\\lambda^2 + 891\\lambda - 4374 = 0$. Testing divisors of $4374 = 2\\cdot3^7$, $\\lambda = 9$ works ($729 - 4374 + 8019 - 4374 = 0$), and dividing out leaves $\\lambda^2 - 45\\lambda + 486 = (\\lambda - 18)(\\lambda - 27)$.\nSo $\\lambda_1 = 27$, $\\lambda_2 = 18$, $\\lambda_3 = 9$."
         },
         {
-          "title": "Sample covariance matrix",
-          "body": "Sums of products: $c_1\\!\\cdot\\! c_1 = 10$, $c_2\\!\\cdot\\! c_2 = 10$, $c_3\\!\\cdot\\! c_3 = 4$, $c_1\\!\\cdot\\! c_2 = 4 - 1 + 0 - 1 + 0 = 2$, $c_1\\!\\cdot\\! c_3 = 0 + 1 + 0 + 1 - 2 = 0$, $c_2\\!\\cdot\\! c_3 = 0 - 1 + 2 - 1 + 0 = 0$.\nDividing by $n - 1 = 4$:\n$$S = \\begin{bmatrix}2.5&0.5&0\\\\0.5&2.5&0\\\\0&0&1\\end{bmatrix}.$$"
+          "title": "Error of a rank-2 reconstruction",
+          "body": "Let $U$ hold the top two eigenvectors, so $\\hat{\\mathbf{x}}_i = UU^\\top \\mathbf{x}_i$ and $\\mathbf{x}_i - \\hat{\\mathbf{x}}_i = (I - UU^\\top)\\mathbf{x}_i = \\mathbf{u}_3\\mathbf{u}_3^\\top\\mathbf{x}_i$, where $\\mathbf{u}_3$ is the unit eigenvector for $\\lambda_3$.\nHence $\\sum_i \\lVert \\mathbf{x}_i - \\hat{\\mathbf{x}}_i\\rVert^2 = \\sum_i (\\mathbf{u}_3^\\top \\mathbf{x}_i)^2 = \\mathbf{u}_3^\\top \\left(\\sum_i \\mathbf{x}_i\\mathbf{x}_i^\\top\\right)\\mathbf{u}_3$."
         },
         {
-          "title": "Eigen-decomposition",
-          "body": "$S$ is block diagonal. The $2\\times 2$ block $\\begin{bmatrix}2.5&0.5\\\\0.5&2.5\\end{bmatrix}$ has eigenvalues $2.5 \\pm 0.5 = 3$ (eigenvector $(1,1)/\\sqrt{2}$) and $2$ (eigenvector $(1,-1)/\\sqrt{2}$); the third block gives $\\lambda = 1$ with eigenvector $e_3$.\nSo $\\lambda_1 = 3$, $\\lambda_2 = 2$, $\\lambda_3 = 1$, and $\\mathbf{v}_1 = (1,1,0)^\\top/\\sqrt{2}$."
-        },
-        {
-          "title": "Reconstruction error",
-          "body": "Because $\\hat{\\mathbf{x}}_i - \\bar{\\mathbf{x}}$ is the orthogonal projection of $\\mathbf{z}_i$ onto $\\mathbf{v}_1$, Pythagoras gives $\\lVert \\mathbf{x}_i - \\hat{\\mathbf{x}}_i \\rVert^2 = \\lVert \\mathbf{z}_i \\rVert^2 - (\\mathbf{z}_i^\\top \\mathbf{v}_1)^2$.\n$\\sum_i \\lVert \\mathbf{z}_i \\rVert^2 = 10 + 10 + 4 = 24$. The projections are $\\mathbf{z}_i^\\top \\mathbf{v}_1 = (c_{1i} + c_{2i})/\\sqrt{2} = (-4, 0, 2, 0, 2)/\\sqrt{2}$, so $\\sum_i (\\mathbf{z}_i^\\top \\mathbf{v}_1)^2 = (16 + 0 + 4 + 0 + 4)/2 = 12 = (n-1)\\lambda_1$.\nTotal error $= 24 - 12 = 12 = (n-1)(\\lambda_2 + \\lambda_3)$."
-        },
-        {
-          "title": "Mean error",
-          "body": "Mean squared reconstruction error $= 12/5 = 2.40$. (The per-observation errors are $0, 3, 3, 3, 3$.)"
+          "title": "Scale by n - 1",
+          "body": "For centred data $\\sum_i \\mathbf{x}_i\\mathbf{x}_i^\\top = (n-1)S$, so the total error is $(n-1)\\,\\mathbf{u}_3^\\top S\\,\\mathbf{u}_3 = (n-1)\\lambda_3 = 20 \\times 9 = 180$.\nCheck with total variance: $\\sum_i\\lVert\\mathbf{x}_i\\rVert^2 = 20 \\times 54 = 1080$, of which the first two components retain $20 \\times (27 + 18) = 900$, leaving $1080 - 900 = 180$."
         }
       ],
-      "finalAnswer": "**2.40**",
-      "shortcut": "Projection onto the top component discards exactly the variance along the other eigenvectors. The sum of squared errors is $(n-1)(\\lambda_2 + \\lambda_3)$ for the covariance with divisor $n-1$, so the mean is $\\tfrac{n-1}{n}(\\lambda_2+\\lambda_3) = \\tfrac45 \\times 3 = 2.40$.",
-      "commonTrap": "Mixing the divisors. The discarded eigenvalues sum to $\\lambda_2 + \\lambda_3 = 3$ because the covariance uses $n - 1 = 4$, but the requested mean divides the total squared error by $n = 5$; quoting $3.00$ ignores the factor $\\tfrac{n-1}{n}$. Quoting the total $12$ forgets to average."
+      "finalAnswer": "**180**",
+      "commonTrap": "Multiplying by $n = 21$ instead of $n - 1 = 20$ (giving 189), or reporting the discarded eigenvalue $9$, or the sum of the retained eigenvalues, without scaling. The covariance matrix is already divided by $n - 1$, so the un-normalised sum of squares is $(n-1)$ times the eigenvalue."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "2.40",
+      "independentAnswer": "180",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX = np.array([[2,4,3],[3,7,2],[4,8,4],[5,5,4],[6,6,2]], float)\nmu = X.mean(0); Z = X - mu\nw, V = np.linalg.eigh(np.cov(X.T))            # np.cov uses divisor n-1\nv1 = V[:, -1]\nXh = mu + np.outer(Z @ v1, v1)\nprint(w.round(4), ((X - Xh)**2).sum(1).round(4), round(((X - Xh)**2).sum(1).mean(), 4))  # [1. 2. 3.] [0. 3. 3. 3. 3.] 2.4",
+      "checkCode": "import numpy as np\nS = np.array([[15, 6, 0], [6, 18, 6], [0, 6, 21]], float); n = 21\nw, V = np.linalg.eigh(S)\nrng = np.random.default_rng(0)\nZ = rng.normal(size=(n, 3)); Z -= Z.mean(0)\nZ = Z @ np.linalg.inv(np.linalg.cholesky(Z.T @ Z / (n - 1))).T\nX = Z @ np.linalg.cholesky(S).T\nassert np.allclose(X.T @ X / (n - 1), S)\nU = V[:, ::-1][:, :2]\nprint(np.round(w, 6), round(((X - X @ U @ U.T) ** 2).sum(), 6), (n - 1) * w[0])",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -583,28 +715,28 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one concept (consistency and solution count of a parametric 3x3 system) needing one row reduction and four short case checks; about 3 minutes.",
-    "estimatedTimeSec": 170,
-    "concept": "Parametric linear system: rank of coefficient and augmented matrices decide unique / infinite / no solution; homogeneous system has non-trivial solutions iff determinant is zero.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (rank, consistency and solution count of $A\\mathbf{x}=\\mathbf{b}$) requiring one row reduction and then four statements checked against the rank and the consistency condition; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Solvability of Ax = b via rank(A) vs rank([A|b]), free variables, and nullity = n - rank.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Consider the following system of linear equations in the unknowns $x, y, z$, where $k$ and $m$ are real parameters.\n$$\\begin{aligned} x + y + z &= 2 \\\\ x + 2y + 3z &= 5 \\\\ 2x + 3y + kz &= m \\end{aligned}$$\n\nWhich of the following statements is/are TRUE?",
+    "stem": "Let\n\n$$A = \\begin{bmatrix} 1 & 2 & -1 & 3 \\\\ 2 & 4 & 1 & 3 \\\\ 3 & 6 & 0 & 6 \\end{bmatrix}$$\n\nand consider the linear system $A\\mathbf{x} = \\mathbf{b}$ with $\\mathbf{x} \\in \\mathbb{R}^4$ and $\\mathbf{b} \\in \\mathbb{R}^3$.\n\nWhich of the following statements is/are TRUE?",
     "options": [
       {
         "label": "A",
-        "text": "For every real $k \\ne 4$, the system has exactly one solution, whatever the value of $m$."
+        "text": "$\\operatorname{rank}(A) = 2$ and the null space of $A$ has dimension $2$."
       },
       {
         "label": "B",
-        "text": "For $k = 4$ and $m = 7$, the system has infinitely many solutions."
+        "text": "The system $A\\mathbf{x} = (5,\\ 7,\\ 12)^\\top$ has infinitely many solutions."
       },
       {
         "label": "C",
-        "text": "For $k = 4$, the system is consistent for every real value of $m$."
+        "text": "Since $A$ has more columns than rows, $A\\mathbf{x} = \\mathbf{b}$ is consistent for every $\\mathbf{b} \\in \\mathbb{R}^3$."
       },
       {
         "label": "D",
-        "text": "The homogeneous system obtained by replacing the right-hand sides $2, 5, m$ by $0, 0, 0$ has a non-trivial solution if and only if $k = 4$."
+        "text": "The system $A\\mathbf{x} = (1,\\ 2,\\ 4)^\\top$ has no solution."
       }
     ],
     "answer": {
@@ -616,23 +748,19 @@
       ]
     },
     "solution": {
-      "quick": "Row reduction ($R_3 \\leftarrow R_3 - R_1 - R_2$) turns the last equation into $(k-4)z = m - 7$, while the first two equations remain independent.\nSo $k \\ne 4$ gives a unique solution for every $m$; $k = 4$ gives infinitely many solutions when $m = 7$ and none when $m \\ne 7$; and the homogeneous system is non-trivial exactly when $k = 4$. Answer **(A), (B), (D)**.",
+      "quick": "Row 3 equals row 1 plus row 2, so $\\operatorname{rank}(A) = 2$ and the null space has dimension $4 - 2 = 2$. Consequently $A\\mathbf{x} = \\mathbf{b}$ is consistent exactly when $b_3 = b_1 + b_2$.\n$(5,7,12)$ satisfies this (infinitely many solutions), $(1,2,4)$ does not (no solution), and a general $\\mathbf{b}$ does not. True: **(A), (B), (D)**.",
       "steps": [
         {
-          "title": "Reduce the augmented matrix",
-          "body": "$R_3 \\leftarrow R_3 - R_1 - R_2$ gives\n$$\\left[\\begin{array}{ccc|c} 1 & 1 & 1 & 2 \\\\ 1 & 2 & 3 & 5 \\\\ 0 & 0 & k-4 & m-7 \\end{array}\\right].$$\nThe first two rows are not proportional, so they are independent and the coefficient matrix always has rank at least $2$. Eliminating below $R_1$ ($R_2 \\leftarrow R_2 - R_1$) gives $y + 2z = 3$."
+          "title": "Row-reduce the augmented matrix",
+          "body": "$R_2 \\leftarrow R_2 - 2R_1$ gives $(0, 0, 3, -3 \\mid b_2 - 2b_1)$; $R_3 \\leftarrow R_3 - 3R_1$ gives $(0, 0, 3, -3 \\mid b_3 - 3b_1)$; then $R_3 \\leftarrow R_3 - R_2$ gives $(0, 0, 0, 0 \\mid b_3 - b_1 - b_2)$.\nThe pivots are in columns 1 and 3, so $\\operatorname{rank}(A) = 2$. Free variables: $x_2$ and $x_4$, so the null space has dimension $4 - 2 = 2$. (A) is true."
         },
         {
-          "title": "Case $k \\ne 4$",
-          "body": "The third row reads $(k-4)z = m-7$ with $k - 4 \\ne 0$, so $z = \\dfrac{m-7}{k-4}$ is determined for every $m$; back-substitution then fixes $y$ and $x$. The coefficient matrix has rank $3$ (equivalently $\\det A = k - 4 \\ne 0$), so the solution is unique for every $m$. **A is true.**"
+          "title": "Consistency condition",
+          "body": "The last row says $0 = b_3 - b_1 - b_2$. So $A\\mathbf{x} = \\mathbf{b}$ is consistent iff $b_3 = b_1 + b_2$; otherwise $\\operatorname{rank}([A\\mid\\mathbf{b}]) = 3 > \\operatorname{rank}(A)$.\nThe column space is a plane of $\\mathbb{R}^3$, not all of it."
         },
         {
-          "title": "Case $k = 4$",
-          "body": "The third row becomes $0 = m - 7$.\nIf $m = 7$: it is $0 = 0$, the rank of both the coefficient and augmented matrices is $2 < 3$, so there is one free variable: $y = 3 - 2z$, $x = z - 1$, i.e. infinitely many solutions (a line). **B is true.**\nIf $m \\ne 7$: the row reads $0 = m - 7 \\ne 0$, so the system is inconsistent. Hence \"consistent for every $m$\" is false. **C is false.**"
-        },
-        {
-          "title": "Homogeneous system",
-          "body": "For the homogeneous system, the same reduction gives $(k-4)z = 0$ (with $y + 2z = 0$ and $x + y + z = 0$). A non-trivial solution exists iff $\\det A = k - 4 = 0$, i.e. iff $k = 4$ (then $z$ is free). **D is true.**"
+          "title": "Check each right-hand side",
+          "body": "$\\mathbf{b} = (5, 7, 12)^\\top$: $5 + 7 = 12$, consistent; with 2 free variables there are infinitely many solutions. (B) is true.\n$\\mathbf{b} = (1, 2, 4)^\\top$: $1 + 2 = 3 \\ne 4$, inconsistent, no solution. (D) is true.\n(C) is false: having more unknowns than equations only guarantees a non-trivial null space, not consistency; e.g. $\\mathbf{b} = (1, 2, 4)^\\top$ has no solution."
         }
       ],
       "finalAnswer": "**(A), (B), (D)**",
@@ -640,33 +768,53 @@
         {
           "label": "A",
           "verdict": "correct",
-          "explanation": "Correct. For $k \\ne 4$, $\\det A = k - 4 \\ne 0$, so $A$ is invertible and $Ax = b$ has exactly one solution for every $b$, hence for every $m$."
+          "explanation": "Row 3 = row 1 + row 2, and rows 1 and 2 are not proportional, so the rank is 2. By rank–nullity the null space has dimension $4 - 2 = 2$."
         },
         {
           "label": "B",
           "verdict": "correct",
-          "explanation": "Correct. With $k = 4$ and $m = 7$ the third equation is the sum of the first two ($0 = 0$), leaving two independent equations in three unknowns: the solutions are $(z-1,\\ 3-2z,\\ z)$, infinitely many."
+          "explanation": "$5 + 7 = 12$ satisfies $b_3 = b_1 + b_2$, so the system is consistent; two free variables give infinitely many solutions."
         },
         {
           "label": "C",
           "verdict": "incorrect",
-          "explanation": "Incorrect. With $k = 4$ the third equation reduces to $0 = m - 7$, which is contradictory whenever $m \\ne 7$ (for example $m = 8$ makes the system inconsistent)."
+          "explanation": "More columns than rows only guarantees infinitely many solutions when the system is consistent. Here the column space is 2-dimensional, so most right-hand sides are inconsistent."
         },
         {
           "label": "D",
           "verdict": "correct",
-          "explanation": "Correct. A homogeneous square system has a non-trivial solution iff $\\det A = 0$, and $\\det A = k - 4$, which vanishes only for $k = 4$."
+          "explanation": "$1 + 2 \\ne 4$, so the augmented matrix has rank 3 while $A$ has rank 2, and the system is inconsistent."
         }
       ],
-      "commonTrap": "Saying that \"$k = 4$ means infinitely many solutions\" without checking the right-hand side. When the coefficient matrix is singular the system has infinitely many solutions only if it is also consistent ($m = 7$); for $m \\ne 7$ there is no solution at all (option C)."
+      "commonTrap": "Believing that a system with more unknowns than equations always has a solution. That is true for the homogeneous system $A\\mathbf{x}=\\mathbf{0}$, but for $A\\mathbf{x}=\\mathbf{b}$ consistency depends on whether $\\mathbf{b}$ lies in the column space, which is only 2-dimensional here."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "A, B, D",
+      "independentAnswer": "(A), (B), (D)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nk, m = sp.symbols('k m')\nA = sp.Matrix([[1,1,1],[1,2,3],[2,3,k]]); b = sp.Matrix([2,5,m])\nprint(sp.factor(A.det()))                                   # k - 4 -> A: unique for k != 4 ; D: homogeneous non-trivial iff k = 4\nfor kv, mv in [(4,7),(4,8),(5,3),(-2,10)]:\n    Ak = A.subs(k, kv); Ab = Ak.row_join(b.subs(m, mv))\n    print(kv, mv, Ak.rank(), Ab.rank())                    # (4,7): 2 2 infinite | (4,8): 2 3 inconsistent | others 3 3 unique\nprint(sp.linsolve((A.subs(k,4), b.subs(m,7)), *sp.symbols('x y z')))   # {(z - 1, 3 - 2*z, z)}",
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[1, 2, -1, 3], [2, 4, 1, 3], [3, 6, 0, 6]])\ncons = lambda b: A.rank() == A.row_join(sp.Matrix(b)).rank()\nAok = A.rank() == 2 and len(A.nullspace()) == 2\nBok = cons([5, 7, 12]) and A.rank() < 4\nCok = all(cons(b) for b in ([1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 2, 4]))\nDok = not cons([1, 2, 4])\nprint([k for k, v in zip('ABCD', (Aok, Bok, Cok, Dok)) if v])",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -684,45 +832,64 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a universally quantified implication in tuple calculus) with three linked subtleties (vacuous truth, per-member check, duplicate elimination); about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (evaluating a universally quantified tuple-calculus query) with two linked subtleties, vacuous truth for a sensor with no readings and set semantics for the projected attribute; about 2.5 minutes.",
     "estimatedTimeSec": 150,
-    "concept": "Tuple relational calculus: universal quantification with implication (vacuous truth when no matching tuple) and set semantics of the result.",
+    "concept": "Tuple relational calculus: universal quantification with an implication (vacuous truth) and duplicate-free result sets.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Consider the relations $\\text{Member}(\\text{MId}, \\text{Name})$ and $\\text{Loan}(\\text{MId}, \\text{BookId}, \\text{Days})$ with the following instances.\n\n**Member**\n\n| MId | Name |\n| --- | --- |\n| 1 | Anu |\n| 2 | Bhaskar |\n| 3 | Chitra |\n| 4 | Anu |\n| 5 | Dinesh |\n| 6 | Esha |\n| 7 | Farhan |\n\n**Loan**\n\n| MId | BookId | Days |\n| --- | --- | --- |\n| 1 | B1 | 10 |\n| 1 | B2 | 14 |\n| 2 | B1 | 21 |\n| 2 | B3 | 7 |\n| 3 | B2 | 9 |\n| 4 | B4 | 12 |\n| 4 | B1 | 5 |\n| 6 | B3 | 14 |\n| 7 | B2 | 15 |\n| 7 | B3 | 8 |\n| 7 | B4 | 20 |\n\nConsider the tuple relational calculus query\n$$\\{\\, t \\mid \\exists m \\in \\text{Member}\\,\\big(t.\\text{Name} = m.\\text{Name} \\wedge \\forall l \\in \\text{Loan}\\,(l.\\text{MId} = m.\\text{MId} \\Rightarrow l.\\text{Days} \\le 14)\\big)\\,\\}.$$\n\nThe result of a query is a relation (a set of tuples, with no duplicates). The number of tuples in the result is ________.",
+    "stem": "Consider the relations $\\text{Sensor}(\\text{SId}, \\text{Site})$ and $\\text{Reading}(\\text{SId}, \\text{Day}, \\text{Val})$ with the following instances.\n\n**Sensor**\n\n| SId | Site |\n| --- | --- |\n| 1 | North |\n| 2 | South |\n| 3 | North |\n| 4 | East |\n| 5 | West |\n| 6 | South |\n\n**Reading**\n\n| SId | Day | Val |\n| --- | --- | --- |\n| 1 | Mon | 25 |\n| 1 | Tue | 30 |\n| 2 | Mon | 18 |\n| 2 | Tue | 40 |\n| 3 | Mon | 22 |\n| 4 | Tue | 21 |\n| 4 | Wed | 35 |\n| 6 | Wed | 19 |\n\nEvaluate the following tuple relational calculus query, in which $t$ and $r$ are tuple variables.\n\n$$\\{\\, t.\\text{Site} \\mid \\text{Sensor}(t) \\wedge \\forall r \\,\\big( (\\text{Reading}(r) \\wedge r.\\text{SId} = t.\\text{SId}) \\Rightarrow r.\\text{Val} > 20 \\big) \\,\\}$$\n\nThe number of tuples in the result of the query is ______.",
     "options": [],
     "answer": {
       "kind": "NAT",
-      "min": 4,
-      "max": 4
+      "min": 3,
+      "max": 3
     },
     "solution": {
-      "quick": "The condition $\\forall l\\,(l.\\text{MId} = m.\\text{MId} \\Rightarrow l.\\text{Days} \\le 14)$ says that member $m$ has **no loan longer than 14 days**; it is vacuously true for a member with no loans. Members 1, 3, 4, 5 and 6 qualify.\nProjecting onto $\\text{Name}$ merges the two Anus into one tuple, so the result is $\\{\\text{Anu}, \\text{Chitra}, \\text{Dinesh}, \\text{Esha}\\}$: 4 tuples.",
+      "quick": "A sensor qualifies when every one of its readings exceeds 20; a sensor with no readings qualifies vacuously.\nSensors 1, 3, 4 and 5 qualify (sensors 2 and 6 have readings 18 and 19). Their sites are North, North, East, West. The result is a set, so it contains the 3 distinct values {North, East, West}.",
       "steps": [
         {
           "title": "Meaning of the condition",
-          "body": "$\\forall l \\in \\text{Loan}\\,(l.\\text{MId} = m.\\text{MId} \\Rightarrow l.\\text{Days} \\le 14)$ is equivalent to $\\neg\\exists l \\in \\text{Loan}\\,(l.\\text{MId} = m.\\text{MId} \\wedge l.\\text{Days} > 14)$: the member has no loan of more than 14 days. If $m$ has no loans at all, the implication is true for every $l$ (false premise), so the condition holds vacuously."
+          "body": "For a given sensor $t$, the formula $\\forall r\\,((\\text{Reading}(r) \\wedge r.\\text{SId} = t.\\text{SId}) \\Rightarrow r.\\text{Val} > 20)$ holds iff no reading of that sensor has $\\text{Val} \\le 20$. If the sensor has no readings, the implication is true for every $r$ (its premise is false), so the sensor qualifies."
         },
         {
-          "title": "Check each member",
-          "body": "| MId | Name | Loan days | any $> 14$? | qualifies |\n| --- | --- | --- | --- | --- |\n| 1 | Anu | 10, 14 | no | yes |\n| 2 | Bhaskar | 21, 7 | yes (21) | no |\n| 3 | Chitra | 9 | no | yes |\n| 4 | Anu | 12, 5 | no | yes |\n| 5 | Dinesh | none | no | yes (vacuous) |\n| 6 | Esha | 14 | no | yes |\n| 7 | Farhan | 15, 8, 20 | yes (15, 20) | no |"
+          "title": "Test every sensor",
+          "body": "Sensor 1 (North): readings 25, 30, all above 20, qualifies.\nSensor 2 (South): readings 18, 40; 18 is not above 20, fails.\nSensor 3 (North): reading 22, qualifies.\nSensor 4 (East): readings 21, 35, qualifies.\nSensor 5 (West): no readings, qualifies vacuously.\nSensor 6 (South): reading 19, fails."
         },
         {
-          "title": "Form the result relation",
-          "body": "$t$ takes the value $m.\\text{Name}$ for each qualifying $m$: Anu (member 1), Chitra, Anu (member 4), Dinesh, Esha. A relation is a set, so the duplicate Anu collapses into one tuple. The result is $\\{\\text{Anu}, \\text{Chitra}, \\text{Dinesh}, \\text{Esha}\\}$, which has $4$ tuples."
+          "title": "Project onto Site (set semantics)",
+          "body": "The qualifying sensors 1, 3, 4, 5 have sites North, North, East, West. A tuple-calculus result is a set, so the duplicate North appears once: $\\{\\text{North}, \\text{East}, \\text{West}\\}$.\nNumber of tuples $= 3$."
         }
       ],
-      "finalAnswer": "**4**",
-      "shortcut": "Rewrite $\\forall(\\dots \\Rightarrow \\dots)$ as \"NOT EXISTS a long loan\" (in SQL, `NOT EXISTS (... Days > 14)`). Then simply cross out members with a loan over 14 days (Bhaskar, Farhan) and count the distinct names left.",
-      "commonTrap": "Three easy slips: (i) counting qualifying members instead of distinct names ($5$, because both Anu tuples qualify); (ii) forgetting that Dinesh, who has no loans, satisfies the $\\forall$ condition vacuously ($3$); (iii) reading $\\forall$ as $\\exists$ (\"has some loan of at most 14 days\"), which admits Bhaskar and Farhan and excludes Dinesh."
+      "finalAnswer": "**3**",
+      "commonTrap": "Two opposite slips: dropping sensor 5 (West) because it has no reading above 20, which ignores vacuous truth and gives 2; or counting qualifying sensors instead of distinct sites, which double-counts North and gives 4."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "4",
+      "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\nMember = [(1,'Anu'),(2,'Bhaskar'),(3,'Chitra'),(4,'Anu'),(5,'Dinesh'),(6,'Esha'),(7,'Farhan')]\nLoan = [(1,'B1',10),(1,'B2',14),(2,'B1',21),(2,'B3',7),(3,'B2',9),(4,'B4',12),(4,'B1',5),(6,'B3',14),(7,'B2',15),(7,'B3',8),(7,'B4',20)]\n# direct evaluation of the calculus expression (result is a set)\nres = {m[1] for m in Member if all((l[0] != m[0]) or l[2] <= 14 for l in Loan)}\nprint(sorted(res), len(res))                                                     # ['Anu','Chitra','Dinesh','Esha'] 4\nc = sqlite3.connect(':memory:')\nc.execute('create table Member(MId int, Name text)'); c.execute('create table Loan(MId int, BookId text, Days int)')\nc.executemany('insert into Member values(?,?)', Member); c.executemany('insert into Loan values(?,?,?)', Loan)\nprint(len(c.execute('select distinct Name from Member m where not exists (select 1 from Loan l where l.MId=m.MId and l.Days>14)').fetchall()))  # 4",
+      "checkCode": "import sqlite3\nc = sqlite3.connect(':memory:')\nc.executescript('''\nCREATE TABLE Sensor(SId INT, Site TEXT);\nCREATE TABLE Reading(SId INT, Day TEXT, Val INT);\nINSERT INTO Sensor VALUES (1,'North'),(2,'South'),(3,'North'),(4,'East'),(5,'West'),(6,'South');\nINSERT INTO Reading VALUES (1,'Mon',25),(1,'Tue',30),(2,'Mon',18),(2,'Tue',40),(3,'Mon',22),(4,'Tue',21),(4,'Wed',35),(6,'Wed',19);\n''')\nrows = c.execute('SELECT DISTINCT t.Site FROM Sensor t WHERE NOT EXISTS (SELECT 1 FROM Reading r WHERE r.SId = t.SId AND NOT (r.Val > 20))').fetchall()\nprint(len(rows), sorted(r[0] for r in rows))",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -740,88 +907,109 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY — one concept family (running time and stability of mergesort and quicksort) with four direct-recall statements; about 1 to 1.5 minutes.",
-    "estimatedTimeSec": 80,
-    "concept": "Mergesort and quicksort: input-independent cost of mergesort, worst case of first-element-pivot quicksort on sorted input, instability, and balanced-split analysis.",
+    "difficultyRationale": "Platform-estimated: EASY — recall of standard facts about mergesort and quicksort (auxiliary space, pivot rules, the merge cost in the recurrence) plus one direct count of comparisons; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Mergesort and quicksort: auxiliary space, worst case of pivot rules (first element, median-of-three), and the merge step in the mergesort recurrence.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "Which of the following statements about comparison-based sorting of $n$ elements is/are TRUE?",
+    "stem": "Which of the following statements about sorting $n$ distinct elements stored in an array is/are TRUE?",
     "options": [
       {
         "label": "A",
-        "text": "Standard top-down merge sort, which always splits the array into two halves and merges them, needs only $O(n)$ comparisons when the input is already sorted."
+        "text": "The standard top-down mergesort on an array needs only $O(1)$ auxiliary space, so it is an in-place sort."
       },
       {
         "label": "B",
-        "text": "Quicksort that always chooses the first element of the current subarray as the pivot runs in $O(n \\log n)$ time on an already sorted array of distinct elements."
+        "text": "If quicksort chooses the median of the first, middle and last elements as the pivot, its worst-case running time becomes $O(n \\log n)$."
       },
       {
         "label": "C",
-        "text": "The usual in-place array implementation of quicksort (with Lomuto or Hoare partitioning) is a stable sorting algorithm."
+        "text": "Quicksort that always takes the first element of the current subarray as the pivot, and whose partition step scans the remaining elements from left to right, comparing each with the pivot once and moving an element only if it is smaller than the pivot, performs exactly $n(n-1)/2$ comparisons with the pivot when the input is already sorted in ascending order."
       },
       {
         "label": "D",
-        "text": "If every partition step of quicksort puts at least one-tenth of the current elements on each side of the pivot, then quicksort runs in $O(n \\log n)$ time."
+        "text": "The running time of top-down mergesort satisfies $T(n) = 2T(n/2) + \\Theta(1)$, because merging two sorted halves takes constant time."
       }
     ],
     "answer": {
       "kind": "MSQ",
       "correct": [
-        "D"
+        "C"
       ]
     },
     "solution": {
-      "quick": "Merge sort always performs $\\Theta(n\\log n)$ work (about $\\tfrac{n}{2}\\log_2 n$ comparisons even on sorted input), so (A) is false. First-element-pivot quicksort on sorted input has maximally unbalanced splits and takes $\\Theta(n^2)$ (B is false), and array quicksort swaps distant elements, so it is not stable (C is false).\nA guaranteed 1:9 (or better) split gives the recurrence $T(n) \\le T(n/10) + T(9n/10) + cn$, which solves to $O(n\\log n)$ (D is true). Answer **(D)**.",
+      "quick": "On sorted input with the first element as pivot, nothing moves, so each partition peels off one element: $(n-1) + (n-2) + \\cdots + 1 = n(n-1)/2$ comparisons. The other statements are wrong: array mergesort needs $\\Theta(n)$ extra space, median-of-three still has quadratic worst cases, and merging costs $\\Theta(n)$, giving $T(n) = 2T(n/2) + \\Theta(n)$.\nTrue: **(C)** only.",
       "steps": [
         {
-          "title": "Statement A (merge sort on sorted input)",
-          "body": "Standard merge sort has no early exit: it always recurses on both halves and merges. On sorted input the merge of two halves of size $n/2$ still needs $n/2$ comparisons (the left half is exhausted first), so $T(n) = 2T(n/2) + n/2$, i.e. $\\tfrac{n}{2}\\log_2 n$ comparisons, which is $\\Theta(n\\log n)$, not $O(n)$. **False.**"
+          "title": "Statement A (space of mergesort)",
+          "body": "Merging two sorted halves of an array in linear time needs a temporary buffer of size $\\Theta(n)$. Standard array mergesort is therefore not in place. (Linked-list mergesort or complicated in-place merges are different algorithms.) False."
         },
         {
-          "title": "Statement B (first-element pivot on sorted input)",
-          "body": "On a sorted array the first element is the minimum, so each partition puts $0$ elements on the left and $n-1$ on the right: $T(n) = T(n-1) + (n-1)$, giving $\\tfrac{n(n-1)}{2} = \\Theta(n^2)$ comparisons. **False.**"
+          "title": "Statement B (median-of-three)",
+          "body": "A median-of-three rule looks at only three positions, so an adversarial input can still make every chosen pivot the second smallest (or second largest) element of its subarray, giving splits of sizes $1$ and $m-2$ and a $\\Theta(n^2)$ total. The rule makes the bad case rarer for typical data but does not change the worst case. False."
         },
         {
-          "title": "Statement C (stability)",
-          "body": "Partitioning swaps elements that are far apart, which can reorder equal keys. For example, on the records $1_a, 1_b, 2_c$ (subscripts identify equal keys), Lomuto partitioning with the last element as pivot ends with $1_b, 1_a, 2_c$, and Hoare partitioning with the first element as pivot gives the same order. So it is **not** stable. **False.**"
+          "title": "Statement C (first-element pivot on sorted input)",
+          "body": "For a sorted subarray of size $m$, the pivot is the smallest element. Each of the other $m-1$ elements is compared once and none is smaller, so nothing moves; the pivot stays in place and the remaining $m-1$ elements are still sorted. The recursion then runs on size $m-1$.\nTotal comparisons $= (n-1) + (n-2) + \\cdots + 1 = \\dfrac{n(n-1)}{2}$. True."
         },
         {
-          "title": "Statement D (balanced splits)",
-          "body": "If each split leaves at least $n/10$ elements on each side, the larger side has at most $9n/10$ elements, so the recursion depth is at most $\\log_{10/9} n = O(\\log n)$. Each level of the recursion tree does $O(n)$ partitioning work in total, so $T(n) = O(n\\log n)$. **True.** (The constant is larger than for perfectly balanced splits, but the order is the same.)"
+          "title": "Statement D (mergesort recurrence)",
+          "body": "Merging two sorted lists with a total of $m$ elements takes up to $m-1$ comparisons and $\\Theta(m)$ time, not constant time. The recurrence is $T(n) = 2T(n/2) + \\Theta(n)$, which solves to $\\Theta(n\\log n)$; with a $\\Theta(1)$ merge it would solve to $\\Theta(n)$, which is impossible for comparison sorting. False."
         }
       ],
-      "finalAnswer": "**(D)**",
+      "finalAnswer": "**(C)**",
       "optionAnalysis": [
         {
           "label": "A",
           "verdict": "incorrect",
-          "explanation": "Incorrect. Merge sort does not exploit sortedness: it still splits and merges at every level, using about $\\tfrac{n}{2}\\log_2 n$ comparisons on sorted input, which is $\\Theta(n\\log n)$."
+          "explanation": "Array-based mergesort merges into a temporary buffer of size $\\Theta(n)$; it is not an in-place algorithm."
         },
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "Incorrect. With the first element as pivot, a sorted array gives splits of sizes $0$ and $n-1$ at every step, so the cost is $\\tfrac{n(n-1)}{2} = \\Theta(n^2)$."
+          "explanation": "Median-of-three reduces the chance of bad splits on sorted or reverse-sorted input, but specially crafted inputs still force $\\Theta(n^2)$ time."
         },
         {
           "label": "C",
-          "verdict": "incorrect",
-          "explanation": "Incorrect. Array partitioning swaps non-adjacent elements and can change the relative order of equal keys (e.g. $1_a, 1_b, 2_c$ becomes $1_b, 1_a, 2_c$), so quicksort is not stable."
+          "verdict": "correct",
+          "explanation": "Every partition of a sorted subarray removes only the pivot, so the comparisons are $(n-1) + (n-2) + \\cdots + 1 = n(n-1)/2$."
         },
         {
           "label": "D",
-          "verdict": "correct",
-          "explanation": "Correct. A split ratio bounded away from $0$ and $1$ keeps the depth at $O(\\log n)$ with $O(n)$ work per level, giving $O(n\\log n)$."
+          "verdict": "incorrect",
+          "explanation": "The merge step is $\\Theta(n)$, so the recurrence is $T(n) = 2T(n/2) + \\Theta(n)$. A constant-time merge would give $\\Theta(n)$ overall."
         }
       ],
-      "commonTrap": "Assuming quicksort is $O(n\\log n)$ whatever the input (B), or that sortedness helps every sort. For quicksort with a fixed first-element pivot, already sorted input is the worst case, not the best case."
+      "shortcut": "Sorted input with a first-element pivot is the textbook worst case: one element is removed per partition, so the comparison count is the triangular number $n(n-1)/2$.",
+      "commonTrap": "Believing that a better pivot heuristic such as median-of-three changes the worst-case bound. It only makes the bad case less likely on common inputs; the worst case stays $\\Theta(n^2)$."
     },
     "answerVerification": {
       "status": "PARTIALLY_VERIFIED",
       "method": "Author derivation + Python check",
-      "independentAnswer": "D",
+      "independentAnswer": "(C)",
       "agreesWithKey": true,
-      "checkCode": "import sys, math\nsys.setrecursionlimit(10000)\ndef msort(a, cnt):\n    if len(a) <= 1: return a\n    h = len(a)//2; L = msort(a[:h], cnt); R = msort(a[h:], cnt); out = []; i = j = 0\n    while i < len(L) and j < len(R):\n        cnt[0] += 1\n        if L[i] <= R[j]: out.append(L[i]); i += 1\n        else: out.append(R[j]); j += 1\n    return out + L[i:] + R[j:]\nfor n in (2**8, 2**12):\n    cnt = [0]; msort(list(range(n)), cnt); print('A', n, cnt[0], cnt[0]//(n//2*int(math.log2(n))))   # cnt = n/2*log2 n (ratio 1), so cmp/n grows -> not O(n)\ndef qcmp(a):                                   # first-element pivot, comparisons\n    if len(a) <= 1: return 0\n    p = a[0]; L = [x for x in a[1:] if x < p]; R = [x for x in a[1:] if x >= p]\n    return len(a) - 1 + qcmp(L) + qcmp(R)\nprint('B', qcmp(list(range(500))), 500*499//2)       # 124750 124750 -> quadratic\ndef lomuto(a, lo, hi):\n    if lo >= hi: return\n    p = a[hi][0]; i = lo\n    for j in range(lo, hi):\n        if a[j][0] < p: a[i], a[j] = a[j], a[i]; i += 1\n    a[i], a[hi] = a[hi], a[i]; lomuto(a, lo, i-1); lomuto(a, i+1, hi)\ndef hoare(a, lo, hi):\n    if lo >= hi: return\n    p = a[lo][0]; i = lo-1; j = hi+1\n    while True:\n        i += 1\n        while a[i][0] < p: i += 1\n        j -= 1\n        while a[j][0] > p: j -= 1\n        if i >= j: break\n        a[i], a[j] = a[j], a[i]\n    hoare(a, lo, j); hoare(a, j+1, hi)\nr1 = [(1,'a'),(1,'b'),(2,'c')]; r2 = list(r1); lomuto(r1, 0, 2); hoare(r2, 0, 2)\nprint('C', r1, r2)                                   # both reorder the equal keys -> unstable\nfrom functools import lru_cache\n@lru_cache(None)\ndef T(n): return 0 if n < 10 else T(n//10) + T(n - n//10) + n\nprint('D', [round(T(10**e) / (10**e * math.log2(10**e)), 3) for e in (3, 4, 5, 6)])   # ratio stays bounded -> O(n log n)",
+      "checkCode": "import math\nfrom functools import cmp_to_key\ndef qs(a, pivot):  # Lomuto-style partition scanning left to right; pivot moved to the front first\n    def rec(lo, hi):\n        if lo >= hi: return\n        m = pivot(a, lo, hi)\n        a[lo], a[m] = a[m], a[lo]\n        p, i = a[lo], lo\n        for j in range(lo + 1, hi + 1):\n            if a[j] < p:\n                i += 1; a[i], a[j] = a[j], a[i]\n        a[lo], a[i] = a[i], a[lo]\n        rec(lo, i - 1); rec(i + 1, hi)\n    rec(0, len(a) - 1)\nclass V:  # counting item\n    n = 0\n    def __init__(s, v): s.v = v\n    def __lt__(s, o): V.n += 1; return s.v < o.v\nfirst = lambda a, lo, hi: lo\nmed3 = lambda a, lo, hi: sorted([lo, (lo + hi) // 2, hi], key=cmp_to_key(lambda p, q: -1 if a[p] < a[q] else 1))[1]\ndef count(perm, pivot):\n    V.n = 0; qs([V(x) for x in perm], pivot); return V.n\nC = all(count(range(n), first) == n * (n - 1) // 2 for n in range(1, 60))\nclass Adv:  # McIlroy adversary: lazily fixes values so the pivot is always near the minimum\n    def __init__(s, n): s.g = n; s.v = [n] * n; s.k = 0; s.c = 0\n    def cmp(s, x, y):\n        if s.v[x] == s.g and s.v[y] == s.g:\n            z = x if x == s.c else y; s.v[z] = s.k; s.k += 1\n        if s.v[x] == s.g: s.c = x\n        elif s.v[y] == s.g: s.c = y\n        return s.v[x] - s.v[y]\nclass It:\n    def __init__(s, i, adv): s.i, s.adv = i, adv\n    def __lt__(s, o): return s.adv.cmp(s.i, o.i) < 0\nn = 1024; adv = Adv(n); qs([It(i, adv) for i in range(n)], med3)\nvals, nxt = list(adv.v), adv.k\nfor i in range(n):\n    if vals[i] == adv.g: vals[i] = nxt; nxt += 1\nB_quadratic = count(vals, med3) > 5 * n * math.log2(n)   # median-of-3 still forced to ~n^2/4 comparisons\ndef ms(a):\n    if len(a) <= 1: return a, 0\n    m = len(a) // 2; L, cl = ms(a[:m]); R, cr = ms(a[m:]); o, i, j, c = [], 0, 0, 0\n    while i < len(L) and j < len(R):\n        c += 1\n        if L[i] <= R[j]: o.append(L[i]); i += 1\n        else: o.append(R[j]); j += 1\n    return o + L[i:] + R[j:], cl + cr + c\nr = [ms(list(range(2 ** k)))[1] / 2 ** k for k in (6, 8, 10, 12)]   # comparisons per element grows like log n, not constant\nD_linear = r[-1] < 1.5 * r[0]\nprint(['C'] if C and B_quadratic and not D_linear else 'mismatch', r)",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   }
 ]

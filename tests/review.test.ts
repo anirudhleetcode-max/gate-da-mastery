@@ -190,3 +190,11 @@ describe("review status transitions (regression)", () => {
   });
 });
 
+describe("fix detection", () => {
+  it("counts only the explicit correction marker, not phrases like 'Nothing changed'", () => {
+    const av = (notes: string, method = "Blind independent re-solve agrees with key") => ({ status: "VERIFIED", method, agreesWithKey: true, checkCode: "x", notes });
+    expect(reviewQuestion(q({ answerVerification: av("All steps correct. Nothing changed.") }), ctx()).fixed).toBe(false);
+    expect(reviewQuestion(q({ answerVerification: av("Option C corrected during verification.") }), ctx()).fixed).toBe(true);
+  });
+});
+

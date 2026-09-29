@@ -91,12 +91,36 @@
       "commonTrap": "Writing $\\det(A^2 - A) = \\det(A^2) - \\det(A) = 64 - 8 = 56$. The determinant of a difference is not the difference of determinants."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0 (option A)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nP = sp.Matrix([[1,1,0],[0,1,1],[1,0,1]])      # any invertible P\nA = P*sp.diag(1,2,4)*P.inv()                  # eigenvalues 1, 2, 4\nprint((A*A - A).det())                        # 0",
-      "notes": ""
+      "checkCode": "import sympy as sp\nfrom math import prod\nlam = [1, 2, 4]\nprint(prod(l*l - l for l in lam))                      # 0 -> (A)\n# independent: a non-diagonal A with these eigenvalues (random similarity transform)\nP = sp.Matrix([[2, 1, 0], [1, 3, 1], [0, 1, 4]])\nA = P * sp.diag(*lam) * P.inv()\nassert sorted(A.eigenvals()) == lam\nprint((A*A - A).det(), A.det(), (A*A).det() - A.det())  # 0, 8, 56 (distractor D)",
+      "notes": "Blind solve: eigenvalues of A^2 - A are lambda(lambda-1) = 0, 2, 12, so det = 0 (equivalently A(A-I) is singular because 1 is an eigenvalue). Independent Python used a non-diagonal A = P diag(1,2,4) P^-1 and confirmed det(A^2 - A) = 0, and reproduced distractor D (det(A^2) - det(A) = 56). Audited stem (unambiguous, real 3x3 with stated eigenvalues), steps, option analysis (14 = trace, 42 = 7^2 - 7, 56 = 8^2 - 8), difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "a2e3a9b04e4683ea",
+        "verification": "8b24a0cdf41c0888"
+      }
     }
   },
   {
@@ -191,12 +215,36 @@
       "commonTrap": "Using the number of columns ($6$) instead of the number of rows ($4$) and answering $6 - 2 = 4$, which is the nullity of $A$, not of $A^\\top$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2 (option B)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA = sp.Matrix([[1,-1,2,0,3,1],[0,2,1,1,-1,2],[1,1,3,1,2,3],[2,-4,3,-1,7,0]])\nprint(A.rank(), len(A.T.nullspace()))   # 2 2",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[1,-1,2,0,3,1],[0,2,1,1,-1,2],[1,1,3,1,2,3],[2,-4,3,-1,7,0]])\nns = A.T.nullspace()                                   # {y in R^4 : A^T y = 0}\nprint(A.rank(), len(ns))                               # 2 2 -> (B)\nassert all((A.T*y).is_zero_matrix for y in ns)\nr1, r2, r3, r4 = (A.row(i) for i in range(4))\nassert r3 == r1 + r2 and r4 == 2*r1 - r2               # the two row dependencies\nprint(A.nullspace().__len__())                         # 4 (distractor D: nullity of A)",
+      "notes": "Blind solve: R3 = R1 + R2 and R4 = 2R1 - R2 with R1, R2 independent gives rank 2, so dim N(A^T) = 4 - 2 = 2. Independent Python (sympy) gave rank 2, a 2-vector nullspace for A^T, verified both row dependencies, and gave nullity 4 for A itself (distractor D). Audited stem, steps (explicit basis vectors checked), option analysis, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "35281ffe326e9393",
+        "verification": "c7a9645c1477225f"
+      }
     }
   },
   {
@@ -248,12 +296,36 @@
       "commonTrap": "Forgetting the ReLU (using $z_1 = -0.5$ directly) gives $y = 4(-0.5) + 3 - 2 + 0.5 = -0.5$; forgetting the output bias $c$ gives $1.0$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "1.5",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nW = np.array([[1,3],[-1,-2],[0.5,1]]); b = np.array([0.5,1,2])\nv = np.array([4,3,-1]); c = 0.5; x = np.array([2,-1])\nh = np.maximum(0, W@x + b)\nprint(h, v@h + c)   # [0. 1. 2.] 1.5",
-      "notes": ""
+      "checkCode": "import numpy as np\nW = np.array([[1, 3], [-1, -2], [0.5, 1]]); b = np.array([0.5, 1, 2])\nv = np.array([4, 3, -1]); c = 0.5; x = np.array([2, -1])\nz = W @ x + b; h = np.maximum(0, z)\ny = v @ h + c\nprint(z, h, y)                                         # [-0.5 1. 2.] [0. 1. 2.] 1.5\nassert abs(y - 1.5) < 1e-12\nprint(v @ z + c, v @ h)                                # distractors: no ReLU -> -0.5, no bias -> 1.0",
+      "notes": "Blind solve: Wx + b = (-0.5, 1, 2), ReLU gives (0, 1, 2), y = 3 - 2 + 0.5 = 1.5. Independent numpy forward pass agrees; distractors reproduced (no ReLU gives -0.5, no output bias gives 1.0). The answer is exactly 1.5, so the NAT range 1.5 to 1.5 is appropriate (the grader applies a small epsilon) and the stated rounding (one decimal place) is consistent. Audited steps, teaching, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "47ffde1f208eadb1",
+        "verification": "59442d12a121bfd2"
+      }
     }
   },
   {
@@ -308,12 +380,36 @@
       "commonTrap": "Assuming `b = a` makes a copy, so that `a` is unchanged with sum $39$, and answering $6 + 39 = 45$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "48",
       "agreesWithKey": true,
-      "checkCode": "def f(xs, k):\n    out = []\n    for i in range(len(xs)):\n        if xs[i] % k == 0:\n            out.append(xs[i] // k)\n        else:\n            xs[i] += 1\n    return out\n\na = [3, 4, 6, 7, 9, 10]\nb = a\nr = f(b, 3)\nprint(sum(r) + sum(a))   # 48",
-      "notes": ""
+      "checkCode": "import copy\ndef f(xs, k):\n    out = []\n    for i in range(len(xs)):\n        if xs[i] % k == 0:\n            out.append(xs[i] // k)\n        else:\n            xs[i] += 1\n    return out\n\na = [3, 4, 6, 7, 9, 10]\nb = a\nr = f(b, 3)\nprint(sum(r) + sum(a))                                 # 48\nassert b is a and sum(r) + sum(a) == 48\n# distractor: if b were a copy, a would stay [3,4,6,7,9,10] -> 6 + 39 = 45\na2 = [3, 4, 6, 7, 9, 10]; r2 = f(copy.copy(a2), 3)\nprint(sum(r2) + sum(a2))                               # 45",
+      "notes": "Blind trace: b = a aliases the list, so f mutates a. r = [1, 2, 3] (sum 6), a becomes [3, 5, 6, 8, 9, 11] (sum 42), output 48. Independent Python run of the exact program prints 48 (and 45 if b were a copy, matching the stated trap). Each index is visited once so incremented values are never re-tested. Audited steps, trace table, difficulty and topic mapping; integer answer so range 48 to 48 is appropriate; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "1f11497f77a0757f",
+        "verification": "e566bdcee639afe8"
+      }
     }
   },
   {
@@ -406,12 +502,36 @@
       "commonTrap": "Dividing by the wrong marginal: $0.30 / 0.50 = 0.60$ computes $P(X = 1 \\mid Y \\ge 1)$, not $P(Y \\ge 1 \\mid X = 1)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.75",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.75 (option D)",
       "agreesWithKey": true,
-      "checkCode": "J = {(0,0):.40,(0,1):.15,(0,2):.05,(1,0):.10,(1,1):.20,(1,2):.10}\nnum = sum(p for (x,y),p in J.items() if x==1 and y>=1)\nden = sum(p for (x,y),p in J.items() if x==1)\nprint(round(num/den, 4))   # 0.75",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nJ = {(0,0):F(40,100),(0,1):F(15,100),(0,2):F(5,100),(1,0):F(10,100),(1,1):F(20,100),(1,2):F(10,100)}\nassert sum(J.values()) == 1\npx1 = sum(p for (x, y), p in J.items() if x == 1)\nnum = sum(p for (x, y), p in J.items() if x == 1 and y >= 1)\nprint(num / px1, float(num / px1))                     # 3/4 = 0.75 -> (D)\npy = sum(p for (x, y), p in J.items() if y >= 1)\nprint(float(num), float(py), float(num / py))          # distractors: 0.30 (A), 0.50 (B), 0.60 (C)",
+      "notes": "Blind solve: P(X=1) = 0.40, P(X=1, Y>=1) = 0.30, ratio 0.75. Independent exact-fraction Python agrees and reproduces every distractor (0.30 joint, 0.50 marginal P(Y>=1), 0.60 reverse conditional). Joint PMF sums to 1. Audited option analysis, steps, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "c7cdb2a35c72584e",
+        "verification": "99343d2144af3592"
+      }
     }
   },
   {
@@ -505,12 +625,36 @@
       "commonTrap": "Using the farthest pair (complete linkage) and answering $8.5$, or stopping at the third merge and answering $2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "4.0",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "4 (option B)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\nZ = linkage(np.array([[0],[1],[3],[7],[8.5]]), method='single')\nprint(Z[:,2])   # [1.  1.5 2.  4. ] -> final merge at 4",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\npts = np.array([[0], [1], [3], [7], [8.5]])           # P, Q, R, S, T\nfor m in ('single', 'average', 'complete'):\n    print(m, linkage(pts, m)[:, 2])\nassert abs(linkage(pts, 'single')[-1, 2] - 4) < 1e-12  # (B)\n# hand-rolled naive agglomerative single linkage as a second check\ncl = [[p] for p in [0, 1, 3, 7, 8.5]]; last = None\nwhile len(cl) > 1:\n    d, i, j = min((min(abs(a-b) for a in cl[i] for b in cl[j]), i, j) for i in range(len(cl)) for j in range(i+1, len(cl)))\n    cl[i] += cl[j]; del cl[j]; last = d\nprint(last)                                            # 4",
+      "notes": "Blind solve: single linkage in 1-D, sorted gaps 1, 2, 4, 1.5, so the final merge is at the largest gap, 4 (R-S). Independent Python: scipy linkage (single) gives merge heights [1, 1.5, 2, 4] and a hand-rolled naive agglomerative loop also ends at 4; average linkage gives 6.4167 (option C) and complete linkage 8.5 (option D), so each distractor maps to a real error. Audited steps, option analysis, difficulty and topic mapping; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "d99b448e0fd4efc5",
+        "verification": "4ff0448170371b23"
+      }
     }
   },
   {
@@ -561,7 +705,7 @@
       ]
     },
     "solution": {
-      "quick": "(A) True — PCA uses only the covariance of the features.\n(B) True — $(6 + 3)/(6 + 3 + 1) = 0.9$.\n(C) False — PCA may discard low-variance directions that are exactly the ones separating the classes. (D) False — centring removes the mean but not scale differences; rescaling changes the covariance matrix and hence its eigenvectors.",
+      "quick": "(A) True — PCA uses only the covariance of the features.\n(B) True — $(6 + 3)/(6 + 3 + 1) = 0.9$.\n(C) False — PCA may discard low-variance directions that are exactly the ones separating the classes.\n(D) False — centring removes the mean but not scale differences; rescaling changes the covariance matrix and hence its eigenvectors.",
       "steps": [
         {
           "title": "Statement A: supervision",
@@ -577,7 +721,7 @@
         },
         {
           "title": "Statement D: effect of standardisation",
-          "body": "Centring subtracts the mean; it does not rescale. Standardising replaces the covariance matrix by the correlation matrix, which generally has different eigenvectors. Example: covariance $\\begin{bmatrix} 100 & 5 \\\\ 5 & 1 \\end{bmatrix}$ has its first principal direction almost along feature 1 (about $(0.998, 0.050)$), while the correlation matrix $\\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}$ has first principal direction $(1, 1)/\\sqrt{2}$. **False.**"
+          "body": "Centring subtracts the mean; it does not rescale. Standardising replaces the covariance matrix by the correlation matrix, which generally has different eigenvectors. Example: covariance $\\begin{bmatrix} 100 & 5 \\\\ 5 & 1 \\end{bmatrix}$ has its first principal direction almost along feature 1 (about $(0.999, 0.050)$), while the correlation matrix $\\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}$ has first principal direction $(1, 1)/\\sqrt{2}$. **False.**"
         },
         {
           "title": "Conclusion",
@@ -611,12 +755,36 @@
       "commonTrap": "Believing that centring and standardising are the same preprocessing step (marking D true), or assuming that fewer features always means better generalisation (marking C true)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "A, B",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nev = [6, 3, 1]; print(sum(ev[:2]) / sum(ev))          # B: 0.9\nS = np.array([[100, 5], [5, 1.0]])\nD = np.diag(1/np.sqrt(np.diag(S))); R = D @ S @ D\npc = lambda M: np.linalg.eigh(M)[1][:, -1]\nprint(np.abs(pc(S)), np.abs(pc(R)))                    # D: directions differ",
-      "notes": ""
+      "checkCode": "import numpy as np\nev = np.array([6, 3, 1]); print(ev[:2].sum() / ev.sum())        # B: 0.9 -> True\nS = np.array([[100, 5], [5, 1.0]])                              # D: covariance vs correlation\nR = S / np.sqrt(np.outer(np.diag(S), np.diag(S)))\npc = lambda M: np.abs(np.linalg.eigh(M)[1][:, -1])\nprint(pc(S), pc(R))                                             # [0.9987 0.0503] vs [0.7071 0.7071] -> directions differ, D False\nassert not np.allclose(pc(S), pc(R), atol=1e-2)\n# A: PCA depends only on X, never on labels -> same components for any labelling (unsupervised)\nrng = np.random.default_rng(1); X = rng.normal(size=(200, 3)) * [3, 2, 1]\nXc = X - X.mean(0); w, V = np.linalg.eigh(np.cov(Xc.T))\nprint(np.allclose(np.cov(Xc.T) @ V, V * w))                     # True",
+      "notes": "Blind solve: A true (PCA is unsupervised), B true (9/10 = 90%), C false (no guarantee), D false (standardising changes the covariance into the correlation matrix, so principal directions change). Independent Python confirmed B = 0.9 and that the first principal direction of [[100,5],[5,1]] (0.9987, 0.0503) differs from that of the correlation matrix (0.7071, 0.7071). Audited stem (each statement has one defensible truth value), option analysis, difficulty and topic mapping. Fixed a rounding slip in the worked example of the Statement D step: the first principal direction is (0.9987, 0.0503), i.e. about (0.999, 0.050), not (0.998, 0.050); also put statements C and D on separate lines in the quick summary. Answer and key unaffected."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "4526c03b33ca2b76",
+        "verification": "10b4b24ddf5c43c7"
+      }
     }
   },
   {
@@ -672,12 +840,36 @@
       "commonTrap": "Using the wrong traversal: the 7th key in in-order (sorted order) is $36$ and in pre-order is $28$; neither is the post-order answer."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "25",
       "agreesWithKey": true,
-      "checkCode": "class N:\n    def __init__(s, k): s.k, s.l, s.r = k, None, None\ndef ins(t, k):\n    if t is None: return N(k)\n    if k < t.k: t.l = ins(t.l, k)\n    else: t.r = ins(t.r, k)\n    return t\ndef post(t, o):\n    if t: post(t.l, o); post(t.r, o); o.append(t.k)\n    return o\nt = None\nfor k in [40, 61, 25, 33, 10, 70, 52, 5, 36, 18, 66, 28]: t = ins(t, k)\nprint(post(t, [])[6])   # 25",
-      "notes": ""
+      "checkCode": "keys = [40, 61, 25, 33, 10, 70, 52, 5, 36, 18, 66, 28]\ntree = {}                                              # key -> [left, right]\nroot = None\nfor k in keys:\n    tree[k] = [None, None]\n    if root is None: root = k; continue\n    cur = root\n    while True:\n        side = 0 if k < cur else 1\n        if tree[cur][side] is None: tree[cur][side] = k; break\n        cur = tree[cur][side]\ndef post(n):\n    return [] if n is None else post(tree[n][0]) + post(tree[n][1]) + [n]\ndef inorder(n):\n    return [] if n is None else inorder(tree[n][0]) + [n] + inorder(tree[n][1])\ndef pre(n):\n    return [] if n is None else [n] + pre(tree[n][0]) + pre(tree[n][1])\np = post(root); print(p, p[6])                         # 7th = 25\nassert p[6] == 25 and inorder(root) == sorted(keys)\nprint(inorder(root)[6], pre(root)[6])                  # distractors: 36 (in-order), 28 (pre-order)",
+      "notes": "Blind solve: built the BST (40; L 25, R 61; 25: L 10, R 33; 10: L 5, R 18; 33: L 28, R 36; 61: L 52, R 70; 70: L 66); post-order is 5, 18, 10, 28, 36, 33, 25, 52, 66, 70, 61, 40 so the 7th key is 25. Independent Python (dictionary-based BST with separate post/in/pre-order functions) agrees, in-order is sorted, and the distractor positions (in-order 36, pre-order 28) match the stated trap. Audited steps, shortcut (7 keys smaller than 40), difficulty and topic mapping; integer answer so range 25 to 25 is appropriate; no edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "45eab3b494200023",
+        "verification": "ba2ee31d161fce4a"
+      }
     }
   }
 ]

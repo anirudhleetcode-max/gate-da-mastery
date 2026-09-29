@@ -103,6 +103,26 @@
       "agreesWithKey": true,
       "checkCode": "p=[1,0,1,0,0,0,0,1,0,0]; q=[1,0,0,0,0,1,0,1,0,0]; n=len(p)\nf11=sum(a&b for a,b in zip(p,q)); f00=sum((1-a)&(1-b) for a,b in zip(p,q))\nsmc=(f11+f00)/n; jac=f11/(n-f00)\nF=lambda c:1.8*c+32\nA=abs(F(40)/F(20)-40/20)>0.4          # ratio not preserved under C->F shift\nB=abs(smc-0.8)<1e-12 and abs(jac-0.5)<1e-12\nC=abs((80*2.2046)/(40*2.2046)-2)>1e-9   # False: pure rescaling keeps ratio 2\nprint(smc,jac,F(40)/F(20),(80*2.2046)/(40*2.2046))\nprint('A',A,'B',B,'C',C,'D',True)  # D: ordinal -> median ok, equal gaps not implied (definition)\n# expected: A True, B True, C False, D True -> A,B,D",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -203,6 +223,26 @@
       "agreesWithKey": true,
       "checkCode": "import copy\nclass Ring:\n    def __init__(s,c,mode=None): s.a=[None]*c; s.c=c; s.h=s.t=0; s.mode=mode\n    def size(s): return (s.t-s.h)%s.c\n    def enq(s,x):\n        full = (s.size()==s.c) if s.mode=='size' else ((s.t+1)%s.c==s.h)\n        if full: return False\n        s.a[s.t]=x; s.t=(s.t+1)%s.c; return True\n    def deq(s):\n        if s.h==s.t: return None\n        x=s.a[s.h]; s.h=(s.h+1)%s.c; return x\nq=Ring(5); r=[q.enq(v) for v in (10,20,30,40,50)]; q.deq(); q.deq(); r+=[q.enq(v) for v in (60,70,80)]\nA=(r.count(False)==1 and r[-1] is False)\nB=(q.a==[70,20,30,40,60])\nC=(copy.deepcopy(q).deq()==20)\nq2=Ring(5,'size'); r2=[q2.enq(v) for v in (10,20,30,40,50)]\nD=(all(r2) and q2.deq() is None)\nprint(r, q.a, q.h, q.t, q.size(), 'A',A,'B',B,'C',C,'D',D)  # expect B, D",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -296,6 +336,26 @@
       "agreesWithKey": true,
       "checkCode": "def bsearch(arr, key):\n    lo, hi = 0, len(arr) - 1\n    probes = 0\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        probes += 1\n        if arr[mid] == key:\n            return mid, probes\n        elif arr[mid] < key:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1, probes\narr = [4, 9, 15, 21, 28, 34, 40, 47, 55, 63, 70, 78, 86, 93]\nprint(bsearch(arr, 60))  # (-1, 4)",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -355,6 +415,26 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nx=np.array([1,2,3,5.]); y=np.array([2,3,7,10.]); lam=11.0\nw=(x@y)/(x@x+lam)\ng=np.linspace(0,4,400001); J=((y[None,:]-g[:,None]*x[None,:])**2).sum(1)+lam*g**2\nprint(w, 4*w, round(4*w,2), g[J.argmin()])  # 1.58 6.32 6.32 1.58",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -457,6 +537,26 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nA=np.array([[2,2],[1,0],[0,1.]]); U,s,Vt=np.linalg.svd(A)\nA1=s[0]*np.outer(U[:,0],Vt[0])\nopts={'A':np.array([[2,2],[0,0],[0,0.]]),'B':np.array([[2,2],[.5,.5],[.5,.5]]),\n      'C':np.array([[6,6],[1.5,1.5],[1.5,1.5]]),'D':np.array([[0,0],[.5,-.5],[-.5,.5]])}\nprint(s, A1.round(6).tolist(), {k:round(float(np.linalg.norm(A-v)),4) for k,v in opts.items()})\nprint([k for k,v in opts.items() if np.allclose(v,A1)])  # ['B'], error = sigma2 = 1",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -554,6 +654,26 @@
       "agreesWithKey": true,
       "checkCode": "from math import log2\nfrom collections import Counter\nrows=[('Phone','High','Yes')]*4+[('Phone','Normal','Yes')]*2+[('Phone','Normal','No')]+[('Email','High','No')]+[('Email','Normal','Yes')]+[('Email','Normal','No')]*3\nH=lambda c:-sum(v/sum(c)*log2(v/sum(c)) for v in c if v)\nlab=lambda rs:list(Counter(r[2] for r in rs).values())\npar=H(lab(rows)); gains={}\nfor i,name in ((0,'Channel'),(1,'Priority')):\n    rem=0\n    for v in set(r[i] for r in rows):\n        sub=[r for r in rows if r[i]==v]; rem+=len(sub)/len(rows)*H(lab(sub))\n    gains[name]=(round(par-rem,4),round(rem,4))\nprint(round(par,4), gains)  # Channel gain 0.3339 (remaining 0.646); Priority gain 0.1043 (remaining 0.8756)",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -613,6 +733,26 @@
       "agreesWithKey": true,
       "checkCode": "from math import sqrt\ncells=[(20,40,6),(30,50,8),(10,60,10),(40,55,5)]   # (orders, mean, population std)\nN=sum(n for n,m,s in cells); S=sum(n*m for n,m,s in cells); Q=sum(n*(s*s+m*m) for n,m,s in cells)\nmu=S/N; var=Q/N-mu*mu\nprint(N,S,Q,mu,var,sqrt(var))  # 100 5100 268640 51.0 85.4 9.2412\n# raw-data cross-check: build synthetic samples with exactly these (n, mean, pop std) and take np.std\nimport numpy as np\nxs=[]\nfor n,m,s in cells:\n    z=np.random.default_rng(0).standard_normal(n); z=(z-z.mean())/z.std(); xs+=list(m+s*z)\nprint(np.std(xs))  # 9.2412",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   }
 ]

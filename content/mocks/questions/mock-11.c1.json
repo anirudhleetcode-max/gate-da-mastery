@@ -58,6 +58,26 @@
       "agreesWithKey": true,
       "checkCode": "from math import comb\npN = {1: 0.2, 2: 0.5, 3: 0.3}; p = 0.8\npS = {}\nfor n, pn in pN.items():\n    for k in range(n + 1):\n        pS[k] = pS.get(k, 0) + pn * comb(n, k) * p**k * (1 - p)**(n - k)\nm = sum(k * v for k, v in pS.items())\nprint(round(sum(k * k * v for k, v in pS.items()) - m * m, 4))  # 0.6496",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -114,6 +134,26 @@
       "agreesWithKey": true,
       "checkCode": "targets = {1: 'continuous', 2: 'binary', 3: 'continuous', 4: '10-class',\n           5: 'continuous', 6: '4-class', 7: 'continuous', 8: 'binary'}\nprint(sum(v == 'continuous' for v in targets.values()))  # 4",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -215,6 +255,26 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nx = np.linspace(-5, 5, 200001)\ng = lambda t: t**3 - 3*t; A = not np.isclose(g(0.0), g(np.sqrt(3)))  # g(0)=g(sqrt3)=0 -> not injective\nh = lambda t: np.log(t + np.sqrt(t*t + 1)); B = np.max(np.abs(h(x) + h(-x))) < 1e-9\np = lambda t: np.sin(2*t) + np.cos(3*t); t = np.linspace(0, 2*np.pi, 2001)\nTs = np.linspace(0.05, 2*np.pi - 0.05, 20000)\nC = np.max(np.abs(p(t + 2*np.pi) - p(t))) < 1e-9 and min(np.max(np.abs(p(t+T) - p(t))) for T in Ts) > 0.1\nqf = lambda t: 2*t/(1 + t*t); D = not (np.max(np.abs(qf(x))) <= 1 and qf(1.0) == 1 and qf(-1.0) == -1)  # |q|<=1 attained -> [-1,1]\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['B', 'C']",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -314,6 +374,26 @@
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nfrom scipy.optimize import minimize\nX = np.array([[3,3],[4,2],[5,5],[1,1],[0,2],[1,-1]], float); y = np.array([1,1,1,-1,-1,-1], float)\ncons = [{'type': 'ineq', 'fun': (lambda z, i=i: y[i]*(X[i] @ z[:2] + z[2]) - 1)} for i in range(6)]\nr = minimize(lambda z: z[0]**2 + z[1]**2, x0=[1, 1, -4], constraints=cons, method='SLSQP')\nprint(np.round(r.x, 4))  # [ 0.5  0.5 -2. ]",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -408,6 +488,26 @@
       "agreesWithKey": true,
       "checkCode": "from collections import deque\nE = [(1,4),(1,6),(2,4),(2,5),(3,5),(3,6),(4,7),(6,7)]\nadj = {v: [] for v in range(1, 8)}\nfor a, b in E: adj[a].append(b); adj[b].append(a)\nseen, q, order = {1}, deque([1]), []\nwhile q:\n    u = q.popleft(); order.append(u)\n    for v in sorted(adj[u]):\n        if v not in seen: seen.add(v); q.append(v)\nprint(order)  # [1, 4, 6, 2, 7, 3, 5]",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -510,6 +610,26 @@
       "agreesWithKey": true,
       "checkCode": "from math import comb\nfrom fractions import Fraction as F\nn, p = 10, F(3, 10)\npmf = [comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1)]\nA = sum(k*k*v for k, v in enumerate(pmf)) == F(111, 10)\nB = False  # P(B1+B2=0,1,2) = 1/4, 1/2, 1/4 -> not uniform\nC = max(range(n + 1), key=lambda k: pmf[k]) == 3\nU = range(2, 21, 2); m = F(sum(U), 10); D = sum((u - m)**2 for u in U) / 10 == 33\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['A', 'C', 'D']",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -570,6 +690,26 @@
       "agreesWithKey": true,
       "checkCode": "data = [3, 8, 9, 6, 4, 2, 5]\na = data[1::2]\nb = data[::2]\nresult = 0\nfor x, y in zip(a, b):\n    result += x * y if x > y else x - y\nprint(result)  # 19",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -630,6 +770,26 @@
       "agreesWithKey": true,
       "checkCode": "preds = [5.0, 6.0, 7.2, 5.8]; f = 5.4; s2 = 0.40\nm = sum(preds) / 4\nbias2 = (m - f)**2; var = sum((p - m)**2 for p in preds) / 4\nprint(round(bias2 + var + s2, 4), round(sum((f - p)**2 for p in preds) / 4 + s2, 4))  # 1.38 1.38",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -730,6 +890,26 @@
       "agreesWithKey": true,
       "checkCode": "import heapq\nfrom collections import deque\nG = {'S':[('A',1),('B',4)], 'A':[('B',2),('C',6)], 'B':[('C',1),('G',5)], 'C':[('G',2)], 'G':[]}\ncost = lambda p: sum(dict(G[u])[v] for u, v in zip(p, p[1:]))\nfr, done, order = [(0, 'S', ['S'])], set(), []\nwhile fr:\n    g, u, p = heapq.heappop(fr)\n    if u in done: continue\n    done.add(u); order.append(u)\n    if u == 'G': ucs = p; break\n    for v, c in G[u]: heapq.heappush(fr, (g + c, v, p + [v]))\nq = deque([['S']]); seen = {'S'}\nwhile q:\n    p = q.popleft()\n    if p[-1] == 'G': bfs = p; break\n    for v, _ in sorted(G[p[-1]]):\n        if v not in seen: seen.add(v); q.append(p + [v])\ndef dls(p, L):\n    if p[-1] == 'G': return p\n    if L == 0: return None\n    for v, _ in sorted(G[p[-1]]):\n        r = dls(p + [v], L - 1)\n        if r: return r\nids_L = next(L for L in range(10) if dls(['S'], L))\nA = bfs == ucs; B = ids_L == 3; C = order.index('C') < order.index('B'); D = cost(ucs) == 6\nprint([l for l, v in zip('ABCD', [A, B, C, D]) if v])  # ['D']",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   },
   {
@@ -835,6 +1015,26 @@
       "agreesWithKey": true,
       "checkCode": "def ok(seq, n=5, cap=3):\n    st, nxt, peak = [], 1, 0\n    for x in seq:\n        while (not st or st[-1] != x) and nxt <= n:\n            st.append(nxt); nxt += 1; peak = max(peak, len(st))\n        if st and st[-1] == x: st.pop()\n        else: return False\n    return peak <= cap\nopts = {'A': [3,2,5,4,1], 'B': [4,3,5,2,1], 'C': [1,5,3,4,2], 'D': [2,1,5,4,3]}\nprint([k for k, s in opts.items() if ok(s)])  # ['A', 'D']",
       "notes": ""
+    },
+    "review": {
+      "status": "SELF_CHECKED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": false,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29"
     }
   }
 ]

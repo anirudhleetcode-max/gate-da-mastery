@@ -89,12 +89,36 @@
       "commonTrap": "Reading the median off the unsorted list (which gives $2.5$) or reporting the highest frequency ($3$) as the mode."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "mean 2, median 1.0, mode 0 -> option D",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "mean 2, median 1, mode 0 -> option D",
       "agreesWithKey": true,
-      "checkCode": "import statistics as st\nd=[0,2,1,0,5,0,1,7]\nprint(st.mean(d), st.median(d), st.mode(d))  # 2 1.0 0",
-      "notes": ""
+      "checkCode": "import statistics as st\nd = [0, 2, 1, 0, 5, 0, 1, 7]\nmean, median, modes = st.mean(d), st.median(d), st.multimode(d)\nprint(mean, median, modes)  # 2 1.0 [0]\nassert (mean, median, modes) == (2, 1, [0])  # unique mode, so option D: (2, 1, 0)\n",
+      "notes": "No corrections needed. Solved blind before viewing the stored key: sorted data 0,0,0,1,1,2,5,7 gives mean 16/8 = 2, median (1+1)/2 = 1, unique mode 0 (option D). Distractor derivations checked (0.5 = off-by-one median, 2.5 = median of the unsorted list, 3 = frequency). Steps, option verdicts, difficulty (EASY), topic mapping all consistent."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "6e0d644f83fcbc81",
+        "verification": "171c819c8d8e6c24"
+      }
     }
   },
   {
@@ -187,12 +211,36 @@
       "commonTrap": "Dividing total bytes by the block size (the spanned count, 2813) even though the file is unspanned, or taking the logarithm of the number of records instead of the number of blocks."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "bfr 4, b = 3000 blocks, binary search worst case 12 -> option B",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "bfr = 4, b = 3000 blocks, worst-case binary search = 12 block accesses -> option B",
       "agreesWithKey": true,
-      "checkCode": "import math\nr,R,B=12000,240,1024\nbfr=B//R; b=math.ceil(r/bfr)\nprint(bfr, b, math.floor(math.log2(b))+1)  # 4 3000 12",
-      "notes": ""
+      "checkCode": "import math\nn, R, B = 12000, 240, 1024\nbfr = B // R                       # unspanned: whole records only\nb = math.ceil(n / bfr)             # blocks in the file\ndef worst_probes(b):               # brute-force worst case of binary search over b blocks\n    worst = 0\n    for target in range(b):\n        lo, hi, c = 0, b - 1, 0\n        while lo <= hi:\n            mid = (lo + hi) // 2\n            c += 1\n            if mid == target: break\n            lo, hi = (mid + 1, hi) if mid < target else (lo, mid - 1)\n        worst = max(worst, c)\n    return worst\nprint(bfr, b, worst_probes(b), math.ceil(math.log2(b)))  # 4 3000 12 12\nprint(math.ceil(n * R / B), math.ceil(math.log2(n)))     # 2813 (spanned count), 14 (over records): distractors\nassert (bfr, b, worst_probes(b)) == (4, 3000, 12)        # option B\n",
+      "notes": "No corrections needed. Solved blind: bfr = floor(1024/240) = 4, b = 12000/4 = 3000, worst-case binary search over blocks = ceil(log2 3000) = floor(log2 3000)+1 = 12 (both common formulas agree, and a brute-force simulation gives 12), so no convention ambiguity. Distractors match the spanned count 2813, log2 of the record count (14) and the linear-scan average b/2 (1500). Difficulty MODERATE and topic mapping consistent."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "089eceb7bd317c3a",
+        "verification": "5330d888653585ff"
+      }
     }
   },
   {
@@ -286,12 +334,36 @@
       "commonTrap": "Using the 10 unordered pairs as an equally likely sample space (which gives 1), or dropping the absolute value and reporting $E[U - V] = 0$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "5/4 = 1.25 -> option C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "E[X] = 20/16 = 5/4 = 1.25 -> option C",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nprint(F(sum(abs(u-v) for u in range(1,5) for v in range(1,5)),16))  # 5/4",
-      "notes": ""
+      "checkCode": "from fractions import Fraction\nfrom itertools import product\nfrom collections import Counter\npairs = list(product(range(1, 5), repeat=2))          # 16 equally likely ordered pairs\npmf = Counter(abs(u - v) for u, v in pairs)\nE = sum(Fraction(k * c, len(pairs)) for k, c in pmf.items())\nprint(sorted(pmf.items()), E, float(E))               # [(0, 4), (1, 6), (2, 4), (3, 2)] 5/4 1.25\nassert E == Fraction(5, 4)                            # option C\n",
+      "notes": "No corrections needed. Solved blind by enumerating the 16 ordered pairs: PMF (4,6,4,2)/16, E[X] = 20/16 = 1.25 (option C). Shortcut formula (n^2-1)/(3n) = 15/12 re-derived and correct. Distractor derivations (signed difference 0, unordered pairs 1, plain average 1.5) verified. Difficulty EASY consistent."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "862e856a16d4d697",
+        "verification": "80f7def45d621de2"
+      }
     }
   },
   {
@@ -380,12 +452,36 @@
       "commonTrap": "Stopping the trace when `lo == hi` (the loop condition is `<=`, so that element is still probed), or rounding the midpoint up instead of down."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "[24, 41, 30, 36] -> option A",
       "agreesWithKey": true,
-      "checkCode": "def search(a, x):\n    lo, hi = 0, len(a) - 1\n    probes = []\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        probes.append(a[mid])\n        if a[mid] == x:\n            return probes\n        elif a[mid] < x:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return probes\n\nprint(search([3, 8, 11, 15, 19, 24, 30, 36, 41, 47, 52], 40))  # [24, 41, 30, 36]",
-      "notes": ""
+      "checkCode": "def search(a, x):\n    lo, hi = 0, len(a) - 1\n    probes = []\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        probes.append(a[mid])\n        if a[mid] == x:\n            return probes\n        elif a[mid] < x:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return probes\n\na = [3, 8, 11, 15, 19, 24, 30, 36, 41, 47, 52]\noptions = {\"A\": [24, 41, 30, 36], \"B\": [24, 41, 36], \"C\": [24, 41, 30], \"D\": [24, 41, 47, 52]}\nresult = search(a, 40)\nprint(result)  # [24, 41, 30, 36]\nprint([k for k, v in options.items() if v == result])  # ['A']\nassert [k for k, v in options.items() if v == result] == [\"A\"]\n",
+      "notes": "No corrections needed. Ran the function on the given list: probes at indices 5, 8, 6, 7 give [24, 41, 30, 36] (option A); the other three options are each reproduced only by the stated misreadings (ceil midpoint, lo < hi loop, moving right after 41). Trace table, complexity claim (floor(log2 11)+1 = 4) and option verdicts correct. Difficulty EASY consistent."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "95c94764dee0d3d6",
+        "verification": "5490a4c9f6a174ab"
+      }
     }
   },
   {
@@ -436,12 +532,36 @@
       "commonTrap": "Answering $11$ (the largest leaf) and ignoring MIN's choice, or swapping the MIN and MAX levels (which gives $3$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "10",
       "agreesWithKey": true,
-      "checkCode": "L={'E':(4,9),'F':(7,2),'G':(6,1),'H':(8,3),'I':(5,10),'J':(11,0)}\nm={k:max(v) for k,v in L.items()}\nprint(max(min(m['E'],m['F']),min(m['G'],m['H']),min(m['I'],m['J'])))  # 10",
-      "notes": ""
+      "checkCode": "leaves = {\"E\": (4, 9), \"F\": (7, 2), \"G\": (6, 1), \"H\": (8, 3), \"I\": (5, 10), \"J\": (11, 0)}\ntree = {\"A\": (\"max\", [\"B\", \"C\", \"D\"]), \"B\": (\"min\", [\"E\", \"F\"]), \"C\": (\"min\", [\"G\", \"H\"]), \"D\": (\"min\", [\"I\", \"J\"])}\ndef value(node):\n    if node in leaves:                       # MAX node over its two terminal utilities\n        return max(leaves[node])\n    kind, kids = tree[node]\n    vals = [value(k) for k in kids]\n    return max(vals) if kind == \"max\" else min(vals)\nprint({n: value(n) for n in \"ABCDEFGHIJ\"})  # A=10, B=7, C=6, D=10\nassert value(\"A\") == 10\n",
+      "notes": "No corrections needed. Solved blind bottom-up: E,F,G,H,I,J = 9,7,6,8,10,11; B,C,D = 7,6,10; root = 10. NAT is an exact integer (range 10 to 10) so no rounding is needed. Trap values checked: the largest leaf is 11, and swapping MIN/MAX levels gives 3. Difficulty EASY and topic mapping (ai-adversarial) consistent."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "ee49f925c5a10021",
+        "verification": "ec195596b2273081"
+      }
     }
   },
   {
@@ -533,12 +653,36 @@
       "commonTrap": "Treating Celsius temperature as ratio-scaled because it is numeric (it can even be negative), or treating an integer-coded ID as a numeric measurement."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A and C correct (distance ratio 2.0 invariant to km->miles; Celsius ratio 1.70 vs Fahrenheit 1.36)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A and C correct (B: Celsius is interval-scaled, ratio 1.70 in C vs 1.36 in F; D: trip_id is a nominal label) -> options A, C",
       "agreesWithKey": true,
-      "checkCode": "f=lambda c:c*9/5+32\nprint(12.4/6.2, (12.4*0.621371)/(6.2*0.621371))  # 2.0 2.0 (unit-invariant)\nprint(round(31.5/18.5,2), round(f(31.5)/f(18.5),2))  # 1.7 1.36 (not invariant)",
-      "notes": ""
+      "checkCode": "# A meaningful ratio statement must survive a change of unit (ratio scale) ; interval scales fail this test.\nkm_to_mi = 0.621371\nc_to_f = lambda c: c * 9 / 5 + 32\ndist = (12.4, 6.2)\ntemp = (31.5, 18.5)\nprint(\"A distance ratio km/mi:\", dist[0] / dist[1], (dist[0] * km_to_mi) / (dist[1] * km_to_mi))      # 2.0 2.0 -> invariant\nprint(\"B temp ratio C/F:\", round(temp[0] / temp[1], 3), round(c_to_f(temp[0]) / c_to_f(temp[1]), 3))  # 1.703 1.358 -> not invariant\nassert abs(dist[0] / dist[1] - 2) < 1e-12\nassert abs(temp[0] / temp[1] - c_to_f(temp[0]) / c_to_f(temp[1])) > 0.3\n# C/D are definitional: payment_mode and trip_id are nominal (no order, no arithmetic) -> mode valid, median/mean not.\nfrom statistics import multimode\nprint(multimode([\"UPI\", \"Cash\", \"Card\", \"UPI\"]))  # mode of a nominal attribute is well defined\nprint(\"Answer: A, C\")\n",
+      "notes": "No corrections needed. Solved blind: A true (12.4/6.2 = 2 exactly, unit-invariant); B false (Celsius is interval-scaled, ratio 1.70 in C but 1.36 in F); C true (nominal: mode defined, median needs order); D false (ID is a nominal label regardless of integer storage). The answer set {A, C} is unique with no unstated convention. Unit conversions in the solution (7.705/3.8525 mi, 88.7/65.3 F) recomputed and correct. Difficulty EASY consistent (each statement is a direct definition check)."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "6dd0c2c666bd3cdc",
+        "verification": "c1c4376f66ce014f"
+      }
     }
   },
   {
@@ -631,12 +775,36 @@
       "commonTrap": "Forgetting the chain-rule factor $2$ in $\\frac{d}{dx} e^{2x-2}$ (giving option A), or matching only the derivatives and forgetting that differentiability also requires continuity (option D)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "a = -1/2, b = 5/2 -> option B",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "a = -1/2, b = 5/2 (unique solution) -> option B",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx,a,b=sp.symbols('x a b')\nL=a*sp.exp(2*x-2)+b; R=x**2-3*x+4\nprint(sp.solve([L.subs(x,1)-R.subs(x,1), sp.diff(L,x).subs(x,1)-sp.diff(R,x).subs(x,1)],[a,b]))  # {a: -1/2, b: 5/2}",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx, a, b = sp.symbols(\"x a b\", real=True)\nL = a * sp.exp(2 * x - 2) + b\nR = x**2 - 3 * x + 4\nsol = sp.solve([sp.Eq(L.subs(x, 1), R.subs(x, 1)),                   # continuity at x = 1\n                sp.Eq(sp.diff(L, x).subs(x, 1), sp.diff(R, x).subs(x, 1))],  # equal one-sided derivatives\n               [a, b], dict=True)\nprint(sol)  # [{a: -1/2, b: 5/2}]\nassert sol == [{a: sp.Rational(-1, 2), b: sp.Rational(5, 2)}]         # unique -> option B\nopts = {\"A\": (-1, 3), \"B\": (sp.Rational(-1, 2), sp.Rational(5, 2)), \"C\": (sp.Rational(1, 2), sp.Rational(3, 2))}\nfor k, (av, bv) in opts.items():\n    ok = (L.subs({a: av, b: bv, x: 1}) == R.subs(x, 1)) and (sp.diff(L, x).subs({a: av, b: bv, x: 1}) == sp.diff(R, x).subs(x, 1))\n    print(k, ok)  # only B is True; D (b arbitrary) fails continuity unless b = 5/2\n",
+      "notes": "No corrections needed. Solved blind and confirmed with sympy: continuity a + b = 2 and matching slopes 2a = -1 give the unique pair a = -1/2, b = 5/2 (option B). Options A, C and D each fail (A: slope -2 vs -1; C: corner with slopes +1 and -1; D: jump unless b = 5/2). Right-hand difference-quotient verification in the solution is correct. Difficulty MODERATE consistent."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-09-29",
+      "verifiedHash": {
+        "content": "392379d54eff0df7",
+        "verification": "a2a8c6a569140978"
+      }
     }
   }
 ]
