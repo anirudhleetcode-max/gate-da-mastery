@@ -100,16 +100,16 @@
     "gate2024-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The phrase 'is a tautology /are tautologies' is bold in the paper and the question mark is not; the line breaks after 'tautology', and the PDF text layer has a space there, so the text is kept as printed with a space before '/are'. The paper's long double arrow ⟹ is written as \\implies, ¬ as \\neg and ∧ as \\wedge. The paper leaves a small typesetting gap before the closing parenthesis of each antecedent, e.g. '(¬x ∧ y )'; this spacing is not reproduced. No figure is needed; the page has only text and the GATE 2024 background watermark."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, bold phrase and all four options checked symbol by symbol against the crop (negations, operand order and arrow directions in each option match). The phrase 'is a tautology /are tautologies' is bold in the paper and the question mark is not; the line breaks after 'tautology', and the PDF text layer has a space there, so the text is kept as printed with a space before '/are'. The paper's long double arrow ⟹ is written as \\implies, ¬ as \\neg and ∧ as \\wedge. The paper leaves a small typesetting gap before the closing parenthesis of each antecedent, e.g. '(¬x ∧ y )'; this spacing is not reproduced. No figure is needed; the page has only text and the GATE 2024 background watermark."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "(B), (C), (D)",
     "agreesWithKey": true,
     "checkCode": "from itertools import product\nimp = lambda p, q: (not p) or q\nopts = {'A': lambda x, y: imp((not x) and y, imp(y, x)),\n        'B': lambda x, y: imp(x and (not y), imp(not x, y)),\n        'C': lambda x, y: imp((not x) and y, imp(not x, y)),\n        'D': lambda x, y: imp(x and (not y), imp(y, x))}\nfor k, f in opts.items():\n    rows = [(x, y, f(x, y)) for x, y in product([True, False], repeat=2)]\n    print(k, 'tautology' if all(r[2] for r in rows) else 'NOT tautology', [(int(x), int(y), int(v)) for x, y, v in rows])\nprint('tautologies:', [k for k, f in opts.items() if all(f(x, y) for x, y in product([True, False], repeat=2))])",
-    "notes": "Each antecedent is a conjunction of two literals and is true at exactly one assignment; evaluating the consequent there shows (A) is false at x = F, y = T (y ⇒ x = T ⇒ F), while (B), (C) and (D) are true at their critical assignments and hence at all four. A Python enumeration of all four assignments confirms that exactly B, C and D are tautologies. This agrees with the official key B;C;D."
+    "notes": "Independent re-solve: each antecedent is a conjunction of two literals true at exactly one assignment. (A): at x = F, y = T the consequent y ⇒ x = T ⇒ F = F, so (A) is false there and is not a tautology. (B): at x = T, y = F, ¬x ⇒ y = F ⇒ F = T. (C): at x = F, y = T, ¬x ⇒ y = T ⇒ T = T. (D): at x = T, y = F, y ⇒ x = F ⇒ T = T. So (B), (C), (D) are tautologies. A separate Python enumeration of all four assignments, and the author's check code (kept in checkCode), both give exactly B, C, D. This agrees with the official key B;C;D. The truth table, the algebraic simplifications, the shortcut and the common-trap claim in the solution were re-checked and are correct."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }
