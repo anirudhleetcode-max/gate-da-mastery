@@ -39,7 +39,7 @@ test("full student journey", async ({ page }) => {
     await page.getByRole("link", { name: /Machine Learning/ }).first().click();
     await expect(page).toHaveURL(/\/subjects\/ml/);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Machine Learning");
-    await page.goto("/subjects/ml");
+    await page.getByRole("tab", { name: /^Topics/ }).click();
     const topicLink = page.locator('a[href^="/subjects/ml/topics/"]').first();
     await topicLink.click();
     await expect(page).toHaveURL(/\/subjects\/ml\/topics\//);
@@ -114,7 +114,13 @@ test("full student journey", async ({ page }) => {
     await page.getByRole("button", { name: /Save & next/ }).click();
     await page.getByRole("button", { name: /Mark for review & next/ }).click();
     await page.getByRole("button", { name: "Previous" }).click();
-    await page.getByRole("button", { name: "Submit test" }).first().click();
+    // Desktop header: "Submit"; phones open the palette sheet, whose button is "Submit test".
+    const submit = page.getByRole("button", { name: "Submit", exact: true });
+    if (await submit.isVisible().catch(() => false)) await submit.click();
+    else {
+      await page.getByRole("button", { name: /Question palette/ }).click();
+      await page.getByRole("button", { name: "Submit test" }).click();
+    }
     const dialog = page.getByRole("dialog", { name: "Submit the test?" });
     await expect(dialog).toBeVisible();
     await dialog.getByRole("button", { name: "Submit test" }).click();

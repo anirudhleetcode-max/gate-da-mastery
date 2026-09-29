@@ -61,10 +61,12 @@ export function adminRows(): AdminRow[] {
 let cache: { signature: string; index: Map<string, string> } | null = null;
 
 function jsonFiles(dirRel: string): string[] {
-  const dir = path.join(process.cwd(), dirRel);
+  // Admin reads the working checkout's content/ at request time (development or ADMIN_ENABLED);
+  // it must not pull the whole project into the production output trace.
+  const dir = path.join(/*turbopackIgnore: true*/ process.cwd(), dirRel);
   try {
     return fs
-      .readdirSync(dir, { withFileTypes: true })
+      .readdirSync(/*turbopackIgnore: true*/ dir, { withFileTypes: true })
       .filter((e) => e.isFile() && e.name.endsWith(".json") && !e.name.startsWith("."))
       .map((e) => `${dirRel}/${e.name}`)
       .sort();
@@ -82,7 +84,7 @@ export function questionFileIndex(): Map<string, string> {
   const signature = files
     .map((f) => {
       try {
-        const st = fs.statSync(path.join(process.cwd(), f));
+        const st = fs.statSync(path.join(/*turbopackIgnore: true*/ process.cwd(), f));
         return `${f}:${st.mtimeMs}:${st.size}`;
       } catch {
         return f;
@@ -93,7 +95,7 @@ export function questionFileIndex(): Map<string, string> {
   const index = new Map<string, string>();
   for (const f of files) {
     try {
-      const arr = JSON.parse(fs.readFileSync(path.join(process.cwd(), f), "utf8")) as { id?: unknown }[];
+      const arr = JSON.parse(fs.readFileSync(path.join(/*turbopackIgnore: true*/ process.cwd(), f), "utf8")) as { id?: unknown }[];
       if (Array.isArray(arr)) for (const q of arr) if (typeof q?.id === "string") index.set(q.id, f);
     } catch {
       /* an invalid file is reported by the build; it simply has no index entries */

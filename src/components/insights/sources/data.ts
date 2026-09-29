@@ -10,7 +10,8 @@ import path from "node:path";
 
 function readJson(rel: string): unknown | null {
   try {
-    return JSON.parse(fs.readFileSync(path.join(process.cwd(), rel), "utf8"));
+    // Read at build/render time from the checkout; not an output-tracing dependency.
+    return JSON.parse(fs.readFileSync(path.join(/*turbopackIgnore: true*/ process.cwd(), rel), "utf8"));
   } catch {
     return null;
   }

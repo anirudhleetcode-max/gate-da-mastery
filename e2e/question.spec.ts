@@ -18,7 +18,8 @@ test.describe("official PYQ page", () => {
     await page.getByRole("button", { name: "Submit answer" }).click();
     await expect(page.getByRole("status").filter({ hasText: "Incorrect" })).toContainText("-0.67");
     await expect(page.getByRole("heading", { name: "Solution" })).toBeVisible();
-    await expect(page.getByText("Correct answer", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Solution").getByText("Correct answer", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Learn from this mistake")).toBeVisible();
     await expect(page.getByText("Added to your")).toBeVisible();
     await expect(page.getByRole("button", { name: /In revision queue/ })).toBeDisabled();
     // Explanation levels
