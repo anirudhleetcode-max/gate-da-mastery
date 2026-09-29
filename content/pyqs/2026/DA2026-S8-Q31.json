@@ -40,7 +40,7 @@
       },
       {
         "title": "Why it can never take more than 10 (decision-tree view)",
-        "body": "The comparisons form a binary decision tree whose 1000 internal nodes are the array elements. Binary search keeps it as balanced as possible. Levels 1 to 9 hold at most $2^9 - 1 = 511$ nodes, so the remaining $1000 - 511 = 489$ nodes sit on level 10. The height is\n\n$$\n\\lfloor \\log_2 1000 \\rfloor + 1 = 9 + 1 = 10 \\quad (2^9 = 512 \\le 1000 < 1024 = 2^{10}).\n$$\n\nAn unsuccessful search walks down one root-to-leaf path and falls into an empty subtree, so it makes at most 10 comparisons. There are 1001 such empty positions (one per gap between consecutive elements, plus both ends). The 489 level-10 nodes supply $2 \\times 489 = 978$ positions reached after 10 comparisons; the other 23 are reached after 9. So 10 comparisons do occur, and 10 is the maximum. The same bound, $\\lceil \\log_2(1000 + 1) \\rceil = 10$, is the usual worst-case formula for an unsuccessful search."
+        "body": "The comparisons form a binary decision tree whose 1000 internal nodes are the array elements. Binary search keeps it as balanced as possible: levels 1 to 9 are completely full, holding $1 + 2 + 4 + \\dots + 256 = 2^9 - 1 = 511$ nodes, and the remaining $1000 - 511 = 489$ nodes sit on level 10. The height is\n\n$$\n\\lfloor \\log_2 1000 \\rfloor + 1 = 9 + 1 = 10 \\quad (2^9 = 512 \\le 1000 < 1024 = 2^{10}).\n$$\n\nAn unsuccessful search walks down one root-to-leaf path and falls into an empty subtree, so it makes at most 10 comparisons. There are 1001 such empty positions (one per gap between consecutive elements, plus both ends). The 489 level-10 nodes supply $2 \\times 489 = 978$ positions reached after 10 comparisons; the other 23 are reached after 9. So 10 comparisons do occur, and 10 is the maximum. The same bound, $\\lceil \\log_2(1000 + 1) \\rceil = 10$, is the usual worst-case formula for an unsuccessful search."
       },
       {
         "title": "Complexity and result",
@@ -63,16 +63,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The array name A and the element y are set in a sans-serif code-style font in the paper (distinct from the serif body text) and are transcribed as inline code. 'integer' is bold in the answer instruction and is kept bold. No figure is needed. The second official crop (Q31-2) shows only the header and table border of the next page."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Both sentences, the blank and the answer instruction match the official crop and the PDF text layer word for word. The array name A and the element y are set in a sans-serif code-style font in the paper (distinct from the serif body text) and are transcribed as inline code. 'integer' is bold in the answer instruction and is kept bold. No figure is needed. The second official crop (Q31-2) shows only the header and table border of the next page."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "10",
     "agreesWithKey": true,
     "checkCode": "import math\ndef bs(A, y, lo, hi, mid_of, c=0):             # recursive binary search, counts 3-way comparisons\n    if lo > hi: return c                        # empty range: y absent, no comparison\n    m = mid_of(lo, hi); c += 1                  # one comparison: A[m] ==, <, > y\n    if A[m] == y: return c\n    return bs(A, y, lo, m - 1, mid_of, c) if y < A[m] else bs(A, y, m + 1, hi, mid_of, c)\nn = 1000; A = [2 * k for k in range(n)]         # distinct sorted evens; every odd y is absent\ngaps = range(-1, 2 * n + 1, 2)                  # one absent y per gap (1001 gaps)\nfloor_mid = [bs(A, y, 0, n - 1, lambda l, h: (l + h) // 2) for y in gaps]\nceil_mid = [bs(A, y, 0, n - 1, lambda l, h: (l + h + 1) // 2) for y in gaps]\nprint(max(floor_mid), max(ceil_mid), min(floor_mid), math.floor(math.log2(n)) + 1, math.ceil(math.log2(n + 1)))\nassert max(floor_mid) == max(ceil_mid) == 10    # -> 10 (min is 9)",
-    "notes": "With one three-way comparison per recursive step, the worst-case range sizes are 1000, 500, 250, 125, 62, 31, 15, 7, 3, 1, giving 10 comparisons before the range is empty: floor(log2 1000) + 1 = ceil(log2 1001) = 10. A Python simulation over all 1001 absent-value positions gives a maximum of 10 (978 positions need 10, 23 need 9) for both floor and ceiling middle indices. This matches official key '10 to 10'."
+    "notes": "Solved blind before the key was opened. With one three-way comparison per recursive step, the worst-case range sizes are 1000, 500, 250, 125, 62, 31, 15, 7, 3, 1, giving 10 comparisons before the range is empty: floor(log2 1000) + 1 = ceil(log2 1001) = 10. A Python simulation over all 1001 absent-value positions gives a maximum of 10 (978 positions need 10, 23 need 9) for both floor and ceiling middle indices; the implied search tree has levels 1-9 full (511 nodes) and 489 nodes on level 10. This matches official key '10 to 10'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

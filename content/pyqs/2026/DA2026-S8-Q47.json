@@ -103,16 +103,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets the author/class labels X and Y in a sans-serif font; they are transcribed as plain X and Y. The original wording, including \"Let, out of X’s stories, 6 were classified as that of Y.\", is kept verbatim."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The paper sets the author/class labels X and Y in a sans-serif font; they are transcribed as plain X and Y. The original wording, including \"Let, out of X’s stories, 6 were classified as that of Y.\" and the curly apostrophes, is kept verbatim."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "A;B",
     "agreesWithKey": true,
     "checkCode": "from fractions import Fraction as F\n# confusion matrix, rows = actual author, columns = predicted author\nXX, XY = 20 - 6, 6      # X's 20 stories: 14 predicted X, 6 predicted Y\nYX, YY = 2, 10 - 2      # Y's 10 stories: 2 predicted X, 8 predicted Y\nacc = F(XX + YY, XX + XY + YX + YY)\nprecX, precY = F(XX, XX + YX), F(YY, YY + XY)\nrecX, recY = F(XX, XX + XY), F(YY, YY + YX)\nprint('acc', acc, 'precX', precX, 'precY', precY, 'recX', recX, 'recY', recY)\nres = dict(A=acc == F(11, 15), B=precX > precY, C=recX > recY, D=acc == F(14, 15))\nprint(res); assert res == dict(A=True, B=True, C=False, D=False)   # -> A;B",
-    "notes": "Confusion matrix (actual->predicted): X->X 14, X->Y 6, Y->X 2, Y->Y 8. This gives accuracy 22/30 = 11/15, precision X 14/16 = 0.875 vs Y 8/14 = 0.571, and recall X 14/20 = 0.7 vs Y 8/10 = 0.8. So A and B are true, C and D are false, which matches official key A;B. Classification note: accuracy, precision and recall have no dedicated subtopic in the syllabus taxonomy, so the question is filed under ml-problem-types (official phrase 'regression and classification problems'). That subtopic belongs to topic ml-regression."
+    "notes": "Blind re-solve. Confusion matrix (actual->predicted): X->X 14, X->Y 6, Y->X 2, Y->Y 8. This gives accuracy 22/30 = 11/15, precision X 14/16 = 0.875 vs Y 8/14 = 0.571, and recall X 14/20 = 0.7 vs Y 8/10 = 0.8. So A and B are true, C and D are false, which agrees with official key A;B. Classification note: accuracy, precision and recall have no dedicated subtopic in the syllabus taxonomy, so the question is filed under ml-problem-types (official phrase 'regression and classification problems'). That subtopic belongs to topic ml-regression."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

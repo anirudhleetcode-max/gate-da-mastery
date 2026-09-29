@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-type Tone = "neutral" | "accent" | "success" | "danger" | "warning" | "info" | "outline";
+type Tone = "neutral" | "accent" | "success" | "danger" | "warning" | "info" | "violet" | "outline";
 const tones: Record<Tone, string> = {
   neutral: "bg-surface-2 text-fg-2 border-border",
   accent: "bg-accent-soft text-accent-text border-transparent",
@@ -9,6 +9,7 @@ const tones: Record<Tone, string> = {
   danger: "bg-danger-soft text-danger border-transparent",
   warning: "bg-warning-soft text-warning border-transparent",
   info: "bg-info-soft text-info border-transparent",
+  violet: "bg-violet-soft text-violet border-transparent",
   outline: "bg-transparent text-fg-2 border-border",
 };
 

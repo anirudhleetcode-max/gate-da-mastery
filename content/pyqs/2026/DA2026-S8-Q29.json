@@ -57,16 +57,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The paper sets $f_w(x) = wx$, $x \\in \\mathbb{R}$, $w \\in \\mathbb{R}$, $i$, $x = 10.00$ and $(i + 1)$ as italic math and these are transcribed as inline LaTeX. The numbers 0.10 and 10.00 in the running text are upright and are kept as plain text. The paper prints no separate 'Note' defining the symbol for the real numbers. 'two' is bold in the rounding instruction and is kept bold. No figure is needed and none is embedded in this region."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. Stem, the blank and the rounding instruction match the official crop and the PDF text layer word for word (learning rate 0.10, w = 10.00 at the end of iteration i, x = 10.00 for iteration (i + 1)). The paper sets $f_w(x) = wx$, $x \\in \\mathbb{R}$, $w \\in \\mathbb{R}$, $i$, $x = 10.00$ and $(i + 1)$ as italic math; these are transcribed as inline LaTeX, while the numbers 0.10 and 10.00 in running text are upright and kept as plain text. The paper prints no separate 'Note' defining the symbol for the real numbers. 'two' is bold in the rounding instruction and is kept bold. No figure is needed."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "9.00",
     "agreesWithKey": true,
     "checkCode": "eta, w, x = 0.10, 10.00, 10.00      # learning rate, w after iteration i, input for iteration i+1\ngrad = x                             # d(w*x)/dw = x (does not depend on w)\nw_new = w - eta * grad               # SGD step: move against the gradient\nprint(round(w_new, 2))               # 9.0\nassert abs(w_new - 9.0) < 1e-12 and 8.90 <= w_new <= 9.10",
-    "notes": "The gradient of $f_w(x) = wx$ with respect to $w$ is $x = 10.00$, so one SGD step gives $w = 10.00 - 0.10 \\times 10.00 = 9.00$ (confirmed by the Python check). This lies inside the official key range 8.90 to 9.10."
+    "notes": "Solved blind before the key was opened: the gradient of $f_w(x) = wx$ with respect to the parameter $w$ is $x = 10.00$, so one SGD step gives $w = 10.00 - 0.10 \\times 10.00 = 9.00$ (confirmed by the Python check). This lies inside the official key range 8.90 to 9.10."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

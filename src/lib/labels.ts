@@ -37,7 +37,7 @@ export const SUBJECT_COLOR: Record<SubjectId, string> = {
 };
 
 export const ORIGIN_LABEL: Record<QuestionOrigin, string> = {
-  OFFICIAL_PYQ: "Official PYQ",
+  OFFICIAL_PYQ: "Official GATE PYQ",
   ORIGINAL_PRACTICE: "Original practice",
   MOCK_TEST: "Mock test",
 };

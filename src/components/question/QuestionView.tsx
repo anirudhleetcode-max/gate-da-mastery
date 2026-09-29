@@ -199,6 +199,23 @@ function QuestionViewInner({ q, context = "pyq", onSubmitted, compact = false, h
             Answer revealed without an attempt. Nothing was recorded.
           </p>
         ) : null}
+        {done && q.origin === "OFFICIAL_PYQ" && !q.answerVerification.agreesWithKey ? (
+          <Callout tone="warning" className="mt-4" title="Disputed question: official key retained, under review">
+            <p>
+              The platform keeps the official answer <strong>({q.officialKeyRaw})</strong> from the official answer key. Its independent re-solve found a possible ambiguity:
+            </p>
+            <p className="mt-1">{q.answerVerification.notes}</p>
+            {q.answerVerification.independentAnswer ? <p className="mt-1">Platform analysis: {q.answerVerification.independentAnswer}</p> : null}
+            {q.sources.find((s) => s.type === "OFFICIAL_ANSWER_KEY")?.url ? (
+              <p className="mt-1">
+                Source:{" "}
+                <a className="underline" href={q.sources.find((s) => s.type === "OFFICIAL_ANSWER_KEY")!.url} target="_blank" rel="noopener noreferrer">
+                  {q.sources.find((s) => s.type === "OFFICIAL_ANSWER_KEY")!.name}
+                </a>
+              </p>
+            ) : null}
+          </Callout>
+        ) : null}
         {isMta && done ? (
           <Callout tone="warning" className="mt-4" title="Marks to all (official key)">
             The official final answer key awarded marks to all candidates for this question. The solution below analyses the question as printed.

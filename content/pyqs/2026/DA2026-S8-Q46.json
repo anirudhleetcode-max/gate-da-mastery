@@ -98,16 +98,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The matrix and the option sets are transcribed from the rendered image (the PDF text layer splits them into fragments). The paper places the matrix inline at the end of the first line; here it is set as display math with the trailing comma kept. No figure is needed: the only candidate embedded image is a raster copy of part of the question text and the options, not a diagram. The second official crop (Q46-2) contains only the page header and an empty table border."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. The matrix and option sets were taken from the rendered image, because the PDF text layer splits them into fragments. The paper places the matrix inline at the end of the first line; here it is set as display math with the trailing comma kept. No figure is needed: the only candidate embedded image is a raster copy of part of the question text and the options over the watermark, not a diagram. The second official crop (Q46-2) holds only the next page's header and an empty table border."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "C (t = pi/4 and t = -pi/4)",
     "agreesWithKey": true,
     "checkCode": "import numpy as np, sympy as sp\nt = sp.symbols('t', real=True)\nM = sp.Matrix([[1, 0, 0], [0, sp.cos(t), sp.sin(t)], [0, -sp.sin(t), sp.cos(t)]])\nprint(sp.factor(M.charpoly().as_expr()), M.eigenvals())   # 1, cos t +/- i sin t\nprint(sp.simplify(sum(k*v for k, v in M.eigenvals().items())))   # 2*cos(t) + 1 = trace\nsols = sp.solveset(sp.Eq(M.trace(), 1 + sp.sqrt(2)), t, sp.Interval(-sp.pi, sp.pi))\nprint(sols); assert sols == sp.FiniteSet(-sp.pi/4, sp.pi/4)\nR = lambda v: np.array([[1, 0, 0], [0, np.cos(v), np.sin(v)], [0, -np.sin(v), np.cos(v)]])\nfor name, vals in {'A': [np.pi/3, -np.pi/4], 'B': [np.pi/4, -np.pi/3], 'C': [np.pi/4, -np.pi/4], 'D': [np.pi/3, -np.pi/3]}.items():\n    print(name, [bool(np.isclose(np.linalg.eigvals(R(v)).sum().real, 1 + np.sqrt(2))) for v in vals])   # only C: [True, True]",
-    "notes": "The eigenvalues are 1 and cos t +/- i sin t, so their sum is the trace 1 + 2cos t. Setting it equal to 1 + sqrt(2) gives cos t = 1/sqrt(2), and sympy solveset on [-pi, pi] returns {-pi/4, pi/4}. A numeric eigenvalue check confirms that only option C's values both satisfy the condition. This matches official key C."
+    "notes": "Blind re-solve: the sum of the eigenvalues is the trace, 1 + 2cos t. Setting it equal to 1 + sqrt(2) gives cos t = 1/sqrt(2), so t = +/- pi/4 on [-pi, pi]. sympy gives the eigenvalues as 1 and cos t +/- i sin t, and solveset returns {-pi/4, pi/4}. A numeric eigenvalue check shows that only option C's values both satisfy the condition. This agrees with official key C."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

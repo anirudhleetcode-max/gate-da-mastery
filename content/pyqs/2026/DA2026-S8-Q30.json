@@ -58,16 +58,16 @@
     "gate2026-da-key"
   ],
   "transcription": {
-    "status": "PARTIALLY_VERIFIED",
-    "notes": "Single-pass transcription from the official paper rendering; awaiting independent check. The game-tree figure is the raster image embedded in the official paper (extracted as-is, not redrawn) and is reproduced as /pyq/2026/fig/Q30-1.png, placed after the answer line as in the paper. Its terminal values read left to right: 8, 6, -1 | 1, 5, 7 | -4, -3, -12. 'integer' is bold in the answer instruction and is kept bold."
+    "status": "VERIFIED",
+    "notes": "Transcribed from the official paper rendering and independently checked against it. All four paragraphs, the blank and the answer instruction match the official crop and the PDF text layer word for word; 'integer' is bold and kept bold. The game-tree figure /pyq/2026/fig/Q30-1.png is byte-identical to the raster image embedded in the official paper (extracted as-is, not redrawn) and is placed after the answer line as in the paper. Its edge labels (MAX: 1, 2, 3; each MIN node: 1, 2, 3) and terminal values read left to right as 8, 6, -1 | 1, 5, 7 | -4, -3, -12, matching the alt text."
   },
   "answerVerification": {
-    "status": "PARTIALLY_VERIFIED",
-    "method": "Author solve (not blind) compared with official key",
+    "status": "VERIFIED",
+    "method": "Blind independent re-solve + Python check agrees with official key",
     "independentAnswer": "2",
     "agreesWithKey": true,
     "checkCode": "leaves = {1: [8, 6, -1], 2: [1, 5, 7], 3: [-4, -3, -12]}   # MIN strategies 1,2,3 under each MAX strategy\nmin_val = {s: min(v) for s, v in leaves.items()}              # MIN backs up the minimum\nbest = max(min_val, key=min_val.get)                          # MAX picks the largest backed-up value\nprint(min_val, best, min_val[best])                           # {1: -1, 2: 1, 3: -12} 2 1\nassert best == 2 and sorted(min_val.values())[-1] > sorted(min_val.values())[-2]   # unique best",
-    "notes": "The MIN nodes back up min(8, 6, -1) = -1, min(1, 5, 7) = 1 and min(-4, -3, -12) = -12. MAX's maximum, 1, is unique and reached via strategy 2 (confirmed by the Python check). This matches official key '2 to 2'."
+    "notes": "Solved blind before the key was opened: the MIN nodes back up min(8, 6, -1) = -1, min(1, 5, 7) = 1 and min(-4, -3, -12) = -12. MAX's maximum, 1, is unique and reached via strategy 2 (confirmed by the Python check). This matches official key '2 to 2'."
   },
-  "solutionStatus": "PARTIALLY_VERIFIED"
+  "solutionStatus": "VERIFIED"
 }

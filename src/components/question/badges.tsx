@@ -5,7 +5,8 @@ import { DIFFICULTY_LABEL, ORIGIN_LABEL, VERIFICATION_LABEL } from "@/lib/labels
 
 /** Mandatory origin label: OFFICIAL PYQ / ORIGINAL PRACTICE / MOCK TEST. */
 export function OriginBadge({ origin }: { origin: QuestionOrigin }) {
-  const tone = origin === "OFFICIAL_PYQ" ? "accent" : origin === "MOCK_TEST" ? "info" : "neutral";
+  // Fixed mapping used everywhere: green = official, blue = original practice, violet = mock test.
+  const tone = origin === "OFFICIAL_PYQ" ? "success" : origin === "MOCK_TEST" ? "violet" : "accent";
   return (
     <Badge tone={tone} className="uppercase tracking-wide" title={origin === "OFFICIAL_PYQ" ? "Question from an official GATE DA paper" : "Original question written for this platform (not an official GATE question)"}>
       {ORIGIN_LABEL[origin]}

@@ -82,7 +82,7 @@ const INFIX: [RegExp, string][] = [
   between("lor", "∨"),
   between("mid", "|"),
   between("sim", "∼"),
-  [new RegExp(String.raw`(?<=\S) in ${SET_NEXT}`, "g"), " ∈ "],
+  [new RegExp(String.raw`(?<=(?:^|[\s(,\[])(?:${TOK}|[A-Za-z0-9)\]]ᵀ)) in ${SET_NEXT}`, "g"), " ∈ "],
   // f: R to R, g: R to (1, ∞) and lim x to 0 only; "from 1 to 12" stays English.
   [/(?<=\bR(?:\^\S+)?) to (?=R\b|\(|\[)/g, " → "],
   [/(?<=\blim\s+[a-z]) to /g, " → "],
@@ -91,7 +91,6 @@ const INFIX: [RegExp, string][] = [
   [/(?<=[\s(,])neg (?=[A-Za-z(])/g, "¬"],
 ];
 
-const SUB: Record<string, string> = { "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉", i: "ᵢ", j: "ⱼ", k: "ₖ", n: "ₙ" };
 
 export function cleanPreview(input: string): string {
   let s = input;
@@ -114,20 +113,18 @@ export function cleanPreview(input: string): string {
   s = s.replace(/\s&\s/g, "  ");
   // Formatting commands and decorations.
   s = s.replace(DROP, "");
-  s = s.replace(/widehat([A-Za-z])/g, "$1̂").replace(/\b(?:hat)([A-Za-z])\b/g, "$1̂");
-  s = s.replace(/overline([A-Za-z])(?![a-z])/g, "$1̅").replace(/\bbar([A-Za-z])(?![a-z])/g, "$1̄");
+  s = s.replace(/widehat([A-Za-z])/g, "$1\u0302").replace(/\b(?:hat)([A-Za-z])\b/g, "$1\u0302");
+  s = s.replace(/overline([A-Za-z])(?![a-z])/g, "$1\u0305").replace(/\bbar([A-Za-z])(?![a-z])/g, "$1\u0304");
   s = s.replace(/\bunderline(?=[A-Z(\\]|[a-z]{2,}|\s+\()/g, "");
   s = s.replace(/lnleft/g, "ln").replace(/\bleft(?=[([|.\\])/g, "").replace(/right(?=[)\]|.\\])/g, "");
   s = s.replace(/\bleft\\(?=\s)/g, "");
-  s = s.replace(/\b(cos|sin|tan)(?=theta|alpha|beta|phi|pi\b|x\b|t\b)/g, "$1 ");
+  s = s.replace(/\b(cos|sin|tan)(?=theta|alpha|beta|phi|pi\b)/g, "$1 ");
   for (const [re, rep] of SYMBOLS) s = s.replace(re, rep);
   s = s.replace(/(?<![A-Za-z]{2})sum(?=\s?[a-z]\s?=)/g, (m, offset: number, whole: string) => (/[A-Za-z]/.test(whole[offset - 1] ?? "") ? " Σ" : "Σ"));
   s = s.replace(GREEK_RE, (m) => GREEK[m] ?? m);
+  // Leftover lone backslashes from stripped \{ \} and similar; Markdown table rules.
+  s = s.replace(/\\/g, " ").replace(/:?-{3,}:?/g, " ");
   for (const [re, rep] of INFIX) s = s.replace(re, rep);
-  // Stripped subscripts: "x 1, x 2, …, x n" → "x₁, x₂, …, xₙ" (never after the article "a").
-  s = s.replace(/(?<=(?:^|[\s(,=\[])[B-Zb-zα-ω])\s([0-9]|[ijkn])(?=[\s,.;:)=ᵀ^]|$)/g, (m, d: string) => SUB[d] ?? m);
-  // Leftover lone backslashes from stripped \{ \} and similar.
-  s = s.replace(/\\/g, " ");
   return s
     .replace(/\s+([,.;:?)\]}])/g, "$1")
     .replace(/([([{])\s+/g, "$1")
