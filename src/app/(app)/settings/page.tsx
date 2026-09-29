@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getMocks, getPyqs, getQuestion, getTopic } from "@/lib/server/repo";
-import type { DemoQuestion } from "@/lib/demo/seed";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Preferences } from "@/components/insights/settings/Preferences";
 import { DataManagement } from "@/components/insights/settings/DataManagement";
-import { DemoMode, type DemoMockOption } from "@/components/insights/settings/DemoMode";
+import { DemoMode } from "@/components/insights/settings/DemoMode";
+import { demoMockChoice, demoPyqCount } from "@/components/insights/settings/demoPool";
 
 export const metadata: Metadata = {
   title: "Settings & data",
@@ -13,27 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default function SettingsPage() {
-  // Demo data may reference only real, servable ids: official PYQs (always servable) and questions of
-  // AVAILABLE mocks (their answers are fetched from the mock key API only if the student opts in).
-  const pyqs: DemoQuestion[] = getPyqs()
-    .filter((q) => getQuestion(q.id) !== undefined)
-    .map((q) => ({
-      id: q.id,
-      origin: "OFFICIAL_PYQ",
-      subjectId: q.subjectId,
-      topicId: q.topicId,
-      topicName: getTopic(q.topicId)?.name ?? q.topicId,
-      type: q.type,
-      marks: q.marks,
-      estimatedTimeSec: q.estimatedTimeSec,
-      answer: q.answer,
-      title: `GATE DA ${q.year} · Q.${q.questionNumber}`,
-      questionNumber: q.questionNumber,
-    }));
-  const mocks: DemoMockOption[] = getMocks()
-    .filter((m) => m.available)
-    .sort((a, b) => a.number - b.number)
-    .map((m) => ({ id: m.id, number: m.number, title: m.title, durationMinutes: m.durationMinutes, negativeMarking: m.negativeMarking, questionIds: m.questionIds }));
+  // Demo data may reference only real, servable ids: official PYQs and questions of AVAILABLE mocks.
+  // Only counts go into the page; the ids and answer keys are fetched from /settings/demo-pool on demand.
+  const pyqCount = demoPyqCount();
+  const mocks = demoMockChoice();
 
   return (
     <>
@@ -59,7 +41,7 @@ export default function SettingsPage() {
           <DataManagement />
         </div>
         <div className="lg:col-start-1 lg:row-start-2">
-          <DemoMode pyqs={pyqs} mocks={mocks} />
+          <DemoMode pyqCount={pyqCount} mocks={mocks} />
         </div>
       </div>
     </>

@@ -1,0 +1,506 @@
+[
+  {
+    "id": "f-co-standard-limits",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Standard limits (x → 0 and the number e)",
+    "latex": "\\begin{aligned}\n&\\lim_{x\\to 0}\\frac{\\sin x}{x}=1, \\qquad \\lim_{x\\to 0}\\frac{\\tan x}{x}=1, \\qquad \\lim_{x\\to 0}\\frac{1-\\cos x}{x^2}=\\frac{1}{2},\\\\\n&\\lim_{x\\to 0}\\frac{e^x-1}{x}=1, \\qquad \\lim_{x\\to 0}\\frac{a^x-1}{x}=\\ln a, \\qquad \\lim_{x\\to 0}\\frac{\\ln(1+x)}{x}=1,\\\\\n&\\lim_{x\\to a}\\frac{x^n-a^n}{x-a}=n\\,a^{n-1}, \\qquad \\lim_{x\\to\\infty}\\left(1+\\frac{1}{x}\\right)^{x}=\\lim_{x\\to 0}\\,(1+x)^{1/x}=e\n\\end{aligned}",
+    "meaning": "Each of these is a $\\frac{0}{0}$ (or $1^\\infty$) form worth memorising. Most are derivatives in disguise: $\\frac{e^x-1}{x}$ is the difference quotient of $e^x$ at $0$, so its limit is $\\frac{d}{dx}e^x\\big|_{x=0}=1$; likewise $\\frac{\\ln(1+x)}{x}\\to\\frac{d}{dx}\\ln(1+x)\\big|_{x=0}=1$ and $\\frac{x^n-a^n}{x-a}\\to\\frac{d}{dx}x^n\\big|_{x=a}=n\\,a^{n-1}$. The trigonometric ones follow from the Maclaurin series $\\sin x = x-\\frac{x^3}{6}+\\cdots$ and $1-\\cos x=\\frac{x^2}{2}-\\cdots$.\n\n**Assumptions:** angles in **radians**; $\\ln$ is the natural logarithm (base $e$); $a>0$ in $a^x$. The power-rule limit holds for every positive integer $n$ and any real $a$, and for every real $n$ when $a>0$.\n\n**Scaling:** replacing $x$ by $kx$ gives $\\frac{\\sin kx}{x}\\to k$, $\\frac{1-\\cos kx}{x^2}\\to\\frac{k^2}{2}$ and $\\frac{e^{kx}-1}{x}\\to k$.",
+    "variables": [
+      {
+        "symbol": "$x$",
+        "meaning": "the variable tending to the limit point (in radians inside trigonometric functions)"
+      },
+      {
+        "symbol": "$a$",
+        "meaning": "base of the exponential a^x (a > 0), or the point approached in the power-rule limit"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "exponent in the power-rule limit"
+      },
+      {
+        "symbol": "$e$",
+        "meaning": "Euler's number ≈ 2.71828, the base of the natural logarithm"
+      }
+    ],
+    "whenToUse": "The first move on any $\\frac{0}{0}$ limit near $x=0$ built from $\\sin$, $\\tan$, $\\cos$, $e^x$, $a^x$ or $\\ln(1+x)$: multiply and divide so that each factor becomes one of these forms, then take the limit factor by factor. This is often faster than L'Hôpital's rule.",
+    "commonMistake": "Working in degrees (then $\\frac{\\sin x^\\circ}{x}\\to\\frac{\\pi}{180}$); writing $\\frac{1-\\cos x}{x}\\to\\frac12$ (it tends to $0$; the $\\frac12$ needs $x^2$ in the denominator); and using $\\frac{\\sin x}{x}\\to 1$ as $x\\to\\infty$ (there $\\frac{\\sin x}{x}\\to 0$ because $|\\sin x|\\le 1$).",
+    "example": "$$\n\\lim_{x\\to 0}\\frac{\\sin 3x}{e^{2x}-1} = \\lim_{x\\to 0}\\frac{\\dfrac{\\sin 3x}{3x}\\cdot 3x}{\\dfrac{e^{2x}-1}{2x}\\cdot 2x} = \\frac{1\\cdot 3}{1\\cdot 2} = \\frac{3}{2} = 1.5\n$$\n\n$$\n\\lim_{x\\to 0}\\frac{1-\\cos 4x}{x^2} = \\frac{4^2}{2} = 8, \\qquad \\lim_{x\\to 0}\\frac{2^x-1}{x} = \\ln 2 \\approx 0.693\n$$",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-one-power-infinity",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Indeterminate form 1^∞ (exponential limits)",
+    "latex": "\\lim_{x\\to a} f(x)=1,\\ \\ \\lim_{x\\to a} g(x)=\\pm\\infty \\;\\Longrightarrow\\; \\lim_{x\\to a} f(x)^{g(x)} = \\exp\\!\\Big(\\lim_{x\\to a} g(x)\\,\\big(f(x)-1\\big)\\Big)",
+    "meaning": "Write $f^{g}=e^{\\,g\\ln f}$. As $f\\to 1$, $\\ln f = (f-1)\\,(1+o(1))$ (because $\\frac{\\ln(1+u)}{u}\\to 1$ as $u\\to 0$), so $g\\ln f$ has the same limit as $g\\,(f-1)$. If that limit is a finite number $L$, the answer is $e^{L}$; if it is $+\\infty$ the answer is $+\\infty$; if it is $-\\infty$ the answer is $0$.\n\nThe point $a$ may be finite or $\\pm\\infty$, and $f>0$ near $a$ so that the power is defined. Two special cases worth memorising:\n\n$$\n\\lim_{x\\to\\infty}\\left(1+\\frac{k}{x}\\right)^{mx}=e^{km}, \\qquad \\lim_{x\\to 0}\\,(1+kx)^{1/x}=e^{k}\n$$\n\nThe other exponential indeterminate forms, $0^0$ and $\\infty^0$, are handled the same way: take $\\ln$, find $\\lim g\\ln f$ (often with L'Hôpital's rule), then exponentiate.",
+    "variables": [
+      {
+        "symbol": "$f(x)$",
+        "meaning": "the base; tends to 1 and must be positive near the point"
+      },
+      {
+        "symbol": "$g(x)$",
+        "meaning": "the exponent; tends to +∞ or −∞"
+      },
+      {
+        "symbol": "$a$",
+        "meaning": "the point approached (finite, +∞ or −∞)"
+      },
+      {
+        "symbol": "$\\exp(t)$",
+        "meaning": "e raised to the power t"
+      }
+    ],
+    "whenToUse": "A power whose base tends to $1$ while its exponent blows up: $\\left(1+\\frac{k}{x}\\right)^{x}$, $(\\cos x)^{1/x^2}$, $\\left(\\frac{x+p}{x+q}\\right)^{x}$, compound-interest style limits.",
+    "commonMistake": "Treating $1^\\infty$ as $1$. It is indeterminate: $\\left(1+\\frac1x\\right)^x\\to e$, not $1$. Also, using $g\\,(f-1)$ when the base does **not** tend to $1$: $\\left(\\frac12\\right)^x\\to 0$ as $x\\to\\infty$ is not an indeterminate form at all.",
+    "example": "$\\displaystyle\\lim_{x\\to\\infty}\\left(\\frac{x+3}{x-1}\\right)^{2x}$: the base tends to $1$ and the exponent to $\\infty$, so this is $1^\\infty$.\n\n$$\nf-1=\\frac{x+3}{x-1}-1=\\frac{4}{x-1}, \\qquad g\\,(f-1)=\\frac{8x}{x-1}\\;\\to\\; 8\n$$\n\nSo the limit is $e^{8}\\approx 2980.96$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-lhopital",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "L'Hôpital's rule",
+    "latex": "\\lim_{x\\to a}\\frac{f(x)}{g(x)} = \\lim_{x\\to a}\\frac{f'(x)}{g'(x)} \\qquad \\text{for the forms } \\tfrac{0}{0} \\text{ or } \\tfrac{\\pm\\infty}{\\pm\\infty}, \\text{ provided the right-hand limit exists (finite or } \\pm\\infty\\text{)}",
+    "meaning": "**Hypotheses:** $f$ and $g$ are differentiable on an open interval around $a$ (except possibly at $a$ itself), $g'(x)\\ne 0$ there, and either $f(x)\\to 0$ and $g(x)\\to 0$, or $|g(x)|\\to\\infty$. The point $a$ may be finite, $\\pm\\infty$ or approached from one side. The rule may be applied again as long as the new quotient is still indeterminate.\n\nIt differentiates the numerator and the denominator **separately**; it is not the quotient rule.\n\nOther indeterminate forms must first be rewritten as a quotient:\n\n| Form | Rewrite |\n|---|---|\n| $0\\cdot\\infty$ | $fg = \\dfrac{f}{1/g}$ |\n| $\\infty-\\infty$ | combine into one fraction, or rationalise |\n| $1^\\infty$, $0^0$, $\\infty^0$ | take $\\ln$: $\\ln(f^g) = \\dfrac{\\ln f}{1/g}$ |",
+    "variables": [
+      {
+        "symbol": "$f(x),\\ g(x)$",
+        "meaning": "numerator and denominator, both → 0 or denominator → ±∞"
+      },
+      {
+        "symbol": "$f'(x),\\ g'(x)$",
+        "meaning": "their derivatives, taken separately"
+      },
+      {
+        "symbol": "$a$",
+        "meaning": "the point approached (finite, ±∞, or one-sided)"
+      }
+    ],
+    "whenToUse": "A $\\frac00$ or $\\frac{\\infty}{\\infty}$ limit where no standard limit or short series expansion is obvious, especially ratios mixing polynomials with $e^x$ or $\\ln x$ as $x\\to\\infty$: for example $\\frac{x^n}{e^x}\\to 0$ and $\\frac{\\ln x}{x^p}\\to 0$ for every $p>0$.",
+    "commonMistake": "(1) Applying it when the form is **not** indeterminate: $\\lim_{x\\to0}\\frac{x+1}{x+2}=\\frac12$, but differentiating top and bottom gives the wrong value $1$. (2) Using the quotient rule on $\\frac{f}{g}$ instead of differentiating top and bottom separately. (3) Concluding that the limit does not exist when $\\frac{f'}{g'}$ has no limit; the rule is then silent. For example $\\frac{x+\\sin x}{x}\\to 1$ as $x\\to\\infty$, even though $\\frac{f'}{g'}=1+\\cos x$ oscillates.",
+    "example": "$$\n\\lim_{x\\to 0}\\frac{x-\\sin x}{x^3}\\;\\overset{0/0}{=}\\;\\lim_{x\\to 0}\\frac{1-\\cos x}{3x^2}\\;\\overset{0/0}{=}\\;\\lim_{x\\to 0}\\frac{\\sin x}{6x} = \\frac{1}{6}\\approx 0.1667\n$$\n\nThe last step uses $\\frac{\\sin x}{x}\\to 1$; a third application of the rule gives $\\frac{\\cos x}{6}\\to\\frac16$ as well.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-continuity",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Continuity at a point",
+    "latex": "f \\text{ is continuous at } x=a \\iff \\lim_{x\\to a^-} f(x) = \\lim_{x\\to a^+} f(x) = f(a)",
+    "meaning": "Three conditions must all hold: $f(a)$ is defined; the left-hand limit (LHL) equals the right-hand limit (RHL), so $\\lim_{x\\to a}f(x)$ exists; and this common value equals $f(a)$. At an endpoint of the domain only the one-sided limit from inside the domain is used.\n\n**Types of discontinuity:** *removable* (the limit exists but differs from $f(a)$, or $f(a)$ is undefined), *jump* (LHL and RHL are finite but unequal), *infinite or oscillatory* (a one-sided limit is infinite or does not exist, e.g. $\\frac1x$ or $\\sin\\frac1x$ at $0$).\n\n**Building blocks:** polynomials, $e^x$, $\\sin x$, $\\cos x$ and $|x|$ are continuous on $\\mathbb{R}$; $\\ln x$ on $(0,\\infty)$; a rational function $\\frac{p(x)}{q(x)}$ wherever $q(x)\\ne 0$. Sums, products and compositions of continuous functions, and quotients with a nonzero denominator, are continuous.\n\n**Intermediate value theorem (IVT):** if $f$ is continuous on $[a,b]$ and $k$ lies between $f(a)$ and $f(b)$, then $f(c)=k$ for some $c\\in[a,b]$. In particular, a sign change of a continuous $f$ on $[a,b]$ guarantees a root.",
+    "variables": [
+      {
+        "symbol": "$\\lim_{x\\to a^-} f(x)$",
+        "meaning": "left-hand limit: x approaches a through values less than a"
+      },
+      {
+        "symbol": "$\\lim_{x\\to a^+} f(x)$",
+        "meaning": "right-hand limit: x approaches a through values greater than a"
+      },
+      {
+        "symbol": "$f(a)$",
+        "meaning": "the value of the function at the point being tested"
+      }
+    ],
+    "whenToUse": "Piecewise functions (find the parameter that makes $f$ continuous at each join), formulas with a removable hole such as $\\frac{\\sin x}{x}$ at $0$, root-existence arguments (IVT), and checking the hypotheses of the mean value and extreme value theorems.",
+    "commonMistake": "Checking only that $f(a)$ exists, or only that LHL = RHL, instead of all three conditions; and assuming continuity implies differentiability ($|x|$ is continuous but not differentiable at $0$).",
+    "example": "$f(x)=kx+1$ for $x\\le 2$ and $f(x)=x^2-1$ for $x>2$.\n\n- LHL $= f(2) = 2k+1$ (the left piece contains $x=2$).\n- RHL $= \\lim_{x\\to 2^+}(x^2-1) = 3$.\n\nContinuity at $x=2$ requires $2k+1=3$, so $k=1$. For any other $k$ there is a jump of size $|3-(2k+1)|$ at $x=2$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-differentiability",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Derivative as a limit; left and right derivatives",
+    "latex": "\\begin{aligned}\nf'(a) &= \\lim_{h\\to 0}\\frac{f(a+h)-f(a)}{h}\\\\\nf'_{-}(a) &= \\lim_{h\\to 0^-}\\frac{f(a+h)-f(a)}{h}, \\qquad f'_{+}(a) = \\lim_{h\\to 0^+}\\frac{f(a+h)-f(a)}{h}\\\\\nf \\text{ differentiable at } a &\\iff f'_{-}(a) \\text{ and } f'_{+}(a) \\text{ exist, are finite and are equal}\n\\end{aligned}",
+    "meaning": "The derivative is the limit of the slope of the secant through $(a,f(a))$ and $(a+h,f(a+h))$, i.e. the slope of the tangent line. It exists only when both one-sided slopes exist, are finite and agree.\n\n**Differentiable ⟹ continuous**, because $f(a+h)-f(a)=h\\cdot\\frac{f(a+h)-f(a)}{h}\\to 0\\cdot f'(a)=0$. The converse is false. Typical failures at points where $f$ is still continuous:\n\n- **corner:** $|x|$ at $0$ ($f'_-(0)=-1$, $f'_+(0)=+1$); $\\mathrm{ReLU}(x)=\\max(x,0)$ at $0$ ($0$ versus $1$);\n- **cusp or vertical tangent:** $x^{2/3}$ and $x^{1/3}$ at $0$ (the difference quotient is unbounded).\n\n**Piecewise shortcut:** if $f$ is continuous at $a$ and each piece is differentiable, then $f'_-(a)$ and $f'_+(a)$ equal the one-sided limits of the pieces' derivatives at $a$, provided those limits exist (a consequence of the mean value theorem). So first impose continuity, then match the derivatives of the pieces at the join.",
+    "variables": [
+      {
+        "symbol": "$h$",
+        "meaning": "a small increment tending to 0 (from both sides, or from one side for one-sided derivatives)"
+      },
+      {
+        "symbol": "$f'_{-}(a)$",
+        "meaning": "left derivative at a"
+      },
+      {
+        "symbol": "$f'_{+}(a)$",
+        "meaning": "right derivative at a"
+      }
+    ],
+    "whenToUse": "Differentiability of piecewise functions and of $|x|$-type or $\\max/\\min$ functions (ReLU, hinge loss), and questions that give an inequality on $f(x)-f(y)$ and ask about $f'$: bound the difference quotient, then let $h\\to 0$.",
+    "commonMistake": "Matching the pieces' derivatives without first checking continuity. $f(x)=x$ for $x<0$ and $f(x)=x+1$ for $x\\ge 0$ has piece-derivatives $1$ and $1$, but it jumps at $0$, so it is **not** differentiable there (indeed $f'_-(0)=\\lim_{h\\to0^-}\\frac{h-1}{h}=+\\infty$).",
+    "example": "Find $a,b$ so that $f(x)=ax^2+b$ for $x\\le 1$ and $f(x)=4x-1$ for $x>1$ is differentiable at $x=1$.\n\n1. Continuity: $a(1)^2+b = 4(1)-1$, so $a+b=3$.\n2. Equal one-sided derivatives: $f'_-(1)=2a(1)=2a$ and $f'_+(1)=4$, so $a=2$.\n3. Hence $b=1$: $f(1)=3$ and $f'(1)=4$ from both sides.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-differentiation-rules",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Differentiation rules and standard derivatives",
+    "latex": "\\begin{aligned}\n&(uv)' = u'v+uv', \\qquad \\left(\\frac{u}{v}\\right)' = \\frac{u'v-uv'}{v^2}\\ \\ (v\\ne 0), \\qquad \\frac{d}{dx}f\\big(g(x)\\big) = f'\\big(g(x)\\big)\\,g'(x)\\\\\n&(x^n)' = n x^{n-1}, \\quad (e^x)' = e^x, \\quad (a^x)' = a^x\\ln a, \\quad (\\ln x)' = \\frac{1}{x}, \\quad (\\sin x)' = \\cos x, \\quad (\\cos x)' = -\\sin x\n\\end{aligned}",
+    "meaning": "Sums, differences, products, quotients (where the denominator is nonzero) and compositions of differentiable functions are differentiable, with derivatives given by the rules above. Operations such as $|f(x)|$, $\\max(f,g)$ or $\\min(f,g)$ can destroy differentiability where the branches meet.\n\nMore standard derivatives: $(\\tan x)'=\\sec^2 x$; $(\\ln|x|)'=\\frac1x$ for $x\\ne0$; $(\\sqrt{x})'=\\frac{1}{2\\sqrt x}$ for $x>0$; $(\\log_a x)' = \\frac{1}{x\\ln a}$. The power rule $(x^n)'=nx^{n-1}$ holds for integer $n$ wherever $x^n$ is defined, and for every real $n$ when $x>0$; $(a^x)'=a^x\\ln a$ needs $a>0$.\n\n**Logarithmic differentiation** for variable powers: if $y=u^{v}$ with $u>0$, then $\\ln y = v\\ln u$ and\n\n$$\ny' = u^{v}\\left(v'\\ln u + \\frac{v\\,u'}{u}\\right), \\qquad \\text{e.g. } (x^x)'=x^x(\\ln x+1)\\ \\ (x>0).\n$$",
+    "variables": [
+      {
+        "symbol": "$u,\\ v$",
+        "meaning": "differentiable functions of x"
+      },
+      {
+        "symbol": "$f\\big(g(x)\\big)$",
+        "meaning": "composition: outer function f applied to inner function g"
+      },
+      {
+        "symbol": "$a$",
+        "meaning": "positive constant base of an exponential"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "exponent in the power rule"
+      }
+    ],
+    "whenToUse": "Every derivative computation: slopes, critical points, Taylor coefficients, gradient-descent updates. The chain rule is the engine of backpropagation in neural networks.",
+    "commonMistake": "Writing $(uv)'=u'v'$ or $\\left(\\frac uv\\right)'=\\frac{u'}{v'}$; reversing the sign in the quotient-rule numerator (it is $u'v-uv'$); forgetting the inner derivative in the chain rule ($\\frac{d}{dx}e^{3x}=3e^{3x}$, not $e^{3x}$); and applying the power rule to $a^x$ or $x^x$.",
+    "example": "Product and chain rules: $\\frac{d}{dx}\\left[x^2e^{3x}\\right] = 2x\\,e^{3x} + x^2\\cdot 3e^{3x} = e^{3x}(3x^2+2x)$, so at $x=1$ the slope is $5e^{3}\\approx 100.43$.\n\nChain rule: $\\frac{d}{dx}\\ln(1+x^2) = \\frac{1}{1+x^2}\\cdot 2x$, which equals $\\frac{2}{2}=1$ at $x=1$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-activation-derivatives",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Derivatives of sigmoid, tanh and ReLU",
+    "latex": "\\begin{aligned}\n\\sigma(x) &= \\frac{1}{1+e^{-x}}, &\\quad \\sigma'(x) &= \\sigma(x)\\big(1-\\sigma(x)\\big)\\\\\n\\tanh x &= \\frac{e^{x}-e^{-x}}{e^{x}+e^{-x}}, &\\quad \\frac{d}{dx}\\tanh x &= 1-\\tanh^2 x\\\\\n\\mathrm{ReLU}(x) &= \\max(x,0), &\\quad \\mathrm{ReLU}'(x) &= \\begin{cases}0, & x<0\\\\ 1, & x>0\\\\ \\text{undefined}, & x=0\\end{cases}\n\\end{aligned}",
+    "meaning": "**Sigmoid:** by the chain rule, $\\sigma'(x)=\\frac{e^{-x}}{(1+e^{-x})^2}=\\sigma(x)\\cdot\\frac{e^{-x}}{1+e^{-x}}=\\sigma(x)\\big(1-\\sigma(x)\\big)$, so the slope can be read off from the **output value** alone. $\\sigma$ is strictly increasing with range $(0,1)$, $\\sigma(-x)=1-\\sigma(x)$, and $\\sigma'$ is largest at $x=0$, where $\\sigma=\\frac12$ and $\\sigma'=\\frac14$.\n\n**tanh:** odd, strictly increasing, range $(-1,1)$, and $\\tanh x = 2\\sigma(2x)-1$; its derivative is at most $1$ (attained at $x=0$).\n\n**ReLU:** continuous everywhere and differentiable everywhere except at $x=0$, where $f'_-(0)=0\\ne 1=f'_+(0)$ (a corner). Frameworks use a subgradient there (any value in $[0,1]$ is valid; $0$ is the common choice). The softplus function $\\ln(1+e^{x})$ is a smooth version of ReLU whose derivative is exactly $\\sigma(x)$.",
+    "variables": [
+      {
+        "symbol": "$\\sigma(x)$",
+        "meaning": "logistic sigmoid, output in (0, 1)"
+      },
+      {
+        "symbol": "$\\tanh x$",
+        "meaning": "hyperbolic tangent, output in (−1, 1)"
+      },
+      {
+        "symbol": "$\\mathrm{ReLU}(x)$",
+        "meaning": "rectified linear unit max(x, 0)"
+      }
+    ],
+    "whenToUse": "Backpropagation and logistic-regression gradients, questions that give an activation's output value and ask for its slope, and differentiability questions about ReLU or hinge-type functions.",
+    "commonMistake": "Writing $\\sigma'(x)=\\sigma(x)\\big(1+\\sigma(x)\\big)$, or plugging the input $x$ into $\\sigma(1-\\sigma)$ instead of the output value $\\sigma(x)$; claiming ReLU is discontinuous at $0$ (it is continuous, just not differentiable); and writing $\\frac{d}{dx}\\tanh x = 1+\\tanh^2x$ (the sign is minus).",
+    "example": "At $x=\\ln 3$: $\\sigma(\\ln 3)=\\frac{1}{1+e^{-\\ln 3}}=\\frac{1}{1+\\frac13}=\\frac34$, so\n\n$$\n\\sigma'(\\ln 3)=\\frac34\\cdot\\frac14=\\frac{3}{16}=0.1875.\n$$\n\nIf $\\tanh x = 0.6$ at some point, the slope of $\\tanh$ there is $1-0.6^2=0.64$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-geometric-series",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Geometric series and convergence of series",
+    "latex": "\\sum_{k=0}^{n-1} r^k = \\frac{1-r^n}{1-r}\\ \\ (r\\ne 1), \\qquad \\sum_{k=0}^{\\infty} r^k = \\frac{1}{1-r}\\ \\ (|r|<1), \\qquad \\sum_{k=1}^{\\infty} k\\,r^{k} = \\frac{r}{(1-r)^2}\\ \\ (|r|<1)",
+    "meaning": "An infinite series $\\sum a_k$ is the **limit of its partial sums** $S_n$. The geometric series converges exactly when $|r|<1$, because then $r^n\\to 0$ in the finite-sum formula; for $|r|\\ge 1$ it diverges. The third formula follows by differentiating $\\sum_{k\\ge0} r^k = \\frac{1}{1-r}$ term by term and multiplying by $r$.\n\n**The starting index matters:** $\\sum_{k=m}^{\\infty} r^k = \\frac{r^m}{1-r}$ (first term divided by one minus the ratio).\n\nRelated facts: if $\\sum a_k$ converges then $a_k\\to 0$ (the converse is false); the harmonic series $\\sum\\frac1k$ diverges; the $p$-series $\\sum \\frac{1}{k^p}$ converges if and only if $p>1$. For absolutely convergent series, a double sum of a product splits into a product of sums: $\\sum_i\\sum_j a_i b_j = \\left(\\sum_i a_i\\right)\\left(\\sum_j b_j\\right)$.",
+    "variables": [
+      {
+        "symbol": "$r$",
+        "meaning": "common ratio between consecutive terms"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "number of terms in a finite sum"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "summation index"
+      },
+      {
+        "symbol": "$m$",
+        "meaning": "starting index of a tail sum"
+      }
+    ],
+    "whenToUse": "Infinite sums of powers, discounted sums, expectations such as $E[X]$ for a geometric random variable, the series $\\frac{1}{1-x}=1+x+x^2+\\cdots$ in Taylor expansions, and iterations whose error shrinks by a constant factor per step (e.g. gradient descent on a quadratic).",
+    "commonMistake": "Using $\\frac{1}{1-r}$ when the sum starts at $k=1$ (the answer is then $\\frac{r}{1-r}$), applying the infinite-sum formula when $|r|\\ge 1$, and confusing $\\sum k\\,r^k$ with $\\sum r^k$.",
+    "example": "$$\n\\sum_{k=1}^{\\infty} k\\left(\\tfrac13\\right)^{k} = \\frac{1/3}{(1-1/3)^2} = \\frac{1/3}{4/9} = \\frac34 = 0.75\n$$\n\n$$\n\\sum_{k=2}^{\\infty}\\left(\\tfrac25\\right)^{k} = \\frac{(2/5)^2}{1-2/5} = \\frac{4/25}{3/5} = \\frac{4}{15}\\approx 0.267\n$$",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-mean-value-theorem",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "name": "Rolle's theorem and the mean value theorem",
+    "latex": "\\begin{aligned}\n&\\textbf{MVT: } \\exists\\, c\\in(a,b):\\quad f'(c) = \\frac{f(b)-f(a)}{b-a}\\\\\n&\\textbf{Rolle: } f(a)=f(b) \\;\\Longrightarrow\\; \\exists\\, c\\in(a,b):\\quad f'(c)=0\n\\end{aligned}",
+    "meaning": "**Hypotheses (both theorems):** $a<b$, $f$ is continuous on the closed interval $[a,b]$ and differentiable on the open interval $(a,b)$. Then some interior point has a tangent slope equal to the slope of the chord joining the endpoints. Rolle's theorem is the special case $f(a)=f(b)$. Both guarantee existence only: $c$ need not be unique, and the theorems do not say where it is.\n\n**Consequences used constantly:**\n\n- $f'(x)=0$ on an interval $\\Rightarrow$ $f$ is constant there.\n- $f'(x)>0$ on an interval $\\Rightarrow$ $f$ is strictly increasing there ($f'<0$: strictly decreasing).\n- $|f'(x)|\\le M$ on an interval $\\Rightarrow$ $|f(x)-f(y)|\\le M|x-y|$ for $x,y$ in it (a Lipschitz bound).\n- Between two roots of a differentiable $f$ lies a root of $f'$, so a polynomial with $k$ distinct real roots has at least $k-1$ distinct real critical points.",
+    "variables": [
+      {
+        "symbol": "$[a,b]$",
+        "meaning": "the interval (f continuous on it, differentiable inside it)"
+      },
+      {
+        "symbol": "$c$",
+        "meaning": "an interior point, a < c < b, guaranteed to exist"
+      },
+      {
+        "symbol": "$\\frac{f(b)-f(a)}{b-a}$",
+        "meaning": "average rate of change = slope of the chord"
+      }
+    ],
+    "whenToUse": "Bounding $f(b)-f(a)$ from a bound on $f'$, proving monotonicity, counting roots of $f$ and $f'$, and checking whether a stated 'there exists $c$' claim is guaranteed.",
+    "commonMistake": "Applying it without checking the hypotheses: for $f(x)=|x|$ on $[-1,1]$, $f(-1)=f(1)$ but $f'(c)=0$ has no solution, because $f$ is not differentiable at $0$. Also forgetting that $c$ must lie strictly inside $(a,b)$.",
+    "example": "$f(x)=x^3$ on $[0,3]$ is continuous and differentiable. The chord slope is $\\frac{27-0}{3-0}=9$, and\n\n$$\nf'(c)=3c^2=9 \\;\\Rightarrow\\; c=\\sqrt3\\approx 1.732 \\in (0,3).\n$$\n\nThe other root, $c=-\\sqrt3$, lies outside the interval and is discarded.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-taylor-series",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "name": "Taylor series and Taylor's theorem (Lagrange remainder)",
+    "latex": "\\begin{aligned}\nf(x) &= \\sum_{n=0}^{\\infty}\\frac{f^{(n)}(a)}{n!}(x-a)^n = f(a)+f'(a)(x-a)+\\frac{f''(a)}{2!}(x-a)^2+\\cdots\\\\\nf(x) &= \\underbrace{\\sum_{k=0}^{n}\\frac{f^{(k)}(a)}{k!}(x-a)^k}_{P_n(x)} + \\underbrace{\\frac{f^{(n+1)}(\\xi)}{(n+1)!}(x-a)^{n+1}}_{R_n(x)}, \\qquad \\xi \\text{ between } a \\text{ and } x\n\\end{aligned}",
+    "meaning": "The Taylor polynomial $P_n$ matches $f$ and its first $n$ derivatives at the centre $a$. With $a=0$ it is called a **Maclaurin** polynomial or series. Conventions: $0!=1$ and $f^{(0)}=f$.\n\n**Taylor's theorem** (second line) holds when $f$ is $(n+1)$ times differentiable on an interval containing $a$ and $x$. The unknown point $\\xi$ gives the error bound $|R_n(x)|\\le \\frac{M}{(n+1)!}|x-a|^{n+1}$, where $M\\ge|f^{(n+1)}|$ between $a$ and $x$. The infinite series equals $f(x)$ only where $R_n(x)\\to 0$ as $n\\to\\infty$ (inside the interval of convergence).\n\n- $n=1$: $f(x)\\approx f(a)+f'(a)(x-a)$ is the tangent-line (**linear**) approximation.\n- $n=2$: adding $\\frac{f''(a)}{2}(x-a)^2$ gives the **quadratic** approximation, which underlies the second-derivative test and Newton's method.",
+    "variables": [
+      {
+        "symbol": "$a$",
+        "meaning": "centre of the expansion (a = 0 gives a Maclaurin series)"
+      },
+      {
+        "symbol": "$f^{(n)}(a)$",
+        "meaning": "n-th derivative of f evaluated at a"
+      },
+      {
+        "symbol": "$n!$",
+        "meaning": "n factorial, with 0! = 1"
+      },
+      {
+        "symbol": "$P_n(x)$",
+        "meaning": "Taylor polynomial of degree n"
+      },
+      {
+        "symbol": "$R_n(x)$",
+        "meaning": "remainder (error) after the degree-n polynomial"
+      },
+      {
+        "symbol": "$\\xi$",
+        "meaning": "some unknown point strictly between a and x"
+      }
+    ],
+    "whenToUse": "Approximating a function near a point, deriving series of new functions, evaluating limits by expansion, and reasoning about local behaviour (maxima and minima) through the first non-zero derivative.",
+    "commonMistake": "Dropping the factorials, writing $x^n$ instead of $(x-a)^n$ when $a\\ne 0$, and assuming the series converges for every $x$ (the series of $\\ln(1+x)$ converges only for $-1<x\\le 1$).",
+    "example": "Approximate $\\sqrt{4.1}$ using $f(x)=\\sqrt x$ about $a=4$: $f(4)=2$; $f'(x)=\\frac{1}{2\\sqrt x}$ gives $f'(4)=\\frac14$; $f''(x)=-\\frac{1}{4x^{3/2}}$ gives $f''(4)=-\\frac{1}{32}$. With $x-a=0.1$:\n\n$$\nP_2(4.1)=2+\\frac14(0.1)-\\frac{1}{2}\\cdot\\frac{1}{32}(0.1)^2 = 2+0.025-0.00015625 = 2.02484375.\n$$\n\nThe true value is $2.0248457\\ldots$ Since $f'''(x)=\\frac{3}{8x^{5/2}}\\le\\frac{3}{256}$ on $[4,4.1]$, the remainder bound is $\\frac{3/256}{3!}(0.1)^3\\approx 1.95\\times10^{-6}$, and the actual error, about $1.92\\times 10^{-6}$, is within it.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-maclaurin-standard",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "name": "Standard Maclaurin series",
+    "latex": "\\begin{aligned}\ne^x &= \\sum_{n=0}^{\\infty}\\frac{x^n}{n!} = 1+x+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots && (x\\in\\mathbb{R})\\\\\n\\sin x &= x-\\frac{x^3}{3!}+\\frac{x^5}{5!}-\\cdots && (x\\in\\mathbb{R})\\\\\n\\cos x &= 1-\\frac{x^2}{2!}+\\frac{x^4}{4!}-\\cdots && (x\\in\\mathbb{R})\\\\\n\\ln(1+x) &= x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots && (-1<x\\le 1)\\\\\n\\frac{1}{1-x} &= 1+x+x^2+x^3+\\cdots && (|x|<1)\\\\\n(1+x)^{\\alpha} &= 1+\\alpha x+\\frac{\\alpha(\\alpha-1)}{2!}x^2+\\frac{\\alpha(\\alpha-1)(\\alpha-2)}{3!}x^3+\\cdots && (|x|<1)\n\\end{aligned}",
+    "meaning": "These are Taylor series about $0$. Most other expansions are built from them by **substitution** ($e^{-x^2}$, $\\cos 2x$), **multiplication** ($x^2e^x$), **addition** or term-by-term differentiation and integration. For example\n\n$$\n\\sinh x=\\frac{e^x-e^{-x}}{2}=x+\\frac{x^3}{3!}+\\frac{x^5}{5!}+\\cdots, \\qquad \\cosh x=\\frac{e^x+e^{-x}}{2} = 1+\\frac{x^2}{2!}+\\frac{x^4}{4!}+\\cdots\n$$\n\nPatterns: $\\sin$ and $\\sinh$ are odd (only odd powers); $\\cos$ and $\\cosh$ are even (only even powers); $\\sin$ and $\\cos$ alternate in sign while $\\sinh$ and $\\cosh$ do not. The binomial series terminates when $\\alpha$ is a non-negative integer (it is then the binomial theorem, valid for all $x$); otherwise it is infinite, e.g. $\\sqrt{1+x}=1+\\frac{x}{2}-\\frac{x^2}{8}+\\cdots$. Angles are in radians and $\\ln$ is the natural logarithm.",
+    "variables": [
+      {
+        "symbol": "$x$",
+        "meaning": "the variable; each series is valid on the interval shown on its right"
+      },
+      {
+        "symbol": "$\\alpha$",
+        "meaning": "any real exponent in the binomial series"
+      },
+      {
+        "symbol": "$n!$",
+        "meaning": "n factorial, with 0! = 1"
+      }
+    ],
+    "whenToUse": "Limits as $x\\to 0$, quick numerical approximations near $0$, finding $f^{(n)}(0)$ from a coefficient, and recognising a given power series as a known function.",
+    "commonMistake": "Giving $\\ln(1+x)$ factorial denominators (they are $1,2,3,\\ldots$, not $1!,2!,3!$), losing the alternating signs of $\\sin$, $\\cos$ and $\\ln(1+x)$, and using the $\\ln(1+x)$ or $\\frac{1}{1-x}$ series outside their intervals of convergence.",
+    "example": "$e^{0.1}\\approx 1+0.1+\\frac{0.01}{2}+\\frac{0.001}{6} = 1.1051667$ (true value $1.1051709$).\n\n$\\sqrt{1.2}=(1+0.2)^{1/2}\\approx 1+\\frac{0.2}{2}-\\frac{0.2^2}{8}=1+0.1-0.005=1.095$ (true value $1.0954451$).\n\nSubstitution: $e^{-x^2} = 1-x^2+\\frac{x^4}{2}-\\frac{x^6}{6}+\\cdots$",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-taylor-coefficient",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "name": "Reading derivatives from series coefficients",
+    "latex": "f(x)=\\sum_{n=0}^{\\infty} c_n (x-a)^n \\;\\Longrightarrow\\; c_n=\\frac{f^{(n)}(a)}{n!}, \\quad\\text{i.e.}\\quad f^{(n)}(a) = n!\\,c_n",
+    "meaning": "A power series that converges to $f$ near $a$ is the Taylor series of $f$ (the representation is unique), so the $n$-th derivative at the centre is $n!$ times the coefficient of $(x-a)^n$. Build the series by substitution into, or multiplication of, standard series; read off the coefficient; multiply by $n!$. No repeated differentiation is needed.\n\n**Parity shortcut (at $a=0$):** an even function ($f(-x)=f(x)$) has only even powers, so $f^{(n)}(0)=0$ for every odd $n$; an odd function ($f(-x)=-f(x)$) has only odd powers, so $f^{(n)}(0)=0$ for every even $n$.\n\n**Substitution shifts the index:** if $f(x)=g(x^2)$, the coefficient of $x^{2m}$ in $f$ is the coefficient of $x^m$ in $g$, and all odd-power coefficients of $f$ are $0$.",
+    "variables": [
+      {
+        "symbol": "$c_n$",
+        "meaning": "coefficient of (x − a)^n in the power series"
+      },
+      {
+        "symbol": "$a$",
+        "meaning": "centre of the series"
+      },
+      {
+        "symbol": "$f^{(n)}(a)$",
+        "meaning": "n-th derivative of f at the centre"
+      }
+    ],
+    "whenToUse": "High-order derivatives at a point, such as $f^{(7)}(0)$ or $f^{(10)}(0)$, of products and compositions of $e^x$, $\\sin$, $\\cos$, $\\sinh$, $\\cosh$, $\\ln(1+x)$ and $\\frac{1}{1-x}$.",
+    "commonMistake": "Reporting the coefficient $c_n$ itself as the derivative (forgetting to multiply by $n!$), and mis-indexing after substitution or after multiplying by a power of $x$.",
+    "example": "$f(x)=x^2e^{x}=\\sum_{k\\ge0}\\frac{x^{k+2}}{k!}$. The coefficient of $x^5$ comes from $k=3$: $c_5=\\frac{1}{3!}=\\frac16$, so\n\n$$\nf^{(5)}(0)=5!\\cdot\\frac16=\\frac{120}{6}=20.\n$$\n\nFor $g(x)=\\cos 2x = 1-\\frac{(2x)^2}{2!}+\\frac{(2x)^4}{4!}-\\cdots$ the coefficient of $x^4$ is $\\frac{16}{24}$, so $g^{(4)}(0)=4!\\cdot\\frac{16}{24}=16$; and $g^{(7)}(0)=0$ because $g$ is even.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-series-limits",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "name": "Limits by series expansion (leading-term rule)",
+    "latex": "f(x)=a_p x^p+o(x^p),\\ \\ g(x)=b_q x^q+o(x^q),\\ \\ a_p,b_q\\ne 0 \\;\\Longrightarrow\\; \\lim_{x\\to 0}\\frac{f(x)}{g(x)}=\\begin{cases}\\dfrac{a_p}{b_q}, & p=q\\\\[6pt] 0, & p>q\\\\[6pt] \\text{no finite limit}, & p<q\\end{cases}",
+    "meaning": "Near $0$ a function behaves like the first non-zero term of its Maclaurin series; $o(x^p)$ denotes terms that are negligible compared with $x^p$ as $x\\to 0$ (higher powers). Expand numerator and denominator **far enough to reach the first term that survives cancellation**, then compare leading terms.\n\nUseful leading terms as $x\\to 0$:\n\n| Expression | Leading term |\n|---|---|\n| $\\sin x - x$ | $-\\frac{x^3}{6}$ |\n| $1-\\cos x$ | $\\frac{x^2}{2}$ |\n| $e^x-1-x$ | $\\frac{x^2}{2}$ |\n| $\\ln(1+x)-x$ | $-\\frac{x^2}{2}$ |\n| $\\tan x - x$ | $\\frac{x^3}{3}$ |\n| $\\tan x - \\sin x$ | $\\frac{x^3}{2}$ |\n\nFor a composite such as $\\ln\\big(1+u(x)\\big)$ with $u(x)\\to0$, expand $u$ first and substitute into $\\ln(1+u)=u-\\frac{u^2}{2}+\\cdots$.",
+    "variables": [
+      {
+        "symbol": "$a_p x^p$",
+        "meaning": "leading (lowest-order non-zero) term of the numerator"
+      },
+      {
+        "symbol": "$b_q x^q$",
+        "meaning": "leading term of the denominator"
+      },
+      {
+        "symbol": "$o(x^p)$",
+        "meaning": "terms that vanish faster than x^p as x → 0"
+      }
+    ],
+    "whenToUse": "$\\frac00$ limits as $x\\to0$ that combine several transcendental terms, where L'Hôpital's rule would need three or more rounds (typically when the denominator is $x^3$ or $x^4$).",
+    "commonMistake": "Truncating too early: replacing $\\sin x$ by $x$ in $\\frac{x-\\sin x}{x^3}$ gives $\\frac{0}{x^3}$ and the false answer $0$ (the correct value is $\\frac16$). Always keep terms until the numerator's leading term no longer cancels.",
+    "example": "$\\displaystyle\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}$:\n\n$$\ne^{x^2}-\\cos x = \\left(1+x^2+\\cdots\\right)-\\left(1-\\frac{x^2}{2}+\\cdots\\right) = \\frac32x^2+o(x^2),\n$$\n\nso $p=q=2$ and the limit is $\\frac{3}{2}=1.5$.\n\n$\\displaystyle\\lim_{x\\to0}\\frac{\\tan x-\\sin x}{x^3}$: $\\tan x-\\sin x = \\left(x+\\frac{x^3}{3}\\right)-\\left(x-\\frac{x^3}{6}\\right)+o(x^3)=\\frac{x^3}{2}+o(x^3)$, so the limit is $\\frac12$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-first-derivative-test",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "name": "Critical points, monotonicity and the first-derivative test",
+    "latex": "\\begin{aligned}\n&c \\text{ critical} \\iff c \\text{ is an interior point of the domain with } f'(c)=0 \\text{ or } f'(c) \\text{ undefined}\\\\\n&f' > 0 \\text{ on } I \\Rightarrow f \\text{ strictly increasing on } I, \\qquad f' < 0 \\text{ on } I \\Rightarrow f \\text{ strictly decreasing on } I\\\\\n&\\text{sign of } f' \\text{ around } c:\\ \\ + \\to - \\Rightarrow \\text{local max}, \\qquad - \\to + \\Rightarrow \\text{local min}, \\qquad \\text{no change} \\Rightarrow \\text{no extremum}\n\\end{aligned}",
+    "meaning": "**Fermat's theorem:** if $f$ has a local extremum at an interior point $c$ and $f'(c)$ exists, then $f'(c)=0$. So interior local extrema occur only at critical points, but not every critical point is an extremum: $x^3$ has $f'(0)=0$ and no extremum at $0$.\n\n**First-derivative test:** for $f$ continuous at a critical point $c$, read the sign of $f'$ just to the left and just to the right of $c$. It also works where $f'(c)$ does not exist: $|x|$ has $f'<0$ then $f'>0$ around $0$, a minimum.\n\n**Monotonicity:** a positive derivative on an interval is sufficient, not necessary, for strict increase: $x^3$ is strictly increasing on $\\mathbb{R}$ although $f'(0)=0$. Isolated zeros of $f'$ do not break monotonicity.",
+    "variables": [
+      {
+        "symbol": "$c$",
+        "meaning": "a critical point (interior point with f′(c) = 0 or f′(c) undefined)"
+      },
+      {
+        "symbol": "$I$",
+        "meaning": "an interval"
+      },
+      {
+        "symbol": "$f'$",
+        "meaning": "first derivative; its sign gives the direction of change"
+      }
+    ],
+    "whenToUse": "Finding intervals of increase and decrease, classifying critical points when $f''(c)=0$ or $f''$ is awkward to compute, and functions with corners where $f'$ does not exist.",
+    "commonMistake": "Declaring every stationary point an extremum; ignoring points where $f'$ does not exist; and forgetting the domain: points outside it are irrelevant, and endpoints of a closed interval are not interior critical points (they are checked separately when finding global extrema).",
+    "example": "$f(x)=xe^{-x}$: $f'(x)=e^{-x}-xe^{-x}=(1-x)e^{-x}$. Since $e^{-x}>0$, the sign of $f'$ is the sign of $1-x$: positive on $(-\\infty,1)$ and negative on $(1,\\infty)$.\n\nSo $f$ increases on $(-\\infty,1]$, decreases on $[1,\\infty)$, and $f'$ changes from $+$ to $-$ at $x=1$: a local (in fact global) maximum $f(1)=e^{-1}\\approx 0.368$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-second-derivative-test",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "name": "Second-derivative and higher-order derivative tests",
+    "latex": "\\begin{aligned}\n&f'(c)=0,\\ f''(c)>0 \\;\\Rightarrow\\; \\text{strict local minimum at } c\\\\\n&f'(c)=0,\\ f''(c)<0 \\;\\Rightarrow\\; \\text{strict local maximum at } c\\\\\n&f'(c)=0,\\ f''(c)=0 \\;\\Rightarrow\\; \\text{test inconclusive}\\\\\n&f'(c)=\\cdots=f^{(n-1)}(c)=0,\\ f^{(n)}(c)\\ne 0:\\ \\ \\begin{cases} n \\text{ even: min if } f^{(n)}(c)>0,\\ \\text{max if } f^{(n)}(c)<0\\\\ n \\text{ odd: no extremum} \\end{cases}\n\\end{aligned}",
+    "meaning": "Near a stationary point the Taylor expansion is $f(c+h)=f(c)+\\frac{f''(c)}{2}h^2+o(h^2)$. If $f''(c)>0$ the function rises on both sides (a bowl: local minimum); if $f''(c)<0$ it falls on both sides (local maximum).\n\nWhen $f''(c)=0$ the quadratic term vanishes and the first non-zero derivative decides: $f(c+h)-f(c)\\approx\\frac{f^{(n)}(c)}{n!}h^n$. An **even** $n$ keeps one sign on both sides (an extremum); an **odd** $n$ changes sign (no extremum; for odd $n\\ge3$ the point is a stationary point of inflection). Examples: $x^4$ at $0$ ($n=4$, $f^{(4)}=24>0$: minimum) and $x^3$ at $0$ ($n=3$: no extremum).\n\nThe tests assume $f$ is $n$ times differentiable at $c$ (for the basic test, $n=2$). Their conclusions are **local**; global extrema need the closed-interval method or a convexity argument.",
+    "variables": [
+      {
+        "symbol": "$c$",
+        "meaning": "a stationary point, f′(c) = 0"
+      },
+      {
+        "symbol": "$f''(c)$",
+        "meaning": "second derivative (curvature) at c"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "order of the first derivative that is non-zero at c"
+      }
+    ],
+    "whenToUse": "Classifying stationary points of smooth functions (polynomials, exponentials, loss functions) once $f'(c)=0$ has been solved; usually faster than a sign chart.",
+    "commonMistake": "Concluding 'no extremum' or 'inflection' from $f''(c)=0$: $x^4$ has $f''(0)=0$ and a strict minimum at $0$. Also assuming that a single local minimum must be the global minimum without checking endpoints or the behaviour as $x\\to\\pm\\infty$.",
+    "example": "$f(x)=x^4-4x^3$: $f'(x)=4x^3-12x^2=4x^2(x-3)$, so the stationary points are $x=0$ and $x=3$; $f''(x)=12x^2-24x$.\n\n- $x=3$: $f''(3)=108-72=36>0$, so a local minimum with $f(3)=81-108=-27$.\n- $x=0$: $f''(0)=0$ (inconclusive). $f'''(x)=24x-24$ gives $f'''(0)=-24\\ne0$ with $n=3$ odd, so there is no extremum at $0$ (a stationary inflection point; $f'<0$ on both sides of $0$).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-closed-interval-method",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "name": "Global extrema on a closed interval (closed-interval method)",
+    "latex": "\\max_{x\\in[a,b]} f(x) = \\max\\{f(a),\\, f(b),\\, f(c_1),\\dots,f(c_k)\\}, \\qquad \\min_{x\\in[a,b]} f(x) = \\min\\{f(a),\\, f(b),\\, f(c_1),\\dots,f(c_k)\\}",
+    "meaning": "**Extreme value theorem:** a function that is continuous on a closed, bounded interval $[a,b]$ attains a global maximum and a global minimum on it. Each occurs either at an endpoint or at an interior critical point $c_i$ (where $f'(c_i)=0$ or $f'(c_i)$ does not exist). So list these candidates, evaluate $f$ at each, and pick the largest and smallest values.\n\nOn an **open, half-open or unbounded** domain the theorem does not apply and an extremum may not be attained: $f(x)=x$ on $(0,1]$ has maximum $1$ but no minimum (the values approach $0$ without reaching it). There, also compute the limits of $f$ at the open ends: a global maximum exists only if the largest candidate value is at least as large as each of those limits (similarly for the minimum).\n\n**Single-variable optimisation recipe:** write the objective as a function of one variable, determine the feasible interval from the constraints, then apply this method.",
+    "variables": [
+      {
+        "symbol": "$[a,b]$",
+        "meaning": "closed, bounded interval on which f is continuous"
+      },
+      {
+        "symbol": "$c_1,\\dots,c_k$",
+        "meaning": "critical points of f lying strictly inside (a, b)"
+      }
+    ],
+    "whenToUse": "Any 'maximum or minimum value of $f$ on $[a,b]$' question, applied optimisation problems once reduced to one variable, and MSQ statements about whether a global extremum exists on a given interval.",
+    "commonMistake": "Forgetting the endpoints (the global maximum is often at an endpoint rather than at the local maximum), including critical points that lie outside the interval, and assuming a global extremum exists on an open or half-open interval.",
+    "example": "$f(x)=2x^3-3x^2-12x+5$ on $[-2,4]$: $f'(x)=6x^2-6x-12=6(x-2)(x+1)$, so the interior critical points are $x=-1$ and $x=2$.\n\n| $x$ | $-2$ | $-1$ | $2$ | $4$ |\n|---|---|---|---|---|\n| $f(x)$ | $1$ | $12$ | $-15$ | $37$ |\n\nGlobal maximum $37$ at the endpoint $x=4$ (not at the local maximum $x=-1$); global minimum $-15$ at $x=2$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-convexity",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "name": "Convexity test and why convex minima are global",
+    "latex": "\\begin{aligned}\n&f \\text{ convex on } I \\iff f\\big(\\lambda x+(1-\\lambda)y\\big)\\le \\lambda f(x)+(1-\\lambda)f(y)\\quad \\forall\\, x,y\\in I,\\ \\lambda\\in[0,1]\\\\\n&f \\text{ twice differentiable: } f \\text{ convex on } I \\iff f''(x)\\ge 0\\ \\ \\forall x\\in I; \\qquad f''>0 \\text{ on } I \\Rightarrow f \\text{ strictly convex on } I\n\\end{aligned}",
+    "meaning": "Geometrically, every chord lies on or above the graph; for differentiable $f$, equivalently, every tangent lies on or below it: $f(y)\\ge f(x)+f'(x)(y-x)$. $f$ is **concave** when $-f$ is convex (for twice-differentiable $f$: $f''\\le 0$).\n\n**Optimisation payoff:** for a convex $f$ on an interval, every local minimum is a global minimum, and any point with $f'(c)=0$ is a global minimiser (put $x=c$ in the tangent inequality). A strictly convex function has **at most one** minimiser. For concave functions the same statements hold for maxima.\n\n**Cautions:** $f''>0$ is sufficient, not necessary, for strict convexity ($x^4$ is strictly convex although $f''(0)=0$); and convexity does not guarantee that a minimiser exists ($e^x$ has $f''>0$ everywhere but no minimum on $\\mathbb{R}$). An **inflection point** is where $f$ switches between convex and concave; if $f''(c)$ exists there it must be $0$, but $f''(c)=0$ alone does not make $c$ an inflection point ($x^4$ at $0$).",
+    "variables": [
+      {
+        "symbol": "$I$",
+        "meaning": "an interval"
+      },
+      {
+        "symbol": "$\\lambda$",
+        "meaning": "mixing weight between 0 and 1"
+      },
+      {
+        "symbol": "$f''$",
+        "meaning": "second derivative; its sign gives the curvature"
+      }
+    ],
+    "whenToUse": "Deciding whether a stationary point is the global optimum (squared-error and log-loss objectives are convex), MSQ statements of the form 'if $f''>0$ everywhere then …', and locating inflection points.",
+    "commonMistake": "Assuming $f''>0$ everywhere implies that a minimum exists, or that $f''(c)=0$ means an inflection point; and reversing the chord inequality (for a convex function the graph lies **below** its chords).",
+    "example": "Minimise $F(c)=\\sum_{i=1}^{n}(x_i-c)^2$ for the data $2,3,7$ ($n=3$).\n\n$F'(c)=-2\\sum_i(x_i-c)=0$ gives $c=\\bar x=\\frac{2+3+7}{3}=4$. Since $F''(c)=2n=6>0$ for all $c$, $F$ is strictly convex and $c=4$ is the unique global minimiser, with $F(4)=(2-4)^2+(3-4)^2+(7-4)^2=4+1+9=14$.\n\nBy contrast, $\\sum_i|x_i-c|$ is convex but not differentiable at the data points; it is minimised at the median $c=3$, giving $1+0+4=5$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-co-gradient-descent",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "name": "Gradient descent update in one variable and its step-size condition",
+    "latex": "\\begin{aligned}\n&x_{k+1} = x_k - \\eta\\, f'(x_k)\\\\\n&f(x)=\\tfrac{a}{2}(x-m)^2+d,\\ a>0:\\quad x_{k+1}-m=(1-\\eta a)(x_k-m) \\;\\Rightarrow\\; x_k \\to m \\text{ for every } x_0 \\iff 0<\\eta<\\tfrac{2}{a}\n\\end{aligned}",
+    "meaning": "Step against the derivative: if $f'(x_k)>0$ the function increases to the right, so move left, and vice versa. The **learning rate** $\\eta>0$ scales the step. A fixed point satisfies $x^*=x^*-\\eta f'(x^*)$, i.e. $f'(x^*)=0$, so gradient descent can only settle at stationary points; for a non-convex $f$ that may be a local (not global) minimum or even a stationary inflection point.\n\n**Quadratic case (exact):** the error $x_k-m$ is multiplied by $1-\\eta a$ at every step, where $a=f''$, so $x_k-m=(1-\\eta a)^k(x_0-m)$.\n\n- $0<\\eta<\\frac1a$: monotone convergence; $\\eta=\\frac1a$: convergence in one step;\n- $\\frac1a<\\eta<\\frac2a$: convergence with oscillation about $m$;\n- $\\eta=\\frac2a$: bounces between $x_0$ and $2m-x_0$ forever; $\\eta>\\frac2a$: divergence.\n\n**Stochastic gradient descent** uses the same update with the derivative of the loss on one training example (or a mini-batch) in place of the full objective. **Newton's method** $x_{k+1}=x_k-\\frac{f'(x_k)}{f''(x_k)}$ is the choice $\\eta=\\frac{1}{f''(x_k)}$: it jumps to the minimiser of the local quadratic Taylor model, so it solves a quadratic in one step.",
+    "variables": [
+      {
+        "symbol": "$x_k$",
+        "meaning": "the iterate (parameter value) after k steps"
+      },
+      {
+        "symbol": "$\\eta$",
+        "meaning": "learning rate (step size), η > 0"
+      },
+      {
+        "symbol": "$f'(x_k)$",
+        "meaning": "derivative evaluated at the current iterate"
+      },
+      {
+        "symbol": "$a$",
+        "meaning": "curvature f″ of the quadratic, a > 0"
+      },
+      {
+        "symbol": "$m$",
+        "meaning": "the minimiser of the quadratic"
+      },
+      {
+        "symbol": "$d$",
+        "meaning": "constant term (minimum value); it does not affect the iterates"
+      }
+    ],
+    "whenToUse": "Tracing a few iterations of (stochastic) gradient descent by hand, deciding whether a learning rate converges or diverges, and computing the parameter after $k$ steps on a quadratic loss via $x_k-m=(1-\\eta a)^k(x_0-m)$.",
+    "commonMistake": "Using $+\\eta f'(x_k)$ (that is gradient **ascent**), plugging in $f(x_k)$ instead of $f'(x_k)$, evaluating the derivative at the new point instead of the current one, and assuming a larger learning rate always converges faster.",
+    "example": "$f(x)=x^2-4x+5=(x-2)^2+1$, so $f'(x)=2x-4$, $m=2$ and $a=f''=2$. Take $x_0=0$ and $\\eta=0.1$ (convergent, since $0<0.1<\\frac22=1$).\n\n$$\n\\begin{aligned}\nx_1 &= 0-0.1\\,(2\\cdot 0-4) = 0.4\\\\\nx_2 &= 0.4-0.1\\,(0.8-4) = 0.72\\\\\nx_3 &= 0.72-0.1\\,(1.44-4) = 0.976\n\\end{aligned}\n$$\n\nCheck with the closed form: $x_3 = 2+(1-0.1\\cdot 2)^3(0-2) = 2-2(0.512) = 0.976$.",
+    "conceptIds": []
+  }
+]

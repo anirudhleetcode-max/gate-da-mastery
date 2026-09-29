@@ -13,36 +13,23 @@ import { useSetting, useUserData } from "@/lib/userdata/hooks";
 import { clearAll } from "@/lib/userdata/ops";
 import { createDb, DEMO_DB_NAME } from "@/lib/userdata/db";
 import { DEMO_INFO_KEY, generateDemoData, referencedQuestionIds, writeDemoData, type DemoInfo, type DemoMock, type DemoQuestion } from "@/lib/demo/seed";
-import type { KeyResponse } from "@/lib/mock/types";
 import { plural } from "@/lib/utils";
+import type { DemoMockChoice, DemoPool } from "./demoPool";
 import { Switch } from "./Switch";
 
-export interface DemoMockOption extends DemoMock {
-  title: string;
-}
-
-/** Turn a mock answer key (fetched only when the student opts in) into demo question records. */
-function fromKey(key: KeyResponse, mock: DemoMockOption): DemoQuestion[] {
-  const allowed = new Set(mock.questionIds);
-  return key.questions
-    .filter((q) => q.origin === "MOCK_TEST" && q.testId === mock.id && allowed.has(q.id))
-    .map((q) => ({
-      id: q.id,
-      origin: "MOCK_TEST" as const,
-      subjectId: q.subjectId,
-      topicId: q.topicId,
-      topicName: q.topicName,
-      type: q.type,
-      marks: q.marks,
-      estimatedTimeSec: q.estimatedTimeSec,
-      answer: q.answer,
-      title: `Mock ${mock.number} · Q.${q.questionNumber ?? mock.questionIds.indexOf(q.id) + 1}`,
-      testId: mock.id,
-      questionNumber: q.questionNumber,
-    }));
+/** Fetch the real question ids (and keys) the demo may use; mock answers only when the student opts in. */
+async function fetchPool(includeMocks: boolean): Promise<DemoPool> {
+  const r = await fetch(`/settings/demo-pool${includeMocks ? "?mocks=1" : ""}`, { cache: "no-store" });
+  if (!r.ok) throw new Error(`the question list could not be loaded (HTTP ${r.status})`);
+  const d = (await r.json()) as Partial<DemoPool>;
+  if (!Array.isArray(d.pyqs) || !Array.isArray(d.mocks)) throw new Error("the question list is malformed");
+  return { pyqs: d.pyqs, mocks: d.mocks };
 }
 
 type Notice = { tone: "success" | "danger" | "info"; text: string } | null;
+
+/** Long button labels may wrap on narrow phones instead of widening the page. */
+const WRAP = "h-auto min-h-10 whitespace-normal py-2 text-left";
 
 /** A fresh seed per generation (called from an event handler, never during render). */
 function newSeed(): number {
@@ -51,7 +38,7 @@ function newSeed(): number {
   return a[0] & 0x7fffffff;
 }
 
-export function DemoMode({ pyqs, mocks }: { pyqs: DemoQuestion[]; mocks: DemoMockOption[] }) {
+export function DemoMode({ pyqCount, mocks }: { pyqCount: number; mocks: DemoMockChoice[] }) {
   const { db, demo, setDemo, available } = useUserData();
   const [info] = useSetting<DemoInfo | null>(DEMO_INFO_KEY, null);
   const [includeMocks, setIncludeMocks] = useState(false);
@@ -63,21 +50,19 @@ export function DemoMode({ pyqs, mocks }: { pyqs: DemoQuestion[]; mocks: DemoMoc
     setBusy(true);
     setNotice(null);
     try {
-      const questions: DemoQuestion[] = [...pyqs];
+      const pool = await fetchPool(includeMocks && mockChoice.length > 0);
+      const questions: DemoQuestion[] = [...pool.pyqs];
       const demoMocks: DemoMock[] = [];
-      if (includeMocks) {
-        for (const m of mockChoice) {
-          const r = await fetch(`/api/mocks/${encodeURIComponent(m.id)}/key`);
-          if (!r.ok) continue; // not available any more: simply left out
-          const qs = fromKey((await r.json()) as KeyResponse, m);
-          if (qs.length !== m.questionIds.length) continue;
-          questions.push(...qs);
-          demoMocks.push({ id: m.id, number: m.number, durationMinutes: m.durationMinutes, negativeMarking: m.negativeMarking, questionIds: m.questionIds });
-        }
+      for (const m of pool.mocks) {
+        // Only complete, available mocks come back; anything else is simply left out.
+        if (!m.questions.length || m.questions.length !== m.questionIds.length) continue;
+        questions.push(...m.questions);
+        demoMocks.push({ id: m.id, number: m.number, durationMinutes: m.durationMinutes, negativeMarking: m.negativeMarking, questionIds: m.questionIds });
       }
+      if (!questions.length) throw new Error("no official questions are available");
       const seed = newSeed();
       const data = generateDemoData({ questions, mocks: demoMocks, seed, now: new Date() });
-      // Runtime guard: never write an id that did not come from the server.
+      // Runtime guard: never write an id that did not come from the server's list.
       const allowed = new Set(questions.map((q) => q.id));
       for (const id of referencedQuestionIds(data)) if (!allowed.has(id)) throw new Error(`Unexpected question id ${id}; nothing was written.`);
 
@@ -153,7 +138,7 @@ export function DemoMode({ pyqs, mocks }: { pyqs: DemoQuestion[]; mocks: DemoMoc
         <div className="space-y-3 border-t border-border pt-5">
           <h3 className="text-sm font-semibold text-fg">Generate demo data</h3>
           <p className="text-sm text-fg-3">
-            Creates about four weeks of fictional practice on real official PYQs ({pyqs.length} available), with correct and incorrect answers, a revision queue, error-log entries and bookmarks. It
+            Creates about four weeks of fictional practice on real official PYQs ({pyqCount} available), with correct and incorrect answers, a revision queue, error-log entries and bookmarks. It
             replaces whatever is in the demo database and {demo ? "keeps demo mode on" : "then turns demo mode on"}.
           </p>
           <label className={`flex items-start gap-2.5 text-sm ${mockChoice.length ? "text-fg" : "text-fg-3"}`}>
@@ -168,10 +153,10 @@ export function DemoMode({ pyqs, mocks }: { pyqs: DemoQuestion[]; mocks: DemoMoc
             </span>
           </label>
           <div className="flex flex-wrap gap-2">
-            <Button variant={demo ? "secondary" : "primary"} onClick={generate} disabled={!available || busy || pyqs.length === 0}>
+            <Button variant={demo ? "secondary" : "primary"} onClick={generate} disabled={!available || busy || pyqCount === 0} className={WRAP}>
               <Sparkles aria-hidden className="h-4 w-4" /> {busy ? "Working…" : demo ? "Regenerate demo data" : "Generate demo data and switch to it"}
             </Button>
-            <Button variant="ghost" onClick={clearDemo} disabled={!available || busy}>
+            <Button variant="ghost" onClick={clearDemo} disabled={!available || busy} className={WRAP}>
               <RotateCcw aria-hidden className="h-4 w-4" /> {demo ? "Empty the demo database" : "Delete the demo database"}
             </Button>
           </div>

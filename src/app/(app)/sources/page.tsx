@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getBundle, getMocks, getPapers, getPattern, getPyqs, getSources, getWeightage } from "@/lib/server/repo";
 import { DUPLICATE_THRESHOLD, PYQ_SIMILARITY_THRESHOLD } from "@/lib/content/review";
-import { MASTERY_HALF_LIFE_DAYS, MASTERY_MIN_ATTEMPTS } from "@/lib/analytics/stats";
+import { MASTERY_EXPLANATION, MASTERY_HALF_LIFE_DAYS, MASTERY_WEIGHTS } from "@/lib/analytics/stats";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/insights/sources/ui";
 import { PapersSection, PatternSection, SourceRegistry } from "@/components/insights/sources/Registry";
@@ -121,7 +121,7 @@ export default function SourcesPage() {
         </Section>
 
         <Section id="methods" title="Difficulty, mastery and weightage">
-          <Rubrics halfLifeDays={MASTERY_HALF_LIFE_DAYS} minAttempts={MASTERY_MIN_ATTEMPTS} papers={weightage.papers.length} confidence={weightage.confidenceNote} />
+          <Rubrics halfLifeDays={MASTERY_HALF_LIFE_DAYS} weights={MASTERY_WEIGHTS} masteryNote={MASTERY_EXPLANATION.note} papers={weightage.papers.length} confidence={weightage.confidenceNote} />
         </Section>
 
         {audit || mockReport ? (

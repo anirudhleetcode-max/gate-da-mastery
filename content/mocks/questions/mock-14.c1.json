@@ -1,0 +1,855 @@
+[
+  {
+    "id": "M14-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-independence"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — reduces independence of derived vectors to a parameterised $4\\times4$ determinant, needs the rank (not just singularity) at the singular parameters, and has a likely trap (the 3-vector cyclic pattern gives only $\\lambda=-1$); about 3–4 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Linear dependence of vectors built from independent base vectors: the dimension of their span equals the rank of the coefficient matrix.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $u, v, w, x$ be four linearly independent vectors in $\\mathbb{R}^6$. For a real number $\\lambda$, define\n\n$$a_1 = u + \\lambda v, \\quad a_2 = v + \\lambda w, \\quad a_3 = w + \\lambda x, \\quad a_4 = x + \\lambda u,$$\n\nand let $d(\\lambda)$ be the dimension of $\\operatorname{span}\\{a_1, a_2, a_3, a_4\\}$.\n\nThe value of $d(-2) + d(-1) + d(0) + d(1) + d(2)$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 18,
+      "max": 18
+    },
+    "solution": {
+      "quick": "Because $u,v,w,x$ are independent, $\\dim\\operatorname{span}\\{a_j\\}$ equals the rank of the coefficient matrix $C(\\lambda)$ that expresses the $a_j$ in terms of $u,v,w,x$.\n$\\det C(\\lambda) = 1-\\lambda^4$, which vanishes for real $\\lambda$ only at $\\pm1$, where the rank is exactly $3$.\nSo $d = 4,3,4,3,4$ for $\\lambda=-2,-1,0,1,2$, giving $18$.",
+      "steps": [
+        {
+          "title": "Reduce to a coefficient matrix",
+          "body": "Write $(b_1,b_2,b_3,b_4)=(u,v,w,x)$. Then $a_j=\\sum_k C_{jk}\\,b_k$ with\n\n$$C(\\lambda)=\\begin{bmatrix}1&\\lambda&0&0\\\\0&1&\\lambda&0\\\\0&0&1&\\lambda\\\\\\lambda&0&0&1\\end{bmatrix}.$$\n\nSince the $b_k$ are linearly independent, a combination $\\sum_j c_j a_j$ is zero exactly when $c^{\\top}C(\\lambda)=0$. Hence the number of independent $a_j$ equals $\\operatorname{rank}C(\\lambda)$, i.e. $d(\\lambda)=\\operatorname{rank}C(\\lambda)$."
+        },
+        {
+          "title": "Compute the determinant",
+          "body": "Expand along the first column. The entry $1$ in position $(1,1)$ has minor $\\det\\begin{bmatrix}1&\\lambda&0\\\\0&1&\\lambda\\\\0&0&1\\end{bmatrix}=1$. The entry $\\lambda$ in position $(4,1)$ has cofactor sign $(-1)^{4+1}=-1$ and minor $\\det\\begin{bmatrix}\\lambda&0&0\\\\1&\\lambda&0\\\\0&1&\\lambda\\end{bmatrix}=\\lambda^3$.\n\n$$\\det C(\\lambda)=1\\cdot 1-\\lambda\\cdot\\lambda^{3}=1-\\lambda^{4}=(1-\\lambda)(1+\\lambda)(1+\\lambda^{2}).$$"
+        },
+        {
+          "title": "Where the vectors are dependent",
+          "body": "$\\det C(\\lambda)=0$ for real $\\lambda$ only when $\\lambda=1$ or $\\lambda=-1$. For $\\lambda\\in\\{-2,0,2\\}$ the determinant is $-15,\\ 1,\\ -15$, so the $a_j$ are independent and $d=4$. (For $\\lambda=0$ the $a_j$ are just $u,v,w,x$.)"
+        },
+        {
+          "title": "Rank at the singular values",
+          "body": "At $\\lambda=\\pm1$ the first three rows of $C$ are $(1,\\lambda,0,0),(0,1,\\lambda,0),(0,0,1,\\lambda)$, which are independent (a staircase pattern with leading $1$s). So $\\operatorname{rank}C\\ge3$, and since $\\det C=0$ the rank is exactly $3$.\n\nExplicit relations: for $\\lambda=1$, $a_1-a_2+a_3-a_4=(u+v)-(v+w)+(w+x)-(x+u)=0$; for $\\lambda=-1$, $a_1+a_2+a_3+a_4=(u-v)+(v-w)+(w-x)+(x-u)=0$."
+        },
+        {
+          "title": "Add up",
+          "body": "$d(-2)=4,\\ d(-1)=3,\\ d(0)=4,\\ d(1)=3,\\ d(2)=4$, so the sum is $4+3+4+3+4=18$."
+        }
+      ],
+      "finalAnswer": "**18**",
+      "shortcut": "For a cyclic pattern $a_i=b_i+\\lambda b_{i+1}$ (indices mod $n$) the coefficient determinant is $1-(-\\lambda)^n$; for $n=4$ this is $1-\\lambda^4$. Spotting the telescoping sums at $\\lambda=\\pm1$ confirms the two dependent cases immediately.",
+      "commonTrap": "Carrying over the 3-vector pattern (where $\\det=1+\\lambda^3$ has the single real root $-1$) gives $d=3$ only at $\\lambda=-1$ and a total of $19$; ignoring the singular cases altogether gives $20$; treating the drop in dimension as $2$ at $\\lambda=\\pm1$ gives $16$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "18",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp, numpy as np\nlam = sp.symbols('lam')\n# a_j = sum_k C[j,k] b_k with b=(u,v,w,x) independent  =>  dim span{a_j} = rank C\nC = sp.Matrix([[1, lam, 0, 0], [0, 1, lam, 0], [0, 0, 1, lam], [lam, 0, 0, 1]])\nprint(sp.factor(C.det()))\nd = {l: C.subs(lam, l).rank() for l in (-2, -1, 0, 1, 2)}\nprint(d, sum(d.values()))  # 18\n# numeric confirmation with random independent u,v,w,x in R^6\nb = np.random.default_rng(0).standard_normal((4, 6))\nrk = lambda l: np.linalg.matrix_rank(np.array([b[0]+l*b[1], b[1]+l*b[2], b[2]+l*b[3], b[3]+l*b[0]]), tol=1e-9)\nprint(sum(rk(l) for l in (-2, -1, 0, 1, 2)))  # 18",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one algorithm (insertion sort) but a careful trace with a stable-sort tie and two different loop-exit conditions, about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Comparison count of insertion sort: shifts equal inversions, plus one failing comparison whenever the key does not reach the front.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The following Python function sorts a list in place and also keeps a cost counter.\n\n```python\ndef insertion_cost(a):\n    cost = 0\n    for i in range(1, len(a)):\n        key = a[i]\n        j = i - 1\n        while j >= 0:\n            cost += 1\n            if a[j] > key:\n                a[j + 1] = a[j]\n                j -= 1\n            else:\n                break\n        a[j + 1] = key\n    return cost\n```\n\nThe variable `cost` is incremented once for every evaluation of the condition `a[j] > key`.\n\nThe value returned by `insertion_cost([6, 2, 9, 5, 5, 8, 1])` is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 16,
+      "max": 16
+    },
+    "solution": {
+      "quick": "Trace the six insertions. The comparisons per insertion are $1,1,3,3,2,6$, i.e. $16$ in total.\nCheck: shifts equal the $12$ inversions, and $4$ of the six insertions end on a failing comparison, so $12+4=16$.",
+      "steps": [
+        {
+          "title": "What the counter measures",
+          "body": "For each $i\\ge 1$ the key `a[i]` is compared with the sorted prefix from right to left. Every evaluation of `a[j] > key` costs $1$. The scan stops either when a comparison fails (`else: break`, which also costs $1$) or when $j$ reaches $-1$ (no further comparison). Because the test is a strict `>`, an equal element is *not* shifted."
+        },
+        {
+          "title": "Trace",
+          "body": "| $i$ | key | sorted prefix before | comparisons made | cost | prefix after |\n|---|---|---|---|---|---|\n| 1 | 2 | [6] | $6>2$ yes, then $j=-1$ | 1 | [2, 6] |\n| 2 | 9 | [2, 6] | $6>9$ no | 1 | [2, 6, 9] |\n| 3 | 5 | [2, 6, 9] | $9>5$ yes, $6>5$ yes, $2>5$ no | 3 | [2, 5, 6, 9] |\n| 4 | 5 | [2, 5, 6, 9] | $9>5$ yes, $6>5$ yes, $5>5$ no | 3 | [2, 5, 5, 6, 9] |\n| 5 | 8 | [2, 5, 5, 6, 9] | $9>8$ yes, $6>8$ no | 2 | [2, 5, 5, 6, 8, 9] |\n| 6 | 1 | [2, 5, 5, 6, 8, 9] | six comparisons, all yes, then $j=-1$ | 6 | [1, 2, 5, 5, 6, 8, 9] |\n\nTotal cost $=1+1+3+3+2+6=16$."
+        },
+        {
+          "title": "Cross-check with inversions",
+          "body": "Each shift removes exactly one inversion (a pair $i<k$ with $a_i>a_k$). Inversions of $[6,2,9,5,5,8,1]$: $6$ contributes $4$ ($2,5,5,1$), $2$ contributes $1$, $9$ contributes $4$ ($5,5,8,1$), the first $5$ contributes $1$, the second $5$ contributes $1$, and $8$ contributes $1$; total $12$. Insertions that finish on a failing comparison (a `break`) are $i=2,3,4,5$, which is $4$ of them; $i=1$ and $i=6$ run off the front. Hence comparisons $=12+4=16$."
+        }
+      ],
+      "finalAnswer": "**16**",
+      "shortcut": "Comparisons $=$ (number of inversions) $+$ (number of insertions whose key stops before reaching the front) $=12+4=16$.",
+      "commonTrap": "Reporting the number of shifts (the inversion count $12$), or assuming every insertion ends with one failing comparison (giving $12+6=18$). Also, treating equal keys as out of order (using `>=`) would change the trace."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "16",
+      "agreesWithKey": true,
+      "checkCode": "def insertion_cost(a):\n    cost = 0\n    for i in range(1, len(a)):\n        key = a[i]\n        j = i - 1\n        while j >= 0:\n            cost += 1\n            if a[j] > key:\n                a[j + 1] = a[j]\n                j -= 1\n            else:\n                break\n        a[j + 1] = key\n    return cost\narr = [6, 2, 9, 5, 5, 8, 1]\ninv = sum(arr[i] > arr[k] for i in range(len(arr)) for k in range(i + 1, len(arr)))\nprint(insertion_cost(arr[:]), inv)  # 16 12",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-bayes",
+      "ps-marginal-joint"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Bayes' theorem with conditionally independent observations) needing likelihood, total probability and normalisation, about 2 minutes.",
+    "estimatedTimeSec": 110,
+    "concept": "Bayes' theorem with two conditionally independent observations (posterior from prior and product of likelihoods).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A GPU node in a training cluster is *degraded* with prior probability $0.10$. To test it, two benchmark runs are made and each run is flagged either SLOW or OK. A degraded node is flagged SLOW in a run with probability $0.6$, and a healthy node is flagged SLOW in a run with probability $0.1$. Given the state of the node, the two runs are independent.\n\nBoth runs on a particular node are flagged SLOW. The posterior probability that this node is degraded is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.036$"
+      },
+      {
+        "label": "B",
+        "text": "$0.40$"
+      },
+      {
+        "label": "C",
+        "text": "$0.80$"
+      },
+      {
+        "label": "D",
+        "text": "$\\approx 0.97$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Let $D$ = degraded and $E$ = both runs SLOW. Then $P(E\\mid D)=0.6^2=0.36$ and $P(E\\mid D^c)=0.1^2=0.01$.\n$P(D\\mid E)=\\dfrac{0.1\\times0.36}{0.1\\times0.36+0.9\\times0.01}=\\dfrac{0.036}{0.045}=0.80$.",
+      "steps": [
+        {
+          "title": "Set up the events",
+          "body": "Let $D$ = \"node is degraded\", so $P(D)=0.1$ and $P(D^c)=0.9$. Let $E$ = \"both runs are flagged SLOW\"."
+        },
+        {
+          "title": "Likelihoods",
+          "body": "Given the node's state the runs are independent, so the probabilities multiply: $P(E\\mid D)=0.6\\times0.6=0.36$ and $P(E\\mid D^c)=0.1\\times0.1=0.01$."
+        },
+        {
+          "title": "Total probability of the evidence",
+          "body": "$P(E)=P(D)P(E\\mid D)+P(D^c)P(E\\mid D^c)=0.1(0.36)+0.9(0.01)=0.036+0.009=0.045.$"
+        },
+        {
+          "title": "Bayes' theorem",
+          "body": "$$P(D\\mid E)=\\frac{P(D)\\,P(E\\mid D)}{P(E)}=\\frac{0.036}{0.045}=0.80.$$\nCheck with odds: prior odds $=0.1/0.9=1/9$, likelihood ratio for both runs $=0.36/0.01=36$, posterior odds $=36/9=4$, and $4/(1+4)=0.8$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.036=P(D\\cap E)$ is only the numerator of Bayes' rule; it has not been divided by $P(E)=0.045$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.40$ is the posterior after a single SLOW run ($0.06/0.15$). It ignores that the second run also came out SLOW."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: $P(D\\mid E)=0.036/0.045=0.80$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.36/(0.36+0.01)\\approx0.97$ compares the likelihoods alone, i.e. it assumes equal prior probabilities and drops the $0.1$ versus $0.9$ prior."
+        }
+      ],
+      "shortcut": "Use odds: posterior odds $=$ prior odds $\\times$ (likelihood ratio per run)$^2=\\tfrac19\\times6^2=4$, so the probability is $4/5=0.8$.",
+      "commonTrap": "Stopping after one run ($0.40$) or forgetting the prior ($\\approx0.97$). Both errors give tempting round numbers."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (0.80)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nprior, p_slow_bad, p_slow_ok = F(1, 10), F(6, 10), F(1, 10)\nnum = prior * p_slow_bad**2\nden = num + (1 - prior) * p_slow_ok**2\nprint(num, den, num / den, float(num / den))  # 9/250 9/200 4/5 0.8\nprint(float(prior * p_slow_bad / (prior * p_slow_bad + (1 - prior) * p_slow_ok)))  # 0.4 (one run only)\nprint(float(p_slow_bad**2 / (p_slow_bad**2 + p_slow_ok**2)))  # 0.973 (no prior)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-multiple-linear-regression"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (OLS normal equations for two predictors) with a $2\\times2$ solve, an intercept recovery and a prediction, about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Multiple linear regression via the centred normal equations: joint OLS slopes differ from separate simple-regression slopes when predictors are correlated.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A real-estate analyst fits the model $y=\\beta_0+\\beta_1x_1+\\beta_2x_2+\\varepsilon$ by ordinary least squares to $n=10$ flats. Here $y$ is the sale price (in ₹ lakh), $x_1$ is the carpet area (in units of $10\\ \\text{m}^2$) and $x_2$ is the distance from the nearest metro station (in km).\n\nThe sample means are $\\bar x_1=4$, $\\bar x_2=3$, $\\bar y=12$. Writing $\\tilde x_1=x_1-\\bar x_1$, $\\tilde x_2=x_2-\\bar x_2$ and $\\tilde y=y-\\bar y$, the sums over the 10 flats are\n\n| $\\sum \\tilde x_1^{2}$ | $\\sum \\tilde x_2^{2}$ | $\\sum \\tilde x_1\\tilde x_2$ | $\\sum \\tilde x_1\\tilde y$ | $\\sum \\tilde x_2\\tilde y$ |\n|---|---|---|---|---|\n| 50 | 20 | 20 | 130 | 40 |\n\nThe OLS predicted price (in ₹ lakh) of a flat with $x_1=6$ and $x_2=5$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$13$"
+      },
+      {
+        "label": "B",
+        "text": "$16$"
+      },
+      {
+        "label": "C",
+        "text": "$20$"
+      },
+      {
+        "label": "D",
+        "text": "$21.2$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "With an intercept, the slopes solve $\\begin{bmatrix}50&20\\\\20&20\\end{bmatrix}\\begin{bmatrix}\\beta_1\\\\\\beta_2\\end{bmatrix}=\\begin{bmatrix}130\\\\40\\end{bmatrix}$, giving $\\beta_1=3$, $\\beta_2=-1$.\nThen $\\beta_0=12-3(4)+1(3)=3$ and $\\hat y=3+3(6)-5=16$.",
+      "steps": [
+        {
+          "title": "Normal equations in centred form",
+          "body": "When the model contains an intercept, OLS passes through $(\\bar x_1,\\bar x_2,\\bar y)$ and the slopes satisfy $(\\tilde X^{\\top}\\tilde X)\\boldsymbol\\beta=\\tilde X^{\\top}\\tilde y$:\n\n$$\\begin{bmatrix}50&20\\\\20&20\\end{bmatrix}\\begin{bmatrix}\\beta_1\\\\\\beta_2\\end{bmatrix}=\\begin{bmatrix}130\\\\40\\end{bmatrix}.$$"
+        },
+        {
+          "title": "Solve for the slopes",
+          "body": "The determinant is $50\\cdot20-20\\cdot20=600$. By Cramer's rule,\n$\\beta_1=\\dfrac{130\\cdot20-20\\cdot40}{600}=\\dfrac{1800}{600}=3$ and $\\beta_2=\\dfrac{50\\cdot40-20\\cdot130}{600}=\\dfrac{-600}{600}=-1$.\nCheck: $50(3)+20(-1)=130$ and $20(3)+20(-1)=40$."
+        },
+        {
+          "title": "Intercept",
+          "body": "$\\beta_0=\\bar y-\\beta_1\\bar x_1-\\beta_2\\bar x_2=12-3(4)-(-1)(3)=3$, so the fitted plane is $\\hat y=3+3x_1-x_2$."
+        },
+        {
+          "title": "Predict",
+          "body": "$\\hat y(6,5)=3+3(6)-1(5)=16$. In centred form: $12+3(6-4)-1(5-3)=12+6-2=16$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$13=3(6)-5$ drops the intercept $\\beta_0=3$ from the prediction."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: $\\hat y=3+3(6)-1(5)=16$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$20=12+3(2)+1(2)$ takes the wrong sign for the distance effect; the joint slope for $x_2$ is $-1$, not $+1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$21.2=12+2.6(2)+2(2)$ uses the two separate simple-regression slopes $130/50$ and $40/20$. That ignores the correlation between $x_1$ and $x_2$ ($\\sum\\tilde x_1\\tilde x_2=20$), so it is not the multiple-regression fit."
+        }
+      ],
+      "shortcut": "Work with centred variables: $\\hat y=\\bar y+\\beta_1(x_1-\\bar x_1)+\\beta_2(x_2-\\bar x_2)$ avoids computing $\\beta_0$ separately.",
+      "commonTrap": "Fitting each predictor on its own and adding the effects (giving $21.2$), which is wrong whenever the predictors are correlated, or forgetting the intercept (giving $13$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (16)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS = np.array([[50., 20.], [20., 20.]]); s = np.array([130., 40.])\nbeta = np.linalg.solve(S, s)               # [ 3, -1]\nxbar, ybar = np.array([4., 3.]), 12.\nb0 = ybar - beta @ xbar                    # 3\nx = np.array([6., 5.])\nprint(beta, b0, b0 + beta @ x)             # 16.0\nprint(beta @ x)                            # 13.0 (no intercept)\nprint(ybar + np.array([130/50, 40/20]) @ (x - xbar))  # 21.2 (separate slopes)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-adversarial"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one algorithm (alpha–beta) traced on a 12-leaf tree with both a MAX-node and MIN-node cutoff, about 2–3 minutes.",
+    "estimatedTimeSec": 160,
+    "concept": "Alpha–beta pruning on a three-level game tree: distinguishing cutoffs at MAX and MIN nodes, and the exact value versus a returned bound.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A two-player zero-sum game tree is searched with minimax and alpha–beta pruning. The root R is a MAX node, its children A, B, C are MIN nodes, each of these has two MAX children, and each MAX node has two leaf children. Leaf values are utilities for MAX.\n\n| Node | Type | Children (left to right) |\n|---|---|---|\n| R | MAX | A, B, C |\n| A | MIN | A1, A2 |\n| B | MIN | B1, B2 |\n| C | MIN | C1, C2 |\n| A1, A2, B1, B2, C1, C2 | MAX | two leaf nodes each |\n\n| Node | A1 | A2 | B1 | B2 | C1 | C2 |\n|---|---|---|---|---|---|---|\n| Leaf values (left, right) | 2, 6 | 7, 2 | 3, 4 | 9, 12 | 2, 1 | 11, 10 |\n\nAlpha–beta pruning starts at R with $\\alpha=-\\infty$, $\\beta=+\\infty$, examines the children of every node from left to right, and stops examining the remaining children of a node as soon as $\\alpha\\ge\\beta$. Let $V$ be the minimax value of R and let $N$ be the number of leaf nodes whose values are examined by the search.\n\nThe pair $(V,\\,N)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(6,\\ 12)$"
+      },
+      {
+        "label": "B",
+        "text": "$(6,\\ 8)$"
+      },
+      {
+        "label": "C",
+        "text": "$(7,\\ 7)$"
+      },
+      {
+        "label": "D",
+        "text": "$(6,\\ 7)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Plain minimax: $A=\\min(6,7)=6$, $B=\\min(4,12)=4$, $C=\\min(2,11)=2$, so $V=6$.\nAlpha–beta examines $2$ leaves under A1, only $1$ under A2 (a $\\beta$-cutoff), $2$ under B1 (B2 pruned) and $2$ under C1 (C2 pruned): $N=7$.",
+      "steps": [
+        {
+          "title": "Minimax value without pruning",
+          "body": "$A1=\\max(2,6)=6,\\ A2=\\max(7,2)=7,\\ A=\\min(6,7)=6$.\n$B1=\\max(3,4)=4,\\ B2=\\max(9,12)=12,\\ B=\\min(4,12)=4$.\n$C1=\\max(2,1)=2,\\ C2=\\max(11,10)=11,\\ C=\\min(2,11)=2$.\n$V=\\max(6,4,2)=6$."
+        },
+        {
+          "title": "Alpha–beta on subtree A",
+          "body": "At A ($\\alpha=-\\infty,\\beta=\\infty$): A1 examines both leaves, $2$ and $6$, and returns $6$, so $\\beta_A=6$. A2 is entered with $\\beta=6$; its first leaf $7$ gives $\\alpha=7\\ge\\beta=6$, so the leaf $2$ is skipped. A2 returns a value $\\ge 7$, so $A=\\min(6,\\ge7)=6$. The root now has $\\alpha=6$. Leaves examined: $2+1=3$."
+        },
+        {
+          "title": "Alpha–beta on subtrees B and C",
+          "body": "At B ($\\alpha=6$): B1 examines $3$ and $4$ and returns $4$. Now $\\beta_B=4\\le\\alpha=6$, so B2 (leaves $9,12$) is pruned. At C ($\\alpha=6$): C1 examines $2$ and $1$ and returns $2\\le6$, so C2 (leaves $11,10$) is pruned. Leaves examined: $2+2=4$. The root value stays $6$."
+        },
+        {
+          "title": "Count",
+          "body": "$N=3+4=7$ leaves examined ($5$ pruned: the second leaf under A2 and both leaves under B2 and C2). Therefore $(V,N)=(6,7)$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$V=6$ is right but $N=12$ means no pruning at all. Three cutoffs occur here (at A2, B and C)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$V=6$ is right, but $N=8$ counts the second leaf under A2. It applies only the MIN-node cutoffs and misses the $\\beta$-cutoff inside the MAX node A2 ($\\alpha=7\\ge\\beta=6$)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$N=7$ is right, but $V=7$ treats the bound returned by the cut-off node A2 as an exact value. A2 only guarantees a value $\\ge7$; A is $\\min(6,\\ge7)=6$, so $V=6$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $V=6$ and $N=7$."
+        }
+      ],
+      "commonTrap": "Treating the value returned by a cut-off MAX node (the $7$ under A2) as exact, which makes the root look like $7$, and overlooking the cutoff inside A2 because only the cutoffs at MIN nodes are remembered."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (V=6, N=7)",
+      "agreesWithKey": true,
+      "checkCode": "import math\ntree = [[[2, 6], [7, 2]], [[3, 4], [9, 12]], [[2, 1], [11, 10]]]  # R(MAX)->A,B,C(MIN)->2 MAX->2 leaves\nseen = []\ndef ab(node, alpha, beta, is_max, strict):\n    if isinstance(node, int):\n        seen.append(node); return node\n    v = -math.inf if is_max else math.inf\n    for ch in node:\n        r = ab(ch, alpha, beta, not is_max, strict)\n        if is_max: v = max(v, r); alpha = max(alpha, v)\n        else: v = min(v, r); beta = min(beta, v)\n        if (alpha >= beta) if strict else (alpha > beta): break\n    return v\nfor strict in (True, False):\n    seen.clear(); v = ab(tree, -math.inf, math.inf, True, strict)\n    print(v, len(seen))            # 6 7 for both tie rules\nmm = lambda n, m: n if isinstance(n, int) else (max if m else min)(mm(c, not m) for c in n)\nprint(mm(tree, True))              # 6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-correlation-covariance"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (correlation from a joint PMF) with routine but multi-step computation: marginals, moments, covariance, standardisation, about 2–3 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Pearson correlation coefficient from a joint probability mass function: Cov(X,Y)=E[XY]-E[X]E[Y] divided by the product of standard deviations.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "For a randomly chosen student of a course, let $X$ be the number of assignments (out of 2) submitted on time and $Y$ the number of quizzes (out of 2) passed. The joint probability mass function $P(X=x,\\,Y=y)$ is\n\n| | $Y=0$ | $Y=1$ | $Y=2$ |\n|---|---|---|---|\n| $X=0$ | 0.2 | 0.1 | 0.0 |\n| $X=1$ | 0.1 | 0.3 | 0.1 |\n| $X=2$ | 0.0 | 0.1 | 0.1 |\n\nThe correlation coefficient $\\rho(X,Y)$, rounded to two decimal places, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.59$"
+      },
+      {
+        "label": "B",
+        "text": "$0.29$"
+      },
+      {
+        "label": "C",
+        "text": "$0.41$"
+      },
+      {
+        "label": "D",
+        "text": "$1.10$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Marginals: $X$ and $Y$ both have PMF $(0.3,0.5,0.2)$, so $E[X]=E[Y]=0.9$ and $\\operatorname{Var}=1.3-0.81=0.49$.\n$E[XY]=1.1$, so $\\operatorname{Cov}=1.1-0.81=0.29$ and $\\rho=0.29/0.49\\approx0.59$.",
+      "steps": [
+        {
+          "title": "Marginal distributions",
+          "body": "Row sums: $P(X=0)=0.3,\\ P(X=1)=0.5,\\ P(X=2)=0.2$. Column sums: $P(Y=0)=0.3,\\ P(Y=1)=0.5,\\ P(Y=2)=0.2$."
+        },
+        {
+          "title": "Means and variances",
+          "body": "$E[X]=0(0.3)+1(0.5)+2(0.2)=0.9$, and likewise $E[Y]=0.9$.\n$E[X^2]=0.5+4(0.2)=1.3$, so $\\operatorname{Var}(X)=1.3-0.9^2=0.49$; by the same numbers $\\operatorname{Var}(Y)=0.49$."
+        },
+        {
+          "title": "Covariance",
+          "body": "Only cells with $x,y\\ge1$ contribute to $E[XY]$:\n$E[XY]=(1)(1)(0.3)+(1)(2)(0.1)+(2)(1)(0.1)+(2)(2)(0.1)=0.3+0.2+0.2+0.4=1.1$.\n$\\operatorname{Cov}(X,Y)=E[XY]-E[X]E[Y]=1.1-0.81=0.29$."
+        },
+        {
+          "title": "Correlation",
+          "body": "$$\\rho=\\frac{\\operatorname{Cov}(X,Y)}{\\sqrt{\\operatorname{Var}(X)\\operatorname{Var}(Y)}}=\\frac{0.29}{\\sqrt{0.49\\times0.49}}=\\frac{0.29}{0.49}\\approx0.5918\\approx0.59.$$"
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $\\rho=0.29/0.49\\approx0.59$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.29$ is the covariance, not the correlation; it has not been divided by the standard deviations."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.29/\\sqrt{0.49}\\approx0.41$ divides by only one standard deviation instead of the product $\\sigma_X\\sigma_Y=0.49$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$1.10=E[XY]$ omits subtracting $E[X]E[Y]=0.81$ and is not standardised."
+        }
+      ],
+      "commonTrap": "Quoting the covariance ($0.29$) as the correlation, dividing by only one standard deviation ($0.41$), or using $E[XY]$ directly ($1.10$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (0.59)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nP = np.array([[0.2, 0.1, 0.0], [0.1, 0.3, 0.1], [0.0, 0.1, 0.1]])   # rows X=0,1,2; cols Y=0,1,2\nv = np.arange(3)\npx, py = P.sum(1), P.sum(0)\nEX, EY = v @ px, v @ py\nEXY = sum(P[i, j] * i * j for i in range(3) for j in range(3))\nVX, VY = (v**2) @ px - EX**2, (v**2) @ py - EY**2\ncov = EXY - EX * EY\nprint(P.sum(), EX, EY, EXY, VX, VY, cov, cov / np.sqrt(VX * VY))    # ... 0.29 0.5918\nprint(cov / np.sqrt(VX))                                            # 0.414 (one SD only)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-integrity-constraints"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — several integrity-constraint rules (PRIMARY KEY, UNIQUE, FOREIGN KEY with CASCADE, CHECK and NULL handling) applied in sequence to six statements, about 2–3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Integrity constraints: key, UNIQUE, referential (ON DELETE CASCADE), CHECK and NULL semantics applied to a sequence of updates.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A university database has the following schema. All constraints are enforced, and standard SQL semantics apply to `NULL`.\n\n```sql\nCREATE TABLE Course  (cid CHAR(4) PRIMARY KEY,\n                      title VARCHAR(30) UNIQUE);\nCREATE TABLE Section (sid INT PRIMARY KEY,\n                      cid CHAR(4) REFERENCES Course(cid) ON DELETE CASCADE,\n                      room VARCHAR(5),\n                      cap INT CHECK (cap BETWEEN 10 AND 60),\n                      UNIQUE (cid, room));\nCREATE TABLE Enroll  (sid INT REFERENCES Section(sid) ON DELETE CASCADE,\n                      stu INT,\n                      grade CHAR(1),\n                      PRIMARY KEY (sid, stu));\n```\n\nThe current instances are:\n\n| Course: cid | title |\n|---|---|\n| C101 | Databases |\n| C102 | Algorithms |\n\n| Section: sid | cid | room | cap |\n|---|---|---|---|\n| 1 | C101 | R1 | 40 |\n| 2 | C101 | R2 | 30 |\n| 3 | C102 | R1 | 50 |\n\n| Enroll: sid | stu | grade |\n|---|---|---|\n| 1 | 501 | A |\n| 1 | 502 | B |\n| 2 | 501 | C |\n| 3 | 503 | A |\n\nThe following statements are executed one at a time, in the order S1 to S6. Each runs on the database left by the earlier statements; a rejected statement changes nothing and execution continues with the next one.\n\n```sql\nS1: INSERT INTO Section VALUES (4, 'C102', 'R1', 20);\nS2: INSERT INTO Section VALUES (5, NULL, NULL, NULL);\nS3: INSERT INTO Section VALUES (6, 'C103', 'R3', 25);\nS4: INSERT INTO Enroll  VALUES (2, NULL, 'B');\nS5: DELETE FROM Course WHERE cid = 'C101';\nS6: UPDATE Section SET cap = 5 WHERE sid = 3;\n```\n\nWhich one of the following lists exactly the statements that are rejected?",
+    "options": [
+      {
+        "label": "A",
+        "text": "S1, S3, S4, S6"
+      },
+      {
+        "label": "B",
+        "text": "S1, S2, S3, S4, S6"
+      },
+      {
+        "label": "C",
+        "text": "S1, S3, S4, S5, S6"
+      },
+      {
+        "label": "D",
+        "text": "S1, S3, S6"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "S1 breaks `UNIQUE(cid, room)`, S3 breaks the foreign key, S4 puts `NULL` in a primary-key column and S6 breaks the `CHECK`.\nS2 is accepted (`NULL` foreign key, `NULL` in `UNIQUE`, and a `CHECK` that evaluates to unknown all pass) and S5 is accepted because of `ON DELETE CASCADE`.",
+      "steps": [
+        {
+          "title": "S1 and S2 (inserts into Section)",
+          "body": "S1 inserts $(4,\\text{C102},\\text{R1},20)$: the key is new, C102 exists and $20\\in[10,60]$, but $(\\text{C102},\\text{R1})$ already occurs in section 3, so `UNIQUE (cid, room)` is violated. **Rejected.**\nS2 inserts $(5,\\text{NULL},\\text{NULL},\\text{NULL})$: the key $5$ is new; a `NULL` foreign key needs no parent row; a `UNIQUE` constraint never treats `NULL`s as equal; and `CHECK (NULL BETWEEN 10 AND 60)` evaluates to *unknown*, which a `CHECK` constraint accepts. **Accepted.**"
+        },
+        {
+          "title": "S3 and S4",
+          "body": "S3 refers to course C103, which does not exist in `Course`, so the foreign key fails. **Rejected.**\nS4 inserts $\\text{stu}=\\text{NULL}$, but `stu` is part of the primary key $(\\text{sid},\\text{stu})$ and key columns cannot be `NULL`. **Rejected.**"
+        },
+        {
+          "title": "S5 and S6",
+          "body": "S5 deletes course C101. With `ON DELETE CASCADE` the sections $1$ and $2$ are deleted too, and that in turn cascades to the three `Enroll` rows with $\\text{sid}\\in\\{1,2\\}$. **Accepted.**\nS6 sets the capacity of section 3 (still present) to $5$, which is outside $[10,60]$, so the `CHECK` fails. **Rejected.**"
+        },
+        {
+          "title": "Result",
+          "body": "Rejected: S1, S3, S4, S6. Final state: `Course` = {C102}, `Section` = {$(3,\\text{C102},\\text{R1},50)$, $(5,\\text{NULL},\\text{NULL},\\text{NULL})$}, `Enroll` = {$(3,503,\\text{A})$}."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: exactly S1, S3, S4 and S6 violate a constraint."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Wrongly rejects S2. A `CHECK` on a `NULL` value is unknown (not false), a `NULL` foreign key is allowed, and `NULL`s do not collide in `UNIQUE`."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Wrongly rejects S5. That would happen with `NO ACTION`/`RESTRICT`, but here the foreign key is declared `ON DELETE CASCADE`."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Misses S4. The column `stu` is part of the primary key, so `NULL` is not allowed there."
+        }
+      ],
+      "commonTrap": "Treating `NULL` as a violation everywhere (rejecting S2) while forgetting that a primary-key column cannot be `NULL` (accepting S4), and assuming that deleting a referenced parent row is always refused."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (S1, S3, S4, S6)",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\ncon = sqlite3.connect(\":memory:\"); con.isolation_level = None\ncon.execute(\"PRAGMA foreign_keys = ON\")\n# SQLite lets PRIMARY KEY columns hold NULL unless NOT NULL is declared, so NOT NULL mimics standard PK semantics\ncon.executescript('''\nCREATE TABLE Course (cid CHAR(4) PRIMARY KEY, title VARCHAR(30) UNIQUE);\nCREATE TABLE Section (sid INT NOT NULL PRIMARY KEY, cid CHAR(4) REFERENCES Course(cid) ON DELETE CASCADE,\n  room VARCHAR(5), cap INT CHECK (cap BETWEEN 10 AND 60), UNIQUE (cid, room));\nCREATE TABLE Enroll (sid INT NOT NULL REFERENCES Section(sid) ON DELETE CASCADE, stu INT NOT NULL,\n  grade CHAR(1), PRIMARY KEY (sid, stu));\nINSERT INTO Course VALUES ('C101','Databases'),('C102','Algorithms');\nINSERT INTO Section VALUES (1,'C101','R1',40),(2,'C101','R2',30),(3,'C102','R1',50);\nINSERT INTO Enroll VALUES (1,501,'A'),(1,502,'B'),(2,501,'C'),(3,503,'A');''')\nstmts = [\"INSERT INTO Section VALUES (4,'C102','R1',20)\", \"INSERT INTO Section VALUES (5,NULL,NULL,NULL)\",\n         \"INSERT INTO Section VALUES (6,'C103','R3',25)\", \"INSERT INTO Enroll VALUES (2,NULL,'B')\",\n         \"DELETE FROM Course WHERE cid='C101'\", \"UPDATE Section SET cap=5 WHERE sid=3\"]\nrejected = []\nfor i, s in enumerate(stmts, 1):\n    try: con.execute(s)\n    except sqlite3.Error: rejected.append('S%d' % i)\nprint(rejected)  # ['S1', 'S3', 'S4', 'S6']",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-logistic-regression"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (logit link and probability threshold) requiring inversion of the sigmoid and a linear solve, about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Logistic regression: a probability threshold corresponds to a threshold on the linear score z = logit(p), not on p itself.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A streaming service models whether a subscriber cancels within a month using logistic regression:\n\n$$P(\\text{cancel}=1\\mid x_1,x_2)=\\sigma(z),\\qquad z=-3+0.5\\,x_1+1.2\\,x_2,\\qquad \\sigma(z)=\\frac{1}{1+e^{-z}},$$\n\nwhere $x_1$ is the number of support tickets raised in the last quarter and $x_2$ is the average weekly buffering time in hours. The service sends a retention offer to every subscriber whose predicted cancellation probability is at least $0.75$.\n\nFor a subscriber with $x_1=4$, the smallest average weekly buffering time $x_2$ (in hours) that triggers the offer is closest to (use $\\ln 3\\approx1.0986$)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.83$"
+      },
+      {
+        "label": "B",
+        "text": "$1.46$"
+      },
+      {
+        "label": "C",
+        "text": "$1.75$"
+      },
+      {
+        "label": "D",
+        "text": "$3.33$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$\\sigma(z)\\ge0.75\\iff z\\ge\\ln\\frac{0.75}{0.25}=\\ln3\\approx1.0986$.\nWith $x_1=4$: $z=-1+1.2x_2\\ge1.0986$, so $x_2\\ge2.0986/1.2\\approx1.75$.",
+      "steps": [
+        {
+          "title": "Convert the probability threshold to a threshold on $z$",
+          "body": "$\\sigma$ is increasing, so $\\sigma(z)\\ge0.75\\iff z\\ge\\sigma^{-1}(0.75)=\\ln\\dfrac{0.75}{1-0.75}=\\ln3\\approx1.0986$."
+        },
+        {
+          "title": "Substitute $x_1=4$",
+          "body": "$z=-3+0.5(4)+1.2x_2=-1+1.2x_2$."
+        },
+        {
+          "title": "Solve for $x_2$",
+          "body": "$-1+1.2x_2\\ge1.0986\\Rightarrow 1.2x_2\\ge2.0986\\Rightarrow x_2\\ge1.7488\\approx1.75$ hours."
+        },
+        {
+          "title": "Check",
+          "body": "At $x_2=1.7488$: $z=-1+1.2(1.7488)=1.0986$ and $\\sigma(1.0986)=\\dfrac{1}{1+e^{-1.0986}}=\\dfrac{1}{1+1/3}=0.75$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.83=(0+1)/1.2$ uses the default boundary $z=0$ (probability $0.5$) instead of the service's $0.75$ threshold."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$1.46=(0.75+1)/1.2$ sets the linear score $z$ equal to the probability $0.75$, forgetting that $z$ is the log-odds."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: $z\\ge\\ln3$ gives $x_2\\ge(1+1.0986)/1.2\\approx1.75$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$3.33=(3+1)/1.2$ sets $z$ equal to the odds $3$ instead of the log-odds $\\ln3$."
+        }
+      ],
+      "commonTrap": "Equating the linear score $z$ with the probability $0.75$ (or with the odds $3$) rather than with $\\ln3$, or falling back on the default $0.5$ boundary $z=0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (1.75)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nb0, b1, b2, x1, tau = -3, 0.5, 1.2, 4, 0.75\nz = math.log(tau / (1 - tau))\nx2 = (z - b0 - b1 * x1) / b2\nprint(z, x2)                                   # 1.0986 1.7488\nsig = lambda t: 1 / (1 + math.exp(-t))\nprint(sig(b0 + b1 * x1 + b2 * x2))             # 0.75\nprint((0 - b0 - b1 * x1) / b2,                 # 0.833 (z = 0 boundary)\n      (tau - b0 - b1 * x1) / b2,               # 1.458 (z = 0.75)\n      (tau / (1 - tau) - b0 - b1 * x1) / b2)   # 3.333 (z = odds)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-sql"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single SQL idea (LEFT JOIN with GROUP BY/HAVING and COUNT of a column ignoring NULLs) on tiny tables; about a minute.",
+    "estimatedTimeSec": 75,
+    "concept": "LEFT JOIN with GROUP BY and HAVING: unmatched rows survive the join and COUNT(column) counts them as zero.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relations `Author` and `Paper`.\n\n| aid | aname |\n|---|---|\n| 1 | Meera |\n| 2 | Kabir |\n| 3 | Jonas |\n| 4 | Lin |\n| 5 | Omar |\n\n| pid | aid | venue |\n|---|---|---|\n| 101 | 1 | KDD |\n| 102 | 1 | ICML |\n| 103 | 1 | KDD |\n| 104 | 2 | ICML |\n| 105 | 4 | KDD |\n| 106 | 4 | ICML |\n\nThe following query is executed.\n\n```sql\nSELECT a.aname, COUNT(p.pid) AS papers\nFROM Author a LEFT JOIN Paper p ON a.aid = p.aid\nGROUP BY a.aid, a.aname\nHAVING COUNT(p.pid) <= 1;\n```\n\nThe number of rows returned by the query is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "The `LEFT JOIN` keeps every author, and `COUNT(p.pid)` counts only non-`NULL` paper ids. The counts are Meera 3, Kabir 1, Jonas 0, Lin 2, Omar 0.\n`HAVING COUNT(p.pid) <= 1` keeps Kabir, Jonas and Omar: $3$ rows.",
+      "steps": [
+        {
+          "title": "Join",
+          "body": "A `LEFT JOIN` returns every `Author` row. Authors 3 (Jonas) and 5 (Omar) have no matching paper, so each appears once with `NULL` in all `Paper` columns. The other authors appear once per paper: Meera 3 rows, Kabir 1, Lin 2."
+        },
+        {
+          "title": "Group and count",
+          "body": "`GROUP BY a.aid, a.aname` gives one group per author. `COUNT(p.pid)` ignores `NULL`, so the counts are Meera $=3$, Kabir $=1$, Jonas $=0$, Lin $=2$, Omar $=0$."
+        },
+        {
+          "title": "Filter with HAVING",
+          "body": "`HAVING COUNT(p.pid) <= 1` keeps the groups with count $0$ or $1$: Kabir, Jonas and Omar. The query returns $3$ rows."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "commonTrap": "Treating the `LEFT JOIN` as an inner join, so that authors with no papers disappear before grouping; that gives only Kabir, i.e. $1$ row."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\ncon = sqlite3.connect(\":memory:\")\ncon.executescript('''\nCREATE TABLE Author (aid INT PRIMARY KEY, aname VARCHAR(20));\nCREATE TABLE Paper (pid INT PRIMARY KEY, aid INT, venue VARCHAR(10));\nINSERT INTO Author VALUES (1,'Meera'),(2,'Kabir'),(3,'Jonas'),(4,'Lin'),(5,'Omar');\nINSERT INTO Paper VALUES (101,1,'KDD'),(102,1,'ICML'),(103,1,'KDD'),(104,2,'ICML'),(105,4,'KDD'),(106,4,'ICML');''')\nq = '''SELECT a.aname, COUNT(p.pid) AS papers FROM Author a LEFT JOIN Paper p ON a.aid = p.aid\nGROUP BY a.aid, a.aname HAVING COUNT(p.pid) <= 1'''\nrows = con.execute(q).fetchall()\nprint(rows, len(rows))                                   # 3 rows\nprint(len(con.execute(q.replace('LEFT JOIN', 'JOIN')).fetchall()))  # 1 (inner join)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-graph-theory"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single idea (Euler trail end-points are the odd-degree vertices) with a short degree count; about a minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Euler trails: a connected graph with exactly two odd-degree vertices has an Euler trail, and it must start at one of them and end at the other.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A campus network has six routers $v_1,\\dots,v_6$ joined by nine links. As an undirected simple graph $G$, its edges are\n\n$$v_1v_2,\\ v_1v_3,\\ v_1v_5,\\ v_2v_3,\\ v_2v_4,\\ v_2v_5,\\ v_3v_4,\\ v_3v_6,\\ v_4v_6.$$\n\nAn *Euler trail* of $G$ is a walk that uses every edge of $G$ exactly once; it may start and end at different vertices.\n\nWhich one of the following pairs of routers can be the start and the finish of an Euler trail of $G$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$v_2$ and $v_3$"
+      },
+      {
+        "label": "B",
+        "text": "$v_5$ and $v_6$"
+      },
+      {
+        "label": "C",
+        "text": "$v_1$ and $v_5$"
+      },
+      {
+        "label": "D",
+        "text": "$v_1$ and $v_4$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Degrees: $v_1=3,\\ v_2=4,\\ v_3=4,\\ v_4=3,\\ v_5=2,\\ v_6=2$. Exactly two vertices ($v_1$ and $v_4$) have odd degree.\nAn Euler trail of a connected graph must start and finish at the odd-degree vertices, so the pair is $v_1$ and $v_4$.",
+      "steps": [
+        {
+          "title": "Degrees",
+          "body": "$v_1$: $v_2,v_3,v_5\\Rightarrow3$; $v_2$: $v_1,v_3,v_4,v_5\\Rightarrow4$; $v_3$: $v_1,v_2,v_4,v_6\\Rightarrow4$; $v_4$: $v_2,v_3,v_6\\Rightarrow3$; $v_5$: $v_1,v_2\\Rightarrow2$; $v_6$: $v_3,v_4\\Rightarrow2$. The sum is $18=2\\times9$, matching the nine edges."
+        },
+        {
+          "title": "Parity rule for Euler trails",
+          "body": "Each time a trail passes through a vertex it uses one edge to enter and one to leave, so an interior visit uses an even number of edges there. A vertex that is neither the start nor the finish therefore has even degree; if the start and finish differ, those two vertices have odd degree. $G$ is connected and has exactly two odd-degree vertices, $v_1$ and $v_4$, so it has an Euler trail and every such trail runs between $v_1$ and $v_4$."
+        },
+        {
+          "title": "Example and elimination",
+          "body": "An explicit trail: $v_1\\,v_5\\,v_2\\,v_1\\,v_3\\,v_2\\,v_4\\,v_6\\,v_3\\,v_4$, which uses all nine edges exactly once. The pairs $\\{v_2,v_3\\}$ and $\\{v_5,v_6\\}$ consist of even-degree vertices, and $\\{v_1,v_5\\}$ contains an even-degree vertex, so none of them can be the two end-points."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$v_2$ and $v_3$ both have even degree $4$. With distinct start and finish, the two ends must be the odd-degree vertices, which here are $v_1$ and $v_4$. Having the largest degree does not make a vertex an end-point."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$v_5$ and $v_6$ both have even degree $2$, so they cannot be the two ends; low degree is irrelevant."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$v_1$ has odd degree $3$ but $v_5$ has even degree $2$. The two ends must be exactly the two odd-degree vertices."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $v_1$ and $v_4$ are the only odd-degree vertices."
+        }
+      ],
+      "commonTrap": "Choosing end-points by size of degree (largest or smallest) instead of by parity, or thinking that a graph with odd-degree vertices has no Euler trail at all."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (v1 and v4)",
+      "agreesWithKey": true,
+      "checkCode": "from collections import Counter\nE = [(1,2),(1,3),(1,5),(2,3),(2,4),(2,5),(3,4),(3,6),(4,6)]\ndeg = Counter(v for e in E for v in e)\nprint(sorted(deg.items()), [v for v in deg if deg[v] % 2])   # odd: [1, 4]\nends = set()\ndef dfs(cur, used, start):\n    if len(used) == len(E): ends.add((start, cur)); return\n    for i, (a, b) in enumerate(E):\n        if i not in used and cur in (a, b):\n            dfs(b if cur == a else a, used | {i}, start)\nfor s in range(1, 7): dfs(s, frozenset(), s)\nprint(sorted(ends))  # [(1, 4), (4, 1)]",
+      "notes": ""
+    }
+  }
+]

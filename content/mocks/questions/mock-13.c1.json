@@ -1,0 +1,879 @@
+[
+  {
+    "id": "M13-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-pmf"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a PMF with unknown entries) in three steps: use normalisation and the given mean to find the unknown probabilities, then compute $E[X^2]$ and the variance; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "PMF with two unknown probabilities fixed by normalisation and a given mean, then the variance via E[X^2] - (E[X])^2.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A network monitor sends bursts of three packets and records the number $X$ of packets lost in a burst. The probability mass function of $X$ is given below, where $a$ and $b$ are unknown constants.\n\n| $x$ | 0 | 1 | 2 | 3 |\n|---|---|---|---|---|\n| $P(X = x)$ | $0.10$ | $a$ | $b$ | $0.20$ |\n\nIt is known that $E[X] = 1.6$.\n\nThe value of $\\operatorname{Var}(X)$, correct to two decimal places, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.83,
+      "max": 0.85
+    },
+    "solution": {
+      "quick": "Normalisation gives $a + b = 0.70$ and the mean condition gives $a + 2b = 1.00$, so $b = 0.30$ and $a = 0.40$. Then $E[X^2] = 0.40 + 4(0.30) + 9(0.20) = 3.40$ and $\\operatorname{Var}(X) = 3.40 - 1.6^2 = 0.84$.",
+      "steps": [
+        {
+          "title": "Normalisation",
+          "body": "The probabilities of a PMF add up to 1, so $0.10 + a + b + 0.20 = 1$, that is $a + b = 0.70$."
+        },
+        {
+          "title": "Use the given mean",
+          "body": "$E[X] = 0(0.10) + 1\\cdot a + 2\\cdot b + 3(0.20) = a + 2b + 0.60$. Setting this equal to $1.6$ gives $a + 2b = 1.00$."
+        },
+        {
+          "title": "Solve for $a$ and $b$",
+          "body": "Subtracting $a + b = 0.70$ from $a + 2b = 1.00$ gives $b = 0.30$, and then $a = 0.40$. Both lie in $[0, 1]$, so the PMF is $(0.10,\\ 0.40,\\ 0.30,\\ 0.20)$ for $x = 0, 1, 2, 3$."
+        },
+        {
+          "title": "Second moment",
+          "body": "$E[X^2] = 0^2(0.10) + 1^2(0.40) + 2^2(0.30) + 3^2(0.20) = 0.40 + 1.20 + 1.80 = 3.40$."
+        },
+        {
+          "title": "Variance",
+          "body": "$\\operatorname{Var}(X) = E[X^2] - (E[X])^2 = 3.40 - (1.6)^2 = 3.40 - 2.56 = 0.84$."
+        }
+      ],
+      "finalAnswer": "**0.84**",
+      "commonTrap": "Using $\\sum x\\,P(x)$ (which is $E[X] = 1.6$) instead of $\\sum x^2 P(x)$ as the second moment, which gives $1.6 - 2.56 < 0$, or computing $E[X^2]$ as $(E[X])^2$ and getting a variance of $0$. Skipping the normalisation equation leaves one equation for two unknowns."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.84",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\na, b = np.linalg.solve([[1, 1], [1, 2]], [0.70, 1.00])   # normalisation, mean condition\np = [0.10, a, b, 0.20]\nassert min(p) > 0 and abs(sum(p) - 1) < 1e-12\nEX = sum(k * q for k, q in enumerate(p)); EX2 = sum(k * k * q for k, q in enumerate(p))\nprint(round(a, 2), round(b, 2), round(EX, 2), round(EX2 - EX ** 2, 2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (translating an English statement into first-order logic) needing a single direct step: pair the existential quantifier with a conjunction and the universal quantifier with an implication; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Translating 'there is an x such that no y ...' into first-order logic: existential with conjunction, universal with implication.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider a library with the following predicates over a domain that contains books, members and possibly other objects.\n\n- $\\text{Book}(b)$: $b$ is a book\n- $\\text{Member}(m)$: $m$ is a member\n- $\\text{Borrowed}(m, b)$: member $m$ has borrowed book $b$\n\nWhich one of the following first-order logic formulas correctly expresses the statement\n\n> *There is a book that no member has borrowed.*",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\exists b\\,\\big(\\text{Book}(b) \\rightarrow \\forall m\\,(\\text{Member}(m) \\rightarrow \\neg\\text{Borrowed}(m, b))\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\neg\\exists b\\,\\exists m\\,\\big(\\text{Book}(b) \\land \\text{Member}(m) \\land \\text{Borrowed}(m, b)\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\exists b\\,\\big(\\text{Book}(b) \\land \\forall m\\,(\\text{Member}(m) \\rightarrow \\neg\\text{Borrowed}(m, b))\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\forall m\\,\\big(\\text{Member}(m) \\rightarrow \\exists b\\,(\\text{Book}(b) \\land \\neg\\text{Borrowed}(m, b))\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "A book $b$ that nobody has borrowed satisfies $\\text{Book}(b) \\land \\forall m\\,(\\text{Member}(m) \\rightarrow \\neg\\text{Borrowed}(m, b))$. Saying that such a book exists puts $\\exists b$ in front of this conjunction, which is option **(C)**.",
+      "steps": [
+        {
+          "title": "Express 'book $b$ is unborrowed'",
+          "body": "Every member must have not borrowed $b$: $\\forall m\\,(\\text{Member}(m) \\rightarrow \\neg\\text{Borrowed}(m, b))$. The implication restricts the universal quantifier to members, since the domain may contain other objects. The object must also be a book, so we add $\\text{Book}(b)$."
+        },
+        {
+          "title": "Quantify existentially",
+          "body": "'There is a book ...' becomes $\\exists b\\,\\big(\\text{Book}(b) \\land \\forall m\\,(\\ldots)\\big)$. An existential quantifier is paired with $\\land$, because we assert that some object is a book **and** has the property."
+        },
+        {
+          "title": "Test the other formulas on small models",
+          "body": "Take members $m_1, m_2$ and books $b_1, b_2$. If $m_1$ borrowed only $b_1$ and $m_2$ borrowed only $b_2$, no book is unborrowed, yet formula (D) is true (each member skipped some book). If $b_1$ is borrowed by nobody but $b_2$ is borrowed by $m_1$, the statement is true, yet formula (B) is false. Formula (A) is true in any domain that contains a non-book, whatever was borrowed."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only (C) matches the statement in every model. A brute-force check over all models with three objects agrees: (C) never differs from the statement, while (A), (B) and (D) each differ in some models."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\exists b\\,(\\text{Book}(b) \\rightarrow \\ldots)$ is satisfied by any object $b$ that is not a book, since the implication is then vacuously true. It holds whenever the domain contains a non-book (for example a member), even if every book has been borrowed."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This says that no book has been borrowed by any member, which is the stronger claim that all books are unborrowed. It fails when one book is unborrowed and another is borrowed, although the statement is then true."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "There is an object that is a book and that every member has not borrowed. This is exactly 'there is a book that no member has borrowed'."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This says that every member has left at least one book unborrowed, a different claim. With two members who each borrowed a different one of two books it is true, although every book has been borrowed by someone."
+        }
+      ],
+      "shortcut": "Pair $\\exists$ with $\\land$ and $\\forall$ with $\\rightarrow$. That rules out (A) at once, and the position of the negation (inside the $\\forall m$) rules out (B) and (D).",
+      "commonTrap": "Writing $\\exists b\\,(\\text{Book}(b) \\rightarrow \\ldots)$. It reads naturally but is true as soon as the domain contains anything that is not a book."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(C)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nN = 3\ndef A(bk, mm, br): return any((not bk[b]) or all((not mm[m]) or not br[m*N+b] for m in range(N)) for b in range(N))\ndef B(bk, mm, br): return not any(bk[b] and mm[m] and br[m*N+b] for b in range(N) for m in range(N))\ndef C(bk, mm, br): return any(bk[b] and all((not mm[m]) or not br[m*N+b] for m in range(N)) for b in range(N))\ndef D(bk, mm, br): return all((not mm[m]) or any(bk[b] and not br[m*N+b] for b in range(N)) for m in range(N))\nref = lambda bk, mm, br: any(bk[b] and not any(mm[m] and br[m*N+b] for m in range(N)) for b in range(N))  # some book has no borrower\nbad = dict.fromkeys(\"ABCD\", 0)\nfor bk in product([0, 1], repeat=N):\n    for mm in product([0, 1], repeat=N):\n        for br in product([0, 1], repeat=N*N):\n            for k, f in zip(\"ABCD\", (A, B, C, D)):\n                bad[k] += f(bk, mm, br) != ref(bk, mm, br)\nprint(bad)   # models (domain size 3) where the option disagrees with the statement",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-file-organization"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (blocking factor under spanned and unspanned organisation) needing a short direct calculation of two block counts and their difference; about 1 minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Blocks needed for a fixed-length-record file under unspanned versus spanned organisation (floor for the blocking factor, ceiling for the block count).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retail chain stores $10{,}000$ fixed-length transaction records of $70$ bytes each in a file on disk. The disk block size is $512$ bytes. Blocks carry no header, and no pointer or other overhead is needed when a record is split across two blocks.\n\nThe file can be organised in either of two ways.\n\n- **Unspanned:** every record lies entirely within one block, so the unused space at the end of a block is wasted.\n- **Spanned:** records are packed one after another, and a record may be split across two consecutive blocks.\n\nThe number of blocks needed under the unspanned organisation exceeds the number needed under the spanned organisation by ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 61,
+      "max": 61
+    },
+    "solution": {
+      "quick": "Unspanned: $\\lfloor 512/70 \\rfloor = 7$ records per block, so $\\lceil 10000/7 \\rceil = 1429$ blocks. Spanned: $\\lceil 10000 \\times 70/512 \\rceil = \\lceil 1367.19 \\rceil = 1368$ blocks. The difference is $1429 - 1368 = 61$.",
+      "steps": [
+        {
+          "title": "Unspanned: blocking factor",
+          "body": "A block holds a whole number of records: $bfr = \\lfloor 512/70 \\rfloor = \\lfloor 7.31 \\rfloor = 7$. Only $7 \\times 70 = 490$ of the 512 bytes are used in each block."
+        },
+        {
+          "title": "Unspanned: number of blocks",
+          "body": "$b_{\\text{unsp}} = \\lceil 10000/7 \\rceil = \\lceil 1428.57 \\rceil = 1429$."
+        },
+        {
+          "title": "Spanned: number of blocks",
+          "body": "There is no waste, so the file needs $\\lceil 10000 \\times 70/512 \\rceil = \\lceil 700000/512 \\rceil = \\lceil 1367.19 \\rceil = 1368$ blocks."
+        },
+        {
+          "title": "Difference",
+          "body": "$1429 - 1368 = 61$ blocks, which is about the space wasted by the $22$ unused bytes in each block ($1429 \\times 22 / 512 \\approx 61$ blocks' worth)."
+        }
+      ],
+      "finalAnswer": "**61**",
+      "commonTrap": "Using the fractional blocking factor $512/70 \\approx 7.31$ for the unspanned file. That gives $\\lceil 10000/7.31 \\rceil = 1368$, the same as the spanned file, and a difference of $0$. In an unspanned file the blocking factor must be rounded **down** to a whole number of records."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "61",
+      "agreesWithKey": true,
+      "checkCode": "import math\nn, r, blk = 10000, 70, 512\nbfr = blk // r                                # whole records per block (unspanned)\nunspanned = math.ceil(n / bfr)\nspanned = math.ceil(n * r / blk)              # records packed contiguously\nprint(bfr, unspanned, spanned, unspanned - spanned)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-cross-validation"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (leave-one-out cross-validation of a 1-nearest-neighbour classifier) needing a single pass of eight direct nearest-neighbour look-ups on a line; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Leave-one-out cross-validation of a 1-nearest-neighbour classifier: hold out each point and classify it by its nearest remaining neighbour.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A plant engineer records the vibration amplitude (in mm/s) of eight bearings together with their condition, Healthy (H) or Worn (W).\n\n| Bearing | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|---|---|---|---|---|---|---|---|---|\n| Amplitude | 14 | 17 | 18 | 25 | 27 | 33 | 36 | 41 |\n| Condition | H | H | W | W | W | H | H | W |\n\nA 1-nearest-neighbour classifier, with the distance between two bearings equal to the absolute difference of their amplitudes, is evaluated by leave-one-out cross-validation. Each bearing in turn is held out and classified using the condition of its nearest neighbour among the other seven bearings. For every bearing the nearest neighbour is unique.\n\nThe number of bearings that are misclassified in this procedure is ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "Bearings 2 and 3 (amplitudes 17 and 18) are each other's nearest neighbour but have different conditions, so both are misclassified. Bearing 8 (41) has nearest neighbour bearing 7 (36, H) and is Worn, so it is misclassified too. The other five are classified correctly, giving $3$ errors.",
+      "steps": [
+        {
+          "title": "Procedure",
+          "body": "For each bearing, ignore its own row, find the nearest amplitude among the other seven bearings, and predict that neighbour's condition. Count the mismatches."
+        },
+        {
+          "title": "Bearings 1 to 4",
+          "body": "Bearing 1 (14): nearest is 17 (H), prediction H, actual H, correct. Bearing 2 (17): nearest is 18 (distance 1, W) rather than 14 (distance 3), prediction W, actual H, **wrong**. Bearing 3 (18): nearest is 17 (H), prediction H, actual W, **wrong**. Bearing 4 (25): nearest is 27 (distance 2, W), prediction W, actual W, correct."
+        },
+        {
+          "title": "Bearings 5 to 8",
+          "body": "Bearing 5 (27): nearest is 25 (W), correct. Bearing 6 (33): nearest is 36 (distance 3, H) rather than 27 (distance 6), prediction H, actual H, correct. Bearing 7 (36): nearest is 33 (distance 3, H) rather than 41 (distance 5), prediction H, actual H, correct. Bearing 8 (41): nearest is 36 (H), prediction H, actual W, **wrong**."
+        },
+        {
+          "title": "Count",
+          "body": "The misclassified bearings are 2, 3 and 8, so the number of errors is $3$ (a LOOCV error rate of $3/8$)."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "commonTrap": "Forgetting to hold the test point out. If each bearing is allowed to be its own nearest neighbour (distance 0), every prediction matches its label and the count is $0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "x = [14, 17, 18, 25, 27, 33, 36, 41]; y = \"HHWWWHHW\"\nwrong = 0\nfor i in range(8):\n    d = sorted((abs(x[i] - x[j]), j) for j in range(8) if j != i)   # held-out point excluded\n    assert d[0][0] < d[1][0]                                         # nearest neighbour is unique\n    wrong += y[d[0][1]] != y[i]\nprint(wrong)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked concepts (characteristic polynomial, eigenvector check, geometric versus algebraic multiplicity, eigenvalues of powers and inverses) with a likely trap around a repeated eigenvalue; four statements to check, about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Eigenvalues and eigenvectors of a matrix with a repeated, defective eigenvalue: multiplicities, diagonalizability, and eigenvalues of A^k and A^{-1}.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$\nA = \\begin{bmatrix} 2 & 2 & -1 \\\\ 1 & 3 & -1 \\\\ -1 & 2 & 2 \\end{bmatrix}.\n$$\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(1, 1, 1)^\\top$ is an eigenvector of $A$."
+      },
+      {
+        "label": "B",
+        "text": "$A$ is diagonalizable."
+      },
+      {
+        "label": "C",
+        "text": "$\\operatorname{trace}(A^3) = 55$."
+      },
+      {
+        "label": "D",
+        "text": "The eigenvalues of $A^{-1}$, listed with algebraic multiplicity, are $\\tfrac{1}{3},\\ \\tfrac{1}{3}$ and $1$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The characteristic polynomial is $(\\lambda - 1)(\\lambda - 3)^2$. Also $A(1,1,1)^\\top = 3(1,1,1)^\\top$, $\\operatorname{trace}(A^3) = 27 + 27 + 1 = 55$, and $A^{-1}$ has eigenvalues $\\tfrac13, \\tfrac13, 1$. But $\\operatorname{rank}(A - 3I) = 2$, so the eigenvalue 3 has only one independent eigenvector and $A$ is not diagonalizable. Correct: **(A), (C), (D)**.",
+      "steps": [
+        {
+          "title": "Eigenvalues",
+          "body": "$\\operatorname{tr}A = 7$; the sum of the principal $2 \\times 2$ minors is $(6 - 2) + (4 - 1) + (6 + 2) = 15$; and $\\det A = 2(8) - 2(1) + (-1)(5) = 9$. So $p(\\lambda) = \\lambda^3 - 7\\lambda^2 + 15\\lambda - 9 = (\\lambda - 1)(\\lambda - 3)^2$. The eigenvalues are $3$ (algebraic multiplicity 2) and $1$."
+        },
+        {
+          "title": "Statement (A)",
+          "body": "$A\\,(1, 1, 1)^\\top = (2 + 2 - 1,\\ 1 + 3 - 1,\\ -1 + 2 + 2)^\\top = (3, 3, 3)^\\top = 3\\,(1, 1, 1)^\\top$. So it is an eigenvector, for $\\lambda = 3$. True."
+        },
+        {
+          "title": "Statement (B)",
+          "body": "$A - 3I = \\begin{bmatrix} -1 & 2 & -1 \\\\ 1 & 0 & -1 \\\\ -1 & 2 & -1 \\end{bmatrix}$. Rows 1 and 3 are equal and rows 1 and 2 are independent, so the rank is 2 and the null space is one-dimensional. The geometric multiplicity of $3$ is $1$, less than its algebraic multiplicity $2$, so $A$ is **not** diagonalizable. False."
+        },
+        {
+          "title": "Statement (C)",
+          "body": "The eigenvalues of $A^3$ are $3^3, 3^3, 1^3$ (triangularise $A$; this needs no diagonalizability). So $\\operatorname{trace}(A^3) = 27 + 27 + 1 = 55$. True."
+        },
+        {
+          "title": "Statement (D)",
+          "body": "$\\det A = 9 \\ne 0$, so $A^{-1}$ exists, and its eigenvalues are the reciprocals $\\tfrac13, \\tfrac13, 1$ with the same multiplicities. True."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$A(1,1,1)^\\top = (3,3,3)^\\top = 3(1,1,1)^\\top$, so $(1,1,1)^\\top$ is an eigenvector for $\\lambda = 3$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\operatorname{rank}(A - 3I) = 2$, so the eigenspace of the double eigenvalue $3$ has dimension $1$. A diagonalizable matrix would need dimension $2$, so $A$ is not diagonalizable."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The eigenvalues of $A^3$ are $27, 27, 1$, so its trace is $55$. This holds even though $A$ is not diagonalizable."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The eigenvalues of an invertible matrix's inverse are the reciprocals of its eigenvalues: $\\tfrac13$ (twice) and $1$."
+        }
+      ],
+      "shortcut": "For (C) and (D) only the eigenvalues matter: $\\operatorname{trace}(A^k) = \\sum \\lambda_i^k$ and the eigenvalues of $A^{-1}$ are $1/\\lambda_i$. Diagonalizability is needed only for (B).",
+      "commonTrap": "Treating a repeated eigenvalue as automatically harmless (concluding that $A$ is diagonalizable), or the opposite error of thinking that a non-diagonalizable matrix breaks the rules for trace, powers and inverses. Those rules hold for every square matrix."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A), (C), (D)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 2, -1], [1, 3, -1], [-1, 2, 2]]); lam = sp.symbols('lam')\nprint(sp.factor(A.charpoly(lam).as_expr()))          # (lam - 3)**2 * (lam - 1)\nprint((A * sp.Matrix([1, 1, 1])).T)                  # [3, 3, 3] -> (A) true\nprint((A - 3 * sp.eye(3)).rank(), A.is_diagonalizable())   # 2 -> geometric mult 1 -> (B) false\nprint((A ** 3).trace())                              # 55 -> (C) true\nprint(A.inv().eigenvals())                           # {1/3: 2, 1: 1} -> (D) true",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the for-else construct) with 2-3 steps per statement: trace a few calls, including an empty list, and spot that the function returns the first, not the last, matching index; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Python for-else semantics: the else block runs only when the loop finishes without break, including when the iterable is empty.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python function.\n\n```python\ndef first_exceeding(vals, limit):\n    for idx, v in enumerate(vals):\n        if v > limit:\n            break\n    else:\n        return -1\n    return idx\n```\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`first_exceeding([3, 8, 5, 11], 6)` returns `1`."
+      },
+      {
+        "label": "B",
+        "text": "`first_exceeding([3, 8, 5, 11], 11)` returns `3`."
+      },
+      {
+        "label": "C",
+        "text": "`first_exceeding([], 0)` returns `-1` without raising an exception."
+      },
+      {
+        "label": "D",
+        "text": "For a non-empty list whose last element is greater than `limit`, the function returns `len(vals) - 1`."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "The `else` clause of a `for` loop runs only if the loop ends without `break`; then the function returns `-1`. With a `break`, it returns the index of the first element greater than `limit`. Hence (A) is true, (B) returns `-1`, (C) is true because the loop body never runs and the `else` returns first, and (D) fails because the first, not the last, exceeding index is returned. Correct: **(A), (C)**.",
+      "steps": [
+        {
+          "title": "How for-else behaves",
+          "body": "The `else` block attached to a `for` runs when the loop terminates normally, that is, when the iterable is exhausted without executing `break`. If `break` executes, `else` is skipped and control continues after the loop, at `return idx`."
+        },
+        {
+          "title": "Statement (A)",
+          "body": "For `[3, 8, 5, 11]` and limit `6`: `3 > 6` is false; `8 > 6` is true at `idx = 1`, so `break` executes, `else` is skipped and `return idx` returns `1`. True."
+        },
+        {
+          "title": "Statements (B) and (C)",
+          "body": "With limit `11`, no element is greater than `11` (`11 > 11` is false), so the loop ends normally, the `else` clause runs and `-1` is returned, not `3`. False. For the empty list the body never executes, so the loop ends normally at once and `return -1` runs. The variable `idx` is never used, so there is no `UnboundLocalError`. True."
+        },
+        {
+          "title": "Statement (D)",
+          "body": "The `break` fires at the first element greater than `limit`, so the function returns the index of the **first** such element. In example (A) the last element `11` exceeds `6`, yet the result is `1`, not `len(vals) - 1 = 3`. False."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "`8` is the first element greater than `6`, at index `1`; `break` skips the `else` and `return idx` returns `1`."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "No element is greater than `11`, so the loop finishes without `break`, the `else` clause runs and the function returns `-1`."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The loop body never runs for an empty list, so the loop completes normally and `else` returns `-1` before `idx` is ever read. No exception is raised."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The function returns the index of the first element greater than `limit`. For `[3, 8, 5, 11]` with limit `6` the last element exceeds `6`, but the result is `1`, not `3`."
+        }
+      ],
+      "commonTrap": "Believing that `idx` is undefined for an empty list and that `first_exceeding([], 0)` therefore raises `UnboundLocalError`. The `else` clause returns before `idx` is read, so no error occurs."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A), (C)",
+      "agreesWithKey": true,
+      "checkCode": "def first_exceeding(vals, limit):\n    for idx, v in enumerate(vals):\n        if v > limit:\n            break\n    else:\n        return -1\n    return idx\n\nprint(first_exceeding([3, 8, 5, 11], 6),     # (A) 1 -> true\n      first_exceeding([3, 8, 5, 11], 11),    # (B) -1, not 3 -> false\n      first_exceeding([], 0))                # (C) -1, no exception -> true\nprint(first_exceeding([3, 8, 5, 11], 6) == len([3, 8, 5, 11]) - 1)   # (D) counter-example -> False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-queues"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a queue built from two stacks) with 2-3 steps: recognise when elements are transferred and count every push and pop over a 12-operation sequence; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Queue implemented with two stacks: elements move from the input stack to the output stack only when the output stack is empty, and every element costs push, pop, push, pop.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A queue is implemented with two stacks, $S_1$ (input) and $S_2$ (output), both initially empty.\n\n- `enqueue(x)`: push $x$ onto $S_1$.\n- `dequeue()`: if $S_2$ is empty, repeatedly pop an element from $S_1$ and push it onto $S_2$ until $S_1$ is empty. Then pop the top element of $S_2$ and return it.\n\nEvery individual push and every individual pop, on either stack, counts as one elementary operation. The following operations are performed in the given order, and no `dequeue` is attempted on an empty queue.\n\n`enqueue(10)`, `enqueue(20)`, `enqueue(30)`, `dequeue()`, `enqueue(40)`, `dequeue()`, `dequeue()`, `enqueue(50)`, `dequeue()`, `dequeue()`, `enqueue(60)`, `dequeue()`\n\nThe total number of elementary operations performed on $S_1$ and $S_2$ together is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$12$"
+      },
+      {
+        "label": "B",
+        "text": "$18$"
+      },
+      {
+        "label": "C",
+        "text": "$21$"
+      },
+      {
+        "label": "D",
+        "text": "$24$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Each of the six elements is pushed on $S_1$, popped from $S_1$, pushed on $S_2$ and popped from $S_2$ exactly once, since a transfer happens only when $S_2$ is empty and moves everything in $S_1$. That is $4$ operations per element, so $6 \\times 4 = 24$, option **(D)**.",
+      "steps": [
+        {
+          "title": "When transfers happen",
+          "body": "A `dequeue` moves elements only if $S_2$ is empty. Here that happens at the 1st `dequeue` (3 elements in $S_1$), the 4th (2 elements: 40 and 50) and the 6th (1 element: 60). The other `dequeue` calls only pop $S_2$."
+        },
+        {
+          "title": "Cost of each call",
+          "body": "`enqueue` costs 1 push. A transfer of $n$ elements costs $n$ pops plus $n$ pushes, $2n$, and then the dequeue's own pop costs 1. Costs in order: $1, 1, 1$, then $(2\\cdot 3 + 1) = 7$, then $1$ (enqueue 40), $1$ (dequeue returns 20), $1$ (dequeue returns 30), $1$ (enqueue 50), $(2\\cdot 2 + 1) = 5$ (dequeue returns 40), $1$ (dequeue returns 50), $1$ (enqueue 60), $(2\\cdot 1 + 1) = 3$ (dequeue returns 60)."
+        },
+        {
+          "title": "Total",
+          "body": "$1 + 1 + 1 + 7 + 1 + 1 + 1 + 1 + 5 + 1 + 1 + 3 = 24$."
+        },
+        {
+          "title": "Cross-check",
+          "body": "Group by operation type: $6$ pushes on $S_1$, $6$ pops from $S_1$ and $6$ pushes on $S_2$ during transfers (each element is moved exactly once), and $6$ final pops from $S_2$. That is $6 + 6 + 6 + 6 = 24$. The dequeued values are $10, 20, 30, 40, 50, 60$, so the order is FIFO as it should be."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$12$ counts only the six pushes on $S_1$ and the six final pops from $S_2$. It leaves out the cost of moving elements from $S_1$ to $S_2$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$18$ treats moving an element from $S_1$ to $S_2$ as a single operation. It is a pop followed by a push, which is two operations, so the six moves cost $12$, not $6$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$21$ forgets the dequeue's own final pop from $S_2$ in the three dequeues that trigger a transfer ($24 - 3$)."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Every element is pushed and popped on $S_1$ and pushed and popped on $S_2$, exactly $4$ operations per element, so $6 \\times 4 = 24$."
+        }
+      ],
+      "shortcut": "Because a transfer moves the whole of $S_1$ and only when $S_2$ is empty, each element is touched by exactly four operations during its lifetime (push, pop, push, pop). With six enqueues the total is $6 \\times 4 = 24$, without tracing the sequence.",
+      "commonTrap": "Counting a transfer as one operation per element, or leaving it out altogether, and forgetting that the dequeue that triggers a transfer also pays for its own final pop."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(D) 24",
+      "agreesWithKey": true,
+      "checkCode": "s1, s2, cnt, out, nxt = [], [], 0, [], 10\nfor op in \"EEEDEDDEDDED\":\n    if op == \"E\":\n        s1.append(nxt); nxt += 10; cnt += 1\n    else:\n        if not s2:\n            while s1:\n                s2.append(s1.pop()); cnt += 2       # one pop + one push\n        out.append(s2.pop()); cnt += 1\nprint(cnt, out)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-types"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (scales of measurement and the operations each permits) applied to four attributes and eight claims: identify each scale, then check every pair of claims in each option; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Attribute types (nominal, ordinal, interval, ratio) and which statistics or comparisons are meaningful for each.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A logistics company's parcel table has the following attributes.\n\n| Attribute | Description |\n|---|---|\n| `zone` | Delivery zone code 1, 2, 3, 4 or 5; the numbers are only labels for regions |\n| `service` | Service level: Standard, Express or Overnight, in increasing order of speed |\n| `temp_c` | Temperature inside the parcel at dispatch, in degrees Celsius |\n| `weight_kg` | Parcel weight in kilograms |\n\nWhich one of the following options lists two operations that are both meaningful for the attributes they are applied to?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Computing the mean of `temp_c`; stating that a 6 kg parcel is twice as heavy as a 3 kg parcel."
+      },
+      {
+        "label": "B",
+        "text": "Computing the mean of `zone`; finding the mode of `service`."
+      },
+      {
+        "label": "C",
+        "text": "Finding the median of `service`; stating that a parcel at 30 °C is twice as warm as one at 15 °C."
+      },
+      {
+        "label": "D",
+        "text": "Finding the mode of `zone`; stating that the difference between Express and Standard equals the difference between Overnight and Express."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "`zone` is nominal, `service` is ordinal, `temp_c` is interval and `weight_kg` is ratio. A mean needs at least an interval scale and a 'twice as much' ratio needs a true zero (ratio scale). Only option (A) uses valid operations for both attributes.",
+      "steps": [
+        {
+          "title": "Classify the attributes",
+          "body": "`zone`: numbers are mere labels, so **nominal**. `service`: ordered categories with no defined spacing, so **ordinal**. `temp_c`: equal differences are meaningful but $0\\,^\\circ$C is arbitrary, so **interval**. `weight_kg`: true zero, so **ratio**."
+        },
+        {
+          "title": "What each scale permits",
+          "body": "Nominal: equality and the mode. Ordinal: also order, median and percentiles. Interval: also differences, mean and standard deviation. Ratio: also ratios such as 'twice as much'."
+        },
+        {
+          "title": "Check every option",
+          "body": "(A) A mean of an interval attribute is valid and 6 kg is twice 3 kg on a ratio scale: both valid. (B) The mean of nominal zone codes is meaningless. (C) The median of an ordinal attribute is valid, but 30 °C is not 'twice as warm' as 15 °C because the Celsius zero is arbitrary. (D) The mode of a nominal attribute is valid, but equal gaps between ordinal levels cannot be claimed, since the spacing is undefined."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Both operations are meaningful only in option (A)."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The mean is meaningful for an interval attribute such as `temp_c`, and a ratio comparison is meaningful for `weight_kg`, which has a true zero."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The mode of an ordinal attribute is valid, but the mean of `zone` is not: the codes 1 to 5 are only labels, so an 'average zone' has no meaning."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The median of `service` is valid for ordinal data, but ratios need a true zero. In degrees Celsius 30 °C is not twice as warm as 15 °C (in kelvin the ratio is about $1.05$)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The mode of `zone` is valid, but the gaps between ordinal levels are not defined, so 'Express minus Standard equals Overnight minus Express' cannot be claimed."
+        }
+      ],
+      "commonTrap": "Treating a numeric-looking column as if it carried all arithmetic. Zone codes are labels (no mean), and Celsius temperatures are interval-scaled (differences and means are fine, but ratios are not)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A)",
+      "agreesWithKey": true,
+      "checkCode": "scale = {\"zone\": \"nominal\", \"service\": \"ordinal\", \"temp_c\": \"interval\", \"weight_kg\": \"ratio\"}\nrank = {\"nominal\": 0, \"ordinal\": 1, \"interval\": 2, \"ratio\": 3}\nneed = {\"mode\": 0, \"median\": 1, \"difference\": 2, \"mean\": 2, \"ratio\": 3}      # weakest scale allowing the operation\nopts = {\"A\": [(\"temp_c\", \"mean\"), (\"weight_kg\", \"ratio\")],\n        \"B\": [(\"zone\", \"mean\"), (\"service\", \"mode\")],\n        \"C\": [(\"service\", \"median\"), (\"temp_c\", \"ratio\")],\n        \"D\": [(\"zone\", \"mode\"), (\"service\", \"difference\")]}\nprint([k for k, ops in opts.items() if all(rank[scale[a]] >= need[o] for a, o in ops)])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-feedforward"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a network with identity activations collapses to one linear map) needing 2-3 steps: compose the two layers, keep track of the weights' orientation and propagate the hidden biases; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "A feed-forward network whose units all use the identity activation is equivalent to a single linear model with weights W^T v and bias v^T b + c.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward neural network takes $\\mathbf{x} = (x_1, x_2)^\\top$, has one hidden layer of two units and a single output unit. **Every** unit, including the hidden units, uses the identity activation $g(z) = z$. The network computes\n\n$$\n\\mathbf{h} = W\\mathbf{x} + \\mathbf{b}, \\qquad \\hat{y} = \\mathbf{v}^\\top \\mathbf{h} + c,\n$$\n\nwhere\n\n$$\nW = \\begin{bmatrix} 1 & 2 \\\\ 3 & -1 \\end{bmatrix}, \\quad \\mathbf{b} = \\begin{bmatrix} 1 \\\\ -2 \\end{bmatrix}, \\quad \\mathbf{v} = \\begin{bmatrix} 2 \\\\ -1 \\end{bmatrix}, \\quad c = 3.\n$$\n\nWhich one of the following single linear functions of $x_1$ and $x_2$ gives exactly the same output $\\hat{y}$ as this network for every input?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\hat{y} = 7x_2 + 7$"
+      },
+      {
+        "label": "B",
+        "text": "$\\hat{y} = -x_1 + 5x_2 + 7$"
+      },
+      {
+        "label": "C",
+        "text": "$\\hat{y} = -x_1 + 5x_2 + 3$"
+      },
+      {
+        "label": "D",
+        "text": "$\\hat{y} = -x_1 + 5x_2 + 2$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "With identity activations, $\\hat{y} = \\mathbf{v}^\\top(W\\mathbf{x} + \\mathbf{b}) + c = (W^\\top \\mathbf{v})^\\top \\mathbf{x} + (\\mathbf{v}^\\top \\mathbf{b} + c)$. Here $W^\\top \\mathbf{v} = (-1, 5)^\\top$ and $\\mathbf{v}^\\top \\mathbf{b} + c = 4 + 3 = 7$, so $\\hat{y} = -x_1 + 5x_2 + 7$, option **(B)**.",
+      "steps": [
+        {
+          "title": "Write out the hidden units",
+          "body": "$h_1 = x_1 + 2x_2 + 1$ and $h_2 = 3x_1 - x_2 - 2$. With identity activations no non-linearity intervenes, so the output is a linear function of $\\mathbf{x}$."
+        },
+        {
+          "title": "Substitute into the output",
+          "body": "$\\hat{y} = 2h_1 - h_2 + 3 = 2(x_1 + 2x_2 + 1) - (3x_1 - x_2 - 2) + 3$."
+        },
+        {
+          "title": "Collect terms",
+          "body": "$x_1$: $2 - 3 = -1$. $x_2$: $4 + 1 = 5$. Constant: $2 + 2 + 3 = 7$. So $\\hat{y} = -x_1 + 5x_2 + 7$. In matrix form the weights are $W^\\top\\mathbf{v} = (1\\cdot 2 + 3\\cdot(-1),\\ 2\\cdot 2 + (-1)(-1))^\\top = (-1, 5)^\\top$ and the bias is $\\mathbf{v}^\\top\\mathbf{b} + c = 2\\cdot 1 + (-1)(-2) + 3 = 7$."
+        },
+        {
+          "title": "Check against the options",
+          "body": "At $\\mathbf{x} = (0, 0)$ the network gives $2(1) - (-2) + 3 = 7$, which rules out (C) (value 3) and (D) (value 2). At $\\mathbf{x} = (1, 0)$ it gives $h = (2, 1)$ and $\\hat{y} = 4 - 1 + 3 = 6$, while (A) gives $7$. Only (B) agrees at all three test points $(0,0)$, $(1,0)$ and $(0,1)$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$7x_2 + 7$ uses $W\\mathbf{v} = (0, 7)^\\top$ instead of $W^\\top\\mathbf{v}$. The weight of hidden unit $j$ on input $i$ is $W_{ji}$, so the input weights are combined as $\\sum_j v_j W_{ji}$. At $\\mathbf{x} = (1, 0)$ it gives $7$ but the network gives $6$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$W^\\top\\mathbf{v} = (-1, 5)^\\top$ and bias $\\mathbf{v}^\\top\\mathbf{b} + c = 7$, which matches the network at every test point."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The weights are right, but the bias $3$ is only the output bias $c$; the hidden biases contribute $\\mathbf{v}^\\top\\mathbf{b} = 4$ more. At $\\mathbf{x} = \\mathbf{0}$ the network outputs $7$, not $3$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The weights are right, but the bias adds the hidden biases without weighting them by $\\mathbf{v}$: $(1 - 2) + 3 = 2$. The correct contribution is $\\mathbf{v}^\\top\\mathbf{b} = 2(1) - 1(-2) = 4$."
+        }
+      ],
+      "shortcut": "The output of a linear map is fixed by three values. Evaluate the network at $(0,0)$, $(1,0)$ and $(0,1)$ to get the intercept ($7$) and the two slopes ($6 - 7 = -1$ and $12 - 7 = 5$).",
+      "commonTrap": "Multiplying the layers in the wrong orientation ($W\\mathbf{v}$ instead of $W^\\top\\mathbf{v}$), or forgetting that the hidden-layer biases are passed through the output weights."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B) y = -x1 + 5 x2 + 7",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nW = np.array([[1, 2], [3, -1]]); b = np.array([1, -2]); v = np.array([2, -1]); c = 3\nw_eff, b_eff = W.T @ v, v @ b + c\nX = np.random.default_rng(0).normal(size=(1000, 2))\ny = (X @ W.T + b) @ v + c                       # network with identity activations\ncands = {\"A\": (W @ v, b_eff), \"B\": (w_eff, b_eff), \"C\": (w_eff, c), \"D\": (w_eff, b.sum() + c)}\nprint(w_eff, b_eff, [k for k, (w, bb) in cands.items() if np.allclose(y, X @ w + bb)])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-optimization",
+    "subtopicIds": [
+      "co-maxima-minima"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (first-derivative test for a cubic) with a single differentiation and factorisation, from which every statement follows directly; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "A stationary point where the derivative does not change sign (a repeated root of f') is not a local extremum; monotonicity of a cubic.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be defined by\n\n$$\nf(x) = x^3 - 6x^2 + 12x - 5 .\n$$\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The equation $f'(x) = 0$ has two distinct real roots."
+      },
+      {
+        "label": "B",
+        "text": "$f$ is strictly increasing on $\\mathbb{R}$."
+      },
+      {
+        "label": "C",
+        "text": "$f$ has a local minimum at $x = 2$."
+      },
+      {
+        "label": "D",
+        "text": "$f$ has a local maximum at $x = 2$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "$f'(x) = 3x^2 - 12x + 12 = 3(x - 2)^2 \\ge 0$, with a single (repeated) root at $x = 2$. Since $f'$ does not change sign there, $x = 2$ is not an extremum, and $f$ is strictly increasing on all of $\\mathbb{R}$. Correct: **(B)** only.",
+      "steps": [
+        {
+          "title": "Differentiate and factorise",
+          "body": "$f'(x) = 3x^2 - 12x + 12 = 3(x^2 - 4x + 4) = 3(x - 2)^2$."
+        },
+        {
+          "title": "Statement (A)",
+          "body": "$f'(x) = 0$ only when $x = 2$, a repeated root, so there is exactly one real root. False."
+        },
+        {
+          "title": "Statement (B)",
+          "body": "$f'(x) = 3(x - 2)^2 > 0$ for every $x \\ne 2$ and $f'(2) = 0$ at a single isolated point. Hence $f$ is strictly increasing on $\\mathbb{R}$. (Indeed $f(x) = (x - 2)^3 + 3$.) True."
+        },
+        {
+          "title": "Statements (C) and (D)",
+          "body": "At $x = 2$ we have $f'(2) = 0$, but $f'$ is positive on both sides, so it does not change sign. There is neither a local minimum nor a local maximum at $x = 2$; it is a point of inflection, where $f''(2) = 0$ and the second-derivative test is inconclusive. Both false."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$f'(x) = 3(x - 2)^2$ has one repeated root, $x = 2$, not two distinct roots."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$f'(x) \\ge 0$ everywhere and vanishes only at $x = 2$, so $f$ is strictly increasing on $\\mathbb{R}$; equivalently $f(x) = (x - 2)^3 + 3$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "A local minimum requires $f'$ to change from negative to positive at $x = 2$. It stays positive on both sides."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "A local maximum requires $f'$ to change from positive to negative at $x = 2$. It stays positive on both sides."
+        }
+      ],
+      "commonTrap": "Believing that every point with $f'(x) = 0$ is a local maximum or minimum. A critical point is an extremum only if $f'$ changes sign there (or a higher-order test shows it)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x'); f = x**3 - 6*x**2 + 12*x - 5\nfp = sp.diff(f, x)\nprint(sp.factor(fp), sp.solve(fp, x), sp.diff(f, x, 2).subs(x, 2))   # 3*(x-2)**2, [2], 0\nprint(sp.expand(f - ((x - 2)**3 + 3)) == 0, all(fp.subs(x, t) > 0 for t in [-5, 0, 1, 1.99, 2.01, 3, 10]))   # f = (x-2)^3 + 3, f' > 0 off x = 2",
+      "notes": ""
+    }
+  }
+]

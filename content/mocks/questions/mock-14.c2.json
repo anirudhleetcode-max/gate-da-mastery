@@ -1,0 +1,879 @@
+[
+  {
+    "id": "M14-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (tracing a run-length routine with nested while loops) needing two traces, the second on the output of the first; routine work, about 1.5\u20132 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Tracing a run-length encoding function with nested while loops, applied twice (string building and len)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef compress(s):\n    out = []\n    i = 0\n    while i < len(s):\n        j = i\n        while j < len(s) and s[j] == s[i]:\n            j += 1\n        out.append(s[i] + str(j - i))\n        i = j\n    return \"\".join(out)\n\nt = compress(\"aaabccdddd\")\nu = compress(t)\nprint(t, len(u))\n```\n\nWhat is printed when the program is executed?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`a3b1c2d4 8`"
+      },
+      {
+        "label": "B",
+        "text": "`a3b1c2d4 16`"
+      },
+      {
+        "label": "C",
+        "text": "`a3bc2d4 7`"
+      },
+      {
+        "label": "D",
+        "text": "`a2b0c1d3 16`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "`compress` replaces every maximal run of equal characters by the character followed by the run length, so `t = \"a3b1c2d4\"` (8 characters).\nNo two neighbouring characters of `t` are equal, so `compress(t)` turns each of its 8 characters into a run of length 1 and writes it as `x1`, giving 16 characters.\nThe program prints `a3b1c2d4 16`.",
+      "steps": [
+        {
+          "title": "Trace compress on the first string",
+          "body": "For each start index `i`, the inner loop advances `j` to the first index whose character differs from `s[i]`, and the pair `s[i] + str(j - i)` is appended.\n\n| `i` | run | `j` after inner loop | appended |\n|---|---|---|---|\n| 0 | `aaa` | 3 | `a3` |\n| 3 | `b` | 4 | `b1` |\n| 4 | `cc` | 6 | `c2` |\n| 6 | `dddd` | 10 | `d4` |\n\nSo `t = \"a3b1c2d4\"`, which has 8 characters."
+        },
+        {
+          "title": "Inspect the characters of t",
+          "body": "The characters of `t` are `a`, `3`, `b`, `1`, `c`, `2`, `d`, `4`. No two neighbouring characters are equal, so in every iteration the inner loop moves `j` exactly one step: the second call sees 8 runs, each of length 1."
+        },
+        {
+          "title": "Build u",
+          "body": "Each run contributes the character followed by `\"1\"`: `a1`, `31`, `b1`, `11`, `c1`, `21`, `d1`, `41`. Hence `u = \"a131b111c121d141\"`, and `len(u) = 16`."
+        },
+        {
+          "title": "Print",
+          "body": "`print(t, len(u))` writes `t`, a space and the integer `16`, so the output is `a3b1c2d4 16`. The correct choice is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "`t` is right but `len(u)` is not 8. That value would hold only if compressing `t` left it unchanged; in fact every run, even one of length 1, gets a count digit appended, so each of the 8 characters becomes two."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "`t = \"a3b1c2d4\"` and `u = \"a131b111c121d141\"` (16 characters), so the program prints `a3b1c2d4 16`."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This follows the common run-length convention of omitting the count for a run of length 1. The code always appends `str(j - i)`, so the `b` run becomes `b1`, `t` has 8 characters and `len(u)` is 16."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is off by one: the inner loop stops at the first different character, so a run of `aaa` starting at `i = 0` gives `j = 3` and the count is `j - i = 3`, not `j - i - 1 = 2`."
+        }
+      ],
+      "shortcut": "If no two adjacent characters of a string are equal, `compress` writes every character followed by `1`, so the output is exactly twice as long as the input. Here `len(t) = 8` gives `len(u) = 16`.",
+      "commonTrap": "Assuming that compressing an already compressed string returns it unchanged (or that a run of length 1 is written without its count). The code appends a count for every run, so a string with no repeated neighbours doubles in length."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: a3b1c2d4 16",
+      "agreesWithKey": true,
+      "checkCode": "def compress(s):\n    out=[];i=0\n    while i<len(s):\n        j=i\n        while j<len(s) and s[j]==s[i]: j+=1\n        out.append(s[i]+str(j-i)); i=j\n    return \"\".join(out)\nt=compress(\"aaabccdddd\"); u=compress(t)\nprint(t,len(u))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (law of total variance) with two or three routine steps: conditional mean and variance of a uniform, then two moments of $X$; about 2 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Law of total variance: Var(Y) = E[Var(Y|X)] + Var(E[Y|X]) for a uniform mixture",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A bottling line starts each morning with a random fill level $X$ (in thousands of litres) in its supply tank, where $X$ is uniformly distributed on $(0, 2)$. Given $X = x$, the volume $Y$ (in thousands of litres) dispensed during the day is uniformly distributed on $(0, x)$.\n\nThe variance of $Y$, that is $\\operatorname{Var}(Y)$, is ________ (rounded off to **three** decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.193,
+      "max": 0.195
+    },
+    "solution": {
+      "quick": "Use the law of total variance: $\\operatorname{Var}(Y)=E[\\operatorname{Var}(Y\\mid X)]+\\operatorname{Var}(E[Y\\mid X])$.\nHere $E[Y\\mid X]=X/2$ and $\\operatorname{Var}(Y\\mid X)=X^2/12$, so $\\operatorname{Var}(Y)=\\tfrac{E[X^2]}{12}+\\tfrac{\\operatorname{Var}(X)}{4}=\\tfrac19+\\tfrac1{12}=\\tfrac7{36}\\approx 0.194$.",
+      "steps": [
+        {
+          "title": "Conditional mean and variance",
+          "body": "If $Y\\mid X=x\\sim\\text{Uniform}(0,x)$, then $E[Y\\mid X=x]=x/2$ and $\\operatorname{Var}(Y\\mid X=x)=x^2/12$. So $E[Y\\mid X]=X/2$ and $\\operatorname{Var}(Y\\mid X)=X^2/12$."
+        },
+        {
+          "title": "Moments of X",
+          "body": "For $X\\sim\\text{Uniform}(0,2)$: $E[X]=1$, $\\operatorname{Var}(X)=\\tfrac{(2-0)^2}{12}=\\tfrac13$, and $E[X^2]=\\operatorname{Var}(X)+E[X]^2=\\tfrac13+1=\\tfrac43$."
+        },
+        {
+          "title": "Apply the law of total variance",
+          "body": "$$\nE[\\operatorname{Var}(Y\\mid X)]=\\frac{E[X^2]}{12}=\\frac{4/3}{12}=\\frac19,\\qquad\n\\operatorname{Var}(E[Y\\mid X])=\\operatorname{Var}\\!\\left(\\frac X2\\right)=\\frac{\\operatorname{Var}(X)}{4}=\\frac1{12}.\n$$\n\nAdding: $\\operatorname{Var}(Y)=\\tfrac19+\\tfrac1{12}=\\tfrac{4}{36}+\\tfrac{3}{36}=\\tfrac{7}{36}=0.19444\\ldots$"
+        },
+        {
+          "title": "Cross-check with moments",
+          "body": "$E[Y]=E[X/2]=\\tfrac12$ and $E[Y^2]=E\\big[E[Y^2\\mid X]\\big]=E\\!\\left[\\tfrac{X^2}{3}\\right]=\\tfrac{4/3}{3}=\\tfrac49$, so $\\operatorname{Var}(Y)=\\tfrac49-\\tfrac14=\\tfrac{7}{36}$, which agrees. Rounded to three decimals the value is $0.194$."
+        }
+      ],
+      "finalAnswer": "**0.194** (accepted range 0.193 to 0.195)",
+      "shortcut": "Write $Y = X\\cdot V$ with $V\\sim\\text{Uniform}(0,1)$ independent of $X$. Then $E[Y^2]=E[X^2]E[V^2]=\\tfrac43\\cdot\\tfrac13=\\tfrac49$ and $E[Y]=1\\cdot\\tfrac12$, so $\\operatorname{Var}(Y)=\\tfrac49-\\tfrac14=\\tfrac7{36}$.",
+      "commonTrap": "Keeping only one of the two terms. Using just $E[\\operatorname{Var}(Y\\mid X)]=\\tfrac19\\approx0.111$, or plugging $X=E[X]=1$ into the conditional variance to get $\\tfrac1{12}\\approx0.083$, ignores the extra spread that comes from $X$ itself varying."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "7/36 = 0.1944, i.e. 0.194",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nimport random\nVarX=F(4,12); EX2=VarX+1          # X~U(0,2)\ntot=EX2/12+VarX/4                 # E[Var(Y|X)]+Var(E[Y|X])\nprint(tot,round(float(tot),3),F(4,9)-F(1,4)==tot)\nrandom.seed(1); n=10**6; ys=[random.uniform(0,random.uniform(0,2)) for _ in range(n)]\nm=sum(ys)/n; print(round(sum((y-m)**2 for y in ys)/n,3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD \u2014 four statements on binomial, Bernoulli and uniform distributions, each needing its own non-routine check (a same-mean trap, a symmetry argument, a covariance of a product and an independence test); about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Binomial sums need equal success probabilities; complement symmetry; Bernoulli products; independence of events under a discrete uniform",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $S \\sim \\text{Binomial}(10,\\ 0.4)$ and $T \\sim \\text{Binomial}(10,\\ 0.6)$ be independent random variables (for example, the numbers of chips that pass a test in two independent batches of ten). Let $I_1$ and $I_2$ be independent Bernoulli random variables, each with success probability $\\tfrac{1}{2}$, and let $K$ be a serial number drawn uniformly at random from $\\{1, 2, \\ldots, 10\\}$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$S + T \\sim \\text{Binomial}(20,\\ 0.5)$"
+      },
+      {
+        "label": "B",
+        "text": "$P(S \\ge 7) = P(T \\le 3)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\operatorname{Cov}(I_1,\\ I_1 I_2) = \\tfrac{1}{8}$"
+      },
+      {
+        "label": "D",
+        "text": "The events \"$K$ is even\" and \"$K > 5$\" are independent."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "(A) fails: $S+T$ adds independent Bernoulli trials with different success probabilities, so it is not binomial even though its mean is $10$.\n(B) holds because $10-S\\sim\\text{Binomial}(10,0.6)$ has the law of $T$. (C) holds: $\\operatorname{Cov}(I_1,I_1I_2)=\\tfrac14-\\tfrac12\\cdot\\tfrac14=\\tfrac18$.\n(D) fails: $P(\\text{even and }>5)=\\tfrac{3}{10}\\ne\\tfrac12\\cdot\\tfrac12$.",
+      "steps": [
+        {
+          "title": "Statement (A): the sum of the two batches",
+          "body": "$S+T$ counts successes among 20 independent trials, but 10 of them have $p=0.4$ and 10 have $p=0.6$. A sum of independent binomials is binomial only when the success probabilities are equal. The means agree ($4+6=10=20\\cdot0.5$) but the variances do not:\n\n$$\n\\operatorname{Var}(S+T)=10(0.4)(0.6)+10(0.6)(0.4)=4.8\\ne 20(0.5)(0.5)=5.\n$$\n\nIndeed $P(S+T=10)=0.1800$ whereas for $\\text{Binomial}(20,0.5)$ it is $0.1762$. (A) is false."
+        },
+        {
+          "title": "Statement (B): complement symmetry",
+          "body": "Counting failures instead of passes, $10-S\\sim\\text{Binomial}(10,\\,1-0.4)=\\text{Binomial}(10,0.6)$, the same law as $T$. Therefore\n\n$$\nP(T\\le 3)=P(10-S\\le 3)=P(S\\ge 7).\n$$\n\nNumerically both equal $0.0425+0.0106+0.0016+0.0001\\approx0.0548$. (B) is true."
+        },
+        {
+          "title": "Statement (C): covariance of a product",
+          "body": "Since $I_1\\in\\{0,1\\}$, $I_1^2=I_1$, so $E[I_1\\cdot I_1I_2]=E[I_1I_2]=E[I_1]E[I_2]=\\tfrac14$. Also $E[I_1]=\\tfrac12$ and $E[I_1I_2]=\\tfrac14$, so\n\n$$\n\\operatorname{Cov}(I_1,I_1I_2)=\\tfrac14-\\tfrac12\\cdot\\tfrac14=\\tfrac18 .\n$$\n\n(C) is true."
+        },
+        {
+          "title": "Statement (D): independence under the uniform law",
+          "body": "$P(K\\text{ even})=\\tfrac{5}{10}=\\tfrac12$ and $P(K>5)=\\tfrac{5}{10}=\\tfrac12$, so independence would need $P(\\text{both})=\\tfrac14$. But \"both\" means $K\\in\\{6,8,10\\}$, giving $\\tfrac{3}{10}\\ne\\tfrac14$. The events are dependent, so (D) is false."
+        }
+      ],
+      "finalAnswer": "**(B), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The success probabilities of the two batches differ ($0.4$ versus $0.6$), so $S+T$ is not binomial. Equal means (both $10$) are not enough: the variance is $4.8$, not $5$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$10-S\\sim\\text{Binomial}(10,0.6)$ has the same distribution as $T$, so $P(T\\le3)=P(10-S\\le3)=P(S\\ge7)\\approx0.0548$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Using $I_1^2=I_1$: $E[I_1\\cdot I_1I_2]=\\tfrac14$, so $\\operatorname{Cov}=\\tfrac14-\\tfrac12\\cdot\\tfrac14=\\tfrac18$. The two factors are not independent because they share $I_1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$P(\\text{even})P(>5)=\\tfrac14$ but $P(\\text{even and }>5)=P(K\\in\\{6,8,10\\})=\\tfrac3{10}$. The events are dependent, even though each has probability $\\tfrac12$."
+        }
+      ],
+      "shortcut": "For (B), skip the arithmetic: swapping \"pass\" and \"fail\" turns $\\text{Binomial}(10,0.4)$ into $\\text{Binomial}(10,0.6)$ and turns \"at least 7 passes\" into \"at most 3 failures\".",
+      "commonTrap": "Accepting (A) because the mean of $S+T$ equals the mean of $\\text{Binomial}(20,0.5)$: a sum of independent binomials is binomial only when the success probabilities are equal. Students also accept (D) because both events have probability $\\tfrac12$, without computing the joint probability."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nfrom math import comb\nfrom itertools import product\npm=lambda n,p:[comb(n,k)*p**k*(1-p)**(n-k) for k in range(n+1)]\ns,t=pm(10,F(2,5)),pm(10,F(3,5))\nconv=[sum(s[i]*t[k-i] for i in range(11) if 0<=k-i<=10) for k in range(21)]\nA=conv==pm(20,F(1,2))\nB=sum(s[7:])==sum(t[:4])\nE=lambda f:sum(F(1,4)*f(a,b) for a,b in product([0,1],repeat=2))\nC=E(lambda a,b:a*a*b)-E(lambda a,b:a)*E(lambda a,b:a*b)==F(1,8)\nK=range(1,11); P=lambda g:F(sum(1 for k in K if g(k)),10)\nD=P(lambda k:k%2==0 and k>5)==P(lambda k:k%2==0)*P(lambda k:k>5)\nprint(dict(A=A,B=B,C=C,D=D))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-quadratic-forms"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (quadratic form and its symmetric matrix) with single-step checks: read off the matrix, then trace, determinant and one factorisation; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Symmetric matrix of a quadratic form, semidefiniteness versus definiteness, eigenvalues from trace and determinant",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the quadratic form\n\n$$\nQ(x_1, x_2) = 9x_1^2 + 12x_1x_2 + 4x_2^2\n$$\n\non $\\mathbb{R}^2$. Write $Q(\\mathbf{x}) = \\mathbf{x}^\\top A\\,\\mathbf{x}$, where $A$ is the real **symmetric** matrix representing $Q$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$Q(\\mathbf{x}) \\ge 0$ for every $\\mathbf{x} \\in \\mathbb{R}^2$."
+      },
+      {
+        "label": "B",
+        "text": "$Q$ is positive definite."
+      },
+      {
+        "label": "C",
+        "text": "$A = \\begin{bmatrix} 9 & 6 \\\\ 6 & 4 \\end{bmatrix}$."
+      },
+      {
+        "label": "D",
+        "text": "The eigenvalues of $A$ are $0$ and $13$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The symmetric matrix has the squared-term coefficients on the diagonal and half the cross-term coefficient off it: $A=\\begin{bmatrix}9&6\\\\6&4\\end{bmatrix}$.\n$Q=(3x_1+2x_2)^2\\ge0$, and it vanishes at $(2,-3)$, so $Q$ is positive semidefinite but not positive definite. Trace $13$ and determinant $0$ give eigenvalues $0$ and $13$.",
+      "steps": [
+        {
+          "title": "Find the symmetric matrix",
+          "body": "For $A=\\begin{bmatrix}a&b\\\\b&c\\end{bmatrix}$, $\\mathbf{x}^\\top A\\mathbf{x}=ax_1^2+2b\\,x_1x_2+cx_2^2$. Matching $9x_1^2+12x_1x_2+4x_2^2$ gives $a=9$, $c=4$ and $2b=12$, so $b=6$:\n\n$$\nA=\\begin{bmatrix}9&6\\\\6&4\\end{bmatrix}.\n$$\n\nStatement (C) is true."
+        },
+        {
+          "title": "Factor the form",
+          "body": "$9x_1^2+12x_1x_2+4x_2^2=(3x_1+2x_2)^2$, a perfect square. Hence $Q(\\mathbf{x})\\ge0$ for all $\\mathbf{x}$ (statement A is true). But $Q(2,-3)=(6-6)^2=0$ at a nonzero vector, so $Q$ is not positive definite (statement B is false)."
+        },
+        {
+          "title": "Eigenvalues",
+          "body": "$\\operatorname{tr}A=9+4=13$ and $\\det A=9\\cdot4-6\\cdot6=0$, so the characteristic equation is $\\lambda^2-13\\lambda=0$ and $\\lambda=0$ or $\\lambda=13$. Statement (D) is true. The zero eigenvalue, with eigenvector along $(2,-3)$, confirms that $A$ is positive semidefinite but not definite."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$Q=(3x_1+2x_2)^2$ is a square, hence never negative."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Positive definite needs $Q(\\mathbf{x})>0$ for every nonzero $\\mathbf{x}$. Here $Q(2,-3)=0$, and correspondingly $\\det A=0$ (a zero eigenvalue), so $Q$ is only positive semidefinite."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The off-diagonal entries are half of the cross-term coefficient: $12/2=6$. This matrix reproduces $9x_1^2+12x_1x_2+4x_2^2$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The trace is $13$ and the determinant is $0$, so the eigenvalues are $13$ and $0$."
+        }
+      ],
+      "shortcut": "For a $2\\times2$ symmetric matrix, the eigenvalues are fixed by the trace and the determinant. Trace $>0$ with determinant $=0$ means eigenvalues $\\{\\text{trace},0\\}$, so positive semidefinite but not definite.",
+      "commonTrap": "Placing the full cross-term coefficient $12$ in both off-diagonal slots. That gives $\\det=36-144<0$, which wrongly suggests an indefinite form. The off-diagonal entry is half the coefficient of $x_1x_2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx1,x2=sp.symbols(\"x1 x2\",real=True)\nQ=9*x1**2+12*x1*x2+4*x2**2\nA=sp.hessian(Q,(x1,x2))/2\nprint(A.tolist(),A.eigenvals(),\"PSD\",A.is_positive_semidefinite,\"PD\",A.is_positive_definite,Q.subs({x1:2,x2:-3}),sp.factor(Q))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-limits"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (evaluating standard limits) with a single-step check per statement: a trigonometric identity, one-sided limits, degree comparison and cancelling a common factor; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Evaluating limits: trigonometric identity, one-sided limits, rational functions at infinity, removable factor",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following statements about limits is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\displaystyle\\lim_{x \\to 0} \\frac{\\sin 4x}{\\sin 2x} = 2$"
+      },
+      {
+        "label": "B",
+        "text": "$\\displaystyle\\lim_{x \\to 0} \\frac{|x|}{x} = 1$"
+      },
+      {
+        "label": "C",
+        "text": "$\\displaystyle\\lim_{x \\to \\infty} \\frac{4x^2 + x}{x^3 + 1} = 4$"
+      },
+      {
+        "label": "D",
+        "text": "$\\displaystyle\\lim_{x \\to 1} \\frac{x^2 - 1}{x^3 - 1} = 1$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A"
+      ]
+    },
+    "solution": {
+      "quick": "(A) $\\sin4x=2\\sin2x\\cos2x$, so the ratio is $2\\cos2x\\to2$. (B) The one-sided limits are $+1$ and $-1$, so the limit does not exist.\n(C) The numerator has lower degree than the denominator, so the limit is $0$. (D) Cancelling $x-1$ leaves $\\tfrac{x+1}{x^2+x+1}\\to\\tfrac23$.\nOnly (A) is true.",
+      "steps": [
+        {
+          "title": "Statement (A)",
+          "body": "Using $\\sin4x=2\\sin2x\\cos2x$, for $x$ near $0$ but $\\sin 2x\\ne0$,\n\n$$\n\\frac{\\sin4x}{\\sin2x}=2\\cos2x\\;\\longrightarrow\\;2\\cos0=2 .\n$$\n\n(A) is true."
+        },
+        {
+          "title": "Statement (B)",
+          "body": "For $x>0$, $\\tfrac{|x|}{x}=1$; for $x<0$, $\\tfrac{|x|}{x}=-1$. The right-hand limit is $1$ and the left-hand limit is $-1$, so the two-sided limit does not exist. (B) is false."
+        },
+        {
+          "title": "Statement (C)",
+          "body": "Divide numerator and denominator by $x^3$: $\\dfrac{4/x+1/x^2}{1+1/x^3}\\to\\dfrac{0}{1}=0$. The numerator has degree $2<3$, so the limit is $0$, not $4$. (C) is false."
+        },
+        {
+          "title": "Statement (D)",
+          "body": "Factor: $x^2-1=(x-1)(x+1)$ and $x^3-1=(x-1)(x^2+x+1)$. After cancelling $x-1$ (allowed since $x\\ne1$ in the limit),\n\n$$\n\\frac{x+1}{x^2+x+1}\\;\\longrightarrow\\;\\frac{2}{3},\n$$\n\nnot $1$. (D) is false."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\sin4x=2\\sin2x\\cos2x$, so the ratio equals $2\\cos2x$, whose limit at $0$ is $2$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The function equals $+1$ for $x>0$ and $-1$ for $x<0$. The two one-sided limits differ, so the limit does not exist."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The denominator has the higher degree ($3$ versus $2$), so the ratio tends to $0$. The value $4$ would be the ratio of leading coefficients, which applies only when the degrees are equal."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "After cancelling the common factor $x-1$ the limit is $\\tfrac{1+1}{1+1+1}=\\tfrac23$. The value $1$ comes from comparing only the leading coefficients ($1$ and $1$), a rule that is valid only as $x\\to\\infty$."
+        }
+      ],
+      "commonTrap": "Applying the \"ratio of leading coefficients\" rule in (C) without checking that the degrees are equal, and treating $\\tfrac{|x|}{x}$ as $1$ in (B) by only considering $x>0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols(\"x\")\nprint(sp.limit(sp.sin(4*x)/sp.sin(2*x),x,0),\n      sp.limit(sp.Abs(x)/x,x,0,\"+\"),sp.limit(sp.Abs(x)/x,x,0,\"-\"),\n      sp.limit((4*x**2+x)/(x**3+1),x,sp.oo),\n      sp.limit((x**2-1)/(x**3-1),x,1))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (the decomposition of expected test error) applied to a four-row table, plus two conceptual checks (irreducible error, direction of change); about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Expected squared error = bias^2 + variance + irreducible noise; comparing models of different complexity",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data scientist fits polynomial regression models of degree $d = 1, 2, 3, 4$ to data generated as $y = f(x) + \\varepsilon$, where the noise $\\varepsilon$ has mean $0$ and variance $\\sigma^2 = 0.50$ and is independent of the training data. At a fixed test input $x_0$, averaging over many random training sets gives the following squared bias and variance of the prediction $\\hat{f}(x_0)$.\n\n| Degree $d$ | $\\text{Bias}^2$ | Variance |\n|---|---|---|\n| 1 | 2.40 | 0.10 |\n| 2 | 1.10 | 0.25 |\n| 3 | 0.30 | 0.60 |\n| 4 | 0.20 | 1.35 |\n\nThe expected squared prediction error at $x_0$ is $E\\big[(y - \\hat{f}(x_0))^2\\big]$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Among the four models, the degree-3 model has the smallest expected squared prediction error at $x_0$."
+      },
+      {
+        "label": "B",
+        "text": "The degree-2 model has expected squared prediction error $1.35$ at $x_0$."
+      },
+      {
+        "label": "C",
+        "text": "No model of any degree, however much data it is trained on, can have expected squared prediction error below $0.50$ at $x_0$."
+      },
+      {
+        "label": "D",
+        "text": "Changing from the degree-4 model to the degree-3 model reduces both the squared bias and the variance at $x_0$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Expected squared error $=\\text{Bias}^2+\\text{Variance}+\\sigma^2$, giving $3.00,\\ 1.85,\\ 1.40,\\ 2.05$ for $d=1,2,3,4$: the minimum is at $d=3$.\nThe degree-2 value is $1.85$ (not $1.35$, which leaves out $\\sigma^2$). Since $\\sigma^2=0.50$ can never be removed, no model goes below $0.50$. Going from $d=4$ to $d=3$ lowers variance but raises bias.",
+      "steps": [
+        {
+          "title": "Decompose the expected error",
+          "body": "With $y=f(x_0)+\\varepsilon$ and $\\varepsilon$ independent of $\\hat{f}$,\n\n$$\nE\\big[(y-\\hat{f}(x_0))^2\\big]=\\text{Bias}^2+\\text{Variance}+\\sigma^2 .\n$$"
+        },
+        {
+          "title": "Compute the four totals",
+          "body": "| $d$ | $\\text{Bias}^2+\\text{Variance}+\\sigma^2$ | Total |\n|---|---|---|\n| 1 | $2.40+0.10+0.50$ | $3.00$ |\n| 2 | $1.10+0.25+0.50$ | $1.85$ |\n| 3 | $0.30+0.60+0.50$ | $1.40$ |\n| 4 | $0.20+1.35+0.50$ | $2.05$ |\n\nThe smallest total is $1.40$, at $d=3$. Statement (A) is true; the error falls and then rises, the typical U-shape."
+        },
+        {
+          "title": "Check statements (B) and (C)",
+          "body": "(B) $1.35=1.10+0.25$ is only $\\text{Bias}^2+\\text{Variance}$ for $d=2$; adding $\\sigma^2=0.50$ gives $1.85$. (B) is false.\n\n(C) Because $\\text{Bias}^2\\ge0$ and $\\text{Variance}\\ge0$, the expected error is at least $\\sigma^2=0.50$ for any predictor built from the training data. The noise is irreducible, so (C) is true."
+        },
+        {
+          "title": "Check statement (D)",
+          "body": "From $d=4$ to $d=3$: variance falls from $1.35$ to $0.60$, but $\\text{Bias}^2$ rises from $0.20$ to $0.30$. Only the variance is reduced, so (D) is false. The error still drops from $2.05$ to $1.40$ because the variance saving ($0.75$) outweighs the bias increase ($0.10$)."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The totals are $3.00$, $1.85$, $1.40$ and $2.05$ for $d=1,\\dots,4$, so $d=3$ is smallest."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$1.35$ is $\\text{Bias}^2+\\text{Variance}=1.10+0.25$ for $d=2$. The irreducible noise $\\sigma^2=0.50$ must be added, giving $1.85$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The expected squared error equals $\\text{Bias}^2+\\text{Variance}+\\sigma^2\\ge\\sigma^2=0.50$. More data or a better model cannot remove the noise term."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Variance falls ($1.35\\to0.60$) but squared bias rises ($0.20\\to0.30$): the simpler model is more biased. Only the variance is reduced."
+        }
+      ],
+      "commonTrap": "Forgetting the irreducible noise term and comparing $\\text{Bias}^2+\\text{Variance}$ alone (which is how the tempting value $1.35$ for $d=2$ arises), or assuming that a simpler model reduces both bias and variance."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C",
+      "agreesWithKey": true,
+      "checkCode": "s2=0.50\ntab={1:(2.40,0.10),2:(1.10,0.25),3:(0.30,0.60),4:(0.20,1.35)}\nerr={d:round(b+v+s2,2) for d,(b,v) in tab.items()}\nA=min(err,key=err.get)==3\nB=err[2]==1.35\nC=all(e>=s2 for e in err.values())\nD=tab[3][0]<tab[4][0] and tab[3][1]<tab[4][1]\nprint(err,dict(A=A,B=B,C=C,D=D))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (propositional entailment) solved by two direct modus ponens steps on a small knowledge base; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Propositional entailment: chaining modus ponens to find what a knowledge base entails",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A model-release checklist uses the following propositional variables:\n\n- $D$: the training data has been deduplicated,\n- $P$: the model passes the fairness audit,\n- $R$: the model is released,\n- $V$: the validation set is reused for tuning.\n\nThe knowledge base is\n\n$$\nKB = \\{\\; P \\to R,\\;\\; (D \\land R) \\to \\lnot V,\\;\\; D,\\;\\; P \\;\\}.\n$$\n\nWhich one of the following formulas is entailed by $KB$, that is, true in every model of $KB$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$V$"
+      },
+      {
+        "label": "B",
+        "text": "$\\lnot R$"
+      },
+      {
+        "label": "C",
+        "text": "$\\lnot V$"
+      },
+      {
+        "label": "D",
+        "text": "$P \\to V$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "From $P$ and $P\\to R$ we get $R$ by modus ponens. Then $D\\land R$ holds, and $(D\\land R)\\to\\lnot V$ gives $\\lnot V$.\nSo the only model of $KB$ has $D=P=R=\\text{true}$ and $V=\\text{false}$, and $\\lnot V$ is the only option true in it.",
+      "steps": [
+        {
+          "title": "Derive R",
+          "body": "$KB$ contains $P$ and $P\\to R$. Modus ponens gives $R$, so every model of $KB$ makes $R$ true."
+        },
+        {
+          "title": "Derive not V",
+          "body": "Now $D$ and $R$ are both true, so $D\\land R$ is true. With $(D\\land R)\\to\\lnot V$, modus ponens gives $\\lnot V$, so $V$ is false in every model."
+        },
+        {
+          "title": "The models of KB",
+          "body": "All four variables are forced: $D=\\text{T}$, $P=\\text{T}$, $R=\\text{T}$, $V=\\text{F}$. So $KB$ has exactly one model, and a formula is entailed exactly when it is true in that model."
+        },
+        {
+          "title": "Evaluate the options in that model",
+          "body": "| Option | Value at $D=P=R=\\text{T},\\ V=\\text{F}$ |\n|---|---|\n| $V$ | F |\n| $\\lnot R$ | F |\n| $\\lnot V$ | T |\n| $P\\to V$ | $\\text{T}\\to\\text{F}=$ F |\n\nOnly $\\lnot V$ is entailed, so the correct choice is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$V$ is false in the only model of $KB$: $D\\land R$ is forced true, so the rule $(D\\land R)\\to\\lnot V$ forces $V$ false."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$R$ is derived from $P$ and $P\\to R$, so $\\lnot R$ is false in every model of $KB$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$R$ follows from $P\\to R$ and $P$; then $D\\land R$ holds and $(D\\land R)\\to\\lnot V$ gives $\\lnot V$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$P$ is true and $V$ is false in the model, so $P\\to V$ is false there. It is not entailed (in fact its negation is)."
+        }
+      ],
+      "commonTrap": "Not chaining the rules: $R$ is not stated directly, so the second rule seems not to apply until $R$ has been derived from $P\\to R$ and $P$. Students also misread $(D\\land R)\\to\\lnot V$ and conclude $V$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: not V",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nms=[m for m in product([False,True],repeat=4) if imp(m[0],m[1]) and imp(m[2] and m[1],not m[3]) and m[2] and m[0]]  # (P,R,D,V)\nopts={\"A\":lambda P,R,D,V:V,\"B\":lambda P,R,D,V:not R,\"C\":lambda P,R,D,V:not V,\"D\":lambda P,R,D,V:imp(P,V)}\nprint(ms,{k:all(f(*m) for m in ms) for k,f in opts.items()})",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-mlp",
+      "ml-feedforward"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (a small multi-layer perceptron with step units) needing a four-row truth-table trace, a parameter count, a substitution of activations and a linear-separability argument; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Small MLP with step units computing XOR: truth-table evaluation, parameter count, effect of a linear activation, need for a hidden layer",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A multi-layer perceptron has two binary inputs $x_1, x_2 \\in \\{0, 1\\}$, two hidden units and one output unit. Every unit uses the step activation $H(z) = 1$ if $z > 0$ and $H(z) = 0$ otherwise. The units compute\n\n$$\nh_1 = H(x_1 + x_2 - 0.5), \\qquad h_2 = H(x_1 + x_2 - 1.5), \\qquad o = H(h_1 - h_2 - 0.5).\n$$\n\nEvery weight and every bias (the constants $-0.5$, $-1.5$ and $-0.5$) is a trainable parameter.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "For every $(x_1, x_2) \\in \\{0,1\\}^2$, the output $o$ equals $x_1 \\oplus x_2$ (exclusive OR)."
+      },
+      {
+        "label": "B",
+        "text": "The network has $9$ trainable parameters."
+      },
+      {
+        "label": "C",
+        "text": "If the two hidden step activations are replaced by the identity activation $g(z) = z$, keeping the same weights and biases and the step activation at the output, the network still computes $x_1 \\oplus x_2$."
+      },
+      {
+        "label": "D",
+        "text": "No single step-activation unit applied directly to $(x_1, x_2)$, for any choice of weights and bias, can compute $x_1 \\oplus x_2$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Evaluating the four inputs gives outputs $0,1,1,0$, which is XOR (A true). Parameters: hidden $2\\cdot2+2=6$, output $2\\cdot1+1=3$, total $9$ (B true).\nWith identity hidden units, $h_1-h_2=1$ for every input, so $o=H(0.5)=1$ constantly (C false). XOR is not linearly separable, so one step unit cannot compute it (D true).",
+      "steps": [
+        {
+          "title": "Truth table of the network",
+          "body": "| $x_1$ | $x_2$ | $x_1+x_2$ | $h_1$ | $h_2$ | $h_1-h_2-0.5$ | $o$ |\n|---|---|---|---|---|---|---|\n| 0 | 0 | 0 | $H(-0.5)=0$ | $H(-1.5)=0$ | $-0.5$ | 0 |\n| 0 | 1 | 1 | $H(0.5)=1$ | $H(-0.5)=0$ | $0.5$ | 1 |\n| 1 | 0 | 1 | $1$ | $0$ | $0.5$ | 1 |\n| 1 | 1 | 2 | $H(1.5)=1$ | $H(0.5)=1$ | $-0.5$ | 0 |\n\nThe output is $0,1,1,0$, which is $x_1\\oplus x_2$. Statement (A) is true."
+        },
+        {
+          "title": "Count the parameters",
+          "body": "Hidden layer: two units, each with 2 weights and 1 bias, giving $2\\cdot2+2=6$ parameters. Output unit: 2 weights and 1 bias, giving $3$. Total $6+3=9$. Statement (B) is true."
+        },
+        {
+          "title": "Replace the hidden activations by the identity",
+          "body": "With $g(z)=z$: $h_1=x_1+x_2-0.5$ and $h_2=x_1+x_2-1.5$, so $h_1-h_2=1$ whatever the input. Then $o=H(1-0.5)=H(0.5)=1$ for all four inputs. The network outputs the constant $1$, not XOR. Statement (C) is false."
+        },
+        {
+          "title": "A single step unit cannot compute XOR",
+          "body": "Suppose $H(w_1x_1+w_2x_2+b)=x_1\\oplus x_2$. The four inputs would require\n\n$$\nb\\le 0,\\qquad w_1+b>0,\\qquad w_2+b>0,\\qquad w_1+w_2+b\\le 0 .\n$$\n\nAdding the middle two inequalities gives $w_1+w_2+2b>0$. The last inequality gives $w_1+w_2\\le -b$, so $0<w_1+w_2+2b\\le -b+2b=b$, that is $b>0$, contradicting $b\\le0$. Geometrically, XOR is not linearly separable, so (D) is true."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The four inputs $(0,0),(0,1),(1,0),(1,1)$ give outputs $0,1,1,0$, exactly XOR."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Hidden layer: $2\\times2$ weights $+\\,2$ biases $=6$; output layer: $2$ weights $+\\,1$ bias $=3$; total $9$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "With identity hidden units $h_1-h_2=(x_1+x_2-0.5)-(x_1+x_2-1.5)=1$ always, so $o=H(0.5)=1$ for every input. The step activations in the hidden layer are what make the network non-linear."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "A single step unit separates the plane by a line. The XOR points $(0,1),(1,0)$ (output 1) and $(0,0),(1,1)$ (output 0) cannot be separated by any line, so no weights and bias work."
+        }
+      ],
+      "commonTrap": "Believing that the hidden layer is not needed (or that replacing its step units by identity units changes nothing important). Without a non-linear hidden activation the whole network collapses to a single linear-threshold unit and cannot represent XOR."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D",
+      "agreesWithKey": true,
+      "checkCode": "H=lambda z:1 if z>0 else 0\nins=[(a,b) for a in (0,1) for b in (0,1)]\nnet=lambda a,b,g=H:H(g(a+b-0.5)-g(a+b-1.5)-0.5)\nA=all(net(a,b)==(a^b) for a,b in ins)\nB=(2*2+2)+(2*1+1)==9\nC=all(net(a,b,g=lambda z:z)==(a^b) for a,b in ins)\nv=[i/4 for i in range(-24,25)]\nD=not any(all(H(w1*a+w2*b+c)==(a^b) for a,b in ins) for w1 in v for w2 in v for c in v)\nprint(dict(A=A,B=B,C=C,D=D),[net(a,b,g=lambda z:z) for a,b in ins])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-gaussian-elimination"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (Gaussian elimination) with routine but error-prone arithmetic: three row operations with sign changes, then back substitution with fractions; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Gaussian elimination to upper triangular form and back substitution on a 3x3 system with fractional solution",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the system of linear equations\n\n$$\n\\begin{aligned}\n2x + 3y + z &= 5 \\\\\n4x + 5y - 3z &= 2 \\\\\n-2x + y + 6z &= 7\n\\end{aligned}\n$$\n\nSolve the system by Gaussian elimination (forward elimination to an upper triangular system, followed by back substitution). The value of $x + y + z$ is ________ (rounded off to **two** decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3.11,
+      "max": 3.13
+    },
+    "solution": {
+      "quick": "Eliminate with $R_2\\leftarrow R_2-2R_1$, $R_3\\leftarrow R_3+R_1$, then $R_3\\leftarrow R_3+4R_2$ to reach $-13z=-20$.\nBack substitution gives $z=\\tfrac{20}{13}$, $y=\\tfrac{4}{13}$, $x=\\tfrac{33}{26}$, so $x+y+z=\\tfrac{81}{26}\\approx3.12$.",
+      "steps": [
+        {
+          "title": "Augmented matrix",
+          "body": "$$\n\\left[\\begin{array}{rrr|r}\n2 & 3 & 1 & 5\\\\\n4 & 5 & -3 & 2\\\\\n-2 & 1 & 6 & 7\n\\end{array}\\right]\n$$"
+        },
+        {
+          "title": "Eliminate below the first pivot",
+          "body": "The multipliers are $\\tfrac42=2$ and $\\tfrac{-2}{2}=-1$.\n\n- $R_2\\leftarrow R_2-2R_1$: $(4-4,\\ 5-6,\\ -3-2\\mid 2-10)=(0,\\,-1,\\,-5\\mid-8)$\n- $R_3\\leftarrow R_3+R_1$: $(-2+2,\\ 1+3,\\ 6+1\\mid 7+5)=(0,\\,4,\\,7\\mid 12)$"
+        },
+        {
+          "title": "Eliminate below the second pivot",
+          "body": "The second pivot is $-1$ and the multiplier is $\\tfrac{4}{-1}=-4$, so $R_3\\leftarrow R_3+4R_2$:\n\n$$\n(0,\\ 4-4,\\ 7-20\\mid 12-32)=(0,\\ 0,\\ -13\\mid -20).\n$$\n\nThe upper triangular system is $2x+3y+z=5$, $-y-5z=-8$, $-13z=-20$."
+        },
+        {
+          "title": "Back substitution",
+          "body": "$$\nz=\\frac{20}{13},\\qquad y=8-5z=8-\\frac{100}{13}=\\frac{4}{13},\\qquad\nx=\\frac{5-3y-z}{2}=\\frac{5-\\tfrac{12}{13}-\\tfrac{20}{13}}{2}=\\frac{33}{26}.\n$$\n\nCheck in the second equation: $4\\cdot\\tfrac{33}{26}+5\\cdot\\tfrac{4}{13}-3\\cdot\\tfrac{20}{13}=\\tfrac{66+20-60}{13}=2$, which matches the right-hand side."
+        },
+        {
+          "title": "Sum",
+          "body": "$$\nx+y+z=\\frac{33}{26}+\\frac{8}{26}+\\frac{40}{26}=\\frac{81}{26}=3.1153\\ldots\\approx 3.12 .\n$$"
+        }
+      ],
+      "finalAnswer": "**3.12** (accepted range 3.11 to 3.13)",
+      "commonTrap": "Sign errors caused by the negative entries. The second-stage multiplier is $\\tfrac{4}{-1}=-4$, so the operation is $R_3+4R_2$ (using $R_3-4R_2$ does not clear the entry), and in $R_2$ the third entry is $-3-2=-5$. Substituting the result back into all three original equations catches such slips."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "81/26 = 3.1154, i.e. 3.12",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as Fr\nA=[[2,3,1],[4,5,-3],[-2,1,6]]; b=[5,2,7]; n=3\nM=[[Fr(v) for v in r]+[Fr(c)] for r,c in zip(A,b)]\nfor c in range(n):\n    for r in range(c+1,n):\n        m=M[r][c]/M[c][c]; M[r]=[u-m*v for u,v in zip(M[r],M[c])]\nx=[0]*n\nfor i in reversed(range(n)):\n    x[i]=(M[i][n]-sum(M[i][j]*x[j] for j in range(i+1,n)))/M[i][i]\nprint([str(v) for v in x],sum(x),round(float(sum(x)),2),all(sum(A[i][j]*x[j] for j in range(n))==b[i] for i in range(n)))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M14-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-14",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (candidate keys and prime attributes) found by a direct attribute-closure search on five attributes; about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Candidate keys via attribute closure and prime attributes (attributes belonging to some candidate key)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E)$ with the set of functional dependencies\n\n$$\nF = \\{\\, A \\to B,\\;\\; C \\to D,\\;\\; BD \\to E,\\;\\; E \\to A \\,\\}.\n$$\n\nAn attribute is called *prime* if it belongs to at least one candidate key of $R$.\n\nThe number of prime attributes of $R$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 4,
+      "max": 4
+    },
+    "solution": {
+      "quick": "$C$ never appears on a right-hand side, so it lies in every key, and $\\{C\\}^+=\\{C,D\\}$ is not enough. Adding $A$, $B$ or $E$ each gives closure $\\{A,B,C,D,E\\}$, so the candidate keys are $AC$, $BC$ and $CE$.\nThe prime attributes are $A,B,C,E$; only $D$ is non-prime. The count is $4$.",
+      "steps": [
+        {
+          "title": "Attributes that must be in every key",
+          "body": "No dependency has $C$ on its right-hand side, so nothing can determine $C$; $C$ belongs to every candidate key. Start from $C$: $\\{C\\}^+=\\{C,D\\}$ (using $C\\to D$), which is not all of $R$, so at least one more attribute is needed."
+        },
+        {
+          "title": "Add one more attribute to C",
+          "body": "- $\\{A,C\\}^+$: $A\\to B$ gives $B$; $C\\to D$ gives $D$; $BD\\to E$ gives $E$. Closure $=\\{A,B,C,D,E\\}$, so $AC$ is a key.\n- $\\{B,C\\}^+$: $C\\to D$ gives $D$; $BD\\to E$ gives $E$; $E\\to A$ gives $A$. Closure $=R$, so $BC$ is a key.\n- $\\{C,E\\}^+$: $E\\to A$ gives $A$; $A\\to B$ gives $B$; $C\\to D$ gives $D$. Closure $=R$, so $CE$ is a key.\n- $\\{C,D\\}^+=\\{C,D\\}$: not a key."
+        },
+        {
+          "title": "Minimality and the list of keys",
+          "body": "$AC$, $BC$ and $CE$ have two attributes and no single attribute is a key (every key contains $C$ and $\\{C\\}^+\\ne R$), so all three are minimal. Any key containing $D$ would be $\\{C,D,X\\}$ with $X\\in\\{A,B,E\\}$, which contains a smaller key. The candidate keys are exactly $AC$, $BC$, $CE$."
+        },
+        {
+          "title": "Count the prime attributes",
+          "body": "The union of the keys is $\\{A,B,C,E\\}$. Attribute $D$ is in no candidate key, so it is non-prime. The number of prime attributes is $4$."
+        }
+      ],
+      "finalAnswer": "**4**",
+      "commonTrap": "Stopping after finding one key ($AC$) and counting only its attributes (giving $2$), or reporting the number of candidate keys ($3$) instead of the number of attributes that occur in some key."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nR=set(\"ABCDE\"); F=[(\"A\",\"B\"),(\"C\",\"D\"),(\"BD\",\"E\"),(\"E\",\"A\")]\ndef cl(s):\n    s=set(s)\n    while True:\n        n=set(s)\n        for l,r in F:\n            if set(l)<=n: n|=set(r)\n        if n==s: return s\n        s=n\nsk=[set(c) for k in range(1,6) for c in combinations(\"ABCDE\",k) if cl(c)==R]\nkeys=[k for k in sk if not any(o<k for o in sk)]\nprint(sorted(\"\".join(sorted(k)) for k in keys),len(set().union(*keys)))",
+      "notes": ""
+    }
+  }
+]

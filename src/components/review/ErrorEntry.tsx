@@ -2,7 +2,7 @@
 /**
  * One error-log entry, editable in place: mistake type, correct concept,
  * note (saved on blur) and revision status, all through updateErrorLog.
- * Rendered as a card on phones and as a two-row table body on wider screens.
+ * Rendered as a card on phones, tablets and narrow laptops, and as a two-row table body on wide screens.
  */
 import Link from "next/link";
 import type { ErrorLogRow, MistakeType } from "@/lib/userdata/db";
@@ -11,9 +11,9 @@ import { useUserData } from "@/lib/userdata/hooks";
 import { updateErrorLog } from "@/lib/userdata/ops";
 import { OriginBadge } from "@/components/question/badges";
 import { SUBJECT_SHORT } from "@/lib/labels";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { BlurField, SelectField } from "./fields";
-import { dayOf, isWithdrawnMockQuestion } from "./shared";
+import { dayOf, isWithdrawnMockQuestion, questionHref } from "./shared";
 
 export type RevisionStatus = ErrorLogRow["revisionStatus"];
 export const STATUS_LABEL: Record<RevisionStatus, string> = { open: "Open", revising: "Revising", resolved: "Resolved" };
@@ -50,7 +50,7 @@ function QuestionCell({ entry, ctx }: { entry: ErrorLogRow; ctx: EntryContext })
         {withdrawn ? (
           <span className="font-medium text-fg">{entry.title}</span>
         ) : (
-          <Link href={`/questions/${entry.questionId}`} className="font-medium text-fg hover:underline">
+          <Link href={questionHref(entry.questionId)} className="break-words font-medium text-fg hover:underline">
             {entry.title}
           </Link>
         )}
@@ -63,9 +63,9 @@ function QuestionCell({ entry, ctx }: { entry: ErrorLogRow; ctx: EntryContext })
   );
 }
 
-function Answers({ entry }: { entry: ErrorLogRow }) {
+function Answers({ entry, stacked = false }: { entry: ErrorLogRow; stacked?: boolean }) {
   return (
-    <dl className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-sm md:grid-cols-1">
+    <dl className={cn("grid gap-x-3 gap-y-0.5 text-sm", stacked ? "grid-cols-1" : "grid-cols-2")}>
       <div className="min-w-0">
         <dt className="text-xs text-fg-3">Your answer</dt>
         <dd className="tnum break-words font-semibold text-danger">{entry.yourAnswer || "—"}</dd>
@@ -84,32 +84,36 @@ function dates(entry: ErrorLogRow) {
   return { created: formatDate(created), updated: updated !== created ? formatDate(updated) : null };
 }
 
-/** Phone layout. */
+/** Card layout (phones and tablets): one column, two from md up. */
 export function ErrorCard({ entry, ctx }: { entry: ErrorLogRow; ctx: EntryContext }) {
   const { canEdit, save } = useSave(entry);
   const p = `m-${entry.id}`;
   const d = dates(entry);
   return (
-    <li className="space-y-3 rounded-[var(--radius)] border border-border bg-surface p-4">
-      <div className="flex items-start justify-between gap-3">
-        <QuestionCell entry={entry} ctx={ctx} />
-        <p className="shrink-0 text-right text-xs text-fg-3">
-          <time dateTime={entry.createdAt}>{d.created}</time>
-          {d.updated ? <span className="block">edited {d.updated}</span> : null}
-        </p>
+    <li className="grid gap-x-6 gap-y-3 rounded-[var(--radius)] border border-border bg-surface p-4 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="min-w-0 space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <QuestionCell entry={entry} ctx={ctx} />
+          <p className="shrink-0 text-right text-xs text-fg-3">
+            <time dateTime={entry.createdAt}>{d.created}</time>
+            {d.updated ? <span className="block">edited {d.updated}</span> : null}
+          </p>
+        </div>
+        <Answers entry={entry} />
       </div>
-      <Answers entry={entry} />
-      <div className="grid gap-3 min-[360px]:grid-cols-2">
-        <SelectField id={`${p}-type`} label="Mistake type" srContext={entry.title} value={entry.mistakeType ?? ""} options={MISTAKE_OPTIONS} disabled={!canEdit} onSave={(v) => save({ mistakeType: v || null })} />
-        <SelectField id={`${p}-status`} label="Revision status" srContext={entry.title} value={entry.revisionStatus} options={STATUS_OPTIONS} disabled={!canEdit} onSave={(v) => save({ revisionStatus: v })} />
+      <div className="min-w-0 space-y-3">
+        <div className="grid gap-3 min-[360px]:grid-cols-2">
+          <SelectField id={`${p}-type`} label="Mistake type" srContext={entry.title} value={entry.mistakeType ?? ""} options={MISTAKE_OPTIONS} disabled={!canEdit} onSave={(v) => save({ mistakeType: v || null })} />
+          <SelectField id={`${p}-status`} label="Revision status" srContext={entry.title} value={entry.revisionStatus} options={STATUS_OPTIONS} disabled={!canEdit} onSave={(v) => save({ revisionStatus: v })} />
+        </div>
+        <BlurField id={`${p}-concept`} label="Correct concept" srContext={entry.title} value={entry.correctConcept} list={ctx.conceptListId} disabled={!canEdit} placeholder="What the question tests" onSave={(v) => save({ correctConcept: v })} />
+        <BlurField id={`${p}-note`} label="Your note" srContext={entry.title} value={entry.note} multiline disabled={!canEdit} placeholder="What will you do differently next time?" onSave={(v) => save({ note: v })} />
       </div>
-      <BlurField id={`${p}-concept`} label="Correct concept" srContext={entry.title} value={entry.correctConcept} list={ctx.conceptListId} disabled={!canEdit} placeholder="What the question tests" onSave={(v) => save({ correctConcept: v })} />
-      <BlurField id={`${p}-note`} label="Your note" srContext={entry.title} value={entry.note} multiline disabled={!canEdit} placeholder="What will you do differently next time?" onSave={(v) => save({ note: v })} />
     </li>
   );
 }
 
-/** Table layout: a <tbody> of two rows per entry. */
+/** Table layout (wide screens): a <tbody> of two rows per entry. */
 export function ErrorTableBody({ entry, ctx }: { entry: ErrorLogRow; ctx: EntryContext }) {
   const { canEdit, save } = useSave(entry);
   const p = `t-${entry.id}`;
@@ -121,7 +125,7 @@ export function ErrorTableBody({ entry, ctx }: { entry: ErrorLogRow; ctx: EntryC
           <QuestionCell entry={entry} ctx={ctx} />
         </td>
         <td className="px-3 pb-2 pt-3">
-          <Answers entry={entry} />
+          <Answers entry={entry} stacked />
         </td>
         <td className="px-3 pb-2 pt-3">
           <SelectField id={`${p}-type`} label={`Mistake type for ${entry.title}`} srOnlyLabel value={entry.mistakeType ?? ""} options={MISTAKE_OPTIONS} disabled={!canEdit} onSave={(v) => save({ mistakeType: v || null })} />

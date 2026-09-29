@@ -4,7 +4,7 @@ import { useId, useMemo, useState, type ReactNode } from "react";
 import { RotateCcw, SlidersHorizontal } from "lucide-react";
 import type { SubjectId } from "@/lib/content/schema";
 import { MISTAKE_LABELS, MISTAKE_TYPES, type ErrorLogRow, type MistakeType } from "@/lib/userdata/db";
-import { useErrorLogs, useSetting, useUserData } from "@/lib/userdata/hooks";
+import { useDbQuery, useErrorLogs, useUserData } from "@/lib/userdata/hooks";
 import { addToRevision, updateErrorLog } from "@/lib/userdata/ops";
 import { SUBJECT_COLOR, SUBJECT_SHORT } from "@/lib/labels";
 import { cn, pct, plural } from "@/lib/utils";
@@ -29,6 +29,9 @@ interface Filters {
 const NO_FILTERS: Filters = { subject: "", topic: "", mistake: "", status: "", from: "", to: "" };
 const PAGE = 50;
 
+const isValidEntry = (e: ErrorLogRow) =>
+  e.id !== undefined && typeof e.questionId === "string" && typeof e.title === "string" && typeof e.createdAt === "string" && STATUSES.includes(e.revisionStatus);
+
 function matches(e: ErrorLogRow, f: Filters): boolean {
   if (f.subject && e.subjectId !== f.subject) return false;
   if (f.topic && e.topicId !== f.topic) return false;
@@ -42,10 +45,14 @@ function matches(e: ErrorLogRow, f: Filters): boolean {
 
 export function ErrorLogClient({ taxonomy, conceptSuggestions, availableMocks }: { taxonomy: ReviewTaxonomy; conceptSuggestions: string[]; availableMocks: string[] }) {
   const { db } = useUserData();
-  const entries = useErrorLogs();
-  const status = useTableStatus("errorLogs", entries);
-  const [autoLog] = useSetting("autoErrorLog", true);
-  const wide = useMediaQuery("(min-width: 768px)", true);
+  const rows = useErrorLogs();
+  const status = useTableStatus("errorLogs", rows);
+  // Rows can come from an imported backup file: skip anything that is not a well-formed entry.
+  const entries = useMemo(() => rows.filter(isValidEntry), [rows]);
+  // null until the setting has been read, so the page never states the wrong value while loading. Default: on.
+  const autoLog = useDbQuery((db) => db.settings.get("autoErrorLog").then((r) => (r ? r.value !== false : true)), [], null as boolean | null);
+  // The table needs about 1000px of content width; below that (phones, tablets, laptops with the sidebar) entries are cards.
+  const wide = useMediaQuery("(min-width: 1200px)", true);
   const [filters, setFilters] = useState<Filters>(NO_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [limit, setLimit] = useState(PAGE);
@@ -82,11 +89,13 @@ export function ErrorLogClient({ taxonomy, conceptSuggestions, availableMocks }:
 
   const autoNote = (
     <>
-      Incorrect answers to official PYQs, mock-test questions and practice questions are added here automatically while automatic error logging is on in{" "}
+      Incorrect answers to official PYQs, mock-test questions and practice questions are added here automatically while “Add incorrect answers to the error log
+      automatically” is on in{" "}
       <Link href="/settings" className="font-medium text-accent-text underline">
         Settings
       </Link>{" "}
-      (on by default; <strong className="text-fg">currently {autoLog ? "on" : "off"}</strong>). Use “Add to error log” on any question to log one yourself. A repeated mistake on
+      (on by default{autoLog === null ? "" : "; "}
+      {autoLog === null ? null : <strong className="text-fg">currently {autoLog ? "on" : "off"}</strong>}). Use “Add to error log” on any question to log one yourself. A repeated mistake on
       the same question updates its open entry.
     </>
   );
@@ -105,7 +114,7 @@ export function ErrorLogClient({ taxonomy, conceptSuggestions, availableMocks }:
             </div>
           }
         >
-          {autoLog
+          {autoLog !== false
             ? "Answer questions and every incorrect answer is logged here automatically. Then classify each mistake to see your patterns and send the questions back to revision."
             : "Automatic error logging is off, so incorrect answers are not logged for you. Turn it on in Settings, or use “Add to error log” on a question."}
         </EmptyState>
@@ -157,7 +166,7 @@ export function ErrorLogClient({ taxonomy, conceptSuggestions, availableMocks }:
       <section aria-label="Error log summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Entries" value={entries.length} hint={counts.unclassified ? `${counts.unclassified} not classified yet` : "All classified"} />
         <Stat label="Open" value={counts.open} hint="Not yet revised" />
-        <Stat label="Revising" value={counts.revising} hint="In your revision queue" />
+        <Stat label="Revising" value={counts.revising} hint="Marked as being revised" />
         <Stat label="Resolved" value={counts.resolved} hint={pct(entries.length ? counts.resolved / entries.length : null, 0) + " of entries"} />
       </section>
 

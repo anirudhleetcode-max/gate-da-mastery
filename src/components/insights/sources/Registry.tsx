@@ -134,9 +134,9 @@ export function PapersSection({ papers, sourceName, loaded }: { papers: ExamPape
   if (!papers.length) return <EmptyState title="No exam papers recorded">Add papers to content/exam/papers.json.</EmptyState>;
   const sorted = [...papers].sort((a, b) => b.examDate.localeCompare(a.examDate));
   return (
-    <div className="grid gap-3 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
       {sorted.map((p) => (
-        <Card key={p.id} className="flex flex-col p-4">
+        <Card key={p.id} className="flex min-w-0 flex-col p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <H3>GATE DA {p.year}</H3>
@@ -144,18 +144,19 @@ export function PapersSection({ papers, sourceName, loaded }: { papers: ExamPape
             </div>
             <VerificationBadge status={p.scheduleStatus} />
           </div>
-          <dl className="mt-3 grid grid-cols-[7.5rem_1fr] gap-x-3 gap-y-1.5 text-sm">
+          <dl className="mt-3 grid grid-cols-[7.5rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
             <dt className="text-fg-3">Exam date</dt>
             <dd>{formatDate(p.examDate)}</dd>
             <dt className="text-fg-3">Session · slot</dt>
             <dd>
-              Session {p.session} · {SLOT_LABEL[p.slot] ?? p.slot} <span className="whitespace-nowrap text-fg-3">({p.slotTime})</span>
+              Session {p.session} · {SLOT_LABEL[p.slot] ?? p.slot} <span className="block whitespace-nowrap text-fg-3">{p.slotTime}</span>
             </dd>
             <dt className="text-fg-3">Institute</dt>
             <dd>{p.organizingInstitute}</dd>
             <dt className="text-fg-3">Paper</dt>
             <dd>
-              {p.totalQuestions} questions · {formatMarks(p.totalMarks)} marks · {p.durationMinutes} min
+              <span className="whitespace-nowrap">{p.totalQuestions} questions</span> · <span className="whitespace-nowrap">{formatMarks(p.totalMarks)} marks</span> ·{" "}
+              <span className="whitespace-nowrap">{p.durationMinutes} min</span>
             </dd>
             <dt className="text-fg-3">On this platform</dt>
             <dd>

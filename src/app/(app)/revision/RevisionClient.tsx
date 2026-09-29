@@ -8,6 +8,7 @@ import { useRevisionItems, useUserData } from "@/lib/userdata/hooks";
 import { addToRevision, removeFromRevision } from "@/lib/userdata/ops";
 import { useProgressModel } from "@/lib/analytics/useProgress";
 import { isFrequentlyForgotten, MAX_EASE, MAX_INTERVAL_DAYS, MIN_EASE, START_EASE } from "@/lib/revision/schedule";
+import { WEAK_TOPIC_DEFAULTS } from "@/lib/analytics/stats";
 import { useStorageValue } from "@/lib/useStorage";
 import { SUBJECT_SHORT } from "@/lib/labels";
 import { cn, formatDate, pct, plural } from "@/lib/utils";
@@ -38,6 +39,19 @@ const PANEL_ID = "revision-queue-panel";
 
 const byDue = (a: RevisionItemRow, b: RevisionItemRow) => a.nextReview.localeCompare(b.nextReview) || a.createdAt.localeCompare(b.createdAt);
 
+const KINDS = new Set<RevisionItemRow["kind"]>(["question", "concept", "formula"]);
+/** Rows can come from an imported backup file: skip anything the scheduler cannot work with. */
+const isValidItem = (i: RevisionItemRow) =>
+  KINDS.has(i.kind) &&
+  typeof i.refId === "string" &&
+  typeof i.title === "string" &&
+  typeof i.nextReview === "string" &&
+  /^\d{4}-\d{2}-\d{2}$/.test(i.nextReview) &&
+  Array.isArray(i.reasons) &&
+  typeof i.createdAt === "string";
+
+const WEAK_RULE = `topics where you have given at least ${WEAK_TOPIC_DEFAULTS.minAttempts} scored answers with under ${Math.round(WEAK_TOPIC_DEFAULTS.threshold * 100)}% accuracy`;
+
 export interface RevisionClientProps {
   catalog: Catalog;
   concepts: ReviewConcept[];
@@ -52,14 +66,15 @@ export interface RevisionClientProps {
 export function RevisionClient(props: RevisionClientProps) {
   const { catalog, concepts, formulas, highWeight, availableMocks } = props;
   const { db } = useUserData();
-  const items = useRevisionItems();
+  const rows = useRevisionItems();
+  const items = useMemo(() => rows.filter(isValidItem), [rows]);
   const model = useProgressModel(catalog);
-  const revStatus = useTableStatus("revisionItems", items);
+  const revStatus = useTableStatus("revisionItems", rows);
   const attStatus = useTableStatus("attempts", model.attempts);
   const today = useToday();
   const [storedTab, setStoredTab] = useStorageValue(TAB_KEY, "session");
   const tab: QueueId = QUEUE_IDS.includes(storedTab as QueueId) ? (storedTab as QueueId) : "today";
-  const [session, setSession] = useState<{ title: string; keys: string[] } | null>(null);
+  const [session, setSession] = useState<{ title: string; keys: string[]; titles: Record<string, string> } | null>(null);
   const [notice, setNotice] = useState("");
   const panelHeading = useRef<HTMLHeadingElement>(null);
 
@@ -100,7 +115,7 @@ export function RevisionClient(props: RevisionClientProps) {
   const start = (title: string, list: RevisionItemRow[]) => {
     if (!list.length) return;
     setNotice("");
-    setSession({ title, keys: list.map((i) => i.key) });
+    setSession({ title, keys: list.map((i) => i.key), titles: Object.fromEntries(list.map((i) => [i.key, i.title])) });
     window.scrollTo({ top: 0 });
   };
 
@@ -109,6 +124,7 @@ export function RevisionClient(props: RevisionClientProps) {
       <RevisionSession
         title={session.title}
         keys={session.keys}
+        titles={session.titles}
         items={itemMap}
         today={today}
         concepts={conceptMap}
@@ -140,6 +156,8 @@ export function RevisionClient(props: RevisionClientProps) {
       const title = itemMap.get(key)?.title ?? "Item";
       await removeFromRevision(db, key);
       setNotice(`Removed “${title}” from your revision queue.`);
+      // The row (and its focused button) is gone: continue from the queue heading.
+      requestAnimationFrame(() => panelHeading.current?.focus());
     },
   };
 
@@ -150,17 +168,29 @@ export function RevisionClient(props: RevisionClientProps) {
   const upcoming = items.filter((i) => i.nextReview > today && i.nextReview <= week);
   const questionsInQueue = items.filter((i) => i.kind === "question").length;
 
-  const tabs: QueueTab<QueueId>[] = QUEUE_IDS.map((id) => ({ id, label: QUEUE_LABEL[id], count: queues[id].length, emphasis: id === "today" && overdue > 0 }));
+  const tabs: QueueTab<QueueId>[] = QUEUE_IDS.map((id) => ({
+    id,
+    label: QUEUE_LABEL[id],
+    count: queues[id].length,
+    emphasis: id === "today" && overdue > 0,
+    emphasisLabel: `${overdue} overdue`,
+  }));
   const current = queues[tab];
 
   return (
     <div className="space-y-6">
-      <section aria-label="Revision summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat label="Due today" value={queues.today.length} hint={items.length ? (overdue ? `${overdue} overdue` : "Nothing overdue") : "Queue is empty"} />
-        <Stat label="Reviewed today" value={reviewedToday} hint={reviewedToday ? "Graded today" : "No reviews yet today"} />
-        <Stat label="In your queue" value={items.length} hint={`${plural(questionsInQueue, "question")}${items.length - questionsInQueue ? ` + ${items.length - questionsInQueue} more` : ""}`} />
-        <Stat label="Next 7 days" value={upcoming.length} hint={`Tomorrow: ${upcoming.filter((i) => i.nextReview === tomorrow).length}`} />
-      </section>
+      {items.length ? (
+        <section aria-label="Revision summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <Stat label="Due today" value={queues.today.length} hint={overdue ? `${overdue} overdue` : "Nothing overdue"} />
+          <Stat label="Reviewed today" value={reviewedToday} hint={reviewedToday ? "Graded today" : "No reviews yet today"} />
+          <Stat
+            label="In your queue"
+            value={items.length}
+            hint={`${plural(questionsInQueue, "question")}${items.length - questionsInQueue ? ` + ${plural(items.length - questionsInQueue, "concept or formula", "concepts or formulas")}` : ""}`}
+          />
+          <Stat label="Next 7 days" value={upcoming.length} hint={`Due tomorrow: ${upcoming.filter((i) => i.nextReview === tomorrow).length}`} />
+        </section>
+      ) : null}
 
       <p role="status" aria-live="polite" className={cn("text-sm text-fg-2", !notice && "sr-only")}>
         {notice}
@@ -196,7 +226,7 @@ export function RevisionClient(props: RevisionClientProps) {
               </div>
               <div className="flex flex-wrap gap-2">
                 {tab === "pyq" && current.length ? (
-                  <ButtonLink href={`/practice?ids=${current.slice(0, 100).map((i) => i.refId).join(",")}`} className="max-sm:h-10">
+                  <ButtonLink href={`/practice?ids=${current.slice(0, 100).map((i) => encodeURIComponent(i.refId)).join(",")}`} className="max-sm:h-10">
                     <RotateCcw aria-hidden className="h-4 w-4" /> Reattempt as a practice set
                   </ButtonLink>
                 ) : null}
@@ -244,11 +274,15 @@ function QueueDescription({ id, highWeight, highWeightThreshold, paperCount }: {
     case "today":
       return <>Items due today or overdue, oldest first. New items and fresh mistakes are due the day they are added.</>;
     case "weak":
-      return <>Items in your weak topics: topics where you have given at least 3 answers with under 70% accuracy (your own attempts, ranked by a confidence-adjusted accuracy).</>;
+      return (
+        <>
+          Items in your weak topics: {WEAK_RULE}. Up to {WEAK_TOPIC_DEFAULTS.limit} topics are listed, weakest first (ranked by a confidence-adjusted accuracy of your own attempts).
+        </>
+      );
     case "incorrect":
       return <>Questions you have answered incorrectly. Incorrect answers are added to revision automatically.</>;
     case "forgotten":
-      return <>Items you have graded Forgot at least twice, or graded Forgot again after two or more reviews.</>;
+      return <>Items you have forgotten at least twice, or graded Forgot on their latest review after two or more reviews.</>;
     case "high":
       return (
         <>
@@ -282,7 +316,7 @@ function QueuePanel({
     if (!model.weak.length) {
       return (
         <EmptyState title="No weak topics right now" action={<ButtonLink href="/practice">Build a practice set</ButtonLink>}>
-          A topic counts as weak once you have given at least 3 answers in it with under 70% accuracy. Keep practising; weak topics and their revision items will show up here.
+          Weak topics are {WEAK_RULE}. None of your topics meets that yet. Keep practising: weak topics and their revision items will show up here.
         </EmptyState>
       );
     }
@@ -396,7 +430,7 @@ function QueuePanel({
       },
       forgotten: {
         title: "Nothing is frequently forgotten",
-        body: "An item appears here after you grade it Forgot twice, or Forgot again after two or more reviews.",
+        body: "An item appears here after you have forgotten it twice, or when its latest grade is Forgot after two or more reviews.",
       },
       pyq: {
         title: "No official PYQs in your queue",
@@ -442,7 +476,7 @@ function HowItWorks() {
             The ease factor starts at {START_EASE}: Got it adds 0.05, Almost takes off 0.05 and Forgot takes off 0.20, within {MIN_EASE} to {MAX_EASE}.
           </li>
           <li>No interval is longer than {MAX_INTERVAL_DAYS} days, so everything comes back well before the exam.</li>
-          <li>Frequently forgotten: graded Forgot at least twice, or Forgot again after two or more reviews.</li>
+          <li>Frequently forgotten: forgotten at least twice, or graded Forgot on the latest of two or more reviews.</li>
         </ul>
       </CardBody>
     </Card>

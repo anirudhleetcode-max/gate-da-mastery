@@ -80,7 +80,7 @@ export function OfficialMethod({ stats, keys, freeze, sourceName }: { stats: Pyq
         <div className="space-y-2">
           <H3>Official answer-key tables</H3>
           <Card>
-            <div className="overflow-x-auto">
+            <div role="region" aria-label="Official answer-key tables" tabIndex={0} className="relative overflow-x-auto">
               <table className="w-full text-sm">
                 <caption className="sr-only">Official answer-key tables used for the cross-check</caption>
                 <thead>
@@ -378,13 +378,26 @@ const RUBRIC: { level: keyof typeof DIFFICULTY_LABEL; criteria: string }[] = [
   { level: "VERY_HARD", criteria: "Multi-concept synthesis that needs a non-obvious insight and error-prone computation; more than 5 minutes for most students." },
 ];
 
-export function Rubrics({ halfLifeDays, minAttempts, papers, confidence }: { halfLifeDays: number; minAttempts: number; papers: number; confidence: string }) {
+export function Rubrics({
+  halfLifeDays,
+  weights,
+  masteryNote,
+  papers,
+  confidence,
+}: {
+  halfLifeDays: number;
+  weights: { accuracy: number; pyqCoverage: number; revisionHealth: number };
+  masteryNote: string;
+  papers: number;
+  confidence: string;
+}) {
+  const pctOf = (w: number) => `${Math.round(w * 100)}%`;
   return (
     <div className="space-y-5">
       <Card className="p-4">
         <H3>Difficulty rubric (platform-estimated)</H3>
         <p className="mt-1 text-sm text-fg-2">GATE publishes no difficulty levels, so every difficulty label on this platform is an estimate with a one-sentence rationale naming the criteria it meets.</p>
-        <div className="mt-3 overflow-x-auto">
+        <div role="region" aria-label="Difficulty rubric" tabIndex={0} className="relative mt-3 overflow-x-auto">
           <table className="w-full text-sm">
             <caption className="sr-only">Difficulty rubric</caption>
             <thead>
@@ -400,10 +413,10 @@ export function Rubrics({ halfLifeDays, minAttempts, papers, confidence }: { hal
             <tbody>
               {RUBRIC.map((r) => (
                 <tr key={r.level} className="border-b border-border last:border-0">
-                  <th scope="row" className="py-2 pr-4 text-left font-medium">
+                  <th scope="row" className="py-2 pr-4 text-left align-top font-medium">
                     {DIFFICULTY_LABEL[r.level]}
                   </th>
-                  <td className="py-2 text-fg-2">{r.criteria}</td>
+                  <td className="py-2 align-top text-fg-2">{r.criteria}</td>
                 </tr>
               ))}
             </tbody>
@@ -418,21 +431,19 @@ export function Rubrics({ halfLifeDays, minAttempts, papers, confidence }: { hal
           <p className="mt-1 text-sm text-fg-2">A 0–100 score computed only from your own attempts on this device. It is not an official GATE metric and never predicts a score or rank.</p>
           <ul className="mt-3 space-y-2 text-sm">
             <li className="flex gap-3">
-              <span className="tnum w-12 shrink-0 font-semibold text-fg">60%</span>
+              <span className="tnum w-12 shrink-0 font-semibold text-fg">{pctOf(weights.accuracy)}</span>
               <span className="text-fg-2">Recency-weighted accuracy: each attempt&apos;s weight halves every {halfLifeDays} days.</span>
             </li>
             <li className="flex gap-3">
-              <span className="tnum w-12 shrink-0 font-semibold text-fg">25%</span>
+              <span className="tnum w-12 shrink-0 font-semibold text-fg">{pctOf(weights.pyqCoverage)}</span>
               <span className="text-fg-2">PYQ coverage: the share of the topic&apos;s official PYQs you have attempted (if the topic has no PYQs, this weight moves to accuracy).</span>
             </li>
             <li className="flex gap-3">
-              <span className="tnum w-12 shrink-0 font-semibold text-fg">15%</span>
+              <span className="tnum w-12 shrink-0 font-semibold text-fg">{pctOf(weights.revisionHealth)}</span>
               <span className="text-fg-2">Revision health: the share of the topic&apos;s revision items that are not overdue and were last graded “almost” or “got it” (if there are none, this weight moves to accuracy).</span>
             </li>
           </ul>
-          <p className="mt-3 text-sm text-fg-3">
-            Fewer than {minAttempts} scored attempts in a topic shows “Not enough data”. Levels: Needs work (&lt; 40), Developing (40–69), Proficient (70–84), Strong (85+).
-          </p>
+          <p className="mt-3 text-sm text-fg-3">{masteryNote}</p>
         </Card>
         <Card className="p-4">
           <H3>Historical weightage</H3>
@@ -446,7 +457,8 @@ export function Rubrics({ halfLifeDays, minAttempts, papers, confidence }: { hal
             <li>It is labelled a historical estimate. It describes past papers and does not predict the next one.</li>
           </ul>
           <p className="mt-3 text-sm text-fg-3">
-            Current basis: {plural(papers, "paper")}. {confidence}
+            {/* The confidence note from the weightage computation usually states the basis itself. */}
+            {confidence && /paper/i.test(confidence) ? confidence : `Current basis: ${plural(papers, "paper")}. ${confidence}`.trim()}
           </p>
           <Link href="/weightage" className="mt-2 inline-flex min-h-10 items-center gap-1 text-sm font-medium text-accent-text hover:underline">
             See the weightage page <ArrowRight aria-hidden className="h-4 w-4" />

@@ -10,6 +10,11 @@ import { OriginBadge } from "@/components/question/badges";
 import { TIER_LABEL, VERIFICATION_LABEL } from "@/lib/labels";
 import { ORIGINS, REVIEW_STATUSES, VERIFICATIONS, type AdminRow } from "./data";
 import { Num, REVIEW_LABEL, TableWrap, td, tdNum, th } from "./parts";
+import { cn } from "@/lib/utils";
+
+/** Narrow status columns may wrap their header onto two lines. */
+const thWrap = cn(th, "whitespace-normal px-2 text-right align-bottom");
+const tdTight = cn(tdNum, "px-2");
 
 export function InventoryTables({
   rows,
@@ -23,8 +28,8 @@ export function InventoryTables({
   const n = (f: (r: AdminRow) => boolean) => rows.filter(f).length;
   const originals = ORIGINS.filter((o) => o !== "OFFICIAL_PYQ");
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+      <Card className="min-w-0">
         <CardHeader as="h3" title="By subject and origin" description="All compiled questions (visible or not)." />
         <TableWrap label="Questions by subject and origin">
           <table className="w-full text-sm">
@@ -64,7 +69,7 @@ export function InventoryTables({
         </TableWrap>
       </Card>
 
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <Card>
           <CardHeader as="h3" title="Verification badge by origin" description="The weakest of source, transcription, answer and solution status." />
           <TableWrap label="Verification status by origin">
@@ -75,7 +80,7 @@ export function InventoryTables({
                     Origin
                   </th>
                   {VERIFICATIONS.map((v) => (
-                    <th key={v} scope="col" className={`${th} text-right`}>
+                    <th key={v} scope="col" className={thWrap}>
                       {VERIFICATION_LABEL[v]}
                     </th>
                   ))}
@@ -88,7 +93,7 @@ export function InventoryTables({
                       <OriginBadge origin={o} />
                     </th>
                     {VERIFICATIONS.map((v) => (
-                      <td key={v} className={tdNum}>
+                      <td key={v} className={tdTight}>
                         <Link href={`/admin?origin=${o}&verification=${v}#questions`} className="hover:underline">
                           <Num n={n((r) => r.origin === o && r.verification === v)} />
                         </Link>
@@ -110,7 +115,7 @@ export function InventoryTables({
                     Origin
                   </th>
                   {REVIEW_STATUSES.map((s) => (
-                    <th key={s} scope="col" className={`${th} text-right`}>
+                    <th key={s} scope="col" className={thWrap}>
                       {REVIEW_LABEL[s]}
                     </th>
                   ))}
@@ -123,7 +128,7 @@ export function InventoryTables({
                       <OriginBadge origin={o} />
                     </th>
                     {REVIEW_STATUSES.map((s) => (
-                      <td key={s} className={tdNum}>
+                      <td key={s} className={tdTight}>
                         <Link href={`/admin?origin=${o}&review=${s}#questions`} className="hover:underline">
                           <Num n={n((r) => r.origin === o && r.reviewStatus === s)} />
                         </Link>
@@ -234,7 +239,7 @@ export function MockAvailabilityTable({ mocks, rows }: { mocks: ContentBundle["m
                     ) : present < planned ? (
                       <Badge tone="warning">Incomplete</Badge>
                     ) : (
-                      <Badge tone="info">Verifying</Badge>
+                      <Badge tone="info">In review</Badge>
                     )}
                   </td>
                 </tr>

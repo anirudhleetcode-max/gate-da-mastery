@@ -1,0 +1,867 @@
+[
+  {
+    "id": "M13-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-hierarchical"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked steps (updating a dissimilarity table under complete linkage, then comparing three candidate merges); routine computation, about 1.5–2 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Agglomerative hierarchical clustering with complete linkage: cluster distance is the maximum pairwise dissimilarity",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retailer summarises the behaviour of five stores, $A$ to $E$, by the pairwise dissimilarities below (the table is symmetric and the diagonal is $0$).\n\n| | $A$ | $B$ | $C$ | $D$ | $E$ |\n|---|---|---|---|---|---|\n| $A$ | 0 | 2 | 6 | 9 | 10 |\n| $B$ | 2 | 0 | 5 | 8 | 9 |\n| $C$ | 6 | 5 | 0 | 4 | 7 |\n| $D$ | 9 | 8 | 4 | 0 | 3 |\n| $E$ | 10 | 9 | 7 | 3 | 0 |\n\nAgglomerative (bottom-up) hierarchical clustering with **complete linkage** is applied: the distance between two clusters is the *largest* dissimilarity between a member of one cluster and a member of the other. Every store starts as its own cluster and, at each step, the two closest clusters are merged.\n\nThe third merge (the one that reduces the number of clusters from three to two) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$C$ is merged with $\\{A, B\\}$ at distance $5$"
+      },
+      {
+        "label": "B",
+        "text": "$C$ is merged with $\\{D, E\\}$ at distance $4$"
+      },
+      {
+        "label": "C",
+        "text": "$C$ is merged with $\\{A, B\\}$ at distance $6$"
+      },
+      {
+        "label": "D",
+        "text": "$\\{A, B\\}$ is merged with $\\{D, E\\}$ at distance $8$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Complete linkage takes the maximum pairwise dissimilarity between clusters. The first two merges are $\\{A,B\\}$ (distance 2) and $\\{D,E\\}$ (distance 3).\nThen $d(\\{A,B\\},C)=\\max(6,5)=6$, $d(C,\\{D,E\\})=\\max(4,7)=7$ and $d(\\{A,B\\},\\{D,E\\})=10$, so $C$ joins $\\{A,B\\}$ at distance $6$.",
+      "steps": [
+        {
+          "title": "First merge: closest pair",
+          "body": "The smallest off-diagonal entry is $d(A,B)=2$, so the first merge is $\\{A,B\\}$ at distance $2$. The clusters are now $\\{A,B\\}$, $C$, $D$, $E$."
+        },
+        {
+          "title": "Update the distances and merge again",
+          "body": "With complete linkage:\n\n- $d(\\{A,B\\},C)=\\max(6,5)=6$\n- $d(\\{A,B\\},D)=\\max(9,8)=9$\n- $d(\\{A,B\\},E)=\\max(10,9)=10$\n\nThe other distances are unchanged: $d(C,D)=4$, $d(C,E)=7$, $d(D,E)=3$. The smallest is $d(D,E)=3$, so the second merge is $\\{D,E\\}$ at distance $3$."
+        },
+        {
+          "title": "Third merge",
+          "body": "The three clusters are $\\{A,B\\}$, $C$ and $\\{D,E\\}$. Their complete-linkage distances are\n\n- $d(\\{A,B\\},C)=\\max(6,5)=6$\n- $d(C,\\{D,E\\})=\\max(4,7)=7$\n- $d(\\{A,B\\},\\{D,E\\})=\\max(9,10,8,9)=10$\n\nThe minimum is $6$, so $C$ is merged with $\\{A,B\\}$ at distance $6$. Two clusters, $\\{A,B,C\\}$ and $\\{D,E\\}$, remain."
+        },
+        {
+          "title": "Compare with single linkage",
+          "body": "Single linkage would use the *smallest* pairwise dissimilarity: $d(C,\\{D,E\\})=\\min(4,7)=4<d(C,\\{A,B\\})=\\min(6,5)=5$, so $C$ would join $\\{D,E\\}$ instead. Complete linkage penalises $C$'s far member $E$ (distance 7) and $A$ (distance 6) differently, which changes the decision. The correct choice is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The cluster is right but the distance is not. $5=\\min(6,5)$ is the single-linkage distance from $C$ to $\\{A,B\\}$. Complete linkage uses the maximum, $6$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the single-linkage outcome, where $d(C,\\{D,E\\})=\\min(4,7)=4$ is the smallest available distance. Under complete linkage $d(C,\\{D,E\\})=\\max(4,7)=7$, which is larger than $d(C,\\{A,B\\})=6$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$d(\\{A,B\\},C)=\\max(6,5)=6$ is smaller than $d(C,\\{D,E\\})=7$ and $d(\\{A,B\\},\\{D,E\\})=10$, so $C$ joins $\\{A,B\\}$ at distance $6$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$8$ is the smallest cross-dissimilarity between $\\{A,B\\}$ and $\\{D,E\\}$ (a single-linkage value) and it ignores $C$, which is still a separate cluster. Under complete linkage the distance between these two clusters is $10$."
+        }
+      ],
+      "commonTrap": "Applying the single-linkage rule (minimum distance) out of habit: it sends $C$ to $\\{D,E\\}$ at distance $4$. Under complete linkage every candidate distance is a maximum, so recompute each one from the original table."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: C is merged with {A,B} at distance 6",
+      "agreesWithKey": true,
+      "checkCode": "D={('A','B'):2,('A','C'):6,('A','D'):9,('A','E'):10,('B','C'):5,('B','D'):8,('B','E'):9,('C','D'):4,('C','E'):7,('D','E'):3}\nd=lambda x,y:D.get((x,y),D.get((y,x)))\ndef run(agg):\n    cl=[frozenset(c) for c in 'ABCDE']\n    for step in range(1,5):\n        dist=lambda P,Q:agg(d(x,y) for x in P for y in Q)\n        P,Q=min(((P,Q) for i,P in enumerate(cl) for Q in cl[i+1:]),key=lambda pq:dist(*pq))\n        print(agg.__name__,step,sorted(P),sorted(Q),dist(P,Q)); cl=[c for c in cl if c not in(P,Q)]+[P|Q]\nrun(max); run(min)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-pdf"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked concepts (normalising a density with $|x|$ by splitting the support, turning $X^2>\\tfrac14$ into a two-tailed event, then a conditional probability) and two likely traps; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Continuous random variable with |x|-shaped pdf: normalisation, two-tailed event from a squared condition, conditional probability",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A continuous random variable $X$ has probability density function\n\n$$f(x) = \\begin{cases} c\\,|x|, & -1 \\le x \\le 2,\\\\ 0, & \\text{otherwise,} \\end{cases}$$\n\nwhere $c$ is a constant. Then $P\\!\\left(X > 1 \\,\\middle|\\, X^{2} > \\tfrac{1}{4}\\right)$ equals",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{3}{5}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{2}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{4}{5}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{6}{7}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Normalising, $c\\left(\\tfrac12+2\\right)=1$ gives $c=\\tfrac25$. The condition $X^2>\\tfrac14$ means $|X|>\\tfrac12$, so $P(X^2>\\tfrac14)=1-c\\cdot\\tfrac14=\\tfrac{9}{10}$.\nSince $\\{X>1\\}\\subset\\{X^2>\\tfrac14\\}$ and $P(X>1)=\\tfrac25\\cdot\\tfrac32=\\tfrac35$, the conditional probability is $\\dfrac{3/5}{9/10}=\\dfrac23$.",
+      "steps": [
+        {
+          "title": "Normalise the density",
+          "body": "Because of $|x|$, split the integral at $0$:\n\n$$\\int_{-1}^{0} c(-x)\\,dx + \\int_{0}^{2} c\\,x\\,dx = c\\left(\\frac12 + 2\\right) = \\frac{5c}{2} = 1 \\;\\Longrightarrow\\; c=\\frac25.$$"
+        },
+        {
+          "title": "Translate the conditioning event",
+          "body": "$X^2>\\tfrac14 \\iff |X|>\\tfrac12 \\iff X<-\\tfrac12 \\text{ or } X>\\tfrac12$ (both tails). It is easiest to use the complement:\n\n$$P\\!\\left(|X|\\le\\tfrac12\\right)=\\int_{-1/2}^{1/2} c\\,|x|\\,dx = 2c\\cdot\\frac18=\\frac{c}{4}=\\frac1{10},$$\n\nso $P\\!\\left(X^2>\\tfrac14\\right)=1-\\tfrac1{10}=\\tfrac{9}{10}$. (Check by tails: left $\\tfrac25\\cdot\\tfrac38=\\tfrac{3}{20}$, right $\\tfrac25\\cdot\\tfrac{15}{8}=\\tfrac34$, and $\\tfrac3{20}+\\tfrac{15}{20}=\\tfrac{9}{10}$.)"
+        },
+        {
+          "title": "Numerator",
+          "body": "If $X>1$ then $X^2>1>\\tfrac14$, so $\\{X>1\\}\\cap\\{X^2>\\tfrac14\\}=\\{X>1\\}$ and\n\n$$P(X>1)=\\int_1^2 c\\,x\\,dx = \\frac25\\cdot\\frac{4-1}{2}=\\frac35.$$"
+        },
+        {
+          "title": "Conditional probability",
+          "body": "$$P\\!\\left(X>1 \\mid X^2>\\tfrac14\\right)=\\frac{3/5}{9/10}=\\frac{3}{5}\\cdot\\frac{10}{9}=\\frac23.$$\n\nThe answer is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac35=P(X>1)$ is the unconditional probability. It ignores the division by $P(X^2>\\tfrac14)=\\tfrac9{10}$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\dfrac{P(X>1)}{P(|X|>1/2)}=\\dfrac{3/5}{9/10}=\\dfrac23$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac45=\\dfrac{3/5}{3/4}$ treats $X^2>\\tfrac14$ as $X>\\tfrac12$ only, dropping the left tail $X<-\\tfrac12$ (probability $\\tfrac3{20}$)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac67$ comes from normalising over $[0,2]$ only, which gives $c=\\tfrac12$ and ignores the mass on $[-1,0)$. Then $\\dfrac{3/4}{7/8}=\\tfrac67$."
+        }
+      ],
+      "commonTrap": "Forgetting that $X$ takes negative values. Either the normalising integral is done over $[0,2]$ only (giving $c=\\tfrac12$), or $X^2>\\tfrac14$ is read as $X>\\tfrac12$ and the left tail $X<-\\tfrac12$ is dropped."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: 2/3",
+      "agreesWithKey": true,
+      "checkCode": "from scipy.integrate import quad\nf=lambda x:abs(x)\nc=1/quad(f,-1,2,points=[0])[0]\nnum=c*quad(f,1,2)[0]\nden=c*(quad(f,-1,-.5)[0]+quad(f,.5,2)[0])\nprint(c,num,den,num/den)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-confidence-interval"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (t-interval with unknown variance) in several routine steps: sample mean, sample standard deviation with divisor $n-1$, correct critical value, margin of error; about 2.5–3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Confidence interval for a normal mean with unknown variance and small n: t critical value, sample SD with divisor n-1",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The driving range (in km) of 8 randomly chosen e-scooters on a full charge was measured as\n\n$$41,\\; 45,\\; 38,\\; 44,\\; 47,\\; 40,\\; 43,\\; 42.$$\n\nAssume that the range of a scooter is normally distributed with unknown mean $\\mu$ and unknown variance. For a $t$-distributed random variable $T_\\nu$ with $\\nu$ degrees of freedom, let $t_{\\nu,\\,0.025}$ satisfy $P(T_\\nu > t_{\\nu,\\,0.025}) = 0.025$. Some values are:\n\n| $\\nu$ | 6 | 7 | 8 |\n|---|---|---|---|\n| $t_{\\nu,\\,0.025}$ | 2.447 | 2.365 | 2.306 |\n\nUsing the sample standard deviation with divisor $n-1$, the 95% confidence interval for $\\mu$ (in km, with the end points rounded off to two decimal places) is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(40.09,\\ 44.91)$"
+      },
+      {
+        "label": "B",
+        "text": "$(40.51,\\ 44.49)$"
+      },
+      {
+        "label": "C",
+        "text": "$(40.25,\\ 44.75)$"
+      },
+      {
+        "label": "D",
+        "text": "$(35.69,\\ 49.31)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$\\bar x=42.5$, $\\sum(x_i-\\bar x)^2=58$, so $s=\\sqrt{58/7}\\approx2.8785$ and $SE=s/\\sqrt8\\approx1.0177$.\nWith $\\nu=7$, $t_{7,0.025}=2.365$, the margin is $2.365\\times1.0177\\approx2.407$, giving $42.5\\pm2.407=(40.09,\\,44.91)$.",
+      "steps": [
+        {
+          "title": "Sample mean and sample standard deviation",
+          "body": "$\\sum x_i = 340$, so $\\bar x=340/8=42.5$.\n\nDeviations from the mean: $-1.5,\\ 2.5,\\ -4.5,\\ 1.5,\\ 4.5,\\ -2.5,\\ 0.5,\\ -0.5$. Their squares sum to\n$2.25+6.25+20.25+2.25+20.25+6.25+0.25+0.25=58$.\n\n$$s^2=\\frac{58}{8-1}\\approx 8.2857,\\qquad s\\approx 2.8785.$$"
+        },
+        {
+          "title": "Choose the critical value",
+          "body": "The population variance is unknown, the sample is small and the data are normal, so the pivot $\\dfrac{\\bar X-\\mu}{s/\\sqrt n}$ follows a $t$-distribution with $\\nu=n-1=7$ degrees of freedom. For a 95% interval each tail has probability $0.025$, so the critical value is $t_{7,\\,0.025}=2.365$."
+        },
+        {
+          "title": "Margin of error",
+          "body": "$$SE=\\frac{s}{\\sqrt n}=\\frac{2.8785}{\\sqrt 8}=\\frac{2.8785}{2.8284}\\approx1.0177,\\qquad \\text{margin}=2.365\\times1.0177\\approx2.407.$$"
+        },
+        {
+          "title": "Confidence interval",
+          "body": "$$\\bar x\\pm\\text{margin}=42.5\\pm2.407=(40.093,\\ 44.907)\\approx(40.09,\\ 44.91).$$\n\nThe answer is **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$42.5\\pm 2.365\\times 2.8785/\\sqrt8=42.5\\pm2.407$, i.e. $(40.09,\\,44.91)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Uses the normal critical value $1.96$ (margin $1.995$). That is valid only when $\\sigma$ is known or $n$ is large. With $\\sigma$ unknown and $n=8$ the interval is too narrow."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Uses the divisor $n$ (giving $s=2.693$, $SE=0.952$, margin $2.251$) instead of $n-1$. The sample standard deviation asked for uses $n-1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The margin here is $t\\cdot s=2.365\\times2.8785=6.81$; the division by $\\sqrt n$ was forgotten, so the standard deviation of the data was used in place of the standard error of the mean."
+        }
+      ],
+      "commonTrap": "Using $z=1.96$ or the divisor $n$ for the standard deviation. Both give an interval that is too narrow, and both produce plausible-looking distractors, so check that the degrees of freedom are $n-1=7$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: (40.09, 44.91)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\na=np.array([41,45,38,44,47,40,43,42]);n=len(a);m=a.mean();s=a.std(ddof=1)\nh=2.365*s/n**.5\nprint(m,s,round(m-h,2),round(m+h,2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca",
+      "ml-dim-reduction"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (PCA from a covariance matrix) in an MSQ with four short statements; a block-diagonal $\\Sigma$ keeps the eigen-analysis routine, but one statement is a likely trap; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "PCA on a covariance matrix: eigenvectors as principal directions, ordering by eigenvalue, variance explained, variance along a direction",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Three mean-centred sensor features $x_1, x_2, x_3$ recorded on the same machines have the sample covariance matrix\n\n$$\\Sigma = \\begin{bmatrix} 5 & 2 & 0 \\\\ 2 & 2 & 0 \\\\ 0 & 0 & 3 \\end{bmatrix}.$$\n\nPrincipal component analysis (PCA) is performed by an eigen-decomposition of $\\Sigma$, without rescaling any feature. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The first principal component points along $(2,\\ 1,\\ 0)^\\top$ (up to sign and scale)."
+      },
+      {
+        "label": "B",
+        "text": "The second principal component points along $(1,\\ -2,\\ 0)^\\top$ (up to sign and scale)."
+      },
+      {
+        "label": "C",
+        "text": "The first two principal components together account for $90\\%$ of the total variance."
+      },
+      {
+        "label": "D",
+        "text": "The variance of the data projected onto the unit vector $\\dfrac{1}{\\sqrt5}(1,\\ -2,\\ 0)^\\top$ equals $1$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "$\\Sigma$ is block-diagonal: the $2\\times2$ block has eigenvalues $6$ and $1$ (eigenvectors $(2,1,0)$ and $(1,-2,0)$) and the $1\\times1$ block gives eigenvalue $3$ (eigenvector $e_3$). The ordered eigenvalues are $6,3,1$ with total $10$.\nSo PC1 $\\propto(2,1,0)$, PC2 $=e_3$, and the first two components explain $9/10$; the variance along $(1,-2,0)/\\sqrt5$ is $1$. Statements A, C and D hold.",
+      "steps": [
+        {
+          "title": "Eigenvalues",
+          "body": "The $2\\times2$ block $\\begin{bmatrix}5&2\\\\2&2\\end{bmatrix}$ has characteristic equation $\\lambda^2-7\\lambda+6=0$, so $\\lambda=6$ or $1$. The $1\\times1$ block gives $\\lambda=3$. Ordered: $\\lambda_1=6,\\ \\lambda_2=3,\\ \\lambda_3=1$. Check: $6+3+1=10=\\operatorname{trace}(\\Sigma)=5+2+3$."
+        },
+        {
+          "title": "Eigenvectors (principal directions)",
+          "body": "- $\\lambda=6$: $(5-6)x+2y=0\\Rightarrow y=x/2$, direction $(2,1,0)$.\n- $\\lambda=3$: the direction is $e_3=(0,0,1)$, since the third row and column of $\\Sigma$ are decoupled.\n- $\\lambda=1$: $(5-1)x+2y=0\\Rightarrow y=-2x$, direction $(1,-2,0)$.\n\nPC1 $\\propto(2,1,0)$, PC2 $=e_3$ and PC3 $\\propto(1,-2,0)$, because components are ordered by decreasing eigenvalue."
+        },
+        {
+          "title": "Variance explained",
+          "body": "Fractions of the total variance $10$: PC1 $6/10=60\\%$, PC2 $3/10=30\\%$, PC3 $1/10=10\\%$. The first two together explain $60\\%+30\\%=90\\%$."
+        },
+        {
+          "title": "Check each statement",
+          "body": "(A) True. (B) False: $(1,-2,0)$ is PC3, not PC2, because its eigenvalue $1$ is smaller than $3$. (C) True: $90\\%$. (D) True: for the unit vector $u=(1,-2,0)^\\top/\\sqrt5$, $u^\\top\\Sigma u=\\tfrac15\\,(5\\cdot1+2\\cdot2\\cdot1\\cdot(-2)+2\\cdot4)=\\tfrac15(5-8+8)=1=\\lambda_3$.\n\nThe correct options are **(A), (C), (D)**."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$(5-6)x+2y=0$ gives $y=x/2$, so the eigenvector for the largest eigenvalue $6$ is along $(2,1,0)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$(1,-2,0)$ is orthogonal to PC1 but belongs to the smallest eigenvalue $1$, so it is the third component. PC2 belongs to $\\lambda=3$ and is along $(0,0,1)$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$(6+3)/(6+3+1)=9/10=90\\%$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The variance along an eigenvector direction equals its eigenvalue. For $u=(1,-2,0)/\\sqrt5$, $u^\\top\\Sigma u=1=\\lambda_3$."
+        }
+      ],
+      "commonTrap": "Assuming that the direction orthogonal to PC1 inside the $x_1x_2$-plane must be PC2. Components are ranked by eigenvalue, and the decoupled feature $x_3$ (variance $3$) beats the residual direction of the $2\\times2$ block (eigenvalue $1$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS=np.array([[5,2,0],[2,2,0],[0,0,3]],float);w,V=np.linalg.eigh(S);o=w.argsort()[::-1];w=w[o];V=V[:,o]\nprint('eigenvalues',w.round(6)); print('PC rows',V.T.round(3)); print('cumulative',(w.cumsum()/w.sum()).round(3))\nu=np.array([1,-2,0])/5**.5; print('u S u',round(u@S@u,6))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (linear search with early exit on a sorted list) traced over five short calls; direct tracing with no algebra, about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Tracing a linear search that stops early on a sorted list: number of elements examined for found and absent keys",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program. The list `a` is sorted in increasing order.\n\n```python\ndef probe(a, key):\n    steps = 0\n    for x in a:\n        steps += 1\n        if x == key:\n            return True, steps\n        if x > key:\n            break\n    return False, steps\n\na = [3, 8, 12, 15, 21, 27, 30]\nhits = 0\ntotal = 0\nfor key in [12, 10, 30, 1, 40]:\n    found, s = probe(a, key)\n    if found:\n        hits += 1\n    total += s\nprint(hits, total)\n```\n\nThe output printed by the program is",
+    "options": [
+      {
+        "label": "A",
+        "text": "`2 31`"
+      },
+      {
+        "label": "B",
+        "text": "`4 21`"
+      },
+      {
+        "label": "C",
+        "text": "`2 19`"
+      },
+      {
+        "label": "D",
+        "text": "`2 21`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "`probe` scans left to right and stops at the first element that is equal to the key (found) or greater than it (key cannot appear later in a sorted list). Tracing the five keys gives `(True,3)`, `(False,3)`, `(True,7)`, `(False,1)`, `(False,7)`.\nSo `hits = 2` and `total = 3+3+7+1+7 = 21`, and the program prints `2 21`.",
+      "steps": [
+        {
+          "title": "What probe does",
+          "body": "For each element `x` in order, `steps` is incremented first, so the element that causes the exit is counted. The loop returns `(True, steps)` on `x == key`, breaks (returning `(False, steps)`) as soon as `x > key`, and otherwise runs to the end of the list, returning `(False, 7)`."
+        },
+        {
+          "title": "Trace the five keys",
+          "body": "| key | elements examined | result |\n|---|---|---|\n| 12 | 3, 8, 12 (equal) | `(True, 3)` |\n| 10 | 3, 8, 12 (12 > 10, break) | `(False, 3)` |\n| 30 | 3, 8, 12, 15, 21, 27, 30 (equal) | `(True, 7)` |\n| 1 | 3 (3 > 1, break) | `(False, 1)` |\n| 40 | all seven, none equal or greater | `(False, 7)` |"
+        },
+        {
+          "title": "Accumulate",
+          "body": "Found keys: 12 and 30, so `hits = 2`.\nSteps: `3 + 3 + 7 + 1 + 7 = 21`, so `total = 21`.\n\nThe program prints `2 21`. The answer is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "`31 = 3 + 7 + 7 + 7 + 7` assumes that absent keys always cause a full scan. The early exit on `x > key` stops the searches for 10 and 1 after 3 and 1 steps."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "`4` hits would count the two early exits (keys 10 and 1) as successes. Only `x == key` returns `True`; `break` leads to `False`."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "`19 = 3 + 2 + 7 + 0 + 7` forgets that the element which triggers the `break` has already been counted in `steps`."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The searches examine 3, 3, 7, 1 and 7 elements in turn, giving `total = 21`, and exactly two keys (12 and 30) are found."
+        }
+      ],
+      "commonTrap": "Forgetting the early exit (so every unsuccessful search seems to cost 7 steps) or forgetting that the element that triggers the exit is itself counted."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D: 2 21",
+      "agreesWithKey": true,
+      "checkCode": "def probe(a, key):\n    steps = 0\n    for x in a:\n        steps += 1\n        if x == key:\n            return True, steps\n        if x > key:\n            break\n    return False, steps\n\na = [3, 8, 12, 15, 21, 27, 30]\nhits = 0\ntotal = 0\nfor key in [12, 10, 30, 1, 40]:\n    found, s = probe(a, key)\n    if found:\n        hits += 1\n    total += s\nprint(hits, total)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-rank",
+      "la-nullity"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (rank) linked to the fact $\\operatorname{rank}(A^\\top A)=\\operatorname{rank}(A)$, then routine row reduction of a $4\\times5$ matrix; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Rank of A^T A equals rank of A; rank via row reduction",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A quality engineer records five measurements on each of four items and stores them as the rows of\n\n$$A = \\begin{bmatrix} 1 & 2 & 0 & 1 & 3 \\\\ 0 & 1 & 1 & 2 & 1 \\\\ 2 & 1 & -1 & 0 & 2 \\\\ -1 & 3 & 3 & 5 & 3 \\end{bmatrix}.$$\n\nThe $5 \\times 5$ matrix $M = A^{\\top}A$ is then formed. The rank of $M$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "For a real matrix, $A^\\top A\\mathbf x=\\mathbf 0\\Rightarrow\\|A\\mathbf x\\|^2=0\\Rightarrow A\\mathbf x=\\mathbf 0$, so $A^\\top A$ and $A$ have the same null space and therefore the same rank.\nRow reduction of $A$ leaves three non-zero rows (row 4 $=$ row 1 $+\\,2\\,$row 2 $-$ row 3), so $\\operatorname{rank}(M)=\\operatorname{rank}(A)=3$.",
+      "steps": [
+        {
+          "title": "Reduce to the rank of A",
+          "body": "If $A^\\top A\\mathbf x=\\mathbf 0$, then $\\mathbf x^\\top A^\\top A\\mathbf x=\\|A\\mathbf x\\|^2=0$, so $A\\mathbf x=\\mathbf 0$. Conversely $A\\mathbf x=\\mathbf 0$ gives $A^\\top A\\mathbf x=\\mathbf 0$. Hence $\\operatorname{null}(A^\\top A)=\\operatorname{null}(A)$. Both matrices have $5$ columns, so by rank-nullity $\\operatorname{rank}(M)=\\operatorname{rank}(A)$."
+        },
+        {
+          "title": "Row-reduce A",
+          "body": "Use row 1 to clear the first column: $R_3\\leftarrow R_3-2R_1=(0,-3,-1,-2,-4)$ and $R_4\\leftarrow R_4+R_1=(0,5,3,6,6)$.\n\nUse row 2 to clear the second column: $R_3\\leftarrow R_3+3R_2=(0,0,2,4,-1)$ and $R_4\\leftarrow R_4-5R_2=(0,0,-2,-4,1)$.\n\nFinally $R_4\\leftarrow R_4+R_3=(0,0,0,0,0)$."
+        },
+        {
+          "title": "Count the pivots",
+          "body": "The echelon form has three non-zero rows, with pivots in columns $1$, $2$ and $3$. So $\\operatorname{rank}(A)=3$. Check of the dependency: $R_1+2R_2-R_3=(1+0-2,\\ 2+2-1,\\ 0+2+1,\\ 1+4-0,\\ 3+2-2)=(-1,3,3,5,3)=R_4$."
+        },
+        {
+          "title": "Conclude",
+          "body": "$\\operatorname{rank}(M)=\\operatorname{rank}(A^\\top A)=\\operatorname{rank}(A)=3$. So $M$ is a $5\\times5$ matrix with nullity $2$; it is singular even though it is square."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "shortcut": "Use $\\operatorname{rank}(A^\\top A)=\\operatorname{rank}(A)$ and row-reduce only the $4\\times5$ matrix $A$. Multiplying out the $5\\times5$ matrix $M$ is unnecessary work.",
+      "commonTrap": "Reading the size of $M$ ($5\\times5$) as its rank, or taking the number of rows of $A$ ($4$) as its rank without checking for a dependent row."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "from sympy import Matrix\nA=Matrix([[1,2,0,1,3],[0,1,1,2,1],[2,1,-1,0,2],[-1,3,3,5,3]])\nprint(A.rank(),(A.T*A).rank(),(A[0,:]+2*A[1,:]-A[2,:]-A[3,:]).is_zero_matrix)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-variable-elimination"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (variable elimination with evidence) in a routine but multi-stage computation: evidence factor, eliminate $A$, eliminate $S$, multiply by the prior and normalise; about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "Variable elimination with evidence in a Bayesian network: eliminate a child then a co-parent, multiply by the prior, normalise",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a water-treatment plant, a Bayesian network over four Boolean variables ($1$ = true, $0$ = false) has two independent root causes: $F$ (a filter failure) and $S$ (a sensor drift). The variable $A$ (the turbidity alarm sounds) has parents $F$ and $S$, and the variable $N$ (the night engineer is notified) has the single parent $A$. The parameters are:\n\n| Quantity | Value |\n|---|---|\n| $P(F=1)$ | $0.10$ |\n| $P(S=1)$ | $0.30$ |\n| $P(A=1 \\mid F=1, S=1)$ | $0.95$ |\n| $P(A=1 \\mid F=1, S=0)$ | $0.80$ |\n| $P(A=1 \\mid F=0, S=1)$ | $0.40$ |\n| $P(A=1 \\mid F=0, S=0)$ | $0.05$ |\n| $P(N=1 \\mid A=1)$ | $0.90$ |\n| $P(N=1 \\mid A=0)$ | $0.20$ |\n\nThe engineer is notified ($N=1$) and nothing else is observed. Using variable elimination (eliminating $A$ first and then $S$), the value of $P(F=1 \\mid N=1)$, rounded off to three decimal places, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.222$"
+      },
+      {
+        "label": "B",
+        "text": "$0.079$"
+      },
+      {
+        "label": "C",
+        "text": "$0.264$"
+      },
+      {
+        "label": "D",
+        "text": "$0.720$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Fix $N=1$, giving the factor $g(A)=P(N=1\\mid A)$. Eliminating $A$ gives $\\tau_1(F,S)=\\sum_A P(A\\mid F,S)\\,g(A)$, and eliminating $S$ gives $\\tau_2(F)=\\sum_S P(S)\\,\\tau_1(F,S)$, with $\\tau_2(1)=0.7915$ and $\\tau_2(0)=0.3085$.\nThen $P(F=1\\mid N=1)=\\dfrac{0.1\\times0.7915}{0.1\\times0.7915+0.9\\times0.3085}=\\dfrac{0.07915}{0.3568}\\approx0.222$.",
+      "steps": [
+        {
+          "title": "Set the evidence",
+          "body": "The joint distribution factorises as $P(F)P(S)P(A\\mid F,S)P(N\\mid A)$. Setting $N=1$ turns $P(N\\mid A)$ into a factor of $A$ alone: $g(1)=0.9$, $g(0)=0.2$."
+        },
+        {
+          "title": "Eliminate A",
+          "body": "$\\tau_1(F,S)=\\sum_A P(A\\mid F,S)\\,g(A)=0.2+0.7\\,P(A=1\\mid F,S)$, because $0.9p+0.2(1-p)=0.2+0.7p$.\n\n| $(F,S)$ | $P(A=1\\mid F,S)$ | $\\tau_1(F,S)$ |\n|---|---|---|\n| $(1,1)$ | 0.95 | 0.865 |\n| $(1,0)$ | 0.80 | 0.760 |\n| $(0,1)$ | 0.40 | 0.480 |\n| $(0,0)$ | 0.05 | 0.235 |"
+        },
+        {
+          "title": "Eliminate S",
+          "body": "$\\tau_2(F)=\\sum_S P(S)\\,\\tau_1(F,S)$:\n\n- $\\tau_2(1)=0.3\\times0.865+0.7\\times0.760=0.2595+0.532=0.7915$\n- $\\tau_2(0)=0.3\\times0.480+0.7\\times0.235=0.144+0.1645=0.3085$"
+        },
+        {
+          "title": "Multiply by the prior and normalise",
+          "body": "$P(F=1,N=1)=0.1\\times0.7915=0.07915$ and $P(F=0,N=1)=0.9\\times0.3085=0.27765$. Their sum is $P(N=1)=0.3568$.\n\n$$P(F=1\\mid N=1)=\\frac{0.07915}{0.3568}\\approx0.2218\\approx0.222.$$\n\nThe answer is **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\dfrac{0.07915}{0.3568}=0.2218\\approx0.222$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.079$ is the unnormalised value $P(F=1,N=1)=0.07915$. It was not divided by $P(N=1)=0.3568$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.264$ sets $S=0$ instead of summing $S$ out: $\\dfrac{0.1\\times0.760}{0.1\\times0.760+0.9\\times0.235}\\approx0.264$. The variable $S$ is unobserved and must be marginalised with weights $0.3$ and $0.7$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.720=\\dfrac{0.7915}{0.7915+0.3085}$ leaves out the prior $P(F)$, that is, $0.1$ and $0.9$, when the two values of $\\tau_2(F)$ are compared."
+        }
+      ],
+      "commonTrap": "Stopping after summing out the variables and forgetting either the prior $P(F)$ or the final normalisation by $P(N=1)$. Setting the unobserved $S$ to a fixed value instead of summing it out is the other frequent slip."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: 0.222",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nPF,PS={1:.1,0:.9},{1:.3,0:.7}\nPA={(1,1):.95,(1,0):.8,(0,1):.4,(0,0):.05}\nPN={1:.9,0:.2}\ndef J(f,s,a,n):\n    pa=PA[f,s] if a else 1-PA[f,s]; pn=PN[a] if n else 1-PN[a]\n    return PF[f]*PS[s]*pa*pn\nnum=sum(J(1,s,a,1) for s,a in product((0,1),(0,1)))\nden=sum(J(f,s,a,1) for f,s,a in product((0,1),(0,1),(0,1)))\nprint(num,den,round(num/den,3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-counting"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (combinations with an 'at least' condition) as a direct three-case sum or one complement; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Combinations with an at-least condition: case split (or complement) over two groups",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A continuous-integration job runs a set of exactly $4$ tests chosen from a pool of $6$ unit tests and $5$ integration tests (all $11$ tests are distinguishable). The chosen set must contain **at least $2$** integration tests, and the order in which tests are chosen does not matter.\n\nThe number of different sets of tests that can be chosen is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 215,
+      "max": 215
+    },
+    "solution": {
+      "quick": "Split by the number $k$ of integration tests: $\\binom52\\binom62+\\binom53\\binom61+\\binom54\\binom60=150+60+5=215$.\nCheck by complement: $\\binom{11}{4}-\\binom64-\\binom51\\binom63=330-15-100=215$.",
+      "steps": [
+        {
+          "title": "Set up the cases",
+          "body": "Let $k$ be the number of integration tests in the chosen set. The condition allows $k=2,3,4$, and the remaining $4-k$ tests are unit tests."
+        },
+        {
+          "title": "Count each case",
+          "body": "- $k=2$: $\\binom52\\binom62=10\\times15=150$\n- $k=3$: $\\binom53\\binom61=10\\times6=60$\n- $k=4$: $\\binom54\\binom60=5\\times1=5$"
+        },
+        {
+          "title": "Add the disjoint cases",
+          "body": "$$150+60+5=215.$$"
+        },
+        {
+          "title": "Cross-check with the complement",
+          "body": "All sets: $\\binom{11}{4}=330$. Sets with $0$ integration tests: $\\binom64=15$. Sets with exactly $1$: $\\binom51\\binom63=5\\times20=100$. Then $330-15-100=215$, which agrees."
+        }
+      ],
+      "finalAnswer": "**215**",
+      "shortcut": "The complement is quicker: $\\binom{11}{4}-\\binom64-\\binom51\\binom63$, that is, remove the sets with fewer than two integration tests from all sets.",
+      "commonTrap": "Choosing $2$ integration tests first and then any $2$ of the remaining $9$ tests, $\\binom52\\binom92=360$. This counts every set with three or more integration tests more than once."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "215",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nprint(sum(1 for c in combinations(range(11),4) if sum(i>=6 for i in c)>=2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-lu",
+      "la-gaussian-elimination"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (LU factorisation) in 2–3 routine steps: two elimination multipliers, the third multiplier from the reduced row, then forward substitution; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "LU decomposition without pivoting: multipliers form L; forward substitution Ly = b",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The matrix\n\n$$A = \\begin{bmatrix} 2 & 4 & -2 \\\\ 6 & 13 & -3 \\\\ -4 & -6 & 9 \\end{bmatrix}$$\n\nhas the factorisation $A = LU$, where $L$ is lower triangular with every diagonal entry equal to $1$, $U$ is upper triangular, and no row interchanges are needed. To solve $A\\mathbf{x} = \\mathbf{b}$ with $\\mathbf{b} = (6,\\ 25,\\ 0)^\\top$, one first solves $L\\mathbf{y} = \\mathbf{b}$ by forward substitution and then $U\\mathbf{x} = \\mathbf{y}$ by back substitution.\n\nThe value of $y_3$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": -2,
+      "max": -2
+    },
+    "solution": {
+      "quick": "Elimination multipliers give $L=\\begin{bmatrix}1&0&0\\\\3&1&0\\\\-2&2&1\\end{bmatrix}$ (with $U=\\begin{bmatrix}2&4&-2\\\\0&1&3\\\\0&0&-1\\end{bmatrix}$).\nForward substitution on $L\\mathbf y=\\mathbf b$: $y_1=6$, $y_2=25-3\\cdot6=7$, $y_3=0+2\\cdot6-2\\cdot7=-2$.",
+      "steps": [
+        {
+          "title": "First column of L",
+          "body": "Multipliers: $\\ell_{21}=6/2=3$ and $\\ell_{31}=-4/2=-2$.\n\n$R_2\\leftarrow R_2-3R_1=(0,\\ 1,\\ 3)$ and $R_3\\leftarrow R_3+2R_1=(0,\\ 2,\\ 5)$."
+        },
+        {
+          "title": "Second column of L and the matrix U",
+          "body": "Multiplier $\\ell_{32}=2/1=2$, and $R_3\\leftarrow R_3-2R_2=(0,\\ 0,\\ 5-6)=(0,\\ 0,\\ -1)$. Therefore\n\n$$L=\\begin{bmatrix}1&0&0\\\\3&1&0\\\\-2&2&1\\end{bmatrix},\\qquad U=\\begin{bmatrix}2&4&-2\\\\0&1&3\\\\0&0&-1\\end{bmatrix}.$$\n\nCheck: the third row of $LU$ is $-2(2,4,-2)+2(0,1,3)+(0,0,-1)=(-4,\\ -6,\\ 4+6-1)=(-4,\\ -6,\\ 9)$, as in $A$."
+        },
+        {
+          "title": "Forward substitution",
+          "body": "$L\\mathbf y=\\mathbf b$ reads\n\n- $y_1=6$\n- $3y_1+y_2=25\\Rightarrow y_2=25-18=7$\n- $-2y_1+2y_2+y_3=0\\Rightarrow y_3=12-14=-2$"
+        },
+        {
+          "title": "Sanity check",
+          "body": "Back substitution in $U\\mathbf x=\\mathbf y$ gives $x_3=(-2)/(-1)=2$, $x_2=7-3\\cdot2=1$, $x_1=(6-4\\cdot1+2\\cdot2)/2=3$, and $A(3,1,2)^\\top=(6,\\ 25,\\ 0)^\\top=\\mathbf b$. So $y_3=-2$."
+        }
+      ],
+      "finalAnswer": "**$-2$**",
+      "commonTrap": "Dropping the sign of a multiplier. Since $R_3$ is *increased* by $2R_1$, the entry is $\\ell_{31}=-2$ and not $+2$; using $+2$ gives $y_3=-26$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-2",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA=np.array([[2,4,-2],[6,13,-3],[-4,-6,9]],float);b=np.array([6,25,0.])\nL=np.eye(3);U=A.copy()\nfor k in range(3):\n    for i in range(k+1,3):\n        L[i,k]=U[i,k]/U[k,k];U[i]-=L[i,k]*U[k]\ny=np.linalg.solve(L,b);x=np.linalg.solve(U,y)\nprint(L.tolist(),U.tolist(),np.allclose(L@U,A),y.round(6).tolist(),x.round(6).tolist())",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M13-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-13",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-concept-hierarchies",
+      "dbw-multidimensional-schema"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (concept hierarchies and roll-up/drill-down) applied to four statements, one of which needs the non-nested week–month structure; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Concept hierarchies: roll-up only along hierarchy arrows, non-nested levels, drill-down needs finer data",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A sales data warehouse has three dimensions. Their concept hierarchies are given below, where an arrow $X \\to Y$ means that every value of level $X$ belongs to exactly one value of level $Y$.\n\n| Dimension | Hierarchy |\n|---|---|\n| Product | item $\\to$ brand |\n| Time | day $\\to$ week; and day $\\to$ month $\\to$ quarter $\\to$ year (weeks are calendar weeks, Monday to Sunday) |\n| Location | store $\\to$ city $\\to$ state |\n\nThe measure is *sales amount*, aggregated with SUM. A cuboid is written as (product level, time level, location level).\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The cuboid (brand, month, city) can be computed from the cuboid (brand, week, city) by summing the weekly sales amounts."
+      },
+      {
+        "label": "B",
+        "text": "The cuboid (brand, year, state) can be computed from the cuboid (item, day, store) by summing sales amounts."
+      },
+      {
+        "label": "C",
+        "text": "Going from the cuboid (brand, quarter, state) to the cuboid (brand, month, state) is a drill-down along the time dimension."
+      },
+      {
+        "label": "D",
+        "text": "The cuboid (item, day, store) can be obtained from the cuboid (brand, year, state) using only the concept hierarchies."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "A cuboid can be obtained from another by summing only if, in every dimension, each target level is reachable from the source level by following hierarchy arrows. Reversing an arrow (drill-down) needs finer-grained data that the coarser cuboid does not contain.\nB follows arrows in all three dimensions, and C is a drill-down (quarter to month). A fails because week $\\to$ month is not an arrow (weeks straddle months) and D asks to reverse every arrow.",
+      "steps": [
+        {
+          "title": "Roll-up follows arrows",
+          "body": "Rolling up replaces a level by a coarser one reachable through the arrows, and SUM of the finer cells gives the coarser cell. Drill-down goes the other way, to finer detail."
+        },
+        {
+          "title": "Statement A",
+          "body": "It requires week $\\to$ month, but there is no such arrow: a Monday-to-Sunday week can begin in one month and end in the next, so a weekly total cannot be assigned to a single month. Weekly totals cannot be summed to give monthly totals. **False.**"
+        },
+        {
+          "title": "Statements B and C",
+          "body": "B: item $\\to$ brand, day $\\to$ month $\\to$ quarter $\\to$ year and store $\\to$ city $\\to$ state are all valid arrow paths, so the coarse cuboid is obtained by summing. **True.**\nC: quarter $\\to$ month reverses the arrow month $\\to$ quarter, so it moves to more detailed data along time, which is a drill-down. **True.**"
+        },
+        {
+          "title": "Statement D",
+          "body": "It would reverse every arrow: brand to item, year to day, state to store. The many items of a brand, many days of a year and many stores of a state cannot be separated using the hierarchies alone; the fine-grained cells must come from the base data. **False.**\n\nThe correct options are **(B), (C)**."
+        }
+      ],
+      "finalAnswer": "**(B), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "There is no arrow week $\\to$ month: a calendar week can span two months, so the (brand, month, city) cuboid cannot be derived from weekly totals."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "item $\\to$ brand, day $\\to$ month $\\to$ quarter $\\to$ year and store $\\to$ city $\\to$ state are all arrow paths, so the cuboid is a roll-up of the base cuboid using SUM."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Replacing the coarser level quarter by the finer level month is a drill-down along time."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Concept hierarchies say how fine values group into coarse ones, not how to split a coarse total back into fine cells. The detailed cuboid needs the base data."
+        }
+      ],
+      "commonTrap": "Assuming that every pair of time levels can be rolled into one another because both are 'calendar' levels. Week and month are incomparable in this hierarchy, so week totals cannot be rolled up to months."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C",
+      "agreesWithKey": true,
+      "checkCode": "import datetime as dt, random\ndays=[dt.date(2026,1,1)+dt.timedelta(i) for i in range(365)]\nwk=lambda d:d-dt.timedelta(d.weekday())\nwm={}\nfor d in days: wm.setdefault(wk(d),set()).add(d.month)\nprint('weeks spanning 2 months:',sum(len(v)>1 for v in wm.values()))  # >0, so week->month is not a function (A false)\nbrand=lambda i:i//3; state=lambda s:s//2\nrandom.seed(1)\nbase={(i,d,s):random.randint(1,50) for i in range(6) for d in days[:40] for s in range(4)}\ndef rollup(c):\n    out={}\n    for (i,d,s),v in c.items(): k=(brand(i),d.year,state(s)); out[k]=out.get(k,0)+v\n    return out\nalt=dict(base); alt[(0,days[0],0)]+=5; alt[(1,days[0],0)]-=5   # items 0 and 1 belong to the same brand\nprint('same coarse cuboid from different base cuboids:',rollup(base)==rollup(alt) and base!=alt)  # D false",
+      "notes": ""
+    }
+  }
+]

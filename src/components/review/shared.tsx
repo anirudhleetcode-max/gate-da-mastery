@@ -128,6 +128,13 @@ export function isWithdrawnMockQuestion(questionId: string, availableMocks: Read
   return mock !== null && !availableMocks.has(mock);
 }
 
+/** Why the question API does not serve a question (a 404), in words for the student. */
+export function unavailableReason(questionId: string): string {
+  return originFromId(questionId) === "MOCK_TEST"
+    ? "This question is not being served right now: mock-test questions are withdrawn while their mock is re-verified, and return once every question in that mock has passed review again."
+    : "This question is not being served right now: a question is withdrawn while it is re-checked, and returns once it has passed review again.";
+}
+
 // ------------------------------------------------------------------ dates
 
 export function dayToDate(day: string): Date {
@@ -182,9 +189,38 @@ export const GRADE_LABEL: Record<RecallGrade, string> = {
 
 export const KIND_LABEL = { question: "Question", concept: "Concept", formula: "Formula", strategy: "Strategy" } as const;
 
+/*
+ * Ids in user rows come from IndexedDB (or an imported backup file), so they
+ * are encoded before they become part of a path: "../x" or "a?b" can never
+ * change which route a link opens.
+ */
+const seg = (id: string) => encodeURIComponent(id);
+
+export const questionHref = (id: string) => `/questions/${seg(id)}`;
+export const conceptHref = (id: string) => `/concepts/${seg(id)}`;
+export const strategyHref = (id: string) => `/strategy/${seg(id)}`;
+export const formulaHref = (id: string, subjectId: string | undefined) => (subjectId ? `/formulas/${seg(subjectId)}#${seg(id)}` : "/formulas");
+
 /** Where a revision item lives. */
 export function revisionHref(r: Pick<RevisionItemRow, "kind" | "refId" | "subjectId">): string {
-  if (r.kind === "question") return `/questions/${r.refId}`;
-  if (r.kind === "concept") return `/concepts/${r.refId}`;
-  return r.subjectId ? `/formulas/${r.subjectId}#${r.refId}` : "/formulas";
+  if (r.kind === "question") return questionHref(r.refId);
+  if (r.kind === "concept") return conceptHref(r.refId);
+  return formulaHref(r.refId, r.subjectId);
+}
+
+/**
+ * A stored link (e.g. a bookmark snapshot's href) is used only when it is a
+ * plain path on this site: never another origin, a protocol-relative URL or
+ * a javascript: URL from a tampered backup file.
+ */
+export function safeInternalHref(href: string | undefined): string | null {
+  if (typeof href !== "string") return null;
+  const v = href.trim();
+  if (!/^\/(?![/\\])[^\s\\]*$/.test(v)) return null;
+  try {
+    const u = new URL(v, "https://internal.invalid");
+    return u.origin === "https://internal.invalid" ? `${u.pathname}${u.search}${u.hash}` : null;
+  } catch {
+    return null;
+  }
 }

@@ -1,6 +1,6 @@
 "use client";
 /**
- * Three large recall buttons (Forgot / Almost / Got it). Each shows the
+ * Three large recall buttons (Got it / Almost / Forgot). Each shows the
  * interval it would schedule, computed with the same scheduler that
  * gradeRevision uses, so the preview always matches the saved result.
  */
@@ -12,9 +12,9 @@ import { cn, formatDate } from "@/lib/utils";
 import { GRADE_LABEL, dayToDate, relativeDay } from "./shared";
 
 const GRADES: { grade: RecallGrade; icon: typeof CircleX; tone: string; help: string }[] = [
-  { grade: "forgot", icon: CircleX, tone: "border-danger/40 hover:bg-danger-soft text-danger", help: "I could not recall it" },
-  { grade: "almost", icon: CircleDashed, tone: "border-warning/40 hover:bg-warning-soft text-warning", help: "Partly, or with effort" },
   { grade: "got_it", icon: CircleCheck, tone: "border-success/40 hover:bg-success-soft text-success", help: "Recalled it correctly" },
+  { grade: "almost", icon: CircleDashed, tone: "border-warning/40 hover:bg-warning-soft text-warning", help: "Partly, or with effort" },
+  { grade: "forgot", icon: CircleX, tone: "border-danger/40 hover:bg-danger-soft text-danger", help: "I could not recall it" },
 ];
 
 function inDays(n: number) {
@@ -52,6 +52,7 @@ export function RecallGrader({
             type="button"
             disabled={disabled}
             onClick={() => onGrade(grade)}
+            aria-label={`${GRADE_LABEL[grade]}: ${help}. Next review ${inDays(previews[grade])}.`}
             className={cn(
               "flex min-h-16 items-center gap-3 rounded-lg border-2 bg-surface px-4 py-3 text-left transition-colors disabled:pointer-events-none disabled:opacity-50 sm:flex-col sm:items-start sm:gap-1",
               tone,

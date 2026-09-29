@@ -79,7 +79,8 @@ export async function PUT(req: Request) {
   const errors = issues.filter((i) => i.level === "error");
 
   if (errors.length) {
-    return NextResponse.json({ ok: false, dryRun, path: p.rel, info, records, issues, error: `Validation failed with ${errors.length} error(s). Nothing was written.` }, { status: 422 });
+    // A dry run is a successful validation request even when the file is invalid (200 + ok:false).
+    return NextResponse.json({ ok: false, dryRun, path: p.rel, info, records, issues, error: `Validation failed with ${errors.length} error(s). Nothing was written.` }, { status: dryRun ? 200 : 422 });
   }
   if (dryRun) return NextResponse.json({ ok: true, dryRun: true, path: p.rel, info, records, issues });
 

@@ -5,20 +5,27 @@
  */
 import { BACKUP_VERSION } from "@/lib/userdata/ops";
 import { localDay } from "@/lib/userdata/db";
+import { DEMO_INFO_KEY } from "@/lib/demo/seed";
 
 export const BACKUP_TABLES = ["attempts", "mockAttempts", "bookmarks", "revisionItems", "errorLogs", "roadmap", "settings", "views"] as const;
 export type BackupTable = (typeof BACKUP_TABLES)[number];
 
-export const TABLE_LABEL: Record<BackupTable, string> = {
-  attempts: "question attempts",
-  mockAttempts: "mock attempts",
-  bookmarks: "bookmarks",
-  revisionItems: "revision items",
-  errorLogs: "error-log entries",
-  roadmap: "roadmap stages",
-  settings: "settings",
-  views: "viewed pages",
+/** Singular and plural label of each table's records. */
+export const TABLE_LABEL: Record<BackupTable, [one: string, many: string]> = {
+  attempts: ["question attempt", "question attempts"],
+  mockAttempts: ["mock attempt", "mock attempts"],
+  bookmarks: ["bookmark", "bookmarks"],
+  revisionItems: ["revision item", "revision items"],
+  errorLogs: ["error-log entry", "error-log entries"],
+  roadmap: ["roadmap stage", "roadmap stages"],
+  settings: ["setting", "settings"],
+  views: ["viewed page", "viewed pages"],
 };
+
+/** "1 question attempt", "3 bookmarks". */
+export function tableCount(t: BackupTable, n: number): string {
+  return `${n} ${TABLE_LABEL[t][n === 1 ? 0 : 1]}`;
+}
 
 /** Primary key of each table and whether it must be present in every row. */
 const KEYS: Record<BackupTable, { field: string; type: "string" | "number"; required: boolean }> = {
@@ -40,8 +47,8 @@ const REQUIRED: Partial<Record<BackupTable, string[]>> = {
   errorLogs: ["questionId", "createdAt"],
 };
 
-/** Settings key written by the demo generator (src/lib/demo/seed.ts). */
-export const DEMO_MARKER_KEY = "demoInfo";
+/** Settings key written by the demo generator: its presence marks a backup of the demo database. */
+export const DEMO_MARKER_KEY = DEMO_INFO_KEY;
 
 export interface BackupSummary {
   exportedAt: string | null;

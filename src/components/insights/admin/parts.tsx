@@ -34,7 +34,7 @@ export function ReviewBadge({ status }: { status: ReviewStatus }) {
 /** Table wrapper: scrolls horizontally inside itself, never the page. */
 export function TableWrap({ children, className, label }: { children: ReactNode; className?: string; label?: string }) {
   return (
-    <div className={cn("overflow-x-auto", className)} role={label ? "region" : undefined} aria-label={label} tabIndex={label ? 0 : undefined}>
+    <div className={cn("relative overflow-x-auto", className)} role={label ? "region" : undefined} aria-label={label} tabIndex={label ? 0 : undefined}>
       {children}
     </div>
   );

@@ -65,6 +65,9 @@ describe.runIf(hasContent)("/api/admin/file", () => {
     expect((await bad.json()).issues.length).toBeGreaterThan(0);
     const syntax = await PUT(put({ path: "content/exam/papers.json", content: "[{" }));
     expect(syntax.status).toBe(422);
+    const dry = await PUT(put({ path: "content/exam/papers.json", content: "[{", dryRun: true }));
+    expect(dry.status).toBe(200);
+    expect((await dry.json()).ok).toBe(false);
     expect(read("content/exam/papers.json")).toBe(before);
   });
 

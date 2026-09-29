@@ -111,9 +111,9 @@
     "id": "f-la-inverse-adjugate",
     "subjectId": "la",
     "topicId": "la-matrices",
-    "name": "Matrix inverse (adjugate formula) and reverse-order laws",
+    "name": "Matrix inverse (adjugate formula), reverse-order laws and Cramer's rule",
     "latex": "A^{-1} = \\frac{\\operatorname{adj}(A)}{\\det A}, \\qquad \\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}^{-1} = \\frac{1}{ad - bc}\\begin{bmatrix} d & -b \\\\ -c & a \\end{bmatrix}, \\qquad (AB)^{-1} = B^{-1}A^{-1}, \\quad (AB)^\\top = B^\\top A^\\top",
-    "meaning": "A square matrix is invertible iff $\\det A \\ne 0$. The **adjugate** is the transpose of the cofactor matrix: $\\operatorname{adj}(A)_{ij} = C_{ji} = (-1)^{i+j}M_{ji}$, where $M_{ji}$ is the minor obtained by deleting row $j$ and column $i$. For a $2 \\times 2$ matrix: swap the diagonal entries, negate the off-diagonal ones, divide by the determinant.\n\nThe inverse and the transpose of a product **reverse the order**. Related rules: $(A^\\top)^{-1} = (A^{-1})^\\top$, $(kA)^{-1} = \\frac{1}{k}A^{-1}$ for $k \\ne 0$, $(A^{-1})^{-1} = A$.",
+    "meaning": "A square matrix is invertible iff $\\det A \\ne 0$. The **adjugate** is the transpose of the cofactor matrix: $\\operatorname{adj}(A)_{ij} = C_{ji} = (-1)^{i+j}M_{ji}$, where $M_{ji}$ is the minor obtained by deleting row $j$ and column $i$. For a $2 \\times 2$ matrix: swap the diagonal entries, negate the off-diagonal ones, divide by the determinant.\n\nThe inverse and the transpose of a product **reverse the order**. Related rules: $(A^\\top)^{-1} = (A^{-1})^\\top$, $(kA)^{-1} = \\frac{1}{k}A^{-1}$ for $k \\ne 0$, $(A^{-1})^{-1} = A$.\n\n**Cramer's rule** follows from the adjugate formula: if $\\det A \\ne 0$, the unique solution of $A\\mathbf{x} = \\mathbf{b}$ is $x_i = \\dfrac{\\det A_i}{\\det A}$, where $A_i$ is $A$ with column $i$ replaced by $\\mathbf{b}$.",
     "variables": [
       {
         "symbol": "$A$",
@@ -130,11 +130,15 @@
       {
         "symbol": "$B$",
         "meaning": "another invertible n×n matrix"
+      },
+      {
+        "symbol": "$A_i$",
+        "meaning": "A with its i-th column replaced by b (Cramer's rule)"
       }
     ],
-    "whenToUse": "Inverting $2 \\times 2$ matrices by inspection, finding a single entry of $A^{-1}$ (it is $C_{ji}/\\det A$), and simplifying expressions such as $(A^\\top B)^{-1}$ or $(ABC)^\\top$.",
+    "whenToUse": "Inverting $2 \\times 2$ matrices by inspection, finding a single entry of $A^{-1}$ (it is $C_{ji}/\\det A$), simplifying expressions such as $(A^\\top B)^{-1}$ or $(ABC)^\\top$, and solving small ($2 \\times 2$ or $3 \\times 3$) systems, or finding a single unknown, by Cramer's rule.",
     "commonMistake": "Writing $(AB)^{-1} = A^{-1}B^{-1}$; the order must reverse (the two agree only if $A$ and $B$ commute). Forgetting the transpose in the adjugate (entry $(i,j)$ of $A^{-1}$ uses cofactor $C_{ji}$, not $C_{ij}$). And $(A + B)^{-1} \\ne A^{-1} + B^{-1}$ in general.",
-    "example": "$A = \\begin{bmatrix} 4 & 7 \\\\ 2 & 6 \\end{bmatrix}$: $\\det A = 24 - 14 = 10$, so\n\n$$\nA^{-1} = \\frac{1}{10}\\begin{bmatrix} 6 & -7 \\\\ -2 & 4 \\end{bmatrix} = \\begin{bmatrix} 0.6 & -0.7 \\\\ -0.2 & 0.4 \\end{bmatrix}.\n$$\n\nCheck the first row of $AA^{-1}$: $4(0.6) + 7(-0.2) = 1$ and $4(-0.7) + 7(0.4) = 0$. ✓",
+    "example": "$A = \\begin{bmatrix} 4 & 7 \\\\ 2 & 6 \\end{bmatrix}$: $\\det A = 24 - 14 = 10$, so\n\n$$\nA^{-1} = \\frac{1}{10}\\begin{bmatrix} 6 & -7 \\\\ -2 & 4 \\end{bmatrix} = \\begin{bmatrix} 0.6 & -0.7 \\\\ -0.2 & 0.4 \\end{bmatrix}.\n$$\n\nCheck the first row of $AA^{-1}$: $4(0.6) + 7(-0.2) = 1$ and $4(-0.7) + 7(0.4) = 0$. ✓\n\nSolve $4x + 7y = 1,\\; 2x + 6y = 2$: $A^{-1}\\begin{bmatrix} 1 \\\\ 2 \\end{bmatrix} = \\begin{bmatrix} 0.6 - 1.4 \\\\ -0.2 + 0.8 \\end{bmatrix} = \\begin{bmatrix} -0.8 \\\\ 0.6 \\end{bmatrix}$. Cramer's rule agrees: $x = \\frac{1\\cdot 6 - 7\\cdot 2}{10} = -0.8$ and $y = \\frac{4\\cdot 2 - 1\\cdot 2}{10} = 0.6$.",
     "conceptIds": []
   },
   {
@@ -229,7 +233,7 @@
     "topicId": "la-matrices",
     "name": "Partitioned (block) matrices: product, determinant, inverse",
     "latex": "\\det\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix} = \\det A \\cdot \\det\\!\\left(D - CA^{-1}B\\right) \\;\\; (A \\text{ invertible}), \\qquad \\det\\begin{bmatrix} A & B \\\\ 0 & D \\end{bmatrix} = \\det A \\cdot \\det D",
-    "meaning": "Partition matrices into blocks of compatible sizes; blocks then multiply like scalar entries, **keeping the order**:\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}\\begin{bmatrix} E & F \\\\ G & H \\end{bmatrix} = \\begin{bmatrix} AE + BG & AF + BH \\\\ CE + DG & CF + DH \\end{bmatrix}\n$$\n\n$S = D - CA^{-1}B$ is the **Schur complement** of $A$. For block-triangular matrices ($B = 0$ or $C = 0$), with square diagonal blocks $A$ and $D$:\n- the determinant is $\\det A \\cdot \\det D$;\n- the eigenvalues are those of $A$ together with those of $D$;\n- $\\begin{bmatrix} A & B \\\\ 0 & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} & -A^{-1}BD^{-1} \\\\ 0 & D^{-1} \\end{bmatrix}$.\n\nFor block-diagonal matrices, inverses and powers act block by block: $\\begin{bmatrix} A & 0 \\\\ 0 & D \\end{bmatrix}^{k} = \\begin{bmatrix} A^k & 0 \\\\ 0 & D^k \\end{bmatrix}$.",
+    "meaning": "Partition matrices into blocks of compatible sizes; blocks then multiply like scalar entries, **keeping the order**:\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}\\begin{bmatrix} E & F \\\\ G & H \\end{bmatrix} = \\begin{bmatrix} AE + BG & AF + BH \\\\ CE + DG & CF + DH \\end{bmatrix}\n$$\n\n$S = D - CA^{-1}B$ is the **Schur complement** of $A$. When $A$ and $S$ are invertible, $\\det M = \\det A \\cdot \\det S$ and\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} + A^{-1}BS^{-1}CA^{-1} & -A^{-1}BS^{-1} \\\\ -S^{-1}CA^{-1} & S^{-1} \\end{bmatrix}.\n$$\n\nFor block-triangular matrices ($B = 0$ or $C = 0$), with square diagonal blocks $A$ and $D$:\n- the determinant is $\\det A \\cdot \\det D$;\n- the eigenvalues are those of $A$ together with those of $D$;\n- $\\begin{bmatrix} A & B \\\\ 0 & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} & -A^{-1}BD^{-1} \\\\ 0 & D^{-1} \\end{bmatrix}$.\n\nFor block-diagonal matrices, inverses and powers act block by block: $\\begin{bmatrix} A & 0 \\\\ 0 & D \\end{bmatrix}^{k} = \\begin{bmatrix} A^k & 0 \\\\ 0 & D^k \\end{bmatrix}$.",
     "variables": [
       {
         "symbol": "$A, D$",
@@ -242,6 +246,14 @@
       {
         "symbol": "$D - CA^{-1}B$",
         "meaning": "Schur complement of A in the block matrix"
+      },
+      {
+        "symbol": "$S$",
+        "meaning": "the Schur complement D − CA⁻¹B (q×q)"
+      },
+      {
+        "symbol": "$M$",
+        "meaning": "the whole block matrix [A B; C D]"
       }
     ],
     "whenToUse": "Matrices with visible zero blocks: compute the determinant, eigenvalues or inverse block by block instead of expanding a $4 \\times 4$ or $5 \\times 5$ matrix. Also block multiplication in derivations (e.g. $X^\\top X$ for a design matrix split into column groups).",
@@ -285,7 +297,7 @@
     "topicId": "la-matrices",
     "name": "Definiteness of a symmetric matrix (eigenvalue and Sylvester tests)",
     "latex": "A \\succ 0 \\iff \\mathbf{x}^\\top A\\mathbf{x} > 0 \\;\\; \\forall\\, \\mathbf{x} \\ne \\mathbf{0} \\iff \\lambda_i > 0 \\;\\; \\forall\\, i \\iff \\Delta_1 > 0,\\; \\Delta_2 > 0,\\; \\ldots,\\; \\Delta_n > 0",
-    "meaning": "For a **real symmetric** $A$, with $\\Delta_k$ the $k$-th **leading** principal minor (determinant of the top-left $k \\times k$ submatrix):\n\n| Class | Eigenvalues | Minor test |\n| --- | --- | --- |\n| Positive definite | all $> 0$ | $\\Delta_k > 0$ for every $k$ (Sylvester) |\n| Positive semidefinite | all $\\ge 0$ | **all** principal minors $\\ge 0$ (not only leading) |\n| Negative definite | all $< 0$ | $(-1)^k\\Delta_k > 0$: $\\Delta_1 < 0, \\Delta_2 > 0, \\Delta_3 < 0, \\ldots$ |\n| Indefinite | mixed signs | e.g. $\\det A < 0$ for $2 \\times 2$ |\n\n$2 \\times 2$ shortcut: $\\begin{bmatrix} a & b \\\\ b & c \\end{bmatrix}$ is positive definite iff $a > 0$ and $ac - b^2 > 0$. Gram matrices $A^\\top A$ are always positive semidefinite, and positive definite iff $A$ has full column rank.",
+    "meaning": "For a **real symmetric** $A$, with $\\Delta_k$ the $k$-th **leading** principal minor (determinant of the top-left $k \\times k$ submatrix):\n\n| Class | Eigenvalues | Minor test |\n| --- | --- | --- |\n| Positive definite | all $> 0$ | $\\Delta_k > 0$ for every $k$ (Sylvester) |\n| Positive semidefinite | all $\\ge 0$ | **all** principal minors $\\ge 0$ (not only leading) |\n| Negative definite | all $< 0$ | $(-1)^k\\Delta_k > 0$: $\\Delta_1 < 0, \\Delta_2 > 0, \\Delta_3 < 0, \\ldots$ |\n| Negative semidefinite | all $\\le 0$ | $(-1)^k \\times$ (every $k \\times k$ principal minor) $\\ge 0$ |\n| Indefinite | mixed signs | e.g. $\\det A < 0$ for $2 \\times 2$ |\n\n$2 \\times 2$ shortcut: $\\begin{bmatrix} a & b \\\\ b & c \\end{bmatrix}$ is positive definite iff $a > 0$ and $ac - b^2 > 0$. Gram matrices $A^\\top A$ are always positive semidefinite, and positive definite iff $A$ has full column rank.",
     "variables": [
       {
         "symbol": "$A$",
@@ -400,7 +412,7 @@
     ],
     "whenToUse": "Solving linear systems, computing rank, determinants of $3 \\times 3$ and larger numeric matrices, inverses via Gauss–Jordan, and producing the $L$ and $U$ factors (the multipliers $m_{ik}$ become the entries of $L$).",
     "commonMistake": "Forgetting the sign change for each row swap, or scaling a row (e.g. halving it to get a leading 1) and not compensating in the determinant. Also reading eigenvalues off the echelon form: row operations preserve rank and the solution set, but **not** eigenvalues.",
-    "example": "$A = \\begin{bmatrix} 2 & 1 & 1 \\\\ 4 & -6 & 0 \\\\ -2 & 7 & 2 \\end{bmatrix}$. Multipliers $m_{21} = 2$, $m_{31} = -1$: $R_2 - 2R_1 = (0, -8, -2)$, $R_3 + R_1 = (0, 8, 3)$. Then $m_{32} = -1$: $R_3 + R_2 = (0, 0, 1)$.\n\n$$\nU = \\begin{bmatrix} 2 & 1 & 1 \\\\ 0 & -8 & -2 \\\\ 0 & 0 & 1 \\end{bmatrix}, \\qquad \\det A = 2 \\cdot (-8) \\cdot 1 = -16 \\quad (s = 0).\n$$\n\nCofactor check along row 1: $2(-12 - 0) - 1(8 - 0) + 1(28 - 12) = -24 - 8 + 16 = -16$. ✓",
+    "example": "$A = \\begin{bmatrix} 2 & 1 & -1 \\\\ 6 & 1 & 0 \\\\ -4 & 4 & 3 \\end{bmatrix}$. Multipliers $m_{21} = 6/2 = 3$, $m_{31} = -4/2 = -2$: $R_2 - 3R_1 = (0, -2, 3)$, $R_3 + 2R_1 = (0, 6, 1)$. Then $m_{32} = 6/(-2) = -3$: $R_3 + 3R_2 = (0, 0, 10)$.\n\n$$\nU = \\begin{bmatrix} 2 & 1 & -1 \\\\ 0 & -2 & 3 \\\\ 0 & 0 & 10 \\end{bmatrix}, \\qquad \\det A = 2 \\cdot (-2) \\cdot 10 = -40 \\quad (s = 0).\n$$\n\nCofactor check along row 1: $2(3 - 0) - 1(18 - 0) + (-1)(24 + 4) = 6 - 18 - 28 = -40$. ✓ All three pivots are nonzero, so $\\operatorname{rank}A = 3$.",
     "conceptIds": []
   },
   {
@@ -622,6 +634,44 @@
     "conceptIds": []
   },
   {
+    "id": "f-la-special-matrix-eigenvalues",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "name": "Eigenvalues of special matrices",
+    "latex": "\\begin{array}{lcl} A \\text{ triangular or diagonal} & \\Rightarrow & \\lambda_i = a_{ii} \\\\ A = A^\\top \\text{ (real)} & \\Rightarrow & \\lambda \\in \\mathbb{R} \\\\ A = -A^\\top \\text{ (real)} & \\Rightarrow & \\lambda = i\\beta,\\; \\beta \\in \\mathbb{R} \\\\ Q^\\top Q = I & \\Rightarrow & |\\lambda| = 1 \\\\ A^2 = A & \\Rightarrow & \\lambda \\in \\{0, 1\\} \\\\ A^2 = I & \\Rightarrow & \\lambda \\in \\{-1, 1\\} \\\\ A^k = 0 & \\Rightarrow & \\lambda = 0 \\\\ \\text{every row sum} = s & \\Rightarrow & s \\text{ is an eigenvalue} \\end{array}",
+    "meaning": "Most of these follow from one rule: **if a polynomial $p$ satisfies $p(A) = 0$, then every eigenvalue satisfies $p(\\lambda) = 0$**, because $A\\mathbf{v} = \\lambda\\mathbf{v}$ with $\\mathbf{v} \\ne \\mathbf{0}$ gives $\\mathbf{0} = p(A)\\mathbf{v} = p(\\lambda)\\mathbf{v}$. The eigenvalues must lie among the roots of $p$, but not every root has to occur.\n\n- **Triangular/diagonal:** $\\det(A - \\lambda I) = \\prod_i (a_{ii} - \\lambda)$.\n- **Real skew-symmetric** ($A^\\top = -A$): the eigenvalues are 0 or purely imaginary pairs $\\pm i\\beta$. For odd $n$, $\\det A = \\det A^\\top = \\det(-A) = (-1)^n\\det A$ forces $\\det A = 0$.\n- **Involutory** ($A^2 = I$): $A^{-1} = A$ and $\\det A = \\pm 1$; such a matrix is always diagonalizable.\n- **Nilpotent** ($A^k = 0$ for some $k$): every eigenvalue is 0, so $\\operatorname{tr}A = 0$, $\\det A = 0$ and $\\det(I + A) = 1$. A nonzero nilpotent matrix is **not** diagonalizable.\n- **Equal row sums $s$:** $A\\mathbf{1} = s\\mathbf{1}$, so $s$ is an eigenvalue with eigenvector $\\mathbf{1} = (1, \\ldots, 1)$. For a row-stochastic matrix (non-negative entries, each row summing to 1) this gives $\\lambda = 1$, and every eigenvalue satisfies $|\\lambda| \\le 1$. Equal **column** sums $s$ also make $s$ an eigenvalue (apply the rule to $A^\\top$, which has the same eigenvalues).",
+    "variables": [
+      {
+        "symbol": "$\\lambda$",
+        "meaning": "any eigenvalue of A (possibly complex)"
+      },
+      {
+        "symbol": "$p$",
+        "meaning": "a polynomial with p(A) = 0, e.g. p(t) = t² − t for an idempotent matrix"
+      },
+      {
+        "symbol": "$a_{ii}$",
+        "meaning": "diagonal entries of A"
+      },
+      {
+        "symbol": "$\\beta$",
+        "meaning": "a real number; a real skew-symmetric matrix has eigenvalues iβ"
+      },
+      {
+        "symbol": "$Q$",
+        "meaning": "a real orthogonal matrix"
+      },
+      {
+        "symbol": "$s$",
+        "meaning": "the common row sum of A"
+      }
+    ],
+    "whenToUse": "MCQ/MSQ statements such as \"a real skew-symmetric matrix of odd order is singular\", \"if $A^2 = I$ the eigenvalues are $\\pm 1$\", \"a nilpotent matrix has zero trace\", or a matrix whose rows all add up to the same number. Identify the structure first; the eigenvalues, trace and determinant then often follow without solving the characteristic equation.",
+    "commonMistake": "Reading the implications backwards. Eigenvalues in $\\{0, 1\\}$ do **not** make a matrix idempotent: $\\begin{bmatrix} 1 & 1 \\\\ 0 & 1 \\end{bmatrix}$ has eigenvalues $1, 1$, but its square is $\\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}$. Also saying a real skew-symmetric matrix has \"no real eigenvalues\": 0 is real, and it always occurs when $n$ is odd.",
+    "example": "- **Skew-symmetric:** $S = \\begin{bmatrix} 0 & 2 & -1 \\\\ -2 & 0 & 3 \\\\ 1 & -3 & 0 \\end{bmatrix}$ has $\\operatorname{tr}S = 0$, $\\det S = 0$ (odd order) and $S_2 = 2^2 + (-1)^2 + 3^2 = 14$ (sum of its $2 \\times 2$ principal minors). So $\\lambda^3 + 14\\lambda = 0$, giving $\\lambda = 0,\\ \\pm i\\sqrt{14}$.\n- **Equal row sums:** every row of $A = \\begin{bmatrix} 2 & 1 & 1 \\\\ 0 & 3 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}$ sums to 4, so $\\lambda_1 = 4$. Then $\\lambda_2 + \\lambda_3 = \\operatorname{tr}A - 4 = 3$ and $\\lambda_2\\lambda_3 = \\det A/4 = 8/4 = 2$, so $\\lambda_2, \\lambda_3 = 1, 2$.\n- **Nilpotent:** $N = \\begin{bmatrix} 0 & 1 & 2 \\\\ 0 & 0 & 3 \\\\ 0 & 0 & 0 \\end{bmatrix}$ is strictly upper triangular, so $N^3 = 0$, all its eigenvalues are 0, and $\\det(I + N) = 1$.",
+    "conceptIds": []
+  },
+  {
     "id": "f-la-determinant-properties",
     "subjectId": "la",
     "topicId": "la-rank-determinant",
@@ -746,6 +796,40 @@
     "conceptIds": []
   },
   {
+    "id": "f-la-gram-schmidt",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "name": "Gram–Schmidt orthogonalization and QR decomposition",
+    "latex": "\\mathbf{w}_1 = \\mathbf{a}_1, \\quad \\mathbf{w}_k = \\mathbf{a}_k - \\sum_{j=1}^{k-1} \\frac{\\mathbf{w}_j^\\top\\mathbf{a}_k}{\\mathbf{w}_j^\\top\\mathbf{w}_j}\\,\\mathbf{w}_j, \\quad \\mathbf{q}_k = \\frac{\\mathbf{w}_k}{\\lVert\\mathbf{w}_k\\rVert}; \\qquad A = QR, \\;\\; r_{jk} = \\mathbf{q}_j^\\top\\mathbf{a}_k \\;\\; (j \\le k)",
+    "meaning": "Gram–Schmidt turns linearly independent vectors $\\mathbf{a}_1, \\ldots, \\mathbf{a}_n$ into **orthonormal** vectors $\\mathbf{q}_1, \\ldots, \\mathbf{q}_n$: from each new vector subtract its projections onto the directions already found (the projection onto a line, applied repeatedly), then normalize.\n\n- At every stage $\\operatorname{span}\\{\\mathbf{q}_1, \\ldots, \\mathbf{q}_k\\} = \\operatorname{span}\\{\\mathbf{a}_1, \\ldots, \\mathbf{a}_k\\}$.\n- If some $\\mathbf{w}_k = \\mathbf{0}$, then $\\mathbf{a}_k$ is a combination of the earlier vectors, so the process also detects dependence.\n- **QR form:** an $m \\times n$ matrix $A$ with independent columns factors as $A = QR$, where $Q$ ($m \\times n$) has orthonormal columns ($Q^\\top Q = I_n$) and $R = Q^\\top A$ ($n \\times n$) is upper triangular with positive diagonal $r_{kk} = \\lVert\\mathbf{w}_k\\rVert$.\n- With an orthonormal basis, projection needs only dot products: $P = QQ^\\top$, $P\\mathbf{b} = \\sum_k (\\mathbf{q}_k^\\top\\mathbf{b})\\,\\mathbf{q}_k$, and least squares reduces to the triangular system $R\\hat{\\mathbf{x}} = Q^\\top\\mathbf{b}$.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{a}_k$",
+        "meaning": "the given linearly independent vectors (the columns of A)"
+      },
+      {
+        "symbol": "$\\mathbf{w}_k$",
+        "meaning": "k-th orthogonal vector, before normalization"
+      },
+      {
+        "symbol": "$\\mathbf{q}_k$",
+        "meaning": "k-th orthonormal vector: w_k divided by its length"
+      },
+      {
+        "symbol": "$Q$",
+        "meaning": "m×n matrix with orthonormal columns q_1, …, q_n"
+      },
+      {
+        "symbol": "$R$",
+        "meaning": "n×n upper-triangular matrix with entries r_jk = q_jᵀ a_k"
+      }
+    ],
+    "whenToUse": "Building an orthonormal basis for a span or a column space, projecting onto a subspace without inverting $A^\\top A$, computing a QR factorization, and checking a list of vectors for dependence (a zero $\\mathbf{w}_k$ flags it).",
+    "commonMistake": "Subtracting projections onto the **original** $\\mathbf{a}_j$ instead of the orthogonalized $\\mathbf{w}_j$ (or $\\mathbf{q}_j$); the $\\mathbf{a}_j$ are not orthogonal to each other, so the result is not orthogonal either. Forgetting to normalize (orthogonal is not orthonormal). And treating the $m \\times n$ factor $Q$ as an orthogonal matrix when $m > n$: $Q^\\top Q = I_n$, but $QQ^\\top \\ne I_m$ (it is the projection onto $C(A)$).",
+    "example": "$\\mathbf{a}_1 = (2, 1, 2)$, $\\mathbf{a}_2 = (3, 3, 0)$:\n\n- $\\mathbf{w}_1 = \\mathbf{a}_1$, $\\lVert\\mathbf{w}_1\\rVert = 3$.\n- $\\mathbf{w}_2 = \\mathbf{a}_2 - \\frac{\\mathbf{w}_1^\\top\\mathbf{a}_2}{\\mathbf{w}_1^\\top\\mathbf{w}_1}\\,\\mathbf{w}_1 = (3, 3, 0) - \\frac{9}{9}(2, 1, 2) = (1, 2, -2)$; check $\\mathbf{w}_1\\cdot\\mathbf{w}_2 = 2 + 2 - 4 = 0$ ✓ and $\\lVert\\mathbf{w}_2\\rVert = 3$.\n- $\\mathbf{q}_1 = \\frac{1}{3}(2, 1, 2)$, $\\mathbf{q}_2 = \\frac{1}{3}(1, 2, -2)$, and $r_{12} = \\mathbf{q}_1^\\top\\mathbf{a}_2 = \\frac{6 + 3 + 0}{3} = 3$:\n\n$$\n\\begin{bmatrix} 2 & 3 \\\\ 1 & 3 \\\\ 2 & 0 \\end{bmatrix} = \\underbrace{\\frac{1}{3}\\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\\\ 2 & -2 \\end{bmatrix}}_{Q}\\,\\underbrace{\\begin{bmatrix} 3 & 3 \\\\ 0 & 3 \\end{bmatrix}}_{R}.\n$$\n\nProjection of $\\mathbf{b} = (0, 0, 9)$ onto this plane: $\\mathbf{q}_1^\\top\\mathbf{b} = 6$ and $\\mathbf{q}_2^\\top\\mathbf{b} = -6$, so $\\mathbf{p} = 6\\mathbf{q}_1 - 6\\mathbf{q}_2 = (4, 2, 4) - (2, 4, -4) = (2, -2, 8)$. The error $\\mathbf{e} = \\mathbf{b} - \\mathbf{p} = (-2, 2, 1)$ is orthogonal to $\\mathbf{a}_1$ ($-4 + 2 + 2 = 0$) and to $\\mathbf{a}_2$ ($-6 + 6 + 0 = 0$). ✓",
+    "conceptIds": []
+  },
+  {
     "id": "f-la-least-squares-normal-equations",
     "subjectId": "la",
     "topicId": "la-projections-decompositions",
@@ -772,7 +856,7 @@
     ],
     "whenToUse": "Overdetermined systems, fitting a line $y = c + dt$ (or any model linear in its parameters) to data points, and projecting onto a subspace spanned by given vectors.",
     "commonMistake": "\"Cancelling\" $A^\\top$ in $A^\\top A\\hat{\\mathbf{x}} = A^\\top\\mathbf{b}$ to get $A\\hat{\\mathbf{x}} = \\mathbf{b}$ (not allowed when $A$ is not square and invertible). Forgetting the column of ones for the intercept, which forces the fitted line through the origin.",
-    "example": "Fit $y = c + dt$ to $(t, y) = (0, 6), (1, 0), (2, 0)$: $A = \\begin{bmatrix} 1 & 0 \\\\ 1 & 1 \\\\ 1 & 2 \\end{bmatrix}$, $\\mathbf{b} = (6, 0, 0)$.\n\n$$\nA^\\top A = \\begin{bmatrix} 3 & 3 \\\\ 3 & 5 \\end{bmatrix}, \\quad A^\\top\\mathbf{b} = \\begin{bmatrix} 6 \\\\ 0 \\end{bmatrix} \\;\\Rightarrow\\; 3c + 3d = 6,\\;\\; 3c + 5d = 0 \\;\\Rightarrow\\; d = -3,\\; c = 5.\n$$\n\nBest line $y = 5 - 3t$. Fitted $\\mathbf{p} = (5, 2, -1)$, residual $\\mathbf{e} = (1, -2, 1)$, $A^\\top\\mathbf{e} = (0, 0)$ ✓. Minimum sum of squared errors $= 1 + 4 + 1 = 6$.",
+    "example": "Fit $y = c + dt$ to $(t, y) = (0, 1), (1, 2), (2, 6)$: $A = \\begin{bmatrix} 1 & 0 \\\\ 1 & 1 \\\\ 1 & 2 \\end{bmatrix}$, $\\mathbf{b} = (1, 2, 6)$.\n\n$$\nA^\\top A = \\begin{bmatrix} 3 & 3 \\\\ 3 & 5 \\end{bmatrix}, \\quad A^\\top\\mathbf{b} = \\begin{bmatrix} 9 \\\\ 14 \\end{bmatrix} \\;\\Rightarrow\\; 3c + 3d = 9,\\;\\; 3c + 5d = 14 \\;\\Rightarrow\\; d = 2.5,\\; c = 0.5.\n$$\n\nBest line $y = 0.5 + 2.5t$. Fitted $\\mathbf{p} = (0.5, 3, 5.5)$, residual $\\mathbf{e} = (0.5, -1, 0.5)$, $A^\\top\\mathbf{e} = (0, 0)$ ✓. Minimum sum of squared errors $= 0.25 + 1 + 0.25 = 1.5$.",
     "conceptIds": []
   },
   {
@@ -781,7 +865,7 @@
     "topicId": "la-projections-decompositions",
     "name": "LU decomposition",
     "latex": "A = LU, \\qquad L = \\begin{bmatrix} 1 & 0 & 0 \\\\ \\ell_{21} & 1 & 0 \\\\ \\ell_{31} & \\ell_{32} & 1 \\end{bmatrix}, \\;\\; \\ell_{ik} = m_{ik}; \\qquad A\\mathbf{x} = \\mathbf{b} \\iff L\\mathbf{y} = \\mathbf{b},\\;\\; U\\mathbf{x} = \\mathbf{y}",
-    "meaning": "Gaussian elimination **without row swaps** writes $A$ as a unit lower-triangular $L$ times the upper-triangular echelon form $U$ (pivots on its diagonal). This is the Doolittle convention; the entries of $L$ below the diagonal are the multipliers $m_{ik}$ used in $R_i \\leftarrow R_i - m_{ik}R_k$.\n\n- An invertible $A$ has such a factorization iff all its leading principal minors are nonzero; otherwise use $PA = LU$ with a permutation matrix $P$.\n- $\\det A = \\prod_i u_{ii}$.\n- Solving: forward substitution $L\\mathbf{y} = \\mathbf{b}$, then back substitution $U\\mathbf{x} = \\mathbf{y}$, each $O(n^2)$. The factorization itself costs $O(n^3)$ once and can be reused for many right-hand sides.\n- Variants: $A = LDU$ (pivots pulled into a diagonal $D$, both triangular factors unit); Crout's form puts the 1s on the diagonal of $U$ instead.",
+    "meaning": "Gaussian elimination **without row swaps** writes $A$ as a unit lower-triangular $L$ times the upper-triangular echelon form $U$ (pivots on its diagonal). This is the Doolittle convention; the entries of $L$ below the diagonal are the multipliers $m_{ik}$ used in $R_i \\leftarrow R_i - m_{ik}R_k$.\n\n- An invertible $A$ has such a factorization iff all its leading principal minors are nonzero; otherwise use $PA = LU$ with a permutation matrix $P$.\n- Without row swaps the $k$-th pivot is $u_{kk} = \\Delta_k/\\Delta_{k-1}$ ($\\Delta_k$ = $k$-th leading principal minor, $\\Delta_0 = 1$).\n- $\\det A = \\prod_i u_{ii}$.\n- Solving: forward substitution $L\\mathbf{y} = \\mathbf{b}$, then back substitution $U\\mathbf{x} = \\mathbf{y}$, each $O(n^2)$. The factorization itself costs $O(n^3)$ once and can be reused for many right-hand sides.\n- Variants: $A = LDU$ (pivots pulled into a diagonal $D$, both triangular factors unit); Crout's form puts the 1s on the diagonal of $U$ instead.",
     "variables": [
       {
         "symbol": "$L$",
@@ -798,11 +882,15 @@
       {
         "symbol": "$\\mathbf{y}$",
         "meaning": "intermediate vector from forward substitution"
+      },
+      {
+        "symbol": "$\\Delta_k$",
+        "meaning": "k-th leading principal minor of A (determinant of the top-left k×k block)"
       }
     ],
     "whenToUse": "Solving $A\\mathbf{x} = \\mathbf{b}$ for several right-hand sides, computing determinants, and questions asking for a specific entry of $L$ or $U$.",
     "commonMistake": "Storing the negatives of the multipliers in $L$; the entry is $+m_{ik}$ when the step is $R_i \\leftarrow R_i - m_{ik}R_k$. Also forgetting that factorization without pivoting fails at a zero pivot: $\\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}$ has no LU factorization and needs $PA = LU$.",
-    "example": "$A = \\begin{bmatrix} 2 & 1 & 1 \\\\ 4 & -6 & 0 \\\\ -2 & 7 & 2 \\end{bmatrix}$ with multipliers $m_{21} = 2$, $m_{31} = -1$, $m_{32} = -1$:\n\n$$\nL = \\begin{bmatrix} 1 & 0 & 0 \\\\ 2 & 1 & 0 \\\\ -1 & -1 & 1 \\end{bmatrix}, \\qquad U = \\begin{bmatrix} 2 & 1 & 1 \\\\ 0 & -8 & -2 \\\\ 0 & 0 & 1 \\end{bmatrix}.\n$$\n\nSolve for $\\mathbf{b} = (5, -2, 9)$:\n- Forward ($L\\mathbf{y} = \\mathbf{b}$): $y_1 = 5$, $y_2 = -2 - 2(5) = -12$, $y_3 = 9 + 5 - 12 = 2$.\n- Back ($U\\mathbf{x} = \\mathbf{y}$): $x_3 = 2$, then $-8x_2 - 2(2) = -12 \\Rightarrow x_2 = 1$, then $2x_1 + 1 + 2 = 5 \\Rightarrow x_1 = 1$.\n\nSo $\\mathbf{x} = (1, 1, 2)$; check $A\\mathbf{x} = (5, -2, 9)$ ✓. Also $\\det A = 2(-8)(1) = -16$.",
+    "example": "$A = \\begin{bmatrix} 2 & 1 & -1 \\\\ 6 & 1 & 0 \\\\ -4 & 4 & 3 \\end{bmatrix}$ with multipliers $m_{21} = 3$, $m_{31} = -2$, $m_{32} = -3$:\n\n$$\nL = \\begin{bmatrix} 1 & 0 & 0 \\\\ 3 & 1 & 0 \\\\ -2 & -3 & 1 \\end{bmatrix}, \\qquad U = \\begin{bmatrix} 2 & 1 & -1 \\\\ 0 & -2 & 3 \\\\ 0 & 0 & 10 \\end{bmatrix}.\n$$\n\nPivot check: $\\Delta_1 = 2$, $\\Delta_2 = 2 \\cdot 1 - 1 \\cdot 6 = -4$, $\\Delta_3 = \\det A = -40$, so $u_{22} = -4/2 = -2$ and $u_{33} = -40/(-4) = 10$. ✓\n\nSolve for $\\mathbf{b} = (1, 8, 13)$:\n- Forward ($L\\mathbf{y} = \\mathbf{b}$): $y_1 = 1$, $y_2 = 8 - 3(1) = 5$, $y_3 = 13 + 2(1) + 3(5) = 30$.\n- Back ($U\\mathbf{x} = \\mathbf{y}$): $x_3 = 30/10 = 3$, then $-2x_2 + 3(3) = 5 \\Rightarrow x_2 = 2$, then $2x_1 + 2 - 3 = 1 \\Rightarrow x_1 = 1$.\n\nSo $\\mathbf{x} = (1, 2, 3)$; check $A\\mathbf{x} = (2 + 2 - 3,\\ 6 + 2 + 0,\\ -4 + 8 + 9) = (1, 8, 13)$ ✓.",
     "conceptIds": []
   },
   {
@@ -840,7 +928,7 @@
     ],
     "whenToUse": "Questions on singular values, rank, matrix 2-norm or Frobenius norm, low-rank approximation error, PCA (the principal directions are the right singular vectors of the centred data matrix) and pseudo-inverses.",
     "commonMistake": "Taking the singular values to be the eigenvalues of $A$; for a non-symmetric $A$ they differ, and for a symmetric $A$, $\\sigma_i = |\\lambda_i|$. Forgetting the square root of the eigenvalues of $A^\\top A$. Choosing $\\mathbf{u}_i$ independently of $\\mathbf{v}_i$; the signs must match via $\\mathbf{u}_i = A\\mathbf{v}_i/\\sigma_i$.",
-    "example": "$A = \\begin{bmatrix} 3 & 0 \\\\ 4 & 5 \\end{bmatrix}$: $A^\\top A = \\begin{bmatrix} 25 & 20 \\\\ 20 & 25 \\end{bmatrix}$ has eigenvalues $45$ and $5$, so\n\n$$\n\\sigma_1 = \\sqrt{45} = 3\\sqrt{5} \\approx 6.708, \\qquad \\sigma_2 = \\sqrt{5} \\approx 2.236.\n$$\n\nChecks: $\\sigma_1\\sigma_2 = \\sqrt{225} = 15 = |\\det A|$ ✓, and $\\sigma_1^2 + \\sigma_2^2 = 50 = 9 + 16 + 25 = \\lVert A\\rVert_F^2$ ✓. The best rank-1 approximation has error $\\lVert A - A_1\\rVert_2 = \\sigma_2 = \\sqrt{5} \\approx 2.236$.",
+    "example": "$A = \\begin{bmatrix} 2 & 2 \\\\ -1 & 1 \\end{bmatrix}$: $A^\\top A = \\begin{bmatrix} 5 & 3 \\\\ 3 & 5 \\end{bmatrix}$ has eigenvalues $8$ and $2$ (eigenvectors $(1, 1)$ and $(1, -1)$), so\n\n$$\n\\sigma_1 = \\sqrt{8} = 2\\sqrt{2} \\approx 2.828, \\qquad \\sigma_2 = \\sqrt{2} \\approx 1.414.\n$$\n\n- $\\mathbf{v}_1 = \\frac{1}{\\sqrt{2}}(1, 1)$: $A\\mathbf{v}_1 = (2\\sqrt{2}, 0) \\Rightarrow \\mathbf{u}_1 = (1, 0)$. $\\mathbf{v}_2 = \\frac{1}{\\sqrt{2}}(1, -1)$: $A\\mathbf{v}_2 = (0, -\\sqrt{2}) \\Rightarrow \\mathbf{u}_2 = (0, -1)$.\n- Checks: $\\sigma_1\\sigma_2 = 4 = |\\det A|$ ✓ and $\\sigma_1^2 + \\sigma_2^2 = 10 = 4 + 4 + 1 + 1 = \\lVert A\\rVert_F^2$ ✓.\n- Best rank-1 approximation: $A_1 = \\sigma_1\\mathbf{u}_1\\mathbf{v}_1^\\top = \\begin{bmatrix} 2 & 2 \\\\ 0 & 0 \\end{bmatrix}$, with error $\\lVert A - A_1\\rVert_2 = \\sigma_2 = \\sqrt{2} \\approx 1.414$.",
     "conceptIds": []
   }
 ]

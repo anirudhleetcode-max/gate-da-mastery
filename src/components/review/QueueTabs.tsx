@@ -12,6 +12,8 @@ export interface QueueTab<T extends string> {
   count: number;
   /** Tone of the count (e.g. danger for overdue work). */
   emphasis?: boolean;
+  /** What the emphasis means, for screen readers (colour is never the only signal). */
+  emphasisLabel?: string;
 }
 
 export function QueueTabs<T extends string>({ tabs, value, onChange, panelId, label }: { tabs: QueueTab<T>[]; value: T; onChange: (v: T) => void; panelId: string; label: string }) {
@@ -50,8 +52,17 @@ export function QueueTabs<T extends string>({ tabs, value, onChange, panelId, la
               active ? "border-accent bg-accent-soft" : "border-border bg-surface hover:bg-surface-2",
             )}
           >
-            <span className={cn("tnum text-xl font-semibold leading-6", t.emphasis && t.count > 0 ? "text-danger" : "text-fg")}>{t.count}</span>
-            <span className={cn("text-xs font-medium leading-4", active ? "text-accent-text" : "text-fg-2")}>{t.label}</span>
+            <span aria-hidden className={cn("tnum text-xl font-semibold leading-6", t.emphasis && t.count > 0 ? "text-danger" : "text-fg")}>
+              {t.count}
+            </span>
+            <span className={cn("text-xs font-medium leading-4", active ? "text-accent-text" : "text-fg-2")}>
+              {t.label}
+              <span className="sr-only">
+                {", "}
+                {t.count} {t.count === 1 ? "item" : "items"}
+                {t.emphasis && t.count > 0 && t.emphasisLabel ? `, ${t.emphasisLabel}` : ""}
+              </span>
+            </span>
           </button>
         );
       })}

@@ -30,8 +30,10 @@ export interface AdminRow {
   preview: string;
   /** Visible to students (passes the availability gate). */
   servable: boolean;
-  /** Official PYQ: the independent solve disagrees with the key, or a dispute record exists. */
-  flagged: boolean;
+  /** Official PYQ with a formally resolved dispute record. */
+  dispute: boolean;
+  /** Official PYQ whose independent re-solve disagrees with the key (no dispute record yet). */
+  disagrees: boolean;
 }
 
 export function adminRows(): AdminRow[] {
@@ -49,7 +51,8 @@ export function adminRows(): AdminRow[] {
     questionNumber: q.questionNumber,
     preview: q.preview,
     servable: getQuestion(q.id) !== undefined,
-    flagged: q.origin === "OFFICIAL_PYQ" && (Boolean(q.dispute) || !q.answerVerification.agreesWithKey),
+    dispute: q.origin === "OFFICIAL_PYQ" && Boolean(q.dispute),
+    disagrees: q.origin === "OFFICIAL_PYQ" && !q.dispute && !q.answerVerification.agreesWithKey,
   }));
 }
 
@@ -101,6 +104,25 @@ export function questionFileIndex(): Map<string, string> {
   }
   cache = { signature, index };
   return index;
+}
+
+/**
+ * builtAt of generated/content.json as it is on disk now (read from the first
+ * bytes of the file), or null. The server loads the bundle once per process,
+ * so this can be newer than the bundle being served.
+ */
+export function diskBundleBuiltAt(): string | null {
+  let fd: number | null = null;
+  try {
+    fd = fs.openSync(path.join(process.cwd(), "generated", "content.json"), "r");
+    const buf = Buffer.alloc(512);
+    const n = fs.readSync(fd, buf, 0, buf.length, 0);
+    return buf.toString("utf8", 0, n).match(/"builtAt":"([^"]+)"/)?.[1] ?? null;
+  } catch {
+    return null;
+  } finally {
+    if (fd !== null) fs.closeSync(fd);
+  }
 }
 
 export function editHref(file: string): string {

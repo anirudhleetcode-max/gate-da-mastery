@@ -1,0 +1,910 @@
+[
+  {
+    "id": "M15-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (Maclaurin expansions used to resolve a limit) in three routine steps: expand two functions, cancel the low-order terms, read off the $x^4$ coefficient; about 1.5\u20132 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Using Maclaurin series of $e^{x^2}$ and $\\cos x$ to evaluate a limit whose numerator vanishes to fourth order",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The value of the limit\n\n$$\\lim_{x \\to 0} \\frac{e^{x^{2}} - \\cos x - \\tfrac{3}{2}\\,x^{2}}{x^{4}}$$\n\nis",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{11}{24}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{1}{2}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{13}{24}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{23}{24}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Expand $e^{x^2} = 1 + x^2 + \\tfrac{x^4}{2} + \\cdots$ and $\\cos x = 1 - \\tfrac{x^2}{2} + \\tfrac{x^4}{24} - \\cdots$.\nThe constant and $x^2$ terms of the numerator cancel, so the numerator is $\\left(\\tfrac12 - \\tfrac1{24}\\right)x^4 + O(x^6) = \\tfrac{11}{24}x^4 + O(x^6)$.\nDividing by $x^4$ and letting $x \\to 0$ gives $\\tfrac{11}{24}$.",
+      "steps": [
+        {
+          "title": "Expand $e^{x^2}$",
+          "body": "Put $t = x^2$ in $e^{t} = 1 + t + \\dfrac{t^2}{2!} + \\dfrac{t^3}{3!} + \\cdots$:\n\n$$e^{x^2} = 1 + x^2 + \\frac{x^4}{2} + \\frac{x^6}{6} + \\cdots$$"
+        },
+        {
+          "title": "Expand $\\cos x$",
+          "body": "$$\\cos x = 1 - \\frac{x^2}{2} + \\frac{x^4}{24} - \\frac{x^6}{720} + \\cdots$$"
+        },
+        {
+          "title": "Combine the numerator",
+          "body": "$$e^{x^2} - \\cos x - \\tfrac32 x^2 = (1 - 1) + \\left(1 + \\tfrac12 - \\tfrac32\\right)x^2 + \\left(\\tfrac12 - \\tfrac1{24}\\right)x^4 + O(x^6).$$\n\nThe constant term is $0$, the $x^2$ coefficient is $1 + \\tfrac12 - \\tfrac32 = 0$, and the $x^4$ coefficient is $\\tfrac{12}{24} - \\tfrac{1}{24} = \\tfrac{11}{24}$. So the numerator equals $\\tfrac{11}{24}x^4 + O(x^6)$."
+        },
+        {
+          "title": "Divide and take the limit",
+          "body": "$$\\frac{\\tfrac{11}{24}x^4 + O(x^6)}{x^4} = \\frac{11}{24} + O(x^2) \\longrightarrow \\frac{11}{24} \\quad (x \\to 0).$$\n\nThe correct choice is **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The $x^4$ coefficient of the numerator is $\\tfrac12 - \\tfrac1{24} = \\tfrac{11}{24}$, and all lower-order terms cancel, so the limit is $\\tfrac{11}{24}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac12$ is only the $x^4$ coefficient of $e^{x^2}$. The numerator also subtracts $\\cos x$, whose $x^4$ term $\\tfrac{x^4}{24}$ must be subtracted as well."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This adds the $x^4$ term of $\\cos x$ ($\\tfrac12 + \\tfrac1{24}$). The numerator contains $-\\cos x$, so that term enters with a minus sign."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This takes the $x^4$ coefficient of $e^{x^2}$ as $1$ (forgetting the factor $\\tfrac1{2!}$ in $\\tfrac{(x^2)^2}{2!}$) and then subtracts $\\tfrac1{24}$: $1 - \\tfrac1{24} = \\tfrac{23}{24}$."
+        }
+      ],
+      "shortcut": "Once you see that the constant and $x^2$ terms cancel, only the $x^4$ coefficients matter: $\\tfrac{1}{2!}$ from $e^{x^2}$ and $\\tfrac{1}{4!}$ from $\\cos x$, giving $\\tfrac12 - \\tfrac1{24}$.",
+      "commonTrap": "Writing the $x^4$ term of $e^{x^2}$ as $x^4$ instead of $\\tfrac{x^4}{2}$ (substituting $t = x^2$ but dropping the $\\tfrac{t^2}{2!}$ factor), or forgetting that $\\cos x$ enters with a minus sign."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: 11/24",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nprint(sp.limit((sp.exp(x**2) - sp.cos(x) - sp.Rational(3, 2)*x**2) / x**4, x, 0))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-axioms"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD \u2014 four independent statements need different tools (a Bonferroni-type bound, a counting identity over disjoint atoms and two explicit counterexamples), and each false statement has a tempting justification; about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "Bounds forced by the probability axioms on intersections and unions of three events with given marginal probabilities",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Events $A$, $B$ and $C$ are defined on the same probability space and satisfy $P(A) = 0.7$, $P(B) = 0.6$ and $P(C) = 0.5$. Nothing else is known about how the events overlap.\n\nWhich of the following statements must hold for **every** choice of events $A$, $B$, $C$ with these three probabilities?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$P(A \\cap B) \\ge 0.3$"
+      },
+      {
+        "label": "B",
+        "text": "$P(A \\cap B \\cap C) \\ge 0.1$"
+      },
+      {
+        "label": "C",
+        "text": "The probability that exactly two of the three events occur is at most $0.9$."
+      },
+      {
+        "label": "D",
+        "text": "$P(A^{c} \\cap B^{c} \\cap C^{c}) = 0$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Statement A follows from $P(A \\cup B) \\le 1$. Statement C follows from the counting identity $p_1 + 2p_2 + 3p_3 = P(A) + P(B) + P(C) = 1.8$, where $p_k$ is the probability that exactly $k$ of the events occur, which forces $p_2 \\le 0.9$.\nStatements B and D each fail for an explicit assignment of probabilities that still gives $P(A) = 0.7$, $P(B) = 0.6$, $P(C) = 0.5$.",
+      "steps": [
+        {
+          "title": "Statement A: a lower bound on $P(A \\cap B)$",
+          "body": "By inclusion\u2013exclusion, $P(A \\cap B) = P(A) + P(B) - P(A \\cup B) = 1.3 - P(A \\cup B)$. Since $P(A \\cup B) \\le 1$, we get $P(A \\cap B) \\ge 1.3 - 1 = 0.3$ for every choice of the events. So A must hold."
+        },
+        {
+          "title": "Statement C: a counting identity",
+          "body": "The three events cut the sample space into 8 disjoint atoms. Let $p_k$ be the total probability of the atoms in which exactly $k$ of the events occur ($k = 0, 1, 2, 3$). Adding $P(A) + P(B) + P(C)$ counts each atom once for every event that contains it, so\n\n$$p_1 + 2p_2 + 3p_3 = 0.7 + 0.6 + 0.5 = 1.8.$$\n\nBecause $p_1, p_3 \\ge 0$, we have $2p_2 \\le 1.8$, that is $p_2 \\le 0.9$. So C must hold (and $0.9$ is attainable: give the atoms \"$A, B$ only\", \"$A, C$ only\", \"$B, C$ only\" the probabilities $0.4$, $0.3$, $0.2$ and \"none\" the probability $0.1$)."
+        },
+        {
+          "title": "Statement B: a counterexample",
+          "body": "Give the atoms \"$A, B$ only\", \"$A, C$ only\", \"$B, C$ only\" and \"$A$ only\" the probabilities $0.3$, $0.2$, $0.3$ and $0.2$, and every other atom probability $0$. Then $P(A) = 0.3 + 0.2 + 0.2 = 0.7$, $P(B) = 0.3 + 0.3 = 0.6$, $P(C) = 0.2 + 0.3 = 0.5$ and the total is $1$. But $P(A \\cap B \\cap C) = 0 < 0.1$, so B need not hold. (The general bound $P(A) + P(B) + P(C) - 2 = -0.2$ is negative, so it guarantees nothing.)"
+        },
+        {
+          "title": "Statement D: a counterexample",
+          "body": "Take nested events $C \\subseteq B \\subseteq A$ with $P(C) = 0.5$, $P(B \\setminus C) = 0.1$ and $P(A \\setminus B) = 0.1$. Then $P(A) = 0.7$, $P(B) = 0.6$ and $P(C) = 0.5$, while $P(A \\cup B \\cup C) = P(A) = 0.7$. Hence $P(A^{c} \\cap B^{c} \\cap C^{c}) = 0.3 \\ne 0$. The three probabilities add up to more than $1$, but that does not force the union to be the whole sample space, so D need not hold.\n\nTherefore the statements that must hold are A and C."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$P(A \\cap B) = 1.3 - P(A \\cup B) \\ge 1.3 - 1 = 0.3$ because a probability never exceeds $1$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The triple intersection can be empty: with atom probabilities $0.3, 0.2, 0.3, 0.2$ on \u201c$A,B$ only\u201d, \u201c$A,C$ only\u201d, \u201c$B,C$ only\u201d and \u201c$A$ only\u201d all three marginals are respected and $P(A \\cap B \\cap C) = 0$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "With $p_k$ the probability that exactly $k$ events occur, $p_1 + 2p_2 + 3p_3 = 1.8$, hence $2p_2 \\le 1.8$ and $p_2 \\le 0.9$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "If $C \\subseteq B \\subseteq A$ with the given probabilities, the union is $A$ with probability $0.7$, so none of the events occurs with probability $0.3$, not $0$."
+        }
+      ],
+      "commonTrap": "Reasoning that because $0.7 + 0.6 + 0.5 = 1.8 > 1$ the events must jointly cover the sample space or share a common point. A total above $1$ only forces pairwise overlaps (for example $P(A \\cap B) \\ge 0.3$); the triple intersection can be empty and the union can be smaller than the whole space."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A and C",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nfrom scipy.optimize import linprog\natoms = list(itertools.product([0, 1], repeat=3))\ndef bound(f, sign):\n    c = [sign*float(f(*a)) for a in atoms]\n    Aeq = [[1]*8] + [[a[i] for a in atoms] for i in range(3)]\n    r = linprog(c, A_eq=Aeq, b_eq=[1, .7, .6, .5], bounds=[(0, 1)]*8, method='highs')\n    return sign*r.fun\nAB = lambda a, b, c: a and b\nABC = lambda a, b, c: a and b and c\ntwo = lambda a, b, c: a + b + c == 2\nnone = lambda a, b, c: not (a or b or c)\nmn = lambda f: bound(f, 1)\nmx = lambda f: bound(f, -1)\nprint(mn(AB) >= 0.3 - 1e-9, mn(ABC) >= 0.1 - 1e-9, mx(two) <= 0.9 + 1e-9, mx(none) <= 1e-9)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (eigenvalue\u2013eigenvector pairs of a $2 \\times 2$ matrix) checked with one matrix\u2013vector product per option, or one small characteristic polynomial; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Checking eigenvalue\u2013eigenvector pairs of a $2 \\times 2$ matrix via $A\\mathbf{v} = \\lambda\\mathbf{v}$ (right versus left eigenvectors)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $A = \\begin{bmatrix} 5 & 3 \\\\ 2 & 4 \\end{bmatrix}$.\n\nWhich one of the following is an eigenvalue of $A$ together with a corresponding eigenvector?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\lambda = 7$ and $\\mathbf{v} = \\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\lambda = 7$ and $\\mathbf{v} = \\begin{bmatrix} 1 \\\\ -1 \\end{bmatrix}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\lambda = 2$ and $\\mathbf{v} = \\begin{bmatrix} 3 \\\\ 2 \\end{bmatrix}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\lambda = 2$ and $\\mathbf{v} = \\begin{bmatrix} 1 \\\\ -1 \\end{bmatrix}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The characteristic polynomial is $\\lambda^2 - 9\\lambda + 14 = (\\lambda - 2)(\\lambda - 7)$, so the eigenvalues are $2$ and $7$.\nSolving $(A - \\lambda I)\\mathbf{v} = \\mathbf{0}$ gives $\\mathbf{v} \\propto (3, 2)^\\top$ for $\\lambda = 7$ and $\\mathbf{v} \\propto (1, -1)^\\top$ for $\\lambda = 2$.\nOnly option D pairs an eigenvalue with its own eigenvector.",
+      "steps": [
+        {
+          "title": "Eigenvalues",
+          "body": "$$\\det(A - \\lambda I) = (5 - \\lambda)(4 - \\lambda) - 6 = \\lambda^2 - 9\\lambda + 14 = (\\lambda - 2)(\\lambda - 7).$$\n\nSo the eigenvalues are $\\lambda = 2$ and $\\lambda = 7$ (check: sum $9 = \\operatorname{trace}(A)$, product $14 = \\det A$)."
+        },
+        {
+          "title": "Eigenvector for $\\lambda = 7$",
+          "body": "$A - 7I = \\begin{bmatrix} -2 & 3 \\\\ 2 & -3 \\end{bmatrix}$, and $-2x + 3y = 0$ gives $x = \\tfrac32 y$, so $\\mathbf{v} \\propto \\begin{bmatrix} 3 \\\\ 2 \\end{bmatrix}$."
+        },
+        {
+          "title": "Eigenvector for $\\lambda = 2$",
+          "body": "$A - 2I = \\begin{bmatrix} 3 & 3 \\\\ 2 & 2 \\end{bmatrix}$, and $x + y = 0$ gives $\\mathbf{v} \\propto \\begin{bmatrix} 1 \\\\ -1 \\end{bmatrix}$."
+        },
+        {
+          "title": "Test the options",
+          "body": "Compute $A\\mathbf{v}$ for each option.\n\n- A: $A\\begin{bmatrix}1\\\\1\\end{bmatrix} = \\begin{bmatrix}8\\\\6\\end{bmatrix}$, not a multiple of $\\begin{bmatrix}1\\\\1\\end{bmatrix}$.\n- B: $A\\begin{bmatrix}1\\\\-1\\end{bmatrix} = \\begin{bmatrix}2\\\\-2\\end{bmatrix} = 2\\begin{bmatrix}1\\\\-1\\end{bmatrix}$, so the eigenvalue is $2$, not $7$.\n- C: $A\\begin{bmatrix}3\\\\2\\end{bmatrix} = \\begin{bmatrix}21\\\\14\\end{bmatrix} = 7\\begin{bmatrix}3\\\\2\\end{bmatrix}$, so the eigenvalue is $7$, not $2$.\n- D: $A\\begin{bmatrix}1\\\\-1\\end{bmatrix} = 2\\begin{bmatrix}1\\\\-1\\end{bmatrix}$, so the pair $(2, (1,-1)^\\top)$ is valid.\n\nThe correct choice is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$A\\begin{bmatrix}1\\\\1\\end{bmatrix} = \\begin{bmatrix}8\\\\6\\end{bmatrix}$ is not a scalar multiple of $\\begin{bmatrix}1\\\\1\\end{bmatrix}$. Both column sums of $A$ equal $7$, which makes $(1,1)$ a *left* eigenvector ($(1,1)A = 7(1,1)$), not a right one."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\begin{bmatrix}1\\\\-1\\end{bmatrix}$ is an eigenvector, but for $\\lambda = 2$ ($A\\mathbf{v} = 2\\mathbf{v}$), not for $\\lambda = 7$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\begin{bmatrix}3\\\\2\\end{bmatrix}$ is an eigenvector, but for $\\lambda = 7$ ($A\\mathbf{v} = 7\\mathbf{v}$), not for $\\lambda = 2$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$A\\begin{bmatrix}1\\\\-1\\end{bmatrix} = \\begin{bmatrix}2\\\\-2\\end{bmatrix} = 2\\begin{bmatrix}1\\\\-1\\end{bmatrix}$, so $\\lambda = 2$ pairs with $\\mathbf{v} = (1,-1)^\\top$."
+        }
+      ],
+      "shortcut": "Skip the characteristic polynomial: multiply $A$ by each option's vector and check whether the result equals $\\lambda\\mathbf{v}$ for the stated $\\lambda$. One product per option settles it.",
+      "commonTrap": "Pairing an eigenvector with the wrong eigenvalue, or guessing $(1,1)$ because the column sums are equal. That vector is an eigenvector of $A^\\top$, not of $A$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D: lambda = 2 with v = (1, -1)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[5, 3], [2, 4]])\nopts = {'A': (7, [1, 1]), 'B': (7, [1, -1]), 'C': (2, [3, 2]), 'D': (2, [1, -1])}\nprint([k for k, (l, v) in opts.items() if np.allclose(A @ np.array(v), l*np.array(v))])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-marginal-joint"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (conditional probability from a joint PMF) in three routine steps: list the triangular support, add the cells of the two events, divide; about 2\u20133 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Conditional probability from a joint PMF defined on a triangular support ($y \\le x$)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A batch scheduler receives a batch of $X$ jobs, where $X \\in \\{0, 1, 2, 3\\}$, and $Y$ of these jobs fail, so $0 \\le Y \\le X$. The joint probability mass function of $(X, Y)$ is\n\n$$P(X = x,\\, Y = y) = c\\,(x + y + 1) \\quad \\text{for integers } 0 \\le y \\le x \\le 3,$$\n\nand $P(X = x,\\, Y = y) = 0$ for every other pair, where $c$ is a constant.\n\nThe value of $P(X = 3 \\mid Y \\ge 2)$, rounded off to two decimal places, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.71,
+      "max": 0.73
+    },
+    "solution": {
+      "quick": "Only pairs with $y \\le x$ have positive probability; their weights $x + y + 1$ add up to $40$, so $c = \\tfrac1{40}$.\nThe event $Y \\ge 2$ contains $(2,2), (3,2), (3,3)$ with weights $5 + 6 + 7 = 18$, and the part of it with $X = 3$ has weights $6 + 7 = 13$.\nHence $P(X = 3 \\mid Y \\ge 2) = \\tfrac{13}{18} \\approx 0.72$.",
+      "steps": [
+        {
+          "title": "List the support and find $c$",
+          "body": "Allowed pairs and their weights $x + y + 1$:\n\n| $x$ | allowed $y$ | weights | row total |\n| --- | --- | --- | --- |\n| 0 | 0 | 1 | 1 |\n| 1 | 0, 1 | 2, 3 | 5 |\n| 2 | 0, 1, 2 | 3, 4, 5 | 12 |\n| 3 | 0, 1, 2, 3 | 4, 5, 6, 7 | 22 |\n\nThe weights sum to $1 + 5 + 12 + 22 = 40$, so $c = \\tfrac{1}{40}$."
+        },
+        {
+          "title": "Probability of the conditioning event",
+          "body": "$Y \\ge 2$ requires $y \\in \\{2, 3\\}$ with $y \\le x$, so the pairs are $(2,2)$, $(3,2)$, $(3,3)$ with weights $5$, $6$, $7$:\n\n$$P(Y \\ge 2) = \\frac{5 + 6 + 7}{40} = \\frac{18}{40}.$$"
+        },
+        {
+          "title": "Joint probability",
+          "body": "Within $Y \\ge 2$, the pairs with $X = 3$ are $(3,2)$ and $(3,3)$:\n\n$$P(X = 3,\\, Y \\ge 2) = \\frac{6 + 7}{40} = \\frac{13}{40}.$$"
+        },
+        {
+          "title": "Conditional probability",
+          "body": "$$P(X = 3 \\mid Y \\ge 2) = \\frac{13/40}{18/40} = \\frac{13}{18} = 0.7222\\ldots \\approx 0.72.$$"
+        }
+      ],
+      "finalAnswer": "**0.72**",
+      "commonTrap": "Extending the formula to pairs with $y > x$ (for example $(1,2)$ or $(2,3)$), which have probability $0$; that gives $13/40 \\approx 0.33$. Another slip is reversing the condition: $P(Y \\ge 2 \\mid X = 3) = 13/22 \\approx 0.59$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "13/18 = 0.7222 (0.72)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\nw = {(x, y): x + y + 1 for x in range(4) for y in range(x + 1)}\nnum = sum(v for (x, y), v in w.items() if x == 3 and y >= 2)\nden = sum(v for (x, y), v in w.items() if y >= 2)\nprint(sum(w.values()), F(num, den), round(num/den, 2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-binary-search"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (half-open lower-bound binary search) probed by four statements: two short traces, one call-size argument and one interval-halving argument; about 3 minutes.",
+    "estimatedTimeSec": 190,
+    "concept": "Half-open lower-bound binary search: return value for missing keys, counting occurrences with two calls, index safety and iteration count",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python code, in which the list `a` is sorted in non-decreasing order and all entries and search values are integers.\n\n```python\ndef lb(a, x):\n    lo, hi = 0, len(a)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\ndef count(a, x):\n    return lb(a, x + 1) - lb(a, x)\n\na = [3, 5, 5, 8, 8, 8, 11, 14, 14, 17, 20]\n```\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`lb(a, 9)` returns `5`."
+      },
+      {
+        "label": "B",
+        "text": "`count(a, 14)` returns `3`."
+      },
+      {
+        "label": "C",
+        "text": "`count(a, 20)` raises an `IndexError`."
+      },
+      {
+        "label": "D",
+        "text": "For every integer `x`, the `while` loop in `lb(a, x)` executes either 3 or 4 times."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "`lb(a, x)` returns the first index whose entry is at least `x` (or `len(a)` if there is none), and `count(a, x)` is the number of entries equal to `x`.\nSo `lb(a, 9) = 6`, `count(a, 14) = 9 - 7 = 2`, and `count(a, 20) = 11 - 10 = 1` with no exception, since `mid < hi <= len(a)` always.\nThe searched range shrinks $11 \\to 5 \\to 2 \\to$ (1 or 0), so the loop runs 3 or 4 times for every `x`. Only D is true.",
+      "steps": [
+        {
+          "title": "What `lb` computes",
+          "body": "The loop keeps the invariant: every entry at an index below `lo` is `< x` and every entry at an index `>= hi` is `>= x`. When `lo == hi`, this common value is the first index with `a[i] >= x`, or `len(a) = 11` if no entry is that large.\n\nFor integers, `lb(a, x + 1)` is therefore the first index with `a[i] > x`, so `count(a, x)` is the number of entries equal to `x`. The list has indices 0 to 10: `3, 5, 5, 8, 8, 8, 11, 14, 14, 17, 20`."
+        },
+        {
+          "title": "Statement A",
+          "body": "There is no `9` in the list; the first entry that is `>= 9` is `11`, at index 6. Trace of `lb(a, 9)`:\n\n| `lo` | `hi` | `mid` | `a[mid]` | action |\n| --- | --- | --- | --- | --- |\n| 0 | 11 | 5 | 8 | `8 < 9`, so `lo = 6` |\n| 6 | 11 | 8 | 14 | `hi = 8` |\n| 6 | 8 | 7 | 14 | `hi = 7` |\n| 6 | 7 | 6 | 11 | `hi = 6` |\n\nThe function returns `6`, not `5`. Statement A is false."
+        },
+        {
+          "title": "Statements B and C",
+          "body": "`lb(a, 14) = 7` and `lb(a, 15) = 9`, so `count(a, 14) = 9 - 7 = 2` (the value 14 occurs twice). Statement B is false.\n\n`lb(a, 20) = 10` and `lb(a, 21) = 11`, so `count(a, 20) = 11 - 10 = 1`. Since `mid = (lo + hi) // 2 < hi <= len(a)`, the expression `a[mid]` never indexes past the end of the list, so no `IndexError` is raised. Statement C is false."
+        },
+        {
+          "title": "Statement D",
+          "body": "Let $L$ = `hi - lo`. With `mid = lo + L // 2`, the branch `hi = mid` leaves $\\lfloor L/2 \\rfloor$ candidates and the branch `lo = mid + 1` leaves $L - \\lfloor L/2 \\rfloor - 1$. For the sizes that occur:\n\n$$11 \\to 5 \\to 2 \\to \\begin{cases} 1 \\to 0 & \\text{(left branch: 4th iteration)} \\\\ 0 & \\text{(right branch: stops after 3)} \\end{cases}$$\n\nSo every search executes 3 or 4 iterations. For example `x = 21` ends after 3 iterations ($(0,11) \\to (6,11) \\to (9,11) \\to (11,11)$) and `x = 20` needs 4. Statement D is true.\n\nThe correct choice is **(D)**."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "`lb(a, 9)` returns the first index with `a[i] >= 9`, which is 6 (the entry `11`). Index 5 is the last entry smaller than 9, which is not what `lb` returns."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "`count(a, 14) = lb(a, 15) - lb(a, 14) = 9 - 7 = 2`, because 14 appears at indices 7 and 8 only."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "`hi` starts at `len(a)` (exclusive) and `mid < hi`, so `a[mid]` is always a valid entry. `count(a, 20) = 11 - 10 = 1`."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The candidate range has length 11, then 5, then 2, and then 1 or 0, so the loop runs exactly 3 times (right branch at size 2) or 4 times (left branch) for every `x`."
+        }
+      ],
+      "commonTrap": "Treating `lb` as \u201cthe index of the last smaller element\u201d or as a search that fails on a missing key. It returns the insertion point: for a missing key the index of the next larger entry, and `len(a)` (not an error) when `x` exceeds every entry."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D only",
+      "agreesWithKey": true,
+      "checkCode": "def lb(a, x):\n    lo, hi = 0, len(a); n = 0\n    while lo < hi:\n        n += 1; mid = (lo + hi) // 2\n        if a[mid] < x: lo = mid + 1\n        else: hi = mid\n    return lo, n\na = [3, 5, 5, 8, 8, 8, 11, 14, 14, 17, 20]\ncount = lambda a, x: lb(a, x + 1)[0] - lb(a, x)[0]\nA = lb(a, 9)[0] == 5\nB = count(a, 14) == 3\ntry:\n    r = count(a, 20); C = False\nexcept IndexError:\n    C = True\nits = sorted({lb(a, x)[1] for x in range(-100, 100)})\nD = all(i in (3, 4) for i in its)\nprint(A, B, C, D, lb(a, 9)[0], count(a, 14), r, its)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-nullity",
+      "la-rank"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (rank of an outer product, then rank\u2013nullity for the transpose) in a single step of reasoning; about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Rank\u2013nullity theorem applied to the transpose of a rank-one outer-product matrix",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $\\mathbf{u} = \\begin{bmatrix} 2 \\\\ -1 \\\\ 3 \\end{bmatrix}$ and $\\mathbf{v} = \\begin{bmatrix} 1 \\\\ 4 \\\\ 0 \\\\ -2 \\end{bmatrix}$, and let $A = \\mathbf{u}\\mathbf{v}^{\\top}$, a $3 \\times 4$ real matrix.\n\nThe nullity of $A^{\\top}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1$"
+      },
+      {
+        "label": "B",
+        "text": "$2$"
+      },
+      {
+        "label": "C",
+        "text": "$3$"
+      },
+      {
+        "label": "D",
+        "text": "$4$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Every row of $A = \\mathbf{u}\\mathbf{v}^\\top$ is a multiple of $\\mathbf{v}^\\top$, so $\\operatorname{rank}(A) = 1$ and $\\operatorname{rank}(A^\\top) = 1$.\n$A^\\top$ is a $4 \\times 3$ matrix with $3$ columns, so the rank\u2013nullity theorem gives $\\operatorname{nullity}(A^\\top) = 3 - 1 = 2$.",
+      "steps": [
+        {
+          "title": "Write out $A$ and find its rank",
+          "body": "The rows of $A = \\mathbf{u}\\mathbf{v}^\\top$ are $2\\mathbf{v}^\\top$, $-\\mathbf{v}^\\top$ and $3\\mathbf{v}^\\top$:\n\n$$A = \\begin{bmatrix} 2 & 8 & 0 & -4 \\\\ -1 & -4 & 0 & 2 \\\\ 3 & 12 & 0 & -6 \\end{bmatrix}.$$\n\nAll rows are multiples of the nonzero row $(1, 4, 0, -2)$, so $\\operatorname{rank}(A) = 1$."
+        },
+        {
+          "title": "Transpose has the same rank",
+          "body": "$\\operatorname{rank}(A^\\top) = \\operatorname{rank}(A) = 1$. Explicitly, $A^\\top = \\mathbf{v}\\mathbf{u}^\\top$ is a $4 \\times 3$ matrix whose columns are multiples of $\\mathbf{v}$."
+        },
+        {
+          "title": "Apply rank\u2013nullity to $A^\top$",
+          "body": "$A^\\top$ maps $\\mathbb{R}^3 \\to \\mathbb{R}^4$, so it has $3$ columns and\n\n$$\\operatorname{nullity}(A^\\top) = 3 - \\operatorname{rank}(A^\\top) = 3 - 1 = 2.$$\n\nDirectly: $A^\\top \\mathbf{y} = \\mathbf{v}(\\mathbf{u}^\\top \\mathbf{y}) = \\mathbf{0}$ exactly when $\\mathbf{u}^\\top \\mathbf{y} = 0$, which is a plane through the origin in $\\mathbb{R}^3$, of dimension $2$. The correct choice is **(B)**."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$1$ is the rank of $A^\\top$, not its nullity."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$A^\\top$ has $3$ columns and rank $1$, so its nullity is $3 - 1 = 2$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$3$ is the nullity of $A$ itself ($4$ columns minus rank $1$), not of $A^\\top$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$A^\\top$ acts on $\\mathbb{R}^3$, so its null space cannot have dimension larger than $3$; $4$ is the number of rows of $A^\\top$."
+        }
+      ],
+      "shortcut": "A nonzero outer product $\\mathbf{u}\\mathbf{v}^\\top$ has rank $1$. The nullity of $A^\\top$ is then (length of $\\mathbf{u}$) $- 1 = 3 - 1 = 2$.",
+      "commonTrap": "Computing the nullity of $A$ ($4 - 1 = 3$) instead of $A^\\top$, or subtracting the rank from the number of rows instead of the number of columns of the matrix in question."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: 2",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nu = sp.Matrix([2, -1, 3]); v = sp.Matrix([1, 4, 0, -2])\nA = u*v.T\nprint(A.rank(), len(A.T.nullspace()), len(A.nullspace()))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-divide-conquer"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (quicksort with Lomuto partitioning) requiring a careful execution trace in which the swaps change the order of later sub-arrays; about 3 minutes.",
+    "estimatedTimeSec": 190,
+    "concept": "Counting element comparisons in quicksort with Lomuto partitioning (last element as pivot) on a specific array",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ncount = 0\n\ndef partition(a, lo, hi):\n    global count\n    pivot = a[hi]\n    i = lo - 1\n    for j in range(lo, hi):\n        count += 1\n        if a[j] <= pivot:\n            i += 1\n            a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    return i + 1\n\ndef quicksort(a, lo, hi):\n    if lo < hi:\n        p = partition(a, lo, hi)\n        quicksort(a, lo, p - 1)\n        quicksort(a, p + 1, hi)\n\ndata = [7, 3, 5, 9, 8, 6, 2, 4]\nquicksort(data, 0, len(data) - 1)\nprint(count)\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 17,
+      "max": 17
+    },
+    "solution": {
+      "quick": "A call of `partition` on a segment of length $m$ makes exactly $m - 1$ comparisons, whatever the values are. Tracing the swaps gives the segments $[7,3,5,9,8,6,2,4]$ (length 8), $[3,2]$ (2), $[9,8,6,7,5]$ (5), $[8,6,7,9]$ (4) and $[8,6,7]$ (3) with pivots $4, 2, 5, 9, 7$.\nTotal comparisons: $7 + 1 + 4 + 3 + 2 = 17$.",
+      "steps": [
+        {
+          "title": "Cost of one partition call",
+          "body": "`partition(a, lo, hi)` runs `j` from `lo` to `hi - 1` and executes `count += 1` once per iteration, so a segment of length $m$ = `hi - lo + 1` costs $m - 1$ comparisons, independent of the values. The answer is the sum of $m - 1$ over every call with $m \\ge 2$; segments of length $0$ or $1$ cost nothing."
+        },
+        {
+          "title": "First call: whole array, pivot $4$",
+          "body": "Segment $[7,3,5,9,8,6,2,4]$ costs $7$ comparisons. Only $3$ and $2$ are $\\le 4$: `j = 1` swaps $7 \\leftrightarrow 3$ giving $[3,7,5,9,8,6,2,4]$, `j = 6` swaps $7 \\leftrightarrow 2$ giving $[3,2,5,9,8,6,7,4]$, and the final swap puts the pivot at index 2:\n\n$$[3, 2, \\mathbf{4}, 9, 8, 6, 7, 5].$$\n\nThe left part is $[3,2]$ and the right part is $[9,8,6,7,5]$, in this rearranged order."
+        },
+        {
+          "title": "Left part and the size-5 right part",
+          "body": "$[3,2]$, pivot $2$: $1$ comparison ($3 \\le 2$ is false); afterwards both sub-parts are empty.\n\n$[9,8,6,7,5]$, pivot $5$: $4$ comparisons and none succeeds, so the pivot is swapped to the front, giving $[5,8,6,7,9]$. The left part is empty and the right part is $[8,6,7,9]$."
+        },
+        {
+          "title": "The last two segments",
+          "body": "$[8,6,7,9]$, pivot $9$: $3$ comparisons, all succeed, and the pivot stays in place; the right part is empty and the left part is $[8,6,7]$.\n\n$[8,6,7]$, pivot $7$: $2$ comparisons ($8 \\le 7$ false, $6 \\le 7$ true), giving $[6,7,8]$. The remaining parts $[6]$ and $[8]$ have length $1$."
+        },
+        {
+          "title": "Total",
+          "body": "| Segment | Length | Comparisons |\n| --- | --- | --- |\n| $[7,3,5,9,8,6,2,4]$ | 8 | 7 |\n| $[3,2]$ | 2 | 1 |\n| $[9,8,6,7,5]$ | 5 | 4 |\n| $[8,6,7,9]$ | 4 | 3 |\n| $[8,6,7]$ | 3 | 2 |\n\n$$7 + 1 + 4 + 3 + 2 = 17.$$\n\nThe program prints $17$."
+        }
+      ],
+      "finalAnswer": "**17**",
+      "commonTrap": "Assuming that partitioning keeps the elements of each side in their original order. Lomuto partitioning swaps elements, so the later segments (and their pivots) differ from the naive picture; the naive order-preserving trace gives $14$ instead of $17$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "17",
+      "agreesWithKey": true,
+      "checkCode": "count = 0\ndef partition(a, lo, hi):\n    global count\n    pivot = a[hi]; i = lo - 1\n    for j in range(lo, hi):\n        count += 1\n        if a[j] <= pivot:\n            i += 1; a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    return i + 1\ndef quicksort(a, lo, hi):\n    if lo < hi:\n        p = partition(a, lo, hi)\n        quicksort(a, lo, p - 1); quicksort(a, p + 1, hi)\ndata = [7, 3, 5, 9, 8, 6, 2, 4]\nquicksort(data, 0, len(data) - 1)\nprint(count, data)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-svd"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 two directly linked ideas (singular values as square roots of the eigenvalues of $A^\\top A$, then a ratio) with routine $2 \\times 2$ arithmetic; about 2\u20133 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Singular values of a non-symmetric $2 \\times 2$ matrix from the eigenvalues of $A^\\top A$, and the ratio $\\sigma_1/\\sigma_2$",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $A = \\begin{bmatrix} 3 & 0 \\\\ 4 & 5 \\end{bmatrix}$ and let $\\sigma_1 \\ge \\sigma_2 > 0$ be the singular values of $A$.\n\nThe ratio $\\sigma_1 / \\sigma_2$ equals",
+    "options": [
+      {
+        "label": "A",
+        "text": "$3$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{5}{3}$"
+      },
+      {
+        "label": "C",
+        "text": "$9$"
+      },
+      {
+        "label": "D",
+        "text": "$3\\sqrt{5}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The singular values are the square roots of the eigenvalues of $A^\\top A = \\begin{bmatrix} 25 & 20 \\\\ 20 & 25 \\end{bmatrix}$, whose eigenvalues are $45$ and $5$.\nSo $\\sigma_1 = \\sqrt{45} = 3\\sqrt5$, $\\sigma_2 = \\sqrt5$, and $\\sigma_1/\\sigma_2 = 3$.",
+      "steps": [
+        {
+          "title": "Form $A^\\top A$",
+          "body": "$$A^\\top A = \\begin{bmatrix} 3 & 4 \\\\ 0 & 5 \\end{bmatrix}\\begin{bmatrix} 3 & 0 \\\\ 4 & 5 \\end{bmatrix} = \\begin{bmatrix} 25 & 20 \\\\ 20 & 25 \\end{bmatrix}.$$"
+        },
+        {
+          "title": "Eigenvalues of $A^\\top A$",
+          "body": "$$\\det(A^\\top A - \\lambda I) = (25 - \\lambda)^2 - 400 = \\lambda^2 - 50\\lambda + 225 = (\\lambda - 45)(\\lambda - 5),$$\n\nso the eigenvalues are $45$ and $5$."
+        },
+        {
+          "title": "Singular values and their ratio",
+          "body": "$\\sigma_1 = \\sqrt{45} = 3\\sqrt{5}$ and $\\sigma_2 = \\sqrt{5}$, so\n\n$$\\frac{\\sigma_1}{\\sigma_2} = \\frac{3\\sqrt5}{\\sqrt5} = 3.$$"
+        },
+        {
+          "title": "Cross-check",
+          "body": "$\\sigma_1\\sigma_2 = 3\\sqrt5 \\cdot \\sqrt5 = 15 = \\lvert\\det A\\rvert$, and $\\sigma_1^2 + \\sigma_2^2 = 50 = 3^2 + 0^2 + 4^2 + 5^2 = \\lVert A\\rVert_F^2$. Both identities hold. The correct choice is **(A)**."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$\\sigma_1 = 3\\sqrt5$ and $\\sigma_2 = \\sqrt5$, so the ratio is $3$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac53$ is the ratio of the *eigenvalues* of $A$ (which are $5$ and $3$ for this triangular matrix). For a non-symmetric matrix the singular values are not the eigenvalues."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$9 = 45/5$ is the ratio of the eigenvalues of $A^\\top A$, that is $\\sigma_1^2/\\sigma_2^2$. The singular values are the square roots of those eigenvalues."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$3\\sqrt5$ is the largest singular value $\\sigma_1$ itself, not the ratio $\\sigma_1/\\sigma_2$."
+        }
+      ],
+      "shortcut": "For a $2 \\times 2$ matrix, $\\sigma_1\\sigma_2 = \\lvert\\det A\\rvert = 15$ and $\\sigma_1^2 + \\sigma_2^2 = \\lVert A\\rVert_F^2 = 50$. With $r = \\sigma_1/\\sigma_2$ this gives $r + 1/r = 50/15 = 10/3$, so $r = 3$.",
+      "commonTrap": "Using the eigenvalues of $A$ ($5$ and $3$) as if they were singular values, or forgetting to take square roots of the eigenvalues of $A^\\top A$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A: 3",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA = np.array([[3, 0], [4, 5]], float)\ns = np.linalg.svd(A, compute_uv=False)\nprint(np.round(s, 4), round(s[0]/s[1], 6), np.round(np.linalg.eigvalsh(A.T @ A), 4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-knn"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 two directly linked concepts (3-NN voting and min\u2013max scaling) with routine arithmetic: twelve distances, most of them quick to order; about 3 minutes.",
+    "estimatedTimeSec": 190,
+    "concept": "k-NN prediction with and without min\u2013max feature scaling when the features have very different ranges",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A bank predicts loan decisions with $k$-nearest neighbours ($k = 3$, Euclidean distance, majority vote) using two features: annual income (in \u20b9 lakh) and credit score. The six labelled applicants are:\n\n| Applicant | Income (\u20b9 lakh) | Credit score | Decision |\n| --- | --- | --- | --- |\n| P1 | 6 | 690 | Rejected |\n| P2 | 18 | 710 | Approved |\n| P3 | 17 | 720 | Approved |\n| P4 | 15 | 620 | Approved |\n| P5 | 13 | 740 | Rejected |\n| P6 | 14 | 700 | Rejected |\n\nA new applicant has income $15$ and credit score $680$. Let $d_1$ be the decision predicted from the raw feature values, and $d_2$ the decision predicted after min\u2013max scaling both features, $x' = \\dfrac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$, where $x_{\\min}$ and $x_{\\max}$ are taken over the six labelled applicants (the new applicant is scaled with the same constants).\n\nWhich one of the following is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$d_1$ = Approved and $d_2$ = Approved"
+      },
+      {
+        "label": "B",
+        "text": "$d_1$ = Approved and $d_2$ = Rejected"
+      },
+      {
+        "label": "C",
+        "text": "$d_1$ = Rejected and $d_2$ = Approved"
+      },
+      {
+        "label": "D",
+        "text": "$d_1$ = Rejected and $d_2$ = Rejected"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "On raw values the credit-score gap dominates: the three nearest applicants are P1, P6 (Rejected) and P2 (Approved), so $d_1$ = Rejected.\nAfter min\u2013max scaling (income range $12$, score range $120$) one lakh of income counts as much as $10$ score points, and the three nearest become P6 (Rejected), P2 and P3 (Approved), so $d_2$ = Approved.",
+      "steps": [
+        {
+          "title": "Scaling constants",
+          "body": "Income: $x_{\\min} = 6$, $x_{\\max} = 18$, range $12$. Credit score: $x_{\\min} = 620$, $x_{\\max} = 740$, range $120$. The new applicant scales to $\\left(\\tfrac{15 - 6}{12}, \\tfrac{680 - 620}{120}\\right) = (0.75, 0.5)$."
+        },
+        {
+          "title": "Raw distances to $(15, 680)$",
+          "body": "| Applicant | Income gap | Score gap | Distance | Decision |\n| --- | --- | --- | --- | --- |\n| P1 | 9 | 10 | 13.45 | Rejected |\n| P6 | 1 | 20 | 20.02 | Rejected |\n| P2 | 3 | 30 | 30.15 | Approved |\n| P3 | 2 | 40 | 40.05 | Approved |\n| P4 | 0 | 60 | 60.00 | Approved |\n| P5 | 2 | 60 | 60.03 | Rejected |\n\nThe three nearest are P1, P6, P2: Rejected, Rejected, Approved. So $d_1$ = Rejected."
+        },
+        {
+          "title": "Distances after min\u2013max scaling",
+          "body": "Scaled gaps are (income gap)$/12$ and (score gap)$/120$:\n\n| Applicant | Scaled income gap | Scaled score gap | Distance | Decision |\n| --- | --- | --- | --- | --- |\n| P6 | 0.083 | 0.167 | 0.186 | Rejected |\n| P2 | 0.250 | 0.250 | 0.354 | Approved |\n| P3 | 0.167 | 0.333 | 0.373 | Approved |\n| P4 | 0.000 | 0.500 | 0.500 | Approved |\n| P5 | 0.167 | 0.500 | 0.527 | Rejected |\n| P1 | 0.750 | 0.083 | 0.755 | Rejected |\n\nThe three nearest are P6, P2, P3: Rejected, Approved, Approved. So $d_2$ = Approved."
+        },
+        {
+          "title": "Conclusion",
+          "body": "$d_1$ = Rejected and $d_2$ = Approved. The correct choice is **(C)**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The raw-value prediction is Rejected, not Approved: two of the three nearest applicants (P1 and P6) are Rejected."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Both parts are reversed. Raw values give Rejected (P1, P6, P2) and scaled values give Approved (P6, P2, P3)."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Raw distances select P1, P6, P2 (Rejected); scaled distances select P6, P2, P3 (Approved)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "After scaling, the three nearest are P6 (Rejected), P2 and P3 (Approved), so the scaled prediction is Approved, not Rejected."
+        }
+      ],
+      "commonTrap": "Ignoring the scale of the features. On raw values a gap of $1$ lakh of income is negligible next to a gap of $10$ credit-score points, so the score decides everything; after min\u2013max scaling, $1$ lakh of income is worth $10$ score points, and the neighbour set changes."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: raw -> Rejected, scaled -> Approved",
+      "agreesWithKey": true,
+      "checkCode": "import math\nT = [(6, 690, 'Rejected'), (18, 710, 'Approved'), (17, 720, 'Approved'), (15, 620, 'Approved'), (13, 740, 'Rejected'), (14, 700, 'Rejected')]\nq = (15, 680)\ndef pred(scale):\n    xs = [t[0] for t in T]; ys = [t[1] for t in T]\n    f = (lambda a, b: ((a - min(xs))/(max(xs) - min(xs)), (b - min(ys))/(max(ys) - min(ys)))) if scale else (lambda a, b: (a, b))\n    d = sorted((math.dist(f(t[0], t[1]), f(*q)), t[2]) for t in T)[:3]\n    v = [c for _, c in d]\n    return max(set(v), key=v.count)\nprint(pred(False), pred(True))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-measures"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (distributive, algebraic and holistic measures under roll-up) with recall-level statements and one small counter-example to check; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Computing aggregate measures at a coarser level (roll-up) from partial aggregates: distributive, algebraic and holistic measures",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A sales data cube stores, for every (store, month) cell, precomputed aggregates of the individual order values (in \u20b9) placed at that store in that month. A query at the (store, quarter) level must be answered by combining the three monthly cells of the quarter, without going back to the individual orders.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The quarterly total of order values can be computed from the three monthly totals."
+      },
+      {
+        "label": "B",
+        "text": "The quarterly average order value is always equal to the simple mean of the three monthly average order values."
+      },
+      {
+        "label": "C",
+        "text": "The quarterly standard deviation of order values can be computed exactly if every monthly cell stores its number of orders, the sum of its order values and the sum of the squares of its order values."
+      },
+      {
+        "label": "D",
+        "text": "The median order value is a holistic measure: in general it cannot be computed exactly for the quarter from a bounded number of aggregate values stored per monthly cell."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "SUM is distributive (add the monthly sums), and the standard deviation is algebraic (it needs only the count, sum and sum of squares of each month). The median is holistic: no fixed-size summary per month is enough.\nThe average of the monthly averages is wrong unless every month has the same number of orders; for example months $\\{100, 200, 900\\}$, $\\{300, 400\\}$, $\\{500\\}$ give $416.67$ instead of the true $400$.\nSo A, C and D are correct and B is not.",
+      "steps": [
+        {
+          "title": "Classify the measures",
+          "body": "- **Distributive** (SUM, COUNT, MIN, MAX): the coarse value is the same function applied to the fine-level values.\n- **Algebraic** (AVG, standard deviation): computed from a fixed number of distributive values per cell, such as COUNT, SUM and the sum of squares.\n- **Holistic** (median, mode, rank): no fixed-size set of per-cell aggregates is enough in general."
+        },
+        {
+          "title": "Statements A and B",
+          "body": "A: SUM is distributive, so the quarterly total is the sum of the three monthly totals. True.\n\nB: Take monthly orders $\\{100, 200, 900\\}$, $\\{300, 400\\}$ and $\\{500\\}$. The monthly averages are $400$, $350$, $500$, whose simple mean is $416.67$, but the true quarterly average is $\\dfrac{1200 + 700 + 500}{6} = 400$. The simple mean is right only when the months have equal order counts. The correct rule uses (COUNT, SUM) pairs: $\\dfrac{\\sum \\text{SUM}}{\\sum \\text{COUNT}}$. False."
+        },
+        {
+          "title": "Statement C",
+          "body": "If each month stores $n_i$, $S_i = \\sum x$ and $Q_i = \\sum x^2$, then for the quarter $n = \\sum n_i$, $S = \\sum S_i$ and $Q = \\sum Q_i$, so\n\n$$\\sigma^2 = \\frac{Q}{n} - \\left(\\frac{S}{n}\\right)^2, \\qquad \\sigma = \\sqrt{\\sigma^2}$$\n\nexactly. Standard deviation is algebraic. True."
+        },
+        {
+          "title": "Statement D",
+          "body": "Months $\\{1,2,3\\}, \\{4,5,6\\}$ and months $\\{1,2,10\\}, \\{4,5,6\\}$ have identical monthly medians ($2$ and $5$) and identical counts ($3$ and $3$), but their combined medians are $3.5$ and $4.5$. So monthly medians and counts do not determine the combined median; the median is holistic. True.\n\nThe correct choice is **(A), (C), (D)**."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "SUM is a distributive measure: the quarterly total is the sum of the three monthly totals."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The simple mean of the monthly averages ignores the month sizes. Months $\\{100,200,900\\}$, $\\{300,400\\}$, $\\{500\\}$ give $416.67$, whereas the true average is $2400/6 = 400$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Count, sum and sum of squares are all distributive, so they combine by addition and give the variance $Q/n - (S/n)^2$ exactly; the standard deviation is algebraic."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The median is holistic: for instance $\\{1,2,3\\},\\{4,5,6\\}$ and $\\{1,2,10\\},\\{4,5,6\\}$ share monthly medians and counts but have combined medians $3.5$ and $4.5$."
+        }
+      ],
+      "commonTrap": "Averaging the monthly averages (or the monthly medians) to get the quarterly value. This is valid only when all months have the same number of orders, and it never works for medians; the average needs (COUNT, SUM) pairs and the median needs the data itself."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C and D",
+      "agreesWithKey": true,
+      "checkCode": "import statistics as st\nm = [[100, 200, 900], [300, 400], [500]]\nallv = [v for x in m for v in x]\nprint(sum(sum(x) for x in m) == sum(allv))\nprint(round(st.mean([st.mean(x) for x in m]), 2), st.mean(allv))\ntri = [(len(x), sum(x), sum(v*v for v in x)) for x in m]\nn = sum(t[0] for t in tri); s = sum(t[1] for t in tri); q = sum(t[2] for t in tri)\nprint(abs((q/n - (s/n)**2)**.5 - st.pstdev(allv)) < 1e-9)\nX = [[1, 2, 3], [4, 5, 6]]; Y = [[1, 2, 10], [4, 5, 6]]\nprint([st.median(a) for a in X] == [st.median(b) for b in Y], st.median(sum(X, [])), st.median(sum(Y, [])))",
+      "notes": ""
+    }
+  }
+]

@@ -117,7 +117,7 @@ export function MockVerificationReport({ report, builtAt }: { report: MockVerifi
       </div>
       {report.tests.length ? (
         <Card>
-          <div className="overflow-x-auto">
+          <div role="region" aria-label="Mock verification by test" tabIndex={0} className="relative overflow-x-auto">
             <table className="w-full text-sm">
               <caption className="sr-only">Mock verification by test (tests with written questions)</caption>
               <thead>

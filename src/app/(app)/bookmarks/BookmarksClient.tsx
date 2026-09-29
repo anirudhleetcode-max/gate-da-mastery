@@ -1,7 +1,7 @@
 "use client";
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
-import type { BookmarkKind } from "@/lib/userdata/db";
+import type { BookmarkKind, BookmarkRow } from "@/lib/userdata/db";
 import type { SubjectId } from "@/lib/content/schema";
 import { useBookmarks } from "@/lib/userdata/hooks";
 import { SUBJECT_SHORT } from "@/lib/labels";
@@ -10,7 +10,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BookmarkCard, type BookmarkLookup } from "@/components/review/BookmarkCard";
-import { KIND_LABEL, StorageUnavailable, useOnline, useTableStatus } from "@/components/review/shared";
+import { StorageUnavailable, useOnline, useTableStatus } from "@/components/review/shared";
 
 export interface BookmarkLibrary {
   subjects: { id: string; shortName: string }[];
@@ -23,16 +23,23 @@ export interface BookmarkLibrary {
 type KindFilter = BookmarkKind | "all";
 const KINDS: BookmarkKind[] = ["question", "concept", "formula", "strategy"];
 const KIND_PLURAL: Record<BookmarkKind, string> = { question: "Questions", concept: "Concepts", formula: "Formulas", strategy: "Strategy" };
+const KIND_NOUN: Record<BookmarkKind, string> = { question: "questions", concept: "concepts", formula: "formulas", strategy: "strategy articles" };
 const PAGE = 50;
 
+/** Rows can come from an imported backup file: skip anything that is not a well-formed bookmark. */
+const isValid = (b: BookmarkRow) => KINDS.includes(b.kind) && typeof b.refId === "string" && typeof b.title === "string" && typeof b.createdAt === "string";
+
 export function BookmarksClient({ library }: { library: BookmarkLibrary }) {
-  const bookmarks = useBookmarks();
-  const status = useTableStatus("bookmarks", bookmarks);
+  const rows = useBookmarks();
+  const status = useTableStatus("bookmarks", rows);
+  const bookmarks = useMemo(() => rows.filter(isValid), [rows]);
   const online = useOnline();
   const [kind, setKind] = useState<KindFilter>("all");
   const [subject, setSubject] = useState("");
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(PAGE);
+  const [notice, setNotice] = useState("");
+  const listHeading = useRef<HTMLHeadingElement>(null);
   const uid = useId();
 
   const lookup: BookmarkLookup = useMemo(
@@ -70,7 +77,7 @@ export function BookmarksClient({ library }: { library: BookmarkLibrary }) {
 
   const offlineNote = !online ? (
     <Callout tone="warning" title="You are offline">
-      Saved copies of your bookmarked questions are shown below. Other pages need a connection to open.
+      Saved copies of your bookmarked questions are shown below where one was saved. Opening a page needs a connection.
     </Callout>
   ) : null;
 
@@ -89,8 +96,8 @@ export function BookmarksClient({ library }: { library: BookmarkLibrary }) {
             </div>
           }
         >
-          Use the Bookmark button on a question, concept, formula or strategy article to save it here with your own note. Bookmarked questions keep a copy of the question text that
-          you can read offline.
+          Use the Bookmark button on a question (or on a concept, formula or strategy article) to save it here with your own note. Questions you bookmark from their question page
+          also keep a copy of the question text that you can read offline.
         </EmptyState>
       </div>
     );
@@ -102,6 +109,7 @@ export function BookmarksClient({ library }: { library: BookmarkLibrary }) {
     .filter((s) => s.n > 0 || s.id === subject);
   const active = kind !== "all" || subject !== "" || query.trim() !== "";
   const reset = () => {
+    setNotice("");
     setKind("all");
     setSubject("");
     setQuery("");
@@ -193,23 +201,33 @@ export function BookmarksClient({ library }: { library: BookmarkLibrary }) {
 
       <section aria-labelledby={`${uid}-list`} className="space-y-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id={`${uid}-list`} className="text-lg font-semibold text-fg">
+          <h2 id={`${uid}-list`} ref={listHeading} tabIndex={-1} className="text-lg font-semibold text-fg">
             {kind === "all" ? "Saved items" : KIND_PLURAL[kind]}
           </h2>
           <p role="status" aria-live="polite" className="text-sm text-fg-3">
+            {notice ? <span className="sr-only">{notice} </span> : null}
             {filtered.length === bookmarks.length ? `${plural(bookmarks.length, "bookmark")}, newest first` : `${filtered.length} of ${plural(bookmarks.length, "bookmark")}`}
           </p>
         </div>
         {filtered.length ? (
           <ul className="space-y-3">
             {shown.map((b) => (
-              <BookmarkCard key={b.key} bookmark={b} lookup={lookup} online={online} />
+              <BookmarkCard
+                key={b.key}
+                bookmark={b}
+                lookup={lookup}
+                online={online}
+                onRemoved={(title) => {
+                  setNotice(`Removed the bookmark “${title}”.`);
+                  requestAnimationFrame(() => listHeading.current?.focus());
+                }}
+              />
             ))}
           </ul>
         ) : (
           <EmptyState title="No bookmarks match" action={<Button onClick={reset}>Show all bookmarks</Button>}>
             {kind !== "all" && kindCount(kind) === 0
-              ? `You have not bookmarked any ${KIND_LABEL[kind].toLowerCase()} ${subject ? "in this subject " : ""}yet.`
+              ? `You have not bookmarked any ${KIND_NOUN[kind]} ${subject ? "in this subject " : ""}yet.`
               : "Try another subject or a shorter search."}
           </EmptyState>
         )}

@@ -14,7 +14,7 @@ import { useDbQuery, useUserData } from "@/lib/userdata/hooks";
 import { clearAll, exportAll, importAll } from "@/lib/userdata/ops";
 import type { GateDaDB } from "@/lib/userdata/db";
 import { plural } from "@/lib/utils";
-import { BACKUP_TABLES, TABLE_LABEL, backupFileName, parseBackupText, type BackupSummary } from "./backup";
+import { BACKUP_TABLES, backupFileName, parseBackupText, tableCount, type BackupSummary } from "./backup";
 
 interface Counts {
   attempts: number;
@@ -38,6 +38,8 @@ async function countAll(db: GateDaDB): Promise<Counts> {
 }
 
 const RESET_WORD = "RESET";
+/** Long button labels may wrap on narrow phones instead of widening the page. */
+const WRAP = "h-auto min-h-10 whitespace-normal py-2 text-left";
 
 function download(name: string, text: string) {
   const blob = new Blob([text], { type: "application/json" });
@@ -52,11 +54,13 @@ function download(name: string, text: string) {
 }
 
 type Notice = { tone: "success" | "danger" | "info"; title: string; lines?: string[] } | null;
+/** A notice remembers which database it is about, so it is not shown after switching databases. */
+type Stamped = { notice: NonNullable<Notice>; demo: boolean } | null;
 
 export function DataManagement() {
   const { db, demo, ready, available } = useUserData();
   const counts = useDbQuery((d) => countAll(d), [], null as Counts | null);
-  const [notice, setNotice] = useState<Notice>(null);
+  const [stamped, setStamped] = useState<Stamped>(null);
   const [busy, setBusy] = useState<null | "export" | "import" | "reset" | "persist">(null);
   const [pending, setPending] = useState<{ data: Record<string, unknown>; summary: BackupSummary; fileName: string } | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
@@ -64,6 +68,8 @@ export function DataManagement() {
   const fileRef = useRef<HTMLInputElement>(null);
   const typedId = useId();
   const where = demo ? "the demo database" : "your data on this device";
+  const notice = stamped && stamped.demo === demo ? stamped.notice : null;
+  const setNotice = (n: Notice) => setStamped(n ? { notice: n, demo } : null);
   const disabled = !db || busy !== null;
 
   async function onExport() {
@@ -207,10 +213,10 @@ export function DataManagement() {
             Backup and restore
           </h3>
           <div className="flex flex-wrap gap-2">
-            <Button onClick={onExport} disabled={disabled}>
+            <Button onClick={onExport} disabled={disabled} className={WRAP}>
               <Download aria-hidden className="h-4 w-4" /> {busy === "export" ? "Exporting…" : "Export backup (.json)"}
             </Button>
-            <Button onClick={() => fileRef.current?.click()} disabled={disabled}>
+            <Button onClick={() => fileRef.current?.click()} disabled={disabled} className={WRAP}>
               <Upload aria-hidden className="h-4 w-4" /> Import backup…
             </Button>
             <input
@@ -241,10 +247,10 @@ export function DataManagement() {
             {demo ? "Deletes all demo data. Your real data is in a different database and is not touched." : "Permanently deletes your progress, bookmarks, revision queue, error log, mock attempts and settings from this browser. Content is not affected."}
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button variant="danger" onClick={() => setResetOpen(true)} disabled={disabled}>
+            <Button variant="danger" onClick={() => setResetOpen(true)} disabled={disabled} className={WRAP}>
               <Trash2 aria-hidden className="h-4 w-4" /> {demo ? "Clear demo data…" : "Reset all data…"}
             </Button>
-            <Button variant="ghost" onClick={requestPersistence} disabled={busy !== null}>
+            <Button variant="ghost" onClick={requestPersistence} disabled={busy !== null} className={WRAP}>
               <ShieldCheck aria-hidden className="h-4 w-4" /> Protect from automatic clearing
             </Button>
           </div>
@@ -273,7 +279,7 @@ export function DataManagement() {
               <ul className="mt-1 grid grid-cols-2 gap-x-4 gap-y-0.5 text-fg-2">
                 {BACKUP_TABLES.filter((t) => pending.summary.counts[t] > 0).map((t) => (
                   <li key={t}>
-                    <span className="tnum font-medium text-fg">{pending.summary.counts[t]}</span> {TABLE_LABEL[t]}
+                    <span className="tnum">{tableCount(t, pending.summary.counts[t])}</span>
                   </li>
                 ))}
                 {BACKUP_TABLES.every((t) => pending.summary.counts[t] === 0) ? <li className="col-span-2">No records (importing it empties {where}).</li> : null}

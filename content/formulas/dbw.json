@@ -1,0 +1,578 @@
+[
+  {
+    "id": "f-dbw-number-of-superkeys",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "name": "Number of superkeys",
+    "latex": "|\\mathrm{SK}(K)| = 2^{\\,n-|K|}, \\qquad |\\mathrm{SK}(K_1) \\cup \\mathrm{SK}(K_2)| = 2^{\\,n-|K_1|} + 2^{\\,n-|K_2|} - 2^{\\,n-|K_1 \\cup K_2|}",
+    "meaning": "A **superkey** is a set of attributes whose values identify a tuple uniquely. A **candidate key** is a minimal superkey (no proper subset is a superkey), and the **primary key** is the candidate key the designer picks. Every superset of a superkey is again a superkey, so the superkeys are exactly the attribute sets that contain at least one candidate key.\n\n- **One candidate key** $K$ in a relation of $n$ attributes: each of the other $n - |K|$ attributes may be added or left out, giving $2^{n-|K|}$ superkeys.\n- **Several candidate keys**: count the supersets of each key and remove the double counting by **inclusion–exclusion**. A set that contains both $K_1$ and $K_2$ is exactly a superset of $K_1 \\cup K_2$. For three keys, subtract all three pairwise terms and add back $2^{n-|K_1 \\cup K_2 \\cup K_3|}$.\n- **Extremes**: if every single attribute is a candidate key, all $2^n - 1$ non-empty subsets are superkeys. No candidate key can contain another, so a relation of $n$ attributes has at most $\\binom{n}{\\lfloor n/2 \\rfloor}$ candidate keys.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of attributes of the relation"
+      },
+      {
+        "symbol": "$K, K_1, K_2$",
+        "meaning": "candidate keys (sets of attributes)"
+      },
+      {
+        "symbol": "$|K|$",
+        "meaning": "number of attributes in K"
+      },
+      {
+        "symbol": "$\\mathrm{SK}(K)$",
+        "meaning": "the set of superkeys that contain K"
+      }
+    ],
+    "whenToUse": "Counting superkeys once the candidate keys are known (find the keys first with attribute closure). \"How many attribute sets functionally determine all attributes?\" asks for the same count.",
+    "commonMistake": "Adding $2^{n-|K_1|} + 2^{n-|K_2|}$ without subtracting the sets that contain **both** keys, which are counted twice. When the keys share attributes, the overlap term uses $|K_1 \\cup K_2|$, not $|K_1| + |K_2|$.",
+    "example": "$R(A,B,C,D,E)$ with candidate keys $\\{A\\}$ and $\\{B,C\\}$, so $n = 5$:\n\n$$\n2^{5-1} + 2^{5-2} - 2^{5-3} = 16 + 8 - 4 = 20 \\text{ superkeys}.\n$$\n\nThe 4 subtracted sets are the supersets of $\\{A,B,C\\}$, which were counted once for each key. With the overlapping keys $\\{A,B\\}$ and $\\{B,C\\}$ instead: $2^{3} + 2^{3} - 2^{5-3} = 8 + 8 - 4 = 12$, since $|\\{A,B\\} \\cup \\{B,C\\}| = 3$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-er-to-relations",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "name": "Minimum number of tables from an ER diagram",
+    "latex": "T_{\\min} = E_{\\text{strong}} + E_{\\text{weak}} + R_{M:N} + R_{n\\text{-ary}} + A_{\\text{mv}} - R_{1:1}^{\\text{total-total}}",
+    "meaning": "The standard ER-to-relational mapping, applied so that the result has as few tables as possible while staying in 1NF:\n\n- **Strong entity set** → one table; its key becomes the primary key. Composite attributes are flattened into their components; derived attributes are not stored.\n- **Weak entity set** → one table that includes the owner's primary key; its primary key is the owner's key plus the partial key (discriminator). The identifying relationship needs no table of its own.\n- **Binary M:N relationship** → its own table holding the keys of both sides (together the primary key) and any relationship attributes.\n- **Binary 1:N relationship** → no table: put the key of the \"1\" side as a foreign key in the table of the \"N\" side, along with any relationship attributes.\n- **Binary 1:1 relationship** → no table: put a foreign key on either side (preferably the side with total participation). If **both** sides participate totally, the two entity sets can be merged into one table, saving one more table.\n- **Relationship of degree 3 or more** → its own table.\n- **Multivalued attribute** → its own table (owner's key + value).\n\nSize of a binary relationship set between $E_1$ ($m$ entities) and $E_2$ ($k$ entities): M:N allows up to $mk$ pairs; 1:N with each $E_2$ entity related to at most one $E_1$ entity allows up to $k$ pairs (exactly $k$ if $E_2$ participates totally); 1:1 allows up to $\\min(m, k)$ pairs.",
+    "variables": [
+      {
+        "symbol": "$E_{\\text{strong}}, E_{\\text{weak}}$",
+        "meaning": "numbers of strong and weak entity sets"
+      },
+      {
+        "symbol": "$R_{M:N}$",
+        "meaning": "number of binary many-to-many relationship sets"
+      },
+      {
+        "symbol": "$R_{n\\text{-ary}}$",
+        "meaning": "number of relationship sets of degree 3 or more"
+      },
+      {
+        "symbol": "$A_{\\text{mv}}$",
+        "meaning": "number of multivalued attributes"
+      },
+      {
+        "symbol": "$R_{1:1}^{\\text{total-total}}$",
+        "meaning": "number of 1:1 relationship sets with total participation on both sides (each merge removes one table)"
+      }
+    ],
+    "whenToUse": "Questions asking for the minimum number of relations needed to represent an ER diagram (in 1NF), or on which side a foreign key must go.",
+    "commonMistake": "Creating a separate table for every 1:N or 1:1 relationship (it is absorbed into the N side, or either side), or trying to absorb an M:N relationship into one entity's table (that needs a multivalued column or repeats data). Forgetting that a multivalued attribute needs its own table in 1NF.",
+    "example": "Strong entity sets Student, Course, Faculty; weak entity set Guardian (owner Student); Enrolls is M:N between Student and Course; Advises is 1:N from Faculty to Student; Student has a multivalued attribute phone.\n\n$$\nT_{\\min} = 3 + 1 + 1 + 0 + 1 - 0 = 6\n$$\n\nTables: Student (with the advisor's faculty id as a foreign key), Course, Faculty, Guardian, Enrolls(student id, course id) and StudentPhone(student id, phone).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-referential-integrity",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "name": "Key, entity and referential integrity",
+    "latex": "\\pi_{FK}\\big(\\sigma_{FK\\ \\text{IS NOT NULL}}(R)\\big) \\subseteq \\pi_{PK}(S)",
+    "meaning": "The integrity constraints every legal database state must satisfy:\n\n- **Domain constraint**: every value comes from its attribute's domain (type, range, `CHECK`).\n- **Key constraint**: no two distinct tuples agree on a candidate key.\n- **Entity integrity**: no primary-key attribute is `NULL`.\n- **Referential integrity** (the formula): every non-null foreign-key value in the referencing relation $R$ appears as a primary-key (or `UNIQUE`) value in the referenced relation $S$. $R$ and $S$ may be the same relation (self-reference, e.g. employee → manager).\n\nWhich operations can violate referential integrity:\n\n| Operation | Can it violate? |\n| --- | --- |\n| Insert into the referencing relation $R$ | Yes: the new foreign key may match nothing |\n| Update a foreign key in $R$ | Yes |\n| Delete from $R$ | No |\n| Insert into the referenced relation $S$ | No |\n| Delete from $S$, or update a key in $S$ | Yes: existing foreign keys may be left dangling |\n\nFor a delete in $S$ the declared action decides what happens: `RESTRICT` / `NO ACTION` reject the delete, `CASCADE` also deletes the referencing tuples (and, recursively, the tuples that reference those), and `SET NULL` / `SET DEFAULT` change their foreign keys.",
+    "variables": [
+      {
+        "symbol": "$R$",
+        "meaning": "the referencing relation (holds the foreign key)"
+      },
+      {
+        "symbol": "$S$",
+        "meaning": "the referenced relation"
+      },
+      {
+        "symbol": "$FK$",
+        "meaning": "the foreign-key attribute(s) of R"
+      },
+      {
+        "symbol": "$PK$",
+        "meaning": "the primary key (or a UNIQUE key) of S that FK refers to"
+      }
+    ],
+    "whenToUse": "Deciding whether an insert, delete or update is allowed, and counting how many tuples an `ON DELETE CASCADE` delete removes: follow the chain of references (including self-references) until no new tuple is affected.",
+    "commonMistake": "Thinking that deleting from the referencing table or inserting into the referenced table can violate referential integrity (neither can). With a self-referencing `ON DELETE CASCADE`, stopping after the direct children instead of deleting the whole subtree. Treating a `NULL` foreign key as a violation: it is allowed unless the column is also declared `NOT NULL`.",
+    "example": "Emp(eid, mgr), where mgr references Emp(eid) `ON DELETE CASCADE`, holds (1, NULL), (2, 1), (3, 1), (4, 2), (5, 2), (6, 5), (7, 3).\n\n- Deleting eid 2 deletes 4 and 5 (they reference 2), then 6 (it references 5): **4 tuples** are removed (2, 4, 5, 6) and 1, 3, 7 remain.\n- Deleting eid 1 instead removes all 7 tuples.\n- Inserting (8, 9) is rejected because there is no employee 9; inserting (8, NULL) is accepted.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-ra-cardinality-bounds",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "name": "Cardinality bounds of relational-algebra operators",
+    "latex": "\\begin{gathered}\n0 \\le |\\sigma_\\theta(R)| \\le r, \\qquad 1 \\le |\\pi_L(R)| \\le r, \\qquad |R \\times S| = rs, \\qquad 0 \\le |R \\bowtie S| \\le rs \\\\\n\\max(r, s) \\le |R \\cup S| \\le r + s, \\qquad 0 \\le |R \\cap S| \\le \\min(r, s), \\qquad \\max(0,\\, r - s) \\le |R - S| \\le r\n\\end{gathered}",
+    "meaning": "Here $r = |R| \\ge 1$ and $s = |S|$ are tuple counts under relational algebra's **set semantics** (duplicates are removed). Union, intersection and difference need union-compatible relations.\n\n- **Projection** can only shrink a relation by merging duplicates; $|\\pi_L(R)| = r$ whenever $L$ contains a candidate key.\n- **Cartesian product**: the degrees (numbers of attributes) add and the cardinalities multiply. A natural join of relations with no common attribute *is* the product.\n- **Key–foreign-key join**: if the join attribute is the primary key of $S$ and a non-null foreign key in $R$ referencing $S$, each $R$ tuple matches exactly one $S$ tuple, so $|R \\bowtie S| = r$.\n- **Outer joins** keep the dangling tuples, padded with `NULL`s: the left outer join of $R$ and $S$ has $|R \\bowtie S| + u_R$ tuples, where $u_R$ is the number of $R$ tuples with no match (so at least $r$); a full outer join adds the unmatched tuples of both sides.\n- Exact counts: $|R \\cup S| = r + s - |R \\cap S|$ and $|R - S| = r - |R \\cap S|$.\n- SQL uses **bag semantics** (duplicates kept) unless you write `DISTINCT` or use `UNION`, `INTERSECT`, `EXCEPT`, which remove duplicates. A row that occurs $m$ times in one input and $k$ times in the other occurs $m + k$ times in `UNION ALL`, $\\min(m, k)$ times in `INTERSECT ALL` and $\\max(m - k, 0)$ times in `EXCEPT ALL`.",
+    "variables": [
+      {
+        "symbol": "$r, s$",
+        "meaning": "numbers of tuples in R and S"
+      },
+      {
+        "symbol": "$\\theta$",
+        "meaning": "a selection condition"
+      },
+      {
+        "symbol": "$L$",
+        "meaning": "the list of projected attributes"
+      }
+    ],
+    "whenToUse": "Minimum/maximum row-count questions about a query, checking whether a claimed result size is possible, and sanity checks on joins and set operations.",
+    "commonMistake": "Assuming a projection keeps all $r$ tuples (it removes duplicates unless $L$ contains a key), taking $r + s$ as the size of $R \\cup S$ (that is only the upper bound), and using $r - s$ as the size of $R - S$ (only a lower bound, and it may be negative). In SQL, forgetting that `SELECT` without `DISTINCT` keeps duplicates.",
+    "example": "$R$ and $S$ are union-compatible, $r = 5$, $s = 3$, and they share 2 tuples:\n\n$$\n|R \\cup S| = 5 + 3 - 2 = 6, \\quad |R \\cap S| = 2, \\quad |R - S| = 3, \\quad |S - R| = 1, \\quad |R \\times S| = 15.\n$$\n\nEmp has 40 tuples and Dept 6; Emp.dno is a non-null foreign key to Dept's primary key dno. Then $|\\text{Emp} \\bowtie \\text{Dept}| = 40$ exactly, while $|\\text{Emp} \\times \\text{Dept}| = 240$. If 2 departments have no employees, the full outer join has $40 + 2 = 42$ tuples.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-division",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "name": "Division (\"for all\" queries) in relational algebra and tuple calculus",
+    "latex": "R \\div S = \\pi_{A}(R) - \\pi_{A}\\big( (\\pi_{A}(R) \\times S) - R \\big)",
+    "meaning": "For $R(A, B)$ and $S(B)$, $R \\div S$ returns the $A$-values that are paired in $R$ with **every** $B$-value in $S$ (for example, students who took all the courses in a list). The formula builds every possible pair $(a, b)$, removes the pairs that really occur in $R$, and discards the $A$-values that still have a missing pair.\n\nThe same query in **tuple relational calculus** needs a universal quantifier:\n\n$$\n\\{\\, t \\mid \\exists r \\in R\\,(t[A] = r[A]) \\;\\wedge\\; \\forall s \\in S\\,\\big(\\exists u \\in R\\,(u[A] = t[A] \\wedge u[B] = s[B])\\big) \\,\\}\n$$\n\nUseful facts:\n\n- $\\forall x\\, P(x) \\equiv \\neg \\exists x\\, \\neg P(x)$. This is why SQL expresses division with a double `NOT EXISTS`, or with `NOT EXISTS (... EXCEPT ...)`.\n- If $S$ is empty, $R \\div S = \\pi_A(R)$: every $A$-value qualifies vacuously.\n- If $S$ is non-empty, $|R \\div S| \\le \\lfloor |R| / |S| \\rfloor$, because each answer needs $|S|$ distinct tuples of $R$.\n- A calculus expression is **safe** when its result can only contain values that appear in the database. Safe relational calculus and the basic relational algebra ($\\sigma, \\pi, \\times, \\cup, -, \\rho$) have the same expressive power (Codd's theorem).",
+    "variables": [
+      {
+        "symbol": "$R(A, B)$",
+        "meaning": "the dividend relation"
+      },
+      {
+        "symbol": "$S(B)$",
+        "meaning": "the divisor relation"
+      },
+      {
+        "symbol": "$A$",
+        "meaning": "the attributes of R that are not in S (the answer's schema)"
+      },
+      {
+        "symbol": "$t, r, s, u$",
+        "meaning": "tuple variables"
+      }
+    ],
+    "whenToUse": "Any query with \"all\", \"every\" or \"each\" (suppliers who supply every red part, students enrolled in all courses of a department). Also for recognizing a calculus or SQL expression with $\\forall$ or a double `NOT EXISTS` as division.",
+    "commonMistake": "Using a join such as $\\pi_A(R \\bowtie S)$, which returns the values paired with **at least one** $B$ in $S$ (a \"some\" query, not an \"all\" query). Forgetting the outer $\\pi_A(R) - \\ldots$ step, which leaves exactly the *non*-answers.",
+    "example": "Takes(sid, cid) = {(1, DB), (1, ML), (2, DB), (3, DB), (3, ML), (3, AI)} and Core(cid) = {DB, ML}.\n\n1. $\\pi_{\\text{sid}}(\\text{Takes}) = \\{1, 2, 3\\}$.\n2. $\\{1, 2, 3\\} \\times \\text{Core}$ has 6 pairs; removing those present in Takes leaves $\\{(2, \\text{ML})\\}$.\n3. Projecting gives $\\{2\\}$, so $\\text{Takes} \\div \\text{Core} = \\{1, 2, 3\\} - \\{2\\} = \\{1, 3\\}$.\n\nCheck: $2 \\le \\lfloor 6/2 \\rfloor = 3$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-sql-nulls-aggregates",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "name": "SQL NULLs: three-valued logic and aggregates",
+    "latex": "\\begin{gathered}\np \\wedge q = \\min(p, q), \\qquad p \\vee q = \\max(p, q), \\qquad \\neg p = 1 - p \\qquad (\\text{F} = 0,\\ \\text{U} = \\tfrac{1}{2},\\ \\text{T} = 1) \\\\\n\\text{AVG}(A) = \\frac{\\text{SUM}(A)}{\\text{COUNT}(A)}, \\qquad \\text{COUNT}(*) \\ge \\text{COUNT}(A) \\ge \\text{COUNT}(\\text{DISTINCT } A)\n\\end{gathered}",
+    "meaning": "**Comparisons with `NULL`.** Any comparison involving `NULL` (`=`, `<>`, `<` and so on, even `NULL = NULL`) evaluates to **UNKNOWN** (U). The connectives follow the min/max rule, so U AND F = F, U OR T = T and NOT U = U. Test for nulls only with `IS NULL` / `IS NOT NULL`.\n\n**Filtering.** `WHERE`, `HAVING` and join conditions keep a row only when the condition is **TRUE**; rows where it is FALSE or UNKNOWN are both dropped. A `CHECK` constraint, by contrast, is violated only when it is **FALSE** (UNKNOWN passes).\n\n**Aggregates.** `COUNT(*)` counts rows; `COUNT(A)`, `SUM`, `AVG`, `MIN` and `MAX` ignore the `NULL`s of $A$. Without `GROUP BY`, an empty input gives `COUNT(*)` $= 0$ and `COUNT(A)` $= 0$ but `NULL` for `SUM`, `AVG`, `MIN` and `MAX`; the same happens for `COUNT(A)` and the other aggregates of $A$ when every value of $A$ is `NULL`. `GROUP BY` places all `NULL`s of the grouping column in one group.\n\n**The `NOT IN` trap.** `x NOT IN (subquery)` is never TRUE when the subquery returns a `NULL`, so such a filter keeps no rows. `NOT EXISTS` does not have this problem.",
+    "variables": [
+      {
+        "symbol": "$p, q$",
+        "meaning": "truth values: TRUE, FALSE or UNKNOWN"
+      },
+      {
+        "symbol": "$A$",
+        "meaning": "a column that may contain NULLs"
+      },
+      {
+        "symbol": "$\\text{COUNT}(*)$",
+        "meaning": "the number of rows, NULLs included"
+      }
+    ],
+    "whenToUse": "Predicting a query's output on a table with `NULL`s: the number of rows a `WHERE` clause keeps, the values of aggregates, the effect of `NOT IN`, and whether `AVG` equals `SUM` divided by the row count.",
+    "commonMistake": "Assuming `WHERE A > 10` and `WHERE NOT (A > 10)` together return every row (rows whose `A` is `NULL` appear in neither), writing `A = NULL` instead of `A IS NULL`, and dividing `SUM(A)` by `COUNT(*)` to get the average.",
+    "example": "Column sal has the six values 100, 250, NULL, 300, NULL, 150.\n\n- `COUNT(*)` $= 6$, `COUNT(sal)` $= 4$, `SUM(sal)` $= 800$, `AVG(sal)` $= 800/4 = 200$ (not $800/6 \\approx 133.3$).\n- `WHERE sal > 200` keeps 250 and 300 (2 rows); `WHERE NOT (sal > 200)` keeps 100 and 150 (2 rows). The 2 `NULL` rows are in neither result, and $2 + 2 \\ne 6$.\n- `WHERE sal > 200 OR sal IS NULL` keeps 4 rows.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-attribute-closure",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "name": "Attribute closure, Armstrong's axioms and the key test",
+    "latex": "X^+ = \\{\\, A : X \\to A \\in F^+ \\,\\}, \\qquad X \\to Y \\in F^+ \\iff Y \\subseteq X^+, \\qquad X \\text{ is a superkey of } R \\iff X^+ = R",
+    "meaning": "**Algorithm** for $X^+$ under a set $F$ of functional dependencies:\n\n1. Start with $X^+ := X$.\n2. For every FD $Y \\to Z$ in $F$ with $Y \\subseteq X^+$, set $X^+ := X^+ \\cup Z$.\n3. Repeat step 2 until a full pass over $F$ adds nothing.\n\n**Armstrong's axioms** are sound and complete for deriving $F^+$: reflexivity ($Y \\subseteq X \\Rightarrow X \\to Y$), augmentation ($X \\to Y \\Rightarrow XZ \\to YZ$) and transitivity ($X \\to Y,\\ Y \\to Z \\Rightarrow X \\to Z$). Derived rules: union ($X \\to Y,\\ X \\to Z \\Rightarrow X \\to YZ$), decomposition ($X \\to YZ \\Rightarrow X \\to Y$) and pseudotransitivity ($X \\to Y,\\ WY \\to Z \\Rightarrow WX \\to Z$).\n\n**Candidate keys.** $X$ is a candidate key when $X^+ = R$ and $(X - \\{a\\})^+ \\ne R$ for every $a \\in X$. Shortcuts:\n\n- an attribute that appears on **no right-hand side** is in **every** candidate key;\n- an attribute that appears on some right-hand side but on **no left-hand side** is in **no** candidate key;\n- so start from the attributes of the first kind; if their closure is not $R$, try adding attributes that appear on both sides.\n\nAn attribute is **prime** if it belongs to at least one candidate key.",
+    "variables": [
+      {
+        "symbol": "$X, Y, Z, W$",
+        "meaning": "sets of attributes"
+      },
+      {
+        "symbol": "$F$",
+        "meaning": "the given set of functional dependencies"
+      },
+      {
+        "symbol": "$F^+$",
+        "meaning": "all FDs implied by F"
+      },
+      {
+        "symbol": "$X^+$",
+        "meaning": "the closure of X: every attribute X determines"
+      },
+      {
+        "symbol": "$R$",
+        "meaning": "the set of all attributes of the relation"
+      }
+    ],
+    "whenToUse": "Checking whether an FD is implied by $F$, finding candidate keys and prime attributes, and as the inner step of the normal-form, lossless-join and dependency-preservation tests.",
+    "commonMistake": "Stopping after one pass over the FDs (an FD skipped early may fire after later additions), and calling a superkey a candidate key without checking minimality. Also: $XY \\to Z$ does **not** imply $X \\to Z$.",
+    "example": "$R(A,B,C,D,E)$, $F = \\{A \\to B,\\ B \\to C,\\ CD \\to E\\}$.\n\n$(AD)^+$: start with $\\{A, D\\}$; $A \\to B$ adds $B$; $B \\to C$ adds $C$; $CD \\to E$ adds $E$. So $(AD)^+ = ABCDE = R$ and $AD$ is a superkey.\n\nMinimality: $A^+ = ABC$ and $D^+ = D$, neither equals $R$. Since $A$ and $D$ appear on no right-hand side they are in every key, so $AD$ is the **only** candidate key, and there are $2^{5-2} = 8$ superkeys.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-normal-form-conditions",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "name": "Normal-form conditions: 2NF, 3NF and BCNF",
+    "latex": "\\text{For every non-trivial } X \\to A \\text{ in } F^+ \\ (A \\notin X): \\quad\n\\begin{cases}\n\\text{BCNF: } X \\text{ is a superkey} \\\\\n\\text{3NF: } X \\text{ is a superkey, or } A \\text{ is prime} \\\\\n\\text{2NF: not } \\big(A \\text{ non-prime and } X \\subsetneq K \\text{ for some candidate key } K\\big)\n\\end{cases}",
+    "meaning": "$A$ is a single attribute (split right-hand sides first). An attribute is **prime** if it belongs to some candidate key, and **1NF** means every attribute value is atomic.\n\n- $\\text{BCNF} \\Rightarrow \\text{3NF} \\Rightarrow \\text{2NF} \\Rightarrow \\text{1NF}$: each stronger form allows fewer exceptions.\n- A 2NF violation is a **partial dependency** (a non-prime attribute depends on part of a key). A 3NF violation that is not a 2NF violation is a **transitive dependency**: key $\\to X \\to A$ with $X$ not a superkey and $A$ non-prime.\n- Quick facts: every relation with exactly two attributes is in BCNF; if every candidate key is a single attribute, a 1NF relation is automatically in 2NF; if every attribute is prime, the relation is automatically in 3NF.\n- To test the given relation for BCNF it is enough to check the FDs of $F$ (with right-hand sides split). For a relation produced by decomposition you must check the FDs of $F^+$ projected onto it.\n- Every relation has a lossless, dependency-preserving decomposition into 3NF (synthesis from a canonical cover). A lossless BCNF decomposition always exists but may not preserve every dependency.",
+    "variables": [
+      {
+        "symbol": "$X$",
+        "meaning": "the left-hand side (determinant) of an FD"
+      },
+      {
+        "symbol": "$A$",
+        "meaning": "a single attribute on the right-hand side"
+      },
+      {
+        "symbol": "$K$",
+        "meaning": "a candidate key"
+      },
+      {
+        "symbol": "$F^+$",
+        "meaning": "all FDs implied by the given set F"
+      }
+    ],
+    "whenToUse": "Finding the highest normal form of a relation: compute **all** candidate keys, list the prime attributes, then test the FDs against BCNF, then 3NF, then 2NF.",
+    "commonMistake": "Testing normal forms before finding all candidate keys (an attribute may be prime through a key you missed), and calling a partial dependency a 2NF violation when its right-hand side is prime: 2NF and 3NF restrict only dependencies whose right-hand side is non-prime.",
+    "example": "$R(A,B,C,D)$, $F = \\{AB \\to C,\\ C \\to D,\\ D \\to A\\}$.\n\n- $B$ is on no right-hand side, so it is in every key; $B^+ = B$. Then $(AB)^+ = ABCD$, $(BC)^+ = BCDA$, $(BD)^+ = BDAC$, so the candidate keys are $AB$, $BC$, $BD$ and **all four attributes are prime**.\n- BCNF: $C^+ = ACD \\ne R$, so $C \\to D$ violates BCNF.\n- 3NF: every right-hand side ($C$, $D$, $A$) is prime, so every FD passes.\n\nHighest normal form: **3NF**.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-decomposition-tests",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "name": "Lossless-join and dependency-preservation tests",
+    "latex": "\\begin{gathered}\n\\{R_1, R_2\\} \\text{ is lossless} \\iff (R_1 \\cap R_2)^+ \\supseteq R_1 \\ \\text{ or } \\ (R_1 \\cap R_2)^+ \\supseteq R_2 \\\\\n\\{R_1, \\dots, R_k\\} \\text{ preserves dependencies} \\iff \\Big(\\textstyle\\bigcup_{i} F_i\\Big)^+ = F^+, \\qquad F_i = \\{\\, X \\to Y \\in F^+ : X \\cup Y \\subseteq R_i \\,\\}\n\\end{gathered}",
+    "meaning": "A decomposition of $R$ into $R_1, R_2$ with $R_1 \\cup R_2 = R$ is **lossless** when $\\pi_{R_1}(r) \\bowtie \\pi_{R_2}(r) = r$ for every legal instance $r$. The join always contains $r$; a lossy decomposition adds **spurious tuples**. The test says the common attributes must be a superkey of at least one of the two pieces. For more than two pieces the chase (tableau) test is exact; a quick sufficient check is to merge two pieces that pass the binary test and repeat.\n\n**Dependency preservation** asks whether every FD can be enforced by checking the fragments separately. To test one FD $X \\to Y$ of $F$ without computing the $F_i$:\n\n1. Set $Z := X$.\n2. For each $R_i$: $Z := Z \\cup \\big((Z \\cap R_i)^+ \\cap R_i\\big)$, with closures taken under $F$.\n3. Repeat step 2 until $Z$ stops changing. $X \\to Y$ is preserved iff $Y \\subseteq Z$.\n\nAn FD whose attributes all lie inside one $R_i$ is trivially preserved. Losslessness is mandatory; dependency preservation is desirable (3NF synthesis guarantees both, BCNF decomposition only the first).",
+    "variables": [
+      {
+        "symbol": "$R_1, R_2, \\dots, R_k$",
+        "meaning": "the fragments (sets of attributes)"
+      },
+      {
+        "symbol": "$F$",
+        "meaning": "the FDs of the original relation"
+      },
+      {
+        "symbol": "$F_i$",
+        "meaning": "the projection of F+ onto R_i"
+      },
+      {
+        "symbol": "$(R_1 \\cap R_2)^+$",
+        "meaning": "closure of the common attributes under F"
+      }
+    ],
+    "whenToUse": "Questions asking whether a decomposition is lossless, dependency-preserving, both or neither, and checking a BCNF or 3NF decomposition you produced.",
+    "commonMistake": "Checking only that $R_1 \\cap R_2$ is non-empty (a common attribute is necessary but not sufficient: it must determine a whole side), and declaring an FD lost because it does not appear verbatim in any fragment. It may still follow from the fragments' FDs, so use the closure test.",
+    "example": "$R(A,B,C)$ with $F = \\{AB \\to C,\\ C \\to B\\}$ (candidate keys $AB$ and $AC$), decomposed into $R_1(A,C)$ and $R_2(B,C)$.\n\n- Lossless: $R_1 \\cap R_2 = \\{C\\}$ and $C^+ = BC \\supseteq R_2$, so the decomposition is **lossless**.\n- $C \\to B$ lies inside $R_2$: preserved.\n- $AB \\to C$: start $Z = AB$. Through $R_1$: $(Z \\cap AC)^+ \\cap AC = A^+ \\cap AC = A$. Through $R_2$: $(Z \\cap BC)^+ \\cap BC = B^+ \\cap BC = B$. $Z$ stays $AB$, which does not contain $C$, so $AB \\to C$ is **not preserved**.\n\nThis is the classic case of a lossless BCNF decomposition that loses a dependency. Splitting instead into $(A,B)$ and $(B,C)$ would be **lossy**, since $B^+ = B$ contains neither side.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-index-access-cost",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "name": "Blocking factor and index access cost",
+    "latex": "\\text{bfr} = \\left\\lfloor \\frac{B}{R} \\right\\rfloor, \\quad b = \\left\\lceil \\frac{r}{\\text{bfr}} \\right\\rceil, \\quad \\text{fo} = \\left\\lfloor \\frac{B}{V + P} \\right\\rfloor, \\quad t = \\left\\lceil \\log_{\\text{fo}} r_1 \\right\\rceil, \\quad \\text{cost} = t + 1",
+    "meaning": "Assumes fixed-length records, **unspanned** blocking (a record never crosses a block boundary), and cost measured in block accesses.\n\n**Data file** of $r$ records stored in $b$ blocks:\n\n- Heap (unordered) file: a search on a key reads $b/2$ blocks on average if the record exists and $b$ if it does not; a non-key search always reads $b$.\n- File sorted on the search field: binary search needs about $\\lceil \\log_2 b \\rceil$ block accesses.\n\n**Index** entries are (key of $V$ bytes, block pointer of $P$ bytes), so $\\text{fo}$ entries fit in one index block:\n\n- **Primary index** (on the ordering key field, sparse): one entry per data block, $r_1 = b$.\n- **Clustering index** (on an ordering non-key field, sparse): one entry per distinct value.\n- **Secondary index** on a key (dense): one entry per record, $r_1 = r$.\n- A single-level index occupies $b_1 = \\lceil r_1 / \\text{fo} \\rceil$ blocks; binary search on it plus one data block costs $\\lceil \\log_2 b_1 \\rceil + 1$.\n- A **multilevel index** indexes each level's blocks at the next level up until a single block remains. It has $t = \\lceil \\log_{\\text{fo}} r_1 \\rceil$ levels, and a lookup reads one block per level plus the data block.\n\nA file can have at most one primary or clustering index (both follow the physical order) but any number of secondary indexes.",
+    "variables": [
+      {
+        "symbol": "$B$",
+        "meaning": "block size (bytes)"
+      },
+      {
+        "symbol": "$R$",
+        "meaning": "record size (bytes)"
+      },
+      {
+        "symbol": "$r$",
+        "meaning": "number of records"
+      },
+      {
+        "symbol": "$\\text{bfr}$",
+        "meaning": "blocking factor: records per block"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "number of data blocks"
+      },
+      {
+        "symbol": "$V, P$",
+        "meaning": "sizes of the search key and of a block pointer (bytes)"
+      },
+      {
+        "symbol": "$\\text{fo}$",
+        "meaning": "fan-out: index entries per index block"
+      },
+      {
+        "symbol": "$r_1$",
+        "meaning": "number of entries in the first-level index"
+      },
+      {
+        "symbol": "$t$",
+        "meaning": "number of index levels"
+      }
+    ],
+    "whenToUse": "Any \"how many block accesses\" question on file organization and indexing, where record, key and pointer sizes are given and you need the number of blocks, index levels or the cost of a lookup.",
+    "commonMistake": "Rounding the blocking factor up (a partial record does not fit, so use the floor) or the number of blocks down (use the ceiling); making a primary index dense (it has one entry per **block**, not per record); and forgetting the $+1$ for reading the data block itself.",
+    "example": "$r = 50{,}000$ records of $R = 120$ bytes, block size $B = 2048$ bytes, key $V = 10$ bytes, block pointer $P = 6$ bytes.\n\n- $\\text{bfr} = \\lfloor 2048/120 \\rfloor = 17$ and $b = \\lceil 50000/17 \\rceil = 2942$ blocks.\n- Binary search on the sorted file: $\\lceil \\log_2 2942 \\rceil = 12$ block accesses.\n- Primary index: $\\text{fo} = \\lfloor 2048/16 \\rfloor = 128$, $r_1 = 2942$, $b_1 = \\lceil 2942/128 \\rceil = 23$ blocks; a single-level lookup costs $\\lceil \\log_2 23 \\rceil + 1 = 6$.\n- Multilevel: level 2 needs $\\lceil 23/128 \\rceil = 1$ block, so $t = 2 = \\lceil \\log_{128} 2942 \\rceil$ and a lookup costs $2 + 1 = 3$.\n- Dense secondary index on a key: $r_1 = 50000$, levels of $391 \\to 4 \\to 1$ blocks, so $t = 3$ and a lookup costs 4.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-bplus-tree",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "name": "B+ tree order, occupancy and capacity",
+    "latex": "\\begin{gathered}\np\\,P + (p - 1)\\,V \\le B, \\qquad L\\,(V + P_r) + P \\le B \\\\\n2 \\left\\lceil \\tfrac{p}{2} \\right\\rceil^{h-2} \\left\\lceil \\tfrac{L}{2} \\right\\rceil \\;\\le\\; \\text{keys in a B+ tree with } h \\ge 2 \\text{ levels} \\;\\le\\; p^{\\,h-1} L\n\\end{gathered}",
+    "meaning": "**Convention** (Elmasri–Navathe): the **order** $p$ is the maximum number of child pointers of an internal node, which then holds at most $p - 1$ keys; a leaf holds at most $L$ (key, record pointer) pairs plus one pointer to the next leaf. Some books (e.g. Silberschatz) use a single $n$, with leaves holding at most $n - 1$ keys, i.e. $L = n - 1$; others define the order by the minimum occupancy. Always use the definition the question gives.\n\n- **Order from block size**: the largest $p$ with $pP + (p-1)V \\le B$ is $p = \\lfloor (B + V)/(P + V) \\rfloor$; the largest leaf capacity is $L = \\lfloor (B - P)/(V + P_r) \\rfloor$.\n- **Occupancy**: every node except the root is at least half full: internal nodes have at least $\\lceil p/2 \\rceil$ children and leaves at least $\\lceil L/2 \\rceil$ keys. A root that is not a leaf needs only 2 children.\n- **Capacity** with $h$ levels (root = level 1, leaves = level $h$): at most $p^{h-1}$ leaves and at least $2 \\lceil p/2 \\rceil^{h-2}$ leaves; multiply by the keys per leaf. The minimum height for $K$ keys is the smallest $h$ with $p^{h-1} L \\ge K$.\n- **B-tree** (every node stores keys with record pointers): node order from $pP + (p - 1)(V + P_r) \\le B$. With $h$ levels it holds at most $p^{h} - 1$ and at least $2 \\lceil p/2 \\rceil^{h-1} - 1$ keys.\n- Search, insertion and deletion touch $O(\\log_{\\lceil p/2 \\rceil} K)$ nodes; the B+ tree's linked leaves also give efficient range scans.",
+    "variables": [
+      {
+        "symbol": "$B$",
+        "meaning": "block (node) size in bytes"
+      },
+      {
+        "symbol": "$V$",
+        "meaning": "search-key size in bytes"
+      },
+      {
+        "symbol": "$P$",
+        "meaning": "block (tree) pointer size in bytes"
+      },
+      {
+        "symbol": "$P_r$",
+        "meaning": "record (data) pointer size in bytes"
+      },
+      {
+        "symbol": "$p$",
+        "meaning": "order: maximum number of children of an internal node"
+      },
+      {
+        "symbol": "$L$",
+        "meaning": "maximum number of keys in a leaf (p_leaf)"
+      },
+      {
+        "symbol": "$h$",
+        "meaning": "height: number of levels"
+      },
+      {
+        "symbol": "$K$",
+        "meaning": "number of keys indexed"
+      }
+    ],
+    "whenToUse": "Computing the order of B-tree or B+ tree nodes from block, key and pointer sizes, and the minimum or maximum number of keys, or the height, for a given number of records.",
+    "commonMistake": "Mixing conventions (maximum keys vs maximum pointers vs minimum degree), giving a leaf only $p - 1$ keys when the question defines the leaf capacity separately, and applying the half-full minimum to the root (a non-leaf root may have just 2 children).",
+    "example": "$B = 1024$ bytes, $V = 12$, $P = 8$, $P_r = 8$.\n\n- Internal node: $8p + 12(p - 1) \\le 1024 \\Rightarrow 20p \\le 1036 \\Rightarrow p = 51$.\n- Leaf: $20L + 8 \\le 1024 \\Rightarrow L = \\lfloor 1016/20 \\rfloor = 50$.\n- B-tree node: $8p + 20(p - 1) \\le 1024 \\Rightarrow 28p \\le 1044 \\Rightarrow p = 37$.\n\nHeight for $K = 1{,}000{,}000$ keys with $p = 51$, $L = 50$: 3 levels hold at most $51^2 \\cdot 50 = 130{,}050$ keys and 4 levels at most $51^3 \\cdot 50 = 6{,}632{,}550$, so at least 4 levels are needed. With minimum occupancy, 5 levels need only $2 \\cdot 26^3 \\cdot 25 = 878{,}800 \\le 10^6$ keys but 6 levels need $2 \\cdot 26^4 \\cdot 25 = 22{,}848{,}800$, so the height is 4 or 5.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-data-normalization",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "name": "Min–max, z-score and decimal-scaling normalization",
+    "latex": "v' = \\frac{v - \\min_A}{\\max_A - \\min_A}\\,\\big(\\mathit{new\\_max}_A - \\mathit{new\\_min}_A\\big) + \\mathit{new\\_min}_A, \\qquad v' = \\frac{v - \\bar{A}}{\\sigma_A}, \\qquad v' = \\frac{v}{10^{j}}",
+    "meaning": "Normalization rescales an attribute so that attributes with large ranges do not dominate distance-based methods (k-NN, clustering) or gradient-based training.\n\n- **Min–max** maps $[\\min_A, \\max_A]$ linearly onto $[\\mathit{new\\_min}_A, \\mathit{new\\_max}_A]$, usually $[0, 1]$. It keeps the relationships among the original values, but a later value outside the original range falls outside the new range, and a single outlier squeezes the other values together.\n- **z-score** gives mean 0 and standard deviation 1, and suits data whose min and max are unknown or that has outliers. $\\bar A$ is the mean and $\\sigma_A$ the standard deviation (population form, dividing by $N$, unless the question asks for the sample form with $N - 1$). A robust variant divides by the mean absolute deviation $s_A = \\frac{1}{N} \\sum_i |v_i - \\bar A|$.\n- **Decimal scaling** moves the decimal point: $j$ is the **smallest integer** such that $\\max |v'| < 1$.\n\nAll three are increasing linear maps, so they preserve the order of the values and leave the Pearson correlation between two attributes unchanged.",
+    "variables": [
+      {
+        "symbol": "$v, v'$",
+        "meaning": "original and normalized value"
+      },
+      {
+        "symbol": "$\\min_A, \\max_A$",
+        "meaning": "minimum and maximum of attribute A"
+      },
+      {
+        "symbol": "$\\mathit{new\\_min}_A, \\mathit{new\\_max}_A$",
+        "meaning": "the target range"
+      },
+      {
+        "symbol": "$\\bar{A}, \\sigma_A$",
+        "meaning": "mean and standard deviation of A"
+      },
+      {
+        "symbol": "$j$",
+        "meaning": "smallest integer with max |v'| < 1"
+      }
+    ],
+    "whenToUse": "Preprocessing questions that give a value together with the attribute's range, or its mean and standard deviation, and questions on which method suits outliers or an unknown range.",
+    "commonMistake": "Forgetting to add $\\mathit{new\\_min}_A$ back when the target range is not $[0, 1]$; choosing $j$ too small in decimal scaling (for $\\max |v| = 1000$, $j = 4$, because $1000/10^3 = 1$ is not below 1); mixing the population and sample standard deviations.",
+    "example": "An attribute ranges from 20 to 180.\n\n- Min–max of $v = 116$ to $[0, 1]$: $\\frac{116 - 20}{180 - 20} = \\frac{96}{160} = 0.6$. To $[-1, 1]$: $0.6 \\times 2 + (-1) = 0.2$.\n- z-score with $\\bar A = 80$ and $\\sigma_A = 16$: $\\frac{116 - 80}{16} = 2.25$.\n- Decimal scaling for values in $[-452, 1375]$: $\\max |v| = 1375$ and $1375/10^3 = 1.375 \\ge 1$, so $j = 4$; $1375 \\mapsto 0.1375$ and $-452 \\mapsto -0.0452$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-binning",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "name": "Discretization by equal-width and equal-frequency binning",
+    "latex": "w = \\frac{\\max - \\min}{k}, \\qquad \\text{bin}(v) = \\min\\!\\left( \\left\\lfloor \\frac{v - \\min}{w} \\right\\rfloor,\\ k - 1 \\right) \\ \\ (\\text{0-indexed}), \\qquad \\text{equal-frequency: about } \\frac{N}{k} \\text{ values per bin}",
+    "meaning": "**Discretization** replaces a numeric attribute by interval labels (or concept labels such as low / medium / high). It reduces the number of distinct values and yields a concept hierarchy for the attribute.\n\n- **Equal-width** (uniform) binning: $k$ intervals of width $w$. Bin $i$ (0-indexed) is $[\\min + iw,\\ \\min + (i+1)w)$, and the last bin also includes $\\max$, hence the $\\min(\\cdot, k - 1)$. Simple, but skewed data or outliers crowd most values into a few bins.\n- **Equal-frequency** (equal-depth) binning: sort the $N$ values and put about $N/k$ of them in each bin.\n- **Smoothing** by binning replaces each value by its bin's **mean**, its bin's **median**, or the nearer of the bin's two **boundaries** (its own minimum and maximum). If a value is equally close to both boundaries, follow the tie rule the question states.\n- Other discretization methods: histogram analysis, clustering, and supervised **entropy-based** splitting, which picks the split point with the highest information gain about the class; ChiMerge merges adjacent intervals whose class distributions are similar.",
+    "variables": [
+      {
+        "symbol": "$\\min, \\max$",
+        "meaning": "smallest and largest value of the attribute"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of bins"
+      },
+      {
+        "symbol": "$w$",
+        "meaning": "bin width (equal-width binning)"
+      },
+      {
+        "symbol": "$N$",
+        "meaning": "number of values"
+      },
+      {
+        "symbol": "$v$",
+        "meaning": "a value to be binned"
+      }
+    ],
+    "whenToUse": "Questions that give a (sorted) list of values and ask for the bins, or for the values after smoothing by bin means, medians or boundaries.",
+    "commonMistake": "Confusing the two schemes (equal-width fixes the interval length, equal-frequency fixes the count per bin), putting $\\max$ into a non-existent bin $k$, and smoothing by boundaries with the global minimum and maximum instead of each bin's own.",
+    "example": "Sorted data 5, 7, 12, 16, 18, 23, 28, 33, 41 with $k = 3$.\n\n- Equal-width: $w = (41 - 5)/3 = 12$, bins $[5, 17)$, $[17, 29)$, $[29, 41]$, giving $\\{5, 7, 12, 16\\}$, $\\{18, 23, 28\\}$, $\\{33, 41\\}$.\n- Equal-frequency: $\\{5, 7, 12\\}$, $\\{16, 18, 23\\}$, $\\{28, 33, 41\\}$.\n- Smoothing the equal-frequency bins by means: $8, 8, 8 \\mid 19, 19, 19 \\mid 34, 34, 34$.\n- Smoothing by boundaries: $5, 5, 12 \\mid 16, 16, 23 \\mid 28, 28, 41$ (for example, 33 is 5 away from 28 and 8 away from 41).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-sampling",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "name": "Sampling for data reduction",
+    "latex": "\\text{SRSWOR: } \\binom{N}{n} \\text{ samples},\\ \\ P(\\text{tuple chosen}) = \\frac{n}{N}; \\qquad \\text{SRSWR: } P(\\text{tuple chosen}) = 1 - \\left(1 - \\frac{1}{N}\\right)^{n}; \\qquad \\text{stratified: } n_h = n \\cdot \\frac{N_h}{N}",
+    "meaning": "Sampling represents a data set of $N$ tuples by a random sample of $n$ tuples; the cost of working with the sample depends on $n$, not on $N$.\n\n- **SRSWOR** (simple random sample without replacement): every subset of size $n$ is equally likely. There are $\\binom{N}{n}$ such subsets, and each tuple is included with probability $n/N$.\n- **SRSWR** (with replacement): each of the $n$ draws is uniform over all $N$ tuples, so a tuple can be drawn more than once. There are $N^n$ ordered draw sequences; a given tuple is missed with probability $(1 - 1/N)^n$, and the expected number of distinct tuples in the sample is $N\\big[1 - (1 - 1/N)^n\\big]$.\n- **Cluster sampling**: the tuples are grouped into disjoint clusters (for example, disk pages); a simple random sample of clusters is drawn and all tuples of the chosen clusters are kept.\n- **Stratified sampling**: the data are split into disjoint strata (for example, age groups) and a simple random sample is drawn from each. With **proportional allocation**, stratum $h$ of size $N_h$ contributes $n_h = n N_h / N$ tuples, so small groups are still represented; this makes it the usual choice for skewed data.",
+    "variables": [
+      {
+        "symbol": "$N$",
+        "meaning": "number of tuples in the data set"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "sample size"
+      },
+      {
+        "symbol": "$N_h$",
+        "meaning": "number of tuples in stratum h"
+      },
+      {
+        "symbol": "$n_h$",
+        "meaning": "number of tuples sampled from stratum h"
+      }
+    ],
+    "whenToUse": "Questions on the number of possible samples, the probability that a given tuple is included, repeats under sampling with replacement, or how many tuples each stratum contributes.",
+    "commonMistake": "Using $n/N$ for sampling **with** replacement (the true probability $1 - (1 - 1/N)^n$ is slightly smaller, because repeated draws are wasted), and counting ordered sequences $N(N-1)\\cdots(N-n+1)$ instead of subsets $\\binom{N}{n}$ for SRSWOR.",
+    "example": "$N = 1000$ tuples and a sample of $n = 50$.\n\n- SRSWOR: each tuple is included with probability $50/1000 = 0.05$.\n- SRSWR: $1 - 0.999^{50} = 0.0488$ (to 4 decimal places), and the expected number of distinct tuples is $1000 \\times 0.0488 \\approx 48.8$.\n- Strata of sizes 600, 300 and 100 with proportional allocation contribute $50 \\times 0.6 = 30$, $50 \\times 0.3 = 15$ and $50 \\times 0.1 = 5$ tuples.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-haar-wavelet-compression",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "name": "Compression: Haar wavelet transform and compression ratio",
+    "latex": "s = \\frac{a + b}{2}, \\quad d = \\frac{a - b}{2}, \\qquad a = s + d, \\quad b = s - d; \\qquad \\text{compression ratio} = \\frac{\\text{original size}}{\\text{compressed size}}",
+    "meaning": "**Data compression** is a data-reduction strategy that stores a smaller encoding of the data. It is **lossless** if the original can be reconstructed exactly and **lossy** if only an approximation can.\n\n**Haar discrete wavelet transform**, in the unnormalized averaging form used in data-mining texts:\n\n1. The length must be a power of 2 (pad with zeros if necessary).\n2. Replace each consecutive pair $(a, b)$ by its average $s$ and its detail coefficient $d$.\n3. Repeat step 2 on the averages only, until a single average remains.\n4. The result is the overall average followed by the detail coefficients from the coarsest level to the finest; there are as many coefficients as data values.\n\nThe transform itself is lossless. **Compression** comes from keeping only the coefficients whose magnitude exceeds a threshold and setting the rest to 0; for smooth data many detail coefficients are small. The orthonormal Haar transform divides by $\\sqrt{2}$ instead of 2, which changes the coefficient values but not the method. The compression ratio is defined here as original size over compressed size, so values above 1 mean the data shrank.\n\nOther reduction methods: principal component analysis (keep the leading components), lossless encodings such as run-length coding, and numerosity reduction by histograms, clustering or sampling.",
+    "variables": [
+      {
+        "symbol": "$a, b$",
+        "meaning": "two consecutive values"
+      },
+      {
+        "symbol": "$s$",
+        "meaning": "their average (approximation coefficient)"
+      },
+      {
+        "symbol": "$d$",
+        "meaning": "their detail coefficient"
+      }
+    ],
+    "whenToUse": "Questions that ask for the Haar coefficients of a short sequence, for the data reconstructed from truncated coefficients, or for a compression ratio.",
+    "commonMistake": "Mixing the sign conventions $d = (a - b)/2$ and $d = (b - a)/2$ (pick one and reconstruct with it), transforming the detail coefficients again instead of only the averages, and inverting the compression ratio.",
+    "example": "Data $[6, 2, 5, 5, 8, 4, 1, 3]$:\n\n- Level 1 pairs: averages $[4, 5, 6, 2]$, details $[2, 0, 2, -1]$.\n- Level 2: averages $[4.5, 4]$, details $[-0.5, 2]$.\n- Level 3: average $[4.25]$, detail $[0.25]$.\n\nCoefficients: $[4.25,\\ 0.25,\\ -0.5,\\ 2,\\ 2,\\ 0,\\ 2,\\ -1]$. Keeping only those with magnitude at least 1 leaves 5 non-zero values out of 8: a compression ratio of $8/5 = 1.6$ (counting stored values and ignoring the cost of recording their positions). Reconstruction check for the first pair: $s = 4$, $d = 2$ gives $a = 6$, $b = 2$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-attribute-dissimilarity",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "name": "Attribute types and dissimilarity measures",
+    "latex": "d_{\\text{nom}}(i, j) = \\frac{p - m}{p}, \\qquad d_{\\text{sym}}(i, j) = \\frac{r + s}{q + r + s + t}, \\qquad d_{\\text{asym}}(i, j) = \\frac{r + s}{q + r + s}, \\qquad z_{if} = \\frac{r_{if} - 1}{M_f - 1}",
+    "meaning": "Attribute (data) types and what is meaningful for each:\n\n| Type | Example | Meaningful operations | Central tendency |\n| --- | --- | --- | --- |\n| Nominal | colour, city | equality only | mode |\n| Binary | smoker: yes or no | equality only | mode |\n| Ordinal | grade: fair, good, excellent | order | median, mode |\n| Interval-scaled | temperature in °C, calendar year | differences (no true zero) | mean, median, mode |\n| Ratio-scaled | weight, income, counts | differences and ratios (true zero) | mean, median, mode |\n\nDissimilarity between objects $i$ and $j$:\n\n- **Nominal**: $m$ of the $p$ attributes match.\n- **Binary**: $q$ counts attributes that are 1 for both objects, $r$ those that are 1 for $i$ and 0 for $j$, $s$ those that are 0 for $i$ and 1 for $j$, and $t$ those that are 0 for both. **Symmetric** attributes (both outcomes equally informative) use all four counts. For **asymmetric** attributes (a 1 is rare and informative, like a positive test) the negative matches $t$ are ignored; the **Jaccard coefficient** is the matching similarity $\\frac{q}{q + r + s} = 1 - d_{\\text{asym}}$.\n- **Ordinal**: map the rank $r_{if} \\in \\{1, \\dots, M_f\\}$ of object $i$ on attribute $f$ onto $[0, 1]$ with $z_{if}$, then treat it as interval-scaled.\n- **Numeric**: Minkowski distance $\\big(\\sum_f |x_{if} - x_{jf}|^h\\big)^{1/h}$, with $h = 1$ (Manhattan) or $h = 2$ (Euclidean), usually after normalization.",
+    "variables": [
+      {
+        "symbol": "$p, m$",
+        "meaning": "number of nominal attributes and number of matches"
+      },
+      {
+        "symbol": "$q, r, s, t$",
+        "meaning": "binary counts: 1-1, 1-0, 0-1 and 0-0 matches between i and j"
+      },
+      {
+        "symbol": "$r_{if}$",
+        "meaning": "rank of object i on ordinal attribute f"
+      },
+      {
+        "symbol": "$M_f$",
+        "meaning": "number of ordered states of attribute f"
+      }
+    ],
+    "whenToUse": "Classifying an attribute's type (which statistics and operations make sense), and computing dissimilarity or similarity for nominal, binary or ordinal data, e.g. as input to k-NN or clustering.",
+    "commonMistake": "Counting the 0–0 matches $t$ for asymmetric binary attributes (rare-event records then look almost identical), treating ordinal codes 1, 2, 3 as ratio-scaled without rescaling, and averaging nominal codes (a mean PIN code is meaningless). Interval data have no true zero, so 20 °C is not \"twice as hot\" as 10 °C.",
+    "example": "Two patients with six asymmetric binary test results, $i = (1, 0, 1, 1, 0, 0)$ and $j = (1, 1, 0, 1, 0, 0)$: $q = 2$, $r = 1$, $s = 1$, $t = 2$.\n\n- Asymmetric: $d = \\frac{1 + 1}{2 + 1 + 1} = 0.5$, and the Jaccard similarity is $2/4 = 0.5$.\n- Treated as symmetric: $d = \\frac{2}{6} \\approx 0.333$.\n\nAn ordinal grade with $M_f = 3$ states (fair, good, excellent): \"good\" has rank 2, so $z = \\frac{2 - 1}{3 - 1} = 0.5$. Two objects that agree on 1 of 4 nominal attributes have $d = \\frac{4 - 1}{4} = 0.75$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-cube-cuboids-cells",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "name": "Data cube: number of cuboids and cells",
+    "latex": "\\text{cuboids} = 2^{n} \\ \\ \\text{(no hierarchies)}, \\qquad \\text{cuboids} = \\prod_{i=1}^{n} (L_i + 1), \\qquad \\text{cells in the full cube} \\le \\prod_{i=1}^{n} \\big(|D_i| + 1\\big)",
+    "meaning": "An $n$-dimensional data cube is a **lattice of cuboids**, one for each way of grouping by the dimensions. Without hierarchies every dimension is either kept or aggregated away, giving $2^n$ cuboids, $\\binom{n}{k}$ of them $k$-dimensional. The $n$-D **base cuboid** is at the bottom of the lattice and the 0-D **apex cuboid** (the grand total, every dimension set to \"all\") at the top.\n\nWith **concept hierarchies**, dimension $i$ can be viewed at any of its $L_i$ levels or aggregated to \"all\", so it contributes $L_i + 1$ choices; $L_i$ does not count the virtual top level \"all\". The $2^n$ formula is the special case $L_i = 1$.\n\n**Cells**: the base cuboid has at most $\\prod |D_i|$ cells. In the full cube without hierarchies, each coordinate is either a value or \"all\" ($*$), so there are at most $\\prod (|D_i| + 1)$ cells, of which $\\prod (|D_i| + 1) - \\prod |D_i|$ are aggregate cells. Real cubes are sparse, so the actual numbers are usually much smaller.\n\n**Schemas**: in a **star schema** each fact-table row (foreign keys to the dimension tables plus the measures) is one non-empty base cell, so the fact table has at most $\\prod |D_i|$ rows (one per combination of dimension keys). A **snowflake schema** normalizes the dimension tables into separate tables along their hierarchies, and a **fact constellation** has several fact tables sharing dimension tables.\n\n**OLAP operations**: roll-up climbs a concept hierarchy (or drops a dimension); drill-down is the reverse; slice fixes one dimension to a single value, leaving one dimension fewer; dice selects values on two or more dimensions to form a subcube; pivot rotates the view.\n\nWhen a hierarchy over several attributes is generated automatically, the attribute with the **most** distinct values goes to the **lowest** level (e.g. street below city below state below country).",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of dimensions"
+      },
+      {
+        "symbol": "$L_i$",
+        "meaning": "number of levels in the hierarchy of dimension i, excluding the top level all"
+      },
+      {
+        "symbol": "$|D_i|$",
+        "meaning": "number of distinct values of dimension i at the base level"
+      }
+    ],
+    "whenToUse": "Counting the cuboids (group-bys) that a full data cube materializes, bounding the number of cells of a small cube, and tracking how roll-up, slice or dice change a cube.",
+    "commonMistake": "Using $2^n$ when the dimensions have hierarchies, counting the level \"all\" inside $L_i$ and then adding 1 again, and leaving the apex (grand-total) or base cuboid out of the count.",
+    "example": "Dimensions time (day, month, quarter, year: $L = 4$), item (item, brand, type: $L = 3$) and location (city, state, country: $L = 3$):\n\n$$\n(4 + 1)(3 + 1)(3 + 1) = 80 \\text{ cuboids}, \\qquad \\text{versus } 2^3 = 8 \\text{ without hierarchies}.\n$$\n\nA 3-D cube without hierarchies and with $|D_1| = 4$, $|D_2| = 5$, $|D_3| = 3$ has at most $4 \\cdot 5 \\cdot 3 = 60$ base cells and at most $5 \\cdot 6 \\cdot 4 = 120$ cells in all, so up to $120 - 60 = 60$ aggregate cells.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-dbw-measure-categories",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "name": "Measures: distributive, algebraic and holistic",
+    "latex": "\\text{distributive: } f(D) = g\\big(f(D_1), \\dots, f(D_k)\\big), \\qquad \\text{algebraic: } \\operatorname{avg}(D) = \\frac{\\sum_j \\operatorname{sum}(D_j)}{\\sum_j \\operatorname{count}(D_j)}, \\qquad \\text{holistic: no constant-size summary}",
+    "meaning": "A **measure** is a numeric function evaluated at each cell of a data cube. Measures are categorized by how they aggregate over a partition of a cell's data $D$ into disjoint pieces $D_1, \\dots, D_k$ (for example, the finer cells being rolled up):\n\n- **Distributive**: the measure of the whole is a function $g$ of the measures of the pieces. Examples: `count` (combined by summing), `sum`, `min`, `max`. The cube can be computed bottom-up from sub-aggregates.\n- **Algebraic**: computable by an algebraic function of a **bounded** number $M$ of distributive sub-aggregates. Examples: `avg` = sum / count ($M = 2$); variance and standard deviation from count, $\\sum x$ and $\\sum x^2$ ($M = 3$), using $\\sigma^2 = \\frac{\\sum x^2}{N} - \\big(\\frac{\\sum x}{N}\\big)^2$ (population form); the smallest or largest $m$ values for a fixed $m$ (`min_N`, `max_N`); the centre of mass.\n- **Holistic**: no constant bound on the storage needed to describe a sub-aggregate. Examples: `median`, `mode`, `rank`, the number of distinct values. These need the detailed data for an exact answer (or are approximated).\n\nDistributive and algebraic measures allow efficient cube computation; holistic measures are the expensive case.",
+    "variables": [
+      {
+        "symbol": "$D$",
+        "meaning": "the data in one cube cell"
+      },
+      {
+        "symbol": "$D_1, \\dots, D_k$",
+        "meaning": "a partition of D into disjoint pieces"
+      },
+      {
+        "symbol": "$f$",
+        "meaning": "the measure (aggregate function)"
+      },
+      {
+        "symbol": "$g$",
+        "meaning": "the function that combines the pieces' measures"
+      }
+    ],
+    "whenToUse": "Deciding whether a measure can be rolled up from sub-aggregates (and which sub-aggregates to store), and classifying a given measure as distributive, algebraic or holistic.",
+    "commonMistake": "Averaging the averages of pieces of unequal size (combine sums and counts instead), taking the median of the medians as the median, and calling `avg` distributive (it needs two distributive sub-aggregates, so it is algebraic).",
+    "example": "Two cells hold $\\{2, 4, 6\\}$ and $\\{8, 10\\}$. Store (count, sum, sum of squares) for each: $(3, 12, 56)$ and $(2, 18, 164)$.\n\n- Rolled up: count $5$, sum $30$, sum of squares $220$.\n- avg $= 30/5 = 6$, whereas the average of the two cell averages is $(4 + 9)/2 = 6.5$ (wrong).\n- Population variance $= 220/5 - 6^2 = 44 - 36 = 8$.\n- The median of all five values is 6, but the median of the cell medians 4 and 9 is 6.5: the median needs the raw values (holistic).",
+    "conceptIds": []
+  }
+]

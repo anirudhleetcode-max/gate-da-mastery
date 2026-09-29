@@ -44,7 +44,7 @@ export function Step({ n, title, children, meta }: { n: number | string; title: 
 }
 
 export function Mono({ children }: { children: ReactNode }) {
-  return <code className="break-all rounded bg-surface-2 px-1 py-0.5 font-mono text-[0.82em] text-fg">{children}</code>;
+  return <code className="rounded bg-surface-2 px-1 py-0.5 font-mono text-[0.82em] text-fg wrap-anywhere">{children}</code>;
 }
 
 export function Fact({ label, children }: { label: ReactNode; children: ReactNode }) {

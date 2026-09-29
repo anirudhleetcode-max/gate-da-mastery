@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import "fake-indexeddb/auto";
 import { createDb } from "@/lib/userdata/db";
 import { exportAll, importAll } from "@/lib/userdata/ops";
-import { backupFileName, checkBackup, parseBackupText } from "./backup";
+import { backupFileName, checkBackup, parseBackupText, tableCount } from "./backup";
 
 const base = { app: "gate-da-mastery", version: 1, exportedAt: "2026-09-01T10:00:00.000Z" };
 
@@ -53,5 +53,11 @@ describe("checkBackup", () => {
     const d = new Date(2026, 8, 29, 12);
     expect(backupFileName(false, d)).toBe("gate-da-backup-2026-09-29.json");
     expect(backupFileName(true, d)).toBe("gate-da-demo-backup-2026-09-29.json");
+  });
+
+  it("counts records with the right singular or plural label", () => {
+    expect(tableCount("attempts", 1)).toBe("1 question attempt");
+    expect(tableCount("errorLogs", 2)).toBe("2 error-log entries");
+    expect(tableCount("settings", 0)).toBe("0 settings");
   });
 });

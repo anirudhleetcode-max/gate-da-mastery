@@ -1,0 +1,910 @@
+[
+  {
+    "id": "M16-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-cross-validation"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (the number and size of the training splits in k-fold versus leave-one-out cross-validation) followed by a two-to-three step cost computation, with tempting shortcuts as distractors; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Computational cost of k-fold versus leave-one-out cross-validation: k fits on (1 - 1/k)n examples versus n fits on n - 1 examples.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A team trains a kernel-based model whose training time on $m$ examples is proportional to $m^2$; the time taken to evaluate a trained model on held-out examples is negligible. The team has $n = 50$ labelled examples and compares two ways of estimating the generalisation error:\n\n- **10-fold cross-validation**, with the examples split into 10 folds of equal size;\n- **leave-one-out cross-validation (LOOCV)**.\n\nEach procedure trains a fresh model on every one of its training splits, and the total training time of a procedure is the sum of the training times over all its splits.\n\nThe total training time of LOOCV is larger than that of 10-fold cross-validation by a factor of (rounded off to two decimal places)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$5.00$"
+      },
+      {
+        "label": "B",
+        "text": "$5.44$"
+      },
+      {
+        "label": "C",
+        "text": "$5.93$"
+      },
+      {
+        "label": "D",
+        "text": "$6.17$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "10-fold cross-validation trains $10$ models on $45$ examples each; LOOCV trains $50$ models on $49$ examples each.\nWith training time $\\propto m^2$ the totals are $10\\cdot45^2=20250$ and $50\\cdot49^2=120050$ units, so the ratio is $120050/20250\\approx5.93$.",
+      "steps": [
+        {
+          "title": "Training-set size and number of splits",
+          "body": "In 10-fold cross-validation each fold holds $50/10=5$ examples, so each of the $10$ splits trains on $50-5=45$ examples.\nIn LOOCV one example is held out per split, so there are $50$ splits and each trains on $49$ examples."
+        },
+        {
+          "title": "Total training time of each procedure",
+          "body": "Take the time on $m$ examples as $m^2$ units (evaluation time is ignored).\n\n- 10-fold: $10\\times45^2=10\\times2025=20250$ units.\n- LOOCV: $50\\times49^2=50\\times2401=120050$ units."
+        },
+        {
+          "title": "Ratio",
+          "body": "$$\\frac{120050}{20250}=5.9284\\ldots\\approx5.93.$$"
+        },
+        {
+          "title": "Interpretation",
+          "body": "LOOCV performs $50/10=5$ times as many fits, and each one is trained on slightly more data, which costs $(49/45)^2\\approx1.186$ times as much per fit under the $m^2$ law. The product is $5\\times1.186\\approx5.93$. The factor exceeds the plain ratio of fit counts only because the training cost grows faster than linearly in $m$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$5.00=50/10$ is only the ratio of the number of fits. It ignores that a LOOCV model is trained on $49$ examples whereas a 10-fold model is trained on $45$, which matters when the cost is proportional to $m^2$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$5.44=\\dfrac{50\\cdot49}{10\\cdot45}$ assumes the training time is linear in $m$. The problem states that it is proportional to $m^2$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: $\\dfrac{50\\cdot49^2}{10\\cdot45^2}=\\dfrac{120050}{20250}\\approx5.93$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$6.17=\\dfrac{50\\cdot50^2}{10\\cdot45^2}$ uses the full size $n=50$ as the LOOCV training size. Every LOOCV model is trained on $n-1=49$ examples."
+        }
+      ],
+      "shortcut": "Ratio $=\\dfrac{n}{k}\\left(\\dfrac{n-1}{n-n/k}\\right)^2=5\\times\\left(\\dfrac{49}{45}\\right)^2\\approx5\\times1.186=5.93$.",
+      "commonTrap": "Comparing only the number of fits ($5$) or using a linear cost model ($5.44$); a smaller slip is using $n$ instead of $n-1$ as the LOOCV training size ($6.17$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "n, k = 50, 10\ncv = k * (n - n // k) ** 2          # 10 fits, each on 45 examples, cost m^2\nloo = n * (n - 1) ** 2              # 50 fits, each on 49 examples\nprint(cv, loo, round(loo / cv, 2))  # 20250 120050 5.93\n# distractors: fit-count ratio, linear cost, n instead of n-1\nprint(round(n / k, 2), round(n * (n - 1) / (k * (n - n // k)), 2), round(n * n ** 2 / cv, 2))  # 5.0 5.44 6.17",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-feedforward",
+      "ml-mlp"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (the forward pass through ReLU units, read as a piecewise-linear function) with two to three routine steps per statement over four statements; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "A feed-forward network with ReLU hidden units and a linear output computes a continuous piecewise-linear function of its input; evaluate its pieces, extrema and level sets.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward neural network has one input $x \\in \\mathbb{R}$, one hidden layer of two units with ReLU activation $\\mathrm{ReLU}(z)=\\max(0,z)$, and one output unit with the identity activation. The units compute\n\n$$h_1=\\mathrm{ReLU}(x-1),\\qquad h_2=\\mathrm{ReLU}(x-3),\\qquad y=f(x)=2h_1-3h_2+1.$$\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$f(2.5)=4$"
+      },
+      {
+        "label": "B",
+        "text": "The maximum value of $f(x)$ over all real $x$ is $5$."
+      },
+      {
+        "label": "C",
+        "text": "The equation $f(x)=3$ has exactly two real solutions."
+      },
+      {
+        "label": "D",
+        "text": "$f(x)>0$ for every real $x$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "For $x\\le1$ both ReLUs are $0$ and $f=1$; for $1\\le x\\le3$, $f=2x-1$; for $x\\ge3$, $f=2(x-1)-3(x-3)+1=8-x$.\nSo $f(2.5)=4$, the maximum is $f(3)=5$, $f(x)=3$ at $x=2$ and $x=5$, and $f$ becomes negative for $x>8$: statements A, B and C are correct.",
+      "steps": [
+        {
+          "title": "Piecewise form of $f$",
+          "body": "- $x\\le1$: $h_1=h_2=0$, so $f(x)=1$.\n- $1\\le x\\le3$: $h_1=x-1$, $h_2=0$, so $f(x)=2(x-1)+1=2x-1$.\n- $x\\ge3$: $h_1=x-1$, $h_2=x-3$, so $f(x)=2(x-1)-3(x-3)+1=8-x$.\n\nThe pieces join continuously: $f(1)=1$ from both sides and $f(3)=5$ from both sides."
+        },
+        {
+          "title": "Statements A and B",
+          "body": "A: $2.5$ lies in $[1,3]$, so $f(2.5)=2(2.5)-1=4$. True.\n\nB: $f$ is constant ($1$) up to $x=1$, rises with slope $2$ to $f(3)=5$, then falls with slope $-1$. The maximum is $5$, attained at $x=3$. True."
+        },
+        {
+          "title": "Statement C",
+          "body": "Solve $f(x)=3$ on each piece: on $x\\le1$, $f=1\\ne3$; on $[1,3]$, $2x-1=3$ gives $x=2$; on $x\\ge3$, $8-x=3$ gives $x=5$. There are exactly two solutions, $x=2$ and $x=5$. True."
+        },
+        {
+          "title": "Statement D",
+          "body": "On $x\\ge3$, $f(x)=8-x$ equals $0$ at $x=8$ and is negative beyond it, e.g. $f(10)=-2$. The output unit is linear, so nothing forces $f\\ge0$. False."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $h_1=1.5$, $h_2=0$, so $f(2.5)=2(1.5)+1=4$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: the function rises on $[1,3]$ to $f(3)=5$ and decreases afterwards, so its global maximum is $5$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: the level $3$ is crossed once on the rising piece ($x=2$) and once on the falling piece ($x=5$)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$f(8)=0$ and $f(10)=-2$. The output unit has the identity activation, so the output can be negative even though $h_1,h_2\\ge0$."
+        }
+      ],
+      "commonTrap": "Dropping the output bias (which gives $f(2.5)=3$ in A) or assuming $y\\ge0$ because the hidden units are ReLUs; the output unit here is linear, so $f$ eventually becomes negative."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, C",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nrelu = lambda z: max(0.0, z)\nf = lambda x: 2 * relu(x - 1) - 3 * relu(x - 3) + 1\nxs = np.linspace(-10, 20, 300001)\nys = np.array([f(x) for x in xs])\nprint(f(2.5), ys.max(), xs[ys.argmax()])                  # 4.0 5.0 3.0   -> A, B true\ng = np.sign(ys - 3 + 1e-9)\nprint(int((g[:-1] * g[1:] < 0).sum()))                    # 2 solutions of f(x)=3 -> C true\nprint((ys > 0).all(), f(8), f(10))                        # False 0.0 -2.0 -> D false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-kmeans",
+      "ml-clustering-algorithms"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (one Lloyd iteration of k-means: assign to the nearest centroid, then average) done in a single pass over six points; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "One iteration of k-means: assign every point to its nearest centroid, then recompute each centroid as the mean of its assigned points.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A retailer describes six customers by two numbers: the number of visits per month and the average basket value (in units of 100 rupees).\n\n| Customer | $P_1$ | $P_2$ | $P_3$ | $P_4$ | $P_5$ | $P_6$ |\n|---|---|---|---|---|---|---|\n| (visits, basket) | $(1,2)$ | $(2,4)$ | $(2,3)$ | $(4,5)$ | $(8,7)$ | $(9,9)$ |\n\nThe customers are clustered by $k$-means with $k=2$ and Euclidean distance. The initial centroids are $c_1=(1,2)$ (the location of $P_1$) and $c_2=(9,9)$ (the location of $P_6$). One iteration consists of assigning every customer to its nearest centroid and then recomputing each centroid as the mean of the customers assigned to it.\n\nAfter the first iteration, the centroids $c_1$ and $c_2$ are",
+    "options": [
+      {
+        "label": "A",
+        "text": "$c_1=(1.67,\\ 3.00)$ and $c_2=(7.00,\\ 7.00)$"
+      },
+      {
+        "label": "B",
+        "text": "$c_1=(2.25,\\ 3.50)$ and $c_2=(8.50,\\ 8.00)$"
+      },
+      {
+        "label": "C",
+        "text": "$c_1=(2.00,\\ 3.50)$ and $c_2=(8.50,\\ 8.00)$"
+      },
+      {
+        "label": "D",
+        "text": "$c_1=(2.00,\\ 3.20)$ and $c_2=(8.67,\\ 8.33)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Squared distances show $P_1,P_2,P_3,P_4$ are closer to $c_1$ and $P_5,P_6$ are closer to $c_2$.\nThe new centroids are the cluster means: $c_1=\\left(\\tfrac{9}{4},\\tfrac{14}{4}\\right)=(2.25,3.50)$ and $c_2=\\left(\\tfrac{17}{2},\\tfrac{16}{2}\\right)=(8.5,8)$.",
+      "steps": [
+        {
+          "title": "Assignment step",
+          "body": "Squared Euclidean distances to $c_1=(1,2)$ and $c_2=(9,9)$:\n\n| Point | to $c_1$ | to $c_2$ | Nearest |\n|---|---|---|---|\n| $P_1(1,2)$ | $0$ | $113$ | $c_1$ |\n| $P_2(2,4)$ | $1+4=5$ | $49+25=74$ | $c_1$ |\n| $P_3(2,3)$ | $1+1=2$ | $49+36=85$ | $c_1$ |\n| $P_4(4,5)$ | $9+9=18$ | $25+16=41$ | $c_1$ |\n| $P_5(8,7)$ | $49+25=74$ | $1+4=5$ | $c_2$ |\n| $P_6(9,9)$ | $113$ | $0$ | $c_2$ |"
+        },
+        {
+          "title": "Update step for $c_1$",
+          "body": "Cluster 1 is $\\{P_1,P_2,P_3,P_4\\}$. Sum of coordinates: $x$: $1+2+2+4=9$, $y$: $2+4+3+5=14$. Dividing by $4$ gives $c_1=(2.25,\\ 3.50)$."
+        },
+        {
+          "title": "Update step for $c_2$",
+          "body": "Cluster 2 is $\\{P_5,P_6\\}$. Sum: $x$: $8+9=17$, $y$: $7+9=16$. Dividing by $2$ gives $c_2=(8.50,\\ 8.00)$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "Each centroid moved from a data point to the centre of its cluster. The borderline point $P_4$ is still closer to $c_1$ ($18<41$), so it belongs to cluster 1 and pulls $c_1$ upwards and to the right."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This sends $P_4$ to cluster 2: $c_1=\\left(\\tfrac53,3\\right)$, $c_2=(7,7)$. But $P_4$ is at squared distance $18$ from $c_1$ and $41$ from $c_2$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: means of $\\{P_1,\\dots,P_4\\}$ and $\\{P_5,P_6\\}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$x$-coordinate $2.00$ is the median of $1,2,2,4$, not the mean ($2.25$). $k$-means uses means (medians belong to $k$-medians)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Here the old centroids were counted as extra points in the averages: $\\tfrac{9+1}{5}=2.00$, $\\tfrac{14+2}{5}=3.20$, and $\\tfrac{17+9}{3}\\approx8.67$, $\\tfrac{16+9}{3}\\approx8.33$. The new centroid is the mean of the assigned points only."
+        }
+      ],
+      "commonTrap": "Averaging the old centroid together with the assigned points (or using medians instead of means) instead of the plain mean of the assigned points."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nP = np.array([(1,2),(2,4),(2,3),(4,5),(8,7),(9,9)], float)\nc = np.array([(1,2),(9,9)], float)\na = ((P[:,None]-c[None])**2).sum(-1).argmin(1)\nnew = np.array([P[a==j].mean(0) for j in range(2)])\nprint(a, new.round(2).tolist())                      # [0 0 0 0 1 1] [[2.25, 3.5], [8.5, 8.0]]\nb = a.copy(); b[3] = 1                               # P4 wrongly sent to cluster 2\nprint(np.array([P[b==j].mean(0) for j in range(2)]).round(2).tolist())          # [[1.67, 3.0], [7.0, 7.0]]\nprint([np.median(P[a==j], axis=0).tolist() for j in range(2)])                  # medians [[2.0, 3.5], [8.5, 8.0]]\nprint([((P[a==j].sum(0)+c[j])/((a==j).sum()+1)).round(2).tolist() for j in range(2)])  # old centroid re-counted",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-traversals"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (depth-first search with discovery and finishing timestamps) traced over eight vertices with a back edge, cross edges and a restart; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Depth-first search with discovery/finishing timestamps on a directed graph: already-discovered vertices are skipped and a new search starts from the smallest undiscovered vertex.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A directed graph has vertices $1, 2, \\dots, 8$ and the following out-neighbour lists.\n\n| Vertex | Out-neighbours |\n|---|---|\n| 1 | 2, 4 |\n| 2 | 3, 5 |\n| 3 | 1 |\n| 4 | 5, 6 |\n| 5 | 3, 7 |\n| 6 | 7 |\n| 7 | (none) |\n| 8 | 6, 7 |\n\nA depth-first search (DFS) scans the out-neighbours of every vertex in the order listed, and skips a neighbour that has already been discovered. A global clock starts at $0$. When a vertex $v$ is discovered, the clock is increased by $1$ and its new value is recorded as $d[v]$; when all out-neighbours of $v$ have been processed, the clock is increased by $1$ again and its new value is recorded as the finishing time $f[v]$.\n\nThe search starts at vertex $1$. Whenever a search tree is complete and some vertex is still undiscovered, a new search starts from the smallest-numbered undiscovered vertex.\n\nThe finishing time $f[4]$ is ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 13,
+      "max": 13
+    },
+    "solution": {
+      "quick": "Trace the DFS with a clock that ticks at every discovery and every finish: the visit order is $1,2,3,5,7,4,6$ and then $8$.\nThe subtree of vertex $2$ ($2,3,5,7$) uses clock values $2$ to $9$, vertex $4$ is discovered at $10$, vertex $6$ at $11$ and finishes at $12$, so $f[4]=13$.",
+      "steps": [
+        {
+          "title": "Search from vertex 1, first branch",
+          "body": "$d[1]=1$. Vertex $1$ scans $2$ first: $d[2]=2$. Vertex $2$ scans $3$: $d[3]=3$. The only out-neighbour of $3$ is $1$, which is already discovered, so $3$ finishes: $f[3]=4$.\n\nBack at $2$, the next neighbour is $5$: $d[5]=5$. Vertex $5$ scans $3$ (already finished, skipped) and then $7$: $d[7]=6$. Vertex $7$ has no out-neighbours: $f[7]=7$. Then $f[5]=8$, and vertex $2$ has no more neighbours: $f[2]=9$."
+        },
+        {
+          "title": "Back at vertex 1: the second branch",
+          "body": "Vertex $1$ continues with neighbour $4$: $d[4]=10$. Vertex $4$ scans $5$ (already finished, skipped) and then $6$: $d[6]=11$. Vertex $6$ scans $7$ (already finished, skipped), so $f[6]=12$. Now $4$ has no more neighbours: $f[4]=13$. Finally $f[1]=14$."
+        },
+        {
+          "title": "Restart and summary",
+          "body": "Vertex $8$ is still undiscovered, so a new search starts there: $d[8]=15$; its neighbours $6$ and $7$ are already finished, so $f[8]=16$.\n\n| Vertex | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|---|---|---|---|---|---|---|---|---|\n| $d$ | 1 | 2 | 3 | 10 | 5 | 11 | 6 | 15 |\n| $f$ | 14 | 9 | 4 | 13 | 8 | 12 | 7 | 16 |\n\nThe $16$ recorded values are exactly $1,\\dots,16$, each used once, as expected."
+        }
+      ],
+      "finalAnswer": "**13**",
+      "commonTrap": "Ticking the clock only at discoveries (which makes vertex $4$ merely the sixth vertex reached), or exploring vertex $5$ again from vertex $4$ although it is already finished, which inflates $f[4]$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "13",
+      "agreesWithKey": true,
+      "checkCode": "adj = {1:[2,4], 2:[3,5], 3:[1], 4:[5,6], 5:[3,7], 6:[7], 7:[], 8:[6,7]}\nt = 0; d = {}; f = {}\ndef dfs(u):\n    global t\n    t += 1; d[u] = t\n    for v in adj[u]:\n        if v not in d: dfs(v)\n    t += 1; f[u] = t\nfor u in sorted(adj):\n    if u not in d: dfs(u)\nprint(d, f, f[4])     # f[4] = 13",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD \u2014 several Python semantics at once (mutable default argument shared across calls, list aliasing, late-binding closures in a comprehension) with two independent likely traps; about 3.5 minutes.",
+    "estimatedTimeSec": 220,
+    "concept": "Python semantics: a mutable default argument is created once and shared; aliased lists change together; lambdas in a comprehension capture the variable, not its value at creation time.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef collect(x, bucket=[]):\n    bucket.append(x * len(bucket))\n    return bucket\n\np = collect(3)\nq = collect(4)\nr = collect(5, [7])\np.extend(r)\nfs = [lambda z: z + k for k in q]\nprint(sum(f(1) for f in fs))\n```\n\nThe value printed by the program is ________. (Answer in integer)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 24,
+      "max": 24
+    },
+    "solution": {
+      "quick": "The default list is created once, so `p` and `q` are the same list; after `p.extend(r)` it is $[0,4,7,5]$.\nThe four lambdas all read the comprehension variable `k`, which ends at $5$, so the sum is $4\\times(1+5)=24$.",
+      "steps": [
+        {
+          "title": "The default list is shared",
+          "body": "The default value `[]` is evaluated once, when `collect` is defined; call this list $D$.\n\n- `p = collect(3)`: $D$ is empty, so it appends $3\\cdot0=0$; $D=[0]$ and `p` is $D$.\n- `q = collect(4)`: $D$ has length $1$, so it appends $4\\cdot1=4$; $D=[0,4]$ and `q` is also $D$, hence `p is q`."
+        },
+        {
+          "title": "An explicit argument and `extend`",
+          "body": "`r = collect(5, [7])` uses a fresh list: it appends $5\\cdot1=5$ to `[7]`, giving `r = [7, 5]`, and $D$ is untouched.\n\n`p.extend(r)` extends $D$ in place, so $D=[0,4,7,5]$, and `q` (the same object) now has four elements."
+        },
+        {
+          "title": "Late binding in the comprehension",
+          "body": "`[lambda z: z + k for k in q]` creates four lambdas (one per element of `q`), but each lambda looks up `k` only when it is called, and all of them share the comprehension's single variable `k`. The loop ends with `k = 5`, the last element of `q`."
+        },
+        {
+          "title": "Evaluate the sum",
+          "body": "Every call is `f(1) = 1 + 5 = 6`, and there are four lambdas, so the sum is $4\\times6=24$."
+        }
+      ],
+      "finalAnswer": "**24**",
+      "commonTrap": "Two independent slips: believing each call gets a fresh default list (then `q` has only $2$ elements and the result is $10$), or believing each lambda remembers its own `k` (then the sum is $(1+0)+(1+4)+(1+7)+(1+5)=20$); making both slips gives $6$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "24",
+      "agreesWithKey": true,
+      "checkCode": "def collect(x, bucket=[]):\n    bucket.append(x * len(bucket))\n    return bucket\np = collect(3); q = collect(4); r = collect(5, [7]); p.extend(r)\nfs = [lambda z: z + k for k in q]\nprint(sum(f(1) for f in fs), p is q, q)      # 24 True [0, 4, 7, 5]\n# traps: no shared default -> q=[0,4]; early binding -> defaults capture k\nprint(sum(f(1) for f in [lambda z: z + k for k in [0, 4]]))            # 10\nprint(sum(f(1) for f in [lambda z, k=k: z + k for k in q]))           # 20\nprint(sum(f(1) for f in [lambda z, k=k: z + k for k in [0, 4]]))      # 6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-vector-space"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (vector-space axioms under non-standard operations) needing the identity and inverse of the new addition and a check of one scalar computation; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "In a vector space with non-standard operations, the zero vector is the identity of the new addition and the additive inverse is found from it; they need not be 0 and -x.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $V=(0,\\infty)$ be the set of positive real numbers. For $x,y\\in V$ and $c\\in\\mathbb{R}$, define \"addition\" and scalar multiplication on $V$ by\n\n$$x\\oplus y=xy\\quad(\\text{the ordinary product}),\\qquad c\\odot x=x^{c}.$$\n\nIt is known that $V$ is a vector space over $\\mathbb{R}$ under $\\oplus$ and $\\odot$. Which one of the following statements about $V$ is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The zero vector of $V$ is the real number $0$."
+      },
+      {
+        "label": "B",
+        "text": "The additive inverse of $4$ in $V$ is $-4$."
+      },
+      {
+        "label": "C",
+        "text": "$3\\odot(2\\oplus5)=21$."
+      },
+      {
+        "label": "D",
+        "text": "The additive inverse of $4$ in $V$ is $\\tfrac14$."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The zero vector $\\mathbf 0$ must satisfy $x\\oplus\\mathbf 0=x$, i.e. $x\\cdot\\mathbf 0=x$, so $\\mathbf 0=1$ (and $0\\notin V$).\nThe inverse of $x$ satisfies $x\\oplus y=1$, i.e. $xy=1$, so $y=1/x$; for $x=4$ it is $\\tfrac14$. Also $3\\odot(2\\oplus5)=10^3=1000\\ne21$.",
+      "steps": [
+        {
+          "title": "Zero vector",
+          "body": "The zero vector is the identity for $\\oplus$: we need $\\mathbf 0\\in V$ with $x\\oplus\\mathbf 0=x\\cdot\\mathbf 0=x$ for every $x\\in V$. This forces $\\mathbf 0=1$. The number $0$ is not even an element of $V=(0,\\infty)$, so it cannot be the zero vector."
+        },
+        {
+          "title": "Additive inverse",
+          "body": "The additive inverse of $x$ is the $y\\in V$ with $x\\oplus y=\\mathbf 0=1$, i.e. $xy=1$, so $y=\\dfrac1x$. For $x=4$ this is $\\dfrac14$. The number $-4$ is not in $V$, so it cannot be an inverse. As a consistency check, $(-1)\\odot4=4^{-1}=\\tfrac14$."
+        },
+        {
+          "title": "Scalar computation",
+          "body": "$3\\odot(2\\oplus5)=3\\odot10=10^3=1000$. This agrees with the distributive law $3\\odot2\\oplus3\\odot5=8\\cdot125=1000$, and it is not the value $21=3\\,(2+5)$ obtained with ordinary operations."
+        },
+        {
+          "title": "Conclusion",
+          "body": "A is false (zero vector is $1$), B is false ($-4\\notin V$; the inverse is $\\tfrac14$), C is false ($1000\\ne21$), and D is true."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The zero vector is the identity of $\\oplus$, which is $1$ because $x\\cdot1=x$. Moreover $0\\notin(0,\\infty)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$-4$ is the inverse for ordinary addition, but it is not even in $V$. The inverse of $4$ under $\\oplus$ satisfies $4\\cdot y=1$, so $y=\\tfrac14$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$21$ comes from computing $3(2+5)$ with ordinary operations. In $V$, $3\\odot(2\\oplus5)=(2\\cdot5)^3=1000$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $4\\oplus\\tfrac14=4\\cdot\\tfrac14=1$, the zero vector of $V$."
+        }
+      ],
+      "shortcut": "When $\\oplus$ is ordinary multiplication on the positive reals, the identity is $1$ and the inverse of $x$ is $1/x$.",
+      "commonTrap": "Carrying over the intuition from $\\mathbb{R}^n$ that the zero vector is $0$ and the inverse of $x$ is $-x$. Here the zero vector and the inverses must be computed from the operation $\\oplus$ actually defined on the set."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import math\nadd = lambda x, y: x * y\nsmul = lambda c, x: x ** c\ne = 1\ninv = lambda x: 1 / x\nprint(all(math.isclose(add(x, e), x) and math.isclose(add(x, inv(x)), e) for x in (0.5, 4, 7.3)))   # True: zero vector 1, inverse 1/x\nprint(inv(4), smul(-1, 4))                                # 0.25 0.25  (0 and -4 are not in (0, inf))\nprint(smul(3, add(2, 5)), add(smul(3, 2), smul(3, 5)))    # 1000 1000 (not 21)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-descriptive",
+    "subtopicIds": [
+      "ps-central-tendency"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (mean and standard deviation of pooled groups) needing the weighted mean and the between-group term of the variance, with averaging-of-summaries traps; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Mean and standard deviation of two pooled groups: weighted mean of the group means, and total variance = mean within-group variance + variance of the group means.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two packing teams at a warehouse record the time (in minutes) taken to pack each order. The summary of their records is:\n\n| Team | Orders packed | Mean time | Standard deviation |\n|---|---|---|---|\n| Alpha | 4 | 20 | 5 |\n| Beta | 5 | 38 | 3 |\n\nEach standard deviation is a population standard deviation, i.e. the variance is computed by dividing by the number of orders. All nine orders are now pooled into one data set.\n\nWhich one of the following gives the mean and the population standard deviation of the nine pooled times (in minutes)?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Mean $30.00$, standard deviation $9.80$"
+      },
+      {
+        "label": "B",
+        "text": "Mean $30.00$, standard deviation $4.01$"
+      },
+      {
+        "label": "C",
+        "text": "Mean $30.00$, standard deviation $8.94$"
+      },
+      {
+        "label": "D",
+        "text": "Mean $29.00$, standard deviation $4.00$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Pooled mean $=\\dfrac{4\\cdot20+5\\cdot38}{9}=30$.\nPooled variance $=$ average within-team variance $\\dfrac{4\\cdot25+5\\cdot9}{9}=\\dfrac{145}{9}$ plus the variance of the team means $\\dfrac{4\\cdot10^2+5\\cdot8^2}{9}=80$, i.e. $\\dfrac{145}{9}+80=\\dfrac{865}{9}\\approx96.11$, so the standard deviation is $\\sqrt{96.11}\\approx9.80$.",
+      "steps": [
+        {
+          "title": "Pooled mean",
+          "body": "Weight each team's mean by its number of orders: $\\bar x=\\dfrac{4(20)+5(38)}{9}=\\dfrac{80+190}{9}=30$."
+        },
+        {
+          "title": "Within-team part of the variance",
+          "body": "The weighted average of the team variances is $\\dfrac{4(5^2)+5(3^2)}{9}=\\dfrac{100+45}{9}=\\dfrac{145}{9}\\approx16.11$."
+        },
+        {
+          "title": "Between-team part of the variance",
+          "body": "The team means differ from the pooled mean by $20-30=-10$ and $38-30=8$, so their weighted variance is $\\dfrac{4(10^2)+5(8^2)}{9}=\\dfrac{400+320}{9}=80$."
+        },
+        {
+          "title": "Total variance and standard deviation",
+          "body": "$$\\sigma^2=\\frac{145}{9}+80=\\frac{865}{9}\\approx96.11,\\qquad \\sigma=\\sqrt{96.11}\\approx9.80.$$\nEquivalently, $\\sigma^2=\\dfrac{4(25+100)+5(9+64)}{9}=\\dfrac{500+365}{9}=\\dfrac{865}{9}$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: mean $30$ and $\\sigma=\\sqrt{865/9}\\approx9.80$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$4.01=\\sqrt{145/9}$ is the square root of the average within-team variance only. It leaves out the spread caused by the two teams having different means."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$8.94=\\sqrt{80}$ is the square root of the between-team variance only. It leaves out the within-team variance."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This averages the summaries without weights: $(20+38)/2=29$ and $(5+3)/2=4$. The mean must be weighted by the group sizes, and standard deviations cannot be averaged."
+        }
+      ],
+      "shortcut": "Total variance $=$ (weighted mean of the group variances) $+$ (weighted variance of the group means) $=\\tfrac{145}{9}+80$.",
+      "commonTrap": "Averaging the two standard deviations, or using only the within-group variance, forgetting that the two group means differ a lot ($20$ versus $38$) and that this difference adds to the pooled variance."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "import math, numpy as np\nn1, m1, s1, n2, m2, s2 = 4, 20, 5, 5, 38, 3\nN = n1 + n2\nM = (n1*m1 + n2*m2) / N\nwithin = (n1*s1**2 + n2*s2**2) / N\nbetween = (n1*(m1-M)**2 + n2*(m2-M)**2) / N\nprint(M, round(math.sqrt(within + between), 2))      # 30.0 9.8\nprint(round(math.sqrt(within), 2), round(math.sqrt(between), 2), (m1+m2)/2, (s1+s2)/2)   # 4.01 8.94 29.0 4.0\n# explicit data with exactly these group statistics\nrng = np.random.default_rng(0)\ndef make(n, m, s):\n    x = rng.normal(size=n); return m + s * (x - x.mean()) / x.std()\ndata = np.concatenate([make(n1, m1, s1), make(n2, m2, s2)])\nprint(round(data.mean(), 2), round(data.std(), 2))   # 30.0 9.8   (population SD, ddof=0)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-random-variables",
+      "ps-conditional-expectation"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (expectation and variance of a discrete random variable) with two to three steps per statement, including the variance of a difference of independent copies and a conditional expectation; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Expectation, variance, variance of a difference of independent copies and conditional expectation for a discrete random variable given by a small PMF.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a dice game, a fair six-sided die is rolled once. If the outcome is even, the player wins that many rupees; if the outcome is odd, the player loses $3$ rupees. Let $X$ denote the player's net gain in rupees, so that $X$ is negative when the player loses.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$E[X]=\\tfrac12$."
+      },
+      {
+        "label": "B",
+        "text": "$\\operatorname{Var}(X)=\\tfrac{83}{6}$."
+      },
+      {
+        "label": "C",
+        "text": "If the game is played twice independently, with net gains $X_1$ and $X_2$, then $\\operatorname{Var}(X_1-X_2)=\\tfrac{163}{6}$."
+      },
+      {
+        "label": "D",
+        "text": "$E[X\\mid X>0]=2$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "The PMF is $P(X=-3)=\\tfrac12$ and $P(X=2)=P(X=4)=P(X=6)=\\tfrac16$.\n$E[X]=\\tfrac12$, $E[X^2]=\\tfrac{83}{6}$, so $\\operatorname{Var}(X)=\\tfrac{83}{6}-\\tfrac14=\\tfrac{163}{12}$ and $\\operatorname{Var}(X_1-X_2)=2\\cdot\\tfrac{163}{12}=\\tfrac{163}{6}$. Also $E[X\\mid X>0]=4$.",
+      "steps": [
+        {
+          "title": "PMF of $X$",
+          "body": "The odd outcomes $1,3,5$ each give $X=-3$, so $P(X=-3)=\\tfrac36=\\tfrac12$. The even outcomes give $P(X=2)=P(X=4)=P(X=6)=\\tfrac16$."
+        },
+        {
+          "title": "Mean and second moment",
+          "body": "$$E[X]=-3\\cdot\\tfrac12+(2+4+6)\\cdot\\tfrac16=-\\tfrac32+2=\\tfrac12.$$\n$$E[X^2]=9\\cdot\\tfrac12+(4+16+36)\\cdot\\tfrac16=\\tfrac92+\\tfrac{56}{6}=\\tfrac{83}{6}.$$"
+        },
+        {
+          "title": "Variance and the difference of two plays",
+          "body": "$\\operatorname{Var}(X)=E[X^2]-(E[X])^2=\\tfrac{83}{6}-\\tfrac14=\\tfrac{166-3}{12}=\\tfrac{163}{12}$, which is not $\\tfrac{83}{6}$.\n\nFor independent $X_1,X_2$ with the same distribution, $\\operatorname{Var}(X_1-X_2)=\\operatorname{Var}(X_1)+\\operatorname{Var}(X_2)=2\\cdot\\tfrac{163}{12}=\\tfrac{163}{6}$."
+        },
+        {
+          "title": "Conditional expectation",
+          "body": "$P(X>0)=\\tfrac36=\\tfrac12$ and the positive values $2,4,6$ are equally likely, so $E[X\\mid X>0]=\\dfrac{2+4+6}{3}=4$. The value $2$ equals $E[X\\,\\mathbf 1\\{X>0\\}]=\\tfrac{12}{6}$, which has not been divided by $P(X>0)$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "A is true, B is false, C is true, D is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: $E[X]=-\\tfrac32+2=\\tfrac12$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac{83}{6}$ is $E[X^2]$. The variance subtracts $(E[X])^2=\\tfrac14$, giving $\\tfrac{163}{12}$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: for independent copies the variances add even for a difference, so $\\operatorname{Var}(X_1-X_2)=2\\cdot\\tfrac{163}{12}=\\tfrac{163}{6}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$2=E[X\\,\\mathbf 1\\{X>0\\}]$ omits the division by $P(X>0)=\\tfrac12$. The conditional mean of the winning amounts $2,4,6$ is $4$."
+        }
+      ],
+      "commonTrap": "Reporting $E[X^2]$ as the variance (option B), and forgetting to divide by $P(X>0)$ when conditioning on the event $X>0$ (option D)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\npmf = {}\nfor d in range(1, 7):\n    x = d if d % 2 == 0 else -3\n    pmf[x] = pmf.get(x, 0) + F(1, 6)\nE = sum(x*p for x, p in pmf.items()); E2 = sum(x*x*p for x, p in pmf.items()); V = E2 - E**2\nprint(pmf, E, E2, V)                                   # E = 1/2, E2 = 83/6, Var = 163/12\nED = sum((x-y)*p*q for x, p in pmf.items() for y, q in pmf.items())\nVD = sum((x-y)**2*p*q for x, p in pmf.items() for y, q in pmf.items()) - ED**2\nprint(ED, VD)                                          # 0 163/6\npos = sum(p for x, p in pmf.items() if x > 0)\nprint(sum(x*p for x, p in pmf.items() if x > 0) / pos, sum(x*p for x, p in pmf.items() if x > 0))   # 4 and 2",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-er-model"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (turning the cardinality rules of a ternary relationship set into functional dependencies and candidate keys of its relation) in three steps, with the 'union of participant keys' misconception as the main trap; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Keys of the relation for a ternary relationship set: the cardinality rules give functional dependencies, and candidate keys come from their closures, not simply from the union of the participants' keys.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A factory's ER model has the entity sets **TECHNICIAN** (key TechID), **MACHINE** (key MachID) and **SHIFT** (key ShiftID), and a ternary relationship set **OPERATES** among them with one descriptive attribute Output. A relationship instance $(t,m,s)$ means that technician $t$ operated machine $m$ during shift $s$. The business rules are:\n\n1. In any given shift, a machine is operated by at most one technician.\n2. In any given shift, a technician operates at most one machine.\n3. The same technician may operate the same machine in many different shifts; Output is recorded separately for each relationship instance.\n\nOPERATES is mapped to a single relation OPERATES(TechID, MachID, ShiftID, Output). No functional dependency holds in this relation other than those implied by the rules above.\n\nWhich one of the following correctly lists **all** the candidate keys of this relation?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Exactly one candidate key: $\\{\\text{TechID},\\text{MachID},\\text{ShiftID}\\}$"
+      },
+      {
+        "label": "B",
+        "text": "Exactly one candidate key: $\\{\\text{MachID},\\text{ShiftID}\\}$"
+      },
+      {
+        "label": "C",
+        "text": "Exactly two candidate keys: $\\{\\text{TechID},\\text{ShiftID}\\}$ and $\\{\\text{MachID},\\text{ShiftID}\\}$"
+      },
+      {
+        "label": "D",
+        "text": "Exactly two candidate keys: $\\{\\text{TechID},\\text{MachID}\\}$ and $\\{\\text{MachID},\\text{ShiftID}\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Rule 1 gives $\\{\\text{MachID},\\text{ShiftID}\\}\\to\\text{TechID}$ and rule 2 gives $\\{\\text{TechID},\\text{ShiftID}\\}\\to\\text{MachID}$; either pair then determines the whole tuple, including Output.\nNo single attribute is a key, and by rule 3 the pair $\\{\\text{TechID},\\text{MachID}\\}$ repeats across shifts, so the candidate keys are exactly $\\{\\text{TechID},\\text{ShiftID}\\}$ and $\\{\\text{MachID},\\text{ShiftID}\\}$.",
+      "steps": [
+        {
+          "title": "Translate the rules into functional dependencies",
+          "body": "Rule 1: $\\{\\text{MachID},\\text{ShiftID}\\}\\to\\text{TechID}$. Rule 2: $\\{\\text{TechID},\\text{ShiftID}\\}\\to\\text{MachID}$. Each relationship instance $(t,m,s)$ has its own Output, so $\\{\\text{TechID},\\text{MachID},\\text{ShiftID}\\}\\to\\text{Output}$."
+        },
+        {
+          "title": "Closures of the two pairs",
+          "body": "$\\{\\text{MachID},\\text{ShiftID}\\}^+=\\{\\text{MachID},\\text{ShiftID},\\text{TechID}\\}$, and then Output follows from the full triple, so this pair determines every attribute. Likewise $\\{\\text{TechID},\\text{ShiftID}\\}^+=\\{\\text{TechID},\\text{ShiftID},\\text{MachID},\\text{Output}\\}$. Both pairs are superkeys."
+        },
+        {
+          "title": "Minimality and the other pairs",
+          "body": "No single attribute determines the others: in one shift many technicians and machines occur, and one technician or one machine appears in many shifts. So both pairs are minimal, hence candidate keys.\n\nThe pair $\\{\\text{TechID},\\text{MachID}\\}$ is not a key by rule 3: the same pair occurs in many shifts, so it does not determine ShiftID. Every triple is a superkey but not minimal, since it contains one of the two candidate keys."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The candidate keys are exactly $\\{\\text{TechID},\\text{ShiftID}\\}$ and $\\{\\text{MachID},\\text{ShiftID}\\}$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The union of the three participant keys is a superkey, but it is not minimal: it contains $\\{\\text{MachID},\\text{ShiftID}\\}$, which already determines everything. This is the default key only when no participant is functionally determined by the others."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\{\\text{MachID},\\text{ShiftID}\\}$ is a candidate key, but rule 2 also makes $\\{\\text{TechID},\\text{ShiftID}\\}$ one, so the list is incomplete."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: rules 1 and 2 make both $\\{\\text{MachID},\\text{ShiftID}\\}$ and $\\{\\text{TechID},\\text{ShiftID}\\}$ minimal superkeys, and nothing else is minimal."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\{\\text{TechID},\\text{MachID}\\}$ is not a key: by rule 3 the same technician-machine pair appears in many shifts, so the pair does not determine the tuple."
+        }
+      ],
+      "shortcut": "For a ternary relationship, if fixing two participants leaves at most one choice for the third (an \"at most one\" rule), those two participants form a key. Two such rules give two candidate keys.",
+      "commonTrap": "Applying the default rule \"the key of a relationship relation is the union of the participants' keys\" without reading the cardinality rules, or noticing only one of the two \"at most one\" rules."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nA = ['T', 'M', 'S', 'O']                      # TechID, MachID, ShiftID, Output\nfds = [({'M','S'}, {'T'}), ({'T','S'}, {'M'}), ({'T','M','S'}, {'O'})]\ndef closure(X):\n    X = set(X)\n    while True:\n        new = set(X)\n        for l, r in fds:\n            if l <= new: new |= r\n        if new == X: return X\n        X = new\nsup = [set(c) for n in range(1, 5) for c in combinations(A, n) if closure(c) == set(A)]\nkeys = [s for s in sup if not any(t < s for t in sup)]\nprint(sorted(sorted(k) for k in keys))        # [['M', 'S'], ['S', 'T']]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M16-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-16",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-trees"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (reconstructing a binary tree from its preorder and inorder traversals and reading off the postorder) on six nodes, a routine recursive split; about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "A binary tree is determined by its preorder and inorder traversals: the first preorder node is the root, and the inorder sequence splits into left and right subtrees.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A binary tree has $6$ nodes with distinct labels. Its preorder traversal (root, left subtree, right subtree) is\n\n$$R,\\ M,\\ H,\\ V,\\ S,\\ Z$$\n\nand its inorder traversal (left subtree, root, right subtree) is\n\n$$H,\\ M,\\ R,\\ S,\\ V,\\ Z.$$\n\nWhich one of the following is the postorder traversal (left subtree, right subtree, root) of this tree?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$H,\\ M,\\ S,\\ Z,\\ V,\\ R$"
+      },
+      {
+        "label": "B",
+        "text": "$H,\\ M,\\ Z,\\ S,\\ V,\\ R$"
+      },
+      {
+        "label": "C",
+        "text": "$Z,\\ S,\\ V,\\ H,\\ M,\\ R$"
+      },
+      {
+        "label": "D",
+        "text": "$H,\\ M,\\ S,\\ V,\\ Z,\\ R$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The root is $R$ (first in preorder); inorder puts $\\{H,M\\}$ on its left and $\\{S,V,Z\\}$ on its right.\nLeft subtree: root $M$ with child $H$. Right subtree: root $V$ with left child $S$ and right child $Z$. Postorder: $H,M$, then $S,Z,V$, then $R$.",
+      "steps": [
+        {
+          "title": "Root and the two subtrees",
+          "body": "The first node in preorder is the root: $R$. In the inorder sequence $H,M,R,S,V,Z$ the nodes before $R$ form the left subtree $\\{H,M\\}$ and the nodes after it form the right subtree $\\{S,V,Z\\}$."
+        },
+        {
+          "title": "Left subtree",
+          "body": "Its preorder is $M,H$, so its root is $M$. Its inorder is $H,M$, so $H$ comes before $M$: $H$ is the left child of $M$."
+        },
+        {
+          "title": "Right subtree",
+          "body": "Its preorder is $V,S,Z$, so its root is $V$. Its inorder is $S,V,Z$, so $S$ is the left child and $Z$ the right child of $V$."
+        },
+        {
+          "title": "Postorder",
+          "body": "Visit the left subtree in postorder ($H,M$), the right subtree in postorder ($S,Z,V$), then the root $R$:\n$$H,\\ M,\\ S,\\ Z,\\ V,\\ R.$$\nCheck: this tree has preorder $R,M,H,V,S,Z$ and inorder $H,M,R,S,V,Z$, as given."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: postorder of the tree $R\\bigl(M(H,\\cdot),\\,V(S,Z)\\bigr)$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This visits the two children of $V$ in the wrong order ($Z$ before $S$). Inorder $S,V,Z$ places $S$ in the left subtree of $V$, so $S$ must come first in postorder."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is the reverse of the preorder. Reversing a preorder gives the postorder of the mirror image of the tree, not of the tree itself."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the postorder of a tree with the same inorder but a different shape: $Z$ is the root of the right subtree with $V$ (with left child $S$) below it. That tree has preorder $R,M,H,Z,V,S$, not the given one."
+        }
+      ],
+      "commonTrap": "Reading the inorder sequence as if it fixed the tree by itself, or reversing the preorder to get the postorder; only the preorder (roots) together with the inorder (left/right split) determines the shape."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "class N:\n    def __init__(s, k, l=None, r=None): s.k, s.l, s.r = k, l, r\npre = lambda n: [] if n is None else [n.k] + pre(n.l) + pre(n.r)\nino = lambda n: [] if n is None else ino(n.l) + [n.k] + ino(n.r)\npost = lambda n: [] if n is None else post(n.l) + post(n.r) + [n.k]\ndef build(pr, io):\n    if not pr: return None\n    i = io.index(pr[0])\n    return N(pr[0], build(pr[1:1+i], io[:i]), build(pr[1+i:], io[i+1:]))\nt = build(list(\"RMHVSZ\"), list(\"HMRSVZ\"))\nprint(post(t))                                  # ['H','M','S','Z','V','R']\nalt = N('R', N('M', N('H')), N('Z', N('V', N('S'))))   # same inorder, different shape\nprint(ino(alt), pre(alt), post(alt))            # inorder matches, preorder differs, postorder = option D\nprint(pre(t)[::-1])                             # option C",
+      "notes": ""
+    }
+  }
+]

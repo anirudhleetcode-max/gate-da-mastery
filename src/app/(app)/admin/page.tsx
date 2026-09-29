@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { Stat } from "@/components/ui/Stat";
 import { ButtonLink } from "@/components/ui/Button";
 import { isAdminEnabled } from "@/components/insights/admin/access";
-import { adminRows, questionFileIndex } from "@/components/insights/admin/data";
+import { adminRows, diskBundleBuiltAt, questionFileIndex } from "@/components/insights/admin/data";
 import { Section } from "@/components/insights/admin/parts";
 import { InventoryTables, MockAvailabilityTable, ValidationIssues } from "@/components/insights/admin/Inventory";
 import { QuestionTable, parseFilters } from "@/components/insights/admin/QuestionTable";
@@ -38,6 +38,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
   const errors = bundle.issues.filter((i) => i.level === "error").length;
   const warnings = bundle.issues.length - errors;
   const why = process.env.ADMIN_ENABLED === "true" ? "ADMIN_ENABLED=true" : "the development server";
+  const onDisk = diskBundleBuiltAt();
+  const staleServer = onDisk !== null && onDisk > bundle.builtAt;
+  const stamp = (iso: string) => `${formatDate(iso)} at ${iso.slice(11, 16)} UTC`;
 
   return (
     <>
@@ -58,7 +61,13 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
       />
 
       <div className="space-y-8">
-        <Callout tone="info" title={`Content bundle built ${formatDate(bundle.builtAt)} at ${bundle.builtAt.slice(11, 16)} UTC (version ${bundle.version.slice(0, 8)})`}>
+        {staleServer ? (
+          <Callout tone="warning" title={`A newer content build is on disk (built ${stamp(onDisk)})`}>
+            This server loaded the bundle once when it started and is still serving the build from {stamp(bundle.builtAt)}, so every page (this one included) shows the older content. Restart
+            the server to load the new build.
+          </Callout>
+        ) : null}
+        <Callout tone="info" title={`Content bundle served: built ${stamp(bundle.builtAt)} (version ${bundle.version.slice(0, 8)})`}>
           This page reads the compiled bundle, including questions the availability gate hides from students. After editing a file, run{" "}
           <code className="font-mono">npm run content:build</code> (and <code className="font-mono">npm run content:mock-review</code> for mock or practice files), then restart the server to see the change here.
         </Callout>
@@ -102,10 +111,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
           </Card>
         </Section>
 
-        <p className="flex items-center gap-2 text-sm text-fg-3">
-          <Wrench aria-hidden className="h-4 w-4" />
+        <p className="text-sm text-fg-3">
+          <Wrench aria-hidden className="mr-1.5 inline h-4 w-4 align-[-3px]" />
           Command-line equivalents: <code className="font-mono">npm run content:validate</code>, <code className="font-mono">npm run content:audit</code>,{" "}
-          <Link href="/sources" className="text-accent-text hover:underline">
+          <Link href="/sources" className="text-accent-text underline">
             Sources &amp; methodology
           </Link>
         </p>

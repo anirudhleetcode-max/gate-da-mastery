@@ -22,7 +22,7 @@ export default function BookmarksPage() {
     <>
       <PageHeader
         title="My bookmarks"
-        description="Everything you saved to come back to, with your own notes. Bookmarked questions keep a copy of the question that you can read without a connection."
+        description="Everything you saved to come back to, with your own notes. Questions bookmarked from their question page keep a copy of the question text that you can read without a connection."
         crumbs={[{ label: "Review" }, { label: "Bookmarks" }]}
       />
       <BookmarksClient library={library} />

@@ -106,28 +106,51 @@ export function FileEditor({ file }: { file: string }) {
     setBusy(null);
   }
 
+  async function put(dryRun: boolean, force: boolean) {
+    const r = await fetch("/api/admin/file", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: file, content: text, baseSha256: ready?.sha256, freezeReason: ready?.info.frozen ? freezeReason : undefined, dryRun, force }),
+    });
+    const d = await r.json().catch(() => ({}));
+    return { r, d, issues: (Array.isArray(d.issues) ? d.issues : []) as Issue[] };
+  }
+
   async function submit(mode: "validate" | "save", force = false) {
     if (!ready || text === null) return;
-    setBusy(mode);
     setOutcome(null);
+    if (mode === "save" && ready.info.frozen && !freezeReason.trim()) {
+      setOutcome({ kind: "error", needsReason: true, message: "Official PYQ files are frozen. Give a freeze reason (what was wrong and how it was checked against the official paper) to save this change." });
+      reasonRef.current?.focus();
+      return;
+    }
+    setBusy(mode);
     try {
-      const r = await fetch("/api/admin/file", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: file, content: text, baseSha256: ready.sha256, freezeReason: ready.info.frozen ? freezeReason : undefined, dryRun: mode === "validate", force }),
-      });
-      const d = await r.json().catch(() => ({}));
-      const issues: Issue[] = Array.isArray(d.issues) ? d.issues : [];
+      // Always validate first (a dry run never writes), so an invalid file is reported without a failed write request.
+      const check = await put(true, false);
+      if (!check.r.ok) {
+        setOutcome({ kind: "error", message: check.d.error ?? `The request failed (HTTP ${check.r.status}).` });
+        return;
+      }
+      if (!check.d.ok) {
+        setOutcome({ kind: "invalid", issues: check.issues, message: check.d.error ?? "Validation failed." });
+        return;
+      }
+      if (mode === "validate") {
+        setOutcome({ kind: "valid", issues: check.issues, records: check.d.records });
+        return;
+      }
+      const { r, d, issues } = await put(false, force);
       if (r.status === 422) setOutcome({ kind: "invalid", issues, message: d.error ?? "Validation failed." });
       else if (r.status === 409 && d.conflict) setOutcome({ kind: "conflict", message: d.error });
       else if (r.status === 409 && d.requiresFreezeReason) {
         setOutcome({ kind: "error", message: d.error, needsReason: true });
         reasonRef.current?.focus();
       } else if (!r.ok) setOutcome({ kind: "error", message: d.error ?? `The request failed (HTTP ${r.status}).` });
-      else if (mode === "validate") setOutcome({ kind: "valid", issues, records: d.records });
       else {
-        setLoad({ ...ready, status: "ready", sha256: d.sha256, modifiedAt: new Date().toISOString(), original: text.endsWith("\n") ? text : `${text}\n` });
-        setText(text.endsWith("\n") ? text : `${text}\n`);
+        const saved = text.endsWith("\n") ? text : `${text}\n`;
+        setLoad({ ...ready, status: "ready", sha256: d.sha256, modifiedAt: new Date().toISOString(), original: saved });
+        setText(saved);
         setOutcome({ kind: "saved", issues, reminders: Array.isArray(d.reminders) ? d.reminders : [], unchanged: Boolean(d.unchanged) });
       }
     } catch {
@@ -181,7 +204,7 @@ export function FileEditor({ file }: { file: string }) {
             <Lock aria-hidden className="h-3 w-3" /> Read-only
           </Badge>
         )}
-        {dirty ? <Badge tone="warning">Unsaved changes</Badge> : <Badge tone="success">Saved on disk</Badge>}
+        {dirty ? <Badge tone="warning">Unsaved changes</Badge> : <Badge tone="success">No unsaved changes</Badge>}
         <span className="tnum text-fg-3">
           {lines} lines · {kb} KB · last modified {new Date(load.modifiedAt).toLocaleString()}
         </span>
@@ -253,7 +276,13 @@ export function FileEditor({ file }: { file: string }) {
         <Button variant="ghost" onClick={reload} disabled={busy !== null}>
           <RefreshCw aria-hidden className="h-4 w-4" /> {dirty ? "Discard changes and reload" : "Reload from disk"}
         </Button>
-        <Link href="/admin/edit" className="ml-auto text-sm font-medium text-accent-text hover:underline">
+        <Link
+          href="/admin/edit"
+          onClick={(e) => {
+            if (dirty && !window.confirm("Leave this file? Your unsaved changes will be lost.")) e.preventDefault();
+          }}
+          className="ml-auto text-sm font-medium text-accent-text hover:underline"
+        >
           All content files
         </Link>
       </div>

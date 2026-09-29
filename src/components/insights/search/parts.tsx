@@ -9,14 +9,14 @@ import { highlightSegments } from "./highlight";
 export type Category = Exclude<SearchDoc["category"], "mock">;
 
 /** Display order and labels of the result groups. */
-export const CATEGORIES: { id: Category; label: string; singular: string }[] = [
-  { id: "pyq", label: "PYQs", singular: "PYQ" },
-  { id: "concept", label: "Concepts", singular: "concept" },
-  { id: "formula", label: "Formulas", singular: "formula" },
-  { id: "topic", label: "Topics", singular: "topic" },
-  { id: "subject", label: "Subjects", singular: "subject" },
-  { id: "strategy", label: "Strategy", singular: "strategy article" },
-  { id: "practice", label: "Practice", singular: "practice question" },
+export const CATEGORIES: { id: Category; label: string; singular: string; plural: string }[] = [
+  { id: "pyq", label: "PYQs", singular: "PYQ", plural: "PYQs" },
+  { id: "concept", label: "Concepts", singular: "concept", plural: "concepts" },
+  { id: "formula", label: "Formulas", singular: "formula", plural: "formulas" },
+  { id: "topic", label: "Topics", singular: "topic", plural: "topics" },
+  { id: "subject", label: "Subjects", singular: "subject", plural: "subjects" },
+  { id: "strategy", label: "Strategy", singular: "strategy article", plural: "strategy articles" },
+  { id: "practice", label: "Practice", singular: "practice question", plural: "practice questions" },
 ];
 
 export function isCategory(v: string | undefined): v is Category {
@@ -83,13 +83,13 @@ export function CategoryChips({ q, counts, active }: { q: string; counts: Record
       <ul className="flex gap-2 sm:flex-wrap">
         <li>
           <Link href={href()} aria-current={!active ? "page" : undefined} className={cn(chip, !active ? "border-accent bg-accent-soft text-accent-text" : "border-border text-fg-2 hover:bg-surface-2")}>
-            All <span className="tnum text-xs opacity-80">{total}</span>
+            All <span className="tnum text-xs">{total}</span>
           </Link>
         </li>
         {CATEGORIES.filter((c) => counts[c.id] > 0).map((c) => (
           <li key={c.id}>
             <Link href={href(c.id)} aria-current={active === c.id ? "page" : undefined} className={cn(chip, active === c.id ? "border-accent bg-accent-soft text-accent-text" : "border-border text-fg-2 hover:bg-surface-2")}>
-              {c.label} <span className="tnum text-xs opacity-80">{counts[c.id]}</span>
+              {c.label} <span className="tnum text-xs">{counts[c.id]}</span>
             </Link>
           </li>
         ))}

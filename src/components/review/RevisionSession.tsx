@@ -23,13 +23,14 @@ import { SUBJECT_SHORT } from "@/lib/labels";
 import { cn, formatDate, plural } from "@/lib/utils";
 import type { ReviewConcept, ReviewFormula } from "./types";
 import { GradeResult, RecallGrader } from "./RecallGrader";
-import { GRADE_LABEL, KIND_LABEL, dueLabel, isWithdrawnMockQuestion } from "./shared";
+import { GRADE_LABEL, KIND_LABEL, dueLabel, isWithdrawnMockQuestion, unavailableReason } from "./shared";
 
 type Outcome = { kind: "graded"; grade: RecallGrade; nextReview: string } | { kind: "skipped" } | { kind: "removed" } | { kind: "unavailable" };
 
 export function RevisionSession({
   title,
   keys,
+  titles,
   items,
   today,
   concepts,
@@ -41,6 +42,8 @@ export function RevisionSession({
   title: string;
   /** Item keys fixed when the session started (grading changes due dates, not the session). */
   keys: string[];
+  /** Titles when the session started (a removed item keeps its name in the summary). */
+  titles: Readonly<Record<string, string>>;
   /** Live revision items by key. */
   items: ReadonlyMap<string, RevisionItemRow>;
   today: string;
@@ -72,36 +75,49 @@ export function RevisionSession({
   if (finished) {
     const values = Object.values(outcomes);
     const count = (g: RecallGrade) => values.filter((o) => o.kind === "graded" && o.grade === g).length;
-    const skipped = keys.length - values.filter((o) => o.kind === "graded" || o.kind === "removed").length;
+    const of = (k: Outcome["kind"]) => values.filter((o) => o.kind === k).length;
+    const graded = of("graded");
+    const notReached = keys.length - values.length;
+    const notGradedParts = [
+      of("skipped") ? `${of("skipped")} skipped` : "",
+      of("unavailable") ? `${of("unavailable")} unavailable` : "",
+      of("removed") ? `${of("removed")} removed` : "",
+      notReached ? `${notReached} not reached` : "",
+    ].filter(Boolean);
     return (
       <section aria-labelledby="rev-summary" className="space-y-4">
         <h2 id="rev-summary" ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-fg">
-          Review session complete
+          {notReached ? "Review session ended" : "Review session complete"}
         </h2>
         <p className="text-sm text-fg-2">
-          {title}: {plural(keys.length, "item")}. Each graded item has its next review date set; skipped items stay where they were in the queue.
+          {title}: {graded} of {plural(keys.length, "item")} graded{notGradedParts.length ? ` (not graded: ${notGradedParts.join(", ")})` : ""}. Each graded item has its next
+          review date set; items you skipped or did not reach keep their review date.
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Got it" value={count("got_it")} />
           <Stat label="Almost" value={count("almost")} />
           <Stat label="Forgot" value={count("forgot")} />
-          <Stat label="Skipped" value={skipped} hint={values.some((o) => o.kind === "removed") ? `${values.filter((o) => o.kind === "removed").length} removed` : undefined} />
+          <Stat label="Not graded" value={keys.length - graded} />
         </div>
-        <ul className="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
+        <ul aria-label="Items in this session" className="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
           {keys.map((k) => {
             const it = items.get(k);
             const o = outcomes[k];
+            // The live row shows the current date (a later wrong answer can bring an item back to today).
+            const next = o?.kind === "graded" ? (it?.nextReview ?? o.nextReview) : null;
             return (
               <li key={k} className="flex flex-col gap-1 px-4 py-2.5 text-sm sm:flex-row sm:items-center sm:gap-3">
-                <span className="min-w-0 flex-1 truncate text-fg">{it?.title ?? k.split(":").slice(1).join(":")}</span>
+                <span className="min-w-0 flex-1 break-words text-fg">{titles[k] ?? it?.title ?? k.split(":").slice(1).join(":")}</span>
                 <span className={cn("shrink-0", o?.kind === "graded" ? "text-fg-2" : "text-fg-3")}>
                   {o?.kind === "graded"
-                    ? `${GRADE_LABEL[o.grade]} · next ${formatDate(o.nextReview)}`
+                    ? `${GRADE_LABEL[o.grade]} · next review ${formatDate(next ?? o.nextReview)}`
                     : o?.kind === "removed"
                       ? "Removed from revision"
                       : o?.kind === "unavailable"
-                        ? "Temporarily unavailable"
-                        : "Skipped"}
+                        ? "Skipped: temporarily unavailable"
+                        : o?.kind === "skipped"
+                          ? "Skipped"
+                          : "Not reached"}
                 </span>
               </li>
             );
@@ -124,8 +140,9 @@ export function RevisionSession({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 id="rev-session" ref={headingRef} tabIndex={-1} className="min-w-0 text-base font-semibold text-fg">
             Review session: {title}
+            <span className="sr-only">, </span>
             <span className="tnum ml-2 font-normal text-fg-3">
-              Item {index + 1} of {keys.length}
+              item {index + 1} of {keys.length}
             </span>
           </h2>
           <Button size="sm" variant="ghost" onClick={() => setIndex(keys.length)} className="max-sm:h-10">
@@ -138,7 +155,14 @@ export function RevisionSession({
       {!item && outcome?.kind !== "removed" ? (
         <Callout tone="info" title="This item is no longer in your revision queue">
           It was removed on another page or tab.{" "}
-          <button type="button" onClick={next} className="font-medium text-accent-text underline">
+          <button
+            type="button"
+            onClick={() => {
+              record(key, { kind: "removed" });
+              next();
+            }}
+            className="font-medium text-accent-text underline"
+          >
             Continue
           </button>
         </Callout>
@@ -147,6 +171,7 @@ export function RevisionSession({
           key={key}
           itemKey={key}
           item={item}
+          fallbackTitle={titles[key]}
           today={today}
           outcome={outcome}
           concepts={concepts}
@@ -199,6 +224,7 @@ function useQuestionPayload(id: string | null, knownWithdrawn: boolean) {
 function SessionItem({
   itemKey,
   item,
+  fallbackTitle,
   today,
   outcome,
   concepts,
@@ -211,6 +237,7 @@ function SessionItem({
 }: {
   itemKey: string;
   item: RevisionItemRow | undefined;
+  fallbackTitle: string | undefined;
   today: string;
   outcome: Outcome | undefined;
   concepts: ReadonlyMap<string, ReviewConcept>;
@@ -257,7 +284,7 @@ function SessionItem({
     }
   }
 
-  const title = item?.title ?? refId;
+  const title = item?.title ?? fallbackTitle ?? refId;
   const subject = item?.subjectId ? SUBJECT_SHORT[item.subjectId] : null;
   const topic = item?.topicId ? topicName.get(item.topicId) : null;
 
@@ -277,8 +304,7 @@ function SessionItem({
     } else if (state.status === "missing") {
       body = (
         <Callout tone="warning" title={`${title} is temporarily unavailable`}>
-          This question is not being served right now. Mock-test questions are withdrawn while their mock is re-verified, and return once every question in that mock has passed
-          review again. It stays in your queue unless you remove it; skip it for now or remove it below.
+          {unavailableReason(refId)} It stays in your queue unless you remove it: skip it for now, or remove it below.
         </Callout>
       );
     } else if (state.status === "error") {
@@ -350,7 +376,7 @@ function SessionItem({
         </div>
       ) : graded ? (
         <div role="status" className="flex flex-wrap items-center gap-3 rounded-[var(--radius)] border border-border bg-surface px-4 py-3">
-          <GradeResult grade={graded.grade} nextReview={graded.nextReview} today={today} />
+          <GradeResult grade={graded.grade} nextReview={item?.nextReview ?? graded.nextReview} today={today} />
           <Button ref={nextRef} variant="primary" onClick={onNext} className="ml-auto">
             {isLast ? "Finish session" : "Next item"} <ArrowRight aria-hidden className="h-4 w-4" />
           </Button>
@@ -363,7 +389,7 @@ function SessionItem({
           <div className="flex flex-wrap items-center gap-2">
             <Button
               onClick={() => {
-                if (unavailable) onOutcome({ kind: "unavailable" });
+                onOutcome({ kind: unavailable ? "unavailable" : "skipped" });
                 onNext();
               }}
               className="max-sm:h-10"

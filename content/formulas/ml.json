@@ -1,0 +1,1116 @@
+[
+  {
+    "id": "f-ml-slr-least-squares",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "name": "Simple linear regression: least-squares estimates",
+    "latex": "\\hat\\beta_1 = \\frac{S_{xy}}{S_{xx}} = \\frac{\\sum_{i=1}^{n}(x_i-\\bar x)(y_i-\\bar y)}{\\sum_{i=1}^{n}(x_i-\\bar x)^2} = r\\,\\frac{s_y}{s_x}, \\qquad \\hat\\beta_0 = \\bar y - \\hat\\beta_1\\,\\bar x",
+    "meaning": "For the model $y = \\beta_0 + \\beta_1 x + \\varepsilon$, ordinary least squares (OLS) chooses the intercept and slope that minimise the residual sum of squares $\\text{RSS} = \\sum_i (y_i - \\beta_0 - \\beta_1 x_i)^2$. Setting both partial derivatives to zero gives these closed forms.\n\nConsequences of the derivation (model **with** an intercept):\n\n- The fitted line always passes through $(\\bar x, \\bar y)$.\n- The residuals $e_i = y_i - \\hat y_i$ satisfy $\\sum_i e_i = 0$ and $\\sum_i x_i e_i = 0$.\n- The slope has the sign of the sample correlation $r$. In $r\\,s_y/s_x$ the sample standard deviations may use divisor $n-1$ or $n$, as long as both use the same one (the divisor cancels).",
+    "variables": [
+      {
+        "symbol": "$\\hat\\beta_1$",
+        "meaning": "fitted slope"
+      },
+      {
+        "symbol": "$\\hat\\beta_0$",
+        "meaning": "fitted intercept"
+      },
+      {
+        "symbol": "$S_{xy}$",
+        "meaning": "sum of cross-deviations Σ(xᵢ − x̄)(yᵢ − ȳ)"
+      },
+      {
+        "symbol": "$S_{xx}$",
+        "meaning": "Σ(xᵢ − x̄)²; must be > 0 (the x values are not all equal)"
+      },
+      {
+        "symbol": "$\\bar x, \\bar y$",
+        "meaning": "sample means of x and y"
+      },
+      {
+        "symbol": "$r$",
+        "meaning": "sample correlation coefficient between x and y"
+      },
+      {
+        "symbol": "$s_x, s_y$",
+        "meaning": "sample standard deviations of x and y"
+      }
+    ],
+    "whenToUse": "Any question that gives a small table of $(x, y)$ pairs and asks for the slope, the intercept, a prediction or a residual. Also \"the regression line passes through which point?\" (answer: $(\\bar x, \\bar y)$) and converting between the correlation and the slope.",
+    "commonMistake": "Regressing the wrong way round: the slope of the regression of $x$ on $y$ is $S_{xy}/S_{yy}$, **not** $1/\\hat\\beta_1$; the two lines coincide only when $|r| = 1$. Also, forgetting to centre: $\\sum x_i y_i / \\sum x_i^2$ is the slope of a line **forced through the origin**, not the OLS slope of a model with an intercept.",
+    "example": "Data $(x, y)$: $(1,3), (2,4), (4,8), (5,9)$.\n\n- $\\bar x = 3$, $\\bar y = 6$. Deviations: $x - \\bar x = (-2,-1,1,2)$ and $y - \\bar y = (-3,-2,2,3)$.\n- $S_{xy} = 6 + 2 + 2 + 6 = 16$ and $S_{xx} = 4 + 1 + 1 + 4 = 10$.\n- $\\hat\\beta_1 = 16/10 = 1.6$ and $\\hat\\beta_0 = 6 - 1.6 \\times 3 = 1.2$, so $\\hat y = 1.2 + 1.6x$.\n- Prediction at $x = 6$: $\\hat y = 1.2 + 9.6 = 10.8$. Fitted values $(2.8, 4.4, 7.6, 9.2)$ give residuals $(0.2, -0.4, 0.4, -0.2)$, which sum to 0 ✓.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-normal-equation",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "name": "Multiple linear regression: normal equations and the hat matrix",
+    "latex": "X^\\top X\\,\\hat{\\boldsymbol\\beta} = X^\\top\\mathbf{y} \\;\\Rightarrow\\; \\hat{\\boldsymbol\\beta} = (X^\\top X)^{-1}X^\\top\\mathbf{y}, \\qquad \\hat{\\mathbf{y}} = H\\mathbf{y}, \\quad H = X(X^\\top X)^{-1}X^\\top",
+    "meaning": "For $\\mathbf{y} = X\\boldsymbol\\beta + \\boldsymbol\\varepsilon$, minimising $\\text{RSS}(\\boldsymbol\\beta) = \\lVert\\mathbf{y} - X\\boldsymbol\\beta\\rVert_2^2$ and setting the gradient $-2X^\\top(\\mathbf{y} - X\\boldsymbol\\beta)$ to zero gives the **normal equations**. When $X$ has full column rank, $X^\\top X$ is invertible and the least-squares solution is unique.\n\nGeometry: $\\hat{\\mathbf{y}}$ is the orthogonal projection of $\\mathbf{y}$ onto the column space of $X$.\n\n- The **hat matrix** $H$ is symmetric and idempotent ($H^2 = H$), and $\\operatorname{tr}(H)$ equals the number of columns of $X$ (the number of fitted coefficients).\n- The residual vector $\\mathbf{e} = (I - H)\\mathbf{y}$ satisfies $X^\\top\\mathbf{e} = \\mathbf{0}$: residuals are orthogonal to every column of $X$.\n- To include an intercept, make the first column of $X$ all ones; with $p$ predictors, $X$ is then $n \\times (p+1)$.",
+    "variables": [
+      {
+        "symbol": "$X$",
+        "meaning": "n × m design matrix, one row per observation (m = number of coefficients, including the intercept column if present)"
+      },
+      {
+        "symbol": "$\\mathbf{y}$",
+        "meaning": "response vector of length n"
+      },
+      {
+        "symbol": "$\\hat{\\boldsymbol\\beta}$",
+        "meaning": "least-squares coefficient vector of length m"
+      },
+      {
+        "symbol": "$H$",
+        "meaning": "n × n hat (projection) matrix"
+      },
+      {
+        "symbol": "$\\hat{\\mathbf{y}}$",
+        "meaning": "vector of fitted values"
+      }
+    ],
+    "whenToUse": "Computing the coefficients for two or more predictors (or simple regression in matrix form), and any question about properties of a least-squares fit: residuals orthogonal to the predictors, $H$ symmetric and idempotent, $\\operatorname{tr}(H)$ equal to the number of coefficients, $\\hat{\\mathbf{y}}$ as a projection.",
+    "commonMistake": "Assuming $(X^\\top X)^{-1}$ always exists. If the columns of $X$ are linearly dependent (perfect multicollinearity, or more coefficients than observations), $X^\\top X$ is singular and OLS has infinitely many minimisers; ridge regression fixes this. Also, writing $\\hat{\\boldsymbol\\beta} = X^{-1}\\mathbf{y}$ is wrong: $X$ is generally not square.",
+    "example": "No-intercept model $y = \\beta_1 x_1 + \\beta_2 x_2$ with rows $(x_1, x_2, y)$: $(1,0,1)$, $(0,1,2)$, $(1,1,4)$.\n\n- $X^\\top X = \\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\end{bmatrix}$, $X^\\top\\mathbf{y} = \\begin{bmatrix} 5 \\\\ 6 \\end{bmatrix}$, $(X^\\top X)^{-1} = \\frac{1}{3}\\begin{bmatrix} 2 & -1 \\\\ -1 & 2 \\end{bmatrix}$.\n- $\\hat{\\boldsymbol\\beta} = \\frac{1}{3}\\begin{bmatrix} 10 - 6 \\\\ -5 + 12 \\end{bmatrix} = \\begin{bmatrix} 4/3 \\\\ 7/3 \\end{bmatrix}$.\n- Fitted values $\\hat{\\mathbf{y}} = (4/3,\\, 7/3,\\, 11/3)$ and residuals $\\mathbf{e} = (-1/3,\\, -1/3,\\, 1/3)$.\n- Check: $X^\\top\\mathbf{e} = (-1/3 + 1/3,\\; -1/3 + 1/3) = (0, 0)$ ✓. Each diagonal entry of $H$ is $2/3$, so $\\operatorname{tr}(H) = 2$ = number of coefficients ✓.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-ridge-regression",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "name": "Ridge regression (L2-penalised least squares)",
+    "latex": "\\hat{\\boldsymbol\\beta}_{\\text{ridge}} = \\arg\\min_{\\boldsymbol\\beta}\\Big(\\lVert\\mathbf{y} - X\\boldsymbol\\beta\\rVert_2^2 + \\lambda\\lVert\\boldsymbol\\beta\\rVert_2^2\\Big) = (X^\\top X + \\lambda I)^{-1}X^\\top\\mathbf{y}, \\qquad \\lambda > 0",
+    "meaning": "Ridge regression adds an L2 penalty on the coefficients to the RSS. The penalty shrinks every coefficient toward 0 but, for finite $\\lambda$, not exactly to 0. For every $\\lambda > 0$ the matrix $X^\\top X + \\lambda I$ is positive definite, hence invertible, so the solution is unique even with collinear predictors or more predictors than observations.\n\n- $\\lambda \\to 0$ recovers OLS; $\\lambda \\to \\infty$ drives $\\hat{\\boldsymbol\\beta} \\to \\mathbf{0}$.\n- Larger $\\lambda$ means lower variance and higher bias; $\\lambda$ is tuned by cross-validation.\n- Orthonormal columns ($X^\\top X = I$): $\\hat\\beta_j^{\\text{ridge}} = \\hat\\beta_j^{\\text{OLS}}/(1 + \\lambda)$.\n- The intercept is conventionally **not** penalised: centre the predictors and the response, fit ridge without an intercept, then set $\\hat\\beta_0 = \\bar y - \\sum_j \\hat\\beta_j\\bar x_j$. Standardise the predictors first, because the penalty is not scale-invariant.",
+    "variables": [
+      {
+        "symbol": "$\\lambda$",
+        "meaning": "regularisation (tuning) parameter, λ ≥ 0"
+      },
+      {
+        "symbol": "$I$",
+        "meaning": "identity matrix whose size is the number of penalised coefficients"
+      },
+      {
+        "symbol": "$X$",
+        "meaning": "design matrix (centred, without the column of ones when the intercept is not penalised)"
+      },
+      {
+        "symbol": "$\\mathbf{y}$",
+        "meaning": "response vector (centred in the same case)"
+      }
+    ],
+    "whenToUse": "Computing ridge coefficients for a given $\\lambda$ (usually one or two predictors), predicting how increasing $\\lambda$ affects bias, variance, coefficient size or training error, and explaining why ridge works when $X^\\top X$ is singular.",
+    "commonMistake": "(a) Believing ridge performs variable selection: it shrinks coefficients but never sets them exactly to zero for finite $\\lambda$ (the lasso's L1 penalty does that). (b) Expecting training error to fall as $\\lambda$ grows: training RSS is non-decreasing in $\\lambda$; only the test error can improve. (c) Mixing scalings: some texts minimise $\\frac{1}{2n}\\text{RSS} + \\frac{\\lambda}{2}\\lVert\\boldsymbol\\beta\\rVert^2$, whose solution is $(X^\\top X + n\\lambda I)^{-1}X^\\top\\mathbf{y}$. Use the convention the question states.",
+    "example": "Same data as the normal-equations example ($X^\\top X = \\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\end{bmatrix}$, $X^\\top\\mathbf{y} = (5, 6)$, no intercept), with $\\lambda = 1$:\n\n- $X^\\top X + I = \\begin{bmatrix} 3 & 1 \\\\ 1 & 3 \\end{bmatrix}$, with inverse $\\frac{1}{8}\\begin{bmatrix} 3 & -1 \\\\ -1 & 3 \\end{bmatrix}$.\n- $\\hat{\\boldsymbol\\beta}_{\\text{ridge}} = \\frac{1}{8}(15 - 6,\\; -5 + 18) = (9/8,\\; 13/8) = (1.125,\\; 1.625)$.\n- Compared with OLS $(1.333,\\; 2.333)$, the coefficient norm drops from $2.687$ to $1.976$ (shrinkage), while the training RSS rises from $0.333$ to $1.719$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-r-squared",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "name": "RSS, TSS, MSE and the coefficient of determination R²",
+    "latex": "R^2 = 1 - \\frac{\\text{RSS}}{\\text{TSS}} = 1 - \\frac{\\sum_{i=1}^{n}(y_i - \\hat y_i)^2}{\\sum_{i=1}^{n}(y_i - \\bar y)^2}, \\qquad \\text{MSE} = \\frac{\\text{RSS}}{n}, \\qquad R^2_{\\text{simple regression}} = r^2",
+    "meaning": "TSS measures the total variation of $y$ around its mean, RSS the variation the model leaves unexplained, and $R^2$ the fraction explained. For least squares **with an intercept**, $\\text{TSS} = \\text{ESS} + \\text{RSS}$ where $\\text{ESS} = \\sum_i(\\hat y_i - \\bar y)^2$, so $0 \\le R^2 \\le 1$ on the training data. In simple linear regression, $R^2$ equals the square of the sample correlation $r$.\n\nRelated metrics:\n\n- $\\text{RMSE} = \\sqrt{\\text{MSE}}$, in the same units as $y$.\n- $\\text{MAE} = \\frac{1}{n}\\sum_i \\lvert y_i - \\hat y_i\\rvert$.\n- Adjusted $R^2 = 1 - (1 - R^2)\\frac{n-1}{n-p-1}$ for $p$ predictors; it penalises adding useless predictors.",
+    "variables": [
+      {
+        "symbol": "$\\text{RSS}$",
+        "meaning": "residual sum of squares Σ(yᵢ − ŷᵢ)²"
+      },
+      {
+        "symbol": "$\\text{TSS}$",
+        "meaning": "total sum of squares Σ(yᵢ − ȳ)²"
+      },
+      {
+        "symbol": "$\\hat y_i$",
+        "meaning": "fitted (predicted) value for observation i"
+      },
+      {
+        "symbol": "$\\bar y$",
+        "meaning": "mean of the observed responses"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "number of observations"
+      },
+      {
+        "symbol": "$p$",
+        "meaning": "number of predictors, excluding the intercept"
+      },
+      {
+        "symbol": "$r$",
+        "meaning": "sample correlation between x and y (simple regression)"
+      }
+    ],
+    "whenToUse": "Judging or comparing regression fits, converting between the correlation and $R^2$ in simple regression, and computing an error metric (MSE, RMSE, MAE) for a regression model's predictions.",
+    "commonMistake": "(a) Treating a higher training $R^2$ as proof of a better model: adding any predictor never decreases training $R^2$, which is why adjusted $R^2$ and cross-validation exist. (b) Assuming $R^2 \\ge 0$ always: without an intercept, or on held-out data, $1 - \\text{RSS}/\\text{TSS}$ can be negative. (c) Some texts define the MSE of a fitted model with divisor $n - p - 1$ (the unbiased estimate of $\\sigma^2$); check which divisor the question uses.",
+    "example": "For the fit $\\hat y = 1.2 + 1.6x$ on $(1,3), (2,4), (4,8), (5,9)$:\n\n- Residuals $(0.2, -0.4, 0.4, -0.2)$, so $\\text{RSS} = 0.04 + 0.16 + 0.16 + 0.04 = 0.4$.\n- $\\bar y = 6$, so $\\text{TSS} = 9 + 4 + 4 + 9 = 26$.\n- $R^2 = 1 - 0.4/26 = 0.9846$. Check: $r^2 = S_{xy}^2/(S_{xx}S_{yy}) = 16^2/(10 \\times 26) = 256/260 = 0.9846$ ✓.\n- $\\text{MSE} = 0.4/4 = 0.1$, $\\text{RMSE} = 0.316$; adjusted $R^2 = 1 - (0.4/26)(3/2) = 0.9769$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-logistic-model",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Logistic regression model and log-odds",
+    "latex": "P(y=1\\mid\\mathbf{x}) = \\sigma(\\mathbf{w}^\\top\\mathbf{x} + b) = \\frac{1}{1 + e^{-(\\mathbf{w}^\\top\\mathbf{x} + b)}}, \\qquad \\ln\\frac{P(y=1\\mid\\mathbf{x})}{1 - P(y=1\\mid\\mathbf{x})} = \\mathbf{w}^\\top\\mathbf{x} + b",
+    "meaning": "Logistic regression is a **classification** model: a linear score $z = \\mathbf{w}^\\top\\mathbf{x} + b$ is squashed by the sigmoid into a probability in $(0,1)$. Equivalently, the **log-odds (logit) are linear** in $\\mathbf{x}$, so increasing $x_j$ by one unit multiplies the odds $p/(1-p)$ by $e^{w_j}$.\n\n- With the usual threshold 0.5, $P(y=1\\mid\\mathbf{x}) \\ge 0.5 \\iff z \\ge 0$. The decision boundary $\\mathbf{w}^\\top\\mathbf{x} + b = 0$ is a hyperplane, so logistic regression is a **linear classifier**. A general threshold $t$ corresponds to $z \\ge \\ln\\frac{t}{1-t}$.\n- Sigmoid facts: $\\sigma(0) = 0.5$, $\\sigma(-z) = 1 - \\sigma(z)$, $\\sigma'(z) = \\sigma(z)\\big(1 - \\sigma(z)\\big)$.\n- $\\ln$ is the natural logarithm.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{x}$",
+        "meaning": "feature vector"
+      },
+      {
+        "symbol": "$\\mathbf{w}$",
+        "meaning": "weight vector"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "bias (intercept)"
+      },
+      {
+        "symbol": "$\\sigma$",
+        "meaning": "logistic sigmoid function 1/(1 + e^(−z))"
+      },
+      {
+        "symbol": "$z$",
+        "meaning": "linear score wᵀx + b, equal to the log-odds of class 1"
+      }
+    ],
+    "whenToUse": "Computing a predicted probability or class from given weights, interpreting a coefficient as an odds multiplier, and locating the decision boundary of a logistic-regression classifier.",
+    "commonMistake": "(a) Reading $w_j$ as the change in probability per unit of $x_j$: it is the change in **log-odds**; the change in probability depends on where you are on the sigmoid. (b) Treating logistic regression as a regression method for continuous targets: despite the name, it models class probabilities. (c) Thinking the sigmoid makes the boundary non-linear: the boundary is still linear in $\\mathbf{x}$ (unless the features themselves are transformed).",
+    "example": "$\\mathbf{w} = (2, -1)$, $b = -1$, $\\mathbf{x} = (1, 0.5)$:\n\n- $z = 2(1) - 1(0.5) - 1 = 0.5$.\n- $P(y=1\\mid\\mathbf{x}) = 1/(1 + e^{-0.5}) = 0.6225 \\ge 0.5$, so predict class 1.\n- Odds $= e^{0.5} = 1.649$. Raising $x_1$ by 1 multiplies the odds by $e^{2} = 7.389$: the new odds are $12.18$, i.e. probability $\\sigma(2.5) = 0.924$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-logistic-loss-gradient",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Logistic regression: cross-entropy loss and its gradient",
+    "latex": "J(\\mathbf{w}, b) = -\\sum_{i=1}^{n}\\Big[y_i\\ln p_i + (1-y_i)\\ln(1-p_i)\\Big], \\quad p_i = \\sigma(\\mathbf{w}^\\top\\mathbf{x}_i + b), \\qquad \\nabla_{\\mathbf{w}}J = \\sum_{i=1}^{n}(p_i - y_i)\\,\\mathbf{x}_i, \\quad \\frac{\\partial J}{\\partial b} = \\sum_{i=1}^{n}(p_i - y_i)",
+    "meaning": "Maximum-likelihood fitting of logistic regression (labels $y_i \\in \\{0, 1\\}$) is equivalent to minimising the **binary cross-entropy**, i.e. the negative log-likelihood. The loss is convex in $(\\mathbf{w}, b)$ but has no closed-form minimiser, so it is minimised iteratively, e.g. by gradient descent $\\mathbf{w} \\leftarrow \\mathbf{w} - \\eta\\nabla_{\\mathbf{w}}J$.\n\n- The gradient has the same \"error × input\" form as least-squares linear regression, with $p_i$ in place of $\\hat y_i$.\n- Many texts average over $n$ (divide $J$ by $n$); this rescales the gradient but does not change the minimiser.\n- If the training data are linearly separable, the maximum-likelihood estimate does not exist (the weights grow without bound) unless a regulariser is added.",
+    "variables": [
+      {
+        "symbol": "$y_i$",
+        "meaning": "true label of example i, 0 or 1"
+      },
+      {
+        "symbol": "$p_i$",
+        "meaning": "predicted probability that example i belongs to class 1"
+      },
+      {
+        "symbol": "$\\mathbf{x}_i$",
+        "meaning": "feature vector of example i"
+      },
+      {
+        "symbol": "$\\eta$",
+        "meaning": "learning rate (step size) of gradient descent"
+      },
+      {
+        "symbol": "$\\ln$",
+        "meaning": "natural logarithm"
+      }
+    ],
+    "whenToUse": "Computing the loss of a prediction, carrying out one gradient-descent step for logistic regression, and answering \"why not least squares / is the loss convex / is there a closed form?\" questions.",
+    "commonMistake": "(a) Writing the gradient as $(y_i - p_i)\\mathbf{x}_i$ and then *subtracting* it: the step then increases the loss. (b) Using $\\log_2$ or $\\log_{10}$ where the convention is the natural log: the loss values change, although the minimiser does not. (c) Assuming a closed-form normal equation exists as in linear regression.",
+    "example": "Model without a bias term: $\\mathbf{w} = (0.5, -0.25)$; one example $\\mathbf{x} = (2, 2)$ with $y = 0$; learning rate $\\eta = 0.1$.\n\n- $z = 0.5(2) - 0.25(2) = 0.5$ and $p = \\sigma(0.5) = 0.6225$.\n- Loss $= -\\ln(1 - 0.6225) = -\\ln 0.3775 = 0.974$.\n- Gradient $= (p - y)\\mathbf{x} = 0.6225 \\times (2, 2) = (1.245,\\; 1.245)$.\n- Update: $\\mathbf{w} = (0.5 - 0.1245,\\; -0.25 - 0.1245) = (0.3755,\\; -0.3745)$. Now $z = 0.002$, $p = 0.5005$ and the loss is $0.694$, lower than before ✓.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-knn",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "k-nearest neighbour rule and distance metrics",
+    "latex": "d_p(\\mathbf{x}, \\mathbf{z}) = \\Big(\\sum_{j=1}^{d}\\lvert x_j - z_j\\rvert^{p}\\Big)^{1/p}, \\qquad \\hat y(\\mathbf{x}) = \\begin{cases}\\text{majority class among } N_k(\\mathbf{x}) & \\text{(classification)}\\\\[2pt] \\dfrac{1}{k}\\sum_{i \\in N_k(\\mathbf{x})} y_i & \\text{(regression)}\\end{cases}",
+    "meaning": "k-NN stores the training set. For a query $\\mathbf{x}$ it finds $N_k(\\mathbf{x})$, the $k$ training points closest to $\\mathbf{x}$, and predicts their majority class (or their mean response). The Minkowski distance $d_p$ gives the Manhattan ($p = 1$), Euclidean ($p = 2$) and Chebyshev ($p \\to \\infty$: $\\max_j \\lvert x_j - z_j\\rvert$) distances.\n\n- It is **non-parametric** and **lazy**: there is no training phase, and brute-force prediction costs $O(nd)$ per query.\n- $k$ controls the bias–variance trade-off. $k = 1$ gives zero training error (when no two identical training points carry different labels) and high variance; larger $k$ gives smoother boundaries and higher bias; $k = n$ always predicts the overall majority class (or the overall mean).\n- Standardise features on different scales, otherwise the distance is dominated by the large-scale features.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{x}$",
+        "meaning": "query point"
+      },
+      {
+        "symbol": "$\\mathbf{z}$",
+        "meaning": "a training point"
+      },
+      {
+        "symbol": "$d$",
+        "meaning": "number of features"
+      },
+      {
+        "symbol": "$p$",
+        "meaning": "order of the Minkowski distance, p ≥ 1"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of neighbours used"
+      },
+      {
+        "symbol": "$N_k(\\mathbf{x})$",
+        "meaning": "the k training points nearest to x"
+      }
+    ],
+    "whenToUse": "Classifying a query point (or predicting its value) from a small table of labelled points, and reasoning about how $k$ affects training error, boundary smoothness, bias and variance.",
+    "commonMistake": "(a) Reading the zero training error of 1-NN as evidence of a good model: each training point is its own nearest neighbour. (b) Choosing an even $k$ for a two-class problem without a tie-breaking rule. (c) Ranking by squared Euclidean distances is fine (squaring preserves the order), but do not mix squared and unsquared distances in one comparison.",
+    "example": "Query $\\mathbf{q} = (3,3)$; training points P1 $(3,4)$ class A, P2 $(5,3)$ B, P3 $(2,1)$ B, P4 $(6,6)$ A, P5 $(0,1)$ A.\n\n- Euclidean distances: P1 $= 1$, P2 $= 2$, P3 $= \\sqrt5 \\approx 2.236$, P5 $= \\sqrt{13} \\approx 3.606$, P4 $= \\sqrt{18} \\approx 4.243$.\n- $k = 1$: {P1} gives **A**. $k = 3$: {P1, P2, P3} = A, B, B gives **B**. $k = 5$: 3 A against 2 B gives **A**.\n- The Manhattan distances $(1, 2, 3, 5, 6)$ give the same ordering here, so the predictions are unchanged.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-naive-bayes",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Naive Bayes classifier",
+    "latex": "\\hat y = \\arg\\max_{c}\\; P(c)\\prod_{j=1}^{d}P(x_j \\mid c), \\qquad P(c\\mid\\mathbf{x}) = \\frac{P(c)\\prod_{j=1}^{d}P(x_j\\mid c)}{\\sum_{c'}P(c')\\prod_{j=1}^{d}P(x_j\\mid c')}",
+    "meaning": "Bayes' theorem gives $P(c\\mid\\mathbf{x}) \\propto P(c)\\,P(\\mathbf{x}\\mid c)$. The **naive** assumption is that the features are **conditionally independent given the class**, so the class-conditional likelihood factorises into one-dimensional terms. The denominator $P(\\mathbf{x})$ is the same for every class: drop it to classify, but keep it to report the posterior probability.\n\n- Priors $P(c)$ and likelihoods $P(x_j\\mid c)$ are estimated from class frequencies in the training data (with Laplace smoothing for counts).\n- Continuous features: Gaussian naive Bayes uses the normal density $P(x_j\\mid c) = \\mathcal{N}(x_j;\\, \\mu_{jc}, \\sigma_{jc}^2)$.\n- In practice, sum logarithms, $\\ln P(c) + \\sum_j \\ln P(x_j\\mid c)$, to avoid numerical underflow.",
+    "variables": [
+      {
+        "symbol": "$c$",
+        "meaning": "class label"
+      },
+      {
+        "symbol": "$\\mathbf{x} = (x_1, \\dots, x_d)$",
+        "meaning": "feature vector"
+      },
+      {
+        "symbol": "$P(c)$",
+        "meaning": "prior probability of class c"
+      },
+      {
+        "symbol": "$P(x_j \\mid c)$",
+        "meaning": "class-conditional probability (or density) of feature j"
+      },
+      {
+        "symbol": "$P(c \\mid \\mathbf{x})$",
+        "meaning": "posterior probability of class c"
+      }
+    ],
+    "whenToUse": "Any question that gives class priors and per-feature conditional probabilities (or a small training table to estimate them from) and asks for the predicted class or a posterior probability.",
+    "commonMistake": "(a) Stopping at the unnormalised scores when a posterior probability is asked: divide each score by their sum. (b) Believing naive Bayes needs the features to be independent: the assumption is independence **given the class**. (c) Using $P(x_j = 1\\mid c)$ for a feature that is 0; use $1 - P(x_j = 1\\mid c)$.",
+    "example": "A spam filter with two binary features: $P(S) = 0.4$, $P(H) = 0.6$; $P(w_1{=}1\\mid S) = 0.8$, $P(w_2{=}1\\mid S) = 0.3$; $P(w_1{=}1\\mid H) = 0.2$, $P(w_2{=}1\\mid H) = 0.6$. An email has $w_1 = 1$, $w_2 = 0$.\n\n- Spam score: $0.4 \\times 0.8 \\times (1 - 0.3) = 0.224$.\n- Ham score: $0.6 \\times 0.2 \\times (1 - 0.6) = 0.048$.\n- $P(S\\mid\\mathbf{x}) = 0.224/(0.224 + 0.048) = 0.8235$, so classify the email as **spam**.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-laplace-smoothing",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Laplace (add-α) smoothing for naive Bayes",
+    "latex": "\\hat P(x_j = v \\mid c) = \\frac{N_c(x_j = v) + \\alpha}{N_c + \\alpha K_j}, \\qquad \\hat P(w \\mid c) = \\frac{\\text{count}(w, c) + \\alpha}{\\sum_{w'}\\text{count}(w', c) + \\alpha\\lvert V\\rvert}",
+    "meaning": "Maximum-likelihood estimates are raw frequencies, so a feature value never seen with class $c$ gets probability 0 and wipes out the whole product $P(c)\\prod_j P(x_j\\mid c)$. Adding a pseudo-count $\\alpha$ to every possible value keeps every estimate positive while the estimates still sum to 1. $\\alpha = 1$ is **Laplace (add-one) smoothing**.\n\n- Categorical-feature form (left): $N_c$ is the number of training examples of class $c$ and $K_j$ the number of distinct values feature $j$ can take ($K_j = 2$ for a binary feature).\n- Multinomial (text) form (right): the counts are word tokens in the class-$c$ documents and $\\lvert V\\rvert$ is the vocabulary size.",
+    "variables": [
+      {
+        "symbol": "$\\alpha$",
+        "meaning": "pseudo-count added to every value (α = 1 is Laplace smoothing)"
+      },
+      {
+        "symbol": "$N_c(x_j = v)$",
+        "meaning": "number of class-c training examples whose feature j equals v"
+      },
+      {
+        "symbol": "$N_c$",
+        "meaning": "number of training examples in class c"
+      },
+      {
+        "symbol": "$K_j$",
+        "meaning": "number of possible values of feature j"
+      },
+      {
+        "symbol": "$\\text{count}(w, c)$",
+        "meaning": "number of occurrences of word w in class-c documents"
+      },
+      {
+        "symbol": "$\\lvert V\\rvert$",
+        "meaning": "vocabulary size (number of distinct words)"
+      }
+    ],
+    "whenToUse": "Whenever a naive Bayes training table contains a zero count, or the question explicitly asks for Laplace (add-one) smoothed estimates.",
+    "commonMistake": "Adding $\\alpha$ to the numerator but only $\\alpha$ (instead of $\\alpha K_j$ or $\\alpha\\lvert V\\rvert$) to the denominator: the smoothed probabilities then no longer sum to 1. Also, the class priors are usually left unsmoothed unless the question says otherwise.",
+    "example": "Class \"sports\" contains 20 word tokens in total, the vocabulary size is $\\lvert V\\rvert = 10$, \"goal\" occurs 3 times and \"vote\" 0 times.\n\n- Unsmoothed: $P(\\text{vote}\\mid\\text{sports}) = 0/20 = 0$, so any document containing \"vote\" scores 0 for sports.\n- Laplace: $P(\\text{goal}\\mid\\text{sports}) = (3 + 1)/(20 + 10) = 4/30 = 0.133$ and $P(\\text{vote}\\mid\\text{sports}) = (0 + 1)/30 = 0.033$.\n- Check: the 10 smoothed probabilities sum to $(20 + 10 \\times 1)/30 = 1$ ✓.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-lda-discriminant",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Linear discriminant analysis: discriminant function (shared covariance)",
+    "latex": "\\delta_k(\\mathbf{x}) = \\mathbf{x}^\\top\\Sigma^{-1}\\boldsymbol\\mu_k - \\tfrac{1}{2}\\boldsymbol\\mu_k^\\top\\Sigma^{-1}\\boldsymbol\\mu_k + \\ln\\pi_k, \\qquad \\hat y = \\arg\\max_k\\, \\delta_k(\\mathbf{x})",
+    "meaning": "LDA models each class as a Gaussian $\\mathcal{N}(\\boldsymbol\\mu_k, \\Sigma)$ with a **common covariance matrix** $\\Sigma$ and prior $\\pi_k$. Taking the logarithm of $\\pi_k f_k(\\mathbf{x})$ and dropping the terms that are the same for every class leaves $\\delta_k$, which is **linear** in $\\mathbf{x}$, so the class boundaries are hyperplanes. A separate covariance per class gives quadratic boundaries (QDA).\n\nOne feature, two classes, common variance $\\sigma^2$: $\\delta_k(x) = x\\,\\frac{\\mu_k}{\\sigma^2} - \\frac{\\mu_k^2}{2\\sigma^2} + \\ln\\pi_k$, and the boundary $\\delta_1 = \\delta_2$ is at\n\n$$\nx^{*} = \\frac{\\mu_1 + \\mu_2}{2} + \\frac{\\sigma^2\\ln(\\pi_2/\\pi_1)}{\\mu_1 - \\mu_2}.\n$$\n\nWith equal priors, $x^*$ is the midpoint of the means; unequal priors move it toward the mean of the **less** probable class, enlarging the region of the more probable one.",
+    "variables": [
+      {
+        "symbol": "$\\boldsymbol\\mu_k$",
+        "meaning": "mean vector of class k"
+      },
+      {
+        "symbol": "$\\Sigma$",
+        "meaning": "covariance matrix shared by all classes (estimated by the pooled covariance)"
+      },
+      {
+        "symbol": "$\\pi_k$",
+        "meaning": "prior probability of class k"
+      },
+      {
+        "symbol": "$\\delta_k(\\mathbf{x})$",
+        "meaning": "discriminant score of class k at x"
+      },
+      {
+        "symbol": "$\\ln$",
+        "meaning": "natural logarithm"
+      }
+    ],
+    "whenToUse": "Classifying a point when the class means, a shared variance or covariance and the priors are given; locating the LDA decision boundary; contrasting LDA (shared covariance, linear boundary) with QDA and naive Bayes.",
+    "commonMistake": "Dropping the $\\ln\\pi_k$ term: the boundary is at the midpoint of the means **only** when the priors are equal. Also, shifting the boundary the wrong way: a larger prior enlarges that class's region, so the boundary moves away from its mean.",
+    "example": "$\\mu_1 = 2$, $\\mu_2 = 6$, $\\sigma^2 = 4$, $\\pi_1 = 0.75$, $\\pi_2 = 0.25$.\n\n- $x^* = 4 + \\dfrac{4\\ln(0.25/0.75)}{2 - 6} = 4 + \\dfrac{4(-1.0986)}{-4} = 5.099$.\n- Check at $x = 5$: $\\delta_1 = \\frac{10}{4} - \\frac{4}{8} + \\ln 0.75 = 1.712$ and $\\delta_2 = \\frac{30}{4} - \\frac{36}{8} + \\ln 0.25 = 1.614$, so class 1 wins (consistent with $5 < 5.099$), even though 5 is closer to $\\mu_2$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-fisher-lda",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Fisher's linear discriminant (two classes)",
+    "latex": "J(\\mathbf{w}) = \\frac{\\mathbf{w}^\\top S_B\\,\\mathbf{w}}{\\mathbf{w}^\\top S_W\\,\\mathbf{w}}, \\qquad \\mathbf{w}^{*} \\propto S_W^{-1}(\\mathbf{m}_1 - \\mathbf{m}_2)",
+    "meaning": "Fisher's LDA looks for the direction $\\mathbf{w}$ that maximises the separation between the projected class means relative to the spread within the classes, for the projection $y = \\mathbf{w}^\\top\\mathbf{x}$. With\n\n- between-class scatter $S_B = (\\mathbf{m}_1 - \\mathbf{m}_2)(\\mathbf{m}_1 - \\mathbf{m}_2)^\\top$ and\n- within-class scatter $S_W = \\sum_{k=1}^{2}\\sum_{\\mathbf{x}\\in C_k}(\\mathbf{x} - \\mathbf{m}_k)(\\mathbf{x} - \\mathbf{m}_k)^\\top$,\n\nthe maximiser is $\\mathbf{w}^* \\propto S_W^{-1}(\\mathbf{m}_1 - \\mathbf{m}_2)$. Only the direction matters (any rescaling of $\\mathbf{w}$ gives the same $J$), and the maximum value is $(\\mathbf{m}_1 - \\mathbf{m}_2)^\\top S_W^{-1}(\\mathbf{m}_1 - \\mathbf{m}_2)$.\n\nFor $K$ classes, LDA projects onto at most $K - 1$ dimensions (the rank of $S_B$), which makes it a **supervised** dimensionality-reduction method.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{m}_k$",
+        "meaning": "sample mean vector of class k"
+      },
+      {
+        "symbol": "$S_W$",
+        "meaning": "within-class scatter matrix"
+      },
+      {
+        "symbol": "$S_B$",
+        "meaning": "between-class scatter matrix"
+      },
+      {
+        "symbol": "$\\mathbf{w}$",
+        "meaning": "projection direction"
+      },
+      {
+        "symbol": "$J(\\mathbf{w})$",
+        "meaning": "Fisher criterion: between-class over within-class scatter of the projections"
+      }
+    ],
+    "whenToUse": "Finding the best one-dimensional projection for separating two labelled classes, and questions contrasting LDA (supervised, uses the labels) with PCA (unsupervised, maximises total variance).",
+    "commonMistake": "Taking $\\mathbf{w} \\propto \\mathbf{m}_1 - \\mathbf{m}_2$, the difference of the means. That is optimal only when $S_W$ is a multiple of $I$; correlated within-class scatter rotates the optimal direction.",
+    "example": "$\\mathbf{m}_1 = (1, 2)$, $\\mathbf{m}_2 = (3, 5)$, $S_W = \\begin{bmatrix} 2 & 1 \\\\ 1 & 2 \\end{bmatrix}$.\n\n- $S_W^{-1} = \\frac{1}{3}\\begin{bmatrix} 2 & -1 \\\\ -1 & 2 \\end{bmatrix}$ and $\\mathbf{m}_1 - \\mathbf{m}_2 = (-2, -3)$.\n- $\\mathbf{w} = \\frac{1}{3}(-4 + 3,\\; 2 - 6) = \\frac{1}{3}(-1, -4) \\propto (1, 4)$.\n- $J(1, 4) = \\frac{(-2 - 12)^2}{42} = \\frac{196}{42} = 4.667$ (the maximum), against $J(2, 3) = \\frac{169}{38} = 4.447$ for the mean-difference direction.\n- Projected means: $(1,4)\\cdot\\mathbf{m}_1 = 9$ and $(1,4)\\cdot\\mathbf{m}_2 = 23$; with equal priors the midpoint 16 is a natural threshold.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-svm-hard-margin",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "SVM: hard-margin primal problem and margin width",
+    "latex": "\\min_{\\mathbf{w},\\, b}\\; \\tfrac{1}{2}\\lVert\\mathbf{w}\\rVert_2^2 \\quad \\text{s.t.} \\quad y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b) \\ge 1, \\;\\; i = 1, \\dots, n; \\qquad \\text{margin width} = \\frac{2}{\\lVert\\mathbf{w}\\rVert_2}",
+    "meaning": "For linearly separable data with labels $y_i \\in \\{-1, +1\\}$, the SVM finds the separating hyperplane $\\mathbf{w}^\\top\\mathbf{x} + b = 0$ with the **largest margin**. The scale of $(\\mathbf{w}, b)$ is fixed so that the closest points satisfy $y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b) = 1$; they lie on the margin hyperplanes $\\mathbf{w}^\\top\\mathbf{x} + b = \\pm 1$ and are the **support vectors**. The distance between the two margin hyperplanes is $2/\\lVert\\mathbf{w}\\rVert$, so maximising the margin is the same as minimising $\\lVert\\mathbf{w}\\rVert^2$: a convex quadratic program with a unique optimal hyperplane.\n\n- Distance of any point to the hyperplane: $\\dfrac{\\lvert\\mathbf{w}^\\top\\mathbf{x} + b\\rvert}{\\lVert\\mathbf{w}\\rVert}$.\n- Only the support vectors determine the solution: deleting any other training point leaves the hyperplane unchanged.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{w}$",
+        "meaning": "normal vector of the separating hyperplane"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "bias (offset) of the hyperplane"
+      },
+      {
+        "symbol": "$y_i$",
+        "meaning": "class label, −1 or +1"
+      },
+      {
+        "symbol": "$\\mathbf{x}_i$",
+        "meaning": "training point i"
+      },
+      {
+        "symbol": "$\\lVert\\mathbf{w}\\rVert_2$",
+        "meaning": "Euclidean norm of w"
+      }
+    ],
+    "whenToUse": "Computing a margin width or a point-to-hyperplane distance, checking which points satisfy, violate or are tight on the margin constraints, and reasoning about which points can be removed without changing the classifier.",
+    "commonMistake": "(a) Reporting $1/\\lVert\\mathbf{w}\\rVert$ as the margin width: that is the distance from the hyperplane to **one** margin boundary; the full width is $2/\\lVert\\mathbf{w}\\rVert$. (b) Using labels $\\{0, 1\\}$ in the constraint $y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b) \\ge 1$; it requires $\\pm 1$.",
+    "example": "$\\mathbf{w} = (3, 4)$, $b = -10$, so $\\lVert\\mathbf{w}\\rVert = 5$ and the margin width is $2/5 = 0.4$.\n\n- $\\mathbf{x} = (2, 2)$, $y = +1$: $\\mathbf{w}^\\top\\mathbf{x} + b = 6 + 8 - 10 = 4 \\ge 1$ ✓; distance to the hyperplane $4/5 = 0.8$.\n- $\\mathbf{x} = (1, 2)$, $y = +1$: $3 + 8 - 10 = 1$, so the point lies exactly on the margin boundary, where support vectors sit; its distance is $1/5 = 0.2$.\n- $\\mathbf{x} = (0, 0)$, $y = -1$: $y(\\mathbf{w}^\\top\\mathbf{x} + b) = (-1)(-10) = 10 \\ge 1$ ✓.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-svm-soft-margin",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "SVM: soft margin, slack variables and hinge loss",
+    "latex": "\\min_{\\mathbf{w},\\, b,\\, \\boldsymbol\\xi}\\; \\tfrac{1}{2}\\lVert\\mathbf{w}\\rVert^2 + C\\sum_{i=1}^{n}\\xi_i \\quad \\text{s.t.} \\quad y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b) \\ge 1 - \\xi_i, \\;\\; \\xi_i \\ge 0; \\qquad \\xi_i^{*} = \\max\\big(0,\\; 1 - y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b)\\big)",
+    "meaning": "The soft-margin SVM allows margin violations so that it also works on data that are not linearly separable. At the optimum each slack equals the **hinge loss** of its point, so the problem is equivalent to minimising $\\frac{1}{2}\\lVert\\mathbf{w}\\rVert^2 + C\\sum_i \\max\\big(0, 1 - y_i(\\mathbf{w}^\\top\\mathbf{x}_i + b)\\big)$.\n\n- $\\xi_i = 0$: on or outside the correct margin boundary.\n- $0 < \\xi_i < 1$: inside the margin but still correctly classified ($\\xi_i = 1$: exactly on the hyperplane).\n- $\\xi_i > 1$: misclassified. Hence $\\sum_i \\xi_i$ is an upper bound on the number of training misclassifications.\n\n$C > 0$ trades margin width against violations. Large $C$ penalises violations heavily (narrow margin, lower bias, higher variance; $C \\to \\infty$ recovers the hard margin). Small $C$ allows a wider margin (more bias, less variance).",
+    "variables": [
+      {
+        "symbol": "$\\xi_i$",
+        "meaning": "slack variable of point i (its hinge loss at the optimum)"
+      },
+      {
+        "symbol": "$C$",
+        "meaning": "penalty constant, C > 0"
+      },
+      {
+        "symbol": "$y_i$",
+        "meaning": "class label, −1 or +1"
+      },
+      {
+        "symbol": "$\\mathbf{w}, b$",
+        "meaning": "hyperplane parameters"
+      }
+    ],
+    "whenToUse": "Computing slacks (hinge losses) and the objective value for a given hyperplane, classifying points as outside the margin, inside the margin or misclassified, and predicting the effect of increasing or decreasing $C$.",
+    "commonMistake": "Getting the direction of $C$ backwards. In this (standard) formulation $C$ multiplies the violation penalty, so it acts as the **inverse** of a regularisation strength such as ridge's $\\lambda$: larger $C$ means less regularisation. Some textbooks instead use $C$ as a *budget* for $\\sum_i \\xi_i$, with the opposite effect, so read the question's definition. Also, a point with $0 < \\xi_i < 1$ is still correctly classified.",
+    "example": "$\\mathbf{w} = (1, -1)$, $b = 0$, $C = 1$:\n\n| point | $y$ | $f = \\mathbf{w}^\\top\\mathbf{x} + b$ | $yf$ | $\\xi = \\max(0, 1 - yf)$ | status |\n| --- | --- | --- | --- | --- | --- |\n| $(2, 0)$ | $+1$ | $2$ | $2$ | $0$ | outside the margin |\n| $(0.5, 0)$ | $+1$ | $0.5$ | $0.5$ | $0.5$ | inside the margin, correct |\n| $(0, 1)$ | $+1$ | $-1$ | $-1$ | $2$ | misclassified |\n| $(0, 2)$ | $-1$ | $-2$ | $2$ | $0$ | outside the margin |\n\nObjective $= \\frac{1}{2}(1^2 + 1^2) + 1 \\times (0 + 0.5 + 2 + 0) = 1 + 2.5 = 3.5$. The bound holds: $\\sum_i \\xi_i = 2.5 \\ge 1$ misclassified point ✓.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-svm-dual-kernel",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "SVM dual, support vectors and the kernel trick",
+    "latex": "\\begin{aligned} &\\max_{\\boldsymbol\\alpha}\\; \\sum_{i=1}^{n}\\alpha_i - \\frac{1}{2}\\sum_{i=1}^{n}\\sum_{j=1}^{n}\\alpha_i\\alpha_j y_i y_j K(\\mathbf{x}_i, \\mathbf{x}_j) \\quad \\text{s.t.} \\quad 0 \\le \\alpha_i \\le C, \\;\\; \\sum_{i=1}^{n}\\alpha_i y_i = 0 \\\\ &f(\\mathbf{x}) = \\sum_{i=1}^{n}\\alpha_i y_i K(\\mathbf{x}_i, \\mathbf{x}) + b, \\qquad \\hat y = \\operatorname{sign}\\big(f(\\mathbf{x})\\big) \\end{aligned}",
+    "meaning": "The Lagrangian dual of the SVM uses the data only through inner products $\\mathbf{x}_i^\\top\\mathbf{x}_j$. Replacing them by a kernel $K(\\mathbf{x}_i, \\mathbf{x}_j) = \\phi(\\mathbf{x}_i)^\\top\\phi(\\mathbf{x}_j)$ fits a linear separator in a (possibly infinite-dimensional) feature space without ever computing $\\phi$: the **kernel trick**. For the linear kernel, $\\mathbf{w} = \\sum_i \\alpha_i y_i\\mathbf{x}_i$.\n\n- Only points with $\\alpha_i > 0$, the **support vectors**, appear in $f$. By complementary slackness, $\\alpha_i = 0$ for points strictly outside the margin, $0 < \\alpha_i < C$ means the point lies exactly on the margin ($y_i f(\\mathbf{x}_i) = 1$), and every margin violator ($\\xi_i > 0$) has $\\alpha_i = C$. For the hard margin, drop the upper bound ($C = \\infty$).\n- Common kernels: linear $\\mathbf{x}^\\top\\mathbf{z}$; polynomial $(\\mathbf{x}^\\top\\mathbf{z} + c)^{q}$ with $c \\ge 0$ and integer degree $q \\ge 1$; RBF (Gaussian) $\\exp(-\\gamma\\lVert\\mathbf{x} - \\mathbf{z}\\rVert^2)$ with $\\gamma = 1/(2\\sigma^2) > 0$.\n- A symmetric function is a valid kernel if and only if every Gram matrix $[K(\\mathbf{x}_i, \\mathbf{x}_j)]$ it produces is positive semidefinite (Mercer's condition).",
+    "variables": [
+      {
+        "symbol": "$\\alpha_i$",
+        "meaning": "Lagrange multiplier (dual variable) of training point i"
+      },
+      {
+        "symbol": "$K(\\mathbf{x}, \\mathbf{z})$",
+        "meaning": "kernel function: inner product of implicit feature vectors φ(x)ᵀφ(z)"
+      },
+      {
+        "symbol": "$\\phi$",
+        "meaning": "implicit feature map"
+      },
+      {
+        "symbol": "$C$",
+        "meaning": "soft-margin penalty; upper bound on each αᵢ"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "bias of the decision function"
+      },
+      {
+        "symbol": "$f(\\mathbf{x})$",
+        "meaning": "decision value; its sign is the predicted class"
+      }
+    ],
+    "whenToUse": "Identifying support vectors from given $\\alpha$ values, recovering $\\mathbf{w}$ from the $\\alpha$'s, computing a kernel value or a kernel-SVM prediction, and checking whether a proposed function is a valid kernel.",
+    "commonMistake": "(a) Thinking every training point contributes to the prediction: only the support vectors ($\\alpha_i > 0$) do. (b) Forgetting the constraint $\\sum_i \\alpha_i y_i = 0$, which is a quick check on candidate $\\alpha$ values. (c) Believing the kernel trick requires computing $\\phi(\\mathbf{x})$ explicitly.",
+    "example": "Two training points, $\\mathbf{x}_1 = (1, 1)$ with $y_1 = +1$ and $\\mathbf{x}_2 = (-1, -1)$ with $y_2 = -1$ (hard margin, linear kernel). By symmetry $b = 0$ and $\\alpha_1 = \\alpha_2 = \\alpha$, which satisfies $\\sum_i \\alpha_i y_i = 0$.\n\n- $\\mathbf{w} = \\alpha(+1)(1, 1) + \\alpha(-1)(-1, -1) = 2\\alpha(1, 1)$. Requiring $\\mathbf{w}^\\top\\mathbf{x}_1 = 1$ gives $4\\alpha = 1$, so $\\alpha = 0.25$ and $\\mathbf{w} = (0.5, 0.5)$.\n- Margin $= 2/\\lVert\\mathbf{w}\\rVert = 2/\\sqrt{0.5} = 2.828 = \\lVert\\mathbf{x}_1 - \\mathbf{x}_2\\rVert$ ✓. Dual objective $= 0.5 - \\frac{1}{2}(0.5) = 0.25 = \\frac{1}{2}\\lVert\\mathbf{w}\\rVert^2$, the primal optimum (no duality gap).\n- New point $\\mathbf{x} = (0, -3)$: $f = 0.25(+1)(\\mathbf{x}_1^\\top\\mathbf{x}) + 0.25(-1)(\\mathbf{x}_2^\\top\\mathbf{x}) = 0.25(-3) - 0.25(3) = -1.5$, so the class is $-1$.\n- A kernel value: the polynomial kernel $(\\mathbf{x}^\\top\\mathbf{z} + 1)^2$ at $\\mathbf{x} = (1, 2)$, $\\mathbf{z} = (3, 1)$ is $(5 + 1)^2 = 36$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-entropy",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Entropy of a class distribution",
+    "latex": "H(S) = -\\sum_{i=1}^{k} p_i\\log_2 p_i, \\qquad 0 \\le H(S) \\le \\log_2 k, \\qquad H_{\\text{binary}}(p) = -p\\log_2 p - (1-p)\\log_2(1-p)",
+    "meaning": "Entropy measures the impurity (uncertainty) of the class labels at a node $S$, where $p_i$ is the fraction of the node's examples in class $i$. With $\\log_2$ it is measured in **bits**. By convention $0\\log_2 0 = 0$.\n\n- $H = 0$ for a pure node (all examples in one class).\n- $H = \\log_2 k$ for a uniform distribution over $k$ classes, e.g. 1 bit for a 50/50 binary node.\n- Binary entropy is symmetric about $p = 0.5$ and concave in $p$.",
+    "variables": [
+      {
+        "symbol": "$S$",
+        "meaning": "set of training examples at a node"
+      },
+      {
+        "symbol": "$p_i$",
+        "meaning": "proportion of the examples in S that belong to class i"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of classes"
+      }
+    ],
+    "whenToUse": "The first step of every ID3-style decision-tree computation (information gain), and any question about the uncertainty or impurity of a label distribution.",
+    "commonMistake": "Mixing logarithm bases in one calculation. The natural log gives nats and rescales every entropy by the same factor $\\ln 2$, so the ranking of splits is unchanged but numerical answers differ. Also, dropping the minus sign gives a negative \"entropy\".",
+    "example": "A node with 6 positive and 2 negative examples: $p_+ = 0.75$, $p_- = 0.25$.\n\n- $H = -0.75\\log_2 0.75 - 0.25\\log_2 0.25 = 0.75(0.4150) + 0.25(2) = 0.3113 + 0.5 = 0.811$ bits.\n- For comparison, a 4+/4− node has $H = 1$ bit and an 8+/0− node has $H = 0$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-information-gain",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Information gain and gain ratio for a decision-tree split",
+    "latex": "\\text{IG}(S, A) = H(S) - \\sum_{v \\in \\text{Values}(A)}\\frac{\\lvert S_v\\rvert}{\\lvert S\\rvert}\\,H(S_v), \\qquad \\text{GainRatio}(S, A) = \\frac{\\text{IG}(S, A)}{-\\sum_{v}\\frac{\\lvert S_v\\rvert}{\\lvert S\\rvert}\\log_2\\frac{\\lvert S_v\\rvert}{\\lvert S\\rvert}}",
+    "meaning": "Information gain is the expected reduction in entropy from splitting node $S$ on attribute $A$: the parent's entropy minus the **size-weighted** average entropy of the children $S_v$. ID3 splits on the attribute with the largest IG at each node. IG is always $\\ge 0$, and it equals $H(S)$ when every child is pure.\n\nIG favours attributes with many distinct values: an ID-like attribute produces pure singleton children and maximal IG but generalises poorly. C4.5's **gain ratio** divides IG by the split information (the entropy of the partition proportions, the denominator above) to correct for this.",
+    "variables": [
+      {
+        "symbol": "$S$",
+        "meaning": "examples at the parent node"
+      },
+      {
+        "symbol": "$A$",
+        "meaning": "candidate splitting attribute"
+      },
+      {
+        "symbol": "$S_v$",
+        "meaning": "subset of S whose value of A is v"
+      },
+      {
+        "symbol": "$\\lvert S_v\\rvert/\\lvert S\\rvert$",
+        "meaning": "fraction of the parent's examples that go to child v"
+      },
+      {
+        "symbol": "$H$",
+        "meaning": "entropy in bits (log base 2)"
+      }
+    ],
+    "whenToUse": "Choosing the root or the next split of a decision tree from a small table, and comparing candidate attributes.",
+    "commonMistake": "Averaging the child entropies with equal weights instead of weighting by $\\lvert S_v\\rvert/\\lvert S\\rvert$, or subtracting in the wrong order (children minus parent), which gives a value $\\le 0$.",
+    "example": "Parent node: 6+, 2− with $H(S) = 0.811$.\n\n- Attribute A splits it into $A = a$: 4+, 0− ($H = 0$) and $A = b$: 2+, 2− ($H = 1$). $\\text{IG}(S, A) = 0.811 - \\left(\\frac{4}{8}\\cdot 0 + \\frac{4}{8}\\cdot 1\\right) = 0.311$ bits.\n- Attribute B splits it into two nodes of 3+, 1− each ($H = 0.811$ each), so $\\text{IG}(S, B) = 0$. Split on A.\n- Split information of A $= -2 \\times \\frac{1}{2}\\log_2\\frac{1}{2} = 1$, so $\\text{GainRatio}(S, A) = 0.311$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-gini-index",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Gini impurity",
+    "latex": "\\text{Gini}(S) = 1 - \\sum_{i=1}^{k} p_i^2, \\qquad 0 \\le \\text{Gini}(S) \\le 1 - \\frac{1}{k}, \\qquad \\Delta\\text{Gini} = \\text{Gini}(S) - \\sum_{v}\\frac{\\lvert S_v\\rvert}{\\lvert S\\rvert}\\,\\text{Gini}(S_v)",
+    "meaning": "Gini impurity is the probability that two labels drawn independently (with replacement) from the node's class distribution differ; equivalently, the expected error rate if you label the node's examples at random according to that distribution. CART picks the split with the lowest weighted child Gini (the largest decrease $\\Delta\\text{Gini}$).\n\n- Like entropy, it is 0 for a pure node and largest for a uniform node, but it needs no logarithms.\n- Two classes: $\\text{Gini} = 2p(1 - p)$, with maximum $0.5$ at $p = 0.5$.\n- $\\sum_i p_i(1 - p_i)$ is the same quantity as $1 - \\sum_i p_i^2$.",
+    "variables": [
+      {
+        "symbol": "$p_i$",
+        "meaning": "proportion of class i at the node"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of classes"
+      },
+      {
+        "symbol": "$S_v$",
+        "meaning": "child node v produced by the split"
+      }
+    ],
+    "whenToUse": "Decision-tree split selection when the question says Gini or CART, or whenever a log-free impurity measure is convenient.",
+    "commonMistake": "Writing the two-class Gini as $p(1 - p)$ instead of $2p(1 - p)$, and expecting a maximum of 1 for two classes (it is $0.5$). As with information gain, the children must be weighted by their sizes.",
+    "example": "The same split as in the information-gain example: parent 6+, 2−; children 4+/0− and 2+/2−.\n\n- Parent: $1 - (0.75^2 + 0.25^2) = 1 - 0.625 = 0.375$.\n- Children: $0$ and $1 - (0.5^2 + 0.5^2) = 0.5$; weighted average $= \\frac{4}{8}(0) + \\frac{4}{8}(0.5) = 0.25$.\n- Gini decrease $= 0.375 - 0.25 = 0.125$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-classification-metrics",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "name": "Confusion-matrix metrics: accuracy, precision, recall, F1",
+    "latex": "\\text{Accuracy} = \\frac{TP + TN}{TP + TN + FP + FN}, \\quad \\text{Precision} = \\frac{TP}{TP + FP}, \\quad \\text{Recall} = \\frac{TP}{TP + FN}, \\quad F_1 = \\frac{2PR}{P + R} = \\frac{2\\,TP}{2\\,TP + FP + FN}",
+    "meaning": "For a binary classifier with a designated positive class:\n\n- **Precision**: of the examples predicted positive, the fraction that truly are positive.\n- **Recall** (sensitivity, true-positive rate): of the actual positives, the fraction the classifier finds.\n- **Specificity** $= TN/(TN + FP)$; the false-positive rate is $1 -$ specificity $= FP/(FP + TN)$.\n- **F1**: the harmonic mean of precision and recall; it is high only when both are high.\n\nAccuracy can mislead on imbalanced data: always predicting the majority class may score very high while finding no positives.",
+    "variables": [
+      {
+        "symbol": "$TP$",
+        "meaning": "true positives: actual positive, predicted positive"
+      },
+      {
+        "symbol": "$FP$",
+        "meaning": "false positives: actual negative, predicted positive (type I errors)"
+      },
+      {
+        "symbol": "$FN$",
+        "meaning": "false negatives: actual positive, predicted negative (type II errors)"
+      },
+      {
+        "symbol": "$TN$",
+        "meaning": "true negatives: actual negative, predicted negative"
+      },
+      {
+        "symbol": "$P, R$",
+        "meaning": "precision and recall"
+      }
+    ],
+    "whenToUse": "Evaluating a classifier from its confusion matrix, comparing classifiers on imbalanced data, and questions separating classification metrics from regression error metrics such as MSE.",
+    "commonMistake": "Swapping FP and FN in the denominators (precision uses FP, recall uses FN), and averaging precision and recall arithmetically instead of harmonically.",
+    "example": "200 test cases: $TP = 40$, $FP = 10$, $FN = 20$, $TN = 130$.\n\n- Accuracy $= 170/200 = 0.85$.\n- Precision $= 40/50 = 0.8$; recall $= 40/60 = 0.667$; specificity $= 130/140 = 0.929$.\n- $F_1 = \\frac{2(0.8)(0.667)}{0.8 + 0.667} = \\frac{80}{110} = 0.727$ (the arithmetic mean would wrongly give $0.733$).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-bias-variance",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "name": "Bias–variance decomposition of the expected test error",
+    "latex": "\\mathbb{E}\\big[(y_0 - \\hat f(x_0))^2\\big] = \\underbrace{\\big(\\mathbb{E}[\\hat f(x_0)] - f(x_0)\\big)^2}_{\\text{Bias}^2} + \\underbrace{\\mathbb{E}\\Big[\\big(\\hat f(x_0) - \\mathbb{E}[\\hat f(x_0)]\\big)^2\\Big]}_{\\text{Variance}} + \\underbrace{\\sigma^2}_{\\text{irreducible}}",
+    "meaning": "Assume $y = f(x) + \\varepsilon$ with $\\mathbb{E}[\\varepsilon] = 0$ and $\\text{Var}(\\varepsilon) = \\sigma^2$, and that the test noise is independent of the training set. The expectation is over random training sets (which make $\\hat f$ random) and the test noise. The expected squared error at $x_0$ then splits into three parts:\n\n- **Bias²**: the average prediction misses $f(x_0)$ because of wrong or overly simple assumptions (underfitting).\n- **Variance**: how much $\\hat f(x_0)$ changes from one training set to another (overfitting).\n- **Irreducible error** $\\sigma^2$: no model can remove it.\n\nIncreasing flexibility (higher polynomial degree, smaller $k$ in k-NN, smaller $\\lambda$ in ridge, deeper trees) typically lowers bias and raises variance, which gives the U-shaped test-error curve, while the training error keeps falling.",
+    "variables": [
+      {
+        "symbol": "$f$",
+        "meaning": "true regression function"
+      },
+      {
+        "symbol": "$\\hat f$",
+        "meaning": "fitted model (random through the training data)"
+      },
+      {
+        "symbol": "$x_0$",
+        "meaning": "test input"
+      },
+      {
+        "symbol": "$y_0$",
+        "meaning": "test response f(x₀) + ε"
+      },
+      {
+        "symbol": "$\\sigma^2$",
+        "meaning": "noise variance Var(ε)"
+      }
+    ],
+    "whenToUse": "Explaining under- and overfitting; predicting how bias, variance, training error and test error move when model complexity, $k$, $\\lambda$ or the training-set size changes; computing the expected error of simple estimators such as a k-NN average.",
+    "commonMistake": "(a) Thinking more training data reduces bias: it mainly reduces variance; bias comes from the model class. (b) Forgetting $\\sigma^2$, which puts a floor under the test error. (c) Adding the bias itself (not its square) to the variance.",
+    "example": "k-NN regression at $x_0$ with fixed training inputs and independent noise: $\\sigma^2 = 4$, $f(x_0) = 10$, and $f$ at the neighbours (nearest first) $= 10, 10.5, 11, 13$. The prediction is the average of $k$ noisy responses, so its variance is $\\sigma^2/k$.\n\n| $k$ | $\\mathbb{E}[\\hat f(x_0)]$ | Bias² | Variance $= \\sigma^2/k$ | Expected test MSE |\n| --- | --- | --- | --- | --- |\n| 1 | 10 | 0 | 4 | 8 |\n| 2 | 10.25 | 0.0625 | 2 | 6.0625 |\n| 3 | 10.5 | 0.25 | 1.333 | 5.583 |\n| 4 | 11.125 | 1.266 | 1 | 6.266 |\n\nThe minimum is at $k = 3$: as $k$ grows, the bias rises and the variance falls.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-k-fold-cv",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "name": "k-fold and leave-one-out cross-validation",
+    "latex": "\\text{CV}_{(k)} = \\frac{1}{k}\\sum_{i=1}^{k}\\text{MSE}_i, \\qquad \\text{training-set size per fit} = n - \\frac{n}{k} = \\frac{(k-1)\\,n}{k}, \\qquad \\text{LOOCV: } k = n",
+    "meaning": "Split the $n$ observations at random into $k$ folds of (roughly) equal size. For each $i$, train on the other $k - 1$ folds and compute the validation error $\\text{MSE}_i$ (or the misclassification rate) on fold $i$; then average the $k$ errors. Every observation is used for validation exactly once and for training $k - 1$ times, and the procedure needs $k$ model fits.\n\n- **LOOCV** ($k = n$): $n$ fits, each on $n - 1$ points. Its estimate is nearly unbiased, but the $n$ fitted models are highly correlated, so it typically has higher variance than 5- or 10-fold CV. The split involves no randomness.\n- With unequal fold sizes, use the weighted average $\\sum_i \\frac{n_i}{n}\\text{MSE}_i$.\n- CV is used to choose hyperparameters ($k$ in k-NN, $\\lambda$ in ridge, tree depth); the chosen model is then refit on all $n$ points.",
+    "variables": [
+      {
+        "symbol": "$k$",
+        "meaning": "number of folds"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "number of observations"
+      },
+      {
+        "symbol": "$\\text{MSE}_i$",
+        "meaning": "validation error on fold i of the model trained on the other folds"
+      },
+      {
+        "symbol": "$n_i$",
+        "meaning": "number of observations in fold i"
+      }
+    ],
+    "whenToUse": "Counting model fits or training-set sizes for a given CV scheme, computing the CV estimate from fold errors, and comparing LOOCV with k-fold CV in terms of bias, variance and computational cost.",
+    "commonMistake": "(a) Saying LOOCV trains $n$ models on $n$ points: each model uses $n - 1$ points. (b) Leaking information: tuning on the test set, or scaling / selecting features on the full data before splitting into folds. (c) Claiming a smaller $k$ lowers the bias of the error estimate: fewer training points per fit make the estimate more pessimistic, i.e. more biased upward.",
+    "example": "$n = 200$ with 5-fold CV: each fold has 40 points, so each of the 5 models trains on 160 points and is validated on 40. Fold MSEs $2.1, 1.8, 2.4, 2.0, 1.7$ give $\\text{CV}_{(5)} = 10.0/5 = 2.0$. LOOCV on the same data would need 200 fits, each on 199 points.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-loocv-shortcut",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "name": "LOOCV shortcut for least-squares regression (leverage)",
+    "latex": "\\text{CV}_{(n)} = \\frac{1}{n}\\sum_{i=1}^{n}\\left(\\frac{y_i - \\hat y_i}{1 - h_{ii}}\\right)^2, \\qquad h_{ii} = \\mathbf{x}_i^\\top(X^\\top X)^{-1}\\mathbf{x}_i, \\qquad h_{ii}^{\\text{simple}} = \\frac{1}{n} + \\frac{(x_i - \\bar x)^2}{S_{xx}}",
+    "meaning": "For least-squares linear regression (including polynomial regression), the leave-one-out residual $y_i - \\hat y_{(-i)}$ equals the ordinary residual inflated by the **leverage**: $e_i/(1 - h_{ii})$. So LOOCV needs only **one** fit on all $n$ points instead of $n$ refits.\n\n- $h_{ii}$ is the $i$-th diagonal entry of the hat matrix $H = X(X^\\top X)^{-1}X^\\top$; with an intercept in the model, $\\frac{1}{n} \\le h_{ii} \\le 1$.\n- $\\sum_i h_{ii} = \\operatorname{tr}(H)$ = number of fitted coefficients.\n- High-leverage points (far from $\\bar x$) have their residuals inflated the most.",
+    "variables": [
+      {
+        "symbol": "$\\hat y_i$",
+        "meaning": "fitted value from the fit on all n points"
+      },
+      {
+        "symbol": "$h_{ii}$",
+        "meaning": "leverage of observation i (diagonal entry of the hat matrix)"
+      },
+      {
+        "symbol": "$\\mathbf{x}_i$",
+        "meaning": "row i of the design matrix, written as a column vector"
+      },
+      {
+        "symbol": "$S_{xx}$",
+        "meaning": "Σ(xᵢ − x̄)² (simple regression)"
+      }
+    ],
+    "whenToUse": "Computing the LOOCV error of a linear or simple regression from its residuals without refitting, and identifying which observation's removal changes the fit the most (high leverage together with a large residual).",
+    "commonMistake": "Using the ordinary residuals $e_i$ directly (that gives the training MSE, which underestimates the test error), or forgetting to square the ratio. The shortcut is exact for least-squares linear regression; do not apply it to k-NN, logistic regression or trees.",
+    "example": "Fit $\\hat y = 1.2 + 1.6x$ on $(1,3), (2,4), (4,8), (5,9)$: $\\bar x = 3$, $S_{xx} = 10$, residuals $(0.2, -0.4, 0.4, -0.2)$.\n\n- Leverages $h_{ii} = \\frac{1}{4} + \\frac{(x_i - 3)^2}{10} = (0.65,\\; 0.35,\\; 0.35,\\; 0.65)$, which sum to 2, the number of coefficients ✓.\n- Leave-one-out residuals: $0.2/0.35 = 0.571$, $-0.4/0.65 = -0.615$, $0.4/0.65 = 0.615$, $-0.2/0.35 = -0.571$.\n- $\\text{CV}_{(4)} = \\frac{1}{4}(0.3265 + 0.3787 + 0.3787 + 0.3265) = 0.353$, against a training MSE of $0.1$. Refitting four times without the shortcut gives the same value.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-perceptron-rule",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "name": "Perceptron: model and learning rule",
+    "latex": "\\hat y = \\begin{cases}1 & \\mathbf{w}^\\top\\mathbf{x} + b \\ge 0\\\\ 0 & \\text{otherwise}\\end{cases}, \\qquad \\mathbf{w} \\leftarrow \\mathbf{w} + \\eta\\,(y - \\hat y)\\,\\mathbf{x}, \\qquad b \\leftarrow b + \\eta\\,(y - \\hat y)",
+    "meaning": "A perceptron is a single neuron with a step activation, i.e. a linear classifier. It changes its weights only on mistakes: if it outputs 0 for a positive example it adds $\\eta\\mathbf{x}$ to $\\mathbf{w}$, and if it outputs 1 for a negative example it subtracts $\\eta\\mathbf{x}$. With labels $y \\in \\{-1, +1\\}$ the rule is usually written: if $y(\\mathbf{w}^\\top\\mathbf{x} + b) \\le 0$ (a mistake, with a zero score counted as a mistake), set $\\mathbf{w} \\leftarrow \\mathbf{w} + \\eta y\\mathbf{x}$ and $b \\leftarrow b + \\eta y$.\n\n- **Convergence theorem:** if the training data are linearly separable, the rule makes only finitely many mistakes and stops at a separating hyperplane. (Starting from zero weights with the bias absorbed into $\\mathbf{w}$, the number of mistakes is at most $(R/\\gamma)^2$, where every $\\lVert\\mathbf{x}_i\\rVert \\le R$ and some unit-norm separator has margin $\\gamma$.) If the data are not separable, it never converges.\n- A single perceptron cannot represent XOR, which is not linearly separable; a multi-layer perceptron with one hidden layer can.\n- Whether the threshold uses $\\ge 0$ or $> 0$ is a convention; follow the question.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{w}$",
+        "meaning": "weight vector"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "bias (the firing threshold is −b)"
+      },
+      {
+        "symbol": "$\\eta$",
+        "meaning": "learning rate, η > 0"
+      },
+      {
+        "symbol": "$y$",
+        "meaning": "target output, 0 or 1"
+      },
+      {
+        "symbol": "$\\hat y$",
+        "meaning": "perceptron output, 0 or 1"
+      },
+      {
+        "symbol": "$\\mathbf{x}$",
+        "meaning": "input vector"
+      }
+    ],
+    "whenToUse": "Tracing perceptron training by hand for a few steps, deciding whether a Boolean function (AND, OR, NAND, XOR) can be computed by one perceptron, and explaining why multi-layer perceptrons need hidden layers.",
+    "commonMistake": "Updating on correctly classified examples (there $y - \\hat y = 0$, so nothing changes), forgetting to update the bias, or using the $\\pm 1$ form of the rule with 0/1 labels.",
+    "example": "$\\mathbf{w} = (1, -1)$, $b = 0$, $\\eta = 0.5$; training example $\\mathbf{x} = (1, 2)$ with $y = 1$.\n\n- $\\mathbf{w}^\\top\\mathbf{x} + b = 1 - 2 + 0 = -1 < 0$, so $\\hat y = 0$ and the error is $y - \\hat y = 1$.\n- Update: $\\mathbf{w} \\leftarrow (1, -1) + 0.5(1, 2) = (1.5, 0)$ and $b \\leftarrow 0 + 0.5 = 0.5$.\n- Now $\\mathbf{w}^\\top\\mathbf{x} + b = 1.5 + 0 + 0.5 = 2 \\ge 0$, so $\\hat y = 1$: correct.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-forward-pass",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "name": "Feed-forward network: forward pass",
+    "latex": "\\mathbf{a}^{(0)} = \\mathbf{x}, \\qquad \\mathbf{z}^{(l)} = W^{(l)}\\mathbf{a}^{(l-1)} + \\mathbf{b}^{(l)}, \\qquad \\mathbf{a}^{(l)} = g^{(l)}\\big(\\mathbf{z}^{(l)}\\big), \\quad l = 1, \\dots, L, \\qquad \\hat{\\mathbf{y}} = \\mathbf{a}^{(L)}",
+    "meaning": "A feed-forward network (multi-layer perceptron) computes layer by layer: each layer applies an affine map to the previous layer's activations and then an element-wise activation function $g$. Information flows in one direction only (no cycles). If $W^{(l)}$ is $n_l \\times n_{l-1}$, then $\\mathbf{z}^{(l)}$ and $\\mathbf{a}^{(l)}$ have $n_l$ entries.\n\n- Without nonlinear activations the whole network collapses to a single affine map ($W^{(2)}(W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)}) + \\mathbf{b}^{(2)}$ is still affine), so extra layers add no expressive power.\n- With one hidden layer using a suitable nonlinear activation (e.g. sigmoid or ReLU) and enough hidden units, an MLP can approximate any continuous function on a compact set to any accuracy (the universal approximation theorem). The theorem guarantees existence, not that training will find such weights.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{a}^{(l)}$",
+        "meaning": "activation vector of layer l; a(0) is the input x"
+      },
+      {
+        "symbol": "$W^{(l)}$",
+        "meaning": "weight matrix of layer l, size n_l × n_(l−1)"
+      },
+      {
+        "symbol": "$\\mathbf{b}^{(l)}$",
+        "meaning": "bias vector of layer l"
+      },
+      {
+        "symbol": "$\\mathbf{z}^{(l)}$",
+        "meaning": "pre-activation vector of layer l"
+      },
+      {
+        "symbol": "$g^{(l)}$",
+        "meaning": "activation function of layer l (e.g. ReLU, sigmoid, tanh)"
+      },
+      {
+        "symbol": "$L$",
+        "meaning": "number of weight layers (hidden layers + output layer)"
+      }
+    ],
+    "whenToUse": "Computing a network's output for a given input and weights, checking matrix dimensions, and explaining why hidden layers need nonlinear activations.",
+    "commonMistake": "Applying the activation before adding the bias, or transposing $W$. Conventions differ between texts: with $W^{(l)}$ of size $n_l \\times n_{l-1}$ compute $W\\mathbf{a}$; if a text stores weights as $n_{l-1} \\times n_l$ it computes $\\mathbf{a}^\\top W$. Check the dimensions before multiplying.",
+    "example": "A 2-2-1 network with ReLU hidden units and a sigmoid output: $\\mathbf{x} = (1, 2)$, $W^{(1)} = \\begin{bmatrix} 1 & -1 \\\\ 0.5 & 0.5 \\end{bmatrix}$, $\\mathbf{b}^{(1)} = (0, -1)$, $W^{(2)} = \\begin{bmatrix} 2 & -2 \\end{bmatrix}$, $b^{(2)} = 0.5$.\n\n- $\\mathbf{z}^{(1)} = (1 - 2 + 0,\\; 0.5 + 1 - 1) = (-1, 0.5)$, so $\\mathbf{a}^{(1)} = \\text{ReLU}(\\mathbf{z}^{(1)}) = (0, 0.5)$.\n- $z^{(2)} = 2(0) - 2(0.5) + 0.5 = -0.5$, so $\\hat y = \\sigma(-0.5) = 0.3775$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-activation-functions",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "name": "Activation functions and their derivatives",
+    "latex": "\\sigma(z) = \\frac{1}{1 + e^{-z}}, \\;\\; \\sigma'(z) = \\sigma(z)\\big(1 - \\sigma(z)\\big); \\qquad \\tanh'(z) = 1 - \\tanh^2 z, \\;\\; \\tanh z = 2\\sigma(2z) - 1; \\qquad \\text{ReLU}(z) = \\max(0, z), \\;\\; \\text{ReLU}'(z) = \\begin{cases}1 & z > 0\\\\ 0 & z < 0\\end{cases}",
+    "meaning": "The derivatives of the activation functions drive backpropagation.\n\n- **Sigmoid**: range $(0, 1)$; $\\sigma'(z) \\le 0.25$, with the maximum at $z = 0$. It saturates (derivative near 0) for large $\\lvert z\\rvert$.\n- **tanh**: range $(-1, 1)$ and zero-centred; $\\tanh'(z) \\le 1$, with the maximum at $z = 0$.\n- **ReLU**: derivative 1 for positive inputs (no saturation there) and 0 for negative inputs; it is not differentiable at 0, where implementations use 0 or 1. A unit whose pre-activation is negative for every input gets zero gradient (\"dead ReLU\").\n- Output layers usually use softmax (multi-class), sigmoid (binary) or the identity (regression).\n\nEach sigmoid layer multiplies the backpropagated gradient by at most 0.25, so deep sigmoid networks suffer from **vanishing gradients**; ReLU mitigates this.",
+    "variables": [
+      {
+        "symbol": "$z$",
+        "meaning": "pre-activation input of the unit"
+      },
+      {
+        "symbol": "$\\sigma$",
+        "meaning": "logistic sigmoid"
+      },
+      {
+        "symbol": "$\\tanh$",
+        "meaning": "hyperbolic tangent"
+      },
+      {
+        "symbol": "$\\text{ReLU}$",
+        "meaning": "rectified linear unit max(0, z)"
+      }
+    ],
+    "whenToUse": "Computing gradients by hand during backpropagation, comparing activation ranges and saturation, and reasoning about vanishing gradients.",
+    "commonMistake": "Writing $\\sigma'(z) = \\sigma(z)(1 - z)$ instead of $\\sigma(z)\\big(1 - \\sigma(z)\\big)$, i.e. plugging $z$ where $\\sigma(z)$ belongs. Also, assuming ReLU is differentiable at 0.",
+    "example": "- $z = 0$: $\\sigma = 0.5$, $\\sigma' = 0.25$; $\\tanh 0 = 0$, $\\tanh' = 1$; $\\text{ReLU}'(0)$ is undefined (a convention is needed).\n- $z = 2$: $\\sigma = 0.8808$, $\\sigma' = 0.8808 \\times 0.1192 = 0.1050$; $\\tanh 2 = 0.9640$, $\\tanh' = 1 - 0.9293 = 0.0707$; $\\text{ReLU}'(2) = 1$.\n- Ten stacked sigmoid layers scale a gradient by at most $0.25^{10} \\approx 9.5 \\times 10^{-7}$ (ignoring the weights).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-nn-parameter-count",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "name": "Number of parameters in a fully connected network",
+    "latex": "\\#\\text{params} = \\sum_{l=1}^{L}\\big(n_{l-1} + 1\\big)\\,n_l = \\underbrace{\\sum_{l=1}^{L} n_{l-1}\\,n_l}_{\\text{weights}} + \\underbrace{\\sum_{l=1}^{L} n_l}_{\\text{biases}}",
+    "meaning": "In a fully connected (dense) layer from $n_{l-1}$ units to $n_l$ units, every unit of layer $l$ has one weight per input plus one bias, i.e. $(n_{l-1} + 1)\\,n_l$ trainable parameters. The input layer has no parameters of its own. An architecture written $n_0$–$n_1$–…–$n_L$ lists the input size first and the output size last. Conventions for \"number of layers\" vary, so count weight layers to be safe.",
+    "variables": [
+      {
+        "symbol": "$n_0$",
+        "meaning": "number of input features"
+      },
+      {
+        "symbol": "$n_l$",
+        "meaning": "number of units in layer l"
+      },
+      {
+        "symbol": "$L$",
+        "meaning": "number of weight layers (hidden layers + output layer)"
+      }
+    ],
+    "whenToUse": "Questions asking for the number of weights, parameters or connections of an MLP with given layer sizes, or comparing model capacity.",
+    "commonMistake": "Giving the input layer biases, forgetting biases altogether (unless the question asks for weights only), or multiplying all the layer sizes together.",
+    "example": "- 3–4–2 network: $(3 + 1)\\times 4 + (4 + 1)\\times 2 = 16 + 10 = 26$ parameters (20 weights and 6 biases).\n- 784–128–64–10 network: $785 \\times 128 + 129 \\times 64 + 65 \\times 10 = 100480 + 8256 + 650 = 109386$ parameters (109184 weights and 202 biases).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-backpropagation",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "name": "Backpropagation equations",
+    "latex": "\\boldsymbol\\delta^{(L)} = \\nabla_{\\mathbf{a}^{(L)}}\\mathcal{L} \\odot g'\\big(\\mathbf{z}^{(L)}\\big), \\quad \\boldsymbol\\delta^{(l)} = \\big(W^{(l+1)\\top}\\boldsymbol\\delta^{(l+1)}\\big) \\odot g'\\big(\\mathbf{z}^{(l)}\\big), \\quad \\frac{\\partial\\mathcal{L}}{\\partial W^{(l)}} = \\boldsymbol\\delta^{(l)}\\,\\mathbf{a}^{(l-1)\\top}, \\quad \\frac{\\partial\\mathcal{L}}{\\partial\\mathbf{b}^{(l)}} = \\boldsymbol\\delta^{(l)}",
+    "meaning": "Backpropagation is the chain rule applied layer by layer from the output back to the input, reusing the error signals $\\boldsymbol\\delta^{(l)} = \\partial\\mathcal{L}/\\partial\\mathbf{z}^{(l)}$. One forward pass plus one backward pass gives every gradient, at a cost within a small constant factor of a single forward pass. Gradient descent then updates $W^{(l)} \\leftarrow W^{(l)} - \\eta\\,\\partial\\mathcal{L}/\\partial W^{(l)}$ (and likewise the biases).\n\nOutput-layer shortcuts:\n\n- sigmoid output with binary cross-entropy, or softmax output with cross-entropy: $\\boldsymbol\\delta^{(L)} = \\hat{\\mathbf{y}} - \\mathbf{y}$;\n- sigmoid output with squared error $\\frac{1}{2}(\\hat y - y)^2$: $\\delta^{(L)} = (\\hat y - y)\\,\\hat y\\,(1 - \\hat y)$.",
+    "variables": [
+      {
+        "symbol": "$\\mathcal{L}$",
+        "meaning": "loss for one training example"
+      },
+      {
+        "symbol": "$\\boldsymbol\\delta^{(l)}$",
+        "meaning": "gradient of the loss with respect to the pre-activations z(l)"
+      },
+      {
+        "symbol": "$\\odot$",
+        "meaning": "element-wise (Hadamard) product"
+      },
+      {
+        "symbol": "$g'$",
+        "meaning": "derivative of the activation function"
+      },
+      {
+        "symbol": "$\\mathbf{a}^{(l-1)}$",
+        "meaning": "input to layer l (activations of the previous layer)"
+      },
+      {
+        "symbol": "$\\eta$",
+        "meaning": "learning rate"
+      }
+    ],
+    "whenToUse": "Computing a gradient or one weight update of a small network by hand, explaining vanishing gradients (products of small $g'$ values), and seeing why a weight whose input activation is 0 receives no gradient.",
+    "commonMistake": "Forgetting the $g'(\\mathbf{z})$ factor at hidden layers, using $W^{(l+1)}$ instead of its transpose, or multiplying by the wrong layer's activations: $\\partial\\mathcal{L}/\\partial W^{(l)}$ uses $\\mathbf{a}^{(l-1)}$, the **input** to layer $l$.",
+    "example": "Continue the forward-pass example ($\\mathbf{x} = (1, 2)$, $\\mathbf{z}^{(1)} = (-1, 0.5)$, $\\mathbf{a}^{(1)} = (0, 0.5)$, $W^{(2)} = \\begin{bmatrix} 2 & -2 \\end{bmatrix}$, $\\hat y = 0.3775$) with target $y = 1$ and binary cross-entropy loss.\n\n- Output layer: $\\delta^{(2)} = \\hat y - y = -0.6225$; $\\partial\\mathcal{L}/\\partial W^{(2)} = \\delta^{(2)}\\mathbf{a}^{(1)\\top} = \\begin{bmatrix} 0 & -0.3112 \\end{bmatrix}$; $\\partial\\mathcal{L}/\\partial b^{(2)} = -0.6225$.\n- Hidden layer: $W^{(2)\\top}\\delta^{(2)} = (-1.245,\\; 1.245)$ and $\\text{ReLU}'(\\mathbf{z}^{(1)}) = (0, 1)$, so $\\boldsymbol\\delta^{(1)} = (0,\\; 1.245)$.\n- $\\partial\\mathcal{L}/\\partial W^{(1)} = \\boldsymbol\\delta^{(1)}\\mathbf{x}^\\top = \\begin{bmatrix} 0 & 0 \\\\ 1.245 & 2.490 \\end{bmatrix}$: the inactive first hidden unit ($z < 0$) receives no gradient.\n- One step with $\\eta = 0.1$: $W^{(2)} \\leftarrow \\begin{bmatrix} 2 & -2 + 0.0311 \\end{bmatrix} = \\begin{bmatrix} 2 & -1.9689 \\end{bmatrix}$ and $b^{(2)} \\leftarrow 0.5 + 0.0622 = 0.5622$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-softmax-cross-entropy",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "name": "Softmax and categorical cross-entropy",
+    "latex": "p_k = \\operatorname{softmax}(\\mathbf{z})_k = \\frac{e^{z_k}}{\\sum_{j=1}^{K}e^{z_j}}, \\qquad \\mathcal{L} = -\\sum_{k=1}^{K}y_k\\ln p_k = -\\ln p_{\\text{true}}, \\qquad \\frac{\\partial\\mathcal{L}}{\\partial z_k} = p_k - y_k",
+    "meaning": "Softmax turns $K$ real scores (logits) into a probability vector whose entries are positive, sum to 1 and keep the order of the scores. With a one-hot target $\\mathbf{y}$, the cross-entropy is the negative log of the probability assigned to the true class, and its gradient with respect to the logits is simply $\\mathbf{p} - \\mathbf{y}$.\n\n- Softmax is unchanged when the same constant is added to every $z_k$; implementations subtract $\\max_k z_k$ for numerical stability.\n- For $K = 2$ it reduces to the sigmoid of the score difference: $p_1 = \\sigma(z_1 - z_2)$.\n- Multinomial logistic regression = linear scores + softmax + cross-entropy.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{z}$",
+        "meaning": "vector of logits (pre-softmax scores)"
+      },
+      {
+        "symbol": "$K$",
+        "meaning": "number of classes"
+      },
+      {
+        "symbol": "$p_k$",
+        "meaning": "predicted probability of class k"
+      },
+      {
+        "symbol": "$y_k$",
+        "meaning": "one-hot target: 1 for the true class, 0 otherwise"
+      },
+      {
+        "symbol": "$\\ln$",
+        "meaning": "natural logarithm"
+      }
+    ],
+    "whenToUse": "Multi-class output layers and multinomial logistic regression: computing the class probabilities, the loss or the output-layer gradient.",
+    "commonMistake": "Thinking softmax is scale-invariant: multiplying all logits by a constant changes the probabilities (only adding a constant does not). Also, using $\\log_2$ where the natural log is intended.",
+    "example": "Logits $\\mathbf{z} = (2, 1, 0)$ with the first class true.\n\n- $e^{\\mathbf{z}} = (7.389,\\; 2.718,\\; 1)$ with sum $11.107$, so $\\mathbf{p} = (0.6652,\\; 0.2447,\\; 0.0900)$.\n- Loss $= -\\ln 0.6652 = 0.4076$.\n- Gradient $\\mathbf{p} - \\mathbf{y} = (-0.3348,\\; 0.2447,\\; 0.0900)$, which sums to 0.\n- Adding 5 to every logit leaves $\\mathbf{p}$ unchanged.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-kmeans",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "name": "k-means objective and Lloyd's algorithm",
+    "latex": "J = \\sum_{j=1}^{k}\\sum_{\\mathbf{x}_i \\in C_j}\\lVert\\mathbf{x}_i - \\boldsymbol\\mu_j\\rVert_2^2, \\qquad \\text{assign: } \\mathbf{x}_i \\to \\arg\\min_{j}\\lVert\\mathbf{x}_i - \\boldsymbol\\mu_j\\rVert, \\qquad \\text{update: } \\boldsymbol\\mu_j = \\frac{1}{\\lvert C_j\\rvert}\\sum_{\\mathbf{x}_i \\in C_j}\\mathbf{x}_i",
+    "meaning": "k-means minimises $J$, the within-cluster sum of squared Euclidean distances (also called inertia or WCSS). Lloyd's algorithm alternates two steps, each of which can only lower $J$ or leave it unchanged:\n\n1. **Assign** each point to its nearest centroid.\n2. **Update** each centroid to the mean of the points assigned to it.\n\nSo $J$ never increases and the algorithm stops after finitely many iterations, but only at a **local** minimum that depends on the initial centroids (hence multiple restarts or k-means++ initialisation). Each iteration costs $O(nkd)$. k-means favours roughly spherical clusters of similar size and is sensitive to outliers and to feature scaling. The optimal $J$ never increases as $k$ grows (it is 0 when $k = n$ distinct points), so $k$ is chosen by methods such as the elbow of the $J$-versus-$k$ curve, not by minimising $J$.",
+    "variables": [
+      {
+        "symbol": "$k$",
+        "meaning": "number of clusters"
+      },
+      {
+        "symbol": "$C_j$",
+        "meaning": "set of points assigned to cluster j"
+      },
+      {
+        "symbol": "$\\boldsymbol\\mu_j$",
+        "meaning": "centroid (mean) of cluster j"
+      },
+      {
+        "symbol": "$J$",
+        "meaning": "within-cluster sum of squared distances"
+      },
+      {
+        "symbol": "$n, d$",
+        "meaning": "number of points and number of features"
+      }
+    ],
+    "whenToUse": "Tracing k-means iterations on a few points, computing $J$, and conceptual questions about convergence, initialisation and the choice of $k$.",
+    "commonMistake": "Updating a centroid to the median or to a data point (that is k-medians or k-medoids, not k-means), or claiming k-means finds the global optimum. In the standard (batch) algorithm, all points are reassigned first and then all centroids are recomputed.",
+    "example": "1-D points $1, 2, 3, 8, 9, 12$, $k = 2$, initial centroids $\\mu_1 = 1$, $\\mu_2 = 4$.\n\n- Iteration 1: $\\{1, 2\\} \\to \\mu_1$ and $\\{3, 8, 9, 12\\} \\to \\mu_2$ (3 is 2 from $\\mu_1$ but 1 from $\\mu_2$). Update: $\\mu_1 = 1.5$, $\\mu_2 = 8$; $J = 0.5 + 42 = 42.5$.\n- Iteration 2: 3 moves to cluster 1 (distance 1.5 against 5). Update: $\\mu_1 = 2$, $\\mu_2 = 29/3 \\approx 9.667$; $J = 2 + 8.667 = 10.667$.\n- Iteration 3: no assignment changes, so the algorithm has converged.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-kmedoids",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "name": "k-medoids: medoid and clustering cost",
+    "latex": "\\mathbf{m}_j = \\arg\\min_{\\mathbf{m} \\in C_j}\\sum_{\\mathbf{x}_i \\in C_j} d(\\mathbf{x}_i, \\mathbf{m}), \\qquad \\text{Cost} = \\sum_{j=1}^{k}\\sum_{\\mathbf{x}_i \\in C_j} d(\\mathbf{x}_i, \\mathbf{m}_j)",
+    "meaning": "k-medoids (for example the PAM algorithm) changes k-means in two ways. Each cluster centre must be an **actual data point**, the medoid: the member with the smallest total dissimilarity to the rest of its cluster. And $d$ can be any dissimilarity (Manhattan, Euclidean, edit distance or a precomputed matrix), usually not squared.\n\n- Because it minimises a sum of distances rather than squared distances, and centres are data points, k-medoids is **more robust to outliers** than k-means, and its centres are directly interpretable.\n- It is more expensive: one PAM swap iteration costs $O\\big(k(n-k)^2\\big)$.\n- In 1-D with $d(x, m) = \\lvert x - m\\rvert$, the medoid is a median of the cluster (for an odd number of points, exactly the median).",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{m}_j$",
+        "meaning": "medoid of cluster j (a member of the cluster)"
+      },
+      {
+        "symbol": "$d$",
+        "meaning": "dissimilarity (distance) measure"
+      },
+      {
+        "symbol": "$C_j$",
+        "meaning": "set of points in cluster j"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of clusters"
+      }
+    ],
+    "whenToUse": "Finding the medoid of a small cluster, computing the k-medoids cost, and contrasting k-medoids with k-means (robustness to outliers, arbitrary distances, interpretability of centres, cost).",
+    "commonMistake": "Reporting the mean (which may not even be a data point) as the medoid, or using squared distances when the question defines the cost with plain distances.",
+    "example": "Cluster $\\{1, 2, 4, 5, 20\\}$ with $d(x, m) = \\lvert x - m\\rvert$.\n\n- Total distance for each candidate centre: $m = 1$: 27; $m = 2$: 24; $m = 4$: 22; $m = 5$: 23; $m = 20$: 68.\n- The medoid is $4$ (cost 22), the median. The mean, $6.4$, is dragged toward the outlier 20 and is not a data point.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-linkage",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "name": "Hierarchical clustering: linkage criteria",
+    "latex": "d_{\\text{single}}(A, B) = \\min_{\\mathbf{a} \\in A,\\, \\mathbf{b} \\in B} d(\\mathbf{a}, \\mathbf{b}), \\quad d_{\\text{complete}}(A, B) = \\max_{\\mathbf{a} \\in A,\\, \\mathbf{b} \\in B} d(\\mathbf{a}, \\mathbf{b}), \\quad d_{\\text{average}}(A, B) = \\frac{1}{\\lvert A\\rvert\\,\\lvert B\\rvert}\\sum_{\\mathbf{a} \\in A}\\sum_{\\mathbf{b} \\in B} d(\\mathbf{a}, \\mathbf{b})",
+    "meaning": "Agglomerative (bottom-up) clustering starts with $n$ singleton clusters and repeatedly merges the two closest clusters, where the linkage defines \"closest\"; after $n - 1$ merges a single cluster remains. The merge heights form a **dendrogram**, and cutting it at a chosen height gives a flat clustering. Divisive (top-down) clustering instead starts from one cluster and splits recursively.\n\n- **Single linkage** (closest pair): can chain through sequences of close points and finds elongated clusters; its merges correspond to the edges of a minimum spanning tree.\n- **Complete linkage** (farthest pair): favours compact clusters of similar diameter.\n- **Average linkage** (UPGMA, mean over all pairs): a compromise between the two.\n\nA straightforward implementation needs the $O(n^2)$ distance matrix and $O(n^3)$ time.",
+    "variables": [
+      {
+        "symbol": "$A, B$",
+        "meaning": "two current clusters"
+      },
+      {
+        "symbol": "$d(\\mathbf{a}, \\mathbf{b})$",
+        "meaning": "distance between individual points"
+      },
+      {
+        "symbol": "$\\lvert A\\rvert$",
+        "meaning": "number of points in cluster A"
+      }
+    ],
+    "whenToUse": "Tracing agglomerative clustering on a small distance matrix or a few 1-D points, reading merge heights off a dendrogram, and comparing how single and complete linkage behave.",
+    "commonMistake": "Updating the cluster-distance matrix with the wrong rule after a merge (e.g. taking the minimum during complete linkage), or assuming different linkages give the same dendrogram: the merge order and heights generally differ.",
+    "example": "Points $0, 2, 5, 9$ on a line.\n\n- Single linkage: merge $\\{0\\}, \\{2\\}$ at height 2; then $d(\\{0,2\\}, \\{5\\}) = 3 < d(\\{5\\}, \\{9\\}) = 4$, so merge into $\\{0, 2, 5\\}$ at 3; finally merge with $\\{9\\}$ at 4.\n- Complete linkage: merge $\\{0\\}, \\{2\\}$ at 2; then $d(\\{0,2\\}, \\{5\\}) = 5 > d(\\{5\\}, \\{9\\}) = 4$, so merge $\\{5, 9\\}$ at 4; finally merge the two clusters at $d(\\{0,2\\}, \\{5,9\\}) = 9$.\n- Average linkage between $\\{0, 2\\}$ and $\\{5, 9\\}$: $(5 + 9 + 3 + 7)/4 = 6$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-pca-eigen",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "name": "PCA: principal components from the covariance matrix",
+    "latex": "S = \\frac{1}{n-1}\\sum_{i=1}^{n}(\\mathbf{x}_i - \\bar{\\mathbf{x}})(\\mathbf{x}_i - \\bar{\\mathbf{x}})^\\top, \\qquad S\\mathbf{v}_j = \\lambda_j\\mathbf{v}_j, \\;\\; \\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge \\lambda_d \\ge 0, \\qquad z_{ij} = \\mathbf{v}_j^\\top(\\mathbf{x}_i - \\bar{\\mathbf{x}})",
+    "meaning": "The first principal component is the unit vector $\\mathbf{v}_1$ that maximises the variance of the projected data, $\\mathbf{v}^\\top S\\mathbf{v}$ subject to $\\lVert\\mathbf{v}\\rVert = 1$. The maximiser is the eigenvector of $S$ with the largest eigenvalue, and the variance along it equals $\\lambda_1$. Each subsequent component maximises the variance subject to being orthogonal to the previous ones. Because $S$ is symmetric positive semidefinite, its eigenvalues are real and $\\ge 0$ and its eigenvectors can be chosen orthonormal.\n\n- The scores $z_{ij}$ are the coordinates of the centred data in the new basis; scores on different components are uncorrelated.\n- PCA is unsupervised and linear. Centre the data first; standardise the features (PCA on the correlation matrix) when they are measured on different scales.\n- Using divisor $n$ instead of $n - 1$ scales every eigenvalue by the same factor and leaves the directions unchanged.",
+    "variables": [
+      {
+        "symbol": "$\\mathbf{x}_i$",
+        "meaning": "data point i, a vector with d features"
+      },
+      {
+        "symbol": "$\\bar{\\mathbf{x}}$",
+        "meaning": "sample mean vector"
+      },
+      {
+        "symbol": "$S$",
+        "meaning": "d × d sample covariance matrix"
+      },
+      {
+        "symbol": "$\\lambda_j$",
+        "meaning": "j-th largest eigenvalue of S = variance along component j"
+      },
+      {
+        "symbol": "$\\mathbf{v}_j$",
+        "meaning": "unit eigenvector of S = direction of principal component j"
+      },
+      {
+        "symbol": "$z_{ij}$",
+        "meaning": "score of point i on component j"
+      }
+    ],
+    "whenToUse": "Finding principal directions and variances from a given covariance matrix or a small data set, projecting a point onto a component, and conceptual questions on orthogonality, centring and scaling.",
+    "commonMistake": "Forgetting to centre (computing $\\mathbf{v}^\\top\\mathbf{x}$ instead of $\\mathbf{v}^\\top(\\mathbf{x} - \\bar{\\mathbf{x}})$), forgetting to normalise the eigenvector to unit length (the scores come out scaled), or taking the eigenvector of the **smallest** eigenvalue as the first component.",
+    "example": "$S = \\begin{bmatrix} 5 & 2 \\\\ 2 & 2 \\end{bmatrix}$.\n\n- Characteristic equation $\\lambda^2 - 7\\lambda + 6 = 0$, so $\\lambda_1 = 6$ and $\\lambda_2 = 1$.\n- $(S - 6I)\\mathbf{v} = \\mathbf{0}$ gives $-v_1 + 2v_2 = 0$, so $\\mathbf{v}_1 = (2, 1)/\\sqrt5$; likewise $\\mathbf{v}_2 = (-1, 2)/\\sqrt5$ (orthogonal to $\\mathbf{v}_1$ ✓).\n- A point with $\\mathbf{x} - \\bar{\\mathbf{x}} = (3, 1)$ has scores $z_1 = (6 + 1)/\\sqrt5 = 3.130$ and $z_2 = (-3 + 2)/\\sqrt5 = -0.447$. Check: $z_1\\mathbf{v}_1 + z_2\\mathbf{v}_2 = \\frac{7}{5}(2, 1) - \\frac{1}{5}(-1, 2) = (3, 1)$ ✓.\n- The first component carries variance 6, i.e. $6/7 \\approx 85.7\\%$ of the total variance $\\operatorname{tr}(S) = 7$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-pca-explained-variance",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "name": "PCA: proportion of variance explained and reconstruction error",
+    "latex": "\\text{PVE}_j = \\frac{\\lambda_j}{\\sum_{i=1}^{d}\\lambda_i}, \\qquad \\text{cumulative PVE}(k) = \\frac{\\sum_{j=1}^{k}\\lambda_j}{\\sum_{i=1}^{d}\\lambda_i}, \\qquad \\frac{1}{n-1}\\sum_{i=1}^{n}\\lVert\\mathbf{x}_i - \\hat{\\mathbf{x}}_i\\rVert^2 = \\sum_{j=k+1}^{d}\\lambda_j",
+    "meaning": "The total variance of the data is $\\operatorname{tr}(S) = \\sum_i \\lambda_i$, the sum of the individual feature variances. The **proportion of variance explained** (PVE) by component $j$ is its eigenvalue divided by this total. Keeping the top $k$ components and reconstructing $\\hat{\\mathbf{x}}_i = \\bar{\\mathbf{x}} + \\sum_{j=1}^{k} z_{ij}\\mathbf{v}_j$ loses exactly the variance of the discarded components, and no other rank-$k$ linear projection has a smaller squared reconstruction error.\n\n- Choose $k$ as the smallest number of components reaching a target cumulative PVE (e.g. 90% or 95%), or at the elbow of the scree plot.\n- At most $\\min(n - 1, d)$ eigenvalues are nonzero.",
+    "variables": [
+      {
+        "symbol": "$\\lambda_j$",
+        "meaning": "eigenvalues of the sample covariance matrix S, in decreasing order"
+      },
+      {
+        "symbol": "$d$",
+        "meaning": "original number of features"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of components kept"
+      },
+      {
+        "symbol": "$\\hat{\\mathbf{x}}_i$",
+        "meaning": "reconstruction of x_i from the top k components"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "number of data points"
+      }
+    ],
+    "whenToUse": "Deciding how many components to keep, computing the fraction of variance retained or lost, and computing the reconstruction error from the eigenvalues.",
+    "commonMistake": "Dividing by the sum of the **retained** eigenvalues instead of all of them, or treating the singular values of the data matrix as variances (they must be squared and divided by $n - 1$). The reconstruction identity uses the same divisor as $S$ ($n - 1$ here).",
+    "example": "Eigenvalues of $S$: $6, 3, 0.6, 0.4$ (total 10).\n\n- PVE: 60%, 30%, 6%, 4%; cumulative: 60%, **90%**, 96%, 100%.\n- For a 90% target, keep $k = 2$ components (4-D data reduced to 2-D).\n- Reconstruction error $\\frac{1}{n-1}\\sum_i\\lVert\\mathbf{x}_i - \\hat{\\mathbf{x}}_i\\rVert^2 = 0.6 + 0.4 = 1.0$, i.e. the 10% of the total variance that is discarded.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-ml-pca-svd",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "name": "PCA via the SVD of the centred data matrix",
+    "latex": "X_c = U\\Sigma V^\\top, \\qquad \\text{principal directions} = \\text{columns of } V, \\qquad Z = X_c V = U\\Sigma, \\qquad \\lambda_j = \\frac{\\sigma_j^2}{n-1}",
+    "meaning": "Let $X_c$ be the $n \\times d$ data matrix with every column centred (column means subtracted). Then\n\n$$\nS = \\frac{1}{n-1}X_c^\\top X_c = V\\,\\frac{\\Sigma^\\top\\Sigma}{n-1}\\,V^\\top,\n$$\n\nso the right singular vectors of $X_c$ are the eigenvectors of $S$ (the principal directions) and the squared singular values divided by $n - 1$ are its eigenvalues.\n\n- Computing PCA through the SVD avoids forming $X_c^\\top X_c$, which is numerically better.\n- Keeping the top $k$ singular triplets gives the best rank-$k$ approximation $X_c \\approx U_k\\Sigma_kV_k^\\top$ in the least-squares sense (Eckart–Young theorem).\n- The proportion of variance explained is $\\sigma_j^2/\\sum_i \\sigma_i^2$.",
+    "variables": [
+      {
+        "symbol": "$X_c$",
+        "meaning": "n × d centred data matrix (rows are observations)"
+      },
+      {
+        "symbol": "$U$",
+        "meaning": "matrix of left singular vectors"
+      },
+      {
+        "symbol": "$\\Sigma$",
+        "meaning": "diagonal matrix of singular values σ₁ ≥ σ₂ ≥ … ≥ 0"
+      },
+      {
+        "symbol": "$V$",
+        "meaning": "d × d matrix of right singular vectors = principal directions"
+      },
+      {
+        "symbol": "$Z$",
+        "meaning": "matrix of principal-component scores"
+      },
+      {
+        "symbol": "$\\sigma_j$",
+        "meaning": "j-th singular value of the centred data matrix"
+      }
+    ],
+    "whenToUse": "Questions that give an SVD (or just the singular values) of a data matrix and ask for the principal directions, their variances, explained-variance ratios or the scores.",
+    "commonMistake": "Applying the SVD to uncentred data (the first \"component\" then largely points toward the mean), or using $\\sigma_j$ instead of $\\sigma_j^2$ in the explained-variance ratio. Singular vectors are determined only up to sign, so a sign-flipped direction or score vector is equally correct.",
+    "example": "$X_c = \\begin{bmatrix} 3 & 0 \\\\ -3 & 0 \\\\ 0 & 1 \\\\ 0 & -1 \\end{bmatrix}$ with $n = 4$; both column means are 0.\n\n- $X_c^\\top X_c = \\begin{bmatrix} 18 & 0 \\\\ 0 & 2 \\end{bmatrix}$, so $\\sigma_1 = \\sqrt{18} \\approx 4.243$, $\\sigma_2 = \\sqrt2 \\approx 1.414$ and $V = I$.\n- Eigenvalues of $S$: $18/3 = 6$ and $2/3 \\approx 0.667$. The first principal direction is the $x_1$-axis and it explains $18/20 = 90\\%$ of the variance.\n- Scores on the first component: $X_c\\mathbf{v}_1 = (3, -3, 0, 0)$.",
+    "conceptIds": []
+  }
+]

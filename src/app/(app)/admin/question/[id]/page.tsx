@@ -69,7 +69,7 @@ export default async function AdminQuestionPage({ params }: Params) {
           </Callout>
         ) : null}
 
-        <Card>
+        <Card className="relative overflow-hidden">
           <CardHeader title="Question" />
           <CardBody className="space-y-3">
             <ServerRichHtml html={q.html.stem} />
@@ -91,7 +91,7 @@ export default async function AdminQuestionPage({ params }: Params) {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="relative overflow-hidden">
           <CardHeader title="Solution" description="Quick, detailed steps and teaching mode as stored." />
           <CardBody className="space-y-4">
             <div>
@@ -135,10 +135,10 @@ export default async function AdminQuestionPage({ params }: Params) {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="relative overflow-hidden">
           <CardHeader title="Verification record" />
           <CardBody>
-            <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[12rem_1fr]">
+            <dl className="grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-[12rem_minmax(0,1fr)]">
               <dt className="text-fg-3">Answer verification</dt>
               <dd>
                 {VERIFICATION_LABEL[av.status]} · {av.agreesWithKey ? "agrees with the key" : "DISAGREES with the key"}
@@ -186,7 +186,9 @@ export default async function AdminQuestionPage({ params }: Params) {
                 <>
                   <dt className="text-fg-3">Check code</dt>
                   <dd className="min-w-0">
-                    <pre className="max-h-80 overflow-auto rounded-lg border border-border bg-surface-2 p-3 font-mono text-xs">{av.checkCode}</pre>
+                    <pre tabIndex={0} role="region" aria-label="Check code" className="max-h-80 overflow-auto rounded-lg border border-border bg-surface-2 p-3 font-mono text-xs">
+                      {av.checkCode}
+                    </pre>
                   </dd>
                 </>
               ) : null}

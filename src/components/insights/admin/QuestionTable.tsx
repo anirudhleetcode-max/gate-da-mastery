@@ -90,7 +90,7 @@ export function QuestionTable({
 
   return (
     <div>
-      <Form action="/admin" className="grid grid-cols-2 gap-3 border-b border-border px-4 py-3 sm:grid-cols-3 sm:px-5 lg:grid-cols-7">
+      <Form action="/admin" scroll={false} className="grid grid-cols-2 gap-3 border-b border-border px-4 py-3 sm:grid-cols-3 sm:px-5 lg:grid-cols-7">
         <Select label="Origin" name="origin" id="f-origin" defaultValue={filters.origin ?? ""}>
           <option value="">All origins</option>
           {ORIGINS.map((o) => (
@@ -191,7 +191,7 @@ export function QuestionTable({
                       <span className="ml-2 text-xs text-fg-3">
                         {r.type} · {r.marks}m
                       </span>
-                      <span className="mt-0.5 line-clamp-2 block text-xs text-fg-3">{r.preview}</span>
+                      <span className="mt-0.5 line-clamp-2 text-xs text-fg-3">{r.preview}</span>
                     </th>
                     <td className={td}>
                       <OriginBadge origin={r.origin} />
@@ -204,12 +204,13 @@ export function QuestionTable({
                       <span className="flex flex-wrap gap-1">
                         <VerificationBadge status={r.verification} />
                         {r.reviewStatus ? <ReviewBadge status={r.reviewStatus} /> : null}
-                        {r.flagged ? <span className="text-xs font-medium text-warning">Dispute record</span> : null}
+                        {r.dispute ? <span className="text-xs font-medium text-warning">Resolved dispute</span> : null}
+                        {r.disagrees ? <span className="text-xs font-medium text-danger">Disagrees with key</span> : null}
                       </span>
                       <span className="mt-1 block text-xs text-fg-3">{r.servable ? "Visible to students" : "Hidden by the availability gate"}</span>
                     </td>
-                    <td className={cn(td, "whitespace-nowrap")}>
-                      <span className="flex flex-col gap-1">
+                    <td className={cn(td, "min-w-40")}>
+                      <span className="flex flex-wrap gap-x-3 gap-y-1">
                         <Link href={`/admin/question/${encodeURIComponent(r.id)}`} className="inline-flex items-center gap-1 font-medium text-accent-text hover:underline">
                           <Eye aria-hidden className="h-3.5 w-3.5" /> Preview<span className="sr-only"> {r.id}</span>
                         </Link>

@@ -1,0 +1,654 @@
+[
+  {
+    "id": "f-pdsa-loop-iteration-counts",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "name": "Loop iteration counts: range(), slices and halving loops",
+    "latex": "L = \\bigl|\\texttt{range}(a,\\,b,\\,k)\\bigr| = \\max\\!\\left(0,\\ \\left\\lceil \\frac{b-a}{k} \\right\\rceil\\right)\\ (k \\ne 0), \\qquad \\text{last value} = a + (L-1)k, \\qquad \\text{halving loop } (n \\ge 1)\\text{: } \\lfloor \\log_2 n \\rfloor + 1 \\text{ iterations}",
+    "meaning": "`range(a, b, k)` produces $a, a+k, a+2k, \\dots$ and stops **before** reaching $b$: the stop value is exclusive. For $k>0$ it continues while the value is $< b$, for $k<0$ while it is $> b$. Its length $L$ is given by the formula, and the same expression works for either sign of $k$. `range(n)` has exactly $n$ elements, $0, 1, \\dots, n-1$.\n\nA slice `s[i:j:k]` with $k>0$ selects the indices of `range(i, j, k)` after two adjustments: a negative index $i$ means $i + \\text{len}(s)$, and out-of-range bounds are clipped to the sequence, so slicing never raises `IndexError`. Omitted bounds default to the two ends (the ends swap when $k<0$, so `s[::-1]` is the reversed sequence).\n\nThree other counts come up constantly when tracing code:\n\n- Triangular nested loop: `for i in range(n): for j in range(i, n)` runs the inner body $\\sum_{i=0}^{n-1}(n-i) = \\frac{n(n+1)}{2}$ times.\n- Halving loop: `while n > 0: n //= 2` runs $\\lfloor \\log_2 n \\rfloor + 1$ times for an integer $n \\ge 1$, which is the number of bits of $n$.\n- Doubling loop: `i = 1; while i < n: i *= 2` runs $\\lceil \\log_2 n \\rceil$ times for $n \\ge 1$.",
+    "variables": [
+      {
+        "symbol": "$a$",
+        "meaning": "start value (included)"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "stop value (excluded)"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "step, a non-zero integer"
+      },
+      {
+        "symbol": "$L$",
+        "meaning": "number of values produced"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "the integer being halved (or the loop bound)"
+      }
+    ],
+    "whenToUse": "Program-tracing questions that ask how many times a statement executes, the final value of a counter or accumulator, or which elements a `range` or slice produces.",
+    "commonMistake": "Counting the stop value (off-by-one): `range(1, 10)` has 9 elements, not 10. Using the floor instead of the ceiling: `range(0, 10, 3)` is 0, 3, 6, 9, which is $\\lceil 10/3 \\rceil = 4$ values, not 3. Forgetting that a negative step needs start > stop: `range(0, 5, -1)` is empty.",
+    "example": "`range(3, 20, 4)`: $L = \\lceil 17/4 \\rceil = 5$ values and the last is $3 + 4 \\cdot 4 = 19$, so `sum(range(3, 20, 4))` $= 3 + 7 + 11 + 15 + 19 = 55$.\n\nSlices of `s = \"algorithms\"` (length 10): `s[1:-1:3]` uses the indices of `range(1, 9, 3)`, that is 1, 4, 7, giving `\"lrh\"`. `s[::-2]` uses indices 9, 7, 5, 3, 1, giving `\"shiol\"`.\n\nHalving loop with $n = 100$: $n$ takes the values 100, 50, 25, 12, 6, 3, 1 and then becomes 0, so the body runs $\\lfloor \\log_2 100 \\rfloor + 1 = 6 + 1 = 7$ times.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-python-floor-div-mod",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "name": "Python floor division and modulo (with other operator facts)",
+    "latex": "a \\mathbin{/\\!/} b = \\left\\lfloor \\frac{a}{b} \\right\\rfloor, \\qquad a \\,\\%\\, b = a - b\\left\\lfloor \\frac{a}{b} \\right\\rfloor, \\qquad a = b\\,(a \\mathbin{/\\!/} b) + (a \\,\\%\\, b)",
+    "meaning": "In Python 3, `//` is **floor** division: it rounds the true quotient **down** (towards $-\\infty$), not towards zero. `%` is defined to match, so the identity `a == b * (a // b) + a % b` always holds and the remainder takes the **sign of the divisor** $b$: $0 \\le$ `a % b` $< b$ for $b > 0$, and $b <$ `a % b` $\\le 0$ for $b < 0$. `divmod(a, b)` returns the pair `(a // b, a % b)`, and $b = 0$ raises `ZeroDivisionError`.\n\nRelated Python 3 facts that decide tracing questions:\n\n- `/` always returns a `float` (`6 / 3` is `2.0`). `int(x)` truncates toward zero, so `int(-7 / 2)` is `-3` while `-7 // 2` is `-4`.\n- `**` is right-associative and binds tighter than unary minus: `2 ** 3 ** 2` is $2^9 = 512$ and `-2 ** 2` is $-4$.\n- `round()` rounds exact halves to the nearest **even** integer: `round(2.5)` is `2` and `round(3.5)` is `4`.\n- `//` and `%` with a float operand return floats: `7.5 // 2` is `3.0`.",
+    "variables": [
+      {
+        "symbol": "$a$",
+        "meaning": "dividend (integer)"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "divisor, non-zero"
+      },
+      {
+        "symbol": "$\\lfloor x \\rfloor$",
+        "meaning": "floor: the greatest integer less than or equal to x"
+      }
+    ],
+    "whenToUse": "Tracing code that uses `//`, `%` or `divmod` with negative numbers: digit-extraction loops, hash functions `k % m`, circular-buffer indices and parity tests. When both operands are non-negative, floor and truncation agree and the school rules apply.",
+    "commonMistake": "Carrying over the C/Java rule (truncate toward zero; the remainder has the sign of the dividend). In Python `-7 // 2` is `-4`, not `-3`, and `-7 % 2` is `1`, not `-1`. A consequence: `x % 2 == 1` correctly detects negative odd numbers in Python (`-3 % 2` is `1`), but not in C.",
+    "example": "$a = -17$, $b = 5$: $-17/5 = -3.4$, so `-17 // 5` $= \\lfloor -3.4 \\rfloor = -4$ and `-17 % 5` $= -17 - 5 \\cdot (-4) = 3$. Check: $5 \\cdot (-4) + 3 = -17$.\n\n$a = 17$, $b = -5$: $17/(-5) = -3.4$, so `17 // -5` $= -4$ and `17 % -5` $= 17 - (-5)(-4) = -3$.\n\nBy contrast, `int(-17 / 5)` $= -3$ (truncation toward zero).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-recursive-call-count",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "name": "Counting recursive calls and unrolling subtract-and-conquer recurrences",
+    "latex": "C(n) = 1 + \\sum_{\\text{calls made by } f(n)} C(\\text{argument}), \\qquad \\text{e.g. } C(n) = C(n-1) + C(n-2) + 1,\\ \\ C(0) = C(1) = 1 \\;\\Rightarrow\\; C(n) = 2F_{n+1} - 1",
+    "meaning": "The number of calls $C(n)$ made while evaluating $f(n)$, counting the top-level call, satisfies a recurrence read directly from the code: 1 for the call itself plus the calls made by each recursive invocation in its body. A base case contributes $C = 1$. For the naive Fibonacci function below, with $F_1 = F_2 = 1$, the solution is $C(n) = 2F_{n+1} - 1$, which grows like $\\varphi^n$ (exponential).\n\n```python\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n```\n\nThe same unrolling solves the other *subtract-and-conquer* recurrences that recursive code produces ($c > 0$ a constant):\n\n| Recurrence | Closed form | Order |\n| --- | --- | --- |\n| $T(n) = T(n-1) + c$ | $T(0) + cn$ | $\\Theta(n)$ |\n| $T(n) = T(n-1) + n$ | $T(0) + \\frac{n(n+1)}{2}$ | $\\Theta(n^2)$ |\n| $T(n) = 2T(n-1) + 1$, $T(0) = 0$ | $2^n - 1$ | $\\Theta(2^n)$ |\n| $T(n) = T(n-1) + T(n-2) + 1$, $T(0) = T(1) = 1$ | $2F_{n+1} - 1$ | $\\Theta(\\varphi^n)$ |\n\nThe maximum **recursion depth** (frames alive at the same time) is a different quantity: for `fib(n)` it is $n$ frames for $n \\ge 1$, along the chain $n, n-1, \\dots, 1$.",
+    "variables": [
+      {
+        "symbol": "$C(n)$",
+        "meaning": "total number of calls made to evaluate f(n), including the first one"
+      },
+      {
+        "symbol": "$F_k$",
+        "meaning": "k-th Fibonacci number with F₁ = F₂ = 1 (F₀ = 0)"
+      },
+      {
+        "symbol": "$T(n)$",
+        "meaning": "running time or operation count on input n"
+      },
+      {
+        "symbol": "$\\varphi$",
+        "meaning": "golden ratio (1 + √5)/2 ≈ 1.618"
+      }
+    ],
+    "whenToUse": "“How many times is the function called?”, “what does this recursive function return?” and “what is the complexity of this recursive code?” when each call reduces the argument by a constant. When the argument is divided (e.g. $n/2$), use the master theorem instead.",
+    "commonMistake": "Forgetting the top-level call or the base-case calls (the leaves of the recursion tree are calls too), and confusing the **number of calls** (exponential for `fib`) with the **recursion depth** (linear). Another trap is Fibonacci indexing: say which convention ($F_0 = 0$, $F_1 = 1$) you use.",
+    "example": "Calls made by `fib(6)`: $C(0) = C(1) = 1$, $C(2) = 1 + 1 + 1 = 3$, $C(3) = 3 + 1 + 1 = 5$, $C(4) = 5 + 3 + 1 = 9$, $C(5) = 9 + 5 + 1 = 15$, $C(6) = 15 + 9 + 1 = 25$. Closed form: $F_7 = 13$, so $2 \\cdot 13 - 1 = 25$ calls, while `fib(6)` returns $8$.\n\nTower of Hanoi with $n = 10$ discs, $T(n) = 2T(n-1) + 1$: $T(10) = 2^{10} - 1 = 1023$ moves.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-catalan-numbers",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Catalan numbers: stack permutations, binary tree shapes and BSTs",
+    "latex": "C_n = \\frac{1}{n+1}\\binom{2n}{n} = \\binom{2n}{n} - \\binom{2n}{n+1} = \\sum_{i=0}^{n-1} C_i\\,C_{n-1-i}, \\qquad C_0 = 1",
+    "meaning": "The Catalan numbers $C_0, C_1, \\dots, C_7$ are $1, 1, 2, 5, 14, 42, 132, 429$. They count several data-structure objects of size $n$:\n\n- **Binary tree shapes**: structurally different binary trees with $n$ nodes (left and right children distinguished). The recurrence puts $i$ nodes in the left subtree and $n-1-i$ in the right.\n- **BSTs**: different binary search trees on $n$ distinct keys (the shape fixes where every key goes).\n- **Stack permutations**: output orders obtainable when $1, 2, \\dots, n$ are pushed in this order and pops may be interleaved with the pushes; equivalently, valid sequences of $n$ pushes and $n$ pops (balanced parentheses).\n\nAn output order $p_1 p_2 \\dots p_n$ is **impossible** for a stack exactly when it has positions $i < j < k$ with $p_j < p_k < p_i$ (a ‘3-1-2’ pattern). When $p_i$ is popped, the smaller values $p_j$ and $p_k$ have already been pushed and are still in the stack with the larger one, $p_k$, on top, so $p_j$ cannot come out before $p_k$.\n\nWith $n$ **distinct labelled** nodes and no ordering constraint, the number of binary trees is $n!\\,C_n$.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of nodes, keys or pushed items"
+      },
+      {
+        "symbol": "$C_n$",
+        "meaning": "n-th Catalan number"
+      }
+    ],
+    "whenToUse": "“How many distinct BSTs (or binary tree shapes) with $n$ nodes?”, “how many output sequences can a stack produce?”, “is this output order possible with one stack?”, and any count that satisfies the split recurrence $\\sum_i C_i C_{n-1-i}$.",
+    "commonMistake": "Answering $n!$ for the number of BSTs on $n$ keys: $n!$ counts insertion orders, and different orders can build the same BST (for keys 1, 2, 3, the orders 2, 1, 3 and 2, 3, 1 give the same tree). Also mixing up the unlabelled count $C_n$ with the labelled count $n!\\,C_n$.",
+    "example": "$n = 4$: $C_4 = \\frac{1}{5}\\binom{8}{4} = \\frac{70}{5} = 14$, so there are 14 BSTs on the keys $\\{1, 2, 3, 4\\}$ and 14 possible output orders for a stack fed 1, 2, 3, 4. Via the recurrence: $C_4 = C_0C_3 + C_1C_2 + C_2C_1 + C_3C_0 = 5 + 2 + 2 + 5 = 14$.\n\nWith input 1, 2, 3 the output 3, 1, 2 is impossible: after 3 is popped, the stack holds 1 (bottom) and 2 (top), so 2 must be output before 1. Of the $3! = 6$ orders, exactly $C_3 = 5$ are possible.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-circular-queue",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Circular array queue: index arithmetic, size, full and empty tests",
+    "latex": "\\begin{aligned} &\\text{enqueue: } Q[\\mathit{rear}] \\leftarrow x,\\ \\ \\mathit{rear} \\leftarrow (\\mathit{rear} + 1) \\bmod n \\\\ &\\text{dequeue: } x \\leftarrow Q[\\mathit{front}],\\ \\ \\mathit{front} \\leftarrow (\\mathit{front} + 1) \\bmod n \\\\ &\\text{size} = (\\mathit{rear} - \\mathit{front} + n) \\bmod n, \\quad \\text{empty} \\iff \\mathit{front} = \\mathit{rear}, \\quad \\text{full} \\iff (\\mathit{rear} + 1) \\bmod n = \\mathit{front} \\end{aligned}",
+    "meaning": "Convention used here (0-indexed array $Q[0..n-1]$): `front` is the index of the **first** element and `rear` is the index where the **next** element will be written, one past the last element. Both indices only move forward and wrap around modulo $n$, so every enqueue and dequeue is $\\Theta(1)$.\n\nWith only these two indices, ‘empty’ and ‘completely full’ would both look like `front == rear`. The standard fix keeps **one slot unused**, so the queue is full with $n - 1$ elements. The alternative is to store an explicit element count; then the capacity is $n$.\n\nOther queue facts:\n\n- A queue built from two stacks has amortized $\\Theta(1)$ cost per operation, since each element is pushed at most twice and popped at most twice.\n- Python's `collections.deque` appends and pops at both ends in $\\Theta(1)$, whereas `list.pop(0)` is $\\Theta(n)$.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "array length (capacity n − 1 with the one-empty-slot convention)"
+      },
+      {
+        "symbol": "$\\mathit{front}$",
+        "meaning": "index of the first (oldest) element"
+      },
+      {
+        "symbol": "$\\mathit{rear}$",
+        "meaning": "index of the next free slot, one past the last element"
+      }
+    ],
+    "whenToUse": "Questions that give `front` and `rear` and ask for the number of elements, the indices after a sequence of operations, or the full/empty condition; ring buffers; BFS queues implemented on arrays.",
+    "commonMistake": "Mixing conventions. Some texts let `rear` point **at** the last element; then a non-empty queue holds $((\\mathit{rear} - \\mathit{front} + n) \\bmod n) + 1$ elements and emptiness needs a separate test. Read the code's convention first. Also dropping the $+n$: in C and Java, `%` of a negative number is negative (in Python, `(rear - front) % n` is already non-negative).",
+    "example": "$n = 8$, `front = 6`, `rear = 3`: size $= (3 - 6 + 8) \\bmod 8 = 5$ (the elements at indices 6, 7, 0, 1, 2). It is not full, since $(3 + 1) \\bmod 8 = 4 \\ne 6$.\n\nTwo more enqueues write $Q[3]$ and $Q[4]$ and leave `rear = 5`. Now $(5 + 1) \\bmod 8 = 6 =$ `front`, so the queue is full with $(5 - 6 + 8) \\bmod 8 = 7 = n - 1$ elements. A dequeue then returns $Q[6]$ and sets `front = 7`.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-linked-list-vs-array",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Linked list vs dynamic array (Python list): operation costs",
+    "latex": "\\begin{array}{lcc} \\text{operation} & \\text{singly linked list} & \\text{dynamic array} \\\\ \\hline \\text{access the } k\\text{-th element} & \\Theta(k) & \\Theta(1) \\\\ \\text{insert/delete at the front} & \\Theta(1) & \\Theta(n) \\\\ \\text{append at the end} & \\Theta(n)\\ \\text{or}\\ \\Theta(1)^{*} & \\Theta(1)\\ \\text{amortized} \\\\ \\text{delete the last element} & \\Theta(n) & \\Theta(1) \\\\ \\text{insert at a found position} & \\Theta(1) & \\Theta(n-k) \\\\ \\text{search for a value} & \\Theta(n) & \\Theta(n) \\end{array}",
+    "meaning": "A singly linked list stores each element in a node with a `next` pointer, and only the head is directly reachable, so reaching the node at 0-indexed position $k$ takes exactly $k$ pointer hops. Once you hold a pointer to a node, splicing a new node in after it is $\\Theta(1)$: only pointers change and nothing shifts.\n\nA dynamic array (a Python `list`) stores elements contiguously, so indexing is $\\Theta(1)$, but inserting at index $k$ shifts the $n - k$ elements from index $k$ onward (deleting shifts the $n - k - 1$ after it). Appending is amortized $\\Theta(1)$ because the capacity grows geometrically, so the occasional $\\Theta(n)$ copy is spread over many cheap appends.\n\nNotes on the linked-list column:\n\n- $^{*}$ A **tail pointer** makes appending $\\Theta(1)$, but not deleting the last node: that needs the second-to-last node, which a singly linked list reaches only by walking from the head.\n- Deleting a node given only a pointer to it needs its predecessor: $\\Theta(n)$ in a singly linked list, $\\Theta(1)$ in a **doubly** linked list.\n- Binary search gains nothing on a linked list: reaching the middle alone costs $\\Theta(n)$ hops.\n- In Python, `x in lst` is a $\\Theta(n)$ scan of a list, while `x in s` for a `set` or `dict` is $\\Theta(1)$ on average (hashing).",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "0-indexed position of the element or of the insertion"
+      }
+    ],
+    "whenToUse": "Choosing a structure for a given mix of operations, tracing pointer code (insertion, deletion, reversal), and complexity questions such as ‘cost of deleting the last node’ or ‘cost of binary search on a linked list’.",
+    "commonMistake": "Assuming a tail pointer makes **every** end operation $\\Theta(1)$ in a singly linked list (deleting the tail is still $\\Theta(n)$). Losing the rest of the list in pointer code: set `new.next = cur.next` **before** `cur.next = new`, and when reversing, save `nxt = cur.next` before overwriting `cur.next`.",
+    "example": "A singly linked list of $n = 1000$ nodes (positions 0 to 999) with head and tail pointers:\n\n- Reading position 250 takes 250 hops from the head.\n- Appending a node is $\\Theta(1)$ through the tail pointer.\n- Deleting the last node: we must reach position 998 to set its `next` to `None`, which takes 998 hops, and then move the tail pointer there.\n- Reversing in place redirects each of the 1000 `next` pointers once: $\\Theta(n)$ time and $\\Theta(1)$ extra space.\n\nIn a Python list of the same size, `insert(0, x)` shifts all 1000 existing elements, while `append(x)` is amortized $\\Theta(1)$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-binary-tree-height-bounds",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Binary tree node counts, height bounds and BST operation cost",
+    "latex": "\\text{nodes at level } i \\le 2^{i}, \\qquad h + 1 \\;\\le\\; n \\;\\le\\; 2^{h+1} - 1, \\qquad \\lfloor \\log_2 n \\rfloor \\;\\le\\; h \\;\\le\\; n - 1, \\qquad T_{\\text{BST search/insert/delete}} = \\Theta(h)",
+    "meaning": "Convention: the root is at level 0 and the **height** $h$ is the number of **edges** on the longest root-to-leaf path (a single node has $h = 0$, the empty tree $h = -1$). Each level can at most double, so level $i$ holds at most $2^i$ nodes and a tree of height $h$ has at most $1 + 2 + \\dots + 2^h = 2^{h+1} - 1$ nodes (a *perfect* tree). The fewest nodes for height $h$ is $h + 1$ (a chain).\n\nTurned around, a binary tree with $n$ nodes has height between $\\lfloor \\log_2 n \\rfloor$ and $n - 1$. A **complete** binary tree (all levels full except possibly the last, which is filled from the left) always has height exactly $\\lfloor \\log_2 n \\rfloor$.\n\nIn a binary search tree, search, insert and delete follow one root-to-leaf path, so they cost $\\Theta(h)$. That is $\\Theta(\\log n)$ when the tree is balanced (AVL and red-black trees guarantee $h = O(\\log n)$) but $\\Theta(n)$ when keys arrive in sorted order and the BST degenerates into a chain. An inorder traversal of a BST lists its keys in sorted order in $\\Theta(n)$ time.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of nodes"
+      },
+      {
+        "symbol": "$h$",
+        "meaning": "height, counted in edges (single node: 0)"
+      },
+      {
+        "symbol": "$i$",
+        "meaning": "level of a node (root at level 0)"
+      }
+    ],
+    "whenToUse": "Minimum or maximum height for $n$ nodes, maximum nodes for a given height, the height of a heap or complete tree, and best/worst cost of BST operations for a given insertion order.",
+    "commonMistake": "Mixing height conventions. If a question counts height as the number of **levels** (a single node has height 1), every bound shifts by one: at most $2^h - 1$ nodes and minimum height $\\lceil \\log_2 (n+1) \\rceil$. Check the base case the question uses. Also assuming BST operations are $O(\\log n)$ without a balance guarantee.",
+    "example": "$n = 100$ nodes: minimum height $\\lfloor \\log_2 100 \\rfloor = 6$ (height 5 holds at most $2^6 - 1 = 63 < 100$ nodes, height 6 up to $2^7 - 1 = 127$); maximum height $99$.\n\nInserting 1, 2, …, 7 in increasing order into an empty BST gives a right-leaning chain of height 6, and a search for 7 compares with all 7 keys. Inserting the same keys in the order 4, 2, 6, 1, 3, 5, 7 gives a perfect tree of height $\\lfloor \\log_2 7 \\rfloor = 2$, and every successful search needs at most 3 key comparisons.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-tree-leaf-count",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Leaves vs internal nodes (n₀ = n₂ + 1 and full k-ary trees)",
+    "latex": "n_0 = n_2 + 1 \\ \\ (\\text{any non-empty binary tree}), \\qquad \\text{full } k\\text{-ary tree with } I \\text{ internal nodes: } \\ n = kI + 1, \\ \\ L = (k-1)I + 1",
+    "meaning": "Let $n_d$ be the number of nodes with exactly $d$ children. Counting edges two ways proves the binary-tree identity: every node except the root has exactly one edge to its parent, so $n - 1 = n_1 + 2n_2$, and with $n = n_0 + n_1 + n_2$ this gives $n_0 = n_2 + 1$. Nodes with one child do not change the number of leaves.\n\nIn a **full** (proper) $k$-ary tree every internal node has exactly $k$ children. The $I$ internal nodes contribute $kI$ edges, so there are $n = kI + 1$ nodes and $L = n - I = (k-1)I + 1$ leaves. For a full binary tree ($k = 2$): $L = I + 1$ and $n = 2I + 1 = 2L - 1$, which is always odd.\n\nThe same edge count works for any rooted tree: $n - 1 = \\sum_d d\\,n_d$.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "total number of nodes"
+      },
+      {
+        "symbol": "$n_d$",
+        "meaning": "number of nodes with exactly d children"
+      },
+      {
+        "symbol": "$I$",
+        "meaning": "number of internal (non-leaf) nodes"
+      },
+      {
+        "symbol": "$L$",
+        "meaning": "number of leaves"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "number of children of every internal node in a full k-ary tree"
+      }
+    ],
+    "whenToUse": "Questions that give some node-degree counts and ask for the rest (such as the number of leaves given the nodes with two children), and counting nodes of full trees: expression trees, knockout tournaments, Huffman trees and decision trees.",
+    "commonMistake": "Applying $L = (k-1)I + 1$ to a tree that is not full (some internal node has fewer than $k$ children); use $n - 1 = \\sum_d d\\,n_d$ instead. Also counting $n$ edges instead of $n - 1$ (the root has no parent edge).",
+    "example": "A binary tree has 20 leaves and 10 nodes with exactly one child. Then $n_2 = n_0 - 1 = 19$ and $n = 20 + 10 + 19 = 49$ nodes.\n\nA full ternary tree ($k = 3$) with $I = 10$ internal nodes has $n = 3 \\cdot 10 + 1 = 31$ nodes and $L = 2 \\cdot 10 + 1 = 21$ leaves. A knockout tournament with 64 players is a full binary tree with 64 leaves, so it has $64 - 1 = 63$ matches (internal nodes).",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-binary-heap",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Binary heap: array indexing, height, leaves and operation costs",
+    "latex": "\\begin{aligned} &\\text{1-indexed: } \\operatorname{parent}(i) = \\lfloor i/2 \\rfloor, \\quad \\operatorname{left}(i) = 2i, \\quad \\operatorname{right}(i) = 2i + 1 \\\\ &\\text{0-indexed: } \\operatorname{parent}(i) = \\lfloor (i-1)/2 \\rfloor, \\quad \\operatorname{left}(i) = 2i + 1, \\quad \\operatorname{right}(i) = 2i + 2 \\\\ &\\text{height} = \\lfloor \\log_2 n \\rfloor, \\qquad \\text{leaves} = \\lceil n/2 \\rceil \\ \\ (\\text{1-indexed positions } \\lfloor n/2 \\rfloor + 1, \\dots, n) \\end{aligned}",
+    "meaning": "A binary heap is a **complete** binary tree stored level by level in an array, with the heap property: in a max-heap every parent is $\\ge$ its children (in a min-heap, $\\le$), so the maximum (minimum) sits at the root. Because the tree is complete, its height is $\\lfloor \\log_2 n \\rfloor$, and positions $\\lfloor n/2 \\rfloor + 1$ to $n$ (1-indexed) are exactly the leaves. Python's `heapq` module keeps a 0-indexed **min**-heap in a list.\n\n| Operation (max-heap) | Cost |\n| --- | --- |\n| find-max | $\\Theta(1)$ |\n| insert (append, then sift up) | $O(\\log n)$: at most one swap per level |\n| extract-max (move the last element to the root, sift down) | $O(\\log n)$ |\n| build-heap bottom-up (sift down positions $\\lfloor n/2 \\rfloor$ down to 1) | $\\Theta(n)$ |\n| build by $n$ successive inserts | $O(n \\log n)$ |\n| heapsort | $\\Theta(n \\log n)$, in place, not stable |\n| search for an arbitrary key, or find-min in a max-heap | $\\Theta(n)$ |\n\nBottom-up building is linear because at most $\\lceil n / 2^{h+1} \\rceil$ nodes have height $h$ and sifting one down costs $O(h)$: $\\sum_{h \\ge 0} \\frac{n}{2^{h+1}} \\cdot O(h) = O(n)$. In a max-heap the minimum is one of the $\\lceil n/2 \\rceil$ leaves.",
+    "variables": [
+      {
+        "symbol": "$i$",
+        "meaning": "array position of a node"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements in the heap"
+      }
+    ],
+    "whenToUse": "Tracing insert or delete on a heap drawn as an array, finding parent/child/leaf positions, counting swaps, and the cost of priority-queue operations (Dijkstra, heapsort, the $k$ largest elements).",
+    "commonMistake": "Using the 1-indexed formulas on a 0-indexed array or vice versa, and claiming that building a heap costs $\\Theta(n \\log n)$: that is the cost of $n$ successive inserts, not of the bottom-up build. Also assuming the heap array is sorted; only parent–child order is guaranteed.",
+    "example": "Max-heap (1-indexed) `[50, 30, 40, 10, 20, 35, 25]`; insert 45. It goes to position 8. Its parent is position $\\lfloor 8/2 \\rfloor = 4$ holding $10 < 45$: swap, so 45 is at position 4. The parent, position 2, holds $30 < 45$: swap, so 45 is at position 2. The parent, position 1, holds $50 > 45$: stop. Result: `[50, 45, 40, 30, 20, 35, 25, 10]` after 2 swaps.\n\nA heap with $n = 100$ elements has height $\\lfloor \\log_2 100 \\rfloor = 6$ and $\\lceil 100/2 \\rceil = 50$ leaves (positions 51 to 100), and the parent of position 37 is position $\\lfloor 37/2 \\rfloor = 18$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-hashing-chaining",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Hashing with chaining: load factor and expected search cost",
+    "latex": "\\alpha = \\frac{n}{m}, \\qquad E[\\text{chain length}] = \\alpha, \\qquad E[\\text{unsuccessful search}] = \\Theta(1 + \\alpha), \\qquad E[\\text{keys examined, successful}] = 1 + \\frac{\\alpha}{2} - \\frac{\\alpha}{2n}",
+    "meaning": "With **separate chaining**, slot $j$ of a table with $m$ slots holds a linked list of all keys that hash to $j$. Assume **simple uniform hashing**: each key is equally likely to hash to any slot, independently of the other keys. Then the expected length of each chain is the load factor $\\alpha = n/m$, which may exceed 1.\n\n- An unsuccessful search computes the hash and scans a whole chain: $\\alpha$ keys examined on average, $\\Theta(1 + \\alpha)$ time.\n- A successful search examines $1 + \\frac{\\alpha}{2} - \\frac{\\alpha}{2n}$ keys on average: the key itself plus about half of the keys inserted after it into the same chain (new keys go at the head of the list).\n\nSo if $m$ grows in proportion to $n$ (keeping $\\alpha = O(1)$), search, insert and delete take $O(1)$ **expected** time; the worst case, with every key in one chain, is still $\\Theta(n)$.\n\nCounts under the same assumption:\n\n- A given slot stays empty with probability $(1 - 1/m)^n \\approx e^{-\\alpha}$, so the expected number of empty slots is $m(1 - 1/m)^n$.\n- The expected number of colliding pairs of keys is $\\binom{n}{2}\\frac{1}{m}$.\n\nThe division method $h(k) = k \\bmod m$ works best with $m$ a prime not close to a power of 2.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of keys stored"
+      },
+      {
+        "symbol": "$m$",
+        "meaning": "number of slots"
+      },
+      {
+        "symbol": "$\\alpha$",
+        "meaning": "load factor n/m"
+      },
+      {
+        "symbol": "$h(k)$",
+        "meaning": "hash function, mapping key k to a slot 0 … m − 1"
+      }
+    ],
+    "whenToUse": "Expected cost of search/insert/delete in a chained hash table, choosing the table size for a target load factor, and expected numbers of empty slots or collisions.",
+    "commonMistake": "Quoting $O(1)$ as the **worst-case** cost: it is an expected cost that assumes uniform hashing and $\\alpha = O(1)$. Also assuming $\\alpha \\le 1$: with chaining the load factor can exceed 1, unlike open addressing.",
+    "example": "$n = 2000$ keys in $m = 500$ slots, so $\\alpha = 4$.\n\n- Unsuccessful search: $4$ keys examined on average (plus the hash computation).\n- Successful search: $1 + \\frac{4}{2} - \\frac{4}{2 \\cdot 2000} = 3 - 0.001 = 2.999$ keys on average.\n- Expected empty slots: $500\\,(1 - \\frac{1}{500})^{2000} \\approx 500 \\times 0.01824 \\approx 9.1$.\n- Expected colliding pairs: $\\binom{2000}{2} / 500 = 1999000 / 500 = 3998$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-open-addressing",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "name": "Open addressing: probe sequences and expected number of probes",
+    "latex": "\\begin{aligned} &\\text{linear: } h(k,i) = (h'(k) + i) \\bmod m, \\qquad \\text{quadratic: } h(k,i) = (h'(k) + c_1 i + c_2 i^2) \\bmod m \\\\ &\\text{double hashing: } h(k,i) = (h_1(k) + i\\,h_2(k)) \\bmod m, \\qquad i = 0, 1, \\dots, m-1 \\\\ &\\text{uniform hashing},\\ \\alpha = n/m < 1\\text{:} \\quad E[\\text{probes, unsuccessful}] \\le \\frac{1}{1-\\alpha}, \\qquad E[\\text{probes, successful}] \\le \\frac{1}{\\alpha}\\ln\\frac{1}{1-\\alpha} \\end{aligned}",
+    "meaning": "In **open addressing** every key is stored in the table itself, so $n \\le m$ and $\\alpha \\le 1$. To insert or search for key $k$, examine the slots $h(k,0), h(k,1), \\dots$ in turn until the key or an empty slot is found.\n\n- **Linear probing** is simple but suffers from *primary clustering*: runs of occupied slots grow, and any key that hashes into a run lengthens it. Knuth's approximations: about $\\frac{1}{2}\\bigl(1 + \\frac{1}{1-\\alpha}\\bigr)$ probes for a successful and $\\frac{1}{2}\\bigl(1 + \\frac{1}{(1-\\alpha)^2}\\bigr)$ for an unsuccessful search.\n- **Quadratic probing** avoids primary clustering, but keys with the same home slot still follow the same sequence (*secondary clustering*), and it may not reach every slot.\n- **Double hashing** reaches every slot when $h_2(k)$ is non-zero and relatively prime to $m$ (for example, $m$ prime).\n\nThe bounds in the formula assume **uniform hashing**: each key's probe sequence is equally likely to be any permutation of the slots. An insertion costs the same as an unsuccessful search. Deletion needs a **tombstone** (DELETED) marker, because emptying the slot would cut the probe sequences of other keys.",
+    "variables": [
+      {
+        "symbol": "$m$",
+        "meaning": "table size"
+      },
+      {
+        "symbol": "$n$",
+        "meaning": "number of keys stored"
+      },
+      {
+        "symbol": "$\\alpha$",
+        "meaning": "load factor n/m"
+      },
+      {
+        "symbol": "$i$",
+        "meaning": "probe number, starting at 0"
+      },
+      {
+        "symbol": "$h'(k),\\ h_1(k),\\ h_2(k)$",
+        "meaning": "auxiliary hash functions"
+      },
+      {
+        "symbol": "$c_1,\\ c_2$",
+        "meaning": "constants of quadratic probing"
+      }
+    ],
+    "whenToUse": "Tracing insertions into a small open-addressed table (the final slot of each key and its number of probes), comparing probing schemes, and estimating the expected number of probes at a given load factor.",
+    "commonMistake": "Counting probes from 0 (the first slot examined is probe 1, even if it is free), running past slot $m - 1$ without wrapping around modulo $m$, and deleting by simply emptying a slot, which makes later searches stop early and miss keys.",
+    "example": "Linear probing with $m = 11$ and $h'(k) = k \\bmod 11$; insert 15, 26, 37, 5 into an empty table.\n\n- $15 \\bmod 11 = 4$: slot 4 (1 probe).\n- $26 \\bmod 11 = 4$: slot 4 is taken, slot 5 (2 probes).\n- $37 \\bmod 11 = 4$: slots 4 and 5 are taken, slot 6 (3 probes).\n- $5 \\bmod 11 = 5$: slots 5 and 6 are taken, slot 7 (3 probes). Key 5 has a different home slot but still joins the cluster: primary clustering.\n\nAt $\\alpha = 0.75$ under uniform hashing: an unsuccessful search needs at most $\\frac{1}{0.25} = 4$ expected probes and a successful one at most $\\frac{1}{0.75}\\ln 4 \\approx 1.85$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-linear-search",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "name": "Linear search: comparison counts",
+    "latex": "C_{\\text{worst}} = C_{\\text{unsuccessful}} = n, \\qquad \\bar{C}_{\\text{successful}} = \\frac{1}{n}\\sum_{i=1}^{n} i = \\frac{n+1}{2}, \\qquad \\bar{C} = p\\,\\frac{n+1}{2} + (1-p)\\,n",
+    "meaning": "Linear (sequential) search compares the key with $A[1], A[2], \\dots$ in order and stops at the first match. Finding the key at 1-indexed position $i$ costs $i$ key comparisons, and an unsuccessful search of an unsorted array compares with all $n$ elements. If the key is present with probability $p$ and, when present, is equally likely to be at each position, the expected number of comparisons is $p\\frac{n+1}{2} + (1-p)n$. The time is $\\Theta(n)$ in the worst and average case and $\\Theta(1)$ in the best case. Linear search needs no preconditions: it works on unsorted data and on linked lists.\n\nVariants:\n\n- **Sorted array**: an unsuccessful search can stop at the first element larger than the key, but the worst case is still $\\Theta(n)$.\n- **Sentinel**: storing the key at position $n + 1$ removes the index-bound check, so each iteration does one test instead of two; an unsuccessful search then makes $n + 1$ key comparisons (the last one hits the sentinel).\n- Finding the maximum (or minimum) of $n$ elements takes exactly $n - 1$ comparisons.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements"
+      },
+      {
+        "symbol": "$i$",
+        "meaning": "1-indexed position of the key"
+      },
+      {
+        "symbol": "$p$",
+        "meaning": "probability that the key is present"
+      },
+      {
+        "symbol": "$\\bar{C}$",
+        "meaning": "expected number of key comparisons"
+      }
+    ],
+    "whenToUse": "Unsorted or linked data, a single search (sorting first would cost $\\Theta(n \\log n)$), and expected-comparison questions with given probabilities.",
+    "commonMistake": "Using $\\frac{n+1}{2}$ as the overall average when the key may be absent (each unsuccessful search costs $n$), or using $\\frac{n}{2}$ instead of $\\frac{n+1}{2}$. If positions are not equally likely, weight each one: $\\bar{C} = \\sum_i i \\cdot P(\\text{key at position } i)$ for a successful search.",
+    "example": "$n = 99$ elements and the key present with probability $p = 0.6$ (uniform over positions): $\\bar{C} = 0.6 \\cdot \\frac{100}{2} + 0.4 \\cdot 99 = 30 + 39.6 = 69.6$ comparisons.\n\nNon-uniform case: $n = 4$ with $P(\\text{key at } 1, 2, 3, 4) = 0.4, 0.3, 0.2, 0.1$ gives $\\bar{C} = 1(0.4) + 2(0.3) + 3(0.2) + 4(0.1) = 2.0$ comparisons; putting frequently searched keys first pays off.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-binary-search",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "name": "Binary search: number of probes",
+    "latex": "\\mathit{mid} = \\left\\lfloor \\frac{\\mathit{lo} + \\mathit{hi}}{2} \\right\\rfloor, \\qquad T(n) = T(\\lfloor n/2 \\rfloor) + \\Theta(1) = \\Theta(\\log n), \\qquad \\text{worst-case probes} = \\lfloor \\log_2 n \\rfloor + 1 = \\lceil \\log_2 (n+1) \\rceil",
+    "meaning": "Binary search on a **sorted** array $A[0..n-1]$ keeps an interval $[\\mathit{lo}, \\mathit{hi}]$ that must contain the key if it is present. Each iteration (**probe**) compares the key with $A[\\mathit{mid}]$ and either stops or discards $\\mathit{mid}$ together with one side, so at most $\\lfloor s/2 \\rfloor$ of the current $s$ candidates remain. After $t$ probes at most $\\lfloor n/2^t \\rfloor$ candidates remain, so at most $\\lfloor \\log_2 n \\rfloor + 1$ probes are ever needed (for $n \\ge 1$). An unsuccessful search uses either $\\lfloor \\log_2 n \\rfloor$ or $\\lfloor \\log_2 n \\rfloor + 1$ probes; when $n = 2^k - 1$, every unsuccessful search uses exactly $k$.\n\nBinary search needs sorted data **and** $\\Theta(1)$ random access; on a linked list it degrades to $\\Theta(n)$. The same halving finds the first position where any monotone condition becomes true, such as the first element $\\ge x$ (what Python's `bisect_left` returns).",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements in the sorted array"
+      },
+      {
+        "symbol": "$\\mathit{lo},\\ \\mathit{hi}$",
+        "meaning": "current search bounds (0-indexed, inclusive)"
+      },
+      {
+        "symbol": "$\\mathit{mid}$",
+        "meaning": "index probed in the current iteration"
+      },
+      {
+        "symbol": "$T(n)$",
+        "meaning": "number of probes for n candidates"
+      }
+    ],
+    "whenToUse": "Worst-case probe counts for a given $n$, tracing the values of lo, hi and mid, and any search over a sorted array or a monotone condition (binary search on the answer).",
+    "commonMistake": "Mixing units: some texts count a three-way probe (equal, less, greater) as two comparisons, which doubles the count, so state what you are counting. Other traps: writing `lo = mid` instead of `lo = mid + 1` (an infinite loop when $\\mathit{hi} = \\mathit{lo} + 1$), and applying binary search to unsorted data.",
+    "example": "$n = 1000$: at most $\\lfloor \\log_2 1000 \\rfloor + 1 = 9 + 1 = 10$ probes, since $2^9 = 512 \\le 1000 < 1024 = 2^{10}$.\n\nTrace on `A = [3, 8, 12, 17, 23, 31, 42, 56, 64, 77]` ($n = 10$, 0-indexed) for key 64: $\\mathit{lo} = 0$, $\\mathit{hi} = 9$, $\\mathit{mid} = 4$ ($23 < 64$, so $\\mathit{lo} = 5$); $\\mathit{mid} = 7$ ($56 < 64$, so $\\mathit{lo} = 8$); $\\mathit{mid} = 8$: found after 3 probes. The worst case for $n = 10$ is $\\lfloor \\log_2 10 \\rfloor + 1 = 4$ probes.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-elementary-sort-counts",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "name": "Selection, bubble and insertion sort: comparisons, swaps and inversions",
+    "latex": "I(A) = \\bigl|\\{(i,j) : i < j,\\ A[i] > A[j]\\}\\bigr|, \\quad 0 \\le I \\le \\binom{n}{2}; \\qquad \\text{selection sort: } \\binom{n}{2} \\text{ comparisons}; \\qquad \\text{bubble-sort swaps} = \\text{insertion-sort shifts} = I",
+    "meaning": "An **inversion** is a pair of positions whose elements are out of order. A sorted array has $I = 0$, a reverse-sorted one has $I = \\binom{n}{2} = \\frac{n(n-1)}{2}$, and a random permutation of distinct keys has $\\frac{n(n-1)}{4}$ on average. Swapping two **adjacent** out-of-order elements removes exactly one inversion, which is why bubble sort makes exactly $I$ swaps and insertion sort exactly $I$ shifts.\n\n| | Selection sort | Bubble sort | Insertion sort |\n| --- | --- | --- | --- |\n| Comparisons | $\\frac{n(n-1)}{2}$ always | $\\frac{n(n-1)}{2}$ without early exit; $n - 1$ best case with a no-swap flag | between $I$ and $I + n - 1$; $n - 1$ best, $\\frac{n(n-1)}{2}$ worst |\n| Swaps / moves | at most $n - 1$ swaps | exactly $I$ swaps | exactly $I$ shifts |\n| Time: best / worst | $\\Theta(n^2)$ / $\\Theta(n^2)$ | $\\Theta(n)$ with the flag / $\\Theta(n^2)$ | $\\Theta(n)$ / $\\Theta(n^2)$ |\n| Stable | No (standard array version) | Yes | Yes |\n\nAll three sort in place. Insertion sort runs in $\\Theta(n + I)$ time, so it is fast on nearly sorted data. After $k$ passes of (ascending) selection sort, the first $k$ positions hold the $k$ smallest keys in their final order; after $k$ passes of bubble sort, the last $k$ positions hold the $k$ largest.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements"
+      },
+      {
+        "symbol": "$I$",
+        "meaning": "number of inversions of the input"
+      },
+      {
+        "symbol": "$A$",
+        "meaning": "the input array"
+      }
+    ],
+    "whenToUse": "Counting the swaps, comparisons or shifts for a given input, the array state after $k$ passes, and choosing an algorithm for nearly sorted data or when writes are expensive (selection sort makes $O(n)$ swaps).",
+    "commonMistake": "Assuming selection sort is faster on sorted input (it always makes $\\frac{n(n-1)}{2}$ comparisons). Counting insertion sort's **comparisons** as $I$: each insertion that stops at a smaller element costs one extra comparison. Calling selection sort stable: its long-distance swap can reorder equal keys, e.g. `[2a, 2b, 1]` becomes `[1, 2b, 2a]`.",
+    "example": "$A = [4, 1, 3, 5, 2]$, $n = 5$. Inversions: $(4,1), (4,3), (4,2), (3,2), (5,2)$, so $I = 5$.\n\n- Bubble sort: exactly 5 swaps (10 comparisons without early exit).\n- Insertion sort: 5 shifts; the insertions of 1, 3, 5, 2 cost 1, 2, 1, 4 comparisons, total $8 = I + (n - 1) - 1$ (key 1 moves to the front, which saves one comparison).\n- Selection sort: $\\binom{5}{2} = 10$ comparisons; in pass 3 the minimum (3) is already in place, so it makes 3 actual swaps.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-master-theorem",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "name": "Master theorem for divide-and-conquer recurrences",
+    "latex": "T(n) = a\\,T(n/b) + f(n),\\ \\ a \\ge 1,\\ b > 1,\\ \\ p = \\log_b a: \\qquad T(n) = \\begin{cases} \\Theta(n^{p}) & \\text{if } f(n) = O(n^{p-\\varepsilon}) \\text{ for some } \\varepsilon > 0 \\\\ \\Theta(n^{p}\\log^{k+1} n) & \\text{if } f(n) = \\Theta(n^{p}\\log^{k} n),\\ k \\ge 0 \\\\ \\Theta(f(n)) & \\text{if } f(n) = \\Omega(n^{p+\\varepsilon}) \\text{ and } a f(n/b) \\le c f(n) \\text{ for some } c < 1 \\end{cases}",
+    "meaning": "A recursive algorithm that splits a problem of size $n$ into $a$ subproblems of size $n/b$ and spends $f(n)$ outside the recursive calls has this recurrence. The recursion tree has depth $\\log_b n$ and $a^{\\log_b n} = n^{\\log_b a}$ leaves, so the theorem compares the leaf work $n^{p}$ with the top-level work $f(n)$:\n\n1. **Leaves dominate** ($f$ polynomially smaller than $n^p$): $\\Theta(n^p)$.\n2. **Balanced** (every level costs about the same): multiply by the number of levels, $\\Theta(n^p \\log^{k+1} n)$; the common case $k = 0$ gives $\\Theta(n^p \\log n)$.\n3. **Root dominates** ($f$ polynomially larger, plus the regularity condition, which polynomials satisfy): $\\Theta(f(n))$.\n\n| Algorithm | Recurrence | Solution |\n| --- | --- | --- |\n| Binary search | $T(n) = T(n/2) + \\Theta(1)$ | $\\Theta(\\log n)$ (case 2, $p = 0$) |\n| Mergesort | $T(n) = 2T(n/2) + \\Theta(n)$ | $\\Theta(n \\log n)$ (case 2, $p = 1$) |\n| Maximum by halves | $T(n) = 2T(n/2) + \\Theta(1)$ | $\\Theta(n)$ (case 1) |\n| Karatsuba multiplication | $T(n) = 3T(n/2) + \\Theta(n)$ | $\\Theta(n^{\\log_2 3}) \\approx \\Theta(n^{1.585})$ (case 1) |\n| Strassen | $T(n) = 7T(n/2) + \\Theta(n^2)$ | $\\Theta(n^{\\log_2 7}) \\approx \\Theta(n^{2.807})$ (case 1) |\n\nFloors and ceilings in $n/b$ do not change the answer. Recurrences that subtract a constant, such as $T(n) = T(n-1) + n$, are **not** covered: unroll them instead.",
+    "variables": [
+      {
+        "symbol": "$a$",
+        "meaning": "number of subproblems"
+      },
+      {
+        "symbol": "$b$",
+        "meaning": "factor by which the input shrinks"
+      },
+      {
+        "symbol": "$f(n)$",
+        "meaning": "cost of dividing and combining"
+      },
+      {
+        "symbol": "$p$",
+        "meaning": "critical exponent log_b a"
+      },
+      {
+        "symbol": "$\\varepsilon,\\ c$",
+        "meaning": "positive constants (c < 1)"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "power of log n in case 2"
+      }
+    ],
+    "whenToUse": "Any divide-and-conquer recurrence of the form $aT(n/b) + f(n)$: mergesort, balanced quicksort, binary search, recursive array algorithms and matrix or integer multiplication.",
+    "commonMistake": "Comparing $f(n)$ with $n^{a/b}$ or $n^{\\log_a b}$ instead of $n^{\\log_b a}$. Forcing a case across a non-polynomial gap: $T(n) = 2T(n/2) + n/\\log n$ fits none of the three cases (its solution is $\\Theta(n \\log\\log n)$). Applying the theorem to $T(n) = T(n-1) + \\dots$, which is not of divide-and-conquer form.",
+    "example": "$T(n) = 4T(n/2) + n^2$: $p = \\log_2 4 = 2$ and $f(n) = n^2 = \\Theta(n^2 \\log^0 n)$, so case 2 gives $\\Theta(n^2 \\log n)$.\n\n$T(n) = 3T(n/4) + n \\log n$: $p = \\log_4 3 \\approx 0.79$ and $f(n) = n \\log n = \\Omega(n^{0.79 + \\varepsilon})$ (take $\\varepsilon = 0.2$). Regularity: $3 \\cdot \\frac{n}{4} \\log \\frac{n}{4} \\le \\frac{3}{4}\\, n \\log n$. Case 3 gives $\\Theta(n \\log n)$.\n\n$T(n) = 8T(n/2) + n^2$: $p = 3 > 2$, so case 1 gives $\\Theta(n^3)$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-mergesort",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "name": "Mergesort: recurrence, merge cost and exact comparison counts",
+    "latex": "T(n) = 2T(n/2) + \\Theta(n) = \\Theta(n \\log n); \\qquad \\min(m_1, m_2) \\le \\text{merge comparisons} \\le m_1 + m_2 - 1; \\qquad W(n) = n \\log_2 n - n + 1,\\ \\ B(n) = \\tfrac{n}{2}\\log_2 n \\ \\ (n = 2^k)",
+    "meaning": "Mergesort splits the array into two halves, sorts each recursively and **merges** the sorted halves. Merging sorted lists of lengths $m_1$ and $m_2$ repeatedly compares the two front elements and outputs the smaller. It needs at most $m_1 + m_2 - 1$ comparisons (the last element is copied without one) and at least $\\min(m_1, m_2)$ (when the shorter list runs out first). Each level of the recursion does $\\Theta(n)$ work and there are $\\lceil \\log_2 n \\rceil$ levels, so the time is $\\Theta(n \\log n)$ in the **best, average and worst** case, whatever the input order.\n\nFor $n = 2^k$ the exact worst case is $W(n) = n \\log_2 n - n + 1$ comparisons and the best case (for example, already sorted input) is $B(n) = \\frac{n}{2}\\log_2 n$. For general $n$ (top-down, splitting at $\\lfloor n/2 \\rfloor$): $W(n) = n\\lceil \\log_2 n \\rceil - 2^{\\lceil \\log_2 n \\rceil} + 1$.\n\nOther properties: **stable** (on ties, take from the left half); $\\Theta(n)$ auxiliary space for arrays; recursion depth $\\lceil \\log_2 n \\rceil$. It sorts linked lists without an auxiliary array (only pointers change), and its merge step can count inversions in $\\Theta(n \\log n)$ total.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements"
+      },
+      {
+        "symbol": "$m_1,\\ m_2$",
+        "meaning": "lengths of the two sorted lists being merged"
+      },
+      {
+        "symbol": "$W(n),\\ B(n)$",
+        "meaning": "worst-case and best-case number of key comparisons"
+      }
+    ],
+    "whenToUse": "Exact comparison counts for mergesort or a single merge, when a guaranteed $\\Theta(n \\log n)$ or a stable sort is needed, and sorting linked lists or data on disk (external sorting).",
+    "commonMistake": "Saying that merging two lists of $m$ elements each takes $2m$ comparisons (it is at most $2m - 1$), or that mergesort is asymptotically faster on sorted input (it is $\\Theta(n \\log n)$ either way; only the constant changes). Standard array mergesort is not in place.",
+    "example": "$n = 16 = 2^4$: worst case $W = 16 \\cdot 4 - 16 + 1 = 49$ comparisons; best case $B = 8 \\cdot 4 = 32$ comparisons.\n\nMerging $[2, 5, 9]$ with $[3, 4, 10, 12]$: compare 2 with 3 (output 2), 5 with 3 (output 3), 5 with 4 (output 4), 5 with 10 (output 5), 9 with 10 (output 9). The left list is now empty, so 10 and 12 are copied without comparisons. Total: 5 comparisons, within $[\\min(3, 4),\\ 3 + 4 - 1] = [3, 6]$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-quicksort",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "name": "Quicksort: best, worst and average-case recurrences",
+    "latex": "\\begin{aligned} &\\text{worst: } T(n) = T(n-1) + (n-1) \\;\\Rightarrow\\; \\tfrac{n(n-1)}{2} \\text{ comparisons} = \\Theta(n^2) \\\\ &\\text{best: } T(n) = 2T(n/2) + \\Theta(n) \\;\\Rightarrow\\; \\Theta(n \\log n) \\\\ &\\text{average: } C(n) = n - 1 + \\tfrac{2}{n}\\textstyle\\sum_{k=0}^{n-1} C(k) = 2(n+1)H_n - 4n \\approx 1.39\\, n \\log_2 n \\end{aligned}",
+    "meaning": "Quicksort partitions the array around a pivot in one pass ($n - 1$ comparisons of the pivot with the other elements), which puts the pivot in its final position, and then recurses on the two sides. Its cost depends entirely on how balanced the splits are:\n\n- **Worst case**: the pivot is always the smallest or largest element, for example on already sorted (or reverse-sorted) input with the first or last element as pivot, or on all-equal keys with the Lomuto partition. Every split is $n - 1 : 0$, giving $(n-1) + (n-2) + \\dots + 1 = \\frac{n(n-1)}{2}$ comparisons.\n- **Best case**: the pivot is always the median, giving $\\Theta(n \\log n)$.\n- **Any constant-fraction split**, even $1 : 9$ at every level, still gives $\\Theta(n \\log n)$, because the depth is $\\log_{10/9} n = O(\\log n)$.\n- **Average case** (distinct keys, all input orders equally likely, or a random pivot): $2(n+1)H_n - 4n \\approx 2n \\ln n \\approx 1.39\\, n \\log_2 n$ comparisons, where $H_n = 1 + \\frac{1}{2} + \\dots + \\frac{1}{n}$.\n\nQuicksort is in place apart from the recursion stack ($O(\\log n)$ expected depth) and is **not stable**. A random pivot or median-of-three makes the worst case unlikely, but not impossible.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of elements"
+      },
+      {
+        "symbol": "$C(n)$",
+        "meaning": "expected number of key comparisons"
+      },
+      {
+        "symbol": "$H_n$",
+        "meaning": "n-th harmonic number"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "size of the left part after partitioning (pivot rank − 1)"
+      }
+    ],
+    "whenToUse": "Comparison counts on sorted, reverse-sorted or all-equal inputs, identifying which pivot rules cause $\\Theta(n^2)$, recurrences with unbalanced splits, and tracing a partition step.",
+    "commonMistake": "Believing quicksort's worst case needs ‘random-looking’ input: with a first- or last-element pivot it is **sorted** input. Believing that an unbalanced but constant-**ratio** split such as $1 : 99$ makes it quadratic: it stays $\\Theta(n \\log n)$. Only a split that peels off a constant **number** of elements, such as $n - 1 : 0$, is quadratic.",
+    "example": "$n = 10$ sorted keys with the last element as pivot: each partition removes only the pivot, so there are $9 + 8 + \\dots + 1 = 45 = \\frac{10 \\cdot 9}{2}$ comparisons.\n\nAverage for $n = 10$: $H_{10} \\approx 2.928968$, so $C(10) = 2 \\cdot 11 \\cdot 2.928968 - 40 \\approx 64.437 - 40 = 24.44$ comparisons. A check with the recurrence for small $n$: $C(0) = C(1) = 0$, $C(2) = 1$, $C(3) = 2 + \\frac{2}{3}(0 + 0 + 1) = \\frac{8}{3}$, which equals $2 \\cdot 4 \\cdot \\frac{11}{6} - 12 = \\frac{8}{3}$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-sorting-lower-bound",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "name": "Comparison-sorting lower bound, related exact counts and complexity summary",
+    "latex": "\\text{worst-case comparisons of any comparison sort} \\;\\ge\\; \\lceil \\log_2 n! \\rceil, \\qquad \\log_2 n! = n \\log_2 n - n \\log_2 e + O(\\log n) = \\Theta(n \\log n)",
+    "meaning": "Any algorithm that sorts by comparing pairs of keys can be drawn as a binary **decision tree** whose leaves are the possible output orders. To be correct it needs at least $n!$ leaves, and a binary tree of height $h$ has at most $2^h$ leaves, so $h \\ge \\lceil \\log_2 n! \\rceil$. By Stirling's formula this is $\\Theta(n \\log n)$, so mergesort and heapsort are asymptotically optimal comparison sorts. The same argument bounds the average number of comparisons below by $\\log_2 n!$.\n\nSorts that do not compare keys escape the bound: counting sort runs in $\\Theta(n + k)$ for integer keys in $[0, k]$, and radix sort in $\\Theta(d(n + b))$ for $d$-digit keys in base $b$.\n\nExact worst-case comparison counts of the best algorithms for related problems ($n \\ge 2$):\n\n| Problem | Comparisons |\n| --- | --- |\n| Maximum (or minimum) | $n - 1$ |\n| Maximum **and** minimum | $\\lceil 3n/2 \\rceil - 2$ |\n| Second largest | $n + \\lceil \\log_2 n \\rceil - 2$ |\n| Merge two sorted lists of $m$ each | $2m - 1$ |\n\nSorting algorithms on arrays (times are $\\Theta(\\cdot)$, distinct keys):\n\n| Algorithm | Best | Average | Worst | Extra space | Stable |\n| --- | --- | --- | --- | --- | --- |\n| Selection | $n^2$ | $n^2$ | $n^2$ | $O(1)$ | No |\n| Bubble (with flag) | $n$ | $n^2$ | $n^2$ | $O(1)$ | Yes |\n| Insertion | $n$ | $n^2$ | $n^2$ | $O(1)$ | Yes |\n| Mergesort | $n \\log n$ | $n \\log n$ | $n \\log n$ | $O(n)$ | Yes |\n| Quicksort | $n \\log n$ | $n \\log n$ | $n^2$ | $O(\\log n)$ expected stack | No |\n| Heapsort | $n \\log n$ | $n \\log n$ | $n \\log n$ | $O(1)$ | No |",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of keys"
+      },
+      {
+        "symbol": "$n!$",
+        "meaning": "number of possible orderings of n distinct keys"
+      },
+      {
+        "symbol": "$k$",
+        "meaning": "largest key value for counting sort"
+      },
+      {
+        "symbol": "$d,\\ b$",
+        "meaning": "number of digits and base for radix sort"
+      }
+    ],
+    "whenToUse": "The minimum number of comparisons needed to sort $n$ items, proving an $\\Omega(n \\log n)$ bound, recognising when a linear-time sort is possible, and quick recall of the standard complexity table.",
+    "commonMistake": "Applying the $\\Omega(n \\log n)$ bound to counting or radix sort, or using $\\log_2 n$ instead of $\\log_2 n!$. The bound concerns **worst-case** comparisons: a comparison sort can still finish with $n - 1$ comparisons on a lucky input (insertion sort on sorted data).",
+    "example": "$n = 5$: $5! = 120$ and $2^6 = 64 < 120 \\le 128 = 2^7$, so every comparison sort needs at least $\\lceil \\log_2 120 \\rceil = 7$ comparisons in the worst case for 5 keys (and 7 are known to suffice).\n\nMaximum and minimum of $n = 100$ numbers: $\\lceil 300/2 \\rceil - 2 = 148$ comparisons. Pair the elements up (50 comparisons), find the maximum of the 50 pair winners (49) and the minimum of the 50 pair losers (49): $50 + 49 + 49 = 148$, against $2(n - 1) = 198$ for two independent scans.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-handshaking-edge-counts",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "name": "Handshaking lemma and edge counts (simple graphs, trees, forests)",
+    "latex": "\\sum_{v \\in V} \\deg(v) = 2m, \\qquad \\sum_{v \\in V} \\deg^{-}(v) = \\sum_{v \\in V} \\deg^{+}(v) = m \\ \\ (\\text{directed}), \\qquad m \\le \\binom{n}{2}, \\qquad \\text{forest with } c \\text{ trees: } m = n - c",
+    "meaning": "Every edge has two endpoints, so summing the degrees counts each edge twice. Consequences: the number of **odd-degree** vertices is even, and a $k$-regular graph on $n$ vertices has $\\frac{nk}{2}$ edges (so $nk$ must be even). In a directed graph, each edge adds one to an out-degree and one to an in-degree.\n\nEdge counts for $n$ vertices and $m$ edges:\n\n- Simple undirected graph: $0 \\le m \\le \\binom{n}{2} = \\frac{n(n-1)}{2}$, the maximum reached by the complete graph $K_n$. Simple directed graph without self-loops: $m \\le n(n-1)$.\n- Number of simple undirected graphs on $n$ **labelled** vertices: $2^{\\binom{n}{2}}$ (each possible edge is present or absent).\n- A **tree** (connected and acyclic) has exactly $n - 1$ edges; any two of ‘connected’, ‘acyclic’ and ‘$m = n - 1$’ imply the third. A forest with $c$ trees has $n - c$ edges, and any graph with $c$ connected components has $m \\ge n - c$.\n- A simple graph with $m > \\binom{n-1}{2}$ edges must be connected.\n- Cayley's formula: there are $n^{n-2}$ labelled trees on $n$ vertices.",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of vertices"
+      },
+      {
+        "symbol": "$m$",
+        "meaning": "number of edges"
+      },
+      {
+        "symbol": "$\\deg(v)$",
+        "meaning": "degree of v (a self-loop counts 2)"
+      },
+      {
+        "symbol": "$\\deg^{-}(v),\\ \\deg^{+}(v)$",
+        "meaning": "in-degree and out-degree of v in a directed graph"
+      },
+      {
+        "symbol": "$c$",
+        "meaning": "number of connected components"
+      }
+    ],
+    "whenToUse": "Checking whether a degree sequence is possible, finding the number of edges from the degrees, counting edges of trees, forests and complete graphs, and the minimum number of edges for connectivity.",
+    "commonMistake": "Forgetting to halve (a degree sum of 30 means 15 edges, not 30), using $\\binom{n}{2}$ for a **directed** graph (the maximum is $n(n-1)$), and assuming that a graph with $n - 1$ edges is a tree: it must also be connected (equivalently, acyclic).",
+    "example": "The degree sequence $3, 3, 2, 2, 2, 1, 1$ sums to $14$, so a graph with these degrees has $m = 7$ edges; it has four odd-degree vertices, an even number, as required. The sequence $3, 3, 3, 2, 2$ sums to 13, which is odd, so no graph has it.\n\nA forest with $n = 20$ vertices and $m = 16$ edges has $c = 20 - 16 = 4$ trees. $K_{10}$ has $\\binom{10}{2} = 45$ edges, and there are $10^{8}$ labelled trees on 10 vertices.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-bfs-dfs",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "name": "BFS and DFS: complexity, BFS levels and DFS timestamps",
+    "latex": "T_{\\text{BFS}} = T_{\\text{DFS}} = \\Theta(n + m) \\ \\ (\\text{adjacency lists}), \\quad \\Theta(n^2) \\ \\ (\\text{adjacency matrix}); \\qquad f[v] - d[v] = 2\\,s(v) - 1",
+    "meaning": "Both traversals visit each vertex once and look at each adjacency-list entry once. An undirected graph's lists hold $2m$ entries in total and a directed graph's hold $m$. With an adjacency matrix, finding the neighbours of a vertex costs $\\Theta(n)$ however few there are. Storage: lists $\\Theta(n + m)$, matrix $\\Theta(n^2)$.\n\n**BFS** (queue) explores in layers, so the BFS tree gives shortest paths by **number of edges** from the source: it solves single-source shortest paths in **unweighted** graphs. In an undirected graph every edge $(u, v)$ joins vertices whose BFS distances differ by at most 1.\n\n**DFS** (stack or recursion) with a clock that ticks once at each discovery $d[v]$ and each finish $f[v]$ uses the times $1, \\dots, 2n$. Any two intervals $[d, f]$ are either nested (one vertex is a descendant of the other) or disjoint: the **parenthesis theorem**. A vertex's interval contains exactly the discovery and finish events of its DFS subtree, hence $f[v] - d[v] = 2s(v) - 1$. For a directed edge $(u, v)$: tree or forward edge if $v$ is a descendant of $u$, **back** edge if $v$ is an ancestor of $u$ (discovered but not yet finished when the edge is examined), cross edge otherwise. An undirected DFS has only tree and back edges.\n\nApplications: a directed graph has a cycle iff DFS finds a back edge; listing vertices in **decreasing** finish time gives a topological order of a DAG; the number of times the outer loop starts a new traversal equals the number of connected components (undirected).",
+    "variables": [
+      {
+        "symbol": "$n$",
+        "meaning": "number of vertices"
+      },
+      {
+        "symbol": "$m$",
+        "meaning": "number of edges"
+      },
+      {
+        "symbol": "$d[v],\\ f[v]$",
+        "meaning": "DFS discovery and finish times of v"
+      },
+      {
+        "symbol": "$s(v)$",
+        "meaning": "number of vertices in the DFS subtree rooted at v, including v"
+      }
+    ],
+    "whenToUse": "Complexity of traversal-based algorithms, BFS levels and shortest hop counts, DFS discovery/finish-time traces, edge classification, cycle detection, topological sorting and counting connected components.",
+    "commonMistake": "Writing $\\Theta(m)$ or $\\Theta(n)$ instead of $\\Theta(n + m)$ (isolated vertices still cost time, and edges can far outnumber vertices), quoting $\\Theta(n + m)$ for an adjacency matrix (it is $\\Theta(n^2)$), and using BFS for shortest paths in a **weighted** graph.",
+    "example": "Directed graph with edges $A \\to B$, $A \\to C$, $B \\to D$, $C \\to D$, $D \\to E$; DFS from $A$, taking neighbours in alphabetical order:\n\n$d[A] = 1$, $d[B] = 2$, $d[D] = 3$, $d[E] = 4$, $f[E] = 5$, $f[D] = 6$, $f[B] = 7$, $d[C] = 8$ (the edge $C \\to D$ reaches a finished vertex that is not a descendant of $C$: a cross edge), $f[C] = 9$, $f[A] = 10$.\n\nCheck: $f[A] - d[A] = 9 = 2 \\cdot 5 - 1$, and $f[B] - d[B] = 5 = 2 \\cdot 3 - 1$ (the subtree $B, D, E$). There is no back edge, so the graph is a DAG, and decreasing finish times give the topological order $A, C, B, D, E$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-dijkstra",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "name": "Edge relaxation and Dijkstra's algorithm",
+    "latex": "\\text{relax}(u, v)\\text{: if } d[u] + w(u,v) < d[v] \\text{ then } d[v] \\leftarrow d[u] + w(u,v),\\ \\pi[v] \\leftarrow u; \\qquad T_{\\text{Dijkstra}} = O((n + m)\\log n) \\ \\ (\\text{binary heap}), \\ \\ O(n^2) \\ \\ (\\text{array})",
+    "meaning": "Single-source shortest-path algorithms start with $d[s] = 0$ and $d[v] = \\infty$ for every other vertex, then lower the estimates by **relaxing** edges. An estimate never drops below the true distance $\\delta(s, v)$, and the true distances satisfy the triangle inequality $\\delta(s, v) \\le \\delta(s, u) + w(u, v)$ for every edge.\n\n**Dijkstra's algorithm** requires every $w(u, v) \\ge 0$. It repeatedly extracts the unfinished vertex with the smallest $d$, finalises it, and relaxes its outgoing edges. Each vertex is extracted once and each edge is relaxed once (directed) or twice (undirected, once from each end). Vertices are finalised in non-decreasing order of distance, and the predecessor pointers $\\pi$ form a shortest-path tree.\n\n| Priority queue | Time |\n| --- | --- |\n| Unsorted array | $O(n^2)$, best for dense graphs |\n| Binary heap | $O((n + m)\\log n)$ |\n| Fibonacci heap | $O(m + n \\log n)$ |\n\nSpecial cases: in an unweighted graph use BFS, $\\Theta(n + m)$; in a DAG with any weights, relax the edges in topological order, $\\Theta(n + m)$.",
+    "variables": [
+      {
+        "symbol": "$s$",
+        "meaning": "source vertex"
+      },
+      {
+        "symbol": "$d[v]$",
+        "meaning": "current distance estimate of v"
+      },
+      {
+        "symbol": "$w(u,v)$",
+        "meaning": "weight of edge (u, v)"
+      },
+      {
+        "symbol": "$\\pi[v]$",
+        "meaning": "predecessor of v on the current best path"
+      },
+      {
+        "symbol": "$\\delta(s,v)$",
+        "meaning": "true shortest-path distance from s to v"
+      },
+      {
+        "symbol": "$n,\\ m$",
+        "meaning": "number of vertices and edges"
+      }
+    ],
+    "whenToUse": "Single-source shortest paths with non-negative weights: tracing the order in which vertices are finalised and the $d$ values after each step, and complexity questions that depend on the priority queue.",
+    "commonMistake": "Running Dijkstra with a negative edge. With edges $s \\to a$ (2), $s \\to b$ (3), $b \\to a$ ($-2$), $a \\to c$ (1), Dijkstra finalises $a$ with $d[a] = 2$ and sets $d[c] = 3$ before it processes $b$. Since $a$ is never processed again, it reports $d[c] = 3$, but the path $s \\to b \\to a \\to c$ has weight $3 - 2 + 1 = 2$. Adding a constant to every weight does not fix this either (it penalises paths with more edges); use Bellman–Ford.",
+    "example": "Directed graph: $s \\to a$ (4), $s \\to b$ (1), $b \\to a$ (2), $a \\to c$ (1), $b \\to c$ (5), $c \\to t$ (3), $a \\to t$ (6).\n\n1. Extract $s$ (0): $d[a] = 4$, $d[b] = 1$.\n2. Extract $b$ (1): $d[a] = \\min(4, 1 + 2) = 3$, $d[c] = 1 + 5 = 6$.\n3. Extract $a$ (3): $d[c] = \\min(6, 3 + 1) = 4$, $d[t] = 3 + 6 = 9$.\n4. Extract $c$ (4): $d[t] = \\min(9, 4 + 3) = 7$.\n5. Extract $t$ (7).\n\nFinal distances: $s = 0$, $b = 1$, $a = 3$, $c = 4$, $t = 7$; the shortest path to $t$ is $s \\to b \\to a \\to c \\to t$.",
+    "conceptIds": []
+  },
+  {
+    "id": "f-pdsa-bellman-ford-floyd-warshall",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "name": "Bellman–Ford and Floyd–Warshall: recurrences and costs",
+    "latex": "\\begin{aligned} &\\text{Bellman--Ford: } n - 1 \\text{ rounds, each relaxing all } m \\text{ edges} \\;\\Rightarrow\\; O(nm) \\\\ &\\text{Floyd--Warshall: } d_{ij}^{(k)} = \\min\\!\\left(d_{ij}^{(k-1)},\\ d_{ik}^{(k-1)} + d_{kj}^{(k-1)}\\right), \\ \\ d_{ij}^{(0)} = w(i,j) \\;\\Rightarrow\\; \\Theta(n^3) \\end{aligned}",
+    "meaning": "**Bellman–Ford** allows negative edge weights. After round $k$, $d[v]$ is at most the weight of the shortest $s$–$v$ path with at most $k$ edges. Without a negative cycle a shortest path has at most $n - 1$ edges, so $n - 1$ rounds suffice. If some edge can still be relaxed in an extra $n$-th round, a **negative cycle** is reachable from $s$ and shortest paths are undefined. The algorithm may stop early after a round with no change.\n\n**Floyd–Warshall** computes all-pairs distances: $d_{ij}^{(k)}$ is the weight of the shortest $i$–$j$ path whose intermediate vertices all lie in $\\{1, \\dots, k\\}$. Start with $d_{ii}^{(0)} = 0$, $d_{ij}^{(0)} = w(i, j)$ for an edge and $\\infty$ otherwise; the loop over $k$ must be the **outermost** loop. It takes $\\Theta(n^3)$ time with one $n \\times n$ matrix, allows negative edges, and reveals a negative cycle through some $d_{ii} < 0$ at the end.\n\n| Algorithm | Problem | Edge weights | Time |\n| --- | --- | --- | --- |\n| BFS | single source | unweighted | $\\Theta(n + m)$ |\n| Dijkstra (binary heap) | single source | non-negative | $O((n + m)\\log n)$ |\n| Bellman–Ford | single source | any; detects negative cycles | $O(nm)$ |\n| Floyd–Warshall | all pairs | any, no negative cycle | $\\Theta(n^3)$ |",
+    "variables": [
+      {
+        "symbol": "$n,\\ m$",
+        "meaning": "number of vertices and edges"
+      },
+      {
+        "symbol": "$w(i,j)$",
+        "meaning": "weight of edge (i, j)"
+      },
+      {
+        "symbol": "$d_{ij}^{(k)}$",
+        "meaning": "shortest i–j distance using only intermediate vertices 1 … k"
+      },
+      {
+        "symbol": "$d[v]$",
+        "meaning": "Bellman–Ford distance estimate of v"
+      }
+    ],
+    "whenToUse": "Graphs with negative edge weights, negative-cycle detection, all-pairs shortest paths on small dense graphs, and questions asking for matrix entries after the $k$-th Floyd–Warshall iteration.",
+    "commonMistake": "Putting the $k$ loop inside the $i, j$ loops in Floyd–Warshall (the results are then wrong), running fewer than $n - 1$ Bellman–Ford rounds, and expecting meaningful distances when a negative cycle is reachable.",
+    "example": "Floyd–Warshall on vertices 1, 2, 3 with $w(1,2) = 4$, $w(1,3) = 5$, $w(2,3) = -2$, $w(3,1) = 1$:\n\n- $k = 1$: $d_{32} = d_{31} + d_{12} = 1 + 4 = 5$ (was $\\infty$).\n- $k = 2$: $d_{13} = \\min(5,\\ d_{12} + d_{23}) = \\min(5, 2) = 2$.\n- $k = 3$: $d_{21} = d_{23} + d_{31} = -2 + 1 = -1$ (was $\\infty$).\n\nFinal: $d_{12} = 4$, $d_{13} = 2$, $d_{21} = -1$, $d_{23} = -2$, $d_{31} = 1$, $d_{32} = 5$; every $d_{ii} = 0$, so there is no negative cycle.\n\nBellman–Ford with $n = 6$ and $m = 10$: at most $n - 1 = 5$ rounds of 10 relaxations, that is 50 relaxations, plus one checking round of 10.",
+    "conceptIds": []
+  }
+]

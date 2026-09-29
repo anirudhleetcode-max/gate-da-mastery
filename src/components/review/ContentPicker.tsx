@@ -140,6 +140,7 @@ export function ContentPicker({
                   role="option"
                   aria-selected={i === activeIndex}
                   aria-disabled={added || undefined}
+                  aria-label={`${o.kind === "concept" ? "Concept" : "Formula"}: ${o.title}, ${SUBJECT_SHORT[o.subjectId]} · ${o.topicName}${added ? ", already in your revision queue" : ""}`}
                   onMouseDown={(e) => e.preventDefault()}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => void choose(o)}

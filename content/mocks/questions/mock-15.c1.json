@@ -1,0 +1,832 @@
+[
+  {
+    "id": "M15-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 1,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-clustering-algorithms",
+      "ml-kmeans"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (k-medoids cost) applied to all ten candidate pairs of a small dissimilarity table, with tempting heuristics (closest pair, farthest pair, most central site) as traps; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "k-medoids clustering: choose k data points as medoids so that the total dissimilarity of every object to its nearest medoid is minimum.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A content-delivery provider must choose **two** of five sites $V, W, X, Y, Z$ to host cache servers. The round-trip latencies (in ms) between the sites are symmetric and are given below.\n\n| | $V$ | $W$ | $X$ | $Y$ | $Z$ |\n|---|---|---|---|---|---|\n| $V$ | 0 | 10 | 5 | 9 | 7 |\n| $W$ | 10 | 0 | 6 | 11 | 14 |\n| $X$ | 5 | 6 | 0 | 13 | 8 |\n| $Y$ | 9 | 11 | 13 | 0 | 11 |\n| $Z$ | 7 | 14 | 8 | 11 | 0 |\n\nEvery site is served by the chosen site with the smallest latency to it (a chosen site serves itself at latency $0$). This is $k$-medoids clustering with $k = 2$: the two medoids must be among the five sites, and the cost of a choice is the sum, over all five sites, of the latency to the nearest chosen site.\n\nThe pair of sites with the **minimum** total cost is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{V, W\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\{V, X\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\{X, Y\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\{W, Z\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The cost of a pair is the sum, over the three unchosen sites, of the smallest latency to a chosen site. Evaluating all $10$ pairs gives $19$ for $\\{X,Y\\}$, $21$ for $\\{V,W\\}$, $22$ for $\\{V,X\\}$ and $24$ for $\\{W,Z\\}$; every other pair costs at least $22$.\nThe unique minimum is $\\{X, Y\\}$ with cost $19$.",
+      "steps": [
+        {
+          "title": "Define the cost of a pair",
+          "body": "For a chosen pair, each chosen site contributes $0$, and each of the other three sites contributes its smallest latency to the two chosen sites. With five sites there are $\\binom{5}{2}=10$ pairs to compare."
+        },
+        {
+          "title": "Cost of the four pairs in the options",
+          "body": "- $\\{V,W\\}$: $X\\to\\min(5,6)=5$, $Y\\to\\min(9,11)=9$, $Z\\to\\min(7,14)=7$, total $21$.\n- $\\{V,X\\}$: $W\\to\\min(10,6)=6$, $Y\\to\\min(9,13)=9$, $Z\\to\\min(7,8)=7$, total $22$.\n- $\\{X,Y\\}$: $V\\to\\min(5,9)=5$, $W\\to\\min(6,11)=6$, $Z\\to\\min(8,11)=8$, total $19$.\n- $\\{W,Z\\}$: $V\\to\\min(10,7)=7$, $X\\to\\min(6,8)=6$, $Y\\to\\min(11,11)=11$, total $24$."
+        },
+        {
+          "title": "Check the remaining six pairs",
+          "body": "- $\\{V,Y\\}$: $W\\to10$, $X\\to5$, $Z\\to7$, total $22$.\n- $\\{V,Z\\}$: $W\\to10$, $X\\to5$, $Y\\to9$, total $24$.\n- $\\{W,X\\}$: $V\\to5$, $Y\\to11$, $Z\\to8$, total $24$.\n- $\\{W,Y\\}$: $V\\to9$, $X\\to6$, $Z\\to11$, total $26$.\n- $\\{X,Z\\}$: $V\\to5$, $W\\to6$, $Y\\to11$, total $22$.\n- $\\{Y,Z\\}$: $V\\to7$, $W\\to11$, $X\\to8$, total $26$.\n\nAll of them cost at least $22>19$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "Site $Y$ is far from every other site ($9$ to $13$ ms), so it is cheaper to give $Y$ its own medoid (cost $0$) and let $X$ serve the tight group $\\{V,W,Z\\}$ than to put both medoids inside that group and leave $Y$ with a large latency. The minimum cost is $19$, attained only by $\\{X,Y\\}$; the next best is $21$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\{V,W\\}$ costs $5+9+7=21$. It is the pair formed by the site with the smallest total latency to all others ($V$, total $31$) and the site farthest from it ($W$); this heuristic is not optimal here, since $21>19$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\{V,X\\}$ is the closest pair of sites ($5$ ms), but its cost is $6+9+7=22>19$. Two medoids that sit next to each other leave $Y$ badly served."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: $\\{X,Y\\}$ costs $5+6+8=19$, the unique minimum over all ten pairs."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\{W,Z\\}$ is the most distant pair ($14$ ms), but its cost is $7+6+11=24>19$. Spreading the medoids as far apart as possible is not the same as minimising the total latency."
+        }
+      ],
+      "commonTrap": "Using a shortcut heuristic instead of comparing costs: picking the two closest sites ($22$), the two most distant sites ($24$), or the most central site plus the site farthest from it ($21$). Only the full comparison of pair costs shows that $\\{X,Y\\}$ wins."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nnames = \"VWXYZ\"\nD = [[0,10,5,9,7],[10,0,6,11,14],[5,6,0,13,8],[9,11,13,0,11],[7,14,8,11,0]]\ncost = lambda c: sum(min(D[i][m] for m in c) for i in range(5))\nres = sorted((cost(c), \"\".join(names[m] for m in c)) for c in itertools.combinations(range(5), 2))\nprint(res)  # (19, 'XY') is the unique minimum; next best is 21 ('VW')",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 2,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-continuous-named"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — four independent one-step recall checks on standard properties of the uniform, chi-squared, exponential and normal distributions; about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Properties of named continuous distributions: uniform probabilities, chi-squared mean, memorylessness of the exponential, symmetry of the normal.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "If $X$ is uniformly distributed on the interval $[2, 8]$, then $P(3 < X < 5) = \\dfrac{1}{3}$."
+      },
+      {
+        "label": "B",
+        "text": "A chi-squared random variable with $6$ degrees of freedom has mean $12$."
+      },
+      {
+        "label": "C",
+        "text": "If $T$ is exponentially distributed with mean $2$, then $P(T > 5 \\mid T > 3) = e^{-1}$."
+      },
+      {
+        "label": "D",
+        "text": "If $Y$ is normally distributed with mean $10$ and variance $4$, then $P(Y < 8) = P(Y > 12)$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "A: $(5-3)/(8-2)=1/3$, true. B: a $\\chi^2_k$ variable has mean $k=6$, not $12$, false. C: by memorylessness $P(T>5\\mid T>3)=P(T>2)=e^{-2/2}=e^{-1}$, true. D: $8$ and $12$ lie at $\\mu\\mp\\sigma$ (with $\\sigma=2$), so by symmetry the two tail probabilities are equal, true.",
+      "steps": [
+        {
+          "title": "Statement A (uniform)",
+          "body": "For $X\\sim U[2,8]$ the density is $1/6$ on the interval, so $P(3<X<5)=\\dfrac{5-3}{8-2}=\\dfrac{2}{6}=\\dfrac13$. **True.**"
+        },
+        {
+          "title": "Statement B (chi-squared)",
+          "body": "A $\\chi^2_k$ variable is a sum of $k$ squared standard normal variables, each with mean $1$, so $E[\\chi^2_k]=k$. For $k=6$ the mean is $6$; the number $12=2k$ is the **variance**. **False.**"
+        },
+        {
+          "title": "Statement C (exponential)",
+          "body": "An exponential distribution with mean $2$ has rate $1/2$ and survival function $P(T>t)=e^{-t/2}$. It is memoryless: $P(T>5\\mid T>3)=\\dfrac{e^{-5/2}}{e^{-3/2}}=e^{-1}=P(T>2)$. **True.**"
+        },
+        {
+          "title": "Statement D (normal)",
+          "body": "Here $\\mu=10$ and $\\sigma=\\sqrt4=2$. Then $8=\\mu-\\sigma$ and $12=\\mu+\\sigma$, so $P(Y<8)=\\Phi(-1)$ and $P(Y>12)=1-\\Phi(1)=\\Phi(-1)$; both equal about $0.1587$. **True.**"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Statements A, C and D are true; B is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: the probability is the length ratio $2/6=1/3$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The mean of $\\chi^2_k$ is $k=6$; $12=2k$ is its variance."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct: memorylessness gives $P(T>5\\mid T>3)=P(T>2)=e^{-1}$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: the points $8$ and $12$ are symmetric about the mean $10$, so the two tail probabilities coincide."
+        }
+      ],
+      "commonTrap": "Confusing the mean and the variance of the chi-squared distribution (mean $k$, variance $2k$), and, for the normal statement, forgetting that the second parameter is the variance $4$ (so $\\sigma=2$) rather than the standard deviation."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D",
+      "agreesWithKey": true,
+      "checkCode": "from scipy import stats\nprint(stats.uniform(2, 6).cdf(5) - stats.uniform(2, 6).cdf(3))  # 1/3  -> A true\nprint(stats.chi2(6).mean())  # 6, not 12 -> B false\nT = stats.expon(scale=2)  # mean 2\nprint(T.sf(5) / T.sf(3), T.sf(2), 2.718281828459045 ** -1)  # all equal -> C true\nY = stats.norm(10, 2)  # variance 4\nprint(Y.cdf(8), Y.sf(12))  # equal -> D true",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 3,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-dim-reduction",
+      "ml-pca"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked steps: pick the number of components from squared singular values, then use the fact that PCA reconstruction error equals the discarded squared singular values; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "PCA via SVD: variance retained by the top-k components and the reconstruction error equal to the sum of discarded squared singular values.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A spectroscopy lab records the absorbance at $4$ wavelengths for each of $11$ soil samples. After subtracting the column means, the resulting $11 \\times 4$ data matrix $X$ has singular values $14,\\ 9,\\ 6,\\ 3$.\n\nPrincipal component analysis (PCA) keeps the smallest number $k$ of principal components whose retained variance is at least $85\\%$ of the total variance. Each centred sample is then reconstructed from its projection onto these $k$ components.\n\nThe average, over the $11$ samples, of the squared Euclidean distance between a centred sample and its reconstruction is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 4.08,
+      "max": 4.1
+    },
+    "solution": {
+      "quick": "The variance along component $i$ is proportional to $\\sigma_i^2$: $196, 81, 36, 9$ (total $322$). Two components retain $277/322\\approx86.0\\%\\ge85\\%$ (one retains only $60.9\\%$), so $k=2$.\nThe total squared reconstruction error is the sum of the discarded $\\sigma_i^2$, namely $36+9=45$, so the average per sample is $45/11\\approx4.09$.",
+      "steps": [
+        {
+          "title": "Variance is proportional to squared singular values",
+          "body": "For a centred data matrix with SVD $X=U\\Sigma V^{\\top}$, the sample covariance is $X^{\\top}X/(n-1)$ with eigenvalues $\\sigma_i^2/(n-1)$. So the fraction of variance along component $i$ depends only on $\\sigma_i^2$:\n\n$$\\sigma_1^2=196,\\quad \\sigma_2^2=81,\\quad \\sigma_3^2=36,\\quad \\sigma_4^2=9,\\qquad \\sum_i\\sigma_i^2=322.$$"
+        },
+        {
+          "title": "Choose k",
+          "body": "Cumulative retained variance: $k=1$: $196/322\\approx0.609$; $k=2$: $277/322\\approx0.860$; $k=3$: $313/322\\approx0.972$. The smallest $k$ with at least $0.85$ is $k=2$."
+        },
+        {
+          "title": "Reconstruction error",
+          "body": "Reconstructing from the top $k$ components gives $\\hat X=\\sum_{i\\le k}\\sigma_i u_i v_i^{\\top}$, and\n$$\\|X-\\hat X\\|_F^2=\\sum_{i>k}\\sigma_i^2=36+9=45.$$\nThis is the sum over all $11$ samples of the squared distance between a sample and its reconstruction."
+        },
+        {
+          "title": "Average per sample",
+          "body": "$$\\frac{45}{11}=4.0909\\ldots\\approx 4.09.$$"
+        }
+      ],
+      "finalAnswer": "**4.09**",
+      "shortcut": "No principal directions are needed: the squared reconstruction error of rank-$k$ PCA is simply the sum of the discarded $\\sigma_i^2$, and the variance fractions come from the same squared values.",
+      "commonTrap": "Using the singular values themselves instead of their squares when choosing $k$ (cumulative shares $43.8\\%, 71.9\\%, 90.6\\%$ would give $k=3$ and an answer of $0.82$), or dividing by $n-1=10$ instead of averaging over the $11$ samples (giving $4.50$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4.08 to 4.1",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\ns = np.array([14, 9, 6, 3.0]); n = 11\nratio = np.cumsum(s**2) / np.sum(s**2)\nk = int(np.argmax(ratio >= 0.85)) + 1\nprint(ratio.round(4), k, round(float(np.sum(s[k:]**2) / n), 4))  # k = 2, 4.0909\n# numeric confirmation: build a centred 11x4 matrix with these singular values, run PCA\nrng = np.random.default_rng(0)\nA = rng.standard_normal((n, 4)); A -= A.mean(0)\nU, _ = np.linalg.qr(A); V, _ = np.linalg.qr(rng.standard_normal((4, 4)))\nX = U @ np.diag(s) @ V.T\n_, sv, Vt = np.linalg.svd(X, full_matrices=False)\nP = Vt[:k].T @ Vt[:k]                      # projector onto first k principal directions\nprint(sv.round(6), np.abs(X.mean(0)).max() < 1e-12, round(float(np.sum((X - X @ P)**2) / n), 4))  # 4.0909",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-sampling"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked ideas (a Gibbs sampling step draws from the conditional given the other variables, which needs the co-parent of the evidence node) followed by a routine Bayes computation; about 2 minutes.",
+    "estimatedTimeSec": 130,
+    "concept": "Gibbs sampling: a variable is resampled from its conditional distribution given all other variables (its Markov blanket), including co-parents of its children.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data-centre network is modelled by a Bayesian network over three Boolean variables: $S$ (a power surge occurs), $U$ (a firmware update is running) and $O$ (an outage is logged). The only edges are $S \\to O$ and $U \\to O$, and the conditional probabilities are:\n\n| Quantity | Value |\n|---|---|\n| $P(S=1)$ | $0.1$ |\n| $P(U=1)$ | $0.3$ |\n| $P(O=1 \\mid S=1, U=1)$ | $0.9$ |\n| $P(O=1 \\mid S=1, U=0)$ | $0.6$ |\n| $P(O=1 \\mid S=0, U=1)$ | $0.4$ |\n| $P(O=1 \\mid S=0, U=0)$ | $0.05$ |\n\nGibbs sampling is used to estimate $P(S=1 \\mid O=1)$, with the evidence variable held fixed at $O=1$. The chain is currently in the state $(S, U, O) = (0, 1, 1)$. In the next step, $S$ is resampled from its conditional distribution given the current values of **all** the other variables.\n\nThe probability that the new value of $S$ is $1$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.09$"
+      },
+      {
+        "label": "B",
+        "text": "$0.20$"
+      },
+      {
+        "label": "C",
+        "text": "$0.33$"
+      },
+      {
+        "label": "D",
+        "text": "$0.69$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "The Gibbs step needs $P(S=1\\mid U=1, O=1)\\propto P(S=1)\\,P(O=1\\mid S=1,U=1)$ versus $P(S=0)\\,P(O=1\\mid S=0,U=1)$.\nThese are $0.1\\times0.9=0.09$ and $0.9\\times0.4=0.36$, so the probability is $0.09/(0.09+0.36)=0.20$.",
+      "steps": [
+        {
+          "title": "What the Gibbs step needs",
+          "body": "Conditioned on all other variables, $S$ depends only on its Markov blanket: its child $O$ and the co-parent $U$ of that child. Because $S$ and $U$ are independent a priori, $P(U)$ cancels, and\n$$P(S=s\\mid U=1,O=1)\\ \\propto\\ P(S=s)\\,P(O=1\\mid S=s,\\,U=1).$$"
+        },
+        {
+          "title": "Unnormalised weights",
+          "body": "$s=1$: $0.1\\times P(O=1\\mid S=1,U=1)=0.1\\times0.9=0.09$.\n$s=0$: $0.9\\times P(O=1\\mid S=0,U=1)=0.9\\times0.4=0.36$."
+        },
+        {
+          "title": "Normalise",
+          "body": "$$P(S=1\\mid U=1,O=1)=\\frac{0.09}{0.09+0.36}=\\frac{0.09}{0.45}=0.20.$$\nOdds check: prior odds $0.1/0.9=1/9$, likelihood ratio $0.9/0.4=2.25$, posterior odds $0.25$, and $0.25/1.25=0.20$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "The current value $U=1$ is taken as given: the update already \"explains\" part of the outage, so the surge is only moderately likely ($0.20$), although its prior is $0.10$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.09=P(S=1)\\,P(O=1\\mid S=1,U=1)$ is only the unnormalised weight; it has not been divided by $0.09+0.36=0.45$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: $0.09/0.45=0.20$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.33$ is the overall $P(S=1\\mid O=1)$, obtained by averaging over $U$ with $P(U=1)=0.3$; it is the quantity being estimated, not the Gibbs conditional. The Gibbs step must use the chain's current value $U=1$, since $U$ is in the Markov blanket of $S$ as a co-parent of $O$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.9/(0.9+0.4)\\approx0.69$ compares the likelihoods alone. It drops the prior $P(S=1)=0.1$ versus $P(S=0)=0.9$."
+        }
+      ],
+      "shortcut": "Use odds: posterior odds $=$ prior odds $\\times$ likelihood ratio $=\\tfrac19\\times\\tfrac{0.9}{0.4}=0.25$, so the probability is $0.25/1.25=0.20$.",
+      "commonTrap": "Forgetting the co-parent: resampling $S$ using only its child $O$ and averaging over $U$ gives $0.33$, while dropping the prior gives $0.69$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as F\npS = F(1, 10)\npO = {(1, 1): F(9, 10), (1, 0): F(6, 10), (0, 1): F(4, 10), (0, 0): F(5, 100)}   # P(O=1 | S, U)\n# Gibbs step for S given U=1, O=1:  P(S=1 | U=1, O=1) ∝ P(S=1) P(O=1 | S=1, U=1)\nnum = pS * pO[(1, 1)]\nden = num + (1 - pS) * pO[(0, 1)]\nprint(num, den, num / den, float(num / den))  # 9/100 9/20 1/5 0.2\n# distractors: U marginalised out (P(U=1)=0.3) and no prior\npU = F(3, 10)\nm = lambda s: pU * pO[(s, 1)] + (1 - pU) * pO[(s, 0)]\nprint(float(pS * m(1) / (pS * m(1) + (1 - pS) * m(0))), float(pO[(1, 1)] / (pO[(1, 1)] + pO[(0, 1)])))  # 0.331 0.692",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-hypothesis-tests"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines several ideas (reducing paired data to differences, a non-zero null value, the sample standard deviation with divisor $n-1$) with lengthy arithmetic and likely traps (testing against $0$, or treating the samples as independent); about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Paired t-test for a non-zero hypothesised mean difference: the test statistic uses the mean and the sample standard deviation of the pairwise differences.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A backend team measures the response time (in ms) of $8$ API endpoints before and after a caching upgrade.\n\n| Endpoint | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|---|---|---|---|---|---|---|---|---|\n| Before | 84 | 91 | 78 | 88 | 95 | 82 | 90 | 86 |\n| After | 79 | 85 | 74 | 81 | 86 | 80 | 82 | 81 |\n\nFor an endpoint, let $D = \\text{Before} - \\text{After}$. Assume the $8$ values of $D$ are a random sample from a normal distribution with unknown mean $\\mu_D$. The team wants evidence that the upgrade saves **more than $2$ ms** on average, so it tests $H_0: \\mu_D = 2$ against $H_1: \\mu_D > 2$ using a $t$-test.\n\nThe value of the test statistic is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 4.7,
+      "max": 4.72
+    },
+    "solution": {
+      "quick": "The data are paired, so work with the differences $D=5,6,4,7,9,2,8,5$: $\\bar d=5.75$, $s_d=\\sqrt{35.5/7}\\approx2.252$.\n$t=\\dfrac{\\bar d-2}{s_d/\\sqrt8}=\\dfrac{3.75}{0.7962}\\approx4.71$, with $7$ degrees of freedom.",
+      "steps": [
+        {
+          "title": "Reduce the paired data to differences",
+          "body": "$D=\\text{Before}-\\text{After}$: $5,\\ 6,\\ 4,\\ 7,\\ 9,\\ 2,\\ 8,\\ 5$. Each endpoint is measured twice, so the test is a one-sample $t$-test on these $n=8$ differences."
+        },
+        {
+          "title": "Sample mean and standard deviation",
+          "body": "$\\bar d=\\dfrac{46}{8}=5.75$. The deviations $D-\\bar d$ are $-0.75,\\ 0.25,\\ -1.75,\\ 1.25,\\ 3.25,\\ -3.75,\\ 2.25,\\ -0.75$, so\n$$\\sum (D-\\bar d)^2=0.5625+0.0625+3.0625+1.5625+10.5625+14.0625+5.0625+0.5625=35.5.$$\n$$s_d^2=\\frac{35.5}{7}=5.0714,\\qquad s_d=2.2520.$$"
+        },
+        {
+          "title": "Standard error",
+          "body": "$$\\text{SE}=\\frac{s_d}{\\sqrt n}=\\frac{2.2520}{\\sqrt8}=\\frac{2.2520}{2.8284}=0.7962.$$"
+        },
+        {
+          "title": "Test statistic",
+          "body": "The null value is $\\mu_D=2$, not $0$:\n$$t=\\frac{\\bar d-2}{\\text{SE}}=\\frac{5.75-2}{0.7962}=\\frac{3.75}{0.7962}\\approx4.71,$$\nwith $n-1=7$ degrees of freedom."
+        }
+      ],
+      "finalAnswer": "**4.71**",
+      "commonTrap": "Testing against $0$ instead of the stated null value $2$ gives $7.22$; treating Before and After as two independent samples (pooled two-sample statistic with the same null shift) gives $1.62$; dividing by $n$ instead of $n-1$ in the standard deviation gives $5.04$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4.7 to 4.72",
+      "agreesWithKey": true,
+      "checkCode": "import statistics as st, math\nfrom scipy import stats\nb = [84, 91, 78, 88, 95, 82, 90, 86]; a = [79, 85, 74, 81, 86, 80, 82, 81]\nd = [x - y for x, y in zip(b, a)]\nn = len(d); m = st.mean(d); s = st.stdev(d)\nprint(d, m, round(s, 4), (m - 2) / (s / math.sqrt(n)))            # 4.7099 -> 4.71\nprint(stats.ttest_1samp(d, 2).statistic)                            # 4.7099 (library check)\nprint(m / (s / math.sqrt(n)))                                       # 7.22  (trap: null value 0)\nsp2 = (st.variance(b) + st.variance(a)) / 2\nprint((st.mean(b) - st.mean(a) - 2) / math.sqrt(sp2 * 2 / n))       # 1.62  (trap: pairing ignored)\nprint((m - 2) / (st.pstdev(d) / math.sqrt(n)))                      # 5.04  (trap: divisor n)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-indexing"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (fitting a B+ tree node into a disk block), with two direct inequalities and a final product; about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "B+ tree node capacity: internal-node fan-out and leaf capacity follow from the block size, key size and pointer sizes.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a B+ tree index, every node occupies exactly one disk block of $1024$ bytes, and any other per-node overhead may be ignored. A search key takes $10$ bytes, a tree (block) pointer takes $6$ bytes, and a record pointer takes $8$ bytes.\n\n- An internal node with $m$ keys stores $m+1$ tree pointers.\n- A leaf node with $m$ keys stores $m$ (key, record pointer) pairs and one tree pointer to the next leaf.\n\nThe tree has exactly two levels: a root (internal) node and the leaf nodes below it. The root and all the leaves are completely full, with as many entries as the block allows.\n\nThe number of (key, record pointer) entries stored in the leaves, that is, the number of records that are indexed, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3584,
+      "max": 3584
+    },
+    "solution": {
+      "quick": "Internal node: $10m+6(m+1)\\le1024\\Rightarrow m\\le63$ keys, so $64$ children. Leaf node: $(10+8)m+6\\le1024\\Rightarrow m\\le56$ entries.\nA full root with $64$ full leaves indexes $64\\times56=3584$ records.",
+      "steps": [
+        {
+          "title": "Capacity of an internal node",
+          "body": "With $m$ keys and $m+1$ tree pointers: $10m+6(m+1)\\le1024$, i.e. $16m\\le1018$, so $m\\le63.6$ and the maximum is $m=63$ keys. The root therefore has up to $63+1=64$ children."
+        },
+        {
+          "title": "Capacity of a leaf node",
+          "body": "With $m$ (key, record pointer) pairs plus one next-leaf pointer: $(10+8)m+6\\le1024$, i.e. $18m\\le1018$, so $m\\le56.6$ and the maximum is $m=56$ entries per leaf."
+        },
+        {
+          "title": "Two-level tree",
+          "body": "A completely full root has $64$ children, and each of the $64$ leaves holds $56$ entries:\n$$64\\times56=3584.$$"
+        }
+      ],
+      "finalAnswer": "**3584**",
+      "commonTrap": "Using the same capacity for internal and leaf nodes, or taking the fan-out as $63$ instead of $63+1=64$. Taking $63$ children gives $63\\times56=3528$, and taking a leaf capacity of $63$ gives $64\\times63=4032$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3584",
+      "agreesWithKey": true,
+      "checkCode": "block, key, tp, rp = 1024, 10, 6, 8\nm_int = max(m for m in range(200) if key * m + tp * (m + 1) <= block)   # keys in an internal node\nm_leaf = max(m for m in range(200) if (key + rp) * m + tp <= block)     # entries in a leaf node\nprint(m_int, m_leaf, (m_int + 1) * m_leaf)  # 63 56 3584",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-linked-lists"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (pointer manipulation in a singly linked list) needing a careful trace of a four-iteration loop followed by a simple scan; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Tracing in-place pointer rewiring of a singly linked list (odd/even regrouping) and then scanning the result.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A singly linked list has nodes with fields `data` and `next`. The variable `head` refers to the first node, and the `data` values from the head onwards are\n\n`26 → 41 → 58 → 17 → 49 → 73 → 8 → 62 → 35 → None`\n\nThe following Python code is executed on this list.\n\n```python\nodd = head\neven = head.next\neven_head = even\nwhile even is not None and even.next is not None:\n    odd.next = even.next\n    odd = odd.next\n    even.next = odd.next\n    even = even.next\nodd.next = even_head\n\ncount = 0\np = head\nwhile p.next is not None:\n    if p.data > p.next.data:\n        count += 1\n    p = p.next\nprint(count)\n```\n\nThe value printed is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 4,
+      "max": 4
+    },
+    "solution": {
+      "quick": "The first loop splits the list into nodes at odd positions and nodes at even positions, and then appends the even chain after the odd chain: $26,58,49,8,35,41,17,73,62$.\nThe second loop counts adjacent pairs with `data > next.data`: $58>49$, $49>8$, $41>17$, $73>62$, so the output is $4$.",
+      "steps": [
+        {
+          "title": "Set up the two chains",
+          "body": "`odd` starts at $26$ (position 1) and `even` at $41$ (position 2); `even_head` remembers node $41$."
+        },
+        {
+          "title": "Trace the first loop",
+          "body": "- Pass 1: `odd.next = 58`, `odd = 58`, `even.next = 17`, `even = 17`.\n- Pass 2: `odd.next = 49`, `odd = 49`, `even.next = 73`, `even = 73`.\n- Pass 3: `odd.next = 8`, `odd = 8`, `even.next = 62`, `even = 62`.\n- Pass 4: `even.next` is $35$, not `None`, so `odd.next = 35`, `odd = 35`, `even.next = odd.next = None`, `even = None`.\n\nThe loop stops because `even` is `None`. Then `odd.next = even_head` links $35$ to $41$."
+        },
+        {
+          "title": "Resulting list",
+          "body": "Odd-position nodes followed by even-position nodes:\n$$26\\to58\\to49\\to8\\to35\\to41\\to17\\to73\\to62\\to\\texttt{None}.$$"
+        },
+        {
+          "title": "Count the descents",
+          "body": "Compare each node with its successor: $26<58$, $58>49$ (count 1), $49>8$ (count 2), $8<35$, $35<41$, $41>17$ (count 3), $17<73$, $73>62$ (count 4). The loop ends at the last node $62$ whose `next` is `None`.\n\nThe printed value is $4$."
+        }
+      ],
+      "finalAnswer": "**4**",
+      "commonTrap": "Counting the descents of the original list gives $3$, stopping the trace before the final `odd.next = even_head` (so only the odd chain is scanned) gives $2$, and putting the even-position nodes first gives $5$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "4",
+      "agreesWithKey": true,
+      "checkCode": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef build(values):\n    head = None\n    for v in reversed(values):\n        node = Node(v); node.next = head; head = node\n    return head\n\nhead = build([26, 41, 58, 17, 49, 73, 8, 62, 35])\nodd = head; even = head.next; even_head = even\nwhile even is not None and even.next is not None:\n    odd.next = even.next\n    odd = odd.next\n    even.next = odd.next\n    even = even.next\nodd.next = even_head\ncount = 0; p = head; order = []\nwhile p.next is not None:\n    order.append(p.data)\n    if p.data > p.next.data:\n        count += 1\n    p = p.next\norder.append(p.data)\nprint(order, count)  # [26, 58, 49, 8, 35, 41, 17, 73, 62] 4",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-uninformed"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (iterative deepening re-generates shallow levels in every iteration) needing a short count over four iterations, with off-by-one traps; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Iterative deepening search: node generations summed over all depth-limited iterations, including the repeated root and shallow levels.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A maze-solving robot unfolds its maze into a search tree in which every junction has exactly $4$ outgoing corridors and no state is repeated. There is exactly one goal, at depth $3$ (the start junction is at depth $0$). The robot runs **iterative deepening search** with depth limits $0, 1, 2, 3$ in turn.\n\nEach iteration is a depth-limited depth-first search that restarts from the root, generates the children of a node from left to right, and does not expand a node lying at the current depth limit. The goal test is applied to a node as soon as it is generated (the root is tested when it is created). The goal happens to be the **last** node generated at depth $3$ in the left-to-right order.\n\nEvery node creation counts, including the root, and nodes that are re-created in later iterations are counted again each time. The total number of nodes generated by the time the goal is found is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$85$"
+      },
+      {
+        "label": "B",
+        "text": "$108$"
+      },
+      {
+        "label": "C",
+        "text": "$111$"
+      },
+      {
+        "label": "D",
+        "text": "$112$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The iteration with limit $L$ generates every node down to depth $L$ (the goal is only found at the very end of the last iteration): $1,\\ 1+4,\\ 1+4+16,\\ 1+4+16+64$.\nTotal $=1+5+21+85=112$.",
+      "steps": [
+        {
+          "title": "Nodes per level",
+          "body": "With branching factor $4$ there are $1,\\ 4,\\ 16,\\ 64$ nodes at depths $0,1,2,3$."
+        },
+        {
+          "title": "Nodes generated in each iteration",
+          "body": "- Limit $0$: only the root, $1$ node.\n- Limit $1$: $1+4=5$ nodes.\n- Limit $2$: $1+4+16=21$ nodes.\n- Limit $3$: $1+4+16+64=85$ nodes, because the goal is the last depth-$3$ node generated, so the whole tree down to depth $3$ has been created when it is found."
+        },
+        {
+          "title": "Total",
+          "body": "$$1+5+21+85=112.$$"
+        },
+        {
+          "title": "Cross-check by levels",
+          "body": "A node at depth $i$ is generated once in every iteration with limit $L\\ge i$, that is $4-i$ times: root $4\\times1=4$, depth 1 $3\\times4=12$, depth 2 $2\\times16=32$, depth 3 $1\\times64=64$. The sum is $4+12+32+64=112$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$85=1+4+16+64$ is the size of the tree down to depth $3$, i.e. the work of the final iteration alone (or of breadth-first search); it ignores the earlier iterations."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$108=12+32+64$ leaves out the root, which is created afresh in each of the $4$ iterations (this is $4$ short of the true count)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$111=5+21+85$ omits the limit-$0$ iteration, in which the root alone is generated."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: $1+5+21+85=112$."
+        }
+      ],
+      "shortcut": "A node at depth $i$ is generated $(d-i+1)$ times, so the total is $\\sum_{i=0}^{3}(4-i)\\,4^{i}=4+12+32+64=112$.",
+      "commonTrap": "Counting only the final iteration ($85$), or forgetting that the root (and the other shallow nodes) are re-generated in every iteration, which gives $108$ or $111$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "b, d = 4, 3\ngoal = (b - 1,) * d          # last node generated at depth d (left-to-right order)\ntotal = 0\ndef dls(node, depth, limit):\n    global total\n    if depth == limit:\n        return False\n    for c in range(b):\n        child = node + (c,); total += 1          # goal test on generation\n        if child == goal or dls(child, depth + 1, limit):\n            return True\n    return False\nper_iter = []\nfor L in range(d + 1):\n    before = total; total += 1                   # root generated afresh each iteration\n    found = dls((), 0, L)\n    per_iter.append(total - before)\n    if found: break\nprint(per_iter, total)                            # [1, 5, 21, 85] 112\nprint(sum((d - i + 1) * b**i for i in range(d + 1)))  # 112 (level i is generated d-i+1 times)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-ridge-regression"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — four statements on one topic (scale sensitivity, a closed-form one-feature estimate, shrinkage without sparsity, training error versus $\\lambda$), each needing a short check; about 2.5 minutes.",
+    "estimatedTimeSec": 140,
+    "concept": "Ridge regression: closed-form shrinkage, sensitivity to feature scale, no exact sparsity, and monotone growth of training error with λ.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following statements about ridge regression is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Ridge regression is unaffected by the units of the inputs: if one feature is multiplied by $10$ (for example, metres converted to decimetres), the fitted values on the training set remain exactly the same for every fixed $\\lambda > 0$."
+      },
+      {
+        "label": "B",
+        "text": "For the model $\\hat{y} = wx$ (no intercept) fitted by minimising $\\sum_i (y_i - w x_i)^2 + \\lambda w^2$, if $\\sum_i x_i^2 = 25$, $\\sum_i x_i y_i = 20$ and $\\lambda = 15$, then the ridge estimate is $w = 0.5$."
+      },
+      {
+        "label": "C",
+        "text": "Ridge regression performs feature selection: for a large enough finite $\\lambda$ it always sets some of the coefficients exactly to zero."
+      },
+      {
+        "label": "D",
+        "text": "The training residual sum of squares of the ridge solution never decreases as $\\lambda$ is increased."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "B: $w=\\sum xy/(\\sum x^2+\\lambda)=20/(25+15)=0.5$, true. D: the ridge solution moves away from the least-squares minimiser as $\\lambda$ grows, so its training RSS cannot decrease, true.\nA is false (ridge is not scale invariant: the fitted values change when a feature is rescaled) and C is false (ridge shrinks coefficients towards zero but never sets them exactly to zero; that is the lasso).",
+      "steps": [
+        {
+          "title": "Statement B (closed form)",
+          "body": "Setting $\\dfrac{d}{dw}\\left[\\sum (y_i-wx_i)^2+\\lambda w^2\\right]=0$ gives $w=\\dfrac{\\sum x_iy_i}{\\sum x_i^2+\\lambda}=\\dfrac{20}{25+15}=0.5$. **True** (least squares alone would give $20/25=0.8$)."
+        },
+        {
+          "title": "Statement A (scale)",
+          "body": "Multiply $x$ by $10$: $\\sum x'^2=2500$, $\\sum x'y=200$, so $w'=\\dfrac{200}{2500+15}\\approx0.0795$ and the fitted value for an original $x$ is $w'\\cdot10x\\approx0.795\\,x$, whereas before it was $0.5\\,x$. The fitted values changed, so ridge is **not** scale invariant (the penalty acts on coefficients whose size depends on units). **False.**"
+        },
+        {
+          "title": "Statement C (sparsity)",
+          "body": "In the same one-feature example $w=20/(25+\\lambda)>0$ for every finite $\\lambda$; ridge shrinks coefficients smoothly towards $0$ but does not make them exactly $0$. Exact zeros come from the $\\ell_1$ (lasso) penalty. **False.**"
+        },
+        {
+          "title": "Statement D (training error)",
+          "body": "Let $w_1,w_2$ be the ridge solutions for $\\lambda_1<\\lambda_2$ and $R(w)$ the RSS. Optimality gives $R(w_1)+\\lambda_1\\|w_1\\|^2\\le R(w_2)+\\lambda_1\\|w_2\\|^2$ and $R(w_2)+\\lambda_2\\|w_2\\|^2\\le R(w_1)+\\lambda_2\\|w_1\\|^2$. Adding them yields $\\|w_2\\|\\le\\|w_1\\|$, and then the first inequality gives $R(w_1)\\le R(w_2)+\\lambda_1(\\|w_2\\|^2-\\|w_1\\|^2)\\le R(w_2)$. So the training RSS does not decrease with $\\lambda$. **True.**"
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Rescaling a feature changes the ridge fit: in the one-feature example the fitted slope on the original scale goes from $0.5$ to about $0.795$. Only ordinary least squares is unaffected by such rescaling."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct: $w=20/(25+15)=0.5$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Ridge shrinks coefficients towards zero but, for any finite $\\lambda$, does not make them exactly zero in general; exact zeros are a property of the lasso ($\\ell_1$ penalty)."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct: increasing $\\lambda$ trades training fit for a smaller coefficient norm, so the training RSS is non-decreasing in $\\lambda$."
+        }
+      ],
+      "commonTrap": "Mixing up ridge with the lasso (believing ridge zeroes out coefficients), and forgetting that the ridge penalty makes the solution depend on the scale of the features, so inputs should be standardised first."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\n# B: one-feature ridge, no intercept: w = sum(xy) / (sum(x^2) + lambda)\nprint(20 / (25 + 15))  # 0.5 -> B true\n# A: multiply x by 10 -> sum(x'^2)=2500, sum(x'y)=200; fitted value per original x:\nprint(20 / (25 + 15), 10 * 200 / (2500 + 15))  # 0.5 vs 0.7952 -> fitted values change, A false\n# C and D on random data\nrng = np.random.default_rng(1)\nX = rng.standard_normal((30, 4)); y = X @ np.array([3, -2, 0.5, 0]) + rng.standard_normal(30)\nlams = [0, 0.1, 1, 10, 100, 1e3, 1e4, 1e6]\nW = [np.linalg.solve(X.T @ X + l * np.eye(4), X.T @ y) for l in lams]\nrss = [float(np.sum((y - X @ w) ** 2)) for w in W]\nprint(all(q >= p for p, q in zip(rss, rss[1:])))   # True -> D true\nprint(min(np.abs(w).min() for w in W))              # > 0: never exactly zero -> C false\nX2 = X.copy(); X2[:, 0] *= 10\nw2 = np.linalg.solve(X2.T @ X2 + 10 * np.eye(4), X2.T @ y)\nprint(np.abs(X @ W[3] - X2 @ w2).max() > 1e-3)      # True: fitted values differ -> A false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M15-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-15",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-transformation"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (equal-frequency binning with smoothing by bin means), a single sort-group-average step; about 1 minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Equal-frequency (equal-depth) binning followed by smoothing by bin means; the data must be sorted before the bins are formed.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The number of support tickets closed on nine different days was recorded in the following order:\n\n$$31,\\ 9,\\ 55,\\ 18,\\ 7,\\ 27,\\ 14,\\ 38,\\ 22$$\n\nThe attribute is discretised into $3$ **equal-frequency (equal-depth)** bins and then smoothed **by bin means**, so that each value is replaced by the mean of its bin.\n\nAfter smoothing, the value $38$ is replaced by (rounded off to one decimal place)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$41.3$"
+      },
+      {
+        "label": "B",
+        "text": "$38.0$"
+      },
+      {
+        "label": "C",
+        "text": "$32.0$"
+      },
+      {
+        "label": "D",
+        "text": "$24.7$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Sort the values: $7, 9, 14, 18, 22, 27, 31, 38, 55$. The three equal-frequency bins hold three values each: $\\{7,9,14\\}$, $\\{18,22,27\\}$, $\\{31,38,55\\}$.\nThe value $38$ is in the last bin, whose mean is $(31+38+55)/3=124/3\\approx41.3$.",
+      "steps": [
+        {
+          "title": "Sort the data",
+          "body": "Equal-frequency binning works on the sorted values: $7, 9, 14, 18, 22, 27, 31, 38, 55$."
+        },
+        {
+          "title": "Form the bins",
+          "body": "$9$ values in $3$ bins gives $3$ values per bin: Bin 1 $=\\{7,9,14\\}$, Bin 2 $=\\{18,22,27\\}$, Bin 3 $=\\{31,38,55\\}$."
+        },
+        {
+          "title": "Bin means",
+          "body": "Bin 1: $30/3=10$. Bin 2: $67/3\\approx22.3$. Bin 3: $\\dfrac{31+38+55}{3}=\\dfrac{124}{3}\\approx41.3$."
+        },
+        {
+          "title": "Smooth the value 38",
+          "body": "$38$ belongs to Bin 3, so it is replaced by $41.3$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct: the bin $\\{31,38,55\\}$ has mean $124/3\\approx41.3$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$38.0$ is the median of $\\{31,38,55\\}$, i.e. smoothing by bin medians rather than bin means."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$32.0$ comes from equal-**width** bins of width $16$, where $38$ falls in $[23,39)$ with $27$ and $31$. The question asks for equal-frequency bins."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$24.7$ comes from forming the bins from the values in the order recorded, $\\{31,9,55\\},\\{18,7,27\\},\\{14,38,22\\}$, without sorting first."
+        }
+      ],
+      "commonTrap": "Forming the bins before sorting (giving $24.7$), or confusing equal-frequency with equal-width bins (giving $32.0$) or the bin mean with the bin median ($38.0$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nvals = [31, 9, 55, 18, 7, 27, 14, 38, 22]\ns = sorted(vals)\nbins = [s[0:3], s[3:6], s[6:9]]                                   # equal-frequency bins of the SORTED data\nprint(bins, [round(float(np.mean(b)), 2) for b in bins])          # 38 -> 41.33 -> 41.3\n# distractors\nw = (max(vals) - min(vals)) / 3\nedges = [min(vals) + i * w for i in range(4)]\new = [v for v in vals if edges[1] <= v < edges[2]]\nprint(edges, np.mean(ew))                                          # equal-width: 32.0\nprint(np.mean([38, 14, 22]))                                       # bins in recorded order: 24.67\nprint(float(np.median(bins[2])))                                   # bin median: 38.0",
+      "notes": ""
+    }
+  }
+]

@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { OriginBadge } from "@/components/question/badges";
 import { CATEGORIES, CategoryChips, Highlight, SearchForm, isCategory, type Category } from "@/components/insights/search/parts";
 import { excerpt, queryTerms } from "@/components/insights/search/highlight";
+import { stemPreview } from "@/components/pyq/preview";
 import { SUBJECT_SHORT } from "@/lib/labels";
 import type { SubjectId } from "@/lib/content/schema";
 import { plural } from "@/lib/utils";
@@ -25,58 +26,81 @@ interface Hit {
   category: Category;
   title: string;
   href: string;
-  snippet: string;
-  meta: string[];
+  subjectId?: string;
+  /** The id without its category prefix ("formula:f-la-x" → "f-la-x"). */
+  key: string;
   origin?: "OFFICIAL_PYQ" | "ORIGINAL_PRACTICE";
 }
 
 const PREVIEW_PER_GROUP = 6;
 
-/** Search results, with the availability gate re-applied to question hits and the description text for each hit. */
+/**
+ * Search results with the availability gate re-applied to question hits. When
+ * the query names a year ("2025", "2026 Q14"), PYQ hits are limited to that
+ * year: the fuzzy matcher would otherwise also accept neighbouring years,
+ * which differ by one digit (and a year with no paper then finds no PYQs).
+ */
 function runSearch(q: string, terms: string[]): Hit[] {
+  const wantedYears = new Set(terms.filter((t) => /^(19|20)\d{2}$/.test(t)).map(Number));
   const hits: Hit[] = [];
   for (const r of searchContent(q, 400)) {
     if (!isCategory(r.category)) continue; // mock-test entries are never shown here
     const key = r.id.includes(":") ? r.id.slice(r.id.indexOf(":") + 1) : r.id;
-    const subject = r.subjectId ? SUBJECT_SHORT[r.subjectId as SubjectId] : undefined;
-    let snippet = "";
-    const meta: string[] = [];
     let origin: Hit["origin"];
-    switch (r.category) {
-      case "pyq":
-      case "practice": {
-        const question = getQuestion(r.id);
-        if (!question || question.origin === "MOCK_TEST") continue;
-        origin = question.origin;
-        snippet = question.preview;
-        meta.push(...[subject, `${question.type} · ${question.marks} mark${question.marks === 1 ? "" : "s"}`].filter((x): x is string => Boolean(x)));
-        break;
-      }
-      case "concept":
-        snippet = getConcept(key)?.plain ?? "";
-        if (subject) meta.push(subject);
-        break;
-      case "formula":
-        snippet = getFormula(key)?.plain ?? "";
-        if (subject) meta.push(subject);
-        break;
-      case "topic": {
-        const t = getTopic(key);
-        snippet = t ? `${t.summary} Subtopics: ${t.subtopics.map((s) => s.name).join(", ")}.` : "";
-        if (subject) meta.push(subject);
-        if (t) meta.push(plural(t.subtopics.length, "subtopic"));
-        break;
-      }
-      case "subject":
-        snippet = getSubject(key)?.description ?? "";
-        break;
-      case "strategy":
-        snippet = getStrategyArticle(key)?.summary ?? "";
-        break;
+    if (r.category === "pyq" || r.category === "practice") {
+      const question = getQuestion(r.id);
+      if (!question || question.origin === "MOCK_TEST") continue;
+      if (question.origin === "OFFICIAL_PYQ" && wantedYears.size && !wantedYears.has(question.year ?? 0)) continue;
+      origin = question.origin;
     }
-    hits.push({ id: r.id, category: r.category, title: r.title, href: r.href, snippet: excerpt(snippet, terms, 190), meta, origin });
+    hits.push({ id: r.id, category: r.category, title: r.title, href: r.href, subjectId: r.subjectId, key, origin });
   }
   return hits;
+}
+
+/** Readable excerpt and metadata of one hit (computed only for the hits that are shown). Math is converted to Unicode text. */
+function describe(h: Hit, terms: string[]): { snippet: string; meta: string[] } {
+  const subject = h.subjectId ? SUBJECT_SHORT[h.subjectId as SubjectId] : undefined;
+  const meta: string[] = [];
+  let text = "";
+  switch (h.category) {
+    case "pyq":
+    case "practice": {
+      const question = getQuestion(h.id);
+      if (question) {
+        text = stemPreview(question.html.stem, 1200);
+        if (subject) meta.push(subject);
+        meta.push(`${question.type} · ${plural(question.marks, "mark")}`);
+      }
+      break;
+    }
+    case "concept": {
+      const c = getConcept(h.key);
+      text = c ? stemPreview(`${c.html.definition} ${c.html.intuition}`, 1200) : "";
+      if (subject) meta.push(subject);
+      break;
+    }
+    case "formula": {
+      const f = getFormula(h.key);
+      text = f ? stemPreview(f.html.meaning, 1200) : "";
+      if (subject) meta.push(subject);
+      break;
+    }
+    case "topic": {
+      const t = getTopic(h.key);
+      text = t ? `${t.summary} Subtopics: ${t.subtopics.map((s) => s.name).join(", ")}.` : "";
+      if (subject) meta.push(subject);
+      if (t) meta.push(plural(t.subtopics.length, "subtopic"));
+      break;
+    }
+    case "subject":
+      text = getSubject(h.key)?.description ?? "";
+      break;
+    case "strategy":
+      text = getStrategyArticle(h.key)?.summary ?? "";
+      break;
+  }
+  return { snippet: excerpt(text, terms, 190), meta };
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: Search }) {
@@ -86,12 +110,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   const active = isCategory(catParam) ? catParam : undefined;
   const terms = queryTerms(q);
   const tooShort = q.length > 0 && q.length < 2;
+  const years = [...new Set(getPapers().map((p) => p.year))].sort((a, b) => b - a);
   const hits = q.length >= 2 ? runSearch(q, terms) : [];
   const counts = Object.fromEntries(CATEGORIES.map((c) => [c.id, hits.filter((h) => h.category === c.id).length])) as Record<Category, number>;
   const groups = CATEGORIES.filter((c) => counts[c.id] > 0 && (!active || active === c.id));
 
   // Suggestions built from real content, so every one of them returns results.
-  const years = [...new Set(getPapers().map((p) => p.year))].sort((a, b) => b - a);
   const topicSuggestions = getSubjects()
     .filter((s) => s.id !== "ga")
     .slice(0, 5)
@@ -99,13 +123,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
     .filter((x): x is string => Boolean(x));
   const suggestions = [...topicSuggestions.slice(0, 4), ...(years[0] ? [`${years[0]} Q14`] : []), ...years.slice(0, 2).map(String), "eigenvalue"];
 
+  const activeLabel = active ? CATEGORIES.find((c) => c.id === active)!.label : "";
   const status = !q
     ? "Enter a search term."
     : tooShort
       ? "Type at least 2 characters."
-      : hits.length
-        ? `${plural(hits.length, "result")} for “${q}”${active ? ` in ${CATEGORIES.find((c) => c.id === active)!.label}` : ""}.`
-        : `No results for “${q}”.`;
+      : !hits.length
+        ? `No results for “${q}”.`
+        : active
+          ? `${plural(counts[active], "result")} for “${q}” in ${activeLabel} (${plural(hits.length, "result")} in all categories).`
+          : `${plural(hits.length, "result")} for “${q}”.`;
+  const asksForMocks = /\bmocks?\b/i.test(q);
 
   return (
     <>
@@ -132,30 +160,33 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
                 </h2>
                 {!active && list.length > shown.length ? (
                   <Link href={`/search?q=${encodeURIComponent(q)}&cat=${g.id}`} className="inline-flex min-h-9 items-center gap-1 text-sm font-medium text-accent-text hover:underline">
-                    Show all {list.length} {g.label.toLowerCase()} <ArrowRight aria-hidden className="h-4 w-4" />
+                    Show all {list.length} {g.plural} <ArrowRight aria-hidden className="h-4 w-4" />
                   </Link>
                 ) : null}
               </div>
               <Card>
                 <ul className="divide-y divide-border">
-                  {shown.map((h) => (
-                    <li key={h.id}>
-                      <Link href={h.href} className="block px-4 py-3 hover:bg-surface-2 focus-visible:bg-surface-2 sm:px-5">
-                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          {h.origin ? <OriginBadge origin={h.origin} /> : null}
-                          <span className="font-medium text-accent-text">
-                            <Highlight text={h.title} terms={terms} />
+                  {shown.map((h) => {
+                    const { snippet, meta } = describe(h, terms);
+                    return (
+                      <li key={h.id}>
+                        <Link href={h.href} className="block px-4 py-3 hover:bg-surface-2 focus-visible:bg-surface-2 sm:px-5">
+                          <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            {h.origin ? <OriginBadge origin={h.origin} /> : null}
+                            <span className="font-medium text-accent-text">
+                              <Highlight text={h.title} terms={terms} />
+                            </span>
                           </span>
-                        </span>
-                        {h.snippet ? (
-                          <span className="mt-1 block text-sm text-fg-2">
-                            <Highlight text={h.snippet} terms={terms} />
-                          </span>
-                        ) : null}
-                        {h.meta.length ? <span className="mt-1 block text-xs text-fg-3">{h.meta.join(" · ")}</span> : null}
-                      </Link>
-                    </li>
-                  ))}
+                          {snippet ? (
+                            <span className="mt-1 block text-sm text-fg-2 wrap-anywhere">
+                              <Highlight text={snippet} terms={terms} />
+                            </span>
+                          ) : null}
+                          {meta.length ? <span className="mt-1 block text-xs text-fg-3">{meta.join(" · ")}</span> : null}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </Card>
             </section>
@@ -164,7 +195,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
 
         {active && hits.length && !counts[active] ? (
           <EmptyState
-            title={`No ${CATEGORIES.find((c) => c.id === active)!.label.toLowerCase()} match “${q}”`}
+            title={`No ${CATEGORIES.find((c) => c.id === active)!.plural} match “${q}”`}
             action={
               <Link href={`/search?q=${encodeURIComponent(q)}`} className="text-sm font-medium text-accent-text underline">
                 Show all {plural(hits.length, "result")}
@@ -177,6 +208,15 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
 
         {q.length >= 2 && !hits.length ? (
           <EmptyState title={`Nothing matched “${q}”`}>
+            {asksForMocks ? (
+              <p className="mb-2">
+                Mock tests are not searchable, so their questions stay unseen until you take them. Browse them on the{" "}
+                <Link href="/mocks" className="text-accent-text underline">
+                  Mock Tests
+                </Link>{" "}
+                page.
+              </p>
+            ) : null}
             <p>Check the spelling, use fewer words, or try one of these:</p>
             <ul className="mt-3 flex flex-wrap justify-center gap-2">
               {suggestions.map((s) => (
@@ -217,16 +257,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
           </Card>
         ) : null}
 
-        <p className="flex gap-2 text-sm text-fg-3">
-          <EyeOff aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>
-            Mock-test questions are not searchable, so a mock you have not taken stays unseen. After you submit a mock, review its questions from the{" "}
-            <Link href="/mocks" className="text-accent-text underline">
-              Mock Tests
-            </Link>{" "}
-            page.
-          </span>
-        </p>
+        {asksForMocks && !hits.length ? null : (
+          <p className="flex gap-2 text-sm text-fg-3">
+            <EyeOff aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>
+              Mock-test questions are not searchable, so a mock you have not taken stays unseen. After you submit a mock, review its questions from the{" "}
+              <Link href="/mocks" className="text-accent-text underline">
+                Mock Tests
+              </Link>{" "}
+              page.
+            </span>
+          </p>
+        )}
       </div>
     </>
   );
