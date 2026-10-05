@@ -91,12 +91,36 @@
       "commonTrap": "Taking a single 'middle' entry such as $d(P_1,P_3)=9$ for the last merge instead of the minimum (single linkage) or maximum (complete linkage) over all four cross pairs, and assuming that different linkages must produce different partitions."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A;C",
       "agreesWithKey": true,
-      "checkCode": "D = {('P1','P2'): 4, ('P1','P3'): 9, ('P1','P4'): 11, ('P2','P3'): 6, ('P2','P4'): 10, ('P3','P4'): 3}\nd = lambda a, b: D.get((a, b), D.get((b, a)))\ndef run(link):\n    cl, out = [('P1',), ('P2',), ('P3',), ('P4',)], []\n    while len(cl) > 1:\n        h, x, y = min(((link(d(a, b) for a in x for b in y), x, y) for i, x in enumerate(cl) for y in cl[i + 1:]), key=lambda t: t[0])\n        cl = [c for c in cl if c not in (x, y)] + [x + y]\n        out.append((h, sorted(x + y)))\n    return out\nfor name, link in (('single', min), ('complete', max)):\n    print(name, run(link))\n# Output: single [(3, ['P3', 'P4']), (4, ['P1', 'P2']), (6, ['P1', 'P2', 'P3', 'P4'])] | complete [(3, ['P3', 'P4']), (4, ['P1', 'P2']), (11, ['P1', 'P2', 'P3', 'P4'])]",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage, fcluster\nfrom scipy.spatial.distance import squareform\nD = np.array([[0, 4, 9, 11], [4, 0, 6, 10], [9, 6, 0, 3], [11, 10, 3, 0]], float)\npart = lambda lab: {frozenset(i for i, x in enumerate(lab) if x == c) for c in set(lab)}\ncuts = {}\nfor m in ('single', 'complete'):\n    Z = linkage(squareform(D), m)\n    cuts[m] = part(fcluster(Z, 2, 'maxclust'))\n    print(m, 'merge heights', Z[:, 2].tolist())\nprint('same two-cluster partition:', cuts['single'] == cuts['complete'])\nZs = linkage(squareform(D), 'single')\nprint('single cut at height 5:', sorted(map(sorted, part(fcluster(Zs, 5, 'distance')))))\n# Output: single merge heights [3.0, 4.0, 6.0] | complete merge heights [3.0, 4.0, 11.0] | same two-cluster partition: True | single cut at height 5: [[0, 1], [2, 3]]",
+      "notes": "No change. Blind hand solve and independent scipy linkage agree: single merges at 3, 4, 6; complete at 3, 4, 11; both give {P1,P2},{P3,P4} at two clusters; cut at 5 gives the same two clusters. A and C true; B (11, not 9) and D false. Solution steps and option verdicts checked."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "30103d8c4fd613aa",
+        "verification": "e2e450ea2b5e0f21"
+      }
     }
   },
   {
@@ -192,12 +216,36 @@
       "commonTrap": "Mixing up the three related quantities: $\\operatorname{Var}(Y)=0.89$ (total), $E[\\operatorname{Var}(Y\\mid X)]=0.62$ (average within-group) and $\\operatorname{Var}(E[Y\\mid X])=0.27$ (between-group); or averaging the conditional means with equal weights instead of weighting by $P(X=x)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nT = {0: {1: F(25, 100), 2: F(0), 3: F(0)}, 1: {1: F(10, 100), 2: F(0), 3: F(15, 100)}, 2: {1: F(15, 100), 2: F(10, 100), 3: F(25, 100)}}\npx = {x: sum(T[x].values()) for x in T}\nm = {x: sum(y * p for y, p in T[x].items()) / px[x] for x in T}\nEY = sum(px[x] * m[x] for x in T)\nVE = sum(px[x] * (m[x] - EY) ** 2 for x in T)\npy = {y: sum(T[x][y] for x in T) for y in (1, 2, 3)}\nVY = sum(py[y] * y * y for y in py) - EY ** 2\nunw = sum((m[x] - sum(m.values()) / 3) ** 2 for x in T) / 3\nprint(float(VE), float(VY), float(VY - VE), float(unw))\n# Output: 0.27 0.89 0.62 0.32",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nP = {(0, 1): F(25, 100), (1, 1): F(10, 100), (1, 3): F(15, 100), (2, 1): F(15, 100), (2, 2): F(10, 100), (2, 3): F(25, 100)}\nassert sum(P.values()) == 1\npx = {x: sum(p for (a, _), p in P.items() if a == x) for x in (0, 1, 2)}\nm = {x: sum(y * p for (a, y), p in P.items() if a == x) / px[x] for x in px}\nEY = sum(px[x] * m[x] for x in px)\nprint(float(EY), {x: float(v) for x, v in m.items()}, float(sum(px[x] * (m[x] - EY) ** 2 for x in px)))\n# Output: 1.9 {0: 1.0, 1: 2.2, 2: 2.2} 0.27",
+      "notes": "No change. Blind solve and independent Fractions check agree: E[Y|X] = 1, 2.2, 2.2 with weights 0.25, 0.25, 0.5; Var(E[Y|X]) = 0.27. Distractors 0.32 (unweighted), 0.62 (E[Var]), 0.89 (Var Y) all confirmed; law-of-total-variance cross-check in the solution is correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e91e670f164be710",
+        "verification": "0e672ba823a2ab97"
+      }
     }
   },
   {
@@ -248,12 +296,36 @@
       "commonTrap": "Applying only one constraint and answering $12\\times 3=36$ (or multiplying all three domain sizes, $12\\times 3\\times 5=180$). The second constraint on (Station, Shift) is what limits each shift to $5$ tuples."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "15",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\ndef best(nE, nS, nT):\n    tup, top = list(product(range(nE), range(nS), range(nT))), 0\n    for mask in range(1 << len(tup)):\n        sel = [t for i, t in enumerate(tup) if mask >> i & 1]\n        if len({(e, s) for e, s, t in sel}) == len(sel) == len({(t, s) for e, s, t in sel}):\n            top = max(top, len(sel))\n    return top\nprint(best(3, 2, 2), 2 * min(3, 2), best(2, 2, 3), 2 * min(2, 3))\nprint(3 * min(12, 5))\n# Output: 4 4 4 4 | 15",
-      "notes": ""
+      "checkCode": "from itertools import product\nlegal = lambda T: len({(e, s) for e, s, t in T}) == len(T) == len({(t, s) for e, s, t in T})\ndef brute(nE, nS, nT):\n    allt = list(product(range(nE), range(nS), range(nT)))\n    return max(len(S) for mask in range(1 << len(allt)) for S in [[allt[i] for i in range(len(allt)) if mask >> i & 1]] if legal(S))\nprint(brute(3, 2, 2), 2 * min(3, 2), brute(2, 2, 3), 2 * min(2, 3))\ninst = [(i, s, i) for s in range(3) for i in range(5)]\nprint(legal(inst), len(inst), 3 * min(12, 5))\n# Output: 4 4 4 4 | True 15 15",
+      "notes": "No change. Blind solve gives 3 x min(12,5) = 15; confirmed by an explicit legal 15-tuple instance and by brute force on small analogues (3,2,2) and (2,2,3). Integer NAT, exact range 15 to 15 is appropriate."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0613777c2c09552d",
+        "verification": "291cd8a945cfe866"
+      }
     }
   },
   {
@@ -311,12 +383,36 @@
       "commonTrap": "Reducing in base 10 instead of base 7, or stopping after one digit-sum: $2000$ has base-7 digit sum $20$, which is still not a single base-7 digit and needs two more reductions (to $8$ and then to $2$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "55",
       "agreesWithKey": true,
-      "checkCode": "def digits(n):\n    out = []\n    while n > 0:\n        n, r = divmod(n, 7)\n        out.append(r)\n    return out\n\ndef reduce7(n):\n    steps = 0\n    while len(digits(n)) > 1:\n        n = sum(digits(n))\n        steps += 1\n    return n * 10 + steps\n\nprint([reduce7(m) for m in [50, 343, 2000]], sum(reduce7(m) for m in [50, 343, 2000]))\n# Output: [21, 11, 23] 55",
-      "notes": ""
+      "checkCode": "def digits(n):\n    out = []\n    while n > 0:\n        n, r = divmod(n, 7)\n        out.append(r)\n    return out\n\ndef reduce7(n):\n    steps = 0\n    while len(digits(n)) > 1:\n        n = sum(digits(n))\n        steps += 1\n    return n * 10 + steps\n\nprint(digits(2000), [reduce7(m) for m in [50, 343, 2000]], sum(reduce7(m) for m in [50, 343, 2000]))\n# Output: [5, 5, 5, 5] [21, 11, 23] 55",
+      "notes": "No change. Blind trace and independent run of the program give 21, 11, 23 and a printed total of 55. Base-7 digit lists in the solution verified."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "3ed50980ac3fa71f",
+        "verification": "8475c9263e37a261"
+      }
     }
   },
   {
@@ -414,12 +510,36 @@
       "commonTrap": "Believing that rescaling the features changes the fraction of variance retained. It does only when the features are scaled *differently*; a common factor cancels in the ratio. A second slip is rounding $80\\%$ up to satisfy the $85\\%$ requirement with two components."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A;B;C",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nlam = [6, 2, 1, 0.5, 0.5]\ncum = [sum(lam[:k]) / sum(lam) for k in range(1, 6)]\nprint(cum, next(k for k, c in enumerate(cum, 1) if c >= 0.85))\nlam10 = [100 * v for v in lam]\nprint((lam10[0] + lam10[1]) / sum(lam10))\nrng = np.random.default_rng(0); Q, _ = np.linalg.qr(rng.normal(size=(5, 5)))\nS = Q @ np.diag(lam) @ Q.T; V = np.linalg.eigh(S)[1][:, ::-1]\nprint(np.round(V[:, :2].T @ S @ V[:, :2], 6))\n# Output: [0.6, 0.8, 0.9, 0.95, 1.0] 3 | 0.8 | [[ 6. -0.] |  [-0.  2.]]",
-      "notes": ""
+      "checkCode": "import numpy as np\nlam = np.array([6, 2, 1, 0.5, 0.5])\nfor s in (1, 100):\n    cum = np.cumsum(lam * s) / (lam * s).sum()\n    print(s, cum.round(4).tolist(), 'smallest k for >=85%:', int(np.argmax(cum >= 0.85)) + 1)\nrng = np.random.default_rng(1); Q, _ = np.linalg.qr(rng.normal(size=(5, 5)))\nS = Q @ np.diag(lam) @ Q.T\nw, V = np.linalg.eigh(S); V = V[:, ::-1]\nprint('Cov(PC1, PC2 scores) =', round(float((V[:, 0] @ S @ V[:, 1])), 10))\n# Output: 1 [0.6, 0.8, 0.9, 0.95, 1.0] smallest k for >=85%: 3 | 100 [0.6, 0.8, 0.9, 0.95, 1.0] smallest k for >=85%: 3 | Cov(PC1, PC2 scores) = 0.0",
+      "notes": "No change. Blind solve and independent numpy check agree: cumulative fractions 60, 80, 90, 95, 100 percent; k = 3 for 85 percent; PC scores uncorrelated; scaling by 10 leaves the fractions unchanged (exactly 80 percent, not more), so D is false."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "163e5c9bc8047986",
+        "verification": "561be2be24889128"
+      }
     }
   },
   {
@@ -477,12 +597,36 @@
       "commonTrap": "Forgetting the intercept (predicting $1.75\\times 5=8.75$), or computing the slope from uncentred sums as $\\sum x_iy_i/\\sum x_i^2$ instead of using deviations from the means."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "15.25",
       "agreesWithKey": true,
-      "checkCode": "xs, ys = [1, 3, 7, 8, 11], [9, 10, 20, 21, 25]\nn = len(xs); xb, yb = sum(xs) / n, sum(ys) / n\nb1 = sum((x - xb) * (y - yb) for x, y in zip(xs, ys)) / sum((x - xb) ** 2 for x in xs)\nb0 = yb - b1 * xb\nprint(xb, yb, b1, b0, round(b0 + 5 * b1, 2))\n# Output: 6.0 17.0 1.75 6.5 15.25",
-      "notes": ""
+      "checkCode": "import numpy as np\nx = np.array([1, 3, 7, 8, 11.]); y = np.array([9, 10, 20, 21, 25.])\nA = np.column_stack([np.ones_like(x), x])\nb0, b1 = np.linalg.lstsq(A, y, rcond=None)[0]\nprint(round(b0, 4), round(b1, 4), round(b0 + 5 * b1, 2))\n# Output: 6.5 1.75 15.25",
+      "notes": "No change. Blind OLS gives slope 1.75, intercept 6.5, prediction 15.25; confirmed with numpy lstsq. Stem states rounding to two decimals; range 15.24 to 15.26 is tight and sensible."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "7226649242db0cf6",
+        "verification": "bdd1bc50e671702e"
+      }
     }
   },
   {
@@ -575,12 +719,36 @@
       "commonTrap": "Dropping the prior term (threshold $4.00$) or moving the threshold the wrong way. A larger prior for class 1 pushes the boundary *away* from $\\mu_1$, so that class 1 claims more of the line."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "import math\nmu1, mu2, s2, p1, p2 = 2, 6, 4, 0.75, 0.25\ndelta = lambda x, mu, p: x * mu / s2 - mu ** 2 / (2 * s2) + math.log(p)\nlo, hi = 0.0, 10.0\nfor _ in range(60):\n    mid = (lo + hi) / 2\n    if delta(mid, mu1, p1) > delta(mid, mu2, p2): lo = mid\n    else: hi = mid\nprint(round(lo, 4), round(4 + math.log(3), 4))\nprint(round(4 - math.log(3), 2), round(4 + 2 * math.log(3) / 4, 2))\n# Output: 5.0986 5.0986 | 2.9 4.55",
-      "notes": ""
+      "checkCode": "import math\nfrom scipy.optimize import brentq\nmu, pi, s2 = (2, 6), (0.75, 0.25), 4\nd = lambda x, k: x * mu[k] / s2 - mu[k] ** 2 / (2 * s2) + math.log(pi[k])\nxs = brentq(lambda x: d(x, 0) - d(x, 1), 0, 10)\nprint(round(xs, 4), round(4 + 1.0986, 4), [round(v, 2) for v in (4 - math.log(3), 4.0, 4 + 2 * math.log(3) / 4)])\n# Output: 5.0986 5.0986 [2.9, 4.0, 4.55]",
+      "notes": "No change. Blind solve and independent root finding give x* = 4 + ln 3 = 5.0986, i.e. 5.10 (D). The distractors 2.90, 4.00 and 4.55 correspond to the wrong-sign shift, no prior term and sigma used in place of sigma squared, as the option analysis says."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0fc807d663fa2b7e",
+        "verification": "4992e0f292a0a500"
+      }
     }
   },
   {
@@ -603,7 +771,7 @@
     "concept": "Variable elimination on a Bayesian network: summing out a leaf gives an all-ones factor, the scope of a new factor is the union of the scopes it multiplies minus the eliminated variable, and posteriors need Bayes' rule on top of the marginals.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "An orchard is modelled by a Bayesian network over five Boolean variables ($1$ = true, $0$ = false): $F$ (a frost occurs), $B$ (a blight outbreak occurs), $Y$ (the harvest is poor), $R$ (the market price rises) and $C$ (an insurance claim is filed). The edges are $F \\to Y$, $B \\to Y$, $Y \\to R$ and $Y \\to C$, so the joint distribution is $P(F)\\,P(B)\\,P(Y \\mid F, B)\\,P(R \\mid Y)\\,P(C \\mid Y)$. The parameters are:\n\n| Quantity | Value |\n|---|---|\n| $P(F=1)$ | $0.3$ |\n| $P(B=1)$ | $0.2$ |\n| $P(Y=1 \\mid F=1, B=1)$ | $0.9$ |\n| $P(Y=1 \\mid F=1, B=0)$ | $0.6$ |\n| $P(Y=1 \\mid F=0, B=1)$ | $0.5$ |\n| $P(Y=1 \\mid F=0, B=0)$ | $0.1$ |\n| $P(R=1 \\mid Y=1)$ | $0.8$ |\n| $P(R=1 \\mid Y=0)$ | $0.1$ |\n| $P(C=1 \\mid Y=1)$ | $0.7$ |\n| $P(C=1 \\mid Y=0)$ | $0.05$ |\n\nExact inference uses **variable elimination** (VE): to eliminate a variable, VE multiplies all current factors that mention it and sums it out, which creates one new factor.\n\nWhich of the following statements is/are TRUE?",
+    "stem": "An orchard is modelled by a Bayesian network over five Boolean variables ($1$ = true, $0$ = false): $F$ (a frost occurs), $B$ (a blight outbreak occurs), $Y$ (the harvest is poor), $R$ (the market price rises) and $C$ (an insurance claim is filed). The edges are $F \\to Y$, $B \\to Y$, $Y \\to R$ and $Y \\to C$, so the joint distribution is $P(F)\\,P(B)\\,P(Y \\mid F, B)\\,P(R \\mid Y)\\,P(C \\mid Y)$. The parameters are:\n\n| Quantity | Value |\n|---|---|\n| $P(F=1)$ | $0.3$ |\n| $P(B=1)$ | $0.2$ |\n| $P(Y=1 \\mid F=1, B=1)$ | $0.9$ |\n| $P(Y=1 \\mid F=1, B=0)$ | $0.6$ |\n| $P(Y=1 \\mid F=0, B=1)$ | $0.5$ |\n| $P(Y=1 \\mid F=0, B=0)$ | $0.1$ |\n| $P(R=1 \\mid Y=1)$ | $0.8$ |\n| $P(R=1 \\mid Y=0)$ | $0.1$ |\n| $P(C=1 \\mid Y=1)$ | $0.7$ |\n| $P(C=1 \\mid Y=0)$ | $0.05$ |\n\nExact inference uses **variable elimination** (VE): to eliminate a variable, VE multiplies all current factors that mention it and sums it out, which creates one new factor. Assume VE starts from all five conditional probability tables as its initial factors and that no variable is removed from the network beforehand.\n\nWhich of the following statements is/are TRUE?",
     "options": [
       {
         "label": "A",
@@ -637,7 +805,7 @@
         },
         {
           "title": "Statement B: eliminating $Y$ first",
-          "body": "The factors that mention $Y$ are $P(Y\\mid F,B)$, $P(R\\mid Y)$ and $P(C\\mid Y)$. Their product has scope $\\{F,B,Y,R,C\\}$; summing out $Y$ leaves a factor over $\\{F,B,R,C\\}$, that is **four** variables ($2^4=16$ entries). B is false."
+          "body": "The factors that mention $Y$ are $P(Y\\mid F,B)$, $P(R\\mid Y)$ and $P(C\\mid Y)$. Their product has scope $\\{F,B,Y,R,C\\}$; summing out $Y$ leaves a factor over $\\{F,B,R,C\\}$, that is **four** variables ($2^4=16$ entries). The stem fixes the convention that all five tables are initial factors and that no variable is pruned beforehand, so $P(C\\mid Y)$ is one of the factors multiplied. (If the irrelevant leaf $C$ were pruned first, the new factor would have only the three variables $\\{F,B,R\\}$; the stem rules that reading out.) B is false."
         },
         {
           "title": "Statement D: the marginal $P(R=1)$",
@@ -658,7 +826,7 @@
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "The product of $P(Y\\mid F,B)$, $P(R\\mid Y)$ and $P(C\\mid Y)$ mentions $F,B,Y,R,C$; after summing out $Y$ the new factor is over $F,B,R,C$, four variables, not three."
+          "explanation": "The product of $P(Y\\mid F,B)$, $P(R\\mid Y)$ and $P(C\\mid Y)$ mentions $F,B,Y,R,C$; after summing out $Y$ the new factor is over $F,B,R,C$, four variables, not three. The stem stipulates that no variable is pruned beforehand, so $P(C\\mid Y)$ takes part in the product."
         },
         {
           "label": "C",
@@ -671,15 +839,39 @@
           "explanation": "Correct: $P(Y=1)=0.324$ and $P(R=1)=0.324(0.8)+0.676(0.1)=0.3268$."
         }
       ],
-      "commonTrap": "Reading $P(Y=1\\mid F=1)=0.66$ as $P(F=1\\mid Y=1)$, and keeping only the observed-looking $C=1$ entries when eliminating a leaf; an unobserved leaf must be summed over both of its values."
+      "commonTrap": "Reading $P(Y=1\\mid F=1)=0.66$ as $P(F=1\\mid Y=1)$, and keeping only the observed-looking $C=1$ entries when eliminating a leaf; an unobserved leaf must be summed over both of its values. For statement B, counting only the variables that matter for $P(R)$ and forgetting that the stated procedure multiplies every factor that mentions $Y$, including $P(C\\mid Y)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "import itertools\npF, pB = 0.3, 0.2\npY = {(1, 1): 0.9, (1, 0): 0.6, (0, 1): 0.5, (0, 0): 0.1}\npR, pC = {1: 0.8, 0: 0.1}, {1: 0.7, 0: 0.05}\ndef joint(f, b, y, r, c):\n    j = (pF if f else 1 - pF) * (pB if b else 1 - pB) * (pY[f, b] if y else 1 - pY[f, b])\n    return j * (pR[y] if r else 1 - pR[y]) * (pC[y] if c else 1 - pC[y])\nP = lambda cond: sum(joint(*v) for v in itertools.product([0, 1], repeat=5) if cond(*v))   # v = (f, b, y, r, c)\nprint(round(P(lambda f, b, y, r, c: r == 1), 4))\nprint(round(P(lambda f, b, y, r, c: f == 1 and y == 1) / P(lambda f, b, y, r, c: y == 1), 4))\nprint(pC[1] + (1 - pC[1]), pC[0] + (1 - pC[0]))\nfactors = [{'F'}, {'B'}, {'Y', 'F', 'B'}, {'R', 'Y'}, {'C', 'Y'}]\nprint(sorted(set().union(*[s for s in factors if 'Y' in s]) - {'Y'}))\n# Output: 0.3268 | 0.6111 | 1.0 1.0 | ['B', 'C', 'F', 'R']",
-      "notes": ""
+      "checkCode": "import itertools\npF, pB = {1: .3, 0: .7}, {1: .2, 0: .8}\npY1 = {(1, 1): .9, (1, 0): .6, (0, 1): .5, (0, 0): .1}\npR, pC = {1: .8, 0: .1}, {1: .7, 0: .05}\ndef J(f, b, y, r, c):\n    py = pY1[f, b] if y else 1 - pY1[f, b]\n    return pF[f] * pB[b] * py * (pR[y] if r else 1 - pR[y]) * (pC[y] if c else 1 - pC[y])\nV = list(itertools.product([0, 1], repeat=5))              # (f, b, y, r, c)\nP = lambda cond: sum(J(*v) for v in V if cond(*v))\nprint('P(R=1) =', round(P(lambda f, b, y, r, c: r == 1), 4))\nprint('P(F=1|Y=1) =', round(P(lambda f, b, y, r, c: f == 1 and y == 1) / P(lambda f, b, y, r, c: y == 1), 4))\nprint('sum over C of P(C|Y):', [pC[y] + (1 - pC[y]) for y in (0, 1)])\nscopes = [{'F'}, {'B'}, {'F', 'B', 'Y'}, {'Y', 'R'}, {'Y', 'C'}]    # all five CPTs, no pruning\nprint('scope after eliminating Y:', sorted(set().union(*[s for s in scopes if 'Y' in s]) - {'Y'}))\nprint('scope after eliminating Y if barren C were pruned first:', sorted(set().union(*[s for s in scopes[:4] if 'Y' in s]) - {'Y'}))\n# Output: P(R=1) = 0.3268 | P(F=1|Y=1) = 0.6111 | sum over C of P(C|Y): [1.0, 1.0] | scope after eliminating Y: ['B', 'C', 'F', 'R'] | scope after eliminating Y if barren C were pruned first: ['B', 'F', 'R']",
+      "notes": "Fixed an unstated convention. Statement B (the scope of the factor created by eliminating Y first) is 4 variables {F,B,R,C} when all five CPTs are initial factors, but 3 variables {F,B,R} if the barren leaf C is pruned beforehand, so B was defensible either way. The stem now states that VE starts from all five CPTs with no pruning, and the solution, option analysis for B and the common trap mention this. Key unchanged: only D is true (P(R=1) = 0.3268). A false (summing out C gives all-ones), C false (P(F=1|Y=1) = 0.198/0.324 = 0.6111; 0.66 is P(Y=1|F=1))."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "78038e27b078793c",
+        "verification": "51c87ecd2384525a"
+      }
     }
   },
   {
@@ -772,12 +964,36 @@
       "commonTrap": "Taking $\\dim U$ as the number of spanning vectors ($3$) although $(1,1,1,1)$ is dependent, and ignoring the vector $(1,0,1,0)$ that $U$ and $W$ share; either error makes the sum look bigger than it is."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nU = sp.Matrix([[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 1, 1]])\nW = sp.Matrix([[1, 0, -1, 0], [0, 1, 0, 1]]).nullspace()\ndU, dW = U.rank(), len(W)\ndS = sp.Matrix.vstack(U, sp.Matrix.hstack(*W).T).rank()\nprint(dU, dW, dS, dU + dW - dS)\n# Output: 2 2 3 1",
-      "notes": ""
+      "checkCode": "import numpy as np\nU = np.array([[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 1, 1]], float)\nC = np.array([[1, 0, -1, 0], [0, 1, 0, 1]], float)          # W = null space of these two constraints\nu, s, vt = np.linalg.svd(C); Wb = vt[2:]\nrU, rW = np.linalg.matrix_rank(U), np.linalg.matrix_rank(Wb)\nrS = np.linalg.matrix_rank(np.vstack([U, Wb]))\nprint(rU, rW, rS, 'dim(U cap W) =', rU + rW - rS)\n# Output: 2 2 3 dim(U cap W) = 1",
+      "notes": "No change. Blind solve and independent rank computation agree: dim U = 2, dim W = 2, dim(U+W) = 3, dim(U cap W) = 1. Option analysis for the distractors 2, 4, 5 checked."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e070de1baa2071d1",
+        "verification": "2788f37603d5a21d"
+      }
     }
   },
   {
@@ -872,12 +1088,36 @@
       "commonTrap": "Taking the mode to be the rounded mean ($3$ instead of $2$), and writing $1-p^n$ instead of $1-(1-p)^n$ for 'at least one success'."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B;D",
       "agreesWithKey": true,
-      "checkCode": "from math import comb\nn, p = 10, 0.25\npm = [comb(n, k) * p ** k * (1 - p) ** (n - k) for k in range(n + 1)]\nprint(max(range(n + 1), key=pm.__getitem__), round(pm[2], 4), round(pm[3], 4))\nprint(n * p, n * p * (1 - p))\nprint(round(1 - (1 - p) ** n, 4), round(1 - p ** n, 6))\nK = range(1, 7); EK = sum(K) / 6\nprint(round(sum(k * k for k in K) / 6 - EK ** 2, 4), round(35 / 12, 4))\n# Output: 2 0.2816 0.2503 | 2.5 1.875 | 0.9437 0.999999 | 2.9167 2.9167",
-      "notes": ""
+      "checkCode": "from scipy import stats\nimport numpy as np\nb = stats.binom(10, 0.25)\npm = b.pmf(np.arange(11))\nprint('mode', int(pm.argmax()), pm[2].round(4), pm[3].round(4), '| mean, var', b.mean(), b.var())\nprint('P(X>=1)', round(1 - b.pmf(0), 4), 'vs 1-(1/4)^10 =', round(1 - 0.25 ** 10, 6))\nK = np.arange(1, 7)\nprint('Var(K)', round(float(K.var()), 4), round(35 / 12, 4))\n# Output: mode 2 0.2816 0.2503 | mean, var 2.5 1.875 | P(X>=1) 0.9437 vs 1-(1/4)^10 = 0.999999 | Var(K) 2.9167 2.9167",
+      "notes": "No change. Blind solve and independent scipy check agree: mode 2 (P(2)=0.2816 > P(3)=0.2503), E = 2.5, Var = 1.875, P(X>=1) = 1-(3/4)^10 = 0.9437, Var(K) = 35/12. B and D true."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "1970e697656698c5",
+        "verification": "c2c02a85bdbd07a4"
+      }
     }
   }
 ]

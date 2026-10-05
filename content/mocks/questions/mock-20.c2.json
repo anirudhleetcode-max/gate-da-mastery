@@ -1,0 +1,1122 @@
+[
+  {
+    "id": "M20-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the bias–variance decomposition of a $k$-NN regressor) applied for four values of $k$, each needing a running mean, a squared bias and a variance term; routine arithmetic with a mild trap, about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Bias–variance decomposition of the expected squared prediction error for $k$-NN regression: $\\sigma^2 + \\text{Bias}_k^2 + \\sigma^2/k$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A $k$-nearest-neighbour regressor predicts the response at a query point $x_0$ as the average of the responses of the $k$ training points nearest to $x_0$. The responses are generated as $y_i = f(x_i) + \\varepsilon_i$, where the noise terms $\\varepsilon_i$ are independent with mean $0$ and variance $\\sigma^2 = 4$, and the training inputs $x_i$ are fixed (only the noise changes from one training set to another).\n\nAt the query point the true value is $f(x_0) = 10$. The noise-free values $f(x_i)$ at the four training points nearest to $x_0$, from the nearest to the farthest, are:\n\n| Neighbour rank | 1 | 2 | 3 | 4 |\n|---|---|---|---|---|\n| $f(x_i)$ | 9.5 | 10.5 | 11.5 | 14.5 |\n\nA new response $y_0 = f(x_0) + \\varepsilon_0$ is observed at $x_0$, where $\\varepsilon_0$ is independent of the training noise and has the same distribution. Let $\\hat{f}_k(x_0)$ denote the $k$-NN prediction at $x_0$. Over $k \\in \\{1, 2, 3, 4\\}$, the smallest value of the expected squared prediction error $E\\big[(y_0 - \\hat{f}_k(x_0))^2\\big]$ is ________ (rounded off to two decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 5.57,
+      "max": 5.59
+    },
+    "solution": {
+      "quick": "For $k$-NN with fixed inputs, $E\\big[(y_0-\\hat f_k)^2\\big] = \\sigma^2 + \\text{Bias}_k^2 + \\sigma^2/k$, where $\\text{Bias}_k$ is the mean of the $k$ nearest $f$-values minus $10$.\nThis gives $8.25,\\ 6.00,\\ 5.583,\\ 7.25$ for $k = 1,2,3,4$, so the minimum is $5.583 \\approx 5.58$, attained at $k = 3$.",
+      "steps": [
+        {
+          "title": "Decompose the error",
+          "body": "The prediction is $\\hat f_k(x_0) = \\frac{1}{k}\\sum_{i=1}^{k} y_i$ over the $k$ nearest points. With fixed inputs, $E[\\hat f_k] = \\frac{1}{k}\\sum f(x_i)$ and, because the noise terms are independent, $\\operatorname{Var}(\\hat f_k) = \\sigma^2/k$. The new noise $\\varepsilon_0$ is independent of $\\hat f_k$, so\n$$E\\big[(y_0-\\hat f_k)^2\\big] = \\sigma^2 + \\big(E[\\hat f_k] - f(x_0)\\big)^2 + \\frac{\\sigma^2}{k} = 4 + \\text{Bias}_k^2 + \\frac{4}{k}.$$"
+        },
+        {
+          "title": "Bias for each $k$",
+          "body": "Running means of the neighbour values, minus $f(x_0) = 10$:\n\n- $k=1$: mean $9.5$, bias $-0.5$.\n- $k=2$: mean $(9.5+10.5)/2 = 10$, bias $0$.\n- $k=3$: mean $(9.5+10.5+11.5)/3 = 31.5/3 = 10.5$, bias $0.5$.\n- $k=4$: mean $(31.5+14.5)/4 = 46/4 = 11.5$, bias $1.5$."
+        },
+        {
+          "title": "Assemble the error for each $k$",
+          "body": "| $k$ | $\\text{Bias}_k^2$ | $\\sigma^2/k$ | $4 + \\text{Bias}_k^2 + \\sigma^2/k$ |\n|---|---|---|---|\n| 1 | 0.25 | 4 | 8.25 |\n| 2 | 0 | 2 | 6.00 |\n| 3 | 0.25 | 1.3333 | 5.5833 |\n| 4 | 2.25 | 1 | 7.25 |"
+        },
+        {
+          "title": "Pick the minimum",
+          "body": "The smallest value is $5.5833$ at $k = 3$. Going from $k=2$ to $k=3$, the variance falls from $2$ to $1.33$ while the squared bias rises only from $0$ to $0.25$; at $k=4$ the far neighbour ($14.5$) inflates the bias to $1.5$ and the squared bias dominates. Rounded to two decimals: $5.58$."
+        }
+      ],
+      "finalAnswer": "**5.58**",
+      "shortcut": "The irreducible term $\\sigma^2 = 4$ is common to every $k$, so compare only $\\text{Bias}_k^2 + \\sigma^2/k$: $4.25,\\ 2,\\ 1.583,\\ 3.25$. The least is $1.583$ at $k=3$; add $4$ back to get $5.583$.",
+      "commonTrap": "Leaving out the irreducible noise $\\sigma^2 = 4$ of the new observation (giving $1.58$), using $\\sigma^2$ instead of $\\sigma^2/k$ for the variance of an average of $k$ responses, or choosing $k=2$ only because its bias is exactly zero: its variance $\\sigma^2/2 = 2$ is larger than the variance at $k=3$ ($1.33$), which more than pays for the extra $0.25$ of squared bias."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "5.58 (minimum of 4 + Bias_k^2 + 4/k = 8.25, 6, 67/12, 7.25 at k = 3)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: exact formula + Monte Carlo\nimport numpy as np\nf = np.array([9.5, 10.5, 11.5, 14.5]); f0, s2 = 10, 4\nexact = {k: s2 + s2 / k + (f[:k].mean() - f0) ** 2 for k in range(1, 5)}\nrng = np.random.default_rng(1); N = 2_000_000\nmc = {}\nfor k in range(1, 5):\n    yhat = (f[:k] + rng.normal(0, 2, (N, k))).mean(1); y0 = f0 + rng.normal(0, 2, N)\n    mc[k] = round(float(np.mean((y0 - yhat) ** 2)), 1)\nprint({k: round(float(v), 4) for k, v in exact.items()}, mc, round(float(min(exact.values())), 2))\n# {1: 8.25, 2: 6.0, 3: 5.5833, 4: 7.25} {1: 8.2, 2: 6.0, 3: 5.6, 4: 7.2} 5.58",
+      "notes": "No change needed. Blind solve and Python (exact formula plus Monte Carlo) both give 67/12 = 5.5833 at k = 3; NAT range 5.57 to 5.59 matches the stated two-decimal rounding; each shortcut figure and the trap text were re-derived and are correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f2e1ec61b10bfa89",
+        "verification": "ec135f7168772592"
+      }
+    }
+  },
+  {
+    "id": "M20-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-independence"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the determinant test for linear dependence of three vectors in $\\mathbb{R}^3$) and a single short computation with small integers; about one minute.",
+    "estimatedTimeSec": 75,
+    "concept": "Three vectors in $\\mathbb{R}^3$ are linearly dependent exactly when the determinant of the matrix formed by them is zero.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A data scientist builds a design matrix whose three feature columns, recorded over three observations, are\n\n$$\\mathbf{c}_1 = \\begin{bmatrix} 1 \\\\ 0 \\\\ 2 \\end{bmatrix}, \\qquad \\mathbf{c}_2 = \\begin{bmatrix} 2 \\\\ 1 \\\\ 0 \\end{bmatrix}, \\qquad \\mathbf{c}_3 = \\begin{bmatrix} 3 \\\\ 1 \\\\ k \\end{bmatrix},$$\n\nwhere $k$ is a real number. The vectors $\\mathbf{c}_1, \\mathbf{c}_2, \\mathbf{c}_3$ are linearly dependent for exactly one value of $k$. That value of $k$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$-2$"
+      },
+      {
+        "label": "B",
+        "text": "$1$"
+      },
+      {
+        "label": "C",
+        "text": "$2$"
+      },
+      {
+        "label": "D",
+        "text": "$3$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Three vectors in $\\mathbb{R}^3$ are dependent exactly when $\\det[\\mathbf{c}_1\\ \\mathbf{c}_2\\ \\mathbf{c}_3] = 0$. Expanding gives $\\det = k - 2$, so $k = 2$.\nCheck: for $k = 2$, $\\mathbf{c}_1 + \\mathbf{c}_2 = (3,1,2)^\\top = \\mathbf{c}_3$.",
+      "steps": [
+        {
+          "title": "Use the determinant criterion",
+          "body": "Three vectors in $\\mathbb{R}^3$ are linearly dependent if and only if the $3\\times 3$ matrix having them as columns is singular, that is, its determinant is $0$."
+        },
+        {
+          "title": "Compute the determinant",
+          "body": "$$\\det\\begin{bmatrix} 1 & 2 & 3 \\\\ 0 & 1 & 1 \\\\ 2 & 0 & k \\end{bmatrix} = 1\\,(1\\cdot k - 1\\cdot 0) - 2\\,(0\\cdot k - 1\\cdot 2) + 3\\,(0\\cdot 0 - 1\\cdot 2) = k + 4 - 6 = k - 2.$$"
+        },
+        {
+          "title": "Solve for $k$",
+          "body": "$k - 2 = 0$ gives $k = 2$. For every other $k$ the determinant is non-zero, so the columns are independent; this is why exactly one value works."
+        },
+        {
+          "title": "Cross-check with an explicit dependence",
+          "body": "For $k = 2$: $\\mathbf{c}_1 + \\mathbf{c}_2 = (1+2,\\ 0+1,\\ 2+0)^\\top = (3, 1, 2)^\\top = \\mathbf{c}_3$, so $\\mathbf{c}_1 + \\mathbf{c}_2 - \\mathbf{c}_3 = \\mathbf{0}$ is a non-trivial relation."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "At $k=-2$ the determinant is $k-2 = -4 \\ne 0$, so the columns are independent. This value comes from a sign slip in the cofactor expansion (which turns $k-2$ into $k+2$)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "At $k=1$ the determinant is $1-2 = -1 \\ne 0$, so the columns are independent. With $k=1$, $\\mathbf{c}_3 = (3,1,1)^\\top$ agrees with $\\mathbf{c}_1+\\mathbf{c}_2 = (3,1,2)^\\top$ in two of the three coordinates but not the third, which makes it a tempting near-miss."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\det = k-2$ vanishes at $k=2$, and then $\\mathbf{c}_3 = \\mathbf{c}_1 + \\mathbf{c}_2$. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "At $k=3$ the determinant is $1 \\ne 0$, so the columns are independent. The value $3$ is only the first entry of $\\mathbf{c}_3$."
+        }
+      ],
+      "shortcut": "$\\mathbf{c}_1$ and $\\mathbf{c}_2$ are not multiples of each other, so dependence forces $\\mathbf{c}_3 = a\\mathbf{c}_1 + b\\mathbf{c}_2$. The second coordinate gives $b = 1$, the first gives $a + 2b = 3$, so $a = 1$, and the third coordinate then gives $k = 2\\cdot 1 + 0 = 2$.",
+      "commonTrap": "A sign error in the cofactor expansion turns $k - 2$ into $k + 2$ and leads to $k = -2$. Testing whether $\\mathbf{c}_3$ equals $\\mathbf{c}_1 + \\mathbf{c}_2$ is a quick guard against this."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "k = 2, option (C) (det = k - 2; c3 = c1 + c2)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check\nimport sympy as sp\nk = sp.symbols('k')\nM = sp.Matrix([[1, 2, 3], [0, 1, 1], [2, 0, k]])      # columns c1, c2, c3\nprint(sp.solve(M.det(), k), M.det(), [M.subs(k, v).rank() for v in (-2, 1, 2, 3)])\n# [2] k - 2 [3, 3, 2, 3]  -> only k = 2 gives rank < 3",
+      "notes": "Corrected during verification: the optionAnalysis explanation for (B) wrongly claimed k = 1 comes from dropping the factor 2 in the second cofactor (that slip actually yields k - 4). Replaced with an accurate statement (at k = 1, c3 = (3,1,1) matches c1 + c2 = (3,1,2) in two coordinates). Stem, options, key and steps unchanged and correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "6ea38c533fdee218",
+        "verification": "e308e26a0cd8f6df"
+      }
+    }
+  },
+  {
+    "id": "M20-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-orthogonal-matrix"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (orthogonal matrices) with four linked checks — $A^2$, the determinant, an eigenvalue of $-1$ and the trace — each a short routine computation on a $3\\times 3$ matrix; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Orthogonal matrices: $A^\\top A = I$ gives $\\det A = \\pm 1$ and eigenvalues of modulus 1; a symmetric orthogonal matrix satisfies $A^2 = I$ and is a reflection when $\\det A = -1$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$A = \\frac{1}{3}\\begin{bmatrix} 1 & 2 & 2 \\\\ 2 & 1 & -2 \\\\ 2 & -2 & 1 \\end{bmatrix}$$\n\nand let $I$ be the $3\\times 3$ identity matrix. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$A^2 = I$."
+      },
+      {
+        "label": "B",
+        "text": "$A$ is a rotation matrix, that is, an orthogonal matrix with $\\det A = +1$."
+      },
+      {
+        "label": "C",
+        "text": "$A + I$ is invertible."
+      },
+      {
+        "label": "D",
+        "text": "$\\operatorname{tr}(A) = 1$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The columns of $3A$ are mutually orthogonal with squared norm $9$, so $A^\\top A = I$; $A$ is also symmetric, hence $A^2 = A^\\top A = I$ (A true). $\\det A = -1$, so $A$ is a reflection, not a rotation (B false).\nAn orthogonal $3\\times 3$ matrix with $\\det = -1$ has eigenvalue $-1$ (here $A\\mathbf{u} = -\\mathbf{u}$ for $\\mathbf{u} = (1,-1,-1)^\\top$), so $A + I$ is singular (C false). $\\operatorname{tr}A = 3/3 = 1$ (D true).",
+      "steps": [
+        {
+          "title": "Check orthogonality",
+          "body": "Take the columns of $3A$: $(1,2,2)$, $(2,1,-2)$, $(2,-2,1)$. Their dot products are $2+2-4 = 0$, $2-4+2 = 0$ and $4-2-2 = 0$, and each has squared length $9$, so the columns of $A$ are orthonormal and $A^\\top A = I$."
+        },
+        {
+          "title": "Statement A: $A^2$",
+          "body": "$A$ is symmetric ($A^\\top = A$), so $A^2 = A^\\top A = I$. Statement (A) is true, and $A^{-1} = A$."
+        },
+        {
+          "title": "Statement B: the determinant",
+          "body": "$$\\det(3A) = \\begin{vmatrix} 1 & 2 & 2 \\\\ 2 & 1 & -2 \\\\ 2 & -2 & 1 \\end{vmatrix} = 1(1-4) - 2(2+4) + 2(-4-2) = -3 - 12 - 12 = -27,$$\nand $\\det(3A) = 27\\det A$, so $\\det A = -1$. $A$ is orthogonal but not a rotation (it is a reflection), so (B) is false."
+        },
+        {
+          "title": "Statement C: is $A+I$ invertible?",
+          "body": "Let $\\mathbf{u} = (1,-1,-1)^\\top$. Then $3A\\mathbf{u} = (1-2-2,\\ 2-1+2,\\ 2+2-1)^\\top = (-3,\\ 3,\\ 3)^\\top$, so $A\\mathbf{u} = (-1, 1, 1)^\\top = -\\mathbf{u}$. Thus $-1$ is an eigenvalue of $A$ and $(A+I)\\mathbf{u} = \\mathbf{0}$ with $\\mathbf{u}\\ne\\mathbf{0}$: $A+I$ is singular, so (C) is false."
+        },
+        {
+          "title": "Statement D: the trace",
+          "body": "$\\operatorname{tr}(A) = \\frac{1}{3}(1+1+1) = 1$, so (D) is true. This agrees with the eigenvalues $1, 1, -1$ (they have sum $1$ and product $\\det A = -1$)."
+        }
+      ],
+      "finalAnswer": "**(A), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$A$ is symmetric with orthonormal columns, so $A^2 = A^\\top A = I$. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Orthonormal columns only give $\\det A = \\pm 1$. Here $\\det A = -1$, so $A$ is a reflection, not a rotation."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$A\\mathbf{u} = -\\mathbf{u}$ for $\\mathbf{u} = (1,-1,-1)^\\top$, so $(A+I)\\mathbf{u} = \\mathbf{0}$ and $A+I$ is singular."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\operatorname{tr}A = (1+1+1)/3 = 1$. Correct."
+        }
+      ],
+      "shortcut": "$A$ is symmetric with $A^\\top A = I$, so $A^2 = I$ and every eigenvalue is $\\pm 1$. The trace $1$ forces the eigenvalues to be $1, 1, -1$, hence $\\det A = -1$ and $A + I$ has a zero eigenvalue.",
+      "commonTrap": "Concluding from the orthonormal columns that $A$ is a rotation: orthogonality allows $\\det A = -1$. Every $3\\times 3$ orthogonal matrix with $\\det = -1$ has $-1$ as an eigenvalue, which is what makes $A + I$ singular."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A), (D): A^2 = I, tr A = 1; det A = -1 (reflection) and A + I is singular",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check\nimport sympy as sp\nA = sp.Matrix([[1, 2, 2], [2, 1, -2], [2, -2, 1]]) / 3; I = sp.eye(3)\nprint('A', A * A == I, 'B', A.det() == 1 and A * A.T == I, 'C', (A + I).det() != 0, 'D', A.trace() == 1, A.det(), A.eigenvals())\n# A True B False C False D True -1 {-1: 1, 1: 2}  -> (A), (D)",
+      "notes": "No change needed. Sympy gives A*A = I, det A = -1, det(A + I) = 0, tr A = 1, eigenvalues {1, 1, -1}; each statement has exactly one defensible truth value and the steps, including det(3A) = -27 and A(1,-1,-1) = -(1,-1,-1), are correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cecdeb43d5f199b5",
+        "verification": "2f8b9887b639d4fe"
+      }
+    }
+  },
+  {
+    "id": "M20-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-mutually-exclusive",
+      "ps-axioms"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — mutual exclusivity of two pairs of events combined with inclusion–exclusion and the distinction between “at least one” and “exactly one”; three linked routine steps, about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Mutually exclusive events and inclusion–exclusion: when only one pair of events can overlap, $P(\\text{exactly one}) = P(\\text{union}) - P(\\text{overlap})$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A greenhouse controller can raise three kinds of alert in any given hour: a heat alert $H$, a humidity alert $U$ and an irrigation alert $I$. A heat alert and a humidity alert are never raised in the same hour, and a humidity alert and an irrigation alert are never raised in the same hour; a heat alert and an irrigation alert can occur together. For a randomly chosen hour,\n\n$$P(H) = 0.30, \\qquad P(U) = 0.25, \\qquad P(I) = 0.40,$$\n\nand the probability that no alert of any kind is raised is $0.20$.\n\nThe probability that exactly one kind of alert is raised in a randomly chosen hour is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.50$"
+      },
+      {
+        "label": "B",
+        "text": "$0.65$"
+      },
+      {
+        "label": "C",
+        "text": "$0.80$"
+      },
+      {
+        "label": "D",
+        "text": "$0.95$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "$H\\cap U = U\\cap I = \\varnothing$, so the only possible overlap is $H\\cap I$. From $P(H\\cup U\\cup I) = 1 - 0.20 = 0.80$ and inclusion–exclusion, $0.95 - P(H\\cap I) = 0.80$, so $P(H\\cap I) = 0.15$.\nExactly one alert means the union minus the overlap: $0.80 - 0.15 = 0.65$.",
+      "steps": [
+        {
+          "title": "Use the exclusivity information",
+          "body": "$P(H\\cap U) = 0$ and $P(U\\cap I) = 0$. The triple intersection lies inside $H\\cap U$, so $P(H\\cap U\\cap I) = 0$. The only intersection that can be non-empty is $H\\cap I$."
+        },
+        {
+          "title": "Probability of at least one alert",
+          "body": "$P(H\\cup U\\cup I) = 1 - P(\\text{no alert}) = 1 - 0.20 = 0.80$."
+        },
+        {
+          "title": "Find the overlap by inclusion–exclusion",
+          "body": "$$P(H\\cup U\\cup I) = P(H)+P(U)+P(I) - P(H\\cap U) - P(U\\cap I) - P(H\\cap I) + P(H\\cap U\\cap I) = 0.95 - P(H\\cap I).$$\nSetting this equal to $0.80$ gives $P(H\\cap I) = 0.15$."
+        },
+        {
+          "title": "Count only the hours with exactly one alert",
+          "body": "| Outcome of an hour | Probability |\n|---|---|\n| heat alert only | $0.30 - 0.15 = 0.15$ |\n| humidity alert only | $0.25$ |\n| irrigation alert only | $0.40 - 0.15 = 0.25$ |\n| heat and irrigation | $0.15$ |\n| no alert | $0.20$ |\n\nThe five rows add to $1.00$. Exactly one kind of alert: $0.15 + 0.25 + 0.25 = 0.65$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.50 = 0.80 - 2(0.15)$ subtracts the overlap twice. Hours with both $H$ and $I$ are already counted only once in the union, so removing them once gives $0.65$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Exactly one alert $= P(\\text{union}) - P(H\\cap I) = 0.80 - 0.15 = 0.65$. Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.80$ is the probability of at least one alert; it still includes the hours in which both a heat and an irrigation alert occur."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.95$ is the sum $P(H)+P(U)+P(I)$, valid only if the three events were mutually exclusive. It exceeds $P(\\text{at least one}) = 0.80$, which shows that $H$ and $I$ overlap."
+        }
+      ],
+      "shortcut": "Adding the three probabilities counts each hour once per alert: $0.95 = P(\\text{exactly one}) + 2P(H\\cap I)$, while $0.80 = P(\\text{exactly one}) + P(H\\cap I)$. Subtracting the equations gives $P(H\\cap I) = 0.15$ and $P(\\text{exactly one}) = 0.65$.",
+      "commonTrap": "Treating “exactly one” as “at least one” ($0.80$), or adding the three probabilities ($0.95$) because most pairs of events are mutually exclusive: $H$ and $I$ are not."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B) 0.65 (P(H and I) = 0.15; exactly one = 0.80 - 0.15)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: solve for the atom probabilities (H, U, I) under the exclusivity constraints\nimport sympy as sp\nfrom itertools import product\natoms = [a for a in product([0, 1], repeat=3) if not (a[0] and a[1]) and not (a[1] and a[2])]\np = sp.symbols('p0:%d' % len(atoms))\nR = sp.Rational\neqs = [sum(q for q, a in zip(p, atoms) if a[i]) - v for i, v in enumerate([R(30, 100), R(25, 100), R(40, 100)])]\neqs += [sum(p) - 1, p[atoms.index((0, 0, 0))] - R(20, 100)]\ns = sp.solve(eqs, p, dict=True)[0]\nprint(dict(zip(atoms, (s[q] for q in p))), sum(s[q] for q, a in zip(p, atoms) if sum(a) == 1))\n# unique solution, all atoms >= 0; P(exactly one) = 13/20 = 0.65",
+      "notes": "No change needed. Solving the atom probabilities symbolically gives a unique non-negative solution (H only 0.15, U 0.25, I only 0.25, H and I 0.15, none 0.20) so exactly one kind has probability 0.65; option explanations are correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "5866984439708bd5",
+        "verification": "0825221a3fe79f63"
+      }
+    }
+  },
+  {
+    "id": "M20-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-functions"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the range of a composite function) with two linked steps — the range of the inner function, then the behaviour of a quadratic on a restricted interval; routine algebra with a likely trap, about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "The range of a composite $g\\circ f$ is $g$ evaluated on the range of $f$; a quadratic restricted to an interval may attain its extreme value at an endpoint rather than at its vertex.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f, g : \\mathbb{R} \\to \\mathbb{R}$ be defined by\n\n$$f(x) = |x - 2| - 1, \\qquad g(x) = x^2 + 4x - 1,$$\n\nand let $h(x) = g(f(x))$. The range of $h$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(-\\infty, \\infty)$"
+      },
+      {
+        "label": "B",
+        "text": "$[-5, \\infty)$"
+      },
+      {
+        "label": "C",
+        "text": "$[-1, \\infty)$"
+      },
+      {
+        "label": "D",
+        "text": "$[-4, \\infty)$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The range of $f$ is $[-1, \\infty)$, so $h$ takes exactly the values $g(t)$ for $t \\ge -1$. The vertex of $g(t) = (t+2)^2 - 5$ is at $t = -2$, outside $[-1,\\infty)$, so $g$ is increasing there with minimum $g(-1) = -4$ and no upper bound.\nHence the range of $h$ is $[-4, \\infty)$.",
+      "steps": [
+        {
+          "title": "Range of the inner function",
+          "body": "$|x-2| \\ge 0$ with equality at $x = 2$, so $f(x) = |x-2| - 1 \\ge -1$. Every $t \\ge -1$ is attained (take $x = 2 \\pm (t+1)$), so the range of $f$ is $[-1, \\infty)$."
+        },
+        {
+          "title": "Outer function on that set",
+          "body": "Complete the square: $g(t) = t^2 + 4t - 1 = (t+2)^2 - 5$. Over all real $t$ the minimum would be $-5$ at $t = -2$, but $t = -2$ is not in $[-1, \\infty)$, so this minimum is not reached."
+        },
+        {
+          "title": "Monotonicity on $[-1, \\infty)$",
+          "body": "For $t \\ge -1$ we have $t + 2 \\ge 1 > 0$, so $g$ is strictly increasing on $[-1, \\infty)$. Its least value is $g(-1) = 1 - 4 - 1 = -4$, and $g(t) \\to \\infty$ as $t \\to \\infty$. Since $g$ is continuous, it takes every value in $[-4, \\infty)$."
+        },
+        {
+          "title": "Cross-check with sample points",
+          "body": "$h(2) = g(-1) = -4$; $h(1) = h(3) = g(0) = -1$; $h(0) = h(4) = g(1) = 4$. No value below $-4$ occurs, and $h(x) \\to \\infty$ as $|x| \\to \\infty$. The range is $[-4, \\infty)$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$h$ is bounded below: $h(x) \\ge -4$ for all $x$, so its range is not all of $\\mathbb{R}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$-5$ is the minimum of $g$ over all of $\\mathbb{R}$ (at $t=-2$). The inner function $f$ never takes the value $-2$, so $h$ never reaches $-5$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This takes the range of $f$ to be $[0, \\infty)$ because of the absolute value, forgetting the $-1$. But $f(2) = -1$ gives $h(2) = g(-1) = -4 < -1$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\min h = g(-1) = -4$, attained at $x = 2$, and $h$ is unbounded above. Range $[-4,\\infty)$. Correct."
+        }
+      ],
+      "shortcut": "The range of $g\\circ f$ is $g(\\operatorname{range} f)$. Check whether the vertex $t=-2$ of $g$ lies inside $[-1,\\infty)$: it does not, so the minimum is at the left endpoint, $g(-1) = -4$.",
+      "commonTrap": "Using the range of $g$ over all of $\\mathbb{R}$ (giving $[-5,\\infty)$), or assuming $f \\ge 0$ because of the absolute value (giving $[-1,\\infty)$). The range of the composite is $g$ applied only to the range of $f$, here $[-1,\\infty)$."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(D) [-4, infinity) (range f = [-1, inf); g increasing there; g(-1) = -4)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check\nimport numpy as np\nx = np.linspace(-500, 500, 4_000_001)\nt = np.abs(x - 2) - 1\nh = t ** 2 + 4 * t - 1\nprint(round(float(h.min()), 6), float(x[h.argmin()]), bool(h.max() > 1e5), bool(h.min() >= -4))\n# -4.0 2.0 True True  -> range [-4, inf); -5 is never reached",
+      "notes": "No change needed. Dense numeric scan confirms min h = -4 at x = 2 and h unbounded above; (B) is the unrestricted-vertex trap and (C) is the f >= 0 trap, both described correctly."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cc76a828b912d08e",
+        "verification": "ef949c879db0dbc9"
+      }
+    }
+  },
+  {
+    "id": "M20-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-systems"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a consistent underdetermined linear system) with a $3\\times 4$ Gaussian elimination, back-substitution with a free variable and a short consistency insight; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "A consistent underdetermined system has infinitely many solutions, yet a linear form $\\mathbf{c}^\\top\\mathbf{x}$ is the same for all of them when $\\mathbf{c}^\\top$ lies in the row space of $A$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Three audits of a cluster of four servers give the following linear equations in the loads $x, y, z, w$ of the servers (in suitable units):\n\n$$\\begin{aligned} y + z + 2w &= 8, \\\\ x + 2y + z + 3w &= 14, \\\\ 2x + 2y + z + 2w &= 16. \\end{aligned}$$\n\nThe system has infinitely many solutions, yet the total load $x + y + z + w$ has the same value for every solution. This common value is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 10,
+      "max": 10
+    },
+    "solution": {
+      "quick": "Eliminating gives $z = 4$, $y = 4 - 2w$, $x = 2 + w$ with $w$ free, so $x + y + z + w = (2+w) + (4-2w) + 4 + w = 10$ for every $w$.\nEquivalently, (first equation) $-$ (second) $+$ (third) has left side exactly $x+y+z+w$, and right side $8 - 14 + 16 = 10$.",
+      "steps": [
+        {
+          "title": "Set up and eliminate",
+          "body": "Augmented matrix, with the second equation moved to the top:\n$$\\left[\\begin{array}{cccc|c} 1 & 2 & 1 & 3 & 14 \\\\ 0 & 1 & 1 & 2 & 8 \\\\ 2 & 2 & 1 & 2 & 16 \\end{array}\\right].$$\n$R_3 \\leftarrow R_3 - 2R_1$ gives $[0,\\ -2,\\ -1,\\ -4 \\mid -12]$; then $R_3 \\leftarrow R_3 + 2R_2$ gives $[0,\\ 0,\\ 1,\\ 0 \\mid 4]$."
+        },
+        {
+          "title": "Read off the solution set",
+          "body": "The echelon form has $3$ pivots (columns of $x$, $y$, $z$) and $4$ unknowns, and no inconsistent row, so $w$ is free. Back-substitution: $z = 4$; $y = 8 - z - 2w = 4 - 2w$; $x = 14 - 2y - z - 3w = 14 - 2(4-2w) - 4 - 3w = 2 + w$."
+        },
+        {
+          "title": "Evaluate the total load",
+          "body": "$$x + y + z + w = (2 + w) + (4 - 2w) + 4 + w = 10 + (1 - 2 + 1)\\,w = 10.$$\nThe $w$-terms cancel, so the total is $10$ for every solution."
+        },
+        {
+          "title": "Cross-check",
+          "body": "(first) $-$ (second) $+$ (third): $\\ y+z+2w - (x+2y+z+3w) + (2x+2y+z+2w) = x + y + z + w$, with right side $8 - 14 + 16 = 10$. Also, $w = 0$ gives $(x,y,z,w) = (2,4,4,0)$, which satisfies all three equations ($8$, $14$, $16$) and has total $10$."
+        }
+      ],
+      "finalAnswer": "**10**",
+      "shortcut": "A linear form $\\mathbf{c}^\\top\\mathbf{x}$ is the same for all solutions exactly when $\\mathbf{c}^\\top = \\boldsymbol{\\lambda}^\\top A$ for some $\\boldsymbol{\\lambda}$, and then its value is $\\boldsymbol{\\lambda}^\\top\\mathbf{b}$. Here $\\boldsymbol{\\lambda} = (1, -1, 1)$ gives $(1,1,1,1)$ and $8 - 14 + 16 = 10$.",
+      "commonTrap": "Concluding that the total cannot be found because the system is underdetermined, or picking a “nice” guess for $(x,y,z,w)$ that satisfies only some of the equations. Solving in terms of the free variable $w$ shows the $w$-terms cancel in this particular sum."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "10 (x + y + z + w = 10 for every solution; row combination (1, -1, 1))",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: rank test, null space, and the left-multiplier giving (1,1,1,1)\nimport sympy as sp\nA = sp.Matrix([[0, 1, 1, 2], [1, 2, 1, 3], [2, 2, 1, 2]]); b = sp.Matrix([8, 14, 16])\nc = sp.Matrix([1, 1, 1, 1])\nlam, _ = A.T.gauss_jordan_solve(c)                    # c = A^T lam  (c^T in the row space)\nprint(A.rank(), A.row_join(b).rank(), A.nullspace()[0].T, lam.T, (lam.T * b)[0], (c.T * A.nullspace()[0])[0])\n# 3 3 Matrix([[1, -2, 0, 1]]) Matrix([[1, -1, 1]]) 10 0   (rank 3, consistent, null space spanned by (1,-2,0,1); total = 10)",
+      "notes": "No change needed. Rank 3 = augmented rank 3 with a 1-parameter family; (1,1,1,1) = A^T (1,-1,1) and (1,-1,1).b = 10, and the null vector (1,-2,0,1) has zero total, so the sum is invariant. NAT is an exact integer (range 10 to 10), consistent with other integer NATs on the platform."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f21ee88d4730a50c",
+        "verification": "9cbebe923322f6a8"
+      }
+    }
+  },
+  {
+    "id": "M20-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-mlp"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (backpropagation through a ReLU hidden layer) needing a forward pass, the chain rule with the ReLU gate and an update of four weights; routine arithmetic with a clear trap, about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Backpropagation through a ReLU hidden layer: $\\partial L/\\partial w_{jk} = (\\hat y - y)\\, v_j\\, \\mathbf{1}[z_j > 0]\\, x_k$, so a unit with negative pre-activation receives no gradient.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward network has two inputs, two ReLU hidden units and one linear output unit, with no bias terms:\n\n$$z_j = w_{j1}x_1 + w_{j2}x_2, \\qquad h_j = \\max(0, z_j), \\qquad \\hat{y} = v_1 h_1 + v_2 h_2, \\qquad j = 1, 2.$$\n\nThe current weights are\n\n$$W = \\begin{bmatrix} w_{11} & w_{12} \\\\ w_{21} & w_{22} \\end{bmatrix} = \\begin{bmatrix} 1 & 0.5 \\\\ -2 & 0.5 \\end{bmatrix}, \\qquad \\mathbf{v} = \\begin{bmatrix} v_1 \\\\ v_2 \\end{bmatrix} = \\begin{bmatrix} 3 \\\\ 4 \\end{bmatrix}.$$\n\nFor a single training example $\\mathbf{x} = (1, 2)^\\top$ with target $y = 4$, the loss is $L = \\tfrac{1}{2}(\\hat{y} - y)^2$. One step of gradient descent with learning rate $\\eta = 0.02$ is taken (all gradients are evaluated at the current weights). The updated hidden-layer weight matrix $W$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\begin{bmatrix} 0.88 & 0.26 \\\\ -2 & 0.5 \\end{bmatrix}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\begin{bmatrix} 0.88 & 0.26 \\\\ -2.16 & 0.18 \\end{bmatrix}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\begin{bmatrix} 0.96 & 0.42 \\\\ -2 & 0.5 \\end{bmatrix}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\begin{bmatrix} 1.12 & 0.74 \\\\ -2 & 0.5 \\end{bmatrix}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Forward pass: $z = (2, -1)$, $h = (2, 0)$, $\\hat y = 6$, so $\\hat y - y = 2$. Backpropagation gives $\\partial L/\\partial w_{jk} = (\\hat y - y)\\,v_j\\,\\mathbf{1}[z_j>0]\\,x_k$.\nUnit 1 is active: gradients $2\\cdot 3\\cdot(1, 2) = (6, 12)$. Unit 2 has $z_2 = -1 < 0$, so its ReLU derivative is $0$ and its row gets no update. Then $w_{1\\cdot} = (1, 0.5) - 0.02\\,(6, 12) = (0.88, 0.26)$.",
+      "steps": [
+        {
+          "title": "Forward pass",
+          "body": "$z_1 = 1\\cdot 1 + 0.5\\cdot 2 = 2$ and $z_2 = -2\\cdot 1 + 0.5\\cdot 2 = -1$. Hence $h_1 = 2$, $h_2 = \\max(0,-1) = 0$, and $\\hat y = 3\\cdot 2 + 4\\cdot 0 = 6$. The error is $\\hat y - y = 6 - 4 = 2$ (loss $L = \\tfrac12\\cdot 2^2 = 2$)."
+        },
+        {
+          "title": "Chain rule for the hidden weights",
+          "body": "$\\dfrac{\\partial L}{\\partial \\hat y} = \\hat y - y$, $\\ \\dfrac{\\partial \\hat y}{\\partial h_j} = v_j$, $\\ \\dfrac{\\partial h_j}{\\partial z_j} = \\mathbf{1}[z_j > 0]$ and $\\dfrac{\\partial z_j}{\\partial w_{jk}} = x_k$. Multiplying,\n$$\\frac{\\partial L}{\\partial w_{jk}} = (\\hat y - y)\\, v_j\\, \\mathbf{1}[z_j>0]\\, x_k.$$"
+        },
+        {
+          "title": "Evaluate the gradients",
+          "body": "Unit 1 ($z_1 = 2 > 0$, active): $\\partial L/\\partial w_{11} = 2\\cdot 3\\cdot 1\\cdot 1 = 6$ and $\\partial L/\\partial w_{12} = 2\\cdot 3\\cdot 1\\cdot 2 = 12$.\nUnit 2 ($z_2 = -1 < 0$, inactive): the ReLU derivative is $0$, so $\\partial L/\\partial w_{21} = \\partial L/\\partial w_{22} = 0$."
+        },
+        {
+          "title": "Apply the update",
+          "body": "$w_{11} = 1 - 0.02\\cdot 6 = 0.88$, $\\ w_{12} = 0.5 - 0.02\\cdot 12 = 0.26$, $\\ w_{21} = -2$, $\\ w_{22} = 0.5$. Check: with the new weights $z_1 = 0.88 + 2(0.26) = 1.4$, so $\\hat y = 3\\cdot 1.4 = 4.2$, much closer to the target $4$."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Only the active unit 1 is updated: $(1, 0.5) - 0.02\\,(6, 12) = (0.88, 0.26)$; unit 2 is inactive and its row stays $(-2, 0.5)$. Correct."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This also changes row 2, as if $\\partial h_2/\\partial z_2 = 1$: $-2 - 0.02\\cdot 8 = -2.16$ and $0.5 - 0.02\\cdot 16 = 0.18$. But $z_2 = -1 < 0$, so the ReLU derivative is $0$ and row 2 gets no gradient."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This leaves out the output weight $v_1 = 3$ in the chain rule (gradient $2\\cdot(1,2) = (2,4)$ instead of $(6,12)$), giving $(1 - 0.04,\\ 0.5 - 0.08) = (0.96, 0.42)$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is a sign error: the gradient is added instead of subtracted ($1 + 0.12$, $0.5 + 0.24$), which would increase the loss."
+        }
+      ],
+      "shortcut": "Only units with $z_j > 0$ pass gradient back. With a single active unit, the whole update is $-\\eta\\,(\\hat y - y)\\,v_1\\,\\mathbf{x}^\\top$ on its row: $-0.02\\cdot 2\\cdot 3\\cdot(1, 2) = (-0.12, -0.24)$.",
+      "commonTrap": "Updating the inactive unit as well. For this input $z_2 = -1 < 0$, so $\\operatorname{ReLU}'(z_2) = 0$ and the second row of $W$ receives no gradient. Other slips are dropping the output weight $v_j$ from the chain rule and subtracting in the wrong direction."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(A) [[0.88, 0.26], [-2, 0.5]] (z = (2, -1), error = 2, only unit 1 active)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: finite-difference gradient (no hand-derived backprop)\nimport numpy as np\nW = np.array([[1, .5], [-2, .5]]); v = np.array([3., 4.]); x = np.array([1., 2.]); y, eta = 4., 0.02\nL = lambda W: 0.5 * (v @ np.maximum(0, W @ x) - y) ** 2\nG = np.zeros((2, 2))\nfor i in range(2):\n    for j in range(2):\n        e = np.zeros((2, 2)); e[i, j] = 1e-6\n        G[i, j] = (L(W + e) - L(W - e)) / 2e-6\nprint(G.round(4).tolist(), (W - eta * G).round(4).tolist())\n# [[6.0, 12.0], [0.0, 0.0]] [[0.88, 0.26], [-2.0, 0.5]]  -> (A)",
+      "notes": "No change needed. A finite-difference gradient (independent of the hand-derived backprop) gives dL/dW1 = (6, 12) and zero for row 2, so W becomes [[0.88, 0.26], [-2, 0.5]]; distractors (B) ungated, (C) missing v1, (D) wrong sign are described correctly."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "81034c730c104f36",
+        "verification": "9f42e0111c7988c3"
+      }
+    }
+  },
+  {
+    "id": "M20-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — four independent semantic checks (two 8-row equivalences, one proof by cases and one model count over four variables) with a likely trap on the associativity of $\\to$ versus $\\leftrightarrow$; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Semantic checks in propositional logic: equivalence, entailment by cases and model counting; $\\to$ is not associative, whereas $\\leftrightarrow$ is.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $P, Q, R, S$ be propositional variables. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$(P \\to Q) \\to R$ is logically equivalent to $P \\to (Q \\to R)$."
+      },
+      {
+        "label": "B",
+        "text": "$(P \\leftrightarrow Q) \\leftrightarrow R$ is logically equivalent to $P \\leftrightarrow (Q \\leftrightarrow R)$."
+      },
+      {
+        "label": "C",
+        "text": "$\\{\\,P \\lor Q,\\ P \\to R,\\ Q \\to R\\,\\} \\models R$; that is, $R$ is true in every truth assignment that makes all three formulas true."
+      },
+      {
+        "label": "D",
+        "text": "Exactly $3$ of the $16$ truth assignments to $P, Q, R, S$ make all five formulas $P \\to Q$, $Q \\to R$, $R \\to S$, $S \\to \\lnot P$ and $P \\lor S$ true."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "(A) is false: $P = Q = R = \\text{F}$ gives $(P\\to Q)\\to R = \\text{F}$ but $P \\to (Q\\to R) = \\text{T}$. (B) is true: both sides are true exactly when an odd number of $P,Q,R$ are true.\n(C) is true by cases ($P$ or $Q$ holds, and each forces $R$). (D) is true: the chain $P\\to Q\\to R\\to S\\to\\lnot P$ forces $P$ false, $P\\lor S$ forces $S$ true, leaving $(Q,R)\\in\\{\\text{FF},\\text{FT},\\text{TT}\\}$: exactly $3$ models.",
+      "steps": [
+        {
+          "title": "(A) Is $\\to$ associative?",
+          "body": "Take $P = Q = R = \\text{F}$. Then $P\\to Q = \\text{T}$, so $(P\\to Q)\\to R = \\text{T}\\to\\text{F} = \\text{F}$. But $Q\\to R = \\text{T}$, so $P\\to(Q\\to R) = \\text{F}\\to\\text{T} = \\text{T}$. The two sides differ, so they are **not** equivalent. (In fact $P\\to(Q\\to R)$ has $7$ satisfying rows and $(P\\to Q)\\to R$ only $5$.)"
+        },
+        {
+          "title": "(B) Is $\\leftrightarrow$ associative?",
+          "body": "Evaluate all 8 rows:\n\n| $P\\,Q\\,R$ | TTT | TTF | TFT | TFF | FTT | FTF | FFT | FFF |\n|---|---|---|---|---|---|---|---|---|\n| $(P\\leftrightarrow Q)\\leftrightarrow R$ | T | F | F | T | F | T | T | F |\n| $P\\leftrightarrow(Q\\leftrightarrow R)$ | T | F | F | T | F | T | T | F |\n\nThe rows agree everywhere (each is true exactly when an odd number of $P,Q,R$ is true), so the formulas are equivalent."
+        },
+        {
+          "title": "(C) Entailment by cases",
+          "body": "Assume $P\\lor Q$, $P\\to R$ and $Q\\to R$ are all true. If $P$ is true, then $P\\to R$ gives $R$. If $Q$ is true, then $Q\\to R$ gives $R$. One of $P$, $Q$ must be true, so $R$ holds in every such assignment: the entailment is valid."
+        },
+        {
+          "title": "(D) Counting the models",
+          "body": "If $P$ were true, the chain would give $Q$, $R$, $S$ true, and then $S\\to\\lnot P$ would force $P$ false: a contradiction. So $P = \\text{F}$. Then $P\\lor S$ forces $S = \\text{T}$, and the clauses $P\\to Q$, $R\\to S$, $S\\to\\lnot P$ hold automatically. The only remaining constraint is $Q\\to R$, which allows $(Q,R) \\in \\{(\\text{F},\\text{F}),(\\text{F},\\text{T}),(\\text{T},\\text{T})\\}$. The models $(P,Q,R,S)$ are $(\\text{F},\\text{F},\\text{F},\\text{T})$, $(\\text{F},\\text{F},\\text{T},\\text{T})$ and $(\\text{F},\\text{T},\\text{T},\\text{T})$: exactly $3$, so (D) is true."
+        },
+        {
+          "title": "Conclusion",
+          "body": "(A) false, (B) true, (C) true, (D) true."
+        }
+      ],
+      "finalAnswer": "**(B), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\to$ is not associative: $P=Q=R=\\text{F}$ makes $(P\\to Q)\\to R$ false and $P\\to(Q\\to R)$ true."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The 8-row truth table gives identical columns; both groupings are true exactly when an odd number of $P,Q,R$ is true. Correct."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Case $P$: $P\\to R$ gives $R$. Case $Q$: $Q\\to R$ gives $R$. Since $P\\lor Q$ holds, $R$ holds in every model. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$P$ is forced false by the implication chain, $S$ is forced true by $P\\lor S$, and $Q\\to R$ leaves $3$ choices for $(Q,R)$: exactly $3$ models. Correct."
+        }
+      ],
+      "commonTrap": "Treating $\\to$ as associative (statement A): a single assignment such as $P=Q=R=\\text{F}$ separates the two groupings. Conversely, $\\leftrightarrow$ is associative, which surprises many students (B). In (D), forgetting the formula $P\\lor S$ gives $4$ models instead of $3$: it is exactly what removes the all-false assignment."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(B), (C), (D): (A) false (P = Q = R = F), (B) true, (C) true, (D) has exactly 3 models",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: brute-force truth tables\nfrom itertools import product\nimp = lambda a, b: (not a) or b\niff = lambda a, b: a == b\nV3 = list(product([False, True], repeat=3)); V4 = list(product([False, True], repeat=4))\nA = all(imp(imp(P, Q), R) == imp(P, imp(Q, R)) for P, Q, R in V3)\nB = all(iff(iff(P, Q), R) == iff(P, iff(Q, R)) for P, Q, R in V3)\nC = all(R for P, Q, R in V3 if (P or Q) and imp(P, R) and imp(Q, R))\nmodels = [m for m in V4 if imp(m[0], m[1]) and imp(m[1], m[2]) and imp(m[2], m[3]) and imp(m[3], not m[0]) and (m[0] or m[3])]\nprint(A, B, C, len(models) == 3, models)\n# False True True True [(False, False, False, True), (False, False, True, True), (False, True, True, True)]",
+      "notes": "No change needed. Brute-force truth tables: A False, B True, C True, D exactly 3 models (FFFT, FFTT, FTTT); the 7-versus-5 satisfying-rows remark and the 4-versus-3 model remark in the trap were re-checked and are correct. HARD is on the high side but within one level of a routine-per-statement MSQ."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "b989de0286ac28f8",
+        "verification": "5cb316ef4fa2a898"
+      }
+    }
+  },
+  {
+    "id": "M20-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-sql"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (SQL “for all” queries through a double NOT EXISTS) with a three-level nested subquery traced against small instances; routine but it needs care with the double negation, about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Relational division in SQL with a double NOT EXISTS: keep a listener if there is no Jazz track for which that listener has no play.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A music app stores its data in three relations. The primary key of `Played` is `(lid, tid)`.\n\n**Listener**\n\n| lid | lname |\n|---|---|\n| 1 | Aman |\n| 2 | Bela |\n| 3 | Chitra |\n| 4 | Dev |\n| 5 | Esha |\n\n**Track**\n\n| tid | genre |\n|---|---|\n| 1 | Jazz |\n| 2 | Jazz |\n| 3 | Rock |\n| 4 | Jazz |\n| 5 | Rock |\n\n**Played** (each column of the table below is one tuple)\n\n| lid | 1 | 1 | 1 | 2 | 2 | 2 | 3 | 3 | 3 | 3 | 3 | 4 | 4 | 5 | 5 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| tid | 1 | 2 | 4 | 1 | 2 | 3 | 1 | 2 | 3 | 4 | 5 | 3 | 5 | 1 | 4 |\n\nThe following query is executed.\n\n```sql\nSELECT l.lname\nFROM Listener l\nWHERE NOT EXISTS (\n    SELECT *\n    FROM Track t\n    WHERE t.genre = 'Jazz'\n      AND NOT EXISTS (\n          SELECT *\n          FROM Played p\n          WHERE p.lid = l.lid AND p.tid = t.tid));\n```\n\nThe set of names returned by the query is",
+    "options": [
+      {
+        "label": "A",
+        "text": "Aman, Esha"
+      },
+      {
+        "label": "B",
+        "text": "Aman, Bela, Chitra, Esha"
+      },
+      {
+        "label": "C",
+        "text": "Aman, Chitra"
+      },
+      {
+        "label": "D",
+        "text": "Bela, Dev, Esha"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The double `NOT EXISTS` is a division: a listener is kept when there is no Jazz track that the listener has not played, i.e. when the listener has played **every** Jazz track (tracks 1, 2 and 4).\nAman (1, 2, 4) and Chitra (1 to 5) qualify; Bela misses track 4, Esha misses track 2, and Dev has played no Jazz track.",
+      "steps": [
+        {
+          "title": "Read the query from the inside out",
+          "body": "The innermost subquery succeeds when listener `l` has played track `t`. The middle `NOT EXISTS` therefore succeeds for a Jazz track `t` that `l` has **not** played. So the middle subquery returns the set of Jazz tracks missing from `l`'s plays, and the outer `NOT EXISTS` keeps `l` only if that set is empty."
+        },
+        {
+          "title": "Identify the Jazz tracks",
+          "body": "From `Track`, the Jazz tracks are $\\{1, 2, 4\\}$."
+        },
+        {
+          "title": "Evaluate each listener",
+          "body": "| Listener | Tracks played | Jazz tracks not played | Kept? |\n|---|---|---|---|\n| Aman | 1, 2, 4 | none | yes |\n| Bela | 1, 2, 3 | 4 | no |\n| Chitra | 1, 2, 3, 4, 5 | none | yes |\n| Dev | 3, 5 | 1, 2, 4 | no |\n| Esha | 1, 4 | 2 | no |"
+        },
+        {
+          "title": "Result",
+          "body": "The query returns the listeners who played all three Jazz tracks: Aman and Chitra. Playing Rock tracks as well (Chitra) does not disqualify a listener, since only missing Jazz tracks matter."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the set of listeners who played only Jazz tracks and nothing else. The query does not test that: Chitra also played Rock and is returned, while Esha misses Jazz track 2 and is not."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the set of listeners who played at least one Jazz track (a plain join with a Jazz filter). The query needs all three Jazz tracks, which excludes Bela (missing 4) and Esha (missing 2)."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Aman and Chitra have played every Jazz track (1, 2, 4), so no Jazz track is missing for them. Correct."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the complement: listeners for whom some Jazz track is missing. It is what the query would return if the outer test were `EXISTS` instead of `NOT EXISTS`."
+        }
+      ],
+      "shortcut": "Because `(lid, tid)` is a key of `Played`, there are no duplicate plays, so a listener qualifies iff the number of Jazz tracks played equals the number of Jazz tracks ($3$). Jazz plays: Aman $3$, Bela $2$, Chitra $3$, Dev $0$, Esha $2$.",
+      "commonTrap": "Reading the double negation as “listeners who never played a Jazz track” or “who played some Jazz track”. `NOT EXISTS (... NOT EXISTS ...)` encodes “for every Jazz track there is a play”."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "(C) Aman, Chitra (listeners who played all Jazz tracks 1, 2, 4)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: run the query verbatim on the given instance\nimport sqlite3\nc = sqlite3.connect(':memory:')\nc.executescript(\"\"\"CREATE TABLE Listener(lid INT, lname TEXT); CREATE TABLE Track(tid INT, genre TEXT); CREATE TABLE Played(lid INT, tid INT, PRIMARY KEY(lid, tid));\nINSERT INTO Listener VALUES (1,'Aman'),(2,'Bela'),(3,'Chitra'),(4,'Dev'),(5,'Esha');\nINSERT INTO Track VALUES (1,'Jazz'),(2,'Jazz'),(3,'Rock'),(4,'Jazz'),(5,'Rock');\"\"\")\nlids = [1,1,1,2,2,2,3,3,3,3,3,4,4,5,5]; tids = [1,2,4,1,2,3,1,2,3,4,5,3,5,1,4]\nc.executemany('INSERT INTO Played VALUES (?,?)', zip(lids, tids))\nq = \"\"\"SELECT l.lname FROM Listener l WHERE NOT EXISTS (SELECT * FROM Track t WHERE t.genre = 'Jazz'\n       AND NOT EXISTS (SELECT * FROM Played p WHERE p.lid = l.lid AND p.tid = t.tid)) ORDER BY l.lid\"\"\"\nprint([r[0] for r in c.execute(q)])   # ['Aman', 'Chitra']",
+      "notes": "No change needed. The query was executed verbatim in SQLite on the given instance and returns Aman and Chitra; each distractor (only-Jazz listeners, at-least-one-Jazz listeners, complement) was matched to its option set correctly."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "936bd4321b32c503",
+        "verification": "5aacdf35ccc387b8"
+      }
+    }
+  },
+  {
+    "id": "M20-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-20",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (dependency preservation of a decomposition) with three attribute-closure projections and a closure test per dependency, including one dependency preserved only through a derived one; about 3 minutes.",
+    "estimatedTimeSec": 190,
+    "concept": "Dependency preservation: a dependency of $F$ is preserved iff it follows from the union of the projections of $F^{+}$ onto the decomposed relations, tested with attribute closures.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E)$ with the set of functional dependencies\n\n$$F = \\{\\, A \\to B,\\;\\; AC \\to D,\\;\\; D \\to C,\\;\\; D \\to E,\\;\\; B \\to C \\,\\}.$$\n\n$R$ is decomposed into $R_1(A, B, D)$, $R_2(C, D)$ and $R_3(A, B, E)$. For each $R_i$, let $F_i$ be the set of all functional dependencies $X \\to Y$ in $F^{+}$ with $X \\cup Y \\subseteq R_i$. A functional dependency of $F$ is said to be *preserved* by the decomposition if it is implied by $F_1 \\cup F_2 \\cup F_3$.\n\nThe number of functional dependencies of $F$ that are **not** preserved by the decomposition is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2,
+      "max": 2
+    },
+    "solution": {
+      "quick": "Projecting $F^{+}$ gives $F_1 \\equiv \\{A\\to B,\\ A\\to D\\}$, $F_2 \\equiv \\{D \\to C\\}$, $F_3 \\equiv \\{A\\to B,\\ A\\to E\\}$. With $G = F_1\\cup F_2\\cup F_3$: $A\\to B$, $D\\to C$ and $AC\\to D$ (from $A\\to D$) are preserved, while $D\\to E$ ($D^+_G = \\{D, C\\}$) and $B\\to C$ ($B^+_G = \\{B\\}$) are not.\nExactly $2$ dependencies are lost.",
+      "steps": [
+        {
+          "title": "Closures under $F$",
+          "body": "$A^+ = \\{A,B,C,D,E\\}$ (via $A\\to B$, $B\\to C$, $AC\\to D$, $D\\to E$), $B^+ = \\{B, C\\}$, $C^+ = \\{C\\}$, $D^+ = \\{D, C, E\\}$, $E^+ = \\{E\\}$."
+        },
+        {
+          "title": "Project onto each relation",
+          "body": "$R_1(A,B,D)$: $A^+$ contains $B$ and $D$, while $B^+\\cap R_1 = \\{B\\}$ and $D^+\\cap R_1 = \\{D\\}$, so $F_1 \\equiv \\{A\\to B,\\ A\\to D\\}$.\n$R_2(C,D)$: $D^+\\cap R_2 = \\{C, D\\}$ and $C^+ \\cap R_2 = \\{C\\}$, so $F_2 \\equiv \\{D \\to C\\}$.\n$R_3(A,B,E)$: $A^+$ contains $B$ and $E$; $B^+\\cap R_3 = \\{B\\}$ and $E^+ = \\{E\\}$, so $F_3 \\equiv \\{A\\to B,\\ A\\to E\\}$.\nLet $G = \\{A\\to B,\\ A\\to D,\\ A\\to E,\\ D\\to C\\}$."
+        },
+        {
+          "title": "Test each dependency of $F$ against $G$",
+          "body": "| Dependency | Closure of its left side under $G$ | Preserved? |\n|---|---|---|\n| $A \\to B$ | $A^+_G = \\{A,B,D,E,C\\} \\ni B$ | yes |\n| $AC \\to D$ | $(AC)^+_G \\ni D$ since $A\\to D \\in G$ | yes |\n| $D \\to C$ | $D^+_G = \\{D, C\\} \\ni C$ | yes |\n| $D \\to E$ | $D^+_G = \\{D, C\\} \\not\\ni E$ | no |\n| $B \\to C$ | $B^+_G = \\{B\\} \\not\\ni C$ | no |\n\nHere $AC \\to D$ is preserved even though $A, C, D$ never lie together in one $R_i$: in $F^{+}$ we have $A \\to C$ (via $A\\to B\\to C$), so $AC\\to D$ reduces to $A \\to D$, which sits inside $R_1$."
+        },
+        {
+          "title": "Count",
+          "body": "The dependencies $D \\to E$ and $B \\to C$ are not preserved, so the number is $2$."
+        }
+      ],
+      "finalAnswer": "**2**",
+      "commonTrap": "Declaring a dependency lost just because its attributes do not all lie in one $R_i$. $AC\\to D$ is preserved through $A\\to D$, which gives $3$ instead of $2$ if missed. The opposite error is assuming that a lossless decomposition, or one whose parts are all in BCNF, must preserve every dependency; here $D\\to E$ and $B\\to C$ are lost."
+    },
+    "answerVerification": {
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "2 (D -> E and B -> C are not preserved)",
+      "agreesWithKey": true,
+      "checkCode": "# Independent verifier check: brute-force F+ (all single-attribute RHS), project, then closure test\nfrom itertools import combinations\nF = [('A', 'B'), ('AC', 'D'), ('D', 'C'), ('D', 'E'), ('B', 'C')]\ndef cl(X, FD):\n    X = set(X)\n    while True:\n        add = {a for l, r in FD if set(l) <= X for a in r} - X\n        if not add: return X\n        X |= add\nattrs = 'ABCDE'\nFplus = [(''.join(X), a) for n in range(1, 6) for X in combinations(attrs, n) for a in cl(X, F) - set(X)]\nG = [(l, r) for S in ('ABD', 'CD', 'ABE') for (l, r) in Fplus if set(l) | {r} <= set(S)]\nlost = [l + '->' + r for l, r in F if not set(r) <= cl(l, G)]\nprint(sorted(set(G)), lost, len(lost))\n# [('A','B'),('A','D'),('A','E'),('AB','D'),('AB','E'),('AD','B'),('AE','B'),('D','C')] ['D->E', 'B->C'] 2",
+      "notes": "No change needed. Brute-force F+ projected on R1, R2, R3 gives G = {A->B, A->D, A->E, D->C} (plus augmentations); A->B, AC->D (via A->D) and D->C are implied by G while D->E and B->C are not, so 2. NAT is an exact integer."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a97b23f2ed325546",
+        "verification": "fee8e115f34ecf98"
+      }
+    }
+  }
+]

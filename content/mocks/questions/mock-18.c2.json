@@ -88,12 +88,36 @@
       "commonTrap": "Forgetting that $\\forall s\\,(P(s)\\Rightarrow Q(s))$ is true when no tuple satisfies $P$: without the explicit $\\exists$ conjunct, every employee with no reports would be returned as well."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "{Kavya, Tanvi}",
       "agreesWithKey": true,
       "checkCode": "emp = {1: ('Kavya', None, 70), 2: ('Rohan', 1, 85), 3: ('Tanvi', 1, 90), 4: ('Imran', 2, 60),\n       5: ('Lata', 2, 95), 6: ('Vikram', 3, 92), 7: ('Neha', 3, 100), 8: ('Owen', 6, 88)}\nrep = lambda t: [s for s in emp if emp[s][1] == t]\nprint(sorted(emp[t][0] for t in emp if rep(t) and all(emp[s][2] > emp[t][2] for s in rep(t))))  # exists+forall -> Kavya, Tanvi\nprint(sorted(emp[t][0] for t in emp if all(emp[s][2] > emp[t][2] for s in rep(t))))            # forall only (option D)\nprint(sorted(emp[t][0] for t in emp if any(emp[s][2] > emp[t][2] for s in rep(t))))            # exists-greater (option A)\nprint(sorted(emp[t][0] for t in emp if rep(t) and all(emp[s][2] < emp[t][2] for s in rep(t))))  # reversed (option C)",
-      "notes": ""
+      "notes": "Blind solve: only Kavya, Rohan, Tanvi and Vikram have reports; the universal part holds for Kavya (70<85,90) and Tanvi (90<92,100) but fails for Rohan (60<85) and Vikram (88<92), giving {Kavya, Tanvi} = key B. Own Python over the 8 rows agrees; author checkCode re-run also reproduces every distractor (exists-greater gives {Kavya, Rohan, Tanvi} = A, reversed inequality gives {Vikram} = C, universal without the existential gives Imran, Kavya, Lata, Neha, Owen, Tanvi = D). Null mgr never matches an eid, as the stem states. Steps, option verdicts, MODERATE label and dbw / query-languages / tuple-calculus tagging checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "6457f029fb6d5a6e",
+        "verification": "a6f0e7e09525e7f3"
+      }
     }
   },
   {
@@ -185,12 +209,36 @@
       "commonTrap": "Confusing the projection with the identity: taking the trace of a $3\\times3$ projection to be $3$, or assuming that $P$ fixes every vector, including the normal vector $\\mathbf{n}$ that it actually sends to $\\mathbf{0}$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B",
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nA = np.array([[1, 0], [1, 1], [0, 1]], float)\nP = A @ np.linalg.inv(A.T @ A) @ A.T\nx, n = np.array([3, 1, 2.]), np.array([1, -1, 1.])\nprint(np.round(3 * P, 6).tolist())\nprint('A', np.allclose(P, P.T) and np.allclose(P @ P, P))\nprint('B', np.allclose(P @ x, [5 / 3, 7 / 3, 2 / 3]))\nprint('C', np.isclose(np.trace(P), 3))\nprint('D', np.allclose(P @ n, n))   # A True B True C False D False",
-      "notes": ""
+      "notes": "Blind solve: A^T A = [[2,1],[1,2]], P = (1/3)[[2,1,-1],[1,2,1],[-1,1,2]]; P is symmetric and idempotent (A true), Px = (5/3, 7/3, 2/3) (B true), tr P = 2 = rank (C false), n is orthogonal to both columns so Pn = 0 (D false) = key A, B. Own sympy exact-rational and numpy checks agree, and the shortcut P = I - nn^T/3 reproduces the same P. Steps, MSQ verdicts, shortcut and difficulty label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "1a9b54123f4b77dd",
+        "verification": "54a7348396e0a80d"
+      }
     }
   },
   {
@@ -244,12 +292,36 @@
       "commonTrap": "Slipping on a sign or a multiplier during elimination, for instance subtracting $2R_1$ from $R_3$ instead of $3R_1$, or stopping after finding $n$ and forgetting to back-substitute for $p$ (the question asks for the pen, the first unknown, not the last)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "14",
       "agreesWithKey": true,
       "checkCode": "import numpy as np\nA = np.array([[1, 2, 1], [2, 1, 2], [3, 3, 1]], float)\nb = np.array([85, 116, 131], float)\nM = np.hstack([A, b[:, None]])\nfor i in range(3):                       # forward elimination, no row swaps\n    for r in range(i + 1, 3):\n        M[r] -= M[r, i] / M[i, i] * M[i]\nsol = np.zeros(3)\nfor i in (2, 1, 0):                      # back substitution\n    sol[i] = (M[i, 3] - M[i, i + 1:3] @ sol[i + 1:3]) / M[i, i]\nprint(sol, np.linalg.solve(A, b))         # [14. 18. 35.]",
-      "notes": ""
+      "notes": "Blind solve: R2-2R1 gives -3n = -54 so n = 18, then R3-3R1 and R3-R2 give -2h = -70 so h = 35, and p = 85-36-35 = 14, matching the key; all three bills check (85, 116, 131). Own sympy solve and a hand-coded forward elimination / back substitution agree. The system is unique and integer (rupees), so the NAT answer is exact with no rounding. Steps and EASY label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "aaf7f9a97efe895c",
+        "verification": "198db51b96aa1fd6"
+      }
     }
   },
   {
@@ -304,12 +376,36 @@
       "commonTrap": "Replacing $\\sin x$ by $x$ (which gives $\\ln(1+x)$ and $f^{(6)}(0)=-5!=-120$), or dropping the $\\frac{x^5}{120}$ term of $\\sin x$ (which changes the $x^6$ coefficient of $s^2$ from $\\frac{2}{45}$ to $\\frac1{36}$), or forgetting that $s^4$ and $s^6$ also contribute to $x^6$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "-16",
       "agreesWithKey": true,
       "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = sp.log(1 + sp.sin(x))\nprint(sp.diff(f, x, 6).subs(x, 0))                          # -16\nprint(sp.series(f, x, 0, 8).removeO().coeff(x, 6) * sp.factorial(6))   # -16",
-      "notes": ""
+      "notes": "Blind solve two ways: Maclaurin composition of ln(1+s) with s = sin x gives a6 = -1/2*2/45 + 1/4*2/3 - 1/6 = -1/45, so f6(0) = 720*(-1/45) = -16; and f'(x) = sec x - tan x so f6(0) = -tan5(0) = -16. Own sympy derivatives (1, -1, 1, -2, 5, -16 for orders 1-6) and series agree. Integer NAT, exact. Steps, shortcut, trap values (-120 for sin x replaced by x; 1/36 for the dropped x^5 term) and HARD label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8dc4c3047b258f58",
+        "verification": "7810013409cc624c"
+      }
     }
   },
   {
@@ -401,12 +497,36 @@
       "commonTrap": "Reading the list in arrival order (as with insertion at the tail), or slipping on a residue such as $24 \\bmod 7$ so that a key lands in the wrong slot."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "39 -> 60 -> 11 -> 25",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "39 -> 60 -> 11 -> 25 (option D)",
       "agreesWithKey": true,
       "checkCode": "m = 7\nT = [[] for _ in range(m)]\nfor k in (25, 10, 20, 11, 24, 60, 39, 52):\n    T[k % m].insert(0, k)             # head insertion\nprint(T[4], T[3])                     # [39, 60, 11, 25] [52, 24, 10]\nU = [[] for _ in range(m)]\nfor k in (25, 10, 20, 11, 24, 60, 39, 52):\n    U[k % m].append(k)                # tail insertion\nprint(U[4])                           # [25, 11, 60, 39]  (option A)",
-      "notes": ""
+      "notes": "Blind solve: residues mod 7 are 4,3,6,4,3,4,4,3; slot 4 receives 25, 11, 60, 39 in that order and head insertion gives 39 -> 60 -> 11 -> 25 = key D. Own Python simulation of the table agrees (slot 3 = 52,24,10; slot 6 = 20). Distractors reproduced: A is the tail-insertion order, B is slot 3, C wrongly includes 24 (24 mod 7 = 3). Steps, verdicts and EASY label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "02a7c91b092d566a",
+        "verification": "4a62e2b598e5e81a"
+      }
     }
   },
   {
@@ -460,7 +580,7 @@
           "body": "$$f_Y(y)=\\int_0^1\\frac32\\,(x^2+y^2)\\,dx=\\frac32\\left(\\frac13+y^2\\right)=\\frac12+\\frac32y^2,\\qquad f_Y\\!\\left(\\tfrac12\\right)=\\frac12+\\frac38=\\frac78.$$"
         },
         {
-          "title": "Conditional density at $y=\tfrac12$",
+          "title": "Conditional density at $y=\\tfrac12$",
           "body": "$$f_{X\\mid Y}\\!\\left(x\\mid\\tfrac12\\right)=\\frac{f_{X,Y}(x,\\tfrac12)}{f_Y(\\tfrac12)}=\\frac{\\tfrac32\\left(x^2+\\tfrac14\\right)}{7/8}=\\frac{12}{7}\\left(x^2+\\frac14\\right),\\quad 0<x<1.$$\n\nCheck: $\\displaystyle\\int_0^1\\frac{12}{7}\\left(x^2+\\frac14\\right)dx=\\frac{12}{7}\\cdot\\frac{7}{12}=1$."
         },
         {
@@ -495,12 +615,36 @@
       "commonTrap": "Integrating the joint density along $y=\\tfrac12$ without dividing by the marginal density $f_Y(\\tfrac12)$, or using the marginal probability $P(X\\le\\tfrac12)$ as if $X$ and $Y$ were independent."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "2/7",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "2/7 (option C)",
       "agreesWithKey": true,
       "checkCode": "from sympy import symbols, Rational as R, integrate, simplify\nx, y = symbols('x y')\nf = R(3, 2) * (x**2 + y**2)\nfy = integrate(f, (x, 0, 1))\ncond = f.subs(y, R(1, 2)) / fy.subs(y, R(1, 2))\nprint(simplify(integrate(cond, (x, 0, R(1, 2)))))             # 2/7\nprint(integrate(f.subs(y, R(1, 2)), (x, 0, R(1, 2))))         # 1/4  (option B, unnormalised)\nprint(integrate(f, (x, 0, R(1, 2)), (y, 0, 1)))               # 5/16 (option D, marginal P(X<=1/2))\nprint(integrate(f.subs(y, R(1, 2)) / R(3, 2), (x, 0, R(1, 2))))  # 1/6 (option A)",
-      "notes": ""
+      "notes": "Blind solve: f_Y(y) = 1/2 + 3y^2/2 so f_Y(1/2) = 7/8; P = (3/2)(1/24+1/8)/(7/8) = (1/4)/(7/8) = 2/7 = key C. Own sympy integration agrees and reproduces the distractors (1/6 = A, 1/4 = B unnormalised, 5/16 = D marginal P(X<=1/2)). FIXED a rendering defect only: the title of solution step 2 contained a raw TAB character (the LaTeX \\tfrac had been written with a single backslash, so JSON turned \\t into a tab) and displayed 'y=<tab>frac12'; restored $y=\\tfrac12$. Stem, options, answer and steps unchanged; MODERATE label and ps / continuous / conditional-pdf tagging checked."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "fe91aacce1276096",
+        "verification": "309eed5253ccb381"
+      }
     }
   },
   {
@@ -523,7 +667,7 @@
     "concept": "Alpha–beta pruning: bounds $\\alpha$ and $\\beta$ are inherited by all descendants, so a node can be cut off by a bound set several levels above it.",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "A two-player zero-sum game tree has four levels. The root $R$ is a **MAX** node, its children are **MIN** nodes, their children are **MAX** nodes, and the grandchildren of those are **MIN** nodes $P_1,\\dots,P_8$, each with two leaf children.\n\n| Node | Type | Children (left to right) |\n|---|---|---|\n| $R$ | MAX | $A,\\ B$ |\n| $A$ | MIN | $C,\\ D$ |\n| $B$ | MIN | $E,\\ F$ |\n| $C,\\ D,\\ E,\\ F$ | MAX | $P_1, P_2$; $P_3, P_4$; $P_5, P_6$; $P_7, P_8$ respectively |\n| $P_1, \\dots, P_8$ | MIN | two leaves each |\n\nThe leaves are numbered $L_1,\\dots,L_{16}$ from left to right, so $P_i$ has leaves $L_{2i-1}$ and $L_{2i}$. Their utilities (for MAX) are:\n\n| MIN node | $P_1$ | $P_2$ | $P_3$ | $P_4$ | $P_5$ | $P_6$ | $P_7$ | $P_8$ |\n|---|---|---|---|---|---|---|---|---|\n| Leaf utilities (left, right) | 21, 16 | 12, 24 | 22, 29 | 3, 39 | 36, 33 | 26, 34 | 13, 4 | 11, 6 |\n\nAlpha\\u2013beta pruning starts at $R$ with $\\alpha=-\\infty$ and $\\beta=+\\infty$, examines the children of every node from left to right, and stops examining the remaining children of a node as soon as $\\alpha \\ge \\beta$. Each node passes its current $\\alpha$ and $\\beta$ to the child it examines next.\n\nThe set of leaves that are **never examined** is",
+    "stem": "A two-player zero-sum game tree has four levels. The root $R$ is a **MAX** node, its children are **MIN** nodes, their children are **MAX** nodes, and the grandchildren of those are **MIN** nodes $P_1,\\dots,P_8$, each with two leaf children.\n\n| Node | Type | Children (left to right) |\n|---|---|---|\n| $R$ | MAX | $A,\\ B$ |\n| $A$ | MIN | $C,\\ D$ |\n| $B$ | MIN | $E,\\ F$ |\n| $C,\\ D,\\ E,\\ F$ | MAX | $P_1, P_2$; $P_3, P_4$; $P_5, P_6$; $P_7, P_8$ respectively |\n| $P_1, \\dots, P_8$ | MIN | two leaves each |\n\nThe leaves are numbered $L_1,\\dots,L_{16}$ from left to right, so $P_i$ has leaves $L_{2i-1}$ and $L_{2i}$. Their utilities (for MAX) are:\n\n| MIN node | $P_1$ | $P_2$ | $P_3$ | $P_4$ | $P_5$ | $P_6$ | $P_7$ | $P_8$ |\n|---|---|---|---|---|---|---|---|---|\n| Leaf utilities (left, right) | 21, 16 | 12, 24 | 22, 29 | 3, 39 | 36, 33 | 26, 34 | 13, 4 | 11, 6 |\n\nAlpha–beta pruning starts at $R$ with $\\alpha=-\\infty$ and $\\beta=+\\infty$, examines the children of every node from left to right, and stops examining the remaining children of a node as soon as $\\alpha \\ge \\beta$. Each node passes its current $\\alpha$ and $\\beta$ to the child it examines next.\n\nThe set of leaves that are **never examined** is",
     "options": [
       {
         "label": "A",
@@ -588,12 +732,36 @@
       "commonTrap": "Applying cut-offs only against the immediate parent's value and missing the deep cut-offs at $P_7$ and $P_8$, which need the bound $\\alpha=16$ that was set at the root and passed down through $B$ and $F$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "{L4, L7, L8, L12, L14, L16}",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "{L4, L7, L8, L12, L14, L16} (option A)",
       "agreesWithKey": true,
       "checkCode": "INF = float('inf')\nvals = [21, 16, 12, 24, 22, 29, 3, 39, 36, 33, 26, 34, 13, 4, 11, 6]\nseen = []\ndef ab(lo, hi, is_max, a, b):          # node covers leaves vals[lo:hi]; levels alternate MAX, MIN, ...\n    if hi - lo == 1:\n        seen.append(lo + 1); return vals[lo]\n    mid, v = (lo + hi) // 2, (-INF if is_max else INF)\n    for l, h in ((lo, mid), (mid, hi)):\n        r = ab(l, h, not is_max, a, b)\n        if is_max: v = max(v, r); a = max(a, v)\n        else: v = min(v, r); b = min(b, v)\n        if a >= b: break\n    return v\nprint(ab(0, 16, True, -INF, INF), ['L%d' % i for i in range(1, 17) if i not in seen])   # 16 [L4, L7, L8, L12, L14, L16]",
-      "notes": ""
+      "notes": "Blind solve (full alpha-beta trace with inherited bounds): P1=16 so alpha_C=16; L4 cut at P2; A gets beta=16; D cut after P3=22 so L7,L8 pruned; R alpha=16; L12 cut at P6 (26<=33); deep cuts at P7 (L14) and P8 (L16) from alpha=16; root value 16 = key A. Own Python alpha-beta over the table of leaves agrees and reproduces the distractors (B = same run when the root bound is not inherited by B, C = the pruned set when the root is MIN, D = the examined leaves). No exact-tie cut-offs, so the alpha >= beta convention is not decisive. FIXED a stem defect only: 'Alpha\\u2013beta' showed a literal backslash-u2013 sequence; replaced with a real en dash. Options, answer and solution unchanged; MODERATE label and ai / search / adversarial tagging checked."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "51ba5eeb44f2928f",
+        "verification": "51dd7d12c5594783"
+      }
     }
   },
   {
@@ -685,12 +853,36 @@
       "commonTrap": "Recognising the pattern `tutor` → `course` (a BCNF violation whose right side is prime) and concluding \"3NF but not BCNF\", without checking the remaining dependency `room` → `building`, which breaks 3NF."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D (2NF but not 3NF)",
       "agreesWithKey": true,
       "checkCode": "from itertools import combinations\nA = ['student', 'course', 'tutor', 'room', 'building']\nF = [({'student', 'course'}, {'tutor'}), ({'tutor'}, {'course'}), ({'student', 'tutor'}, {'room'}), ({'room'}, {'building'})]\ndef cl(X):\n    X = set(X)\n    while True:\n        n = set(X)\n        for l, r in F:\n            if l <= X: n |= r\n        if n == X: return X\n        X = n\nsup = lambda X: cl(X) == set(A)\nkeys = []\nfor k in range(1, 6):\n    for c in combinations(A, k):\n        if sup(c) and not any(K <= set(c) for K in keys): keys.append(set(c))\nprime = set().union(*keys)\nnonprime = set(A) - prime\npartial = any(cl(s) & nonprime for K in keys for j in range(1, len(K)) for s in combinations(sorted(K), j))\nthird = all(r <= l or sup(l) or (r - l) <= prime for l, r in F)\nbcnf = all(r <= l or sup(l) for l, r in F)\nprint(keys, sorted(prime), 'partial dep', partial, '3NF', third, 'BCNF', bcnf)   # no partial dep (2NF ok), 3NF False, BCNF False",
-      "notes": ""
+      "notes": "Blind solve: student is on no right-hand side so it is in every key; {student, course} and {student, tutor} are the only candidate keys (own closure code agrees), prime = student, course, tutor. No non-prime attribute (room, building) depends on a proper subset of a key, so 2NF holds; room -> building has a non-superkey determinant and a non-prime right side, so 3NF fails (tutor -> course violates only BCNF) = key D. Own Python closure / normal-form test agrees. Steps, FD table, all four option verdicts and the MODERATE label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "d2a11b85caea7ced",
+        "verification": "0ec2454b2672d010"
+      }
     }
   },
   {
@@ -782,12 +974,36 @@
       "commonTrap": "When a new worker is started, forgetting to put the current job into the new block (`load = j`), and miscounting the rounds by stopping one iteration early (or late)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "28 6",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "28 6 (option B)",
       "agreesWithKey": true,
       "checkCode": "def run(jobs, workers, strict=False, drop=False):\n    def fits(cap):\n        used, load = 1, 0\n        for j in jobs:\n            if load + j > cap:\n                used += 1\n                load = 0 if drop else j\n            else:\n                load += j\n        return used < workers if strict else used <= workers\n    lo, hi, rounds = max(jobs), sum(jobs), 0\n    while lo < hi:\n        mid = (lo + hi) // 2\n        rounds += 1\n        if fits(mid): hi = mid\n        else: lo = mid + 1\n    return lo, rounds\njobs = [10, 10, 12, 9, 7, 4, 12, 5]\nprint(run(jobs, 3), run(jobs, 3, strict=True), run(jobs, 3, drop=True))   # (28, 6) (37, 6) (20, 6)",
-      "notes": ""
+      "notes": "Blind solve: lo=12, hi=69; mids 40 (T), 26 (F), 33 (T), 30 (T), 28 (T), 27 (F) give [28,28] after 6 rounds, so the program prints 28 6 = key B. Own Python runs the exact program and a brute-force over all contiguous 3-way splits gives minimum cap 28. Distractors reproduced: C = '37 6' with used < workers, D = '20 6' with load = 0 on a new block, A has the right value but the wrong round count. Trace table, close-call detail, verdicts and HARD label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "36dab12909adf59f",
+        "verification": "aa5e84b6588c0544"
+      }
     }
   },
   {
@@ -837,12 +1053,36 @@
       "commonTrap": "Treating $4$ as the half-width (giving $n\\ge(2.576\\cdot10/4)^2=41.5\\Rightarrow42$), keeping $z=1.96$ from the 95% interval (giving $(2\\cdot1.96\\cdot10/4)^2=96.04\\Rightarrow97$), or rounding $165.89$ down instead of up."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "166",
       "agreesWithKey": true,
       "checkCode": "import math\nlo, hi, n, z95, z99, W = 37.20, 42.80, 49, 1.96, 2.576, 4\nsigma = (hi - lo) / 2 * math.sqrt(n) / z95\nreq = (2 * z99 * sigma / W) ** 2\nprint(round(sigma, 6), round(req, 4), math.ceil(req - 1e-9))     # 10.0 165.8944 166\nprint(2 * z99 * sigma / math.sqrt(165), 2 * z99 * sigma / math.sqrt(166))",
-      "notes": ""
+      "notes": "Blind solve: half-width 2.80 = 1.96*sigma/7 gives sigma = 10; width 2*2.576*10/sqrt(n) <= 4 gives sqrt(n) >= 12.88, n >= 165.8944, so n = 166 (n = 165 gives 4.011 > 4, n = 166 gives 3.999 <= 4) = key. Own Python agrees. The stem asks for the smallest whole number of days, so the NAT is an exact integer with no rounding ambiguity; the stated z values make sigma exactly 10. Trap values (42 for half-width misread, 97 for z = 1.96) reproduced. Steps and MODERATE label checked. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "fc3ac83aa2f53297",
+        "verification": "af8ee4a9e81bda43"
+      }
     }
   }
 ]

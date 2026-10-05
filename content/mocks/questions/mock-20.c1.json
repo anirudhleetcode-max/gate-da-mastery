@@ -92,12 +92,36 @@
       "commonTrap": "Forgetting to renormalise in a conditional probability: dividing $P(X=2)$ by $P(X \\le 3) = \\tfrac{14}{30}$ (not by $1$, and not by $3$ as if the three values were equally likely). Also using the unweighted mean $2.5$ instead of $\\sum k\\,p(k)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B, D (c = 1/30; P(X>=3)=5/6, E[X]=10/3, P(X=2|X<=3)=2/7, F(2)=1/6)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nc = F(1, sum(k * k for k in range(1, 5)))\np = {k: c * k * k for k in range(1, 5)}\nassert sum(p.values()) == 1\nA = sum(v for k, v in p.items() if k >= 3) == F(5, 6)\nB = sum(k * v for k, v in p.items()) == F(10, 3)\nC = p[2] / sum(p[k] for k in (1, 2, 3)) == F(1, 3)\nD = (p[1] + p[2]) == F(1, 6)\nprint(c, A, B, C, D)   # 1/30 True True False True",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nc = F(1, sum(k**2 for k in range(1, 5)))\np = {k: c * k**2 for k in range(1, 5)}\nassert sum(p.values()) == 1\nA = p[3] + p[4] == F(5, 6)\nB = sum(k * v for k, v in p.items()) == F(10, 3)\ncond = p[2] / (p[1] + p[2] + p[3])\nC = cond == F(1, 3)\nD = p[1] + p[2] == F(1, 6)\nprint(c, A, B, C, D, cond)   # 1/30 True True False True 2/7",
+      "notes": "Blind re-solve and independent exact-fraction check agree with the key (A, B, D). No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "2fff027b87e5e29d",
+        "verification": "1ec9eb45cd2702b5"
+      }
     }
   },
   {
@@ -151,12 +175,36 @@
       "commonTrap": "Computing `SUB` as top $-$ second (that is, `b - a`) gives the stack $[9, 5]$ and the value $14$. Returning only the top element ($1$) instead of the sum of the whole stack is another slip."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "10 (final stack [9, 1])",
       "agreesWithKey": true,
-      "checkCode": "def run(prog):\n    st = []\n    for ins in prog:\n        op = ins.split()\n        if op[0] == \"PUSH\": st.append(int(op[1]))\n        elif op[0] == \"DUP\": st.append(st[-1])\n        elif op[0] == \"SWAP\": st[-1], st[-2] = st[-2], st[-1]\n        else:\n            b = st.pop(); a = st.pop()\n            st.append({\"ADD\": a + b, \"SUB\": a - b, \"MUL\": a * b}[op[0]])\n    return st\nprog = [\"PUSH 6\", \"PUSH 2\", \"PUSH 5\", \"SUB\", \"DUP\", \"MUL\", \"SWAP\", \"PUSH 4\", \"SWAP\", \"SUB\", \"PUSH 3\", \"ADD\"]\ns = run(prog)\nprint(s, sum(s))   # [9, 1] 10",
-      "notes": ""
+      "checkCode": "def run(prog, wrong_order=False):\n    st = []\n    for ins in prog:\n        op = ins.split()\n        if op[0] == \"PUSH\": st.append(int(op[1]))\n        elif op[0] == \"DUP\": st.append(st[-1])\n        elif op[0] == \"SWAP\": st[-1], st[-2] = st[-2], st[-1]\n        else:\n            b = st.pop(); a = st.pop()\n            if wrong_order: a, b = b, a          # trap: top - second instead of second - top\n            st.append({\"ADD\": a + b, \"SUB\": a - b, \"MUL\": a * b}[op[0]])\n    return st\nprog = [\"PUSH 6\", \"PUSH 2\", \"PUSH 5\", \"SUB\", \"DUP\", \"MUL\", \"SWAP\", \"PUSH 4\", \"SWAP\", \"SUB\", \"PUSH 3\", \"ADD\"]\ngood, bad = run(prog), run(prog, True)\nprint(good, sum(good), bad, sum(bad))   # [9, 1] 10 [9, 5] 14",
+      "notes": "Blind trace and independent Python (including the wrong-operand-order trap value 14) agree with the key. No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cf0f7bf0bae79989",
+        "verification": "670a0ef55d271040"
+      }
     }
   },
   {
@@ -214,7 +262,7 @@
           "body": "$F(1) = \\displaystyle\\int_0^1 \\frac{x}{2}\\,dx = \\frac14 < \\frac12$, so the median $m$ is larger than $1$ and lies in the second piece."
         },
         {
-          "title": "Solve $F(m) = \tfrac12$ on $(1, 4]$",
+          "title": "Solve $F(m) = \\tfrac12$ on $(1, 4]$",
           "body": "For $1 < m \\le 4$: $P(X > m) = \\displaystyle\\int_m^4 \\frac{4 - x}{6}\\,dx = \\frac{(4-m)^2}{12}$. Setting $\\dfrac{(4-m)^2}{12} = \\dfrac12$ gives $(4-m)^2 = 6$, hence $m = 4 - \\sqrt{6}$ (the root $4 + \\sqrt6 > 4$ is outside the support)."
         },
         {
@@ -248,12 +296,36 @@
       "commonTrap": "Assuming the median lies in the first piece and solving $\\tfrac{x^2}{4} = \\tfrac12$ (giving $\\sqrt2 > 1$, outside that piece), or confusing the median with the mean $\\tfrac53$. Always test $F$ at the breakpoint first."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C: m = 4 - sqrt(6) ~ 1.5505 (c = 1/2)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "C: median = 4 - sqrt(6) ~ 1.5505 (c = 1/2, F(1) = 1/4)",
       "agreesWithKey": true,
-      "checkCode": "import math\nfrom scipy import integrate, optimize\ng = lambda x: x if x <= 1 else (4 - x) / 3          # density divided by c\nc = 1 / (integrate.quad(g, 0, 1)[0] + integrate.quad(g, 1, 4)[0])\nF = lambda m: c * (integrate.quad(g, 0, min(m, 1))[0] + (integrate.quad(g, 1, m)[0] if m > 1 else 0))\nm = optimize.brentq(lambda t: F(t) - 0.5, 0, 4)\nmean = integrate.quad(lambda x: x * c * g(x), 0, 4, points=[1])[0]\nprint(round(c, 6), round(F(1), 6), round(m, 6), round(4 - math.sqrt(6), 6), round(mean, 6))   # 0.5 0.25 1.550510 1.550510 1.666667",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx, m, c = sp.symbols(\"x m c\", positive=True)\ntotal = sp.integrate(c * x, (x, 0, 1)) + sp.integrate(c * (4 - x) / 3, (x, 1, 4))\ncv = sp.solve(sp.Eq(total, 1), c)[0]\nF1 = sp.integrate(cv * x, (x, 0, 1))                       # F(1)\ntail = sp.integrate(cv * (4 - x) / 3, (x, m, 4))           # P(X > m) for 1 < m <= 4\nroots = [r for r in sp.solve(sp.Eq(tail, sp.Rational(1, 2)), m) if 1 < float(r) <= 4]\nmean = sp.integrate(x * cv * x, (x, 0, 1)) + sp.integrate(x * cv * (4 - x) / 3, (x, 1, 4))\nprint(cv, F1, roots, [round(float(r), 6) for r in roots], mean)   # 1/2 1/4 [4 - sqrt(6)] [1.55051] 5/3\nprint([round(v, 4) for v in (2**0.5, 4 - 3**0.5, 4 - 6**0.5, 5/3)])   # options A, B, C, D: only C equals the root",
+      "notes": "Key correct (median 4 - sqrt(6)); distractors A/B/D verified as sqrt(2), 4 - sqrt(3), mean 5/3. Fixed a rendering defect: the title of solution step 3 contained a literal TAB character (an unescaped \\tfrac in the JSON) instead of \\tfrac12."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e8e4f3f279536e45",
+        "verification": "e644ba812c9939c0"
+      }
     }
   },
   {
@@ -347,12 +419,36 @@
       "commonTrap": "Confusing linear search with binary search (needing sorted input), or being off by one in the worst case: a successful search may need all $n$ comparisons, exactly like an unsuccessful one."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B only",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\ndef find(a, k):\n    n = 0\n    for i in range(len(a)):\n        n += 1\n        if a[i] == k: return i, n\n    return -1, n\ntests = [(list(a), k) for L in range(1, 6) for a in product(range(3), repeat=L) for k in range(4)]\nA = all(find(a, k)[0] == max(i for i, x in enumerate(a) if x == k) for a, k in tests if a.count(k) > 1)\nB = all(find(a, k)[1] == len(a) for a, k in tests if k not in a)\nC = not any(find(a, k)[0] == (a.index(k) if k in a else -1) and a != sorted(a) for a, k in tests)\nD = all(find(a, k)[1] <= len(a) - 1 for a, k in tests if k in a)\nprint(A, B, C, D)   # False True False False",
-      "notes": ""
+      "checkCode": "from itertools import product\ndef find(a, key):\n    cmp = 0\n    for i in range(len(a)):\n        cmp += 1\n        if a[i] == key: return i, cmp\n    return -1, cmp\ntests = [(list(a), k) for L in range(1, 6) for a in product(range(3), repeat=L) for k in range(4)]\ncorrect = lambda a, k, r: (r == -1 and k not in a) or (r != -1 and a[r] == k)   # a valid answer to \"where is key?\"\nA = all(find(a, k)[0] == max(i for i, x in enumerate(a) if x == k) for a, k in tests if a.count(k) > 1)\nB = all(find(a, k)[1] == len(a) for a, k in tests if k not in a)\nC = all(not correct(a, k, find(a, k)[0]) for a, k in tests if a != sorted(a))   # \"correct only if sorted\" would need this\nD = all(find(a, k)[1] <= len(a) - 1 for a, k in tests if k in a)\nprint(A, B, C, D)   # False True False False",
+      "notes": "Blind re-solve and exhaustive Python check over all lists of length 1-5 agree with the key (only B). No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "70336272538d2150",
+        "verification": "0c700dbf8eef703d"
+      }
     }
   },
   {
@@ -445,12 +541,36 @@
       "commonTrap": "Equating the number of passes with the number of swaps or inversions ($6$), or with $n - 1$ ($5$). Also forgetting the last pass that detects that no swap is needed."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B: 3 passes",
       "agreesWithKey": true,
-      "checkCode": "def bubble_passes(a):\n    n = len(a); passes = 0; swapped = True\n    while swapped:\n        swapped = False; passes += 1\n        for j in range(n - 1):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]; swapped = True\n    return passes\na = [5, 1, 2, 6, 3, 4]\ninv = sum(a[i] > a[j] for i in range(6) for j in range(i + 1, 6))\nprint(bubble_passes(list(a)), inv)   # 3 6",
-      "notes": ""
+      "checkCode": "def passes(a):\n    a = list(a); n = len(a); p = 0; sw = True\n    while sw:\n        sw = False; p += 1\n        for j in range(n - 1):\n            if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; sw = True\n    return p\na = [5, 1, 2, 6, 3, 4]\ndisp = max(sum(y > x for y in a[:i]) for i, x in enumerate(a))      # most larger elements to the left of any element\ninv = sum(a[i] > a[j] for i in range(len(a)) for j in range(i + 1, len(a)))\nprint(passes(a), 1 + disp, inv, len(a) - 1)   # 3 3 6 5",
+      "notes": "Blind trace and independent Python (including the displacement shortcut 1 + max larger-elements-to-the-left = 3) agree with the key. No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f709b218cccaf7c5",
+        "verification": "289d716370b0b832"
+      }
     }
   },
   {
@@ -538,12 +658,36 @@
       "commonTrap": "Reading the rule as an alphabetical recursive DFS (which reaches $G$ via $A$ at once), or forgetting that duplicates stay on the stack and must be discarded, not re-expanded, when popped."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D: S, E, D, B, C, A",
       "agreesWithKey": true,
-      "checkCode": "adj = {\"S\": \"ADE\", \"A\": \"GS\", \"B\": \"CDE\", \"C\": \"B\", \"D\": \"BES\", \"E\": \"BDS\", \"G\": \"A\"}\nassert all(u in adj[v] for u in adj for v in adj[u])          # corridors are two-way\nst, done = [\"S\"], []\nwhile st:\n    u = st.pop()\n    if u in done: continue\n    if u == \"G\": break\n    done.append(u)\n    st += [v for v in sorted(adj[u]) if v not in done]\nprint(done)   # ['S', 'E', 'D', 'B', 'C', 'A']",
-      "notes": ""
+      "checkCode": "adj = {\"S\": \"ADE\", \"A\": \"GS\", \"B\": \"CDE\", \"C\": \"B\", \"D\": \"BES\", \"E\": \"BDS\", \"G\": \"A\"}\nassert all(u in adj[v] for u in adj for v in adj[u])           # two-way corridors\ndef stem_rule():\n    st, done = [\"S\"], []\n    while st:\n        u = st.pop()\n        if u in done: continue\n        if u == \"G\": break\n        done.append(u)\n        st += [v for v in sorted(adj[u]) if v not in done]      # duplicates allowed on the stack\n    return done\ndef mark_on_push():                                            # distractor B: node marked when pushed\n    st, seen, done = [\"S\"], {\"S\"}, []\n    while st:\n        u = st.pop()\n        if u == \"G\": break\n        done.append(u)\n        for v in sorted(adj[u]):\n            if v not in seen: seen.add(v); st.append(v)\n    return done\ndef recursive():                                               # distractor A: recursive DFS in alphabetical order\n    done = []\n    def go(u):\n        if u == \"G\": return True\n        done.append(u)\n        return any(go(v) for v in sorted(adj[u]) if v not in done)\n    go(\"S\"); return done\nprint(stem_rule(), mark_on_push(), recursive())   # ['S','E','D','B','C','A'] ['S','E','B','C','D','A'] ['S','A']",
+      "notes": "Blind trace of the stated stack rule gives S, E, D, B, C, A; Python also reproduces distractors A (recursive DFS) and B (mark-on-push) so the key is unique under the rules in the stem. No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "47954fb2e97961d4",
+        "verification": "d96acc0f5e0ef57d"
+      }
     }
   },
   {
@@ -597,12 +741,36 @@
       "commonTrap": "Stopping the cascade after the first level (only employees $4$ and $5$ are removed, giving $3 + 3 = 6$) or forgetting the three tasks whose `owner` was already `NULL` (giving $5$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "8",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "8 (cascade deletes eid 2, 4, 5, 7, 10; 5 tasks set to NULL + 3 already NULL)",
       "agreesWithKey": true,
-      "checkCode": "import sqlite3\ncon = sqlite3.connect(\":memory:\")\ncon.execute(\"PRAGMA foreign_keys=ON\")\ncon.executescript('''\nCREATE TABLE Emp (eid INT PRIMARY KEY, boss INT REFERENCES Emp(eid) ON DELETE CASCADE);\nCREATE TABLE Task (tid INT PRIMARY KEY, owner INT REFERENCES Emp(eid) ON DELETE SET NULL);\nINSERT INTO Emp VALUES (1,NULL),(2,1),(3,1),(4,2),(5,2),(6,3),(7,4),(8,NULL),(9,8),(10,4);\nINSERT INTO Task VALUES (101,1),(102,2),(103,NULL),(104,4),(105,6),(106,7),(107,8),(108,NULL),(109,5),(110,9),(111,10),(112,3),(113,NULL);\n''')\ncon.execute(\"DELETE FROM Emp WHERE eid = 2\")\nprint(con.execute(\"SELECT COUNT(*) FROM Task WHERE owner IS NULL\").fetchone()[0],\n      [r[0] for r in con.execute(\"SELECT eid FROM Emp\")])   # 8 [1, 3, 6, 8, 9]",
-      "notes": ""
+      "checkCode": "import sqlite3\nemp = {1: None, 2: 1, 3: 1, 4: 2, 5: 2, 6: 3, 7: 4, 8: None, 9: 8, 10: 4}\ntask = {101: 1, 102: 2, 103: None, 104: 4, 105: 6, 106: 7, 107: 8, 108: None, 109: 5, 110: 9, 111: 10, 112: 3, 113: None}\ngone = {2}\nwhile True:                                                     # cascade closure along boss links\n    more = {e for e, b in emp.items() if b in gone} - gone\n    if not more: break\n    gone |= more\nby_hand = sum(1 for o in task.values() if o is None or o in gone)\ncon = sqlite3.connect(\":memory:\"); con.execute(\"PRAGMA foreign_keys=ON\")\ncon.executescript(\"CREATE TABLE Emp (eid INT PRIMARY KEY, boss INT REFERENCES Emp(eid) ON DELETE CASCADE);\"\n                  \"CREATE TABLE Task (tid INT PRIMARY KEY, owner INT REFERENCES Emp(eid) ON DELETE SET NULL);\")\ncon.executemany(\"INSERT INTO Emp VALUES (?,?)\", emp.items()); con.executemany(\"INSERT INTO Task VALUES (?,?)\", task.items())\ncon.execute(\"DELETE FROM Emp WHERE eid = 2\")\nprint(sorted(gone), by_hand, con.execute(\"SELECT COUNT(*) FROM Task WHERE owner IS NULL\").fetchone()[0])   # [2, 4, 5, 7, 10] 8 8",
+      "notes": "Blind cascade closure and an independent sqlite3 run with foreign keys on both give 8. No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "35b27cb25f35f3bb",
+        "verification": "b19827f4cf399103"
+      }
     }
   },
   {
@@ -656,12 +824,36 @@
       "commonTrap": "Using $n - p$ instead of $n - p - 1$ for the residual degrees of freedom (gives $0.799$), reporting the unadjusted $R^2 = 0.82$, or treating $\\mathrm{SSR}$ as if it were $\\mathrm{SST}$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "0.791",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "0.791 (SST = 250, adjusted R^2 = 0.7912)",
       "agreesWithKey": true,
-      "checkCode": "n, p, ssr, sse = 30, 4, 205, 45\nsst = ssr + sse\nadj = 1 - (sse / (n - p - 1)) / (sst / (n - 1))\nprint(sst, round(ssr / sst, 4), round(adj, 4), round(adj, 3))   # 250 0.82 0.7912 0.791",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nn, p, ssr, sse = 30, 4, 205, 45\nsst = ssr + sse\nadj = 1 - (F(sse, n - p - 1)) / (F(sst, n - 1))\nwrong_df = 1 - F(sse, n - p) / F(sst, n - 1)                      # trap: n - p instead of n - p - 1\nprint(sst, float(adj), round(float(adj), 3), round(float(wrong_df), 3), ssr / sst)   # 250 0.7912 0.791 0.799 0.82",
+      "notes": "Exact-fraction check gives 0.7912, rounds to 0.791; accepted range 0.79 to 0.792 excludes the trap values 0.799 (n - p) and 0.82 (unadjusted R^2). No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "74cf795a028b69fa",
+        "verification": "e451aff6f45407bb"
+      }
     }
   },
   {
@@ -750,12 +942,36 @@
       "commonTrap": "Forgetting the factor $2$ (that is, quoting $1/\\lVert\\mathbf{w}\\rVert$, the distance to only one margin hyperplane), or using $\\lVert\\mathbf{w}\\rVert^2$ or the sum of the components instead of the Euclidean norm."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A: 2/3",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A: 2/3 (||w|| = 3)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nw, b = np.array([2.0, -1.0, 2.0]), -3.0\nx1 = (1 - b) * w / (w @ w)     # a point on w.x + b = +1\nx2 = (-1 - b) * w / (w @ w)    # a point on w.x + b = -1\nprint(round(np.linalg.norm(x1 - x2), 6), round(2 / np.linalg.norm(w), 6),\n      round(1 / np.linalg.norm(w), 6), round(2 / np.abs(w).sum(), 6), round(2 / (w @ w), 6))   # 0.666667 0.666667 0.333333 0.4 0.222222",
-      "notes": ""
+      "checkCode": "import numpy as np\nw, b = np.array([2.0, -1.0, 2.0]), -3.0\nx_plus = (1 - b) * w / (w @ w)           # a point on w.x + b = +1\nx_minus = (-1 - b) * w / (w @ w)         # a point on w.x + b = -1 (same normal direction, so the segment is perpendicular)\nassert abs(w @ x_plus + b - 1) < 1e-12 and abs(w @ x_minus + b + 1) < 1e-12\nd = np.linalg.norm(x_plus - x_minus)\nprint(round(d, 6), [round(v, 6) for v in (2/3, 1/3, 2/5, 2/9)])   # 0.666667 [0.666667, 0.333333, 0.4, 0.222222]",
+      "notes": "Geometric check (distance between the two parallel hyperplanes) gives 2/3; distractors correspond to 1/||w||, 2/||w||_1 and 2/||w||^2. No content changes needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "7e094639f1fbfd09",
+        "verification": "b2bb5d4f100c62cf"
+      }
     }
   },
   {
@@ -851,15 +1067,39 @@
           "explanation": "$2.365 < 2.479 < 2.998$ places the upper-tail probability between $0.01$ and $0.025$ (exactly $0.0211$)."
         }
       ],
-      "commonTrap": "Using normal ($z$) critical values such as $2.326$ for a one-sided $0.01$ test, which wrongly makes C true, or mixing up one-sided and two-sided cutoffs (comparing $t$ with $t_{\\alpha,7}$ for a two-sided test at level $\\alpha$)."
+      "commonTrap": "Using normal ($z$) critical values such as $2.326$ for the one-sided $0.01$ test, which wrongly makes C true; or quoting the two-sided $p$-value $0.042$ as the $p$-value for $H_1: \\mu > 100$, which wrongly makes D false (a one-sided $p$-value is the upper tail only, $\\approx 0.021$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "A, D (t = 2.479 on 7 df; one-sided p = 0.0211, two-sided p = 0.0423)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom scipy import stats\nx = np.array([98, 101, 104, 99, 107, 103, 105, 107]); n = len(x)\nt = (x.mean() - 100) / (x.std(ddof=1) / np.sqrt(n))\ncrit = {a: float(round(stats.t.ppf(1 - a, n - 1), 3)) for a in (0.05, 0.025, 0.01, 0.005)}\nA = t > crit[0.025]\nB = t > crit[0.005]\nC = t > crit[0.01]\np1 = stats.t.sf(t, n - 1)\nD = 0.01 < p1 < 0.025\nprint(round(t, 4), crit, A, B, C, D, round(p1, 4), round(2 * p1, 4))   # 2.4792 {0.05: 1.895, 0.025: 2.365, 0.01: 2.998, 0.005: 3.499} True False False True 0.0211 0.0423",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy import stats\nx = np.array([98, 101, 104, 99, 107, 103, 105, 107]); n = len(x)\nxbar, s = x.mean(), x.std(ddof=1)\nt = (xbar - 100) / (s / np.sqrt(n))\ntab = {0.05: 1.895, 0.025: 2.365, 0.01: 2.998, 0.005: 3.499}      # table printed in the question\nassert all(abs(stats.t.isf(a, n - 1) - v) < 5e-4 for a, v in tab.items())\nA = t > tab[0.025]                       # two-sided, level 0.05\nB = t > tab[0.005]                       # two-sided, level 0.01\nC = t > tab[0.01]                        # one-sided, level 0.01\nD = tab[0.025] < t < tab[0.01]           # table brackets the one-sided p-value\np1 = stats.t.sf(t, n - 1)\nprint(xbar, round(s, 4), round(t, 4), A, B, C, D, round(p1, 4), round(2 * p1, 4), 0.01 < p1 < 0.025)   # 103.0 3.4226 2.4792 True False False True 0.0211 0.0423 True",
+      "notes": "Blind re-solve and independent Python agree with the key (A and D). Fixed commonTrap: the old text blamed a one-/two-sided cutoff mix-up that would not change any verdict here; it now names the real traps (normal z cutoff makes C look true; two-sided p-value 0.042 makes D look false)."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "dbe0e118970c4be2",
+        "verification": "a1d4f1cc656faea9"
+      }
     }
   }
 ]

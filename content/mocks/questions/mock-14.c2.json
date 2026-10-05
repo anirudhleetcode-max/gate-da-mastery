@@ -14,7 +14,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (tracing a run-length routine with nested while loops) needing two traces, the second on the output of the first; routine work, about 1.5\u20132 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (tracing a run-length routine with nested while loops) needing two traces, the second on the output of the first; routine work, about 1.5–2 minutes.",
     "estimatedTimeSec": 100,
     "concept": "Tracing a run-length encoding function with nested while loops, applied twice (string building and len)",
     "conceptIds": [],
@@ -89,12 +89,36 @@
       "commonTrap": "Assuming that compressing an already compressed string returns it unchanged (or that a run of length 1 is written without its count). The code appends a count for every run, so a string with no repeated neighbours doubles in length."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B: a3b1c2d4 16",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B: prints \"a3b1c2d4 16\"",
       "agreesWithKey": true,
-      "checkCode": "def compress(s):\n    out=[];i=0\n    while i<len(s):\n        j=i\n        while j<len(s) and s[j]==s[i]: j+=1\n        out.append(s[i]+str(j-i)); i=j\n    return \"\".join(out)\nt=compress(\"aaabccdddd\"); u=compress(t)\nprint(t,len(u))",
-      "notes": ""
+      "checkCode": "# Independent re-implementation: run-length encode with itertools.groupby (not the stem's nested while loops)\nfrom itertools import groupby\ndef rle(s):\n    return \"\".join(ch + str(len(list(g))) for ch, g in groupby(s))\nt = rle(\"aaabccdddd\")\nu = rle(t)\nprint(t, len(u), u)\nassert (t, len(u)) == (\"a3b1c2d4\", 16)\n\n# Also execute the program exactly as printed in the stem and compare\nimport io, contextlib\nsrc = \"\"\"\ndef compress(s):\n    out = []\n    i = 0\n    while i < len(s):\n        j = i\n        while j < len(s) and s[j] == s[i]:\n            j += 1\n        out.append(s[i] + str(j - i))\n        i = j\n    return \"\".join(out)\n\nt = compress(\"aaabccdddd\")\nu = compress(t)\nprint(t, len(u))\n\"\"\"\nbuf = io.StringIO()\nwith contextlib.redirect_stdout(buf):\n    exec(src, {})\nprint(repr(buf.getvalue().strip()))\nassert buf.getvalue().strip() == \"a3b1c2d4 16\"",
+      "notes": "Blind solve by tracing both calls gave t = \"a3b1c2d4\" (8 characters, no two neighbours equal), so compress(t) writes every character with a count of 1 and len(u) = 16, i.e. option (B), matching the key. Independent Python (groupby re-implementation plus exec of the stem program) agrees. Audited the stem (code reproduced exactly, single printed line), the trace table, option analysis (A = len not doubled, C = count omitted for runs of 1, D = off-by-one count are all genuinely wrong), difficulty (two traces, about 1.7 min) and topic (pdsa-python). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "4fb2fd2b0c69b228",
+        "verification": "cb57cc70bf6f059d"
+      }
     }
   },
   {
@@ -112,7 +136,7 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (law of total variance) with two or three routine steps: conditional mean and variance of a uniform, then two moments of $X$; about 2 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (law of total variance) with two or three routine steps: conditional mean and variance of a uniform, then two moments of $X$; about 2 minutes.",
     "estimatedTimeSec": 100,
     "concept": "Law of total variance: Var(Y) = E[Var(Y|X)] + Var(E[Y|X]) for a uniform mixture",
     "conceptIds": [],
@@ -149,12 +173,36 @@
       "commonTrap": "Keeping only one of the two terms. Using just $E[\\operatorname{Var}(Y\\mid X)]=\\tfrac19\\approx0.111$, or plugging $X=E[X]=1$ into the conditional variance to get $\\tfrac1{12}\\approx0.083$, ignores the extra spread that comes from $X$ itself varying."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "7/36 = 0.1944, i.e. 0.194",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "7/36 = 0.19444, rounds to 0.194",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nimport random\nVarX=F(4,12); EX2=VarX+1          # X~U(0,2)\ntot=EX2/12+VarX/4                 # E[Var(Y|X)]+Var(E[Y|X])\nprint(tot,round(float(tot),3),F(4,9)-F(1,4)==tot)\nrandom.seed(1); n=10**6; ys=[random.uniform(0,random.uniform(0,2)) for _ in range(n)]\nm=sum(ys)/n; print(round(sum((y-m)**2 for y in ys)/n,3))",
-      "notes": ""
+      "checkCode": "# Independent exact computation by direct double integration (not the law of total variance)\nimport sympy as sp\nx, y = sp.symbols(\"x y\", positive=True)\n# joint density f(x, y) = (1/2) * (1/x) on 0 < y < x < 2\nEY  = sp.integrate(sp.integrate(y   * sp.Rational(1, 2) / x, (y, 0, x)), (x, 0, 2))\nEY2 = sp.integrate(sp.integrate(y**2 * sp.Rational(1, 2) / x, (y, 0, x)), (x, 0, 2))\nvar = sp.simplify(EY2 - EY**2)\nprint(EY, EY2, var, float(var), round(float(var), 3))\nassert var == sp.Rational(7, 36) and round(float(var), 3) == 0.194\n\n# Monte Carlo sanity check\nimport numpy as np\nrng = np.random.default_rng(0)\nX = rng.uniform(0, 2, 4_000_000)\nY = rng.uniform(0, X)\nprint(round(float(Y.var()), 3))\nassert abs(Y.var() - 7/36) < 2e-3",
+      "notes": "Blind solve via E[Y] = 1/2, E[Y^2] = E[X^2]/3 = 4/9 gave Var(Y) = 7/36 = 0.194, matching the key. Independent Python integrates the joint density (1/2)(1/x) on 0 < y < x < 2 exactly with sympy (7/36) and a 4-million-sample Monte Carlo agrees. Audited the stem (distributions, units and the three-decimal rounding all stated), the two derivations in the solution, the distractor values 1/9 and 1/12 in the trap, difficulty and topic mapping. The NAT range 0.193 to 0.195 contains 0.1944 and allows last-digit slack while excluding the 0.111 and 0.083 distractors. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "41e83ca5455058f9",
+        "verification": "aab006831bc822fa"
+      }
     }
   },
   {
@@ -172,7 +220,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD \u2014 four statements on binomial, Bernoulli and uniform distributions, each needing its own non-routine check (a same-mean trap, a symmetry argument, a covariance of a product and an independence test); about 4 minutes.",
+    "difficultyRationale": "Platform-estimated: HARD — four statements on binomial, Bernoulli and uniform distributions, each needing its own non-routine check (a same-mean trap, a symmetry argument, a covariance of a product and an independence test); about 4 minutes.",
     "estimatedTimeSec": 240,
     "concept": "Binomial sums need equal success probabilities; complement symmetry; Bernoulli products; independence of events under a discrete uniform",
     "conceptIds": [],
@@ -250,12 +298,36 @@
       "commonTrap": "Accepting (A) because the mean of $S+T$ equals the mean of $\\text{Binomial}(20,0.5)$: a sum of independent binomials is binomial only when the success probabilities are equal. Students also accept (D) because both events have probability $\\tfrac12$, without computing the joint probability."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B, C",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nfrom math import comb\nfrom itertools import product\npm=lambda n,p:[comb(n,k)*p**k*(1-p)**(n-k) for k in range(n+1)]\ns,t=pm(10,F(2,5)),pm(10,F(3,5))\nconv=[sum(s[i]*t[k-i] for i in range(11) if 0<=k-i<=10) for k in range(21)]\nA=conv==pm(20,F(1,2))\nB=sum(s[7:])==sum(t[:4])\nE=lambda f:sum(F(1,4)*f(a,b) for a,b in product([0,1],repeat=2))\nC=E(lambda a,b:a*a*b)-E(lambda a,b:a)*E(lambda a,b:a*b)==F(1,8)\nK=range(1,11); P=lambda g:F(sum(1 for k in K if g(k)),10)\nD=P(lambda k:k%2==0 and k>5)==P(lambda k:k%2==0)*P(lambda k:k>5)\nprint(dict(A=A,B=B,C=C,D=D))",
-      "notes": ""
+      "checkCode": "# Independent exact check of all four statements with Fractions / enumeration\nfrom fractions import Fraction as F\nfrom math import comb\nfrom itertools import product\n\ndef pmf(n, p):\n    return [comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1)]\n\nS, T = pmf(10, F(2, 5)), pmf(10, F(3, 5))\n# (A) exact pmf of S+T versus Binomial(20, 1/2)\nconv = [sum(S[i] * T[k - i] for i in range(11) if 0 <= k - i <= 10) for k in range(21)]\nA = conv == pmf(20, F(1, 2))\nvarST = 10 * F(2, 5) * F(3, 5) * 2\n# (B) tail equality, exact\nB = sum(S[7:]) == sum(T[:4])\n# (C) covariance by enumerating the four (I1, I2) outcomes, each with probability 1/4\nouts = list(product([0, 1], repeat=2))\nE = lambda f: sum(F(1, 4) * f(a, b) for a, b in outs)\nC = E(lambda a, b: a * (a * b)) - E(lambda a, b: a) * E(lambda a, b: a * b) == F(1, 8)\n# (D) independence of \"even\" and \">5\" under uniform {1..10}\nK = range(1, 11)\npe = F(sum(k % 2 == 0 for k in K), 10)\npg = F(sum(k > 5 for k in K), 10)\npb = F(sum(k % 2 == 0 and k > 5 for k in K), 10)\nD = pb == pe * pg\nprint(dict(A=A, B=B, C=C, D=D), \"Var(S+T) =\", varST, \"P(both) =\", pb, \"pe*pg =\", pe * pg)\nassert (A, B, C, D) == (False, True, True, False)",
+      "notes": "Blind solve: (A) false because Var(S+T) = 4.8 differs from 5 (different p, not Binomial); (B) true by the pass/fail complement symmetry 10-S ~ Binomial(10, 0.6); (C) true, Cov = 1/4 - 1/8 = 1/8; (D) false, P(even and >5) = 3/10 differs from 1/4. Answer B, C matches the key. Independent exact Python (Fractions, full convolution, enumeration) agrees on all four statements. Audited stem (independence of S and T, I1 and I2 and K stated, nothing depends on an unstated convention), solution numbers (tail terms 0.0425 + 0.0106 + 0.0016 + 0.0001 = 0.0548, P(S+T=10) = 0.1800 vs 0.1762 re-computed), option verdicts and difficulty (four independent non-trivial checks, so HARD, about 4 min is honest). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "846633ef8c339023",
+        "verification": "778857c952e0eb03"
+      }
     }
   },
   {
@@ -273,7 +345,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (quadratic form and its symmetric matrix) with single-step checks: read off the matrix, then trace, determinant and one factorisation; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (quadratic form and its symmetric matrix) with single-step checks: read off the matrix, then trace, determinant and one factorisation; about 1.5 minutes.",
     "estimatedTimeSec": 90,
     "concept": "Symmetric matrix of a quadratic form, semidefiniteness versus definiteness, eigenvalues from trace and determinant",
     "conceptIds": [],
@@ -348,12 +420,36 @@
       "commonTrap": "Placing the full cross-term coefficient $12$ in both off-diagonal slots. That gives $\\det=36-144<0$, which wrongly suggests an indefinite form. The off-diagonal entry is half the coefficient of $x_1x_2$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C, D",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx1,x2=sp.symbols(\"x1 x2\",real=True)\nQ=9*x1**2+12*x1*x2+4*x2**2\nA=sp.hessian(Q,(x1,x2))/2\nprint(A.tolist(),A.eigenvals(),\"PSD\",A.is_positive_semidefinite,\"PD\",A.is_positive_definite,Q.subs({x1:2,x2:-3}),sp.factor(Q))",
-      "notes": ""
+      "checkCode": "# Independent check with sympy: build A from the form, test definiteness, eigenvalues and a null vector\nimport sympy as sp\nx1, x2 = sp.symbols(\"x1 x2\", real=True)\nQ = 9*x1**2 + 12*x1*x2 + 4*x2**2\nA = sp.Matrix([[9, 6], [6, 4]])\nv = sp.Matrix([x1, x2])\nassert sp.expand((v.T * A * v)[0] - Q) == 0 and A == A.T          # (C): this symmetric A represents Q\n# the symmetric representation is unique: solve for [[a, b], [b, c]]\na, b, c = sp.symbols(\"a b c\")\nsol = sp.solve(sp.Poly(sp.expand((v.T * sp.Matrix([[a, b], [b, c]]) * v)[0] - Q), x1, x2).coeffs(), [a, b, c])\nprint(\"unique symmetric A:\", sol)\nprint(\"factor:\", sp.factor(Q), \"| eigenvalues:\", A.eigenvals(), \"| det:\", A.det())\neig_ok = A.eigenvals() == {0: 1, 13: 1}                           # (D)\npsd = all(ev >= 0 for ev in A.eigenvals())                        # (A): all eigenvalues >= 0\npd = all(ev > 0 for ev in A.eigenvals())                          # (B)\nprint(\"Q(2,-3) =\", Q.subs({x1: 2, x2: -3}))\nprint(dict(A=psd, B=pd, C=True, D=eig_ok))\nassert (psd, pd, eig_ok) == (True, False, True)",
+      "notes": "Blind solve: Q = (3x1 + 2x2)^2 so Q >= 0 (A true) with Q(2, -3) = 0 so not positive definite (B false); A = [[9, 6], [6, 4]] (C true); trace 13 and determinant 0 give eigenvalues 0 and 13 (D true). Answer A, C, D matches the key. Independent sympy check (unique symmetric representation, eigenvalues, null vector) agrees. Audited stem (the matrix is explicitly required to be the symmetric one, so (C) is unambiguous), steps, option verdicts, trap and difficulty (EASY, about 1.5 min). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "99002e6f67e43086",
+        "verification": "4cd0cde8174f7c6e"
+      }
     }
   },
   {
@@ -371,7 +467,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (evaluating standard limits) with a single-step check per statement: a trigonometric identity, one-sided limits, degree comparison and cancelling a common factor; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (evaluating standard limits) with a single-step check per statement: a trigonometric identity, one-sided limits, degree comparison and cancelling a common factor; about 1.5 minutes.",
     "estimatedTimeSec": 90,
     "concept": "Evaluating limits: trigonometric identity, one-sided limits, rational functions at infinity, removable factor",
     "conceptIds": [],
@@ -447,12 +543,36 @@
       "commonTrap": "Applying the \"ratio of leading coefficients\" rule in (C) without checking that the degrees are equal, and treating $\\tfrac{|x|}{x}$ as $1$ in (B) by only considering $x>0$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols(\"x\")\nprint(sp.limit(sp.sin(4*x)/sp.sin(2*x),x,0),\n      sp.limit(sp.Abs(x)/x,x,0,\"+\"),sp.limit(sp.Abs(x)/x,x,0,\"-\"),\n      sp.limit((4*x**2+x)/(x**3+1),x,sp.oo),\n      sp.limit((x**2-1)/(x**3-1),x,1))",
-      "notes": ""
+      "checkCode": "# Independent check: sympy limits plus numerical probing from both sides\nimport sympy as sp\nx = sp.symbols(\"x\")\nfA = sp.sin(4*x) / sp.sin(2*x)\nfB = sp.Abs(x) / x\nfC = (4*x**2 + x) / (x**3 + 1)\nfD = (x**2 - 1) / (x**3 - 1)\nlA = sp.limit(fA, x, 0)\nlBp, lBm = sp.limit(fB, x, 0, \"+\"), sp.limit(fB, x, 0, \"-\")\nlC = sp.limit(fC, x, sp.oo)\nlD = sp.limit(fD, x, 1)\nprint(lA, lBp, lBm, lC, lD)\nA = lA == 2\nB = (lBp == lBm == 1)                 # two-sided limit exists and equals 1 only if both sides are 1\nC = lC == 4\nD = lD == 1\n# numeric probes\nimport math\nprint(math.sin(4e-4)/math.sin(2e-4), 1e-9/1e-9, -1e-9/(-1e-9) * -1, (4e12 + 1e6)/(1e18 + 1), (1.000001**2 - 1)/(1.000001**3 - 1))\nassert (A, B, C, D) == (True, False, False, False)",
+      "notes": "Blind solve: (A) sin4x/sin2x = 2cos2x -> 2 (true); (B) one-sided limits +1 and -1, so the limit does not exist (false); (C) numerator degree 2 < denominator degree 3 so the limit is 0, not 4 (false); (D) (x+1)/(x^2+x+1) -> 2/3, not 1 (false). Answer A matches the key. Independent sympy limits and numerical probing agree. Audited the stem (no stated convention needed; a single-correct-option MSQ is legitimate), steps, option verdicts and difficulty (four routine one-step limits, EASY at about 1.5 min is honest). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "786b2484514a2fcb",
+        "verification": "f5a281a9986df09f"
+      }
     }
   },
   {
@@ -470,7 +590,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (the decomposition of expected test error) applied to a four-row table, plus two conceptual checks (irreducible error, direction of change); about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the decomposition of expected test error) applied to a four-row table, plus two conceptual checks (irreducible error, direction of change); about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "Expected squared error = bias^2 + variance + irreducible noise; comparing models of different complexity",
     "conceptIds": [],
@@ -547,12 +667,36 @@
       "commonTrap": "Forgetting the irreducible noise term and comparing $\\text{Bias}^2+\\text{Variance}$ alone (which is how the tempting value $1.35$ for $d=2$ arises), or assuming that a simpler model reduces both bias and variance."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C",
       "agreesWithKey": true,
-      "checkCode": "s2=0.50\ntab={1:(2.40,0.10),2:(1.10,0.25),3:(0.30,0.60),4:(0.20,1.35)}\nerr={d:round(b+v+s2,2) for d,(b,v) in tab.items()}\nA=min(err,key=err.get)==3\nB=err[2]==1.35\nC=all(e>=s2 for e in err.values())\nD=tab[3][0]<tab[4][0] and tab[3][1]<tab[4][1]\nprint(err,dict(A=A,B=B,C=C,D=D))",
-      "notes": ""
+      "checkCode": "# Independent check: decomposition E[(y - fhat)^2] = bias^2 + var + sigma^2, verified by simulation\n# for the arithmetic, then by Monte Carlo that the decomposition (and the sigma^2 floor) really holds\nimport numpy as np\ns2 = 0.50\ntab = {1: (2.40, 0.10), 2: (1.10, 0.25), 3: (0.30, 0.60), 4: (0.20, 1.35)}\nerr = {d: round(b + v + s2, 4) for d, (b, v) in tab.items()}\nprint(err)\nA = min(err, key=err.get) == 3\nB = abs(err[2] - 1.35) < 1e-12\nC = all(e >= s2 for e in err.values())\nD = (tab[3][0] < tab[4][0]) and (tab[3][1] < tab[4][1])\nprint(dict(A=A, B=B, C=C, D=D))\nassert (A, B, C, D) == (True, False, True, False)\n\n# Monte Carlo: any estimator fhat independent of the fresh noise eps has E[(y - fhat)^2] = (f - E fhat)^2 + Var(fhat) + s2\nrng = np.random.default_rng(1)\nf0, bias, sd = 1.3, 0.55, 0.9                      # arbitrary true value, bias and std of the estimator\nn = 3_000_000\nfhat = f0 - bias + sd * rng.standard_normal(n)     # E[fhat] = f0 - bias\ny = f0 + np.sqrt(s2) * rng.standard_normal(n)      # fresh noisy target, independent of fhat\nmc = np.mean((y - fhat) ** 2)\nprint(round(mc, 3), round(bias**2 + sd**2 + s2, 3))\nassert abs(mc - (bias**2 + sd**2 + s2)) < 0.02 and mc > s2",
+      "notes": "Blind solve: expected squared error = Bias^2 + Variance + sigma^2 = 3.00, 1.85, 1.40, 2.05 for d = 1..4 so d = 3 is smallest (A true); the degree-2 value is 1.85, not 1.35 (B false); the error is at least sigma^2 = 0.50 for any predictor independent of the fresh noise (C true); going from d = 4 to d = 3 lowers variance (1.35 -> 0.60) but raises Bias^2 (0.20 -> 0.30), so (D) false. Answer A, C matches the key. Independent Python (table arithmetic plus a Monte Carlo check of the decomposition and the sigma^2 floor) agrees. Audited stem (the noise is stated independent of the training data and the target is E[(y - fhat)^2], so the decomposition and the floor of 0.50 are unambiguous), steps, option verdicts and difficulty (MODERATE, about 2.5 min). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "c3c848685e34186f",
+        "verification": "5ad2ed49be5ee10b"
+      }
     }
   },
   {
@@ -570,7 +714,7 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (propositional entailment) solved by two direct modus ponens steps on a small knowledge base; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (propositional entailment) solved by two direct modus ponens steps on a small knowledge base; about 1.5 minutes.",
     "estimatedTimeSec": 90,
     "concept": "Propositional entailment: chaining modus ponens to find what a knowledge base entails",
     "conceptIds": [],
@@ -644,12 +788,36 @@
       "commonTrap": "Not chaining the rules: $R$ is not stated directly, so the second rule seems not to apply until $R$ has been derived from $P\\to R$ and $P$. Students also misread $(D\\land R)\\to\\lnot V$ and conclude $V$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C: not V",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nimp=lambda a,b:(not a) or b\nms=[m for m in product([False,True],repeat=4) if imp(m[0],m[1]) and imp(m[2] and m[1],not m[3]) and m[2] and m[0]]  # (P,R,D,V)\nopts={\"A\":lambda P,R,D,V:V,\"B\":lambda P,R,D,V:not R,\"C\":lambda P,R,D,V:not V,\"D\":lambda P,R,D,V:imp(P,V)}\nprint(ms,{k:all(f(*m) for m in ms) for k,f in opts.items()})",
-      "notes": ""
+      "checkCode": "# Independent check: enumerate all 16 truth assignments, keep models of KB, test entailment, and also resolution-style forward chaining\nfrom itertools import product\nimp = lambda a, b: (not a) or b\ndef kb(D, P, R, V):\n    return imp(P, R) and imp(D and R, not V) and D and P\nmodels = [m for m in product([False, True], repeat=4) if kb(*m)]\nprint(\"models (D,P,R,V):\", models)\nopts = {\n    \"A\": lambda D, P, R, V: V,\n    \"B\": lambda D, P, R, V: not R,\n    \"C\": lambda D, P, R, V: not V,\n    \"D\": lambda D, P, R, V: imp(P, V),\n}\nres = {k: bool(models) and all(f(*m) for m in models) for k, f in opts.items()}\nprint(res)\nassert res == {\"A\": False, \"B\": False, \"C\": True, \"D\": False}\n# forward chaining over Horn-style facts as a second method\nfacts = {\"D\", \"P\"}\nif \"P\" in facts: facts.add(\"R\")\nif {\"D\", \"R\"} <= facts: facts.add(\"notV\")\nprint(sorted(facts))\nassert \"notV\" in facts and len(models) == 1",
+      "notes": "Blind solve by chaining modus ponens: P and P -> R give R; then D and R give D and R, so (D and R) -> not V gives not V. KB has the single model D = P = R = true, V = false, so only not V is entailed: option (C), matching the key. Independent Python (enumeration of all 16 assignments plus forward chaining) agrees. Audited stem (variables and KB defined, entailment defined as true in every model), steps, option verdicts (including P -> V being false in the unique model) and difficulty (two direct chaining steps, EASY at about 1.5 min). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "514fe0aa63259adb",
+        "verification": "6b770e0df16893e1"
+      }
     }
   },
   {
@@ -668,7 +836,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (a small multi-layer perceptron with step units) needing a four-row truth-table trace, a parameter count, a substitution of activations and a linear-separability argument; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (a small multi-layer perceptron with step units) needing a four-row truth-table trace, a parameter count, a substitution of activations and a linear-separability argument; about 3 minutes.",
     "estimatedTimeSec": 180,
     "concept": "Small MLP with step units computing XOR: truth-table evaluation, parameter count, effect of a linear activation, need for a hidden layer",
     "conceptIds": [],
@@ -746,12 +914,36 @@
       "commonTrap": "Believing that the hidden layer is not needed (or that replacing its step units by identity units changes nothing important). Without a non-linear hidden activation the whole network collapses to a single linear-threshold unit and cannot represent XOR."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B, D",
       "agreesWithKey": true,
-      "checkCode": "H=lambda z:1 if z>0 else 0\nins=[(a,b) for a in (0,1) for b in (0,1)]\nnet=lambda a,b,g=H:H(g(a+b-0.5)-g(a+b-1.5)-0.5)\nA=all(net(a,b)==(a^b) for a,b in ins)\nB=(2*2+2)+(2*1+1)==9\nC=all(net(a,b,g=lambda z:z)==(a^b) for a,b in ins)\nv=[i/4 for i in range(-24,25)]\nD=not any(all(H(w1*a+w2*b+c)==(a^b) for a,b in ins) for w1 in v for w2 in v for c in v)\nprint(dict(A=A,B=B,C=C,D=D),[net(a,b,g=lambda z:z) for a,b in ins])",
-      "notes": ""
+      "checkCode": "# Independent check of all four statements by direct evaluation / exhaustive search\nfrom itertools import product\nimport numpy as np\nH = lambda z: 1 if z > 0 else 0\nins = list(product([0, 1], repeat=2))\ndef net(x1, x2, g=H):\n    h1 = g(x1 + x2 - 0.5)\n    h2 = g(x1 + x2 - 1.5)\n    return H(h1 - h2 - 0.5)\nprint(\"step net:    \", [net(a, b) for a, b in ins])\nprint(\"identity net:\", [net(a, b, g=lambda z: z) for a, b in ins])\nA = all(net(a, b) == a ^ b for a, b in ins)\n# (B) count parameters of the architecture: hidden 2 units x (2 weights + 1 bias), output 1 unit x (2 weights + 1 bias)\nn_params = 2 * (2 + 1) + 1 * (2 + 1)\nB = n_params == 9\nC = all(net(a, b, g=lambda z: z) == a ^ b for a, b in ins)\n# (D) exhaustive grid over (w1, w2, b) for one step unit, plus the exact linear-inequality argument via LP feasibility\ngrid = np.arange(-6, 6.0001, 0.25)\nfound = any(all(H(w1 * a + w2 * c + b) == (a ^ c) for a, c in ins) for w1 in grid for w2 in grid for b in grid)\nfrom scipy.optimize import linprog\n# need: b <= 0, w1+b >= eps, w2+b >= eps, w1+w2+b <= 0 ; maximise eps (scale-free test with eps <= 1)\n# variables [w1, w2, b, eps]; minimise -eps\ncons_A = [[0, 0, 1, 0], [-1, 0, -1, 1], [0, -1, -1, 1], [1, 1, 1, 0]]\ncons_b = [0, 0, 0, 0]\nr = linprog([0, 0, 0, -1], A_ub=cons_A, b_ub=cons_b, bounds=[(-100, 100)] * 3 + [(0, 1)])\nprint(\"LP best margin eps:\", round(-r.fun, 6))\nD = not found and abs(r.fun) < 1e-9\nprint(dict(A=A, B=B, C=C, D=D), \"params =\", n_params)\nassert (A, B, C, D) == (True, True, False, True)",
+      "notes": "Blind solve: truth table gives outputs 0, 1, 1, 0 = XOR (A true); parameters 2*(2+1) + (2+1) = 9 (B true); with identity hidden units h1 - h2 = 1 always so o = H(0.5) = 1 constantly (C false); XOR is not linearly separable so one step unit cannot compute it (D true). Answer A, B, D matches the key. Independent Python (direct evaluation, parameter count, grid search plus an LP feasibility test for a single unit) agrees. Audited stem (it states that every weight and bias, including the implicit weights 1 and -1, is trainable, so the count of 9 is unambiguous), steps including the algebraic contradiction b <= 0 vs b > 0, option verdicts and difficulty (MODERATE, about 3 min). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f47e05f43a56dd83",
+        "verification": "33b269fc835ee8dd"
+      }
     }
   },
   {
@@ -769,7 +961,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (Gaussian elimination) with routine but error-prone arithmetic: three row operations with sign changes, then back substitution with fractions; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Gaussian elimination) with routine but error-prone arithmetic: three row operations with sign changes, then back substitution with fractions; about 3 minutes.",
     "estimatedTimeSec": 180,
     "concept": "Gaussian elimination to upper triangular form and back substitution on a 3x3 system with fractional solution",
     "conceptIds": [],
@@ -809,12 +1001,36 @@
       "commonTrap": "Sign errors caused by the negative entries. The second-stage multiplier is $\\tfrac{4}{-1}=-4$, so the operation is $R_3+4R_2$ (using $R_3-4R_2$ does not clear the entry), and in $R_2$ the third entry is $-3-2=-5$. Substituting the result back into all three original equations catches such slips."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "81/26 = 3.1154, i.e. 3.12",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "81/26 = 3.1154, rounds to 3.12",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as Fr\nA=[[2,3,1],[4,5,-3],[-2,1,6]]; b=[5,2,7]; n=3\nM=[[Fr(v) for v in r]+[Fr(c)] for r,c in zip(A,b)]\nfor c in range(n):\n    for r in range(c+1,n):\n        m=M[r][c]/M[c][c]; M[r]=[u-m*v for u,v in zip(M[r],M[c])]\nx=[0]*n\nfor i in reversed(range(n)):\n    x[i]=(M[i][n]-sum(M[i][j]*x[j] for j in range(i+1,n)))/M[i][i]\nprint([str(v) for v in x],sum(x),round(float(sum(x)),2),all(sum(A[i][j]*x[j] for j in range(n))==b[i] for i in range(n)))",
-      "notes": ""
+      "checkCode": "# Independent check: numpy + sympy solve (not the author's hand-rolled elimination), residual check, and rounding\nimport numpy as np, sympy as sp\nA = np.array([[2, 3, 1], [4, 5, -3], [-2, 1, 6]], dtype=float)\nb = np.array([5, 2, 7], dtype=float)\nxf = np.linalg.solve(A, b)\nM = sp.Matrix([[2, 3, 1], [4, 5, -3], [-2, 1, 6]])\nxs = M.LUsolve(sp.Matrix([5, 2, 7]))\nprint(xf, list(xs), M.det())\ntot = sum(xs)\nprint(tot, float(tot), round(float(tot), 2), round(float(xf.sum()), 2))\nassert xs == sp.Matrix([sp.Rational(33, 26), sp.Rational(4, 13), sp.Rational(20, 13)])\nassert tot == sp.Rational(81, 26) and round(float(tot), 2) == 3.12\nassert np.allclose(A @ xf, b)\n# uniqueness: determinant nonzero\nassert M.det() != 0",
+      "notes": "Blind solve by forward elimination (R2 - 2R1, R3 + R1, R3 + 4R2) and back substitution gave z = 20/13, y = 4/13, x = 33/26, so x + y + z = 81/26 = 3.1154, i.e. 3.12, matching the key. Independent Python (numpy solve, sympy LU solve in exact rationals, residual and determinant 26 != 0 for uniqueness) agrees. Audited stem (unique solution, two-decimal rounding stated), every row operation and the back-substitution arithmetic in the solution (all re-computed), the sign-error trap and difficulty (MODERATE, about 3 min). The NAT range 3.11 to 3.13 allows last-digit slack. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "b9752f36cd5bf9b6",
+        "verification": "d512ccb9054c767a"
+      }
     }
   },
   {
@@ -832,7 +1048,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (candidate keys and prime attributes) found by a direct attribute-closure search on five attributes; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (candidate keys and prime attributes) found by a direct attribute-closure search on five attributes; about 1.5 minutes.",
     "estimatedTimeSec": 80,
     "concept": "Candidate keys via attribute closure and prime attributes (attributes belonging to some candidate key)",
     "conceptIds": [],
@@ -868,12 +1084,36 @@
       "commonTrap": "Stopping after finding one key ($AC$) and counting only its attributes (giving $2$), or reporting the number of candidate keys ($3$) instead of the number of attributes that occur in some key."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "4",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nR=set(\"ABCDE\"); F=[(\"A\",\"B\"),(\"C\",\"D\"),(\"BD\",\"E\"),(\"E\",\"A\")]\ndef cl(s):\n    s=set(s)\n    while True:\n        n=set(s)\n        for l,r in F:\n            if set(l)<=n: n|=set(r)\n        if n==s: return s\n        s=n\nsk=[set(c) for k in range(1,6) for c in combinations(\"ABCDE\",k) if cl(c)==R]\nkeys=[k for k in sk if not any(o<k for o in sk)]\nprint(sorted(\"\".join(sorted(k)) for k in keys),len(set().union(*keys)))",
-      "notes": ""
+      "checkCode": "# Independent check: brute-force candidate keys via closure over all subsets, plus a check that D is in no key\nfrom itertools import chain, combinations\nattrs = \"ABCDE\"\nF = [(\"A\", \"B\"), (\"C\", \"D\"), (\"BD\", \"E\"), (\"E\", \"A\")]\ndef closure(X):\n    X = set(X)\n    changed = True\n    while changed:\n        changed = False\n        for lhs, rhs in F:\n            if set(lhs) <= X and not set(rhs) <= X:\n                X |= set(rhs)\n                changed = True\n    return X\nsubsets = chain.from_iterable(combinations(attrs, k) for k in range(1, 6))\nsupers = [frozenset(s) for s in subsets if closure(s) == set(attrs)]\nkeys = [s for s in supers if not any(o < s for o in supers)]         # minimal superkeys = candidate keys\nprime = sorted(set().union(*keys))\nprint(sorted(\"\".join(sorted(k)) for k in keys), prime, len(prime))\nassert sorted(\"\".join(sorted(k)) for k in keys) == [\"AC\", \"BC\", \"CE\"]\nassert prime == [\"A\", \"B\", \"C\", \"E\"] and len(prime) == 4",
+      "notes": "Blind solve: C appears on no right-hand side so it is in every key; {C}+ = {C, D}; adding A, B or E each gives all five attributes, so the candidate keys are AC, BC, CE and the prime attributes are A, B, C, E (count 4), D being non-prime. Answer 4 matches the key. Independent Python (closure over all 31 non-empty subsets, minimal superkeys) agrees. Audited stem (prime attribute defined, exact integer answer so the NAT range 4 to 4 is appropriate), steps (minimality argument), trap values (2 and 3) and difficulty (EASY, about 1.3 min). No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8ebc00e683258156",
+        "verification": "1568bbdcd12beac5"
+      }
     }
   }
 ]

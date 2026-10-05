@@ -89,12 +89,36 @@
       "commonTrap": "Using a shortcut heuristic instead of comparing costs: picking the two closest sites ($22$), the two most distant sites ($24$), or the most central site plus the site farthest from it ($21$). Only the full comparison of pair costs shows that $\\{X,Y\\}$ wins."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nnames = \"VWXYZ\"\nD = [[0,10,5,9,7],[10,0,6,11,14],[5,6,0,13,8],[9,11,13,0,11],[7,14,8,11,0]]\ncost = lambda c: sum(min(D[i][m] for m in c) for i in range(5))\nres = sorted((cost(c), \"\".join(names[m] for m in c)) for c in itertools.combinations(range(5), 2))\nprint(res)  # (19, 'XY') is the unique minimum; next best is 21 ('VW')",
-      "notes": ""
+      "checkCode": "import itertools\nnames = \"VWXYZ\"\nD = [[0,10,5,9,7],[10,0,6,11,14],[5,6,0,13,8],[9,11,13,0,11],[7,14,8,11,0]]\nassert all(D[i][j] == D[j][i] for i in range(5) for j in range(5))\ncost = lambda pair: sum(min(D[i][m] for m in pair) for i in range(5))\nres = sorted((cost(p), \"\".join(names[m] for m in p)) for p in itertools.combinations(range(5), 2))\nprint(res)  # [(19,'XY'), (21,'VW'), (22,'VX'), (22,'VY'), (22,'XZ'), ...]: unique minimum XY -> (C)",
+      "notes": "Blind solve: evaluated all 10 pairs (cost = sum of nearest-medoid latencies over the 3 non-chosen sites); {X,Y} = 19 is the unique minimum (next 21 for {V,W}), matching key C. Audited stem (cost defined explicitly, ties cannot matter), all 10 pair costs in the solution, option analysis and trap text; no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "17eb3a940cca85f2",
+        "verification": "4e586029f0376530"
+      }
     }
   },
   {
@@ -194,12 +218,36 @@
       "commonTrap": "Confusing the mean and the variance of the chi-squared distribution (mean $k$, variance $2k$), and, for the normal statement, forgetting that the second parameter is the variance $4$ (so $\\sigma=2$) rather than the standard deviation."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C, D",
       "agreesWithKey": true,
-      "checkCode": "from scipy import stats\nprint(stats.uniform(2, 6).cdf(5) - stats.uniform(2, 6).cdf(3))  # 1/3  -> A true\nprint(stats.chi2(6).mean())  # 6, not 12 -> B false\nT = stats.expon(scale=2)  # mean 2\nprint(T.sf(5) / T.sf(3), T.sf(2), 2.718281828459045 ** -1)  # all equal -> C true\nY = stats.norm(10, 2)  # variance 4\nprint(Y.cdf(8), Y.sf(12))  # equal -> D true",
-      "notes": ""
+      "checkCode": "from math import exp\nfrom scipy import stats\nprint((5 - 3) / (8 - 2))                                   # A: 1/3 -> true\nprint(stats.chi2(6).mean())                                # B: 6, not 12 -> false\nT = stats.expon(scale=2)                                   # mean 2\nprint(T.sf(5) / T.sf(3), T.sf(2), exp(-1))                 # C: all 0.3679 -> true\nY = stats.norm(10, 2)                                      # variance 4 -> sd 2\nprint(Y.cdf(8), Y.sf(12))                                  # D: both 0.1587 -> true",
+      "notes": "Blind solve: A = 2/6 true; B chi-squared mean is 6, not 12, false; C memorylessness gives e^-1, true; D 8 and 12 are symmetric about mean 10, true; matches key A, C, D. Audited statements for a unique truth value each, solution steps, option verdicts; no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "9d8bd6ae922093be",
+        "verification": "4a6dfe3b0847e2cd"
+      }
     }
   },
   {
@@ -255,12 +303,36 @@
       "commonTrap": "Using the singular values themselves instead of their squares when choosing $k$ (cumulative shares $43.8\\%, 71.9\\%, 90.6\\%$ would give $k=3$ and an answer of $0.82$), or dividing by $n-1=10$ instead of averaging over the $11$ samples (giving $4.50$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "4.08 to 4.1",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "4.09",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\ns = np.array([14, 9, 6, 3.0]); n = 11\nratio = np.cumsum(s**2) / np.sum(s**2)\nk = int(np.argmax(ratio >= 0.85)) + 1\nprint(ratio.round(4), k, round(float(np.sum(s[k:]**2) / n), 4))  # k = 2, 4.0909\n# numeric confirmation: build a centred 11x4 matrix with these singular values, run PCA\nrng = np.random.default_rng(0)\nA = rng.standard_normal((n, 4)); A -= A.mean(0)\nU, _ = np.linalg.qr(A); V, _ = np.linalg.qr(rng.standard_normal((4, 4)))\nX = U @ np.diag(s) @ V.T\n_, sv, Vt = np.linalg.svd(X, full_matrices=False)\nP = Vt[:k].T @ Vt[:k]                      # projector onto first k principal directions\nprint(sv.round(6), np.abs(X.mean(0)).max() < 1e-12, round(float(np.sum((X - X @ P)**2) / n), 4))  # 4.0909",
-      "notes": ""
+      "checkCode": "import numpy as np\ns = np.array([14, 9, 6, 3.0]); n = 11\nshare = np.cumsum(s**2) / np.sum(s**2)\nk = int(np.argmax(share >= 0.85)) + 1\nprint(share.round(4), k, np.sum(s[k:]**2) / n)             # k = 2, 45/11 = 4.0909\n# brute-force confirmation on a centred 11x4 matrix with exactly these singular values\nrng = np.random.default_rng(0)\nA = rng.normal(size=(n, 4)); A -= A.mean(0)\nU, _ = np.linalg.qr(A); V, _ = np.linalg.qr(rng.normal(size=(4, 4)))\nX = U @ np.diag(s) @ V.T\n_, sv, Vt = np.linalg.svd(X, full_matrices=False)\nR = X @ Vt[:k].T @ Vt[:k]\nprint(sv.round(6), abs(X.mean(0)).max() < 1e-12, ((X - R)**2).sum(1).mean())  # 4.0909 -> 4.09",
+      "notes": "Blind solve: variance shares 196/81/36/9 of 322 give 60.9% (k=1) and 86.0% (k=2), so k=2; reconstruction error = discarded sigma^2 = 45, average over 11 samples = 45/11 = 4.0909, rounds to 4.09, matching key range 4.08 to 4.10. Also confirmed numerically on a centred 11x4 matrix with those singular values. Audited trap figures (0.82, 4.50), rounding statement and range; no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a1e50bb18e04b7ff",
+        "verification": "1254a4b5bcecf927"
+      }
     }
   },
   {
@@ -353,12 +425,36 @@
       "commonTrap": "Forgetting the co-parent: resampling $S$ using only its child $O$ and averaging over $U$ gives $0.33$, while dropping the prior gives $0.69$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\npS = F(1, 10)\npO = {(1, 1): F(9, 10), (1, 0): F(6, 10), (0, 1): F(4, 10), (0, 0): F(5, 100)}   # P(O=1 | S, U)\n# Gibbs step for S given U=1, O=1:  P(S=1 | U=1, O=1) ∝ P(S=1) P(O=1 | S=1, U=1)\nnum = pS * pO[(1, 1)]\nden = num + (1 - pS) * pO[(0, 1)]\nprint(num, den, num / den, float(num / den))  # 9/100 9/20 1/5 0.2\n# distractors: U marginalised out (P(U=1)=0.3) and no prior\npU = F(3, 10)\nm = lambda s: pU * pO[(s, 1)] + (1 - pU) * pO[(s, 0)]\nprint(float(pS * m(1) / (pS * m(1) + (1 - pS) * m(0))), float(pO[(1, 1)] / (pO[(1, 1)] + pO[(0, 1)])))  # 0.331 0.692",
-      "notes": ""
+      "checkCode": "# exact enumeration of the joint distribution; Gibbs conditional of S given U=1, O=1\npS = {1: 0.1, 0: 0.9}; pU = {1: 0.3, 0: 0.7}\npO1 = {(1,1): 0.9, (1,0): 0.6, (0,1): 0.4, (0,0): 0.05}   # P(O=1 | S, U)\njoint = lambda s, u, o: pS[s] * pU[u] * (pO1[(s, u)] if o else 1 - pO1[(s, u)])\nprint(joint(1,1,1) / (joint(1,1,1) + joint(0,1,1)))        # 0.2 -> (B)\n# distractors: marginal posterior P(S=1 | O=1) and likelihood-only ratio\nprint(sum(joint(1,u,1) for u in (0,1)) / sum(joint(s,u,1) for s in (0,1) for u in (0,1)))  # 0.331 -> (C)\nprint(0.9 / (0.9 + 0.4))                                   # 0.692 -> (D)",
+      "notes": "Blind solve: Gibbs conditional of S given U=1, O=1 is proportional to P(S)P(O=1|S,U=1): 0.09 vs 0.36, so 0.20, matching key B. Confirmed by exact joint enumeration; distractors 0.33 (marginal posterior) and 0.69 (no prior) reproduced. Audited option analysis and Markov-blanket reasoning; no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cda09b9b2fee0971",
+        "verification": "18455d8a3bbdf84f"
+      }
     }
   },
   {
@@ -412,12 +508,36 @@
       "commonTrap": "Testing against $0$ instead of the stated null value $2$ gives $7.22$; treating Before and After as two independent samples (pooled two-sample statistic with the same null shift) gives $1.62$; dividing by $n$ instead of $n-1$ in the standard deviation gives $5.04$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "4.7 to 4.72",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "4.71",
       "agreesWithKey": true,
-      "checkCode": "import statistics as st, math\nfrom scipy import stats\nb = [84, 91, 78, 88, 95, 82, 90, 86]; a = [79, 85, 74, 81, 86, 80, 82, 81]\nd = [x - y for x, y in zip(b, a)]\nn = len(d); m = st.mean(d); s = st.stdev(d)\nprint(d, m, round(s, 4), (m - 2) / (s / math.sqrt(n)))            # 4.7099 -> 4.71\nprint(stats.ttest_1samp(d, 2).statistic)                            # 4.7099 (library check)\nprint(m / (s / math.sqrt(n)))                                       # 7.22  (trap: null value 0)\nsp2 = (st.variance(b) + st.variance(a)) / 2\nprint((st.mean(b) - st.mean(a) - 2) / math.sqrt(sp2 * 2 / n))       # 1.62  (trap: pairing ignored)\nprint((m - 2) / (st.pstdev(d) / math.sqrt(n)))                      # 5.04  (trap: divisor n)",
-      "notes": ""
+      "checkCode": "import numpy as np\nfrom scipy import stats\nbefore = np.array([84, 91, 78, 88, 95, 82, 90, 86]); after = np.array([79, 85, 74, 81, 86, 80, 82, 81])\nd = before - after\nn = len(d)\nt = (d.mean() - 2) / (d.std(ddof=1) / np.sqrt(n))\nprint(d, d.mean(), d.std(ddof=1), t)                       # [5 6 4 7 9 2 8 5] 5.75 2.252 4.7099 -> 4.71\nprint(stats.ttest_1samp(d, 2, alternative=\"greater\"))      # statistic 4.7099, df 7 (library cross-check)\nprint(stats.ttest_1samp(d, 0).statistic)                   # 7.22 (trap: null value 0)\nsp2 = (before.var(ddof=1) + after.var(ddof=1)) / 2\nprint((before.mean() - after.mean() - 2) / np.sqrt(sp2 * 2 / n))   # 1.62 (trap: pairing ignored)\nprint((d.mean() - 2) / (d.std(ddof=0) / np.sqrt(n)))               # 5.04 (trap: divisor n)",
+      "notes": "Blind solve: D = 5,6,4,7,9,2,8,5, mean 5.75, sd 2.2520, SE 0.7962, t = 3.75/0.7962 = 4.7099, rounds to 4.71, matching key range 4.70 to 4.72 (library cross-check agrees, df = 7). Audited arithmetic of sum of squares (35.5), rounding statement, trap values (7.22, 1.62, 5.04); HARD label kept (several linked ideas, non-zero null trap, lengthy arithmetic, about 4 min). No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "af582373205ee366",
+        "verification": "09ca605d4e653510"
+      }
     }
   },
   {
@@ -467,12 +587,36 @@
       "commonTrap": "Using the same capacity for internal and leaf nodes, or taking the fan-out as $63$ instead of $63+1=64$. Taking $63$ children gives $63\\times56=3528$, and taking a leaf capacity of $63$ gives $64\\times63=4032$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3584",
       "agreesWithKey": true,
-      "checkCode": "block, key, tp, rp = 1024, 10, 6, 8\nm_int = max(m for m in range(200) if key * m + tp * (m + 1) <= block)   # keys in an internal node\nm_leaf = max(m for m in range(200) if (key + rp) * m + tp <= block)     # entries in a leaf node\nprint(m_int, m_leaf, (m_int + 1) * m_leaf)  # 63 56 3584",
-      "notes": ""
+      "checkCode": "B, K, TP, RP = 1024, 10, 6, 8\nm_int = max(m for m in range(1, 200) if TP * (m + 1) + K * m <= B)     # keys in the full root\nm_leaf = max(m for m in range(1, 200) if (K + RP) * m + TP <= B)       # entries in a full leaf\nprint(m_int, m_int + 1, m_leaf, (m_int + 1) * m_leaf)                 # 63 64 56 3584",
+      "notes": "Blind solve: internal node 16m+6<=1024 gives 63 keys / 64 pointers; leaf 18m+6<=1024 gives 56 entries; full root with 64 full leaves = 64*56 = 3584, matching key. Audited stem (node layouts defined, full root and leaves, exactly two levels) and trap values (3528, 4032); no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "5ab31466c3b5995b",
+        "verification": "4b8af618c84b8d48"
+      }
     }
   },
   {
@@ -526,12 +670,36 @@
       "commonTrap": "Counting the descents of the original list gives $3$, stopping the trace before the final `odd.next = even_head` (so only the odd chain is scanned) gives $2$, and putting the even-position nodes first gives $5$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "4",
       "agreesWithKey": true,
-      "checkCode": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef build(values):\n    head = None\n    for v in reversed(values):\n        node = Node(v); node.next = head; head = node\n    return head\n\nhead = build([26, 41, 58, 17, 49, 73, 8, 62, 35])\nodd = head; even = head.next; even_head = even\nwhile even is not None and even.next is not None:\n    odd.next = even.next\n    odd = odd.next\n    even.next = odd.next\n    even = even.next\nodd.next = even_head\ncount = 0; p = head; order = []\nwhile p.next is not None:\n    order.append(p.data)\n    if p.data > p.next.data:\n        count += 1\n    p = p.next\norder.append(p.data)\nprint(order, count)  # [26, 58, 49, 8, 35, 41, 17, 73, 62] 4",
-      "notes": ""
+      "checkCode": "class Node:\n    def __init__(self, data): self.data = data; self.next = None\nvals = [26, 41, 58, 17, 49, 73, 8, 62, 35]\nnodes = [Node(v) for v in vals]\nfor a, b in zip(nodes, nodes[1:]): a.next = b\nhead = nodes[0]\nodd = head; even = head.next; even_head = even\nwhile even is not None and even.next is not None:\n    odd.next = even.next\n    odd = odd.next\n    even.next = odd.next\n    even = even.next\nodd.next = even_head\norder = []; p = head\nwhile p is not None: order.append(p.data); p = p.next\ncount = 0; p = head\nwhile p.next is not None:\n    if p.data > p.next.data: count += 1\n    p = p.next\nprint(order, count)  # [26, 58, 49, 8, 35, 41, 17, 73, 62] 4",
+      "notes": "Blind solve: odd/even regrouping gives 26,58,49,8,35,41,17,73,62 with descents 58>49, 49>8, 41>17, 73>62, so 4, matching key. Confirmed by running the code; traced every pointer step. Audited trap values (3, 2, 5); no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f1af7b3e4c470e7d",
+        "verification": "949b99c62b598363"
+      }
     }
   },
   {
@@ -624,12 +792,36 @@
       "commonTrap": "Counting only the final iteration ($85$), or forgetting that the root (and the other shallow nodes) are re-generated in every iteration, which gives $108$ or $111$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "b, d = 4, 3\ngoal = (b - 1,) * d          # last node generated at depth d (left-to-right order)\ntotal = 0\ndef dls(node, depth, limit):\n    global total\n    if depth == limit:\n        return False\n    for c in range(b):\n        child = node + (c,); total += 1          # goal test on generation\n        if child == goal or dls(child, depth + 1, limit):\n            return True\n    return False\nper_iter = []\nfor L in range(d + 1):\n    before = total; total += 1                   # root generated afresh each iteration\n    found = dls((), 0, L)\n    per_iter.append(total - before)\n    if found: break\nprint(per_iter, total)                            # [1, 5, 21, 85] 112\nprint(sum((d - i + 1) * b**i for i in range(d + 1)))  # 112 (level i is generated d-i+1 times)",
-      "notes": ""
+      "checkCode": "b, d = 4, 3\ngoal = (b - 1,) * d                     # last node generated at depth 3 in left-to-right order\ndef depth_limited(limit):\n    count = 1                           # the root is created afresh (and tested) in every iteration\n    found = False\n    def rec(path):\n        nonlocal count, found\n        if len(path) >= limit: return   # nodes at the limit are not expanded\n        for c in range(b):\n            child = path + (c,); count += 1          # goal test on generation\n            if child == goal: found = True; return\n            rec(child)\n            if found: return\n    rec(())\n    return count, found\ntotal = 0\nfor L in range(d + 1):\n    c, f = depth_limited(L); total += c; print(L, c, f)\n    if f: break\nprint(total)  # 1 + 5 + 21 + 85 = 112 -> (D)",
+      "notes": "Blind solve: iterations generate 1, 5, 21 and 85 nodes (goal is the last depth-3 node, so the final iteration generates the whole tree to depth 3): total 112, matching key D. Confirmed by simulating IDS and by the per-level count 4+12+32+64. Stem fixes the counting convention (root counted each iteration, goal test on generation); distractors 85/108/111 reproduced. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "7642a4df336dd516",
+        "verification": "4c2b6cc4521b0834"
+      }
     }
   },
   {
@@ -724,12 +916,36 @@
       "commonTrap": "Mixing up ridge with the lasso (believing ridge zeroes out coefficients), and forgetting that the ridge penalty makes the solution depend on the scale of the features, so inputs should be standardised first."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B, D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\n# B: one-feature ridge, no intercept: w = sum(xy) / (sum(x^2) + lambda)\nprint(20 / (25 + 15))  # 0.5 -> B true\n# A: multiply x by 10 -> sum(x'^2)=2500, sum(x'y)=200; fitted value per original x:\nprint(20 / (25 + 15), 10 * 200 / (2500 + 15))  # 0.5 vs 0.7952 -> fitted values change, A false\n# C and D on random data\nrng = np.random.default_rng(1)\nX = rng.standard_normal((30, 4)); y = X @ np.array([3, -2, 0.5, 0]) + rng.standard_normal(30)\nlams = [0, 0.1, 1, 10, 100, 1e3, 1e4, 1e6]\nW = [np.linalg.solve(X.T @ X + l * np.eye(4), X.T @ y) for l in lams]\nrss = [float(np.sum((y - X @ w) ** 2)) for w in W]\nprint(all(q >= p for p, q in zip(rss, rss[1:])))   # True -> D true\nprint(min(np.abs(w).min() for w in W))              # > 0: never exactly zero -> C false\nX2 = X.copy(); X2[:, 0] *= 10\nw2 = np.linalg.solve(X2.T @ X2 + 10 * np.eye(4), X2.T @ y)\nprint(np.abs(X @ W[3] - X2 @ w2).max() > 1e-3)      # True: fitted values differ -> A false",
-      "notes": ""
+      "checkCode": "import numpy as np\nprint(20 / (25 + 15))                                       # B: 0.5 -> true\nrng = np.random.default_rng(1)\nX = rng.normal(size=(40, 3)); y = X @ np.array([1.0, -2.0, 0.5]) + rng.normal(size=40)\nridge = lambda X, lam: np.linalg.solve(X.T @ X + lam * np.eye(X.shape[1]), X.T @ y)\nX10 = X.copy(); X10[:, 0] *= 10                             # A: rescale one feature by 10\nprint(np.abs(X @ ridge(X, 2.0) - X10 @ ridge(X10, 2.0)).max())   # clearly > 0 -> fitted values change -> A false\nlams = [0, 0.1, 1, 10, 100, 1e3, 1e4, 1e6]\nrss = [float(np.sum((y - X @ ridge(X, l))**2)) for l in lams]\nprint(all(b >= a - 1e-12 for a, b in zip(rss, rss[1:])))    # D: RSS non-decreasing -> true\nprint(min(np.abs(ridge(X, l)).min() for l in lams))         # C: never exactly 0 -> false",
+      "notes": "Blind solve: A false (ridge is not scale invariant, fitted values change), B true (20/(25+15) = 0.5), C false (no exact zeros for finite lambda), D true (training RSS non-decreasing in lambda; exchange argument and numeric check), matching key B, D. Audited the one-feature scale example (0.5 vs 0.795) and the proof in step D; no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0a8fa244fd8483e1",
+        "verification": "40c4aecb2bfe2757"
+      }
     }
   },
   {
@@ -821,12 +1037,36 @@
       "commonTrap": "Forming the bins before sorting (giving $24.7$), or confusing equal-frequency with equal-width bins (giving $32.0$) or the bin mean with the bin median ($38.0$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nvals = [31, 9, 55, 18, 7, 27, 14, 38, 22]\ns = sorted(vals)\nbins = [s[0:3], s[3:6], s[6:9]]                                   # equal-frequency bins of the SORTED data\nprint(bins, [round(float(np.mean(b)), 2) for b in bins])          # 38 -> 41.33 -> 41.3\n# distractors\nw = (max(vals) - min(vals)) / 3\nedges = [min(vals) + i * w for i in range(4)]\new = [v for v in vals if edges[1] <= v < edges[2]]\nprint(edges, np.mean(ew))                                          # equal-width: 32.0\nprint(np.mean([38, 14, 22]))                                       # bins in recorded order: 24.67\nprint(float(np.median(bins[2])))                                   # bin median: 38.0",
-      "notes": ""
+      "checkCode": "import numpy as np\nv = [31, 9, 55, 18, 7, 27, 14, 38, 22]\ns = sorted(v)\nbins = [s[0:3], s[3:6], s[6:9]]                             # equal-frequency bins of the SORTED data\nprint(bins, [round(float(np.mean(b)), 2) for b in bins])    # 38 is in [31, 38, 55] -> mean 41.33 -> 41.3 (A)\nprint(np.mean([38, 14, 22]), float(np.median(bins[2])))     # unsorted-order bins 24.67 (D), bin median 38.0 (B)\nw = (max(v) - min(v)) / 3; e = [min(v) + i * w for i in range(4)]\nprint(e, np.mean([x for x in v if e[1] <= x < e[2]]))       # equal-width bins: 38 is with 27 and 31 -> 32.0 (C)",
+      "notes": "Blind solve: equal-frequency binning needs the sorted data, so bins {7,9,14}, {18,22,27}, {31,38,55}; 38 lies in the last bin with mean 124/3 = 41.3, matching key A. Distractors reproduced (24.7 unsorted-order bins, 38.0 bin median, 32.0 equal-width). Audited that the sorted-interval reading is the standard definition of equal-frequency discretisation; no change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "4fda3773060904ad",
+        "verification": "1f850ce06356d696"
+      }
     }
   }
 ]

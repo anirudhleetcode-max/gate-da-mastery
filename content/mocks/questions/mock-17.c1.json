@@ -89,12 +89,36 @@
       "commonTrap": "Checking only the edges that leave the varied node (the admissibility-style upper bounds) or only the edge that enters it. Consistency is a two-sided condition on $x$: $x \\ge 5$ from $S \\to A$ and $x \\le 5$ from $A \\to B$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C (6)",
       "agreesWithKey": true,
-      "checkCode": "E = {('S','A'):3, ('S','B'):6, ('A','B'):2, ('A','C'):4, ('B','C'):1, ('B','G'):7, ('C','G'):3}\nnodes = 'SABCG'\nhs = {n: 0 if n == 'G' else 10**9 for n in nodes}\nfor _ in nodes:                                   # Bellman-Ford on remaining cost\n    for (u, v), c in E.items(): hs[u] = min(hs[u], c + hs[v])\nadm, con = [], []\nfor x in range(40):\n    h = {'S': 8, 'A': x, 'B': 3, 'C': 3, 'G': 0}\n    if all(h[n] <= hs[n] for n in nodes): adm.append(x)\n    if all(h[u] <= c + h[v] for (u, v), c in E.items()): con.append(x)\nprint(hs, adm, con, len([x for x in adm if x not in con]))   # {'S':9,'A':6,'B':4,'C':3,'G':0} [0..6] [5] 6",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): exhaustive path enumeration for h*\nE = {('S','A'):3,('S','B'):6,('A','B'):2,('A','C'):4,('B','C'):1,('B','G'):7,('C','G'):3}\ndef paths(u):\n    if u == 'G': return [0]\n    return [c + r for (a, v), c in E.items() if a == u for r in paths(v)]\nhs = {n: min(paths(n)) for n in 'SABCG'}\nres = []\nfor x in range(0, 30):\n    h = {'S': 8, 'A': x, 'B': 3, 'C': 3, 'G': 0}\n    adm = all(h[n] <= hs[n] for n in hs)\n    con = all(h[u] <= c + h[v] for (u, v), c in E.items())\n    if adm and not con: res.append(x)\nprint(hs, res, len(res))   # {'S': 9, 'A': 6, 'B': 4, 'C': 3, 'G': 0} [0, 1, 2, 3, 4, 6] 6",
+      "notes": "Blind solve: h* = (S 9, A 6, B 4, C 3, G 0), admissible for x in 0..6 (7 values); consistent only for x = 5 (S->A gives x>=5, A->B gives x<=5); 7-1 = 6, option C. Distractors 1, 5, 7 reproduced from single-direction / count-all slips. Solution steps, option verdicts, difficulty (HARD, ~4 min) and slot checked. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "67a6ce28b68d03fb",
+        "verification": "6dd12dafee40df17"
+      }
     }
   },
   {
@@ -191,12 +215,36 @@
       "commonTrap": "Believing that averaging makes the data itself normal (statement B), rather than the sample mean; and forgetting that the standard error shrinks with $\\sqrt{n}$ rather than $n$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A;C;D",
       "agreesWithKey": true,
-      "checkCode": "import math\nPhi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))\nmu, sd, n = 45, 15, 25\nse = sd / math.sqrt(n)\nprint(se, round(1 - Phi((51 - mu) / se), 4), sd / math.sqrt(100))   # 3.0 0.0228 1.5",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nimport math\nfrom scipy.stats import norm\nmu, sd, n = 45, 15, 25\nse = sd / math.sqrt(n)\nprint(se, round(1 - norm.cdf((51 - mu) / se), 4), sd / math.sqrt(100))   # 3.0 0.0228 1.5\n# B is false: the CLT concerns the sampling distribution of the mean, not of one night's X\n# simulation (gamma(4) durations): single-night skewness stays ~1, mean-of-25 skewness shrinks by 1/sqrt(25)\nimport numpy as np\nrng = np.random.default_rng(0)\nx = rng.gamma(shape=4.0, scale=1.0, size=(200000, 25))\nfrom scipy.stats import skew\nprint(round(skew(x[:, 0]), 2), round(skew(x.mean(axis=1)), 2))      # ~1.0 vs ~0.2",
+      "notes": "Blind solve: sd(mean) = 15/5 = 3 (A true); a single night's X is unchanged by averaging and stays right-skewed (B false); z = (51-45)/3 = 2 so P = 1-0.9772 = 0.0228 (C true); 15/10 = 1.5 (D true). Matches key A, C, D. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "9565536709105024",
+        "verification": "3ee53576051f01f9"
+      }
     }
   },
   {
@@ -246,12 +294,36 @@
       "commonTrap": "Using $n/2 = 15$ or $(n+1)/2$ for every query, i.e. ignoring the failed searches, which always cost the full $n = 30$ comparisons."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "18.4",
       "agreesWithKey": true,
-      "checkCode": "n, p = 30, 0.8\ndef cmp_count(a, key):\n    c = 0\n    for x in a:\n        c += 1\n        if x == key: break\n    return c\na = list(range(n))\nhit = sum(cmp_count(a, k) for k in a) / n     # every position equally likely\nmiss = cmp_count(a, -1)                        # absent key scans everything\nprint(hit, miss, round(p * hit + (1 - p) * miss, 1))   # 15.5 30 18.4",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): exact expectation by enumeration\nfrom fractions import Fraction as F\nn = 30\nhit = [F(i, 1) for i in range(1, n + 1)]            # comparisons if the ID sits at position i\nE = F(4, 5) * sum(hit) / n + F(1, 5) * n            # absent: all n compared\nprint(float(E), round(float(E), 1))                  # 18.4 18.4",
+      "notes": "Blind solve: present -> (n+1)/2 = 15.5 comparisons, absent -> 30; E = 0.8*15.5 + 0.2*30 = 18.4. Stem states rounding to one decimal place; key range 18.3 to 18.5 brackets 18.4 and excludes the slip values 18.0 (n/2), 18.2 and 15.5. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "7981a31dd301ba3f",
+        "verification": "6cd50e96c6d6f242"
+      }
     }
   },
   {
@@ -347,12 +419,36 @@
       "commonTrap": "Adding $|E_2| + |E_3|$ for the union (statement D) without subtracting the overlap, and quoting $|E_1|$ for $|E_1 \\cap E_2|$ (statement B)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A;C",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nS = list(itertools.product([1, 2, 3, 4], repeat=3))\nE1 = {s for s in S if len(set(s)) == 3}\nE2 = {s for s in S if 4 in s}\nE3 = {s for s in S if s[0] == s[2]}\nE4 = {s for s in S if s[0] < s[1] < s[2]}\nprint(len(S), len(E1), len(E2), len(E3), len(E4))               # 64 24 37 16 4\nprint(len(E1 & E3) == 0, len(E1 & E2), E4 <= E1, len(E2 | E3))  # True 18 True 46  -> A and C correct",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nimport itertools\nS = list(itertools.product(range(1, 5), repeat=3))\nE1 = {c for c in S if len(set(c)) == 3}\nE2 = {c for c in S if 4 in c}\nE3 = {c for c in S if c[0] == c[2]}\nE4 = {c for c in S if c[0] < c[1] < c[2]}\nprint(len(E1), len(E2), len(E3), len(E4))                    # 24 37 16 4\nprint('A', not (E1 & E3), 'B', len(E1 & E2) == 24, 'C', E4 <= E1, 'D', len(E2 | E3) == 53)   # A True B False C True D False\nprint(len(E1 & E2), len(E2 & E3), len(E2 | E3))              # 18 7 46",
+      "notes": "Blind solve: |E1|=24, |E2|=37, |E3|=16, |E4|=4. A true (d1=d3 repeats a digit), B false (|E1 and E2| = 24-6 = 18), C true (increasing digits are distinct), D false (|E2 or E3| = 37+16-7 = 46). Matches key A, C. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "26ec2a6902cdd410",
+        "verification": "df40083e652d8189"
+      }
     }
   },
   {
@@ -447,12 +543,36 @@
       "commonTrap": "Assuming bubble sort stops as soon as the list becomes sorted (4 passes) instead of one pass later, and counting $n-1$ swaps for selection sort although the code swaps only when `m != i`."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B",
       "agreesWithKey": true,
-      "checkCode": "A = [6, 3, 8, 1, 9, 2, 7]\ndef sel(a):\n    a = a[:]; sw = 0; hist = []\n    for i in range(len(a) - 1):\n        m = i\n        for j in range(i + 1, len(a)):\n            if a[j] < a[m]: m = j\n        if m != i: a[i], a[m] = a[m], a[i]; sw += 1\n        hist.append(a[:])\n    return sw, hist\ndef bub(a):\n    a = a[:]; sw = 0; outer = 0\n    for i in range(len(a) - 1):\n        outer += 1; s = False\n        for j in range(len(a) - 1 - i):\n            if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; s = True; sw += 1\n        if not s: break\n    return sw, outer\ndef ins(a):\n    a = a[:]; sh = 0\n    for i in range(1, len(a)):\n        k = a[i]; j = i - 1\n        while j >= 0 and a[j] > k: a[j + 1] = a[j]; sh += 1; j -= 1\n        a[j + 1] = k\n    return sh\nssw, hist = sel(A); bsw, outer = bub(A); ish = ins(A)\nprint(ssw, hist[2], bsw, outer, ish)          # 4 [1, 2, 3, 6, 9, 8, 7] 10 5 10\nprint('A', ssw == 6, 'B', ish == bsw, 'C', outer == 4, 'D', hist[2] == [1, 2, 3, 6, 8, 9, 7])   # only B is True",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): instrumented runs of the three functions\na0 = [6, 3, 8, 1, 9, 2, 7]\na = a0[:]; sel_sw = 0; after3 = None\nfor i in range(len(a) - 1):\n    m = min(range(i, len(a)), key=lambda j: (a[j], j))\n    if m != i: a[i], a[m] = a[m], a[i]; sel_sw += 1\n    if i == 2: after3 = a[:]\na = a0[:]; b_sw = 0; passes = 0\nfor i in range(len(a) - 1):\n    passes += 1; sw = False\n    for j in range(len(a) - 1 - i):\n        if a[j] > a[j + 1]: a[j], a[j + 1] = a[j + 1], a[j]; b_sw += 1; sw = True\n    if not sw: break\na = a0[:]; shifts = 0\nfor i in range(1, len(a)):\n    k = a[i]; j = i - 1\n    while j >= 0 and a[j] > k: a[j + 1] = a[j]; shifts += 1; j -= 1\n    a[j + 1] = k\ninv = sum(a0[i] > a0[j] for i in range(7) for j in range(i + 1, 7))\nprint(sel_sw, after3, b_sw, passes, shifts, inv)    # 4 [1, 2, 3, 6, 9, 8, 7] 10 5 10 10\nprint('A', sel_sw == 6, 'B', shifts == b_sw, 'C', passes == 4, 'D', after3 == [1, 2, 3, 6, 8, 9, 7])   # only B True",
+      "notes": "Blind solve: selection sort swaps 4 (guard skips i=3 and i=5), after three iterations [1,2,3,6,9,8,7]; bubble sort 10 swaps and 5 outer iterations (the 5th is the swap-free pass); insertion sort 10 shifts = 10 inversions. Only B is correct. The list in D is what a stable shifting variant would give, as the solution says. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0ca6e1de7991c6f5",
+        "verification": "4739a1ce8da1942d"
+      }
     }
   },
   {
@@ -540,12 +660,36 @@
       "commonTrap": "Treating a task as regression because its labels are numbers (digits $0$ to $9$). What matters is whether the target is a quantity on a continuous scale or a category."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A (P and R)",
       "agreesWithKey": true,
-      "checkCode": "tasks = {'P': 'continuous', 'Q': 'categorical', 'R': 'continuous', 'S': 'categorical'}   # type of the target variable\nreg = sorted(t for t, kind in tasks.items() if kind == 'continuous')\nprint(reg)   # ['P', 'R'] -> option A",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): classify the target of each task\ntarget = {'P': 'real-valued concentration', 'Q': 'digit class 0-9', 'R': 'real-valued price', 'S': 'fraud / genuine'}\nis_regression = {'P': True, 'Q': False, 'R': True, 'S': False}\nprint(sorted(t for t, r in is_regression.items() if r))   # ['P', 'R'] -> option A",
+      "notes": "Blind solve: P (pollutant concentration) and R (resale price) have continuous numeric targets; Q (digit label, ten classes) and S (fraud/genuine) are classification. Option A. Conceptual item with a single defensible reading; the numeric-looking digit labels are the intended trap. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "291c1e5ef9f1ee2f",
+        "verification": "ad9260744632192c"
+      }
     }
   },
   {
@@ -639,12 +783,36 @@
       "commonTrap": "Reading the diagonal entries as eigenvalues (the matrix is not triangular), or using $\\det(A - I) = \\det A + \\det(-I)$. The determinant of a shifted matrix is the product of the shifted eigenvalues."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B (2)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np, sympy as sp\nM = sp.Matrix([[2, -1, 1], [4, -2, 2], [6, -3, 3]])\nprint(M.rank(), M.eigenvals(), (M - sp.eye(3)).det())          # 1 {3: 1, 0: 2} 2\nA = np.array(M.tolist(), dtype=float)\nprint(round(np.linalg.det(A - np.eye(3)), 6), np.round(np.linalg.eigvals(A), 6))   # 2.0 and eigenvalues 3, 0, 0\nprint(np.prod(np.diag(A) - 1))                                  # -6.0 (diagonal-entries mistake)",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nimport numpy as np, sympy as sp\nA = sp.Matrix([[2, -1, 1], [4, -2, 2], [6, -3, 3]])\nprint(A.rank(), A.eigenvals(), (A - sp.eye(3)).det())          # 1 {3: 1, 0: 2} 2\nlam = sp.symbols('lam')\nprint(sp.factor((lam * sp.eye(3) - A).det()))                    # lam**2*(lam - 3)\nprint(round(np.linalg.det(np.array(A.tolist(), float) - np.eye(3)), 6))   # 2.0",
+      "notes": "Blind solve: A = u v^T (rank 1), eigenvalues 3, 0, 0, so det(A - I) = 2*(-1)*(-1) = 2, option B. Cross-checked with sympy determinant and characteristic polynomial lam^2 (lam - 3). Distractors 3, -1, -6 reproduced from the stated slips. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "963453fb7d490320",
+        "verification": "2949a105d83c0c99"
+      }
     }
   },
   {
@@ -732,12 +900,36 @@
       "commonTrap": "Forgetting to normalise (answering $0.17$), or leaving out the class priors, which changes the posterior from $0.77$ to $0.69$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "D",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D (0.77)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nrows = [('High','Chat','Yes')]*3 + [('High','Email','Yes'), ('Low','Chat','Yes'), ('Low','Chat','Yes'),\n        ('High','Email','No'), ('High','Email','No'), ('Low','Email','No'), ('Low','Chat','No')]\nq = ('Low', 'Chat')\nscore = {}\nfor c in ('Yes', 'No'):\n    sub = [r for r in rows if r[2] == c]\n    s = F(len(sub), len(rows))\n    for i, v in enumerate(q): s *= F(sum(r[i] == v for r in sub), len(sub))\n    score[c] = s\nprint(score, float(score['Yes'] / sum(score.values())))    # {'Yes': 1/6, 'No': 1/20} 0.769... -> 0.77",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nfrom fractions import Fraction as F\nrows = [('H','C','Y'),('H','C','Y'),('H','C','Y'),('H','E','Y'),('L','C','Y'),('L','C','Y'),\n        ('H','E','N'),('H','E','N'),('L','E','N'),('L','C','N')]\nscore = {}\nfor c in 'YN':\n    r = [x for x in rows if x[2] == c]\n    score[c] = F(len(r), len(rows)) * F(sum(x[0] == 'L' for x in r), len(r)) * F(sum(x[1] == 'C' for x in r), len(r))\npost = score['Y'] / (score['Y'] + score['N'])\nprint(score, float(post), round(float(post), 2))        # {'Y': 1/6, 'N': 1/20} 0.769.. 0.77\nprint(round(float(score['Y']), 2), round(float(1 - post), 2))          # 0.17 0.23  (distractors A, B)",
+      "notes": "Blind solve: scores Yes = 6/10*2/6*5/6 = 1/6, No = 4/10*2/4*1/4 = 1/20; posterior 10/13 = 0.769 -> 0.77, option D. Distractors 0.17 (unnormalised), 0.23 (the No posterior) and 0.69 (priors dropped) reproduced. Stem fixes the no-smoothing convention, so the answer is unique. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "9921c28dac1ad49e",
+        "verification": "9de5ba249e8d550d"
+      }
     }
   },
   {
@@ -787,12 +979,36 @@
       "commonTrap": "Ignoring the $24$-byte header (capacity $\\lfloor 1024/60 \\rfloor = 17$, giving $7844$ buckets), or rounding $8333.33$ down to $8333$, which pushes the average load just above $75\\%$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "8334",
       "agreesWithKey": true,
-      "checkCode": "import math\nblock, header, rec, N, limit = 1024, 24, 60, 100000, 0.75\nbfr = (block - header) // rec                     # unspanned records per bucket\nallowed = limit * bfr                             # average records per bucket allowed\nbuckets = math.ceil(N / allowed)\nprint(bfr, allowed, N / allowed, buckets, N / (buckets - 1) > allowed)   # 16 12.0 8333.33.. 8334 True\nprint(math.ceil(N / (limit * (block // rec))))                           # 7844 (header ignored)",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nimport math\nbfr = (1024 - 24) // 60                      # whole 60-byte records in the 1000 usable bytes\ncap_avg = 0.75 * bfr\nN = next(b for b in range(1, 10**6) if 100000 / b <= cap_avg)   # brute-force smallest bucket count\nprint(bfr, cap_avg, N, math.ceil(100000 / cap_avg))              # 16 12.0 8334 8334\nprint(100000 / (N - 1))                                          # 12.0005 > 12 (so N-1 buckets break the limit)",
+      "notes": "Blind solve: (1024-24)//60 = 16 records per block; 75% -> 12 average records per bucket; 100000/N <= 12 -> N >= 8333.33 -> 8334 (brute-force search agrees). Stem fixes header, no spanning, no overflow and the load definition, so the answer is unique; the single-value NAT range is appropriate for an integer answer. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a496b5d2c152a349",
+        "verification": "9f36dd181940f81f"
+      }
     }
   },
   {
@@ -881,12 +1097,36 @@
       "commonTrap": "Using the prior $0.3$ (or $0.3/0.7$) instead of the joint $P(E)\\,P(C \\mid E) = 0.15$; the chance of being correct differs in each of the three ways and must be included."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A (0.21)",
       "agreesWithKey": true,
-      "checkCode": "ways = {'know': (0.5, 1.0), 'eliminate': (0.3, 0.5), 'guess': (0.2, 0.25)}   # (prior, P(correct | way))\npc = sum(p * c for p, c in ways.values())\npost = {k: p * c / pc for k, (p, c) in ways.items()}\nprint(round(pc, 4), {k: round(v, 4) for k, v in post.items()})    # 0.7 {'know': 0.7143, 'eliminate': 0.2143, 'guess': 0.0714}\nprint(round(post['eliminate'], 2), round(0.3 / pc, 2))            # 0.21 0.43",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): exact fractions\nfrom fractions import Fraction as F\nprior = {'know': F(1, 2), 'elim': F(3, 10), 'guess': F(1, 5)}\np_correct = {'know': F(1), 'elim': F(1, 2), 'guess': F(1, 4)}\npc = sum(prior[k] * p_correct[k] for k in prior)\npost = {k: prior[k] * p_correct[k] / pc for k in prior}\nprint(pc, post['elim'], float(post['elim']), round(float(post['elim']), 2))   # 7/10 3/14 0.2142.. 0.21\nprint(round(float(post['know']), 2), round(float(prior['elim'] / pc), 2))     # 0.71 0.43 (distractors D, C)",
+      "notes": "Blind solve: P(correct) = 0.5 + 0.15 + 0.05 = 0.70; P(second way | correct) = 0.15/0.70 = 3/14 = 0.214 -> 0.21, option A. Distractors 0.30 (prior), 0.43 (0.3/0.7) and 0.71 (the knowing branch) reproduced. Nothing changed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "5fccd93da86a3f34",
+        "verification": "609304dab7c02354"
+      }
     }
   }
 ]

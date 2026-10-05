@@ -89,12 +89,36 @@
       "commonTrap": "Adding the length $\\|\\mathbf{u}\\| = 3$ instead of the squared length $\\|\\mathbf{u}\\|^2 = 9$, or forgetting that the shift $2I_3$ also moves the eigenvalue along $\\mathbf{u}$ (and the two zero eigenvalues of $\\mathbf{u}\\mathbf{u}^\\top$ to $2$). A trace check ($15$) catches both."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B: eigenvalues 2, 2, 11",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nu = np.array([1, 2, 2]); A = 2 * np.eye(3) + np.outer(u, u)\nprint(np.round(np.linalg.eigvalsh(A), 6), round(np.trace(A)), round(np.linalg.det(A)))   # [ 2.  2. 11.] 15 44",
-      "notes": ""
+      "checkCode": "import numpy as np\nu = np.array([[1.], [2.], [2.]]); A = 2 * np.eye(3) + u @ u.T\nprint(np.round(np.linalg.eigvalsh(A), 6))                      # [ 2.  2. 11.]\nprint(np.allclose(np.poly(A), np.poly([2, 2, 11])))             # True: same characteristic polynomial as (x-2)^2 (x-11)",
+      "notes": "No change needed. Blind solve (u^T u = 9, so 11 along u and 2 on the orthogonal plane) and independent numpy eigenvalue/characteristic-polynomial check both give 2, 2, 11. Distractor explanations audited (A = eigenvalues of uu^T alone, C adds ||u|| = 3, D adds the entry sum 5); trace/determinant cross-check in the solution is correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "2b1bc156f92e71fe",
+        "verification": "50474c4217fe744c"
+      }
     }
   },
   {
@@ -190,12 +214,36 @@
       "commonTrap": "Treating feature selection (or any other step that looks at the labels) as harmless preprocessing that can be done once before cross-validation. Every label-dependent step must be repeated inside each training split."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B, D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nn, k = 40, 8\nidx = np.random.default_rng(0).permutation(n); folds = np.array_split(idx, k)\ntr = np.zeros(n, int); va = np.zeros(n, int)\nfor f in folds:\n    va[f] += 1; tr[np.setdiff1d(idx, f)] += 1\nassert (va == 1).all() and (tr == k - 1).all()\nprint(len(folds[0]), n - len(folds[0]), n - n // 4, n - n // 8)   # 5 35 30 35\n# statement C: labels are pure noise; pick the 5 best of 500 features on ALL data, then 8-fold CV\ndef top(X, y, m=5):\n    s = np.abs(X[y == 1].mean(0) - X[y == 0].mean(0)); return np.argsort(-s)[:m]\ndef cv(X, y, inside):\n    wrong = 0; cols = None if inside else top(X, y)\n    for f in folds:\n        t = np.setdiff1d(idx, f); c = top(X[t], y[t]) if inside else cols\n        m1 = X[t][y[t] == 1][:, c].mean(0); m0 = X[t][y[t] == 0][:, c].mean(0)\n        d1 = ((X[f][:, c] - m1) ** 2).sum(1); d0 = ((X[f][:, c] - m0) ** 2).sum(1)\n        wrong += ((d1 < d0).astype(int) != y[f]).sum()\n    return wrong / n\nrng = np.random.default_rng(5); r = []\nfor _ in range(60):\n    X = rng.normal(size=(n, 500)); y = rng.permutation(np.r_[np.zeros(20, int), np.ones(20, int)])\n    r.append((cv(X, y, False), cv(X, y, True)))\nprint(np.round(np.mean(r, 0), 2))   # leaky CV error well below 0.5, honest CV error near 0.5",
-      "notes": ""
+      "checkCode": "import numpy as np\nrng = np.random.default_rng(2024); n = 40\ndef folds_of(n, k): return np.array_split(rng.permutation(n), k)\n# (A), (B): structure of 8-fold CV\nfs = folds_of(n, 8); tr = np.zeros(n, int); va = np.zeros(n, int)\nfor f in fs: va[f] += 1; tr[np.setdiff1d(np.arange(n), f)] += 1\nprint({len(f) for f in fs}, n - len(fs[0]), (va == 1).all(), (tr == 7).all())     # {5} 35 True True\ndef fit_pred(Xt, yt, Xe, c):\n    c1 = Xt[yt == 1][:, c].mean(0); c0 = Xt[yt == 0][:, c].mean(0)\n    return ((((Xe[:, c] - c1) ** 2).sum(1)) < (((Xe[:, c] - c0) ** 2).sum(1))).astype(int)\ndef topk(X, y, m=5):\n    s = np.abs(X[y == 1].mean(0) - X[y == 0].mean(0)) / (X.std(0) + 1e-12); return np.argsort(-s)[:m]\n# (C): pure-noise labels, 500 features: select on ALL data (leaky) vs inside each training split (honest)\nlk, hn = [], []\nfor _ in range(100):\n    X = rng.normal(size=(n, 500)); y = rng.permutation(np.r_[np.zeros(20, int), np.ones(20, int)])\n    ca = topk(X, y); el = eh = 0\n    for f in folds_of(n, 8):\n        t = np.setdiff1d(np.arange(n), f)\n        el += (fit_pred(X[t], y[t], X[f], ca) != y[f]).sum(); eh += (fit_pred(X[t], y[t], X[f], topk(X[t], y[t])) != y[f]).sum()\n    lk.append(el / n); hn.append(eh / n)\nprint(round(np.mean(lk), 2), round(np.mean(hn), 2))   # leaky well below 0.5, honest near 0.5 -> (C) false\n# (D): modest real signal, accuracy grows with n: 4-fold (train 30) vs 8-fold (train 35) CV error\ne4, e8 = [], []\nfor _ in range(3000):\n    y = rng.permutation(np.r_[np.zeros(20, int), np.ones(20, int)]); X = rng.normal(size=(n, 30)) + 0.5 * y[:, None]\n    for k, out in ((4, e4), (8, e8)):\n        err = 0\n        for f in folds_of(n, k):\n            t = np.setdiff1d(np.arange(n), f); err += (fit_pred(X[t], y[t], X[f], np.arange(30)) != y[f]).sum()\n        out.append(err / n)\nprint(round(np.mean(e4), 4), round(np.mean(e8), 4), np.mean(e4) > np.mean(e8))   # 4-fold more pessimistic -> (D) true",
+      "notes": "No change needed. Blind solve: A and B follow from 8 folds of 5; C is the classic label-leakage error (feature selection on all 40 examples before the folds is optimistically biased); D holds because 4-fold trains on 30 vs 35 examples. Independent simulation (different seed) confirms: leaky CV error about 0.17 vs honest about 0.49 on pure-noise labels, and mean 4-fold CV error exceeds mean 8-fold error when accuracy grows with n. The solution's quoted figures (0.19 / 0.52) reproduce with the author's seed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "363bf575d5a49439",
+        "verification": "2cdbbfe93d654331"
+      }
     }
   },
   {
@@ -291,12 +339,36 @@
       "commonTrap": "Forgetting how an element equal to the pivot is handled (the second 11 is skipped over by `i` because of `<=`), or stopping the trace before the final swap of the pivot into position `j`."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D: r = 4, data = [4, 9, 7, 11, 11, 20, 13, 16]",
       "agreesWithKey": true,
-      "checkCode": "def partition(a, lo, hi):\n    pivot = a[lo]\n    i, j = lo + 1, hi\n    while True:\n        while i <= j and a[i] <= pivot:\n            i += 1\n        while i <= j and a[j] > pivot:\n            j -= 1\n        if i > j:\n            break\n        a[i], a[j] = a[j], a[i]\n    a[lo], a[j] = a[j], a[lo]\n    return j\n\ndata = [11, 16, 7, 11, 20, 4, 13, 9]\nr = partition(data, 0, len(data) - 1)\nprint(r, data)   # 4 [4, 9, 7, 11, 11, 20, 13, 16]",
-      "notes": ""
+      "checkCode": "def partition(a, lo, hi):\n    pivot = a[lo]\n    i, j = lo + 1, hi\n    while True:\n        while i <= j and a[i] <= pivot:\n            i += 1\n        while i <= j and a[j] > pivot:\n            j -= 1\n        if i > j:\n            break\n        a[i], a[j] = a[j], a[i]\n    a[lo], a[j] = a[j], a[lo]\n    return j\n\ndata = [11, 16, 7, 11, 20, 4, 13, 9]\nr = partition(data, 0, len(data) - 1)\nprint(r, data)   # 4 [4, 9, 7, 11, 11, 20, 13, 16]  -> option (D)\n# distractor (A): same scheme with strict tests ('<' for i, '>=' for j) gives r=3, [4, 9, 7, 11, 20, 11, 13, 16]\ndef strict(a, lo, hi):\n    p = a[lo]; i, j = lo + 1, hi\n    while True:\n        while i <= j and a[i] < p: i += 1\n        while i <= j and a[j] >= p: j -= 1\n        if i > j: break\n        a[i], a[j] = a[j], a[i]\n    a[lo], a[j] = a[j], a[lo]; return j\nd2 = [11, 16, 7, 11, 20, 4, 13, 9]; print(strict(d2, 0, 7), d2)\n# distractor (C): Lomuto-style (strictly smaller moved left) gives r=3, [9, 7, 4, 11, 20, 16, 13, 11]\nd3 = [11, 16, 7, 11, 20, 4, 13, 9]; s = 0\nfor k in range(1, 8):\n    if d3[k] < d3[0]: s += 1; d3[s], d3[k] = d3[k], d3[s]\nd3[0], d3[s] = d3[s], d3[0]; print(s, d3)",
+      "notes": "No change needed. Executed the code unchanged: r = 4, data = [4, 9, 7, 11, 11, 20, 13, 16]. Hand trace in the solution (three rounds, then the pivot swap) matches the run step by step. Distractors reproduced exactly: A = strict '<' / '>=' variant, B = array just before the final swap, C = Lomuto-style with strict '<'."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a79352e0b267978c",
+        "verification": "fee4165851de0a94"
+      }
     }
   },
   {
@@ -393,12 +465,36 @@
       "commonTrap": "Assuming $\\operatorname{rank}(AB)$ equals $\\min(\\operatorname{rank}A, \\operatorname{rank}B) = 2$ for every choice of matrices, or allowing $0$ because $A$ has a non-trivial null space. The null space of $A$ is only 1-dimensional, so it can absorb at most one dimension of $\\operatorname{col}(B)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "{1, 2} (option A)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A: {1, 2}",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nrk = np.linalg.matrix_rank\nA = np.zeros((5, 4)); A[0, 0] = A[1, 1] = A[2, 2] = 1          # rank 3, null(A) = span(e4)\nB1 = np.zeros((4, 6)); B1[0, 0] = B1[1, 1] = 1                  # col(B1) = span(e1, e2)\nB2 = np.zeros((4, 6)); B2[0, 0] = B2[3, 1] = 1                  # col(B2) = span(e1, e4)\nprint(rk(A), rk(B1), rk(B2), rk(A @ B1), rk(A @ B2))\nrng = np.random.default_rng(1); seen = set()\nfor _ in range(4000):\n    A = rng.normal(size=(5, 3)) @ rng.normal(size=(3, 4)); assert rk(A) == 3\n    nvec = np.linalg.svd(A)[2][-1]                                # spans null(A)\n    L = rng.normal(size=(4, 2))\n    if rng.random() < 0.5: L[:, 0] = nvec                         # force col(B) to contain null(A)\n    B = L @ rng.normal(size=(2, 6)); assert rk(B) == 2\n    seen.add(int(rk(A @ B, tol=1e-9)))\nprint(sorted(seen))                                               # [1, 2]",
-      "notes": ""
+      "checkCode": "import numpy as np\nrk = np.linalg.matrix_rank\nrng = np.random.default_rng(7); seen = set()\nfor _ in range(4000):\n    P = rng.integers(-1, 2, (5, 3)); Q = rng.integers(-1, 2, (3, 4)); A = P @ Q          # rank-3 candidate, 5x4\n    R = rng.integers(-1, 2, (4, 2)); S = rng.integers(-1, 2, (2, 6)); B = R @ S          # rank-2 candidate, 4x6\n    if rk(A) != 3 or rk(B) != 2: continue\n    r = rk(A @ B); seen.add(int(r)); assert 3 + 2 - 4 <= r <= min(3, 2)              # Sylvester lower bound, min upper bound\nprint(sorted(seen))   # [1, 2]; 0 and 3 never occur and are excluded by the bounds\n# explicit witnesses: null(A) = span(e4)\nA = np.zeros((5, 4)); A[0, 0] = A[1, 1] = A[2, 2] = 1\nB2 = np.zeros((4, 6)); B2[0, 0] = B2[1, 1] = 1      # col(B) = span(e1, e2): rank(AB) = 2\nB1 = np.zeros((4, 6)); B1[0, 0] = B1[3, 1] = 1      # col(B) = span(e1, e4): rank(AB) = 1\nprint(rk(A), rk(B1), rk(B2), rk(A @ B2), rk(A @ B1))   # 3 2 2 2 1",
+      "notes": "No change needed. Blind solve: 1 = 3 + 2 - 4 <= rank(AB) <= min(3, 2) = 2, and both extremes are attainable (explicit witnesses depending on whether col(B) meets null(A)). Independent randomized search over rank-3 5x4 and rank-2 4x6 integer matrices found exactly {1, 2}; 0 and 3 never occur."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e357e4e9b02fb32b",
+        "verification": "c253e2bf25adf6f2"
+      }
     }
   },
   {
@@ -495,12 +591,36 @@
       "commonTrap": "Forgetting the bias of the output unit (getting 320), forgetting all biases (296), or giving the input units biases (331)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C: 321",
       "agreesWithKey": true,
-      "checkCode": "sizes = [10, 16, 8, 1]\nweights = sum(a * b for a, b in zip(sizes, sizes[1:])); biases = sum(sizes[1:])\nprint(weights, biases, weights + biases)   # 296 25 321",
-      "notes": ""
+      "checkCode": "layers = [10, 16, 8, 1]\nw = sum(a * b for a, b in zip(layers, layers[1:])); b = sum(layers[1:])\nprint(w, b, w + b)   # 296 25 321\nprint([(a + 1) * c for a, c in zip(layers, layers[1:])])   # [176, 136, 9]",
+      "notes": "No change needed. (10+1)*16 + (16+1)*8 + (8+1)*1 = 176 + 136 + 9 = 321 (weights 296, biases 25). Distractors 296, 320 and 331 map to the stated mistakes (no biases, no output bias, biases on input units)."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "2d742f81d2bd6313",
+        "verification": "75ea64bb7e0fffff"
+      }
     }
   },
   {
@@ -554,12 +674,36 @@
       "commonTrap": "Using $K_{10}$ plus an isolated vertex ($\\binom{10}{2} = 45$) and forgetting that $G$ must be bipartite, quoting the connected bipartite maximum $\\lfloor 121/4 \\rfloor = 30$, or splitting the vertices as evenly as possible ($5 + 6$, giving only $15$) because a balanced split is best for a single component."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "25",
       "agreesWithKey": true,
-      "checkCode": "best = 0\nn = 11\ndef ok(p, q):   # a connected bipartite component with parts of sizes p, q\n    return p + q == 1 or (p >= 1 and q >= 1)\nfor p1 in range(n + 1):\n    for q1 in range(n + 1 - p1):\n        for p2 in range(n + 1 - p1 - q1):\n            q2 = n - p1 - q1 - p2\n            if ok(p1, q1) and ok(p2, q2):\n                best = max(best, p1 * q1 + p2 * q2)\nprint(best)   # 25",
-      "notes": ""
+      "checkCode": "import itertools, networkx as nx\ndef best(n, k=2):   # max edges of a bipartite graph on n vertices with exactly k=2 components: complete bipartite pieces\n    f = lambda m: max(p * (m - p) for p in range(m + 1))\n    return max(f(a) + f(n - a) for a in range(1, n))\nprint(best(11), [(a, 11 - a, max(p * (a - p) for p in range(a + 1)) + max(p * (11 - a - p) for p in range(12 - a))) for a in range(1, 6)])\n# exhaustive check of the formula on all graphs with n = 6 labelled vertices\nn = 6; pairs = list(itertools.combinations(range(n), 2)); top = 0\nfor mask in range(1 << len(pairs)):\n    E = [pairs[i] for i in range(len(pairs)) if mask >> i & 1]\n    if len(E) <= top: continue\n    G = nx.Graph(); G.add_nodes_from(range(n)); G.add_edges_from(E)\n    if nx.number_connected_components(G) == 2 and nx.is_bipartite(G): top = len(E)\nprint(top, best(6))   # 6 6   (formula agrees with brute force); answer for n = 11: 25",
+      "notes": "No change needed. Blind solve: each component with m vertices has at most floor(m^2/4) edges, and the best split is 1 + 10 (K_{5,5} plus an isolated vertex) = 25; other splits give 21, 18, 16, 15. Independent code confirms the formula by exhaustive enumeration on all 6-vertex graphs and evaluates it at n = 11. Integer answer, so the NAT range 25 to 25 is appropriate."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "4a9b767175c2e253",
+        "verification": "b65fb5a259686e7f"
+      }
     }
   },
   {
@@ -652,12 +796,36 @@
       "commonTrap": "Concluding that pairwise independence implies mutual independence, or that $E_1$ (which involves both dice) must depend on $E_2$ and $E_3$. Independence must be checked with the product rule for every pair and for the triple."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nS = [(x, y) for x in range(1, 7) for y in range(1, 7)]\nE1 = {s for s in S if s[0] + s[1] == 7}; E2 = {s for s in S if s[0] <= 3}; E3 = {s for s in S if s[1] >= 5}\nP = lambda e: F(len(e), 36)\npairs = [(P(a & b), P(a) * P(b)) for a, b in [(E1, E2), (E1, E3), (E2, E3)]]\nprint([p == q for p, q in pairs], P(E1 & E2 & E3), P(E1) * P(E2) * P(E3))   # [True, True, True] 1/18 1/36",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nS = [(x, y) for x in range(1, 7) for y in range(1, 7)]\nE1 = {s for s in S if s[0] + s[1] == 7}; E2 = {s for s in S if s[0] <= 3}; E3 = {s for s in S if s[1] >= 5}\nP = lambda e: F(len(e), 36)\nprint(P(E1), P(E2), P(E3))\nprint([P(a & b) == P(a) * P(b) for a, b in [(E1, E2), (E1, E3), (E2, E3)]])   # [True, True, True] pairwise independent\nprint(P(E1 & E2 & E3), P(E1) * P(E2) * P(E3))                                 # 1/18 1/36 -> not mutually independent: (B)",
+      "notes": "No change needed. Exhaustive enumeration over the 36 outcomes with exact fractions: P(E1) = 1/6, P(E2) = 1/2, P(E3) = 1/3; all three pair intersections equal the product of probabilities (1/12, 1/18, 1/6), but P(E1 and E2 and E3) = 1/18 differs from 1/36. So the events are pairwise but not mutually independent. Only (B) is defensible."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "d85e9bceb18e3521",
+        "verification": "55f41f083cbd1f67"
+      }
     }
   },
   {
@@ -756,12 +924,36 @@
       "commonTrap": "Rejecting A because `ledger` 'does not call any critical service' (the condition is vacuously true when there are no callees), and reading C as B by swapping the direction of $\\text{Calls}$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C",
       "agreesWithKey": true,
-      "checkCode": "D = [\"web\", \"cart\", \"search\", \"ledger\", \"sched\"]\nCrit = {\"ledger\", \"sched\"}\nCalls = {(\"web\",\"cart\"),(\"web\",\"search\"),(\"search\",\"web\"),(\"search\",\"ledger\"),(\"sched\",\"web\"),(\"sched\",\"cart\"),(\"sched\",\"search\")}\nc = lambda x, y: (x, y) in Calls\nA = any(x in Crit and all((not c(x, y)) or y in Crit for y in D) for x in D)\nB = all(x in Crit or any(y in Crit and c(x, y) for y in D) for x in D)\nC = all(x in Crit or any(y in Crit and c(y, x) for y in D) for x in D)\nDd = all(x not in Crit or any(y not in Crit and c(x, y) for y in D) for x in D)\nprint(A, B, C, Dd)   # True False True False",
-      "notes": ""
+      "checkCode": "dom = [\"web\", \"cart\", \"search\", \"ledger\", \"sched\"]\ncrit = {\"ledger\", \"sched\"}\ncalls = {\"web\": {\"cart\", \"search\"}, \"cart\": set(), \"search\": {\"web\", \"ledger\"}, \"ledger\": set(), \"sched\": {\"web\", \"cart\", \"search\"}}\nC = lambda x, y: y in calls[x]\nfA = any(x in crit and all((not C(x, y)) or y in crit for y in dom) for x in dom)\nfB = all(x in crit or any(y in crit and C(x, y) for y in dom) for x in dom)\nfC = all(x in crit or any(y in crit and C(y, x) for y in dom) for x in dom)\nfD = all(x not in crit or any(y not in crit and C(x, y) for y in dom) for x in dom)\nprint(fA, fB, fC, fD)   # True False True False -> (A), (C)",
+      "notes": "No change needed. Evaluated all four formulas by model checking in the stated finite interpretation: A true (ledger calls nothing, so the inner implication is vacuously true), B false (web), C true (sched calls web, cart and search), D false (ledger has no non-critical callee). The table was read with the direction Calls(x, y) = x calls y, as stated in the stem."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8e3ad2ed3c09d674",
+        "verification": "3b9f732f7bfa8d24"
+      }
     }
   },
   {
@@ -853,12 +1045,36 @@
       "commonTrap": "Dividing by the wrong total: using the row total $P(X = 1) = 0.50$ gives $P(Y = 2 \\mid X = 1) = 0.48$, the reverse conditional. The conditioning event $Y = 2$ selects a column, so the denominator is that column's total."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D: 0.75",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nJ = {(0, 0): F(18, 100), (0, 1): F(24, 100), (0, 2): F(8, 100), (1, 0): F(6, 100), (1, 1): F(20, 100), (1, 2): F(24, 100)}\nassert sum(J.values()) == 1\npY2 = sum(p for (x, y), p in J.items() if y == 2); pX1 = sum(p for (x, y), p in J.items() if x == 1)\nprint(float(J[(1, 2)] / pY2), float(pY2), float(J[(1, 2)] / pX1))   # 0.75 0.32 0.48",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nJ = {(0, 0): F(18, 100), (0, 1): F(24, 100), (0, 2): F(8, 100), (1, 0): F(6, 100), (1, 1): F(20, 100), (1, 2): F(24, 100)}\nassert sum(J.values()) == 1\npY2 = sum(p for (x, y), p in J.items() if y == 2); pX1 = sum(p for (x, y), p in J.items() if x == 1)\nprint(float(J[(1, 2)] / pY2), float(pY2), float(J[(1, 2)] / pX1))   # 0.75 0.32 0.48 (0.48 = reversed conditional, a distractor)",
+      "notes": "No change needed. The joint table sums to 1.00; P(Y = 2) = 0.32, P(X = 1, Y = 2) = 0.24, so the conditional is 0.24/0.32 = 0.75. Distractors 0.24 (joint), 0.32 (marginal) and 0.48 (the reversed conditional P(Y = 2 | X = 1)) are correctly explained."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8f55c552efb33e88",
+        "verification": "024f4371cf6a8ebf"
+      }
     }
   },
   {
@@ -912,12 +1128,36 @@
       "commonTrap": "Averaging the seven listed values $0, 1, \\dots, 6$ (which gives $3.00$) instead of weighting each value by the number of mornings, or dividing the weighted sum $142$ by $7$ (the number of table columns) instead of by $50$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "2.84",
       "agreesWithKey": true,
-      "checkCode": "freq = {0: 3, 1: 6, 2: 11, 3: 15, 4: 8, 5: 5, 6: 2}\nn = sum(freq.values()); total = sum(k * v for k, v in freq.items())\nprint(n, total, round(total / n, 2))   # 50 142 2.84",
-      "notes": ""
+      "checkCode": "import numpy as np\nvals = np.arange(7); cnt = np.array([3, 6, 11, 15, 8, 5, 2])\nprint(cnt.sum(), (vals * cnt).sum(), round(float(np.average(vals, weights=cnt)), 2))   # 50 142 2.84",
+      "notes": "No change needed. Frequencies sum to 50 and the weighted sum is 142, so the mean is 2.84 exactly. The stem asks for two decimal places and the accepted range 2.83 to 2.85 brackets the exact value sensibly."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "6895b2402a5cc7fe",
+        "verification": "50a78186e3f8b7d2"
+      }
     }
   }
 ]

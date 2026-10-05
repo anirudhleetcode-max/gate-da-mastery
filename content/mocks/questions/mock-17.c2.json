@@ -14,7 +14,7 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (bias\u2013variance decomposition of the mean squared error) applied to four estimators that each need a short calculation, with two likely traps (an unsquared bias, and smallest variance implying smallest MSE); about 2 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (bias–variance decomposition of the mean squared error) applied to four estimators that each need a short calculation, with two likely traps (an unsquared bias, and smallest variance implying smallest MSE); about 2 minutes.",
     "estimatedTimeSec": 110,
     "concept": "MSE = bias$^2$ + variance: shrinking an unbiased estimator by a factor $c$ trades bias for variance, the MSE is minimised at an intermediate $c$, and the lowest-variance estimator need not have the lowest MSE.",
     "conceptIds": [],
@@ -88,12 +88,36 @@
       "commonTrap": "Adding the bias instead of its square (which makes $T_{0.5}$ look like $1+3=4$, the same as $\\bar X$), and assuming that the estimator with the smallest variance must have the smallest MSE."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B",
       "agreesWithKey": true,
-      "checkCode": "mu, s2, n = 6, 24, 6\nmse = {}\nfor c in (1, 0.9, 0.8, 0.5):\n    bias, var = (c - 1) * mu, c * c * s2 / n\n    mse[c] = bias * bias + var\n    print(c, round(bias, 2), round(var, 2), round(mse[c], 2))\nprint('A', abs(mse[0.8] - mse[1]) < 1e-9, 'B', mse[0.9] < mse[1],\n      'C', min(mse, key=mse.get) == 0.5, 'D', abs(mse[0.5] - mse[1]) < 1e-9)   # A True B True C False D False",
-      "notes": ""
+      "checkCode": "# own check: exact MSE by Fractions + Monte-Carlo simulation of the estimators\nfrom fractions import Fraction as F\nimport numpy as np\nmu, s2, n = 6, 24, 6\ncs = [F(1), F(9, 10), F(4, 5), F(1, 2)]\nmse = {c: (c * mu - mu) ** 2 + c * c * F(s2, n) for c in cs}      # bias^2 + variance\nvar = {c: c * c * F(s2, n) for c in cs}\nprint({str(c): str(m) for c, m in mse.items()})\nA = mse[F(4, 5)] == mse[F(1)] and F(4, 5) * mu != mu\nB = mse[F(9, 10)] < mse[F(1)]\nC = min(var, key=var.get) == min(mse, key=mse.get)\nD = mse[F(1, 2)] == mse[F(1)]\nrng = np.random.default_rng(0)\nX = rng.normal(mu, np.sqrt(s2), size=(400000, n)).mean(axis=1)\nprint([round(float(np.mean((float(c) * X - mu) ** 2)), 2) for c in cs])   # ~[4, 3.6, 4, 10]\nprint(A, B, C, D)   # True True False False -> (A), (B)",
+      "notes": "Blind solve: E[Xbar]=6, Var(Xbar)=24/6=4, so MSE(T_c)=36(c-1)^2+4c^2 = 4, 3.6, 4, 10 for c=1, 0.9, 0.8, 0.5. T_0.8 is biased (-1.2) but ties Xbar at 4 (A true); T_0.9 gives 3.6 < 4 (B true); the smallest variance (1, at c=0.5) has the largest MSE (C false); MSE(T_0.5)=10, not 4 (D false). Own exact Fraction computation plus a Monte-Carlo simulation of the estimators agree. Key (A, B), solution steps, option verdicts, difficulty and blueprint slot all checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "54aa8634743dfaf7",
+        "verification": "86032e3b7861d4dd"
+      }
     }
   },
   {
@@ -111,7 +135,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (backpropagation through a sigmoid output neuron) needing a two-factor chain rule with two given numbers; about 1 minute.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (backpropagation through a sigmoid output neuron) needing a two-factor chain rule with two given numbers; about 1 minute.",
     "estimatedTimeSec": 60,
     "concept": "Backpropagation at a sigmoid output neuron with squared-error loss: $\\partial L/\\partial z=(a-y)\\,\\sigma'(z)$, where $\\sigma'(z)=a(1-a)$.",
     "conceptIds": [],
@@ -185,12 +209,36 @@
       "commonTrap": "Stopping after one factor of the chain rule: reporting $a-y=-0.2$ (forgetting $\\sigma'(z)$) or $a(1-a)=0.16$ (forgetting the error term), or flipping the sign by using $y-a$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "-0.032 (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B: -0.032",
       "agreesWithKey": true,
-      "checkCode": "import math\nz = math.log(0.8 / 0.2)                     # pre-activation that gives a = 0.8\na = 1 / (1 + math.exp(-z)); y = 1\nL = lambda z: 0.5 * (1 / (1 + math.exp(-z)) - y) ** 2\nh = 1e-6\nprint(round(a, 3), round((L(z + h) - L(z - h)) / (2 * h), 4), round((a - y) * a * (1 - a), 4))   # 0.8 -0.032 -0.032",
-      "notes": ""
+      "checkCode": "# own check: autograd-style finite difference and exact formula, using the stated a = 0.8\nimport math\ny = 1.0\nz = math.log(0.8 / 0.2)                       # sigma(z) = 0.8\nsig = lambda t: 1 / (1 + math.exp(-t))\nL = lambda t: 0.5 * (sig(t) - y) ** 2\nh = 1e-6\nnum = (L(z + h) - L(z - h)) / (2 * h)\nexact = (0.8 - y) * 0.8 * (1 - 0.8)\nopts = {'A': -0.2, 'B': -0.032, 'C': 0.032, 'D': 0.16}\nprint(round(sig(z), 6), round(num, 6), round(exact, 6), [k for k, v in opts.items() if abs(v - num) < 1e-4])   # 0.8 -0.032 -0.032 ['B']",
+      "notes": "Blind solve: dL/dz = (a-y)*a(1-a) = (-0.2)(0.16) = -0.032. Own central-difference derivative of L(z) at the z that gives a=0.8 agrees (-0.032). Distractors reproduced (-0.2 = dL/da only; 0.16 = sigma' only; +0.032 = sign flip). Key, steps, verdicts, EASY label and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cf615d437e0ef834",
+        "verification": "1349901d9304f1d2"
+      }
     }
   },
   {
@@ -208,7 +256,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (proximity between objects with mixed attribute types) needing four different per-attribute rules, a normalisation for each of the ordinal and numeric attributes, and the exclusion of a joint absence; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (proximity between objects with mixed attribute types) needing four different per-attribute rules, a normalisation for each of the ordinal and numeric attributes, and the exclusion of a joint absence; about 3 minutes.",
     "estimatedTimeSec": 170,
     "concept": "Dissimilarity for mixed attribute types: nominal (match or mismatch), ordinal (normalised rank difference), ratio-scaled (range-normalised difference) and asymmetric binary attributes (joint absences are left out of the average).",
     "conceptIds": [],
@@ -240,12 +288,36 @@
       "commonTrap": "Treating *past default* as a symmetric attribute, so that the joint $0$ counts as a match ($d=0$, $\\delta=1$). That gives $2.9375/5=0.5875\\approx 0.59$. Another slip is using the raw rank difference $3$ and the raw income difference $6$ instead of the normalised values."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "0.73",
       "agreesWithKey": true,
-      "checkCode": "X = dict(emp='Salaried', grade='B', inc=14, gua=1, dft=0)\nY = dict(emp='Self-employed', grade='E', inc=8, gua=0, dft=0)\nrank = {g: i + 1 for i, g in enumerate('EDCBA')}\nd = {'emp': float(X['emp'] != Y['emp']),\n     'grade': abs(rank[X['grade']] - rank[Y['grade']]) / (len(rank) - 1),\n     'inc': abs(X['inc'] - Y['inc']) / (34 - 2),\n     'gua': float(X['gua'] != Y['gua']),\n     'dft': float(X['dft'] != Y['dft'])}\ndelta = {k: 1 for k in d}\ndelta['dft'] = 0 if X['dft'] == 0 and Y['dft'] == 0 else 1     # joint absence is ignored\nval = sum(delta[k] * d[k] for k in d) / sum(delta.values())\nprint(d, sum(delta.values()), round(val, 4), round(val, 2))   # 0.734375 -> 0.73",
-      "notes": ""
+      "checkCode": "# own check: Fractions, rule-by-rule transcription of the stem's definition\nfrom fractions import Fraction as F\nrank = {g: i + 1 for i, g in enumerate(['E', 'D', 'C', 'B', 'A'])}   # lowest state has rank 1\nattrs = [\n    ('nominal', 'Salaried', 'Self-employed', None),\n    ('ordinal', 'B', 'E', 5),\n    ('ratio', 14, 8, (2, 34)),\n    ('abin', 1, 0, None),\n    ('abin', 0, 0, None),\n]\nnum = den = F(0)\nfor kind, x, y, extra in attrs:\n    if kind == 'abin' and x == 0 and y == 0:\n        continue                                   # delta = 0: joint absence ignored\n    if kind == 'nominal':   dist = F(int(x != y))\n    elif kind == 'ordinal': dist = F(abs(rank[x] - rank[y]), extra - 1)\n    elif kind == 'ratio':   dist = F(abs(x - y), extra[1] - extra[0])\n    else:                   dist = F(int(x != y))  # asymmetric binary with delta = 1\n    num += dist; den += 1\nd = num / den\nprint(num, den, d, float(d), round(float(d), 2))   # 47/16 4 47/64 0.734375 0.73\n# wrong conventions for comparison: joint 0 treated as a match -> 47/16 / 5 = 0.5875 (0.59)",
+      "notes": "Blind solve: delta = (1,1,1,1,0) so the denominator is 4; d_f = 1 (nominal), |4-1|/4 = 0.75 (ordinal, ranks E=1..A=5, B=4), 6/32 = 0.1875 (ratio), 1 (asymmetric binary, values differ); d = 2.9375/4 = 47/64 = 0.734375, i.e. 0.73. Own rule-by-rule Fraction implementation agrees. Stem defines every rule (rank order, normalisation, joint-0 exclusion), so there is a single defensible value; rounding is stated; range 0.72 to 0.74 contains only the 0.73 rounding with a tolerance of one unit in the last place and excludes the 0.59 trap. No fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "c03710c848047388",
+        "verification": "bf797c185e2dc424"
+      }
     }
   },
   {
@@ -263,7 +335,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (sample correlation coefficient) as a single computation on five data pairs whose means are whole numbers; about 100 seconds.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (sample correlation coefficient) as a single computation on five data pairs whose means are whole numbers; about 100 seconds.",
     "estimatedTimeSec": 100,
     "concept": "Sample Pearson correlation coefficient $r = S_{xy}/\\sqrt{S_{xx}S_{yy}}$ computed from paired data.",
     "conceptIds": [],
@@ -295,12 +367,36 @@
       "commonTrap": "Reporting the covariance ($10$, or $8$ with divisor $n$) instead of the correlation, forgetting the square root in the denominator, or giving $r^2\\approx 0.70$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "0.83",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nx = np.array([4, 5, 8, 11, 12]); y = np.array([5, 4, 5, 12, 9])\ndx, dy = x - x.mean(), y - y.mean()\nr = (dx * dy).sum() / np.sqrt((dx ** 2).sum() * (dy ** 2).sum())\nprint((dx * dy).sum(), (dx ** 2).sum(), (dy ** 2).sum(), round(r, 4), round(r, 2), round(np.corrcoef(x, y)[0, 1], 2))   # 40 50 46 0.8341 0.83 0.83",
-      "notes": ""
+      "checkCode": "# own check: from-scratch Pearson r, then scipy and numpy cross-checks\nimport numpy as np\nfrom scipy import stats\nx = [4, 5, 8, 11, 12]; y = [5, 4, 5, 12, 9]\nn = len(x); mx, my = sum(x) / n, sum(y) / n\nsxy = sum((a - mx) * (b - my) for a, b in zip(x, y))\nsxx = sum((a - mx) ** 2 for a in x); syy = sum((b - my) ** 2 for b in y)\nr = sxy / (sxx * syy) ** 0.5\nprint(mx, my, sxy, sxx, syy, round(r, 4), round(r, 2),\n      round(stats.pearsonr(x, y)[0], 4), round(float(np.corrcoef(x, y)[0, 1]), 4))   # 8.0 7.0 40.0 50.0 46.0 0.8341 0.83 0.8341 0.8341",
+      "notes": "Blind solve: means 8 and 7, Sxy=40, Sxx=50, Syy=46, r = 40/sqrt(2300) = 0.8341, i.e. 0.83. From-scratch computation, scipy.stats.pearsonr and numpy.corrcoef all agree. Rounding is stated and the range 0.82 to 0.84 excludes the covariance/r^2 traps. Key, steps, EASY label (one concept, routine five-pair computation) and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "dc52f5c945d46f28",
+        "verification": "c34337ba60c8ab00"
+      }
     }
   },
   {
@@ -318,7 +414,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (entailment checked by counting counter-models over five variables) needing a short case analysis that fixes two variables to make sentences trivially true; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (entailment checked by counting counter-models over five variables) needing a short case analysis that fixes two variables to make sentences trivially true; about 3 minutes.",
     "estimatedTimeSec": 170,
     "concept": "Checking entailment by counting counter-models: $KB \\not\\models \\alpha$ exactly when some model of $KB$ falsifies $\\alpha$, and fixing the variables that falsify $\\alpha$ often makes KB sentences trivially true.",
     "conceptIds": [],
@@ -354,12 +450,36 @@
       "commonTrap": "Counting all assignments that falsify $\\alpha$ without imposing $KB$ (which gives $12$), or counting the models of $KB$ (there are also $12$), instead of the assignments that satisfy $KB$ and falsify $\\alpha$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "9",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nimp = lambda p, q: (not p) or q\ncnt = kb_models = 0\nfor B, T, L, C, R in product([False, True], repeat=5):\n    kb = imp(R, T and C) and imp(C, B) and imp(B, T or L)\n    alpha = imp(T or L, R)\n    kb_models += kb\n    cnt += kb and not alpha\nprint(cnt, kb_models)   # 9 12",
-      "notes": ""
+      "checkCode": "# own check: brute-force truth table over (B, T, L, C, R) using an explicit implication function\nfrom itertools import product\nimp = lambda p, q: (not p) or q\nrows = []\nfor B, T, L, C, R in product([0, 1], repeat=5):\n    kb = imp(R, T and C) and imp(C, B) and imp(B, T or L)\n    alpha = imp(T or L, R)\n    rows.append((B, T, L, C, R, bool(kb), bool(alpha)))\ncounter = [r for r in rows if r[5] and not r[6]]\nprint(len(counter), sum(r[5] for r in rows), sum(not r[6] for r in rows))   # 9 counter-models; 12 KB models; 12 assignments falsify alpha\nprint(all(r[4] == 0 for r in counter))                                       # every counter-model has R = 0 -> KB does not entail alpha",
+      "notes": "Blind solve: alpha=(T or L)->R is false iff T or L is true and R=0; then R->(T and C) and B->(T or L) hold automatically, leaving C->B: 3 choices of (T,L) times 3 choices of (B,C) = 9. Brute-force truth table over all 32 assignments gives 9 counter-models (also 12 KB models and 12 assignments falsifying alpha, which are the documented traps). The question counts assignments, so there is exactly one answer. Key, steps and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "9a824d01f0de84de",
+        "verification": "2a72b98fe1f7735a"
+      }
     }
   },
   {
@@ -377,7 +497,7 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (continuity and differentiability at a point) needing two linked limit computations that each rely on a Taylor expansion of $e^{2x}$ to third order, with a likely trap of truncating too early; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (continuity and differentiability at a point) needing two linked limit computations that each rely on a Taylor expansion of $e^{2x}$ to third order, with a likely trap of truncating too early; about 3 minutes.",
     "estimatedTimeSec": 170,
     "concept": "Continuity via the limit at a point and differentiability via the difference-quotient limit; the Maclaurin expansion of $e^{2x}$ resolves both $0/0$ limits.",
     "conceptIds": [],
@@ -414,7 +534,7 @@
         },
         {
           "title": "Derivative at $0$ from the definition",
-          "body": "$$f'(0)=\\lim_{x\\to0}\\frac{f(x)-f(0)}{x}=\\lim_{x\\to0}\\frac{\\tfrac43x+\\tfrac23x^2+\\cdots}{x}=\\frac43.$$\nEquivalently, $f'(0)=\\lim_{x\\to0}\\dfrac{e^{2x}-1-2x-2x^2}{x^3}$, a $0/0$ form; three applications of L'H\u00f4pital's rule give $\\dfrac{8e^{2x}}{6}\\to\\dfrac43$."
+          "body": "$$f'(0)=\\lim_{x\\to0}\\frac{f(x)-f(0)}{x}=\\lim_{x\\to0}\\frac{\\tfrac43x+\\tfrac23x^2+\\cdots}{x}=\\frac43.$$\nEquivalently, $f'(0)=\\lim_{x\\to0}\\dfrac{e^{2x}-1-2x-2x^2}{x^3}$, a $0/0$ form; three applications of L'Hôpital's rule give $\\dfrac{8e^{2x}}{6}\\to\\dfrac43$."
         },
         {
           "title": "Conclusion",
@@ -447,12 +567,36 @@
       "commonTrap": "Reporting $f(0)=c=2$ as if it were $f'(0)$, or stopping the series too early (so that $f'(0)=0$). The linear term of $f$ comes from the cubic term of $e^{2x}$, whose coefficient is $2^3/3!=\\tfrac43$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "4/3 (B)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "B: 4/3",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nf = (sp.exp(2 * x) - 1 - 2 * x) / x ** 2\nc = sp.limit(f, x, 0)\nfp = sp.limit((f - c) / x, x, 0)\nprint(c, fp, sp.series(f, x, 0, 3))   # 2 4/3 2 + 4*x/3 + 2*x**2/3 + O(x**3)",
-      "notes": ""
+      "checkCode": "# own check: sympy series/limits plus a numerical difference quotient with mpmath\nimport sympy as sp, mpmath as mp\nx = sp.symbols('x')\nf = (sp.exp(2 * x) - 1 - 2 * x) / x ** 2\nc = sp.limit(f, x, 0)\nfprime = sp.limit((f - c) / x, x, 0)\nprint(c, fprime, sp.series(f, x, 0, 3))                 # 2 4/3 2 + 4*x/3 + 2*x**2/3 + O(x**3)\nmp.mp.dps = 60\ng = lambda t: (mp.e ** (2 * t) - 1 - 2 * t) / t ** 2\nh = mp.mpf('1e-10')\nprint(mp.nstr((g(h) - 2) / h, 8), mp.nstr(mp.mpf(4) / 3, 8))   # ~1.3333333 1.3333333 -> option B (4/3)",
+      "notes": "Blind solve: e^{2x}=1+2x+2x^2+(4/3)x^3+..., so f(x)=2+(4/3)x+(2/3)x^2+..., c=2 and f'(0)=4/3 (option B). sympy limits/series and a 60-digit mpmath difference quotient agree. Distractors reproduced (0 from truncating the series, 2 = c, 8/3 from forgetting the factorial). Key, steps, verdicts and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0b89fb7a3e07875f",
+        "verification": "fc62f1f685598a10"
+      }
     }
   },
   {
@@ -470,7 +614,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (Dijkstra's algorithm) with a full run on a seven-vertex graph, then four statements about finalization order, a distance, path uniqueness and an edge-weight change; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Dijkstra's algorithm) with a full run on a seven-vertex graph, then four statements about finalization order, a distance, path uniqueness and an edge-weight change; about 3 minutes.",
     "estimatedTimeSec": 180,
     "concept": "Dijkstra's algorithm on a positively weighted DAG: distances, order of finalization, ties between shortest paths, and why raising the weight of an edge on only some shortest paths leaves the distance unchanged.",
     "conceptIds": [],
@@ -544,12 +688,36 @@
       "commonTrap": "Stopping as soon as one path of cost $10$ is found and calling it the only shortest path, or assuming that raising the weight of any edge on a shortest path must raise the shortest distance. It does not when another shortest path avoids that edge."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B, C, D",
       "agreesWithKey": true,
-      "checkCode": "import heapq\nE = {('S','A'):3,('S','B'):2,('A','B'):2,('A','C'):6,('B','C'):3,('B','D'):6,\n     ('C','E'):2,('C','T'):6,('D','E'):8,('D','T'):2,('E','T'):3}\ndef dijkstra(E):\n    g = {}\n    for (u, v), w in E.items(): g.setdefault(u, []).append((v, w))\n    dist, order, pq = {'S': 0}, [], [(0, 'S')]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if u in order: continue\n        order.append(u)\n        for v, w in g.get(u, []):\n            if d + w < dist.get(v, 1e9): dist[v] = d + w; heapq.heappush(pq, (d + w, v))\n    return dist, order\ndef costs(u, c, E, out):                      # the graph is a DAG, so plain recursion enumerates all paths\n    if u == 'T': out.append(c)\n    for (a, b), w in E.items():\n        if a == u: costs(b, c + w, E, out)\ndist, order = dijkstra(E)\nout = []; costs('S', 0, E, out)\nE2 = dict(E); E2[('B', 'D')] = 8\nprint(dist, order)\nprint('A', out.count(min(out)) == 1, 'B', order.index('E') < order.index('D'), 'C', dist['E'] == 7, 'D', dijkstra(E2)[0]['T'] == dist['T'])   # A False B True C True D True",
-      "notes": ""
+      "checkCode": "# own check: Bellman-Ford style relaxation on the DAG + Dijkstra trace + exhaustive path enumeration\nimport heapq, itertools\nW = {('S','A'):3,('S','B'):2,('A','B'):2,('A','C'):6,('B','C'):3,('B','D'):6,\n     ('C','E'):2,('C','T'):6,('D','E'):8,('D','T'):2,('E','T'):3}\ndef dijkstra(W):\n    adj = {}\n    for (u, v), w in W.items(): adj.setdefault(u, []).append((v, w))\n    dist = {'S': 0}; fin = []; pq = [(0, 'S')]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if u in fin: continue\n        fin.append(u)\n        for v, w in adj.get(u, []):\n            if d + w < dist.get(v, float('inf')):\n                dist[v] = d + w; heapq.heappush(pq, (d + w, v))\n    return dist, fin\ndef bellman(W):\n    dist = {v: float('inf') for e in W for v in e}; dist['S'] = 0\n    for _ in range(len(dist)):\n        for (u, v), w in W.items(): dist[v] = min(dist[v], dist[u] + w)\n    return dist\ndef all_paths(W, s, t):\n    out = []\n    def go(u, path, c):\n        if u == t: out.append((c, tuple(path))); return\n        for (a, b), w in W.items():\n            if a == u: go(b, path + [b], c + w)\n    go(s, [s], 0); return sorted(out)\ndist, order = dijkstra(W)\nassert dist == {k: v for k, v in bellman(W).items() if k in dist}\nbest = all_paths(W, 'S', 'T')\nties = [p for c, p in best if c == best[0][0]]\nW2 = dict(W); W2[('B', 'D')] = 8\nprint(order, dist, ties)\nprint('A', len(ties) == 1, 'B', order.index('E') < order.index('D'), 'C', dist['E'] == 7, 'D', dijkstra(W2)[0]['T'] == dist['T'])   # A False B True C True D True",
+      "notes": "Blind solve: Dijkstra finalizes S(0), B(2), A(3), C(5), E(7), D(8), T(10). Two shortest S-T paths of cost 10 (S-B-C-E-T and S-B-D-T) so A is false; E (7) is finalized before D (8) so B is true; d(S,E)=7 so C is true; raising B->D to 8 leaves S-B-C-E-T at 10 so D is true. Own Dijkstra, Bellman-Ford cross-check and exhaustive path enumeration agree. No tie affects the finalization order of E and D, so no ambiguity. Key, trace, verdicts and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "7f6a6aceac01c4e3",
+        "verification": "b452c5c5ec903c7a"
+      }
     }
   },
   {
@@ -567,7 +735,7 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 two linked concepts (snowflake versus star schema, and joins along foreign-key chains) with a routine count of the tables a query must touch in each design and three likely miscounts; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked concepts (snowflake versus star schema, and joins along foreign-key chains) with a routine count of the tables a query must touch in each design and three likely miscounts; about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "Snowflaking a dimension adds tables along its concept hierarchy, so a query that groups by a high level must join the whole chain (tables $-\\,1$ joins), whereas a star schema needs one join per dimension used.",
     "conceptIds": [],
@@ -641,12 +809,36 @@
       "commonTrap": "Reporting the number of tables instead of the number of joins, or skipping the intermediate snowflaked tables (LocalityDim, CellDim, PlanDim), which carry no requested attribute but are needed to connect CityDim and CategoryDim to the fact table."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "6 and 3 (D)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D: 6 and 3",
       "agreesWithKey": true,
-      "checkCode": "snow = {'CallFact': ['DateDim', 'CellDim', 'PlanDim'], 'CellDim': ['LocalityDim'],\n        'LocalityDim': ['CityDim'], 'PlanDim': ['CategoryDim']}          # parent -> children (foreign-key links)\nstar = {'CallFact': ['DateDim', 'CellStar', 'PlanStar']}\ndef joins(fk, needed):\n    parent = {c: p for p, cs in fk.items() for c in cs}\n    used = {'CallFact'}\n    for t in needed:                                                       # walk each needed table back to the fact table\n        while t not in used:\n            used.add(t); t = parent[t]\n    return len(used) - 1\nprint(joins(snow, ['DateDim', 'CityDim', 'CategoryDim']), joins(star, ['DateDim', 'CellStar', 'PlanStar']))   # 6 3",
-      "notes": ""
+      "checkCode": "# own check: minimum tables = Steiner tree in the foreign-key graph, joins = tables - 1 (networkx)\nimport networkx as nx\nfrom networkx.algorithms.approximation import steiner_tree\ndef min_joins(fk_edges, terminals):\n    G = nx.Graph(fk_edges)\n    T = steiner_tree(G, terminals)                 # the FK graph is a tree, so the Steiner tree is exact\n    return T.number_of_nodes() - 1, sorted(T.nodes)\nsnow = [('CallFact','DateDim'), ('CallFact','CellDim'), ('CellDim','LocalityDim'), ('LocalityDim','CityDim'),\n        ('CallFact','PlanDim'), ('PlanDim','CategoryDim')]\nstar = [('CallFact','DateDim'), ('CallFact','CellStar'), ('CallFact','PlanStar')]\n# attributes needed: charge (CallFact), quarter (DateDim), state_name, category_name\nprint(min_joins(snow, ['CallFact', 'DateDim', 'CityDim', 'CategoryDim']))    # (6, 7 tables)\nprint(min_joins(star, ['CallFact', 'DateDim', 'CellStar', 'PlanStar']))      # (3, 4 tables) -> option D: 6 and 3",
+      "notes": "Blind solve: the query needs charge (CallFact), quarter (DateDim), state_name (CityDim / CellStar) and category_name (CategoryDim / PlanStar). Snowflake must join CallFact, DateDim, CellDim, LocalityDim, CityDim, PlanDim, CategoryDim = 7 tables = 6 joins; star joins CallFact, DateDim, CellStar, PlanStar = 4 tables = 3 joins. The foreign-key graph is a tree, so the table set is forced; own networkx Steiner-tree check agrees (6 and 3). The stem fixes the counting convention (each binary join counts one). Distractors reproduced (7 and 4 = table counts; 3 and 3 = skipping intermediate tables; 5 and 2 = omitting DateDim). No fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "3b3f0a0ea6b54d3a",
+        "verification": "b9ce726956c74f71"
+      }
     }
   },
   {
@@ -664,7 +856,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (determinant of a structured matrix) needing a cofactor recurrence with a non-symmetric off-diagonal product carried over five steps; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (determinant of a structured matrix) needing a cofactor recurrence with a non-symmetric off-diagonal product carried over five steps; about 3 minutes.",
     "estimatedTimeSec": 170,
     "concept": "Determinant of a tridiagonal matrix by cofactor expansion: $D_n=a\\,D_{n-1}-bc\\,D_{n-2}$, where $b$ and $c$ are the paired super- and sub-diagonal entries.",
     "conceptIds": [],
@@ -697,12 +889,36 @@
       "commonTrap": "Using the wrong coefficient in the recurrence: the correction term is the product of the paired off-diagonal entries ($1\\times 3=3$), not $1$ or $9$. Multiplying the diagonal entries ($4^5=1024$) is only valid for triangular matrices."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "364",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np, sympy as sp\nT = sp.zeros(5, 5)\nfor i in range(5):\n    T[i, i] = 4\n    if i < 4: T[i, i + 1] = 1; T[i + 1, i] = 3\nD = [1, 4]\nfor n in range(2, 6): D.append(4 * D[-1] - 3 * D[-2])\nprint(T.det(), D, round(np.linalg.det(np.array(T.tolist(), dtype=float))))   # 364 [1, 4, 13, 40, 121, 364] 364",
-      "notes": ""
+      "checkCode": "# own check: exact determinant with sympy, Laplace expansion by hand-coded recursion, and numpy\nimport sympy as sp, numpy as np\nM = [[4,1,0,0,0],[3,4,1,0,0],[0,3,4,1,0],[0,0,3,4,1],[0,0,0,3,4]]\ndef det(A):                                        # cofactor expansion along the first row\n    if len(A) == 1: return A[0][0]\n    return sum((-1) ** j * A[0][j] * det([r[:j] + r[j+1:] for r in A[1:]]) for j in range(len(A)) if A[0][j])\nprint(det(M), sp.Matrix(M).det(), round(np.linalg.det(np.array(M, float))))   # 364 364 364\nprint([det([r[:k] for r in M[:k]]) for k in range(1, 6)])                    # leading minors 4 13 40 121 364",
+      "notes": "Blind solve: expanding a tridiagonal determinant gives D_n = 4 D_{n-1} - (1)(3) D_{n-2}, with D_0=1, D_1=4: 13, 40, 121, 364 (closed form (3^{n+1}-1)/2). Own cofactor-expansion recursion, sympy exact determinant and numpy agree on 364. Exact integer answer, so the degenerate NAT range [364, 364] is appropriate. Key, steps and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "7aad9a8fa5ec8215",
+        "verification": "ab0f075a68bfd089"
+      }
     }
   },
   {
@@ -720,7 +936,7 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD \u2014 several linked concepts (a null space as an orthogonal complement, projection through a non-orthogonal basis using normal equations, Pythagoras) with a lengthy exact computation and a likely trap of treating the two rows as orthogonal; about 4 minutes.",
+    "difficultyRationale": "Platform-estimated: HARD — several linked concepts (a null space as an orthogonal complement, projection through a non-orthogonal basis using normal equations, Pythagoras) with a lengthy exact computation and a likely trap of treating the two rows as orthogonal; about 4 minutes.",
     "estimatedTimeSec": 260,
     "concept": "Orthogonal projection onto a subspace given by linear constraints: $W=(\\text{row space})^{\\perp}$, so $P_W\\mathbf b=\\mathbf b-P_{\\text{row}}\\mathbf b$, and the projection onto a non-orthogonal basis needs the normal equations.",
     "conceptIds": [],
@@ -794,12 +1010,36 @@
       "commonTrap": "Adding the projections onto the two constraint vectors separately even though they are not orthogonal (this gives $51$), or reporting the squared distance to $W$ ($54$) instead of the squared length of the projection onto $W$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "6 (A)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A: 6",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nM = sp.Matrix([[1, 1, 1, 1], [1, 2, 3, 4]]); b = sp.Matrix([3, 1, 5, 5])\nPR = M.T * (M * M.T).inv() * M                  # projection onto the row space (= W perp)\npw = b - PR * b\nprint(pw.T, pw.dot(pw), (M * pw).T)              # (1, -2, 1, 0)  6  (0, 0)\nN = sp.Matrix.hstack(*M.nullspace()); PW = N * (N.T * N).inv() * N.T   # direct projection onto W\nprint((PW * b).dot(PW * b), b.dot(b), (PR * b).dot(PR * b))            # 6 60 54",
-      "notes": ""
+      "checkCode": "# own check: null-space basis -> Gram matrix projection, then a least-squares / orthogonality cross-check\nimport sympy as sp, numpy as np\nA = sp.Matrix([[1, 1, 1, 1], [1, 2, 3, 4]]); b = sp.Matrix([3, 1, 5, 5])\nN = sp.Matrix.hstack(*A.nullspace())               # basis of W (not orthonormal)\npw = N * (N.T * N).inv() * N.T * b\nprint(pw.T, pw.dot(pw), (A * pw).T)                # (1, -2, 1, 0)  6  (0, 0)\n# cross-check: distance from b to the row space equals ||P_W b||; ||b||^2 - ||P_row b||^2\nR = np.array(A.tolist(), float).T\nc, *_ = np.linalg.lstsq(R, np.array(b.tolist(), float).ravel(), rcond=None)\nres = np.array(b.tolist(), float).ravel() - R @ c\nprint(round(float(res @ res), 6), 60 - round(float((R @ c) @ (R @ c)), 6))   # 6.0 6.0\nprint({k: v for k, v in {'A': 6, 'B': 11, 'C': 51, 'D': 54}.items() if v == pw.dot(pw)})   # {'A': 6}",
+      "notes": "Blind solve: W is the orthogonal complement of the row space R=span{(1,1,1,1),(1,2,3,4)}; P_R b = (2,3,4,5), so P_W b = (1,-2,1,0), which satisfies both constraints, and ||P_W b||^2 = 6 = 60 - 54. Own null-space/Gram-matrix projection, plus a least-squares residual cross-check, agree. Distractors reproduced (11 = 60 - 14^2/4 removing only r1; 51 = subtracting the two non-orthogonal projections separately; 54 = distance to W instead of projection norm). Key, steps, verdicts, HARD label (multi-concept, 4+ min computation, likely trap) and blueprint slot checked; no fix needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "5325869f944650ed",
+        "verification": "5e3bbacaf122c078"
+      }
     }
   }
 ]

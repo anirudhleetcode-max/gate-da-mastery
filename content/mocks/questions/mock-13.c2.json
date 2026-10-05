@@ -59,7 +59,7 @@
         },
         {
           "title": "Compare with single linkage",
-          "body": "Single linkage would use the *smallest* pairwise dissimilarity: $d(C,\\{D,E\\})=\\min(4,7)=4<d(C,\\{A,B\\})=\\min(6,5)=5$, so $C$ would join $\\{D,E\\}$ instead. Complete linkage penalises $C$'s far member $E$ (distance 7) and $A$ (distance 6) differently, which changes the decision. The correct choice is **(C)**."
+          "body": "Single linkage would use the *smallest* pairwise dissimilarity: $d(C,\\{D,E\\})=\\min(4,7)=4<d(C,\\{A,B\\})=\\min(6,5)=5$, so $C$ would join $\\{D,E\\}$ instead. Complete linkage instead charges $C$ the dissimilarity to the *farthest* member of the other cluster: $7$ (to $E$) for $\\{D,E\\}$ against $6$ (to $A$) for $\\{A,B\\}$. This reverses the single-linkage decision, so $C$ joins $\\{A,B\\}$. The correct choice is **(C)**."
         }
       ],
       "finalAnswer": "**(C)**",
@@ -89,11 +89,35 @@
     },
     "answerVerification": {
       "status": "VERIFIED",
-      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "C: C is merged with {A, B} at distance 6",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom scipy.cluster.hierarchy import linkage\nfrom scipy.spatial.distance import squareform\nD=np.array([[0,2,6,9,10],[2,0,5,8,9],[6,5,0,4,7],[9,8,4,0,3],[10,9,7,3,0]],float)\nprint(linkage(squareform(D),'complete'))  # rows: merged ids, height, size; ids 5,6,7 = new clusters\n# expected: (0,1)@2 -> id5={A,B}; (3,4)@3 -> id6={D,E}; (2,5)@6 -> C joins {A,B}; (6,7)@10\n",
-      "notes": "Blind solve (merges A-B@2, D-E@3, then C joins {A,B}@6) matches the key. scipy complete-linkage confirms the merge order and heights. Audited: steps, all four option verdicts, difficulty (MODERATE, about 1.7 min) and blueprint slot. No changes."
+      "checkCode": "# own implementation of complete-linkage agglomeration (no library), cross-checked with scipy\nimport numpy as np\nfrom itertools import combinations\nD = np.array([[0,2,6,9,10],[2,0,5,8,9],[6,5,0,4,7],[9,8,4,0,3],[10,9,7,3,0]], float)\nnames = \"ABCDE\"\nclusters = [frozenset([i]) for i in range(5)]\ndef cd(X, Y, agg): return agg(D[i, j] for i in X for j in Y)\ndef run(agg):\n    cl, merges = list(clusters), []\n    while len(cl) > 1:\n        X, Y = min(combinations(cl, 2), key=lambda p: cd(p[0], p[1], agg))\n        merges.append((\"\".join(names[i] for i in sorted(X)), \"\".join(names[i] for i in sorted(Y)), cd(X, Y, agg)))\n        cl = [c for c in cl if c not in (X, Y)] + [X | Y]\n    return merges\nprint(\"complete:\", run(max))   # third merge: ('C', 'AB', 6) -> option (C)\nprint(\"single  :\", run(min))   # third merge: ('C', 'DE', 4) -> the distractor in option (B)\nfrom scipy.cluster.hierarchy import linkage\nfrom scipy.spatial.distance import squareform\nprint(linkage(squareform(D), \"complete\")[:, 2])  # heights 2, 3, 6, 10\n",
+      "notes": "Blind re-solve (merges A-B@2, D-E@3; then d(AB,C)=6 < d(C,DE)=7 < d(AB,DE)=10, so C joins {A,B} at 6; no ties, merge order unique) matches the key. Own from-scratch complete-linkage implementation and scipy agree (heights 2, 3, 6, 10); a single-linkage run reproduces distractor B (C joins {D,E} at 4). Disclosure: this verifier had inadvertently seen the previous verification record's answer for this item before solving, so blindness is weaker here; the computation is short and was redone independently by hand and in code. Fixed: the single-linkage comparison step described 'C's far member E' although C is a single point; reworded to say complete linkage charges C the distance to the farthest member of the other cluster (7 to E vs 6 to A). Stem, options and key unchanged."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e6a3e61a9477851d",
+        "verification": "c2ccc670c0db8323"
+      }
     }
   },
   {
@@ -189,8 +213,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "B: 2/3",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols('x'); h=sp.Rational(1,2)\nc=1/(sp.integrate(-x,(x,-1,0))+sp.integrate(x,(x,0,2)))\nnum=c*sp.integrate(x,(x,1,2))\nden=c*(sp.integrate(-x,(x,-1,-h))+sp.integrate(x,(x,h,2)))\nprint(c,num,den,num/den)  # 2/5 3/5 9/10 2/3\n# distractors: c=1/2 wrong constant -> (3/4)/(7/8)=6/7 ; dropping left tail -> (3/5)/(3/4)=4/5\n",
-      "notes": "Blind solve (c=2/5, P(X>1)=3/5, P(X^2>1/4)=9/10, ratio 2/3) matches the key; sympy confirms. Key, stem and options unchanged. Fixed the option D explanation: it attributed 6/7 to normalising over [0,2] only, but that route gives 4/5 (option C); 6/7 actually arises from the wrong constant c=1/2 used in an otherwise correct calculation, and the explanation now shows this."
+      "checkCode": "import sympy as sp\nx = sp.symbols(\"x\", real=True)\nc = 1 / (sp.integrate(-x, (x, -1, 0)) + sp.integrate(x, (x, 0, 2)))\npdf = lambda lo, hi: sp.integrate(c * (-x if hi <= 0 else x), (x, lo, hi))   # |x| split at 0\nh = sp.Rational(1, 2)\nnum = pdf(1, 2)                                   # {X>1} is inside {X^2>1/4}\nden = pdf(-1, -h) + pdf(h, 2)                     # |X|>1/2 : both tails\nprint(c, num, den, num / den)                     # 2/5 3/5 9/10 2/3 -> option (B)\nprint(\"drop left tail:\", num / pdf(h, 2), \" c=1/2 slip:\", sp.Rational(3, 4) / sp.Rational(7, 8))  # 4/5, 6/7 (options C, D)\n",
+      "notes": "Blind solve (c=2/5; P(X>1)=3/5; P(X^2>1/4)=P(|X|>1/2)=9/10; ratio 2/3) matches the key; sympy confirms. Distractors reproduced: 3/5 unconditional, 4/5 left tail dropped, 6/7 from the wrong constant c=1/2. Correction retained from the earlier verification pass: the option D explanation had attributed 6/7 to normalising over [0,2] only (that route gives 4/5, option C); 6/7 actually comes from c=1/2 used in an otherwise correct calculation, (3/4)/(7/8). I re-checked this wording and found it correct. Audited steps, option verdicts, HARD label (several linked concepts, two-tail case analysis, likely trap, about 3 min; matches the blueprint slot) and estimated time. No further changes by this verifier; stem, options and key are unchanged."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "ac1aa9a348d446f7",
+        "verification": "1c9dab3b7894b7e7"
+      }
     }
   },
   {
@@ -286,8 +334,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A: (40.09, 44.91)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nfrom scipy import stats\na=np.array([41,45,38,44,47,40,43,42.]);n=len(a);m=a.mean();s=a.std(ddof=1);se=s/np.sqrt(n)\nfor t in (2.365, stats.t.ppf(0.975,n-1)):\n    print(round(m-t*se,2),round(m+t*se,2))   # (40.09, 44.91) for both the table value and the exact quantile\nprint('z:',round(m-1.96*se,2),round(m+1.96*se,2),' ddof=0:',round(m-2.365*a.std()/np.sqrt(n),2),round(m+2.365*a.std()/np.sqrt(n),2),' no sqrt(n):',round(m-2.365*s,2),round(m+2.365*s,2))\n",
-      "notes": "Blind solve (mean 42.5, sum of squares 58, s=2.8785, t7=2.365, margin 2.407) matches the key. Endpoints round to (40.09, 44.91) with both the tabulated t and the exact quantile, so the rounding is robust. Distractor intervals B (z=1.96), C (divisor n) and D (no sqrt(n)) reproduced. No changes."
+      "checkCode": "import numpy as np\nfrom scipy import stats\na = np.array([41, 45, 38, 44, 47, 40, 43, 42.]); n = len(a)\nm, s = a.mean(), a.std(ddof=1); se = s / np.sqrt(n)\nfor t in (2.365, stats.t.ppf(0.975, n - 1)):      # tabulated and exact critical value\n    print(round(m - t * se, 2), round(m + t * se, 2))   # 40.09 44.91 -> option (A) either way\nprint(\"sum sq dev\", ((a - m) ** 2).sum(), \"s\", s)\nprint(\"z=1.96:\", round(m - 1.96 * se, 2), round(m + 1.96 * se, 2))                    # option (B)\nprint(\"ddof=0:\", round(m - 2.365 * a.std() / np.sqrt(n), 2), round(m + 2.365 * a.std() / np.sqrt(n), 2))  # option (C)\nprint(\"no sqrt(n):\", round(m - 2.365 * s, 2), round(m + 2.365 * s, 2))                # option (D)\n",
+      "notes": "Blind solve (mean 42.5, sum of squared deviations 58, s=2.8785, t7=2.365, SE=1.0177, margin 2.407) matches the key. Endpoints round to (40.09, 44.91) with both the tabulated t and the exact quantile (40.0935, 44.9065), so the rounding is robust. Distractors B (z=1.96), C (divisor n) and D (no division by sqrt(n)) reproduced. Audited steps, verdicts, MODERATE label and subject/topic. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "394842af06b3cd42",
+        "verification": "7728c97e381de39a"
+      }
     }
   },
   {
@@ -388,8 +460,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C, D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nS=np.array([[5,2,0],[2,2,0],[0,0,3]],float)\nw,V=np.linalg.eigh(S); o=np.argsort(w)[::-1]; w=w[o]; V=V[:,o]\nprint(w, (w.cumsum()/w.sum()))          # [6 3 1] , [0.6 0.9 1.0]\nprint(np.round(V.T,3))                   # PC1 ∝ (2,1,0), PC2 = e3, PC3 ∝ (1,-2,0)\nu=np.array([1,-2,0])/np.sqrt(5); print(u@S@u)   # 1.0\n",
-      "notes": "Blind solve (eigenvalues 6, 3, 1; PC1 along (2,1,0); PC2 = e3; 90% for two components; variance along (1,-2,0)/sqrt5 equals 1) matches the key A, C, D. numpy eigh confirms. Unique eigenvalues, so directions are unambiguous. No changes."
+      "checkCode": "import numpy as np\nS = np.array([[5, 2, 0], [2, 2, 0], [0, 0, 3]], float)\nw, V = np.linalg.eigh(S); o = np.argsort(w)[::-1]; w, V = w[o], V[:, o]\nprint(\"eigenvalues\", w, \"cumulative\", np.cumsum(w) / w.sum())   # [6 3 1], [0.6 0.9 1.0]\nunit = lambda v: np.array(v, float) / np.linalg.norm(v)\nparallel = lambda a, b: abs(abs(unit(a) @ unit(b)) - 1) < 1e-9\nprint(\"A:\", parallel(V[:, 0], [2, 1, 0]))                          # True\nprint(\"B:\", parallel(V[:, 1], [1, -2, 0]))                         # False (PC2 is e3)\nprint(\"C:\", np.isclose((w[0] + w[1]) / w.sum(), 0.9))               # True\nu = unit([1, -2, 0]); print(\"D:\", np.isclose(u @ S @ u, 1.0))       # True\n",
+      "notes": "Blind solve (block-diagonal Sigma: eigenvalues 6, 3, 1 with eigenvectors (2,1,0), e3, (1,-2,0); 90% for two components; variance along (1,-2,0)/sqrt5 equals 1) matches the key A, C, D. numpy eigh confirms each statement; eigenvalues are distinct so directions are unambiguous. B is the PC3 direction, not PC2. Audited steps, verdicts, difficulty and slot. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "fabe55ddecb25e6a",
+        "verification": "8d54b4c201c73482"
+      }
     }
   },
   {
@@ -481,8 +577,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D: 2 21",
       "agreesWithKey": true,
-      "checkCode": "def probe(a,key):\n    steps=0\n    for x in a:\n        steps+=1\n        if x==key: return True,steps\n        if x>key: break\n    return False,steps\na=[3,8,12,15,21,27,30]\nres=[probe(a,k) for k in [12,10,30,1,40]]\nprint(res, sum(f for f,_ in res), sum(s for _,s in res))  # hits 2, total 21\n",
-      "notes": "Blind trace gives (True,3), (False,3), (True,7), (False,1), (False,7): output 2 21. Executing the program confirms. Distractor arithmetic (31, 19, hits 4) reproduced. No changes."
+      "checkCode": "def probe(a, key):\n    steps = 0\n    for x in a:\n        steps += 1\n        if x == key:\n            return True, steps\n        if x > key:\n            break\n    return False, steps\n\na = [3, 8, 12, 15, 21, 27, 30]\nhits = total = 0\nfor key in [12, 10, 30, 1, 40]:\n    found, s = probe(a, key)\n    print(key, found, s)\n    if found:\n        hits += 1\n    total += s\nprint(hits, total)   # 2 21 -> option (D); distractors: 31 = no early exit, 19 = break element not counted\nprint(3 + 7 + 7 + 7 + 7, 3 + 2 + 7 + 0 + 7)\n",
+      "notes": "Blind trace gives (True,3), (False,3), (True,7), (False,1), (False,7): hits 2, total 21, output '2 21'. Executing the program confirms. Distractors reproduced (31 = no early exit; 19 = break element not counted; hits 4 = early exits counted as hits). Audited steps, verdicts and EASY label. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "55bb4505f69dab0e",
+        "verification": "da66d3cbf4c7e746"
+      }
     }
   },
   {
@@ -542,8 +662,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np, sympy as sp\nA=np.array([[1,2,0,1,3],[0,1,1,2,1],[2,1,-1,0,2],[-1,3,3,5,3]])\nprint(np.linalg.matrix_rank(A), np.linalg.matrix_rank(A.T@A), sp.Matrix(A.tolist()).rank(), (sp.Matrix(A.T@A)).rank())  # 3 3 3 3\n",
-      "notes": "Blind row reduction (row 4 = row 1 + 2 row 2 - row 3) gives rank(A)=3 and rank(A^T A)=3. numpy and exact sympy agree. Integer NAT, so no rounding is needed; range [3,3] is appropriate. No changes."
+      "checkCode": "import numpy as np, sympy as sp\nA = sp.Matrix([[1, 2, 0, 1, 3], [0, 1, 1, 2, 1], [2, 1, -1, 0, 2], [-1, 3, 3, 5, 3]])\nM = A.T * A\nprint(M.shape, A.rank(), M.rank(), np.linalg.matrix_rank(np.array(M.tolist(), float)))   # (5, 5) 3 3 3\nprint(A[0, :] + 2 * A[1, :] - A[2, :] == A[3, :])                                         # True: R4 = R1 + 2R2 - R3\nprint(len(M.nullspace()))                                                                  # nullity 2\n",
+      "notes": "Blind row reduction (R4 = R1 + 2R2 - R3) gives rank(A)=3, hence rank(A^T A)=3 (same null space). Exact sympy rank of A and of the 5x5 M, and numpy, all give 3; nullity of M is 2. Integer NAT, so no rounding is needed; range [3,3] is appropriate. Audited steps (row operations re-checked) and difficulty. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "532b27d574eefbc5",
+        "verification": "fdb7d4cca8bc1bdb"
+      }
     }
   },
   {
@@ -639,8 +783,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A: 0.222",
       "agreesWithKey": true,
-      "checkCode": "# brute-force joint over (F,S,A) with N=1 fixed, independent of the variable-elimination order\nPA={(1,1):.95,(1,0):.8,(0,1):.4,(0,0):.05}\ndef joint(F,S,A):\n    pf=.1 if F else .9; ps=.3 if S else .7\n    pa=PA[F,S] if A else 1-PA[F,S]\n    return pf*ps*pa*(.9 if A else .2)\nnum=sum(joint(1,S,A) for S in (0,1) for A in (0,1))\nden=sum(joint(F,S,A) for F in (0,1) for S in (0,1) for A in (0,1))\nprint(num,den,round(num/den,3))  # 0.07915 0.3568 0.222\n",
-      "notes": "Blind variable elimination (tau2(1)=0.7915, tau2(0)=0.3085) gives 0.07915/0.3568 = 0.2218, which rounds to 0.222. A brute-force joint computation confirms; distractors 0.079, 0.264 and 0.720 reproduced. No changes."
+      "checkCode": "# exact rational arithmetic, enumerating the full joint (independent of the elimination order)\nfrom fractions import Fraction as Fr\nfrom itertools import product\nPF, PS = Fr(1, 10), Fr(3, 10)\nPA = {(1, 1): Fr(95, 100), (1, 0): Fr(80, 100), (0, 1): Fr(40, 100), (0, 0): Fr(5, 100)}\nPN = {1: Fr(9, 10), 0: Fr(2, 10)}\ndef joint(f, s, a, n):\n    pa = PA[f, s] if a else 1 - PA[f, s]\n    pn = PN[a] if n else 1 - PN[a]\n    return (PF if f else 1 - PF) * (PS if s else 1 - PS) * pa * pn\nnum = sum(joint(1, s, a, 1) for s, a in product((0, 1), repeat=2))\nden = sum(joint(f, s, a, 1) for f, s, a in product((0, 1), repeat=3))\nprint(float(num), float(den), round(float(num / den), 3))   # 0.07915 0.3568 0.222 -> option (A)\n# the elimination route: tau1(F,S) = sum_A P(A|F,S) P(N=1|A); tau2(F) = sum_S P(S) tau1(F,S)\ntau1 = {(f, s): sum((PA[f, s] if a else 1 - PA[f, s]) * PN[a] for a in (0, 1)) for f in (0, 1) for s in (0, 1)}\ntau2 = {f: sum((PS if s else 1 - PS) * tau1[f, s] for s in (0, 1)) for f in (0, 1)}\nprint(float(tau2[1]), float(tau2[0]))                        # 0.7915 0.3085\n",
+      "notes": "Blind variable elimination (tau1(F,S)=0.2+0.7P(A=1|F,S); tau2(1)=0.7915, tau2(0)=0.3085) gives 0.07915/0.3568 = 0.2218, which rounds to 0.222 (not near a rounding boundary). Exact-fraction enumeration of the full joint agrees; distractors 0.079 (unnormalised), 0.264 (S fixed to 0) and 0.720 (prior omitted) reproduced. Audited steps, verdicts and difficulty. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "ea42bf78effccc9d",
+        "verification": "df3e3e6b85a2623a"
+      }
     }
   },
   {
@@ -699,8 +867,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "215",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nfrom math import comb\nprint(sum(1 for c in combinations(range(11),4) if sum(i>=6 for i in c)>=2), comb(11,4)-comb(6,4)-5*comb(6,3))  # 215 215\n",
-      "notes": "Blind case split 150+60+5 = 215 and the complement 330-15-100 = 215 both match the key; exhaustive enumeration of all 330 sets confirms. Integer NAT, range [215,215] is appropriate. No changes."
+      "checkCode": "from itertools import combinations\nfrom math import comb\ntests = [(\"U\", i) for i in range(6)] + [(\"I\", i) for i in range(5)]\nprint(sum(1 for c in combinations(tests, 4) if sum(t[0] == \"I\" for t in c) >= 2))   # 215 by brute force\nprint(comb(5, 2) * comb(6, 2) + comb(5, 3) * comb(6, 1) + comb(5, 4), comb(11, 4) - comb(6, 4) - 5 * comb(6, 3))  # 215 215\n",
+      "notes": "Blind case split 150+60+5 = 215 and the complement 330-15-100 = 215 match the key; brute-force enumeration of all 330 four-test sets confirms. Integer NAT, range [215,215] is appropriate. Audited the trap (C(5,2)C(9,2)=360 overcounts) and EASY label. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f84992c04fd196e4",
+        "verification": "a7563e7607e0067d"
+      }
     }
   },
   {
@@ -759,8 +951,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "-2",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA=sp.Matrix([[2,4,-2],[6,13,-3],[-4,-6,9]]); b=sp.Matrix([6,25,0])\nL,U,perm=A.LUdecomposition()\nprint(perm, L.tolist(), U.tolist(), (L*U==A), L.solve(b).T, U.solve(L.solve(b)).T)  # [] ... y=(6,7,-2), x=(3,1,2)\n",
-      "notes": "Blind LU (l21=3, l31=-2, l32=2, U33=-1) and forward substitution give y=(6,7,-2), so y3=-2; sympy LU confirms and back substitution returns x=(3,1,2). L with unit diagonal is unique, so the answer is unambiguous. Integer NAT, range [-2,-2]. No changes."
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 4, -2], [6, 13, -3], [-4, -6, 9]]); b = sp.Matrix([6, 25, 0])\n# Doolittle elimination written out by hand (no pivoting), L has unit diagonal\nn = 3; L = sp.eye(n); U = A.copy()\nfor k in range(n):\n    for i in range(k + 1, n):\n        L[i, k] = U[i, k] / U[k, k]\n        U[i, :] = U[i, :] - L[i, k] * U[k, :]\nprint(L.tolist(), U.tolist(), L * U == A)        # L = [[1,0,0],[3,1,0],[-2,2,1]], U33 = -1\ny = L.solve(b); print(y.T)                        # (6, 7, -2) -> y3 = -2\nprint(U.solve(y).T, A.solve(b).T)                 # x = (3, 1, 2) both ways\n",
+      "notes": "Blind LU (l21=3, l31=-2, l32=2, U33=-1) and forward substitution give y=(6,7,-2), so y3=-2. A hand-written Doolittle elimination and sympy confirm L*U=A; back substitution gives x=(3,1,2) and A*x=b. The unit-diagonal L is unique, so the answer is unambiguous. Integer NAT, range [-2,-2]. Audited steps and difficulty. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "810fe52672a5006e",
+        "verification": "e5b5c3ad6730f824"
+      }
     }
   },
   {
@@ -860,8 +1076,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B, C",
       "agreesWithKey": true,
-      "checkCode": "import datetime as dt\n# (A) weeks (Mon-Sun) are not nested in months, so week->month is not a function\ndays=[dt.date(2026,1,1)+dt.timedelta(i) for i in range(365)]\nwm={}\nfor d in days: wm.setdefault(d-dt.timedelta(d.weekday()),set()).add(d.month)\nprint('weeks spanning 2 months:',sum(len(v)>1 for v in wm.values()))   # >0 => A false\n# (D) two different base cuboids with the same (brand,year,state) roll-up => the coarse cuboid cannot determine the base\nbrand=lambda i:i//3\nbase={(0,0):5,(1,0):5}; alt={(0,0):7,(1,0):3}      # items 0,1 share brand 0\nagg=lambda c:sum(c.values())\nprint(agg(base)==agg(alt) and base!=alt)                             # True => D false\n# (B)/(C): roll-up path item->brand, day->month->quarter->year, store->city->state exists (B true); quarter->month reverses an arrow (drill-down, C true)\n",
-      "notes": "Blind analysis: A false (calendar weeks straddle months, so week->month is not an arrow), B true, C true (quarter->month is a drill-down), D false (a coarse cuboid cannot recover the finer base cells). Matches the key B, C. The Python check confirms that weeks span two months and that different base data give the same coarse cuboid. No changes."
+      "checkCode": "import datetime as dt\n# (A) weeks (Mon-Sun) do not nest inside months -> week->month is not a function -> month totals cannot be formed from week totals\nweeks = {}\nfor i in range(365):\n    d = dt.date(2026, 1, 1) + dt.timedelta(i)\n    weeks.setdefault(d - dt.timedelta(d.weekday()), set()).add(d.month)\nprint(\"weeks touching 2 months:\", sum(len(v) > 1 for v in weeks.values()))   # > 0 -> (A) false\n# hierarchy graph: a target level is computable from a source level iff reachable along the arrows\nedges = {\"item\": [\"brand\"], \"day\": [\"week\", \"month\"], \"month\": [\"quarter\"], \"quarter\": [\"year\"], \"store\": [\"city\"], \"city\": [\"state\"]}\ndef reach(s, t, seen=()):\n    return s == t or any(reach(n, t) for n in edges.get(s, []))\nok = lambda src, dst: all(reach(a, b) for a, b in zip(src, dst))\nprint(\"B:\", ok((\"item\", \"day\", \"store\"), (\"brand\", \"year\", \"state\")))        # True  -> (B) true\nprint(\"A:\", ok((\"brand\", \"week\", \"city\"), (\"brand\", \"month\", \"city\")))       # False -> (A) false\nprint(\"D:\", ok((\"brand\", \"year\", \"state\"), (\"item\", \"day\", \"store\")))        # False -> (D) false\n# (C) quarter -> month goes against the arrow month -> quarter, i.e. toward finer data: a drill-down (C true)\nprint(\"C is drill-down:\", reach(\"month\", \"quarter\") and not reach(\"quarter\", \"month\"))\n# (D) two different base cuboids with the same (brand,year,state) total -> the coarse cuboid cannot determine the base\nbase, alt = {(0, 0): 5, (1, 0): 5}, {(0, 0): 7, (1, 0): 3}\nprint(\"same coarse total, different base:\", sum(base.values()) == sum(alt.values()) and base != alt)\n",
+      "notes": "Blind analysis: A false (Monday-Sunday weeks straddle months, so week->month is not an arrow), B true (item->brand, day->month->quarter->year, store->city->state are all arrow paths), C true (quarter->month reverses an arrow, a drill-down), D false (a coarse cuboid cannot recover the finer base cells). Matches the key B, C. Python check finds 10 calendar weeks in 2026 that span two months, a reachability test over the hierarchy graph gives A False / B True / D False, and a counterexample shows different base data with the same coarse total. Audited steps and verdicts. No changes."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "b5f79a97599d93bd",
+        "verification": "5589c1c549071242"
+      }
     }
   }
 ]

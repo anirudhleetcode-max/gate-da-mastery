@@ -58,8 +58,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "0.84",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\np0, p3 = F(1, 10), F(1, 5)\n# exact search over a, b in steps of 0.01: normalisation and E[X] = 1.6 must both hold\nsols = [(F(i, 100), F(j, 100)) for i in range(101) for j in range(101)\n        if p0 + F(i, 100) + F(j, 100) + p3 == 1 and F(i, 100) + 2 * F(j, 100) + 3 * p3 == F(8, 5)]\nassert len(sols) == 1                      # the linear system is non-singular, so the solution is unique\na, b = sols[0]\np = [p0, a, b, p3]\nEX = sum(k * q for k, q in enumerate(p))\nvar = sum(k * k * q for k, q in enumerate(p)) - EX ** 2\nassert EX == F(8, 5) and all(q >= 0 for q in p)\nprint(a, b, var, round(float(var), 2))     # 2/5 3/10 21/25 0.84",
-      "notes": "Blind solve: normalisation gives a + b = 0.70 and E[X] = 1.6 gives a + 2b = 1.00, so b = 0.30, a = 0.40, E[X^2] = 3.40 and Var(X) = 3.40 - 2.56 = 0.84. Own Python did an exact-fraction search over a, b in steps of 0.01 (unique solution), then computed the variance as 21/25 = 0.84. Audited the five steps, the commonTrap arithmetic (1.6 - 2.56 < 0), the two-decimal rounding statement (0.84 is exact; range 0.83 to 0.85 is sensible), the MODERATE label and the ps-discrete / ps-pmf mapping. No edits required."
+      "checkCode": "import sympy as sp\na, b = sp.symbols('a b')\nR = sp.Rational\ns = sp.solve([R(1, 10) + a + b + R(1, 5) - 1,            # normalisation\n              a + 2*b + 3*R(1, 5) - R(8, 5)], [a, b])   # E[X] = 1.6\np = [R(1, 10), s[a], s[b], R(1, 5)]\nassert all(0 <= q <= 1 for q in p) and sum(p) == 1\nEX = sum(k*q for k, q in enumerate(p)); EX2 = sum(k*k*q for k, q in enumerate(p))\nvar = EX2 - EX**2\nprint(p, EX, EX2, var, round(float(var), 2))             # a = 2/5, b = 3/10, Var = 21/25 = 0.84\nassert round(float(var), 2) == 0.84",
+      "notes": "Blind solve: normalisation gives a + b = 0.70 and E[X] = 1.6 gives a + 2b = 1.00, so b = 0.30, a = 0.40, E[X^2] = 0.40 + 1.20 + 1.80 = 3.40 and Var(X) = 3.40 - 2.56 = 0.84. Own sympy check solved the 2x2 linear system exactly (a = 2/5, b = 3/10, both valid probabilities) and returned Var = 21/25 = 0.84. Audited the five steps, the commonTrap arithmetic, the two-decimal rounding statement in the stem (0.84 is exact; key range 0.83 to 0.85 is sensible), the MODERATE label and the ps-discrete / ps-pmf mapping. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "fa7cfc9390c0bd80",
+        "verification": "68cc4cfd77959e35"
+      }
     }
   },
   {
@@ -135,12 +159,12 @@
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "This says that no book has been borrowed by any member, which is the stronger claim that all books are unborrowed. It fails when one book is unborrowed and another is borrowed, although the statement is then true."
+          "explanation": "This says that no book has been borrowed by any member: a claim about every book, not about some book, and it does not even require a book to exist. It fails when one book is unborrowed and another is borrowed, although the statement is then true."
         },
         {
           "label": "C",
           "verdict": "correct",
-          "explanation": "There is an object that is a book and that every member has not borrowed. This is exactly 'there is a book that no member has borrowed'."
+          "explanation": "There is an object that is a book and that no member has borrowed (for every member $m$, $m$ has not borrowed it). This is exactly 'there is a book that no member has borrowed'."
         },
         {
           "label": "D",
@@ -153,11 +177,35 @@
     },
     "answerVerification": {
       "status": "VERIFIED",
-      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "(C)",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\nN = 3                                              # every object may be a book and/or a member\ndef unborrowed(b, bk, mm, br):                     # no member has borrowed object b\n    return not any(mm[m] and br[m][b] for m in range(N))\ntarget = lambda bk, mm, br: any(bk[b] and unborrowed(b, bk, mm, br) for b in range(N))\nopts = {\n \"A\": lambda bk, mm, br: any((not bk[b]) or unborrowed(b, bk, mm, br) for b in range(N)),\n \"B\": lambda bk, mm, br: not any(bk[b] and mm[m] and br[m][b] for b in range(N) for m in range(N)),\n \"C\": lambda bk, mm, br: any(bk[b] and all((not mm[m]) or (not br[m][b]) for m in range(N)) for b in range(N)),\n \"D\": lambda bk, mm, br: all((not mm[m]) or any(bk[b] and not br[m][b] for b in range(N)) for m in range(N)),\n}\ndiff = dict.fromkeys(opts, 0)\nfor bk in product([0, 1], repeat=N):\n    for mm in product([0, 1], repeat=N):\n        for flat in product([0, 1], repeat=N * N):\n            br = [flat[i * N:(i + 1) * N] for i in range(N)]\n            t = target(bk, mm, br)\n            for k, f in opts.items():\n                diff[k] += f(bk, mm, br) != t\nprint(diff)                                        # only C has zero disagreements\nassert [k for k, v in diff.items() if v == 0] == [\"C\"]",
-      "notes": "Blind solve: the statement needs an existential quantifier with a conjunction, 'exists b (Book(b) and forall m (Member(m) -> not Borrowed(m,b)))', which is (C). (A) is vacuously true for any non-book, (B) asserts that no book at all is borrowed and does not assert that a book exists, (D) says every member skipped some book. Own Python enumerated all 2^15 models on a three-object domain (objects may be books and/or members) against the reference 'some book has no borrowing member': (C) has 0 disagreements, (A) 16120, (B) 10648, (D) 1838. Audited the four option explanations and their counter-models, the EASY label and the ai-logic / ai-predicate mapping. No edits required."
+      "checkCode": "from itertools import product\n# Ground truth: some object is a book and no member has borrowed it.  Enumerate every model on a domain of N objects\n# (each object may be a book and/or a member; Borrowed is any binary relation) and compare each option with the truth.\ndef run(N):\n    objs = range(N)\n    stat = lambda B, M, R: any(B[b] and not any(M[m] and R[m][b] for m in objs) for b in objs)\n    opt = {\n      \"A\": lambda B, M, R: any((not B[b]) or all((not M[m]) or (not R[m][b]) for m in objs) for b in objs),\n      \"B\": lambda B, M, R: not any(B[b] and M[m] and R[m][b] for b in objs for m in objs),\n      \"C\": lambda B, M, R: any(B[b] and all((not M[m]) or (not R[m][b]) for m in objs) for b in objs),\n      \"D\": lambda B, M, R: all((not M[m]) or any(B[b] and not R[m][b] for b in objs) for m in objs),\n    }\n    bad = dict.fromkeys(opt, 0); tot = 0\n    for B in product([0, 1], repeat=N):\n        for M in product([0, 1], repeat=N):\n            for flat in product([0, 1], repeat=N*N):\n                R = [flat[i*N:(i+1)*N] for i in objs]\n                t = stat(B, M, R); tot += 1\n                for k, f in opt.items(): bad[k] += (f(B, M, R) != t)\n    return tot, bad\nfor N in (2, 3):\n    tot, bad = run(N); print(N, tot, bad)\n    assert [k for k, v in bad.items() if v == 0] == [\"C\"]",
+      "notes": "Blind solve: 'exists b (Book(b) and forall m (Member(m) -> not Borrowed(m,b)))' is (C); (A) pairs the existential with an implication and is vacuously true for any non-book; (B) says no book is borrowed at all; (D) says every member skipped some book. Own Python enumerated every model on 2 and on 3 objects (256 and 32768 models; each object may be a book and/or a member, Borrowed arbitrary) against the reference 'some book has no borrowing member': (C) has 0 disagreements; (A), (B), (D) disagree in 16120, 10648 and 1838 models on 3 objects. Fix (wording only; stem, options, key and steps unchanged): the (B) explanation called (B) 'the stronger claim that all books are unborrowed', which is not accurate because (B) is also true in a domain with no books, where the statement is false; it now says (B) is a claim about every book that does not even require a book to exist. The (C) explanation 'every member has not borrowed' was reworded to 'no member has borrowed'. Audited the four steps and counter-models, the EASY label and the ai-logic / ai-predicate mapping."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8b6a6192649d892c",
+        "verification": "7cba95d574d4d4a9"
+      }
     }
   },
   {
@@ -215,8 +263,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "61",
       "agreesWithKey": true,
-      "checkCode": "import math\nn, r, blk = 10000, 70, 512\n# unspanned: greedy packing, a record never crosses a block boundary\nblocks, used = 1, 0\nfor _ in range(n):\n    if used + r > blk:\n        blocks += 1; used = 0\n    used += r\nunspanned = blocks\nspanned = -(-n * r // blk)                          # ceiling of total bytes / block size\nassert unspanned == math.ceil(n / (blk // r)) and spanned == math.ceil(n * r / blk)\nprint(unspanned, spanned, unspanned - spanned)      # 1429 1368 61",
-      "notes": "Blind solve: bfr = floor(512/70) = 7, unspanned blocks = ceil(10000/7) = 1429; spanned blocks = ceil(700000/512) = ceil(1367.19) = 1368; difference 61. Own Python packed the records greedily byte by byte for the unspanned file and used total bytes / block size for the spanned file: 1429, 1368, 61. Audited the four steps (the closing 'about 61 blocks' remark, 1429 x 22 / 512 = 61.4, is only an approximation and is worded as one), the commonTrap (fractional bfr gives 1368 and a difference of 0), the stem's no-header and no-pointer-overhead assumptions, the integer NAT key (61 to 61) and the EASY label. dbw-storage / dbw-file-organization mapping is right. No edits required."
+      "checkCode": "import math\nn, rec, blk = 10_000, 70, 512\n# unspanned: place records one by one, starting a new block whenever the next record does not fit\nblocks, free = 1, blk\nfor _ in range(n):\n    if rec > free: blocks, free = blocks + 1, blk\n    free -= rec\nunspanned = blocks\n# spanned: the file is a plain byte stream cut into 512-byte blocks\nspanned = math.ceil(n*rec / blk)\nprint(blk // rec, unspanned, spanned, unspanned - spanned)     # 7 1429 1368 61\nassert (unspanned, spanned) == (math.ceil(n/(blk//rec)), 1368) and unspanned - spanned == 61",
+      "notes": "Blind solve: bfr = floor(512/70) = 7, unspanned blocks = ceil(10000/7) = 1429; spanned blocks = ceil(700000/512) = ceil(1367.19) = 1368; difference 61. Own Python placed the 10000 records one at a time (new block whenever the next record does not fit) and got 1429, and used total bytes / 512 for the spanned file: 1368, difference 61. Audited the four steps (the closing remark 1429 x 22 / 512 = 61.4 is worded as an approximation), the commonTrap (fractional bfr gives 1368 and difference 0), the stem's no-header / no-pointer-overhead assumptions, the integer NAT key (61 to 61) and the EASY label. dbw-storage / dbw-file-organization mapping is right. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e8d753beead9fdd8",
+        "verification": "a60ba6170c85b192"
+      }
     }
   },
   {
@@ -274,8 +346,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "amp  = [14, 17, 18, 25, 27, 33, 36, 41]\ncond = [\"H\", \"H\", \"W\", \"W\", \"W\", \"H\", \"H\", \"W\"]\nwrong = []\nfor i in range(8):\n    others = sorted((abs(amp[i] - amp[j]), j) for j in range(8) if j != i)   # held-out bearing excluded\n    assert others[0][0] < others[1][0]                                       # unique nearest neighbour\n    if cond[others[0][1]] != cond[i]:\n        wrong.append(i + 1)\nprint(wrong, len(wrong))                                                     # [2, 3, 8] 3",
-      "notes": "Blind solve: nearest neighbours are 14 -> 17 (H, correct), 17 -> 18 (W, wrong), 18 -> 17 (H, wrong), 25 -> 27 (W, correct), 27 -> 25 (W, correct), 33 -> 36 (H, correct), 36 -> 33 (H, correct), 41 -> 36 (H, wrong): 3 errors (bearings 2, 3, 8). Own Python held each bearing out, asserted the nearest neighbour is unique (as the stem states) and counted mismatches: [2, 3, 8]. Audited the four steps, the commonTrap (self as neighbour gives 0), the integer NAT key (3 to 3) and the EASY label (eight direct look-ups on a line). ml-model-selection / ml-cross-validation mapping is right. No edits required."
+      "checkCode": "amp = [14, 17, 18, 25, 27, 33, 36, 41]; cond = \"HHWWWHHW\"\nerrors = []\nfor i, x in enumerate(amp):\n    rest = [(abs(x - y), cond[j]) for j, y in enumerate(amp) if j != i]   # hold bearing i out\n    dist = sorted(d for d, _ in rest)\n    assert dist[0] < dist[1]                                               # nearest neighbour is unique\n    pred = min(rest)[1]\n    if pred != cond[i]: errors.append(i + 1)\nprint(errors, len(errors))                                                 # [2, 3, 8] 3\nassert len(errors) == 3",
+      "notes": "Blind solve: nearest neighbours are 14 -> 17 (H, correct), 17 -> 18 (W, wrong), 18 -> 17 (H, wrong), 25 -> 27 (W, correct), 27 -> 25 (W, correct), 33 -> 36 (H, correct), 36 -> 33 (H, correct), 41 -> 36 (H, wrong): 3 errors (bearings 2, 3, 8). Own Python held each bearing out, asserted that the nearest neighbour is unique (as the stem states) and counted mismatches: [2, 3, 8]. Audited the four steps, the commonTrap (self as neighbour gives 0), the integer NAT key (3 to 3) and the EASY label. ml-model-selection / ml-cross-validation mapping is right. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "2190c99a2923d455",
+        "verification": "1b082dd485add55f"
+      }
     }
   },
   {
@@ -380,8 +476,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(A), (C), (D)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 2, -1], [1, 3, -1], [-1, 2, 2]]); lam = sp.symbols('lam')\nprint(sp.factor(A.charpoly(lam).as_expr()))                    # (lam - 1)*(lam - 3)**2\nv = sp.Matrix([1, 1, 1]); Av = A * v\nsA = Av == 3 * v                                               # (A) eigenvector for lambda = 3\nsB = A.is_diagonalizable() and (A - 3 * sp.eye(3)).nullspace().__len__() == 2   # (B)\nsC = (A ** 3).trace() == 55                                    # (C)\nsD = A.inv().eigenvals() == {sp.Rational(1, 3): 2, 1: 1}       # (D)\nprint(sA, sB, sC, sD, [k for k, t in zip(\"ABCD\", (sA, sB, sC, sD)) if t])   # only A, C, D",
-      "notes": "Blind solve: A(1,1,1) = (3,3,3) so (A) is true; characteristic polynomial (lambda - 1)(lambda - 3)^2 (trace 7, sum of principal minors 15, det 9); rank(A - 3I) = 2 so the eigenvalue 3 has one eigenvector and (B) is false; trace(A^3) = 27 + 27 + 1 = 55 so (C) is true; A^-1 has eigenvalues 1/3, 1/3, 1 so (D) is true. Own sympy check reproduced the factorised polynomial, the eigenvector, a one-dimensional eigenspace for 3, trace(A^3) = 55 and the eigenvalues of the inverse. Audited each step (minor sums and the determinant recomputed), the four option verdicts, the HARD label (four statements to check on a defective matrix) and the la-eigen mapping. No edits required."
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 2, -1], [1, 3, -1], [-1, 2, 2]]); lam = sp.symbols('lam'); I3 = sp.eye(3)\nprint(sp.factor(A.charpoly(lam).as_expr()))                    # (lam - 1)*(lam - 3)**2\nv = sp.Matrix([1, 1, 1])\nsA = sp.simplify(A*v - 3*v) == sp.zeros(3, 1)                  # (A) eigenvector (eigenvalue 3)\nP, J = A.jordan_form()                                         # (B) a 2x2 Jordan block for 3 means defective\nsB = J.is_diagonal()\nsC = (A**3).trace() == 55                                      # (C)\nsD = A.inv().eigenvals() == {sp.Rational(1, 3): 2, 1: 1}       # (D)\nprint(J.tolist(), (A - 3*I3).rank(), sA, sB, sC, sD)           # rank 2 -> geometric multiplicity 1\nassert (sA, sB, sC, sD) == (True, False, True, True)",
+      "notes": "Blind solve: A(1,1,1) = (3,3,3) so (A) is true; characteristic polynomial (lambda - 1)(lambda - 3)^2 (trace 7, principal minors 4 + 3 + 8 = 15, det 9); rank(A - 3I) = 2 so the eigenvalue 3 has one eigenvector and (B) is false; trace(A^3) = 27 + 27 + 1 = 55 so (C) is true; A^-1 has eigenvalues 1/3, 1/3, 1 so (D) is true. Own sympy check: factorised characteristic polynomial, Jordan form with a 2x2 block for the eigenvalue 3 (not diagonal), rank(A - 3I) = 2, trace(A^3) = 55 and eigenvalues of A^-1 = {1/3 (twice), 1}. Audited each step (minor sums and determinant recomputed), the four option verdicts, the HARD label (four statements on a defective matrix) and the la-eigen mapping. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "260a7db540179444",
+        "verification": "cf754f0e29ebc94d"
+      }
     }
   },
   {
@@ -480,8 +600,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(A), (C)",
       "agreesWithKey": true,
-      "checkCode": "from itertools import product\ndef first_exceeding(vals, limit):\n    for idx, v in enumerate(vals):\n        if v > limit:\n            break\n    else:\n        return -1\n    return idx\nsA = first_exceeding([3, 8, 5, 11], 6) == 1\nsB = first_exceeding([3, 8, 5, 11], 11) == 3\ntry:\n    sC = first_exceeding([], 0) == -1\nexcept Exception:\n    sC = False\n# (D): exhaustive search over short lists for a counter-example\ncex = [(list(v), lim) for n in range(1, 4) for v in product(range(4), repeat=n) for lim in range(4)\n       if v[-1] > lim and first_exceeding(list(v), lim) != len(v) - 1]\nsD = not cex\nprint(sA, sB, sC, sD, cex[:1])                                  # True False True False",
-      "notes": "Blind solve: the else clause of the for loop runs only when no break occurs; (A) breaks at index 1 and returns 1 (true); (B) no element exceeds 11, so -1 not 3 (false); (C) the empty list skips the body and the else returns -1 with no exception (true); (D) the function returns the first exceeding index, e.g. [1, 1] with limit 0 returns 0 not 1 (false). Own Python ran the function on all four statements and searched every list of length 1 to 3 over values 0 to 3 for counter-examples to (D). Audited the four steps, the option verdicts, the commonTrap (idx unbound for [] does not occur), the MODERATE label and the pdsa-python mapping. No edits required."
+      "checkCode": "from itertools import product\ndef first_exceeding(vals, limit):\n    for idx, v in enumerate(vals):\n        if v > limit:\n            break\n    else:\n        return -1\n    return idx\nsA = first_exceeding([3, 8, 5, 11], 6) == 1\nsB = first_exceeding([3, 8, 5, 11], 11) == 3\ntry: sC = first_exceeding([], 0) == -1\nexcept Exception: sC = False\n# (D) must hold for EVERY non-empty list whose last element exceeds limit: search for a counter-example\ncex = next(((list(v), lim) for n in range(1, 5) for v in product(range(4), repeat=n) for lim in range(-1, 4)\n            if v[-1] > lim and first_exceeding(list(v), lim) != len(v) - 1), None)\nsD = cex is None\nprint(sA, sB, sC, sD, cex)                                     # True False True False ([0, 0], -1)\nassert (sA, sB, sC, sD) == (True, False, True, False)",
+      "notes": "Blind solve: the else clause of a for loop runs only if no break occurs; (A) breaks at index 1 and returns 1 (true); (B) no element exceeds 11, so -1 and not 3 (false); (C) the empty list skips the body and the else returns -1 with no exception (true); (D) the function returns the first exceeding index, not the last (false). Own Python ran the function on the four statements and searched every list of length 1 to 4 over values 0 to 3 for a counter-example to (D): [0, 0] with limit -1 returns 0, not 1. Audited the four steps, the option verdicts, the commonTrap (idx is never read for [] so no UnboundLocalError), the MODERATE label and the pdsa-python mapping. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "fcaadf850d792e0b",
+        "verification": "0514e5e17c9eddb4"
+      }
     }
   },
   {
@@ -578,8 +722,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(D) 24",
       "agreesWithKey": true,
-      "checkCode": "class Stack:\n    def __init__(self, log): self.a, self.log = [], log\n    def push(self, x): self.a.append(x); self.log.append(\"push\")\n    def pop(self): self.log.append(\"pop\"); return self.a.pop()\n    def empty(self): return not self.a\nlog = []; s1, s2 = Stack(log), Stack(log)\ndef enqueue(x): s1.push(x)\ndef dequeue():\n    if s2.empty():\n        while not s1.empty(): s2.push(s1.pop())\n    return s2.pop()\nout = []\nfor op in [\"e10\", \"e20\", \"e30\", \"d\", \"e40\", \"d\", \"d\", \"e50\", \"d\", \"d\", \"e60\", \"d\"]:\n    if op[0] == \"e\": enqueue(int(op[1:]))\n    else: out.append(dequeue())\nassert out == [10, 20, 30, 40, 50, 60]                          # FIFO order, no dequeue on an empty queue\nprint(len(log), log.count(\"push\"), log.count(\"pop\"))            # 24 12 12",
-      "notes": "Blind solve: every one of the six elements is pushed on S1, popped from S1, pushed on S2 and popped from S2 exactly once (all six enqueued values are dequeued, each transfer moves all of S1 and only when S2 is empty), so 6 x 4 = 24; traced call by call as 3, 7, 1, 1, 1, 1, 5, 1, 1, 3 = 24. Own Python implemented counting stacks (12 pushes, 12 pops), and confirmed the dequeue order 10, 20, 30, 40, 50, 60 with no dequeue on an empty queue. Audited the step costs, the four distractor explanations (12 omits transfers, 18 counts a move as one operation, 21 drops the three transfer-triggering pops), the MODERATE label and the pdsa-queues mapping. No edits required."
+      "checkCode": "ops = []\nS1, S2 = [], []\ndef push(s, x): s.append(x); ops.append(\"push\")\ndef pop(s): ops.append(\"pop\"); return s.pop()\ndef enqueue(x): push(S1, x)\ndef dequeue():\n    if not S2:\n        while S1: push(S2, pop(S1))\n    return pop(S2)\nout = []\nfor op in \"e10 e20 e30 d e40 d d e50 d d e60 d\".split():\n    if op[0] == \"e\": enqueue(int(op[1:]))\n    else: out.append(dequeue())\nprint(out, len(ops), ops.count(\"push\"), ops.count(\"pop\"))      # [10..60] 24 12 12\nassert out == [10, 20, 30, 40, 50, 60] and len(ops) == 24 and not S1 and not S2",
+      "notes": "Blind solve: tracing call by call gives 1, 1, 1, 7, 1, 1, 1, 1, 5, 1, 1, 3 = 24 (transfers at the 1st, 4th and 6th dequeue move 3, 2 and 1 elements at 2 operations each, plus one pop per dequeue); equivalently each of the six elements costs push, pop, push, pop = 4. Own Python implemented counting push/pop on both stacks: 24 operations (12 pushes, 12 pops), dequeue order 10, 20, 30, 40, 50, 60, both stacks empty at the end. Audited the step costs, the four option explanations (12 omits the transfers, 18 counts a move as one operation, 21 drops the three transfer-triggering pops), the MODERATE label and the pdsa-queues mapping. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "430988b5bc133d28",
+        "verification": "e1ab1aef9f9e9010"
+      }
     }
   },
   {
@@ -675,8 +843,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(A)",
       "agreesWithKey": true,
-      "checkCode": "# Stevens' scale levels and the weakest level at which each operation is meaningful\nLEVEL = {\"nominal\": 0, \"ordinal\": 1, \"interval\": 2, \"ratio\": 3}\nattr = {\"zone\": \"nominal\",      # codes 1-5 are only labels\n        \"service\": \"ordinal\",   # ordered, spacing undefined\n        \"temp_c\": \"interval\",   # arbitrary zero\n        \"weight_kg\": \"ratio\"}   # true zero\nneeds = {\"mode\": \"nominal\", \"median\": \"ordinal\", \"equal differences\": \"interval\", \"mean\": \"interval\", \"ratio claim\": \"ratio\"}\noptions = {\n \"A\": [(\"temp_c\", \"mean\"), (\"weight_kg\", \"ratio claim\")],\n \"B\": [(\"zone\", \"mean\"), (\"service\", \"mode\")],\n \"C\": [(\"service\", \"median\"), (\"temp_c\", \"ratio claim\")],\n \"D\": [(\"zone\", \"mode\"), (\"service\", \"equal differences\")],\n}\nok = [k for k, ops in options.items() if all(LEVEL[attr[a]] >= LEVEL[needs[o]] for a, o in ops)]\nprint(ok)                                                      # ['A']\nprint(round(303.15 / 288.15, 3))                               # 30 C vs 15 C in kelvin: not a factor of 2",
-      "notes": "Blind solve: zone is nominal, service ordinal, temp_c interval, weight_kg ratio. (A) a mean of an interval attribute and a ratio claim on a ratio attribute are both meaningful; (B) the mean of nominal codes is not; (C) 'twice as warm' in Celsius is not; (D) equal gaps between ordinal levels are not. Own Python encoded the four scale levels and the weakest level each operation needs and returned only A; the kelvin ratio of 30 C to 15 C is about 1.05, as the solution says. Audited the three steps, the four option verdicts (the stem defines the codes as labels and the service levels as ordered only, so there is no second defensible option), the MODERATE label and the dbw-data-transformation / dbw-data-types mapping. No edits required."
+      "checkCode": "import random\n# A claim is meaningful for a measurement scale iff its truth value survives every admissible re-coding of that scale:\n#   nominal: any relabelling   ordinal: any strictly increasing map   interval: x -> a*x + c (a > 0)   ratio: x -> a*x (a > 0)\nrandom.seed(11)\ndef bijection():\n    p = random.sample(range(1, 6), 5); return lambda v: p[v - 1]\ndef increasing():\n    k = random.uniform(1.5, 3); return lambda v: (v + 50)**k\ndef affine():\n    a, c = random.uniform(.5, 3), random.uniform(-50, 50); return lambda v: a*v + c\ndef scaling():\n    a = random.uniform(.3, 4); return lambda v: a*v\nmean   = lambda g: sum(g)/len(g)\nmedian = lambda g: sorted(g)[len(g)//2]                          # odd-length groups\ndef mode(g):                                                     # unique modal value, else None\n    c = sorted(((g.count(v), v) for v in set(g)), reverse=True)\n    return c[0][1] if len(c) == 1 or c[0][0] > c[1][0] else None\ndef meaningful(claim, recode, gen, trials=4000):\n    for _ in range(trials):\n        data = gen(); t = recode()\n        if claim(data) != claim([[t(v) for v in grp] for grp in data]): return False\n    return True\ntwo_groups = lambda lo, hi, real=False: (lambda: [[(random.uniform(lo, hi) if real else random.randint(lo, hi)) for _ in range(7)] for _ in range(2)])\ndef same_mode(d):\n    m = [mode(g) for g in d]\n    return None if None in m else m[0] == m[1]\ndef twice(d):  return abs(d[0][0]/d[1][0] - 2) < 1e-9\ndef gaps(d):   return abs((d[1][0] - d[0][0]) - (d[2][0] - d[1][0])) < 1e-9\ndef pair():    y = random.uniform(1, 40); return [[2*y], [y]]\ndef triple():  x, g = random.uniform(1, 3), random.uniform(1, 3); return [[x], [x + g], [x + 2*g]]\nres = {\n \"mode, nominal\":                  meaningful(same_mode, bijection, two_groups(1, 5)),\n \"mean, nominal\":                  meaningful(lambda d: mean(d[0]) == mean(d[1]), bijection, two_groups(1, 5)),\n \"median, ordinal\":                meaningful(lambda d: median(d[0]) > median(d[1]), increasing, two_groups(1, 3)),\n \"mean, interval (temp_c)\":        meaningful(lambda d: mean(d[0]) > mean(d[1]), affine, two_groups(1, 40, True)),\n \"x is twice y, ratio (kg)\":       meaningful(twice, scaling, pair),\n \"x is twice y, interval (C)\":     meaningful(twice, affine, pair),\n \"equal gaps, ordinal (service)\":  meaningful(gaps, increasing, triple),\n}\nfor k, v in res.items(): print(f\"{k:32s} meaningful = {v}\")\n# options: 'mode of service' is valid on any scale, so only the other claim of B matters\nopts = {\"A\": [\"mean, interval (temp_c)\", \"x is twice y, ratio (kg)\"],\n        \"B\": [\"mean, nominal\"],\n        \"C\": [\"median, ordinal\", \"x is twice y, interval (C)\"],\n        \"D\": [\"mode, nominal\", \"equal gaps, ordinal (service)\"]}\nok = [k for k, cl in opts.items() if all(res[c] for c in cl)]\nprint(ok); assert ok == [\"A\"]",
+      "notes": "Blind solve: zone is nominal, service ordinal, temp_c interval, weight_kg ratio. (A) a mean of an interval attribute and a ratio claim on a ratio attribute are both meaningful; (B) the mean of nominal zone codes is not; (C) 'twice as warm' in Celsius is not; (D) equal gaps between ordinal levels are not, so exactly one option has two meaningful operations. Own Python tested each claim for invariance under the admissible re-codings of its scale (relabelling, increasing maps, affine maps, scalings) with randomised data: mode(nominal), median(ordinal), mean(interval), ratio(ratio) are invariant; mean(nominal), ratio on Celsius and equal gaps on an ordinal scale are not. Only (A) passes. Audited the three steps, the four option verdicts (the stem defines zone codes as labels and service levels as ordered only), the MODERATE label (eight claims to check, within one level of the slot) and the dbw-data-transformation / dbw-data-types mapping. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0ca8399d11c7073e",
+        "verification": "ced3a6e4ce83d2ab"
+      }
     }
   },
   {
@@ -773,8 +965,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(B) y = -x1 + 5 x2 + 7",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nW = np.array([[1., 2.], [3., -1.]]); b = np.array([1., -2.]); v = np.array([2., -1.]); c = 3.\nnet = lambda x: v @ (W @ x + b) + c                              # every activation is the identity\ncands = {\"A\": lambda x: 7 * x[1] + 7, \"B\": lambda x: -x[0] + 5 * x[1] + 7,\n         \"C\": lambda x: -x[0] + 5 * x[1] + 3, \"D\": lambda x: -x[0] + 5 * x[1] + 2}\nX = np.random.default_rng(1).normal(size=(500, 2))\nmatch = [k for k, f in cands.items() if all(np.isclose(net(x), f(x)) for x in X)]\n# affine fit of the network from three probe points: intercept and the two slopes\nb0 = net(np.zeros(2)); w = [net(np.eye(2)[i]) - b0 for i in range(2)]\nprint(match, w, b0)                                              # ['B'] [-1.0, 5.0] 7.0",
-      "notes": "Blind solve: h1 = x1 + 2 x2 + 1, h2 = 3 x1 - x2 - 2, y = 2 h1 - h2 + 3 = -x1 + 5 x2 + 7 (weights W^T v = (-1, 5), bias v^T b + c = 4 + 3 = 7). Own Python evaluated the identity-activation network on 500 random inputs against all four options (only B matches) and recovered the intercept 7 and slopes -1, 5 from three probe points. Audited the derivation, the probe values (6 at (1,0), 12 at (0,1)), the four option analyses (A uses W v = (0, 7), C omits the weighted hidden biases, D adds them unweighted), the MODERATE label and the ml-neural-networks / ml-feedforward mapping. No edits required."
+      "checkCode": "import numpy as np, sympy as sp\nx1, x2 = sp.symbols('x1 x2')\nW = sp.Matrix([[1, 2], [3, -1]]); b = sp.Matrix([1, -2]); v = sp.Matrix([2, -1]); c = 3\nh = W*sp.Matrix([x1, x2]) + b                                  # identity activation on hidden units\ny = sp.expand((v.T*h)[0] + c)                                  # identity activation on the output\nprint(y)                                                       # -x1 + 5*x2 + 7\ncands = {\"A\": 7*x2 + 7, \"B\": -x1 + 5*x2 + 7, \"C\": -x1 + 5*x2 + 3, \"D\": -x1 + 5*x2 + 2}\nmatch = [k for k, f in cands.items() if sp.expand(f - y) == 0]\nprint(match); assert match == [\"B\"]\nWn, bn, vn = (np.array(m.tolist(), float) for m in (W, b, v))\nfor xs in np.random.default_rng(3).normal(size=(5, 2)):        # numeric spot check of the network itself\n    assert np.isclose(vn.ravel() @ (Wn @ xs + bn.ravel()) + c, -xs[0] + 5*xs[1] + 7)",
+      "notes": "Blind solve: h1 = x1 + 2 x2 + 1, h2 = 3 x1 - x2 - 2, y = 2 h1 - h2 + 3 = -x1 + 5 x2 + 7 (weights W^T v = (-1, 5), bias v^T b + c = 4 + 3 = 7). Own sympy check expanded the identity-activation network symbolically to -x1 + 5 x2 + 7 and compared with all four options (only B is identical); a numeric spot check on random inputs agrees. Audited the derivation, the probe values (7 at (0,0), 6 at (1,0), 12 at (0,1)), the four option analyses (A uses W v = (0, 7), C omits the weighted hidden biases, D adds them unweighted), the MODERATE label and the ml-neural-networks / ml-feedforward mapping. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "9f53cdd96610f4d2",
+        "verification": "965fddcfcb256e16"
+      }
     }
   },
   {
@@ -872,8 +1088,32 @@
       "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "(B)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x'); f = x**3 - 6*x**2 + 12*x - 5\nfp = sp.diff(f, x)\nroots = sp.solve(fp, x)                                          # distinct real roots of f'\nsA = len(roots) == 2\nsB = sp.expand(f - ((x - 2)**3 + 3)) == 0 and all(fp.subs(x, t) > 0 for t in [-9, -1, 0, 1, sp.Rational(19, 10), sp.Rational(21, 10), 3, 12])\nleft, right = fp.subs(x, sp.Rational(19, 10)), fp.subs(x, sp.Rational(21, 10))\nsC = (left < 0) and (right > 0)                                  # sign change - to + at x = 2\nsD = (left > 0) and (right < 0)                                  # sign change + to - at x = 2\nprint(sp.factor(fp), roots, sA, sB, sC, sD)                      # 3*(x - 2)**2 [2] False True False False",
-      "notes": "Blind solve: f'(x) = 3(x - 2)^2 >= 0 with a single repeated root at x = 2, f(x) = (x - 2)^3 + 3 is strictly increasing, and f' does not change sign at 2, so there is no local extremum: only (B) is correct (A false: one distinct root; C and D false). Own sympy check factorised f', confirmed f = (x - 2)^3 + 3, positivity of f' at sample points on both sides of 2, and no sign change at x = 2. Audited the four steps, the option verdicts, the EASY label and the co-optimization / co-maxima-minima mapping. An MSQ with exactly one correct option is allowed. No edits required."
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', real=True)\nf = x**3 - 6*x**2 + 12*x - 5\nfp, fpp = sp.diff(f, x), sp.diff(f, x, 2)\nroots = sp.solve(sp.Eq(fp, 0), x)\nsA = len(set(roots)) == 2                                      # (A) two distinct real roots of f'\nsB = sp.simplify(f - ((x - 2)**3 + 3)) == 0 and sp.solveset(fp < 0, x, sp.S.Reals) == sp.S.EmptySet   # (B) f' >= 0 everywhere\nxs = [sp.Rational(k, 20) for k in range(-100, 141)]            # strict monotonicity on a fine grid\nsB = sB and all(f.subs(x, p) < f.subs(x, q) for p, q in zip(xs, xs[1:]))\nlo, hi = fp.subs(x, sp.Rational(19, 10)), fp.subs(x, sp.Rational(21, 10))\nsC = (lo < 0 < hi)                                             # local min needs - to + sign change of f'\nsD = (lo > 0 > hi)                                             # local max needs + to - sign change\nprint(sp.factor(fp), roots, fpp.subs(x, 2), sA, sB, sC, sD)    # 3*(x - 2)**2 [2] 0 False True False False\nassert (sA, sB, sC, sD) == (False, True, False, False)",
+      "notes": "Blind solve: f(x) = (x - 2)^3 + 3, f'(x) = 3(x - 2)^2 >= 0 with a single repeated root at x = 2, so f is strictly increasing and x = 2 is an inflection point, not an extremum: only (B) is correct (A false: one distinct root; C and D false). Own sympy check: f' factorises as 3(x - 2)^2 with the single root 2, f = (x - 2)^3 + 3, f' is never negative, f is strictly increasing on a fine grid, f'' (2) = 0 and f' has no sign change at 2. Audited the four steps, the option verdicts, the EASY label and the co-optimization / co-maxima-minima mapping. An MSQ with exactly one correct option is allowed. No edits required."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "b94355bf315610b1",
+        "verification": "9a863952f626bfa0"
+      }
     }
   }
 ]

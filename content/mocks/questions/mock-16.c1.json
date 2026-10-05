@@ -14,7 +14,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (the number and size of the training splits in k-fold versus leave-one-out cross-validation) followed by a two-to-three step cost computation, with tempting shortcuts as distractors; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the number and size of the training splits in k-fold versus leave-one-out cross-validation) followed by a two-to-three step cost computation, with tempting shortcuts as distractors; about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "Computational cost of k-fold versus leave-one-out cross-validation: k fits on (1 - 1/k)n examples versus n fits on n - 1 examples.",
     "conceptIds": [],
@@ -89,12 +89,36 @@
       "commonTrap": "Comparing only the number of fits ($5$) or using a linear cost model ($5.44$); a smaller slip is using $n$ instead of $n-1$ as the LOOCV training size ($6.17$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C (5.93)",
       "agreesWithKey": true,
-      "checkCode": "n, k = 50, 10\ncv = k * (n - n // k) ** 2          # 10 fits, each on 45 examples, cost m^2\nloo = n * (n - 1) ** 2              # 50 fits, each on 49 examples\nprint(cv, loo, round(loo / cv, 2))  # 20250 120050 5.93\n# distractors: fit-count ratio, linear cost, n instead of n-1\nprint(round(n / k, 2), round(n * (n - 1) / (k * (n - n // k)), 2), round(n * n ** 2 / cv, 2))  # 5.0 5.44 6.17",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nn, k = 50, 10\ntr = lambda m: m ** 2                                  # training time ~ m^2\nkfold = sum(tr(n - n // k) for _ in range(k))           # 10 fits on 45 examples\nloo = sum(tr(n - 1) for _ in range(n))                  # 50 fits on 49 examples\nprint(kfold, loo, round(loo / kfold, 2))                # 20250 120050 5.93\n# distractors: A fit-count ratio, B linear cost, D n instead of n-1\nprint(round(n / k, 2), round(n * (n - 1) / (k * (n - n // k)), 2), round(n * n ** 2 / kfold, 2))   # 5.0 5.44 6.17",
+      "notes": "Blind solve (10 fits on 45 examples = 20250 units; 50 fits on 49 = 120050 units; ratio 5.93) matches the key. Distractor values 5.00, 5.44 and 6.17 reproduced from their stated slips. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "845babe6792c8bf2",
+        "verification": "48cafc1451e33288"
+      }
     }
   },
   {
@@ -113,7 +137,7 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (the forward pass through ReLU units, read as a piecewise-linear function) with two to three routine steps per statement over four statements; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the forward pass through ReLU units, read as a piecewise-linear function) with two to three routine steps per statement over four statements; about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "A feed-forward network with ReLU hidden units and a linear output computes a continuous piecewise-linear function of its input; evaluate its pieces, extrema and level sets.",
     "conceptIds": [],
@@ -191,12 +215,36 @@
       "commonTrap": "Dropping the output bias (which gives $f(2.5)=3$ in A) or assuming $y\\ge0$ because the hidden units are ReLUs; the output unit here is linear, so $f$ eventually becomes negative."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B, C",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nrelu = lambda z: max(0.0, z)\nf = lambda x: 2 * relu(x - 1) - 3 * relu(x - 3) + 1\nxs = np.linspace(-10, 20, 300001)\nys = np.array([f(x) for x in xs])\nprint(f(2.5), ys.max(), xs[ys.argmax()])                  # 4.0 5.0 3.0   -> A, B true\ng = np.sign(ys - 3 + 1e-9)\nprint(int((g[:-1] * g[1:] < 0).sum()))                    # 2 solutions of f(x)=3 -> C true\nprint((ys > 0).all(), f(8), f(10))                        # False 0.0 -2.0 -> D false",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nfrom fractions import Fraction as F\nrelu = lambda z: max(F(0), z)\nf = lambda x: 2 * relu(x - 1) - 3 * relu(x - 3) + 1\nxs = [F(i, 8) for i in range(-80, 161)]                 # exact grid on [-10, 20]; breakpoints 1 and 3 lie on it\nprint(f(F(5, 2)), max(f(x) for x in xs), min(f(x) for x in xs))   # 4 5 -12 -> A, B true; D false (f is negative for x > 8)\nsols = set()                                            # f is linear on each piece: solve f(x)=3 exactly\nfor lo, hi, a, b in [(None, 1, 0, 1), (1, 3, 2, -1), (3, None, -1, 8)]:   # f = a*x + b\n    if a != 0:\n        x = F(3 - b, a)\n        if (lo is None or x >= lo) and (hi is None or x <= hi): sols.add(x)\nprint(sorted(sols), f(F(8)), f(F(10)))                  # [2, 5]  0  -2  -> C true (exactly two solutions)",
+      "notes": "Blind solve of the piecewise form (f = 1, 2x-1, 8-x) gives f(2.5)=4, max 5 at x=3, f(x)=3 at x=2 and x=5, f<0 for x>8: A, B, C true, D false. Matches the key. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a20873395ee7345d",
+        "verification": "71728b2fc5fba4b0"
+      }
     }
   },
   {
@@ -215,7 +263,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (one Lloyd iteration of k-means: assign to the nearest centroid, then average) done in a single pass over six points; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (one Lloyd iteration of k-means: assign to the nearest centroid, then average) done in a single pass over six points; about 1.5 minutes.",
     "estimatedTimeSec": 90,
     "concept": "One iteration of k-means: assign every point to its nearest centroid, then recompute each centroid as the mean of its assigned points.",
     "conceptIds": [],
@@ -289,12 +337,36 @@
       "commonTrap": "Averaging the old centroid together with the assigned points (or using medians instead of means) instead of the plain mean of the assigned points."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nP = np.array([(1,2),(2,4),(2,3),(4,5),(8,7),(9,9)], float)\nc = np.array([(1,2),(9,9)], float)\na = ((P[:,None]-c[None])**2).sum(-1).argmin(1)\nnew = np.array([P[a==j].mean(0) for j in range(2)])\nprint(a, new.round(2).tolist())                      # [0 0 0 0 1 1] [[2.25, 3.5], [8.5, 8.0]]\nb = a.copy(); b[3] = 1                               # P4 wrongly sent to cluster 2\nprint(np.array([P[b==j].mean(0) for j in range(2)]).round(2).tolist())          # [[1.67, 3.0], [7.0, 7.0]]\nprint([np.median(P[a==j], axis=0).tolist() for j in range(2)])                  # medians [[2.0, 3.5], [8.5, 8.0]]\nprint([((P[a==j].sum(0)+c[j])/((a==j).sum()+1)).round(2).tolist() for j in range(2)])  # old centroid re-counted",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nP = [(1, 2), (2, 4), (2, 3), (4, 5), (8, 7), (9, 9)]\nC = [(1, 2), (9, 9)]\nd2 = lambda p, c: (p[0] - c[0]) ** 2 + (p[1] - c[1]) ** 2\nasg = [min(range(2), key=lambda j: d2(p, C[j])) for p in P]\nprint(asg)                                              # [0, 0, 0, 0, 1, 1]\nmean = lambda pts: tuple(round(sum(c) / len(pts), 2) for c in zip(*pts))\nprint([mean([p for p, a in zip(P, asg) if a == j]) for j in range(2)])    # [(2.25, 3.5), (8.5, 8.0)] -> B\n# distractors: A = P4 in cluster 2, C = medians, D = old centroid counted as an extra point\nprint(mean(P[:3]), mean(P[3:]))                         # (1.67, 3.0) (7.0, 7.0)\nprint(mean(P[:4] + [C[0]]), mean(P[4:] + [C[1]]))       # (2.0, 3.2) (8.67, 8.33)",
+      "notes": "Blind solve (P1-P4 to c1, P5-P6 to c2; means (2.25, 3.5) and (8.5, 8.0)) matches the key. Distractor values for A (P4 misassigned), C (medians) and D (old centroid recounted) reproduced. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "c003b810f51e5543",
+        "verification": "9711a5634a4c2e3e"
+      }
     }
   },
   {
@@ -312,7 +384,7 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (depth-first search with discovery and finishing timestamps) traced over eight vertices with a back edge, cross edges and a restart; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (depth-first search with discovery and finishing timestamps) traced over eight vertices with a back edge, cross edges and a restart; about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "Depth-first search with discovery/finishing timestamps on a directed graph: already-discovered vertices are skipped and a new search starts from the smallest undiscovered vertex.",
     "conceptIds": [],
@@ -344,12 +416,36 @@
       "commonTrap": "Ticking the clock only at discoveries (which makes vertex $4$ merely the sixth vertex reached), or exploring vertex $5$ again from vertex $4$ although it is already finished, which inflates $f[4]$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "13",
       "agreesWithKey": true,
-      "checkCode": "adj = {1:[2,4], 2:[3,5], 3:[1], 4:[5,6], 5:[3,7], 6:[7], 7:[], 8:[6,7]}\nt = 0; d = {}; f = {}\ndef dfs(u):\n    global t\n    t += 1; d[u] = t\n    for v in adj[u]:\n        if v not in d: dfs(v)\n    t += 1; f[u] = t\nfor u in sorted(adj):\n    if u not in d: dfs(u)\nprint(d, f, f[4])     # f[4] = 13",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): iterative DFS, to avoid sharing code with a recursive trace\nadj = {1: [2, 4], 2: [3, 5], 3: [1], 4: [5, 6], 5: [3, 7], 6: [7], 7: [], 8: [6, 7]}\nd, f, t = {}, {}, 0\nfor root in sorted(adj):\n    if root in d: continue\n    t += 1; d[root] = t\n    stack = [(root, iter(adj[root]))]\n    while stack:\n        u, it = stack[-1]\n        for v in it:\n            if v not in d:\n                t += 1; d[v] = t\n                stack.append((v, iter(adj[v])))\n                break\n        else:\n            t += 1; f[u] = t\n            stack.pop()\nprint(d)                                               # {1: 1, 2: 2, 3: 3, 5: 5, 7: 6, 4: 10, 6: 11, 8: 15}\nprint(f, f[4])                                         # f[4] = 13\nassert sorted(list(d.values()) + list(f.values())) == list(range(1, 17))",
+      "notes": "Blind solve with an independent iterative DFS gives d/f values identical to the solution table; f[4]=13, all 16 clock values used once. Matches the key. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "1d586cf196ee5109",
+        "verification": "574c00f6a2835fc4"
+      }
     }
   },
   {
@@ -367,7 +463,7 @@
     "type": "NAT",
     "marks": 1,
     "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD \u2014 several Python semantics at once (mutable default argument shared across calls, list aliasing, late-binding closures in a comprehension) with two independent likely traps; about 3.5 minutes.",
+    "difficultyRationale": "Platform-estimated: HARD — several Python semantics at once (mutable default argument shared across calls, list aliasing, late-binding closures in a comprehension) with two independent likely traps; about 3.5 minutes.",
     "estimatedTimeSec": 220,
     "concept": "Python semantics: a mutable default argument is created once and shared; aliased lists change together; lambdas in a comprehension capture the variable, not its value at creation time.",
     "conceptIds": [],
@@ -400,15 +496,39 @@
         }
       ],
       "finalAnswer": "**24**",
-      "commonTrap": "Two independent slips: believing each call gets a fresh default list (then `q` has only $2$ elements and the result is $10$), or believing each lambda remembers its own `k` (then the sum is $(1+0)+(1+4)+(1+7)+(1+5)=20$); making both slips gives $6$."
+      "commonTrap": "Three independent slips: believing the default list is created afresh on every call (then `q` is just `[0]`, one lambda, and the result is $1$); forgetting that `p` and `q` are the same list, so `p.extend(r)` leaves `q = [0, 4]` (two lambdas, result $10$); or believing each lambda remembers its own `k` (the sum would be $(1+0)+(1+4)+(1+7)+(1+5)=20$). Combining the last two slips gives $6$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "24",
       "agreesWithKey": true,
-      "checkCode": "def collect(x, bucket=[]):\n    bucket.append(x * len(bucket))\n    return bucket\np = collect(3); q = collect(4); r = collect(5, [7]); p.extend(r)\nfs = [lambda z: z + k for k in q]\nprint(sum(f(1) for f in fs), p is q, q)      # 24 True [0, 4, 7, 5]\n# traps: no shared default -> q=[0,4]; early binding -> defaults capture k\nprint(sum(f(1) for f in [lambda z: z + k for k in [0, 4]]))            # 10\nprint(sum(f(1) for f in [lambda z, k=k: z + k for k in q]))           # 20\nprint(sum(f(1) for f in [lambda z, k=k: z + k for k in [0, 4]]))      # 6",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): run the program as printed, then each wrong-belief variant\ndef collect(x, bucket=[]):\n    bucket.append(x * len(bucket))\n    return bucket\np = collect(3)\nq = collect(4)\nr = collect(5, [7])\np.extend(r)\nfs = [lambda z: z + k for k in q]\nprint(sum(f(1) for f in fs), p is q, q)                # 24 True [0, 4, 7, 5]\n# wrong belief 1: the default list is fresh on every call -> q == [0], one lambda\ndef collect_fresh(x, bucket=None):\n    bucket = [] if bucket is None else bucket\n    bucket.append(x * len(bucket)); return bucket\np2 = collect_fresh(3); q2 = collect_fresh(4); p2.extend(collect_fresh(5, [7]))\nprint(q2, sum(f(1) for f in [lambda z: z + k for k in q2]))                  # [0] 1\n# wrong belief 2: p.extend(r) does not change q -> q == [0, 4]\nprint(sum(f(1) for f in [lambda z: z + k for k in [0, 4]]))                  # 10\n# wrong belief 3: every lambda remembers its own k (early binding)\nprint(sum(f(1) for f in [lambda z, k=k: z + k for k in q]))                  # 20\n# beliefs 2 and 3 together\nprint(sum(f(1) for f in [lambda z, k=k: z + k for k in [0, 4]]))             # 6",
+      "notes": "Blind solve gives 24 (shared default list: p is q = [0,4,7,5]; four lambdas all see the final k=5), agreeing with the key. Corrected the commonTrap and the trap comments in checkCode: a fresh default list per call would give q=[0] and the result 1, not 10. The value 10 arises from forgetting that p and q are the same list (q stays [0,4]); early-binding lambdas give 20; both of those slips together give 6. Answer, stem and steps were already correct."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0dde26e77fbe0334",
+        "verification": "0885892290117561"
+      }
     }
   },
   {
@@ -426,7 +546,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (vector-space axioms under non-standard operations) needing the identity and inverse of the new addition and a check of one scalar computation; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (vector-space axioms under non-standard operations) needing the identity and inverse of the new addition and a check of one scalar computation; about 1.5 minutes.",
     "estimatedTimeSec": 90,
     "concept": "In a vector space with non-standard operations, the zero vector is the identity of the new addition and the additive inverse is found from it; they need not be 0 and -x.",
     "conceptIds": [],
@@ -501,12 +621,36 @@
       "commonTrap": "Carrying over the intuition from $\\mathbb{R}^n$ that the zero vector is $0$ and the inverse of $x$ is $-x$. Here the zero vector and the inverses must be computed from the operation $\\oplus$ actually defined on the set."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "import math\nadd = lambda x, y: x * y\nsmul = lambda c, x: x ** c\ne = 1\ninv = lambda x: 1 / x\nprint(all(math.isclose(add(x, e), x) and math.isclose(add(x, inv(x)), e) for x in (0.5, 4, 7.3)))   # True: zero vector 1, inverse 1/x\nprint(inv(4), smul(-1, 4))                                # 0.25 0.25  (0 and -4 are not in (0, inf))\nprint(smul(3, add(2, 5)), add(smul(3, 2), smul(3, 5)))    # 1000 1000 (not 21)",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nfrom fractions import Fraction as F\nadd = lambda x, y: x * y                               # x (+) y\nsmul = lambda c, x: F(x) ** c                          # c (.) x  (integer c here)\nxs = [F(1, 2), F(4), F(73, 10), F(2), F(5)]\nzero = [e for e in (F(0), F(1)) if all(add(x, e) == x for x in xs)]\nprint(zero)                                            # [Fraction(1, 1)] -> the zero vector is 1, not 0\ninv4 = [y for y in (F(-4), F(1, 4)) if add(F(4), y) == 1]\nprint(inv4)                                            # [Fraction(1, 4)] -> D; -4 is not even in (0, inf)\nprint(smul(3, add(2, 5)), add(smul(3, 2), smul(3, 5)))                         # 1000 1000 -> C (21) is false",
+      "notes": "Blind solve (zero vector 1; inverse of 4 is 1/4; 3 (.) (2 (+) 5) = 1000) matches the key. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "c93f01b92645c003",
+        "verification": "0e453cc270d7a0a3"
+      }
     }
   },
   {
@@ -524,7 +668,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (mean and standard deviation of pooled groups) needing the weighted mean and the between-group term of the variance, with averaging-of-summaries traps; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (mean and standard deviation of pooled groups) needing the weighted mean and the between-group term of the variance, with averaging-of-summaries traps; about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "Mean and standard deviation of two pooled groups: weighted mean of the group means, and total variance = mean within-group variance + variance of the group means.",
     "conceptIds": [],
@@ -599,12 +743,36 @@
       "commonTrap": "Averaging the two standard deviations, or using only the within-group variance, forgetting that the two group means differ a lot ($20$ versus $38$) and that this difference adds to the pooled variance."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A",
       "agreesWithKey": true,
-      "checkCode": "import math, numpy as np\nn1, m1, s1, n2, m2, s2 = 4, 20, 5, 5, 38, 3\nN = n1 + n2\nM = (n1*m1 + n2*m2) / N\nwithin = (n1*s1**2 + n2*s2**2) / N\nbetween = (n1*(m1-M)**2 + n2*(m2-M)**2) / N\nprint(M, round(math.sqrt(within + between), 2))      # 30.0 9.8\nprint(round(math.sqrt(within), 2), round(math.sqrt(between), 2), (m1+m2)/2, (s1+s2)/2)   # 4.01 8.94 29.0 4.0\n# explicit data with exactly these group statistics\nrng = np.random.default_rng(0)\ndef make(n, m, s):\n    x = rng.normal(size=n); return m + s * (x - x.mean()) / x.std()\ndata = np.concatenate([make(n1, m1, s1), make(n2, m2, s2)])\nprint(round(data.mean(), 2), round(data.std(), 2))   # 30.0 9.8   (population SD, ddof=0)",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): build explicit data sets with exactly the stated team statistics\nimport numpy as np\nalpha = np.array([15, 15, 25, 25.0])                   # n=4, mean 20, population SD 5\nrng = np.random.default_rng(7)\nb = rng.normal(size=5); beta = 38 + 3 * (b - b.mean()) / b.std()     # n=5, mean 38, population SD 3\nprint(alpha.mean(), alpha.std(), round(beta.mean(), 6), round(beta.std(), 6))   # 20 5 38 3\nallv = np.concatenate([alpha, beta])\nprint(round(allv.mean(), 2), round(allv.std(), 2))     # 30.0 9.8  (np.std default ddof=0 = population SD) -> A\n# distractors: B within-team only, C between-team only, D unweighted averages\nprint(round(np.sqrt((4 * 25 + 5 * 9) / 9), 2), round(np.sqrt((4 * 100 + 5 * 64) / 9), 2), (20 + 38) / 2, (5 + 3) / 2)   # 4.01 8.94 29.0 4.0",
+      "notes": "Blind solve (pooled mean 30; variance 145/9 within + 80 between = 865/9; SD 9.80, population SD) matches the key; explicit data sets built in Python give the same values. Distractors 4.01, 8.94, 29/4.00 reproduced. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e513ab137578f59e",
+        "verification": "98b879f7ecc09f44"
+      }
     }
   },
   {
@@ -623,7 +791,7 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (expectation and variance of a discrete random variable) with two to three steps per statement, including the variance of a difference of independent copies and a conditional expectation; about 2.5 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (expectation and variance of a discrete random variable) with two to three steps per statement, including the variance of a difference of independent copies and a conditional expectation; about 2.5 minutes.",
     "estimatedTimeSec": 150,
     "concept": "Expectation, variance, variance of a difference of independent copies and conditional expectation for a discrete random variable given by a small PMF.",
     "conceptIds": [],
@@ -704,12 +872,36 @@
       "commonTrap": "Reporting $E[X^2]$ as the variance (option B), and forgetting to divide by $P(X>0)$ when conditioning on the event $X>0$ (option D)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\npmf = {}\nfor d in range(1, 7):\n    x = d if d % 2 == 0 else -3\n    pmf[x] = pmf.get(x, 0) + F(1, 6)\nE = sum(x*p for x, p in pmf.items()); E2 = sum(x*x*p for x, p in pmf.items()); V = E2 - E**2\nprint(pmf, E, E2, V)                                   # E = 1/2, E2 = 83/6, Var = 163/12\nED = sum((x-y)*p*q for x, p in pmf.items() for y, q in pmf.items())\nVD = sum((x-y)**2*p*q for x, p in pmf.items() for y, q in pmf.items()) - ED**2\nprint(ED, VD)                                          # 0 163/6\npos = sum(p for x, p in pmf.items() if x > 0)\nprint(sum(x*p for x, p in pmf.items() if x > 0) / pos, sum(x*p for x, p in pmf.items() if x > 0))   # 4 and 2",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): enumerate the 6 equally likely die faces\nfrom fractions import Fraction as F\nX = lambda face: face if face % 2 == 0 else -3\nfaces = range(1, 7)\nE = sum(F(X(f), 6) for f in faces)\nE2 = sum(F(X(f) ** 2, 6) for f in faces)\nprint(E, E2, E2 - E ** 2)                              # 1/2 83/6 163/12 -> A true, B false (83/6 is E[X^2])\ndiffs = [X(a) - X(b) for a in faces for b in faces]    # two independent plays, 36 equally likely pairs\nm = F(sum(diffs), 36)\nprint(F(sum(v * v for v in diffs), 36) - m * m)        # 163/6 -> C true\npos = [X(f) for f in faces if X(f) > 0]\nprint(F(sum(pos), len(pos)))                           # 4 -> D false (2 is E[X 1{X>0}])",
+      "notes": "Blind solve by enumerating the six die faces (E[X]=1/2, E[X^2]=83/6, Var=163/12, Var(X1-X2)=163/6, E[X|X>0]=4) gives A and C, matching the key. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e411d501564e90ec",
+        "verification": "076a2cbda0a601e6"
+      }
     }
   },
   {
@@ -727,7 +919,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (turning the cardinality rules of a ternary relationship set into functional dependencies and candidate keys of its relation) in three steps, with the 'union of participant keys' misconception as the main trap; about 2 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (turning the cardinality rules of a ternary relationship set into functional dependencies and candidate keys of its relation) in three steps, with the 'union of participant keys' misconception as the main trap; about 2 minutes.",
     "estimatedTimeSec": 120,
     "concept": "Keys of the relation for a ternary relationship set: the cardinality rules give functional dependencies, and candidate keys come from their closures, not simply from the union of the participants' keys.",
     "conceptIds": [],
@@ -802,12 +994,36 @@
       "commonTrap": "Applying the default rule \"the key of a relationship relation is the union of the participants' keys\" without reading the cardinality rules, or noticing only one of the two \"at most one\" rules."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C",
       "agreesWithKey": true,
-      "checkCode": "from itertools import combinations\nA = ['T', 'M', 'S', 'O']                      # TechID, MachID, ShiftID, Output\nfds = [({'M','S'}, {'T'}), ({'T','S'}, {'M'}), ({'T','M','S'}, {'O'})]\ndef closure(X):\n    X = set(X)\n    while True:\n        new = set(X)\n        for l, r in fds:\n            if l <= new: new |= r\n        if new == X: return X\n        X = new\nsup = [set(c) for n in range(1, 5) for c in combinations(A, n) if closure(c) == set(A)]\nkeys = [s for s in sup if not any(t < s for t in sup)]\nprint(sorted(sorted(k) for k in keys))        # [['M', 'S'], ['S', 'T']]",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve): candidate keys by exhaustive closure computation\nfrom itertools import combinations\nattrs = {'T', 'M', 'S', 'O'}                            # TechID, MachID, ShiftID, Output\nfds = [({'M', 'S'}, {'T'}),                             # rule 1\n       ({'T', 'S'}, {'M'}),                             # rule 2\n       ({'T', 'M', 'S'}, {'O'})]                        # Output belongs to the relationship instance (rule 3)\ndef closure(x):\n    x = set(x)\n    while True:\n        y = set(x)\n        for l, r in fds:\n            if l <= y: y |= r\n        if y == x: return x\n        x = y\nsup = [set(c) for n in range(1, 5) for c in combinations(sorted(attrs), n) if closure(c) == attrs]\nkeys = sorted(sorted(s) for s in sup if not any(t < s for t in sup))\nprint(keys)                                             # [['M', 'S'], ['S', 'T']] -> option C\nprint(closure({'T', 'M'}) == attrs)                     # False: rule 3 lets (T, M) repeat across shifts -> D wrong",
+      "notes": "Blind solve: rules 1 and 2 give {MachID,ShiftID} -> TechID and {TechID,ShiftID} -> MachID; exhaustive closure computation yields exactly the two candidate keys {TechID,ShiftID} and {MachID,ShiftID}; {TechID,MachID} fails by rule 3. Matches the key. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a8249e6fb1ceda5e",
+        "verification": "dbce4c25f8a8d293"
+      }
     }
   },
   {
@@ -825,7 +1041,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (reconstructing a binary tree from its preorder and inorder traversals and reading off the postorder) on six nodes, a routine recursive split; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (reconstructing a binary tree from its preorder and inorder traversals and reading off the postorder) on six nodes, a routine recursive split; about 1.5 minutes.",
     "estimatedTimeSec": 80,
     "concept": "A binary tree is determined by its preorder and inorder traversals: the first preorder node is the root, and the inorder sequence splits into left and right subtrees.",
     "conceptIds": [],
@@ -899,12 +1115,36 @@
       "commonTrap": "Reading the inorder sequence as if it fixed the tree by itself, or reversing the preorder to get the postorder; only the preorder (roots) together with the inorder (left/right split) determines the shape."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A",
       "agreesWithKey": true,
-      "checkCode": "class N:\n    def __init__(s, k, l=None, r=None): s.k, s.l, s.r = k, l, r\npre = lambda n: [] if n is None else [n.k] + pre(n.l) + pre(n.r)\nino = lambda n: [] if n is None else ino(n.l) + [n.k] + ino(n.r)\npost = lambda n: [] if n is None else post(n.l) + post(n.r) + [n.k]\ndef build(pr, io):\n    if not pr: return None\n    i = io.index(pr[0])\n    return N(pr[0], build(pr[1:1+i], io[:i]), build(pr[1+i:], io[i+1:]))\nt = build(list(\"RMHVSZ\"), list(\"HMRSVZ\"))\nprint(post(t))                                  # ['H','M','S','Z','V','R']\nalt = N('R', N('M', N('H')), N('Z', N('V', N('S'))))   # same inorder, different shape\nprint(ino(alt), pre(alt), post(alt))            # inorder matches, preorder differs, postorder = option D\nprint(pre(t)[::-1])                             # option C",
-      "notes": ""
+      "checkCode": "# Independent verifier check (blind re-solve)\nfrom itertools import permutations\npre, ino = \"RMHVSZ\", \"HMRSVZ\"\ndef post(pr, io):\n    if not pr: return \"\"\n    i = io.index(pr[0])\n    return post(pr[1:1 + i], io[:i]) + post(pr[1 + i:], io[i + 1:]) + pr[0]\nprint(post(pre, ino))                                   # HMSZVR -> option A\n# every tree shape with this preorder/inorder pair is unique: no other postorder is consistent\ndef trees(keys):                                        # all binary trees with the given inorder, as nested tuples\n    if not keys: yield None; return\n    for i, r in enumerate(keys):\n        for l in trees(keys[:i]):\n            for rt in trees(keys[i + 1:]):\n                yield (r, l, rt)\npr = lambda t: \"\" if t is None else t[0] + pr(t[1]) + pr(t[2])\npo = lambda t: \"\" if t is None else po(t[1]) + po(t[2]) + t[0]\nprint({po(t) for t in trees(ino) if pr(t) == pre})      # {'HMSZVR'}\nvalid = {po(t) for t in trees(ino)}                    # postorders of ALL trees having this inorder\nprint([o for o in (\"HMSZVR\", \"HMZSVR\", \"ZSVHMR\", \"HMSVZR\") if o in valid])   # ['HMSZVR', 'HMSVZR']: B and C fit no tree with this inorder\nprint(any(po(t) == \"HMSVZR\" and pr(t) != pre for t in trees(ino)))   # True: D belongs to a tree with a different preorder",
+      "notes": "Blind solve (root R; left subtree M with left child H; right subtree V with children S and Z; postorder H, M, S, Z, V, R) matches the key; brute force over all trees with the given inorder confirms the postorder is unique. No change needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "76625e0ced841485",
+        "verification": "80b5271e53ba6ac0"
+      }
     }
   }
 ]

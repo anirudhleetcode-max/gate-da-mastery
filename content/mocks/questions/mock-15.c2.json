@@ -14,7 +14,7 @@
     "type": "MCQ",
     "marks": 1,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (Maclaurin expansions used to resolve a limit) in three routine steps: expand two functions, cancel the low-order terms, read off the $x^4$ coefficient; about 1.5\u20132 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Maclaurin expansions used to resolve a limit) in three routine steps: expand two functions, cancel the low-order terms, read off the $x^4$ coefficient; about 1.5–2 minutes.",
     "estimatedTimeSec": 100,
     "concept": "Using Maclaurin series of $e^{x^2}$ and $\\cos x$ to evaluate a limit whose numerator vanishes to fourth order",
     "conceptIds": [],
@@ -89,12 +89,36 @@
       "commonTrap": "Writing the $x^4$ term of $e^{x^2}$ as $x^4$ instead of $\\tfrac{x^4}{2}$ (substituting $t = x^2$ but dropping the $\\tfrac{t^2}{2!}$ factor), or forgetting that $\\cos x$ enters with a minus sign."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A: 11/24",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A (11/24)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nprint(sp.limit((sp.exp(x**2) - sp.cos(x) - sp.Rational(3, 2)*x**2) / x**4, x, 0))",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\nnum = sp.exp(x**2) - sp.cos(x) - sp.Rational(3, 2)*x**2\nprint(sp.series(num, x, 0, 7))      # 11*x**4/24 + 121*x**6/720 + O(x**7)\nprint(sp.limit(num / x**4, x, 0))   # 11/24 -> option A",
+      "notes": "No change needed. Blind Maclaurin expansion gives numerator = (11/24)x^4 + O(x^6); sympy series and limit agree; each distractor (1/2, 13/24, 23/24) matches the documented slip."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "19d6b481356e4b3d",
+        "verification": "8d208a8ba56f8a30"
+      }
     }
   },
   {
@@ -112,7 +136,7 @@
     "type": "MSQ",
     "marks": 1,
     "difficulty": "HARD",
-    "difficultyRationale": "Platform-estimated: HARD \u2014 four independent statements need different tools (a Bonferroni-type bound, a counting identity over disjoint atoms and two explicit counterexamples), and each false statement has a tempting justification; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: HARD — four independent statements need different tools (a Bonferroni-type bound, a counting identity over disjoint atoms and two explicit counterexamples), and each false statement has a tempting justification; about 3 minutes.",
     "estimatedTimeSec": 200,
     "concept": "Bounds forced by the probability axioms on intersections and unions of three events with given marginal probabilities",
     "conceptIds": [],
@@ -148,7 +172,7 @@
       "steps": [
         {
           "title": "Statement A: a lower bound on $P(A \\cap B)$",
-          "body": "By inclusion\u2013exclusion, $P(A \\cap B) = P(A) + P(B) - P(A \\cup B) = 1.3 - P(A \\cup B)$. Since $P(A \\cup B) \\le 1$, we get $P(A \\cap B) \\ge 1.3 - 1 = 0.3$ for every choice of the events. So A must hold."
+          "body": "By inclusion–exclusion, $P(A \\cap B) = P(A) + P(B) - P(A \\cup B) = 1.3 - P(A \\cup B)$. Since $P(A \\cup B) \\le 1$, we get $P(A \\cap B) \\ge 1.3 - 1 = 0.3$ for every choice of the events. So A must hold."
         },
         {
           "title": "Statement C: a counting identity",
@@ -173,7 +197,7 @@
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "The triple intersection can be empty: with atom probabilities $0.3, 0.2, 0.3, 0.2$ on \u201c$A,B$ only\u201d, \u201c$A,C$ only\u201d, \u201c$B,C$ only\u201d and \u201c$A$ only\u201d all three marginals are respected and $P(A \\cap B \\cap C) = 0$."
+          "explanation": "The triple intersection can be empty: with atom probabilities $0.3, 0.2, 0.3, 0.2$ on “$A,B$ only”, “$A,C$ only”, “$B,C$ only” and “$A$ only” all three marginals are respected and $P(A \\cap B \\cap C) = 0$."
         },
         {
           "label": "C",
@@ -189,12 +213,36 @@
       "commonTrap": "Reasoning that because $0.7 + 0.6 + 0.5 = 1.8 > 1$ the events must jointly cover the sample space or share a common point. A total above $1$ only forces pairwise overlaps (for example $P(A \\cap B) \\ge 0.3$); the triple intersection can be empty and the union can be smaller than the whole space."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A and C",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nfrom scipy.optimize import linprog\natoms = list(itertools.product([0, 1], repeat=3))\ndef bound(f, sign):\n    c = [sign*float(f(*a)) for a in atoms]\n    Aeq = [[1]*8] + [[a[i] for a in atoms] for i in range(3)]\n    r = linprog(c, A_eq=Aeq, b_eq=[1, .7, .6, .5], bounds=[(0, 1)]*8, method='highs')\n    return sign*r.fun\nAB = lambda a, b, c: a and b\nABC = lambda a, b, c: a and b and c\ntwo = lambda a, b, c: a + b + c == 2\nnone = lambda a, b, c: not (a or b or c)\nmn = lambda f: bound(f, 1)\nmx = lambda f: bound(f, -1)\nprint(mn(AB) >= 0.3 - 1e-9, mn(ABC) >= 0.1 - 1e-9, mx(two) <= 0.9 + 1e-9, mx(none) <= 1e-9)",
-      "notes": ""
+      "checkCode": "import itertools\nfrom scipy.optimize import linprog\n# 8 atoms (a, b, c) in {0,1}^3; unknowns are the atom probabilities\natoms = list(itertools.product([0, 1], repeat=3))\nA_eq = [[1]*8] + [[a[i] for a in atoms] for i in range(3)]\nb_eq = [1, 0.7, 0.6, 0.5]\ndef opt(f, sign):\n    r = linprog([sign*int(f(a)) for a in atoms], A_eq=A_eq, b_eq=b_eq, bounds=[(0, None)]*8, method='highs')\n    return round(sign*r.fun, 6)\nprint('min P(A&B)      =', opt(lambda a: a[0] and a[1], 1))            # 0.3 -> A always holds\nprint('min P(A&B&C)    =', opt(lambda a: a[0] and a[1] and a[2], 1))   # 0.0 -> B can fail\nprint('max P(exactly 2)=', opt(lambda a: sum(a) == 2, -1))             # 0.9 -> C always holds\nprint('P(none) range   =', opt(lambda a: sum(a) == 0, 1), opt(lambda a: sum(a) == 0, -1))  # 0 .. 0.3 -> D can fail",
+      "notes": "No change needed. Blind solve: A true (Bonferroni, P(AB) >= 0.3), C true (p1 + 2p2 + 3p3 = 1.8 so p2 <= 0.9), B false (P(ABC) can be 0), D false (P(none) can be 0.3). Atom-LP gives min P(AB)=0.3, min P(ABC)=0, max P(exactly two)=0.9 (attained), P(none) in [0, 0.3]; the explicit counterexamples in the solution were re-checked by hand."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "a231b9a31f859ac7",
+        "verification": "26b814bd12d0a435"
+      }
     }
   },
   {
@@ -212,9 +260,9 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (eigenvalue\u2013eigenvector pairs of a $2 \\times 2$ matrix) checked with one matrix\u2013vector product per option, or one small characteristic polynomial; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (eigenvalue–eigenvector pairs of a $2 \\times 2$ matrix) checked with one matrix–vector product per option, or one small characteristic polynomial; about 1.5 minutes.",
     "estimatedTimeSec": 90,
-    "concept": "Checking eigenvalue\u2013eigenvector pairs of a $2 \\times 2$ matrix via $A\\mathbf{v} = \\lambda\\mathbf{v}$ (right versus left eigenvectors)",
+    "concept": "Checking eigenvalue–eigenvector pairs of a $2 \\times 2$ matrix via $A\\mathbf{v} = \\lambda\\mathbf{v}$ (right versus left eigenvectors)",
     "conceptIds": [],
     "formulaIds": [],
     "stem": "Let $A = \\begin{bmatrix} 5 & 3 \\\\ 2 & 4 \\end{bmatrix}$.\n\nWhich one of the following is an eigenvalue of $A$ together with a corresponding eigenvector?",
@@ -287,12 +335,36 @@
       "commonTrap": "Pairing an eigenvector with the wrong eigenvalue, or guessing $(1,1)$ because the column sums are equal. That vector is an eigenvector of $A^\\top$, not of $A$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "D: lambda = 2 with v = (1, -1)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "D (lambda = 2 with v = (1, -1))",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA = np.array([[5, 3], [2, 4]])\nopts = {'A': (7, [1, 1]), 'B': (7, [1, -1]), 'C': (2, [3, 2]), 'D': (2, [1, -1])}\nprint([k for k, (l, v) in opts.items() if np.allclose(A @ np.array(v), l*np.array(v))])",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[5, 3], [2, 4]])\nprint(A.eigenvects())   # eigenvalue 2: (-1, 1); eigenvalue 7: (3/2, 1)\nopts = {'A': (7, (1, 1)), 'B': (7, (1, -1)), 'C': (2, (3, 2)), 'D': (2, (1, -1))}\nprint([k for k, (lam, v) in opts.items() if A*sp.Matrix(v) == lam*sp.Matrix(v)])   # ['D']",
+      "notes": "No change needed. Eigenvalues 2 and 7; eigenvector for 7 is (3,2), for 2 is (1,-1). Exactly one option pairs a valid eigenvalue with its eigenvector. sympy confirms."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "e226ea5d0c733d0e",
+        "verification": "d9205001b8c2b92a"
+      }
     }
   },
   {
@@ -310,7 +382,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (conditional probability from a joint PMF) in three routine steps: list the triangular support, add the cells of the two events, divide; about 2\u20133 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (conditional probability from a joint PMF) in three routine steps: list the triangular support, add the cells of the two events, divide; about 2–3 minutes.",
     "estimatedTimeSec": 170,
     "concept": "Conditional probability from a joint PMF defined on a triangular support ($y \\le x$)",
     "conceptIds": [],
@@ -346,12 +418,36 @@
       "commonTrap": "Extending the formula to pairs with $y > x$ (for example $(1,2)$ or $(2,3)$), which have probability $0$; that gives $13/40 \\approx 0.33$. Another slip is reversing the condition: $P(Y \\ge 2 \\mid X = 3) = 13/22 \\approx 0.59$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "13/18 = 0.7222 (0.72)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "13/18 = 0.7222 -> 0.72",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nw = {(x, y): x + y + 1 for x in range(4) for y in range(x + 1)}\nnum = sum(v for (x, y), v in w.items() if x == 3 and y >= 2)\nden = sum(v for (x, y), v in w.items() if y >= 2)\nprint(sum(w.values()), F(num, den), round(num/den, 2))",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nw = {(x, y): x + y + 1 for x in range(4) for y in range(x + 1)}   # support 0 <= y <= x <= 3\ntotal = sum(w.values())\nnum = sum(v for (x, y), v in w.items() if x == 3 and y >= 2)\nden = sum(v for (x, y), v in w.items() if y >= 2)\nprint(total, num, den, F(num, den), round(num/den, 2))   # 40 13 18 13/18 0.72",
+      "notes": "No change needed. Support sum is 40, P(Y>=2)=18/40, P(X=3,Y>=2)=13/40, ratio 13/18=0.7222. Rounding is stated in the stem and the key range 0.71 to 0.73 contains both 0.72 and 13/18. Trap values (13/40 on a full grid, 13/22 for the reversed condition) re-verified."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "0e8972a405c06216",
+        "verification": "e893e3ba5773106a"
+      }
     }
   },
   {
@@ -369,7 +465,7 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (half-open lower-bound binary search) probed by four statements: two short traces, one call-size argument and one interval-halving argument; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (half-open lower-bound binary search) probed by four statements: two short traces, one call-size argument and one interval-halving argument; about 3 minutes.",
     "estimatedTimeSec": 190,
     "concept": "Half-open lower-bound binary search: return value for missing keys, counting occurrences with two calls, index safety and iteration count",
     "conceptIds": [],
@@ -442,15 +538,39 @@
           "explanation": "The candidate range has length 11, then 5, then 2, and then 1 or 0, so the loop runs exactly 3 times (right branch at size 2) or 4 times (left branch) for every `x`."
         }
       ],
-      "commonTrap": "Treating `lb` as \u201cthe index of the last smaller element\u201d or as a search that fails on a missing key. It returns the insertion point: for a missing key the index of the next larger entry, and `len(a)` (not an error) when `x` exceeds every entry."
+      "commonTrap": "Treating `lb` as “the index of the last smaller element” or as a search that fails on a missing key. It returns the insertion point: for a missing key the index of the next larger entry, and `len(a)` (not an error) when `x` exceeds every entry."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D only",
       "agreesWithKey": true,
-      "checkCode": "def lb(a, x):\n    lo, hi = 0, len(a); n = 0\n    while lo < hi:\n        n += 1; mid = (lo + hi) // 2\n        if a[mid] < x: lo = mid + 1\n        else: hi = mid\n    return lo, n\na = [3, 5, 5, 8, 8, 8, 11, 14, 14, 17, 20]\ncount = lambda a, x: lb(a, x + 1)[0] - lb(a, x)[0]\nA = lb(a, 9)[0] == 5\nB = count(a, 14) == 3\ntry:\n    r = count(a, 20); C = False\nexcept IndexError:\n    C = True\nits = sorted({lb(a, x)[1] for x in range(-100, 100)})\nD = all(i in (3, 4) for i in its)\nprint(A, B, C, D, lb(a, 9)[0], count(a, 14), r, its)",
-      "notes": ""
+      "checkCode": "def lb(a, x):\n    lo, hi, n = 0, len(a), 0\n    while lo < hi:\n        n += 1\n        mid = (lo + hi) // 2\n        if a[mid] < x: lo = mid + 1\n        else: hi = mid\n    return lo, n\na = [3, 5, 5, 8, 8, 8, 11, 14, 14, 17, 20]\ncount = lambda a, x: lb(a, x + 1)[0] - lb(a, x)[0]\nA = lb(a, 9)[0] == 5\nB = count(a, 14) == 3\ntry:\n    count(a, 20); C = False\nexcept IndexError:\n    C = True\nD = {lb(a, x)[1] for x in range(-50, 100)} <= {3, 4}\nprint(lb(a, 9)[0], count(a, 14), count(a, 20), sorted({lb(a, x)[1] for x in range(-50, 100)}))  # 6 2 1 [3, 4]\nprint(A, B, C, D)   # False False False True -> only D",
+      "notes": "No change needed. lb(a,9)=6, count(a,14)=2, count(a,20)=1 with no IndexError, and every integer x takes 3 or 4 loop iterations (n=11 -> 5 -> 2 -> 1 or 0), so only D is true. All traces and tables in the solution were re-run."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cfbcf5dfa85bcdbe",
+        "verification": "33791d6de1b15c29"
+      }
     }
   },
   {
@@ -469,9 +589,9 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (rank of an outer product, then rank\u2013nullity for the transpose) in a single step of reasoning; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (rank of an outer product, then rank–nullity for the transpose) in a single step of reasoning; about 1.5 minutes.",
     "estimatedTimeSec": 80,
-    "concept": "Rank\u2013nullity theorem applied to the transpose of a rank-one outer-product matrix",
+    "concept": "Rank–nullity theorem applied to the transpose of a rank-one outer-product matrix",
     "conceptIds": [],
     "formulaIds": [],
     "stem": "Let $\\mathbf{u} = \\begin{bmatrix} 2 \\\\ -1 \\\\ 3 \\end{bmatrix}$ and $\\mathbf{v} = \\begin{bmatrix} 1 \\\\ 4 \\\\ 0 \\\\ -2 \\end{bmatrix}$, and let $A = \\mathbf{u}\\mathbf{v}^{\\top}$, a $3 \\times 4$ real matrix.\n\nThe nullity of $A^{\\top}$ is",
@@ -498,7 +618,7 @@
       "correct": "B"
     },
     "solution": {
-      "quick": "Every row of $A = \\mathbf{u}\\mathbf{v}^\\top$ is a multiple of $\\mathbf{v}^\\top$, so $\\operatorname{rank}(A) = 1$ and $\\operatorname{rank}(A^\\top) = 1$.\n$A^\\top$ is a $4 \\times 3$ matrix with $3$ columns, so the rank\u2013nullity theorem gives $\\operatorname{nullity}(A^\\top) = 3 - 1 = 2$.",
+      "quick": "Every row of $A = \\mathbf{u}\\mathbf{v}^\\top$ is a multiple of $\\mathbf{v}^\\top$, so $\\operatorname{rank}(A) = 1$ and $\\operatorname{rank}(A^\\top) = 1$.\n$A^\\top$ is a $4 \\times 3$ matrix with $3$ columns, so the rank–nullity theorem gives $\\operatorname{nullity}(A^\\top) = 3 - 1 = 2$.",
       "steps": [
         {
           "title": "Write out $A$ and find its rank",
@@ -509,7 +629,7 @@
           "body": "$\\operatorname{rank}(A^\\top) = \\operatorname{rank}(A) = 1$. Explicitly, $A^\\top = \\mathbf{v}\\mathbf{u}^\\top$ is a $4 \\times 3$ matrix whose columns are multiples of $\\mathbf{v}$."
         },
         {
-          "title": "Apply rank\u2013nullity to $A^\top$",
+          "title": "Apply rank–nullity to $A^\\top$",
           "body": "$A^\\top$ maps $\\mathbb{R}^3 \\to \\mathbb{R}^4$, so it has $3$ columns and\n\n$$\\operatorname{nullity}(A^\\top) = 3 - \\operatorname{rank}(A^\\top) = 3 - 1 = 2.$$\n\nDirectly: $A^\\top \\mathbf{y} = \\mathbf{v}(\\mathbf{u}^\\top \\mathbf{y}) = \\mathbf{0}$ exactly when $\\mathbf{u}^\\top \\mathbf{y} = 0$, which is a plane through the origin in $\\mathbb{R}^3$, of dimension $2$. The correct choice is **(B)**."
         }
       ],
@@ -540,12 +660,36 @@
       "commonTrap": "Computing the nullity of $A$ ($4 - 1 = 3$) instead of $A^\\top$, or subtracting the rank from the number of rows instead of the number of columns of the matrix in question."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "B: 2",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
+      "independentAnswer": "B (2)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nu = sp.Matrix([2, -1, 3]); v = sp.Matrix([1, 4, 0, -2])\nA = u*v.T\nprint(A.rank(), len(A.T.nullspace()), len(A.nullspace()))",
-      "notes": ""
+      "checkCode": "import numpy as np\nu = np.array([[2], [-1], [3]]); v = np.array([[1], [4], [0], [-2]])\nA = u @ v.T                                   # 3 x 4\nAt = A.T                                      # 4 x 3\nr = np.linalg.matrix_rank(At)\nprint(A.shape, np.linalg.matrix_rank(A), r, 'nullity(A^T) =', At.shape[1] - r, 'nullity(A) =', A.shape[1] - np.linalg.matrix_rank(A))\n# 3x4  1  1  nullity(A^T) = 2  nullity(A) = 3",
+      "notes": "Solution step 3 title had a corrupted LaTeX command: the JSON contained an unescaped backslash-t, so \"$A^\\top$\" was stored as \"$A^<TAB>op$\". Rewrote it as \"$A^\\top$\". Answer, options and other text unchanged; blind answer B (nullity = 3 - 1 = 2) and numpy rank check agree with the key."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f801a11039971a06",
+        "verification": "2ec2723b31c8192e"
+      }
     }
   },
   {
@@ -563,7 +707,7 @@
     "type": "NAT",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 one concept (quicksort with Lomuto partitioning) requiring a careful execution trace in which the swaps change the order of later sub-arrays; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (quicksort with Lomuto partitioning) requiring a careful execution trace in which the swaps change the order of later sub-arrays; about 3 minutes.",
     "estimatedTimeSec": 190,
     "concept": "Counting element comparisons in quicksort with Lomuto partitioning (last element as pivot) on a specific array",
     "conceptIds": [],
@@ -603,12 +747,36 @@
       "commonTrap": "Assuming that partitioning keeps the elements of each side in their original order. Lomuto partitioning swaps elements, so the later segments (and their pivots) differ from the naive picture; the naive order-preserving trace gives $14$ instead of $17$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "17",
       "agreesWithKey": true,
-      "checkCode": "count = 0\ndef partition(a, lo, hi):\n    global count\n    pivot = a[hi]; i = lo - 1\n    for j in range(lo, hi):\n        count += 1\n        if a[j] <= pivot:\n            i += 1; a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    return i + 1\ndef quicksort(a, lo, hi):\n    if lo < hi:\n        p = partition(a, lo, hi)\n        quicksort(a, lo, p - 1); quicksort(a, p + 1, hi)\ndata = [7, 3, 5, 9, 8, 6, 2, 4]\nquicksort(data, 0, len(data) - 1)\nprint(count, data)",
-      "notes": ""
+      "checkCode": "count = 0\ndef partition(a, lo, hi):\n    global count\n    pivot = a[hi]\n    i = lo - 1\n    for j in range(lo, hi):\n        count += 1\n        if a[j] <= pivot:\n            i += 1\n            a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    return i + 1\ncalls = []\ndef quicksort(a, lo, hi):\n    if lo < hi:\n        calls.append((a[lo:hi + 1], a[hi]))      # segment and pivot before partitioning\n        p = partition(a, lo, hi)\n        quicksort(a, lo, p - 1)\n        quicksort(a, p + 1, hi)\ndata = [7, 3, 5, 9, 8, 6, 2, 4]\nquicksort(data, 0, len(data) - 1)\nprint(count, data)   # 17\nprint(calls)         # 5 calls: lengths 8, 2, 5, 4, 3 -> 7+1+4+3+2",
+      "notes": "No change needed. Blind trace of the Lomuto partitions gives segments of length 8, 2, 5, 4, 3 with 7+1+4+3+2 = 17 comparisons; running the program confirms 17. The \"naive order-preserving trace gives 14\" claim in commonTrap was re-verified. Integer NAT, so the exact range 17 to 17 is appropriate."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "25a54ea508d6dfaf",
+        "verification": "a51d8153e047e022"
+      }
     }
   },
   {
@@ -626,7 +794,7 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 two directly linked ideas (singular values as square roots of the eigenvalues of $A^\\top A$, then a ratio) with routine $2 \\times 2$ arithmetic; about 2\u20133 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked ideas (singular values as square roots of the eigenvalues of $A^\\top A$, then a ratio) with routine $2 \\times 2$ arithmetic; about 2–3 minutes.",
     "estimatedTimeSec": 170,
     "concept": "Singular values of a non-symmetric $2 \\times 2$ matrix from the eigenvalues of $A^\\top A$, and the ratio $\\sigma_1/\\sigma_2$",
     "conceptIds": [],
@@ -701,12 +869,36 @@
       "commonTrap": "Using the eigenvalues of $A$ ($5$ and $3$) as if they were singular values, or forgetting to take square roots of the eigenvalues of $A^\\top A$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "A: 3",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "A (3)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA = np.array([[3, 0], [4, 5]], float)\ns = np.linalg.svd(A, compute_uv=False)\nprint(np.round(s, 4), round(s[0]/s[1], 6), np.round(np.linalg.eigvalsh(A.T @ A), 4))",
-      "notes": ""
+      "checkCode": "import numpy as np\nA = np.array([[3, 0], [4, 5]], float)\nprint(A.T @ A, np.linalg.eigvalsh(A.T @ A))    # [[25 20][20 25]], [5, 45]\ns = np.linalg.svd(A, compute_uv=False)\nprint(s, s[0]/s[1])                            # [6.708 2.236] 3.0\nprint(np.linalg.det(A), (A**2).sum())          # 15, 50 (sigma1*sigma2, sigma1^2+sigma2^2)",
+      "notes": "No change needed. A^T A = [[25,20],[20,25]] with eigenvalues 45 and 5, so sigma1/sigma2 = sqrt(9) = 3. Cross-check identities (product = |det A| = 15, sum of squares = 50) and the r + 1/r = 10/3 shortcut verified."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "c9f9e658233651c3",
+        "verification": "bb8864bcbd8c1a9d"
+      }
     }
   },
   {
@@ -724,12 +916,12 @@
     "type": "MCQ",
     "marks": 2,
     "difficulty": "MODERATE",
-    "difficultyRationale": "Platform-estimated: MODERATE \u2014 two directly linked concepts (3-NN voting and min\u2013max scaling) with routine arithmetic: twelve distances, most of them quick to order; about 3 minutes.",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (3-NN voting and min–max scaling) with routine arithmetic: twelve distances, most of them quick to order; about 3 minutes.",
     "estimatedTimeSec": 190,
-    "concept": "k-NN prediction with and without min\u2013max feature scaling when the features have very different ranges",
+    "concept": "k-NN prediction with and without min–max feature scaling when the features have very different ranges",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "A bank predicts loan decisions with $k$-nearest neighbours ($k = 3$, Euclidean distance, majority vote) using two features: annual income (in \u20b9 lakh) and credit score. The six labelled applicants are:\n\n| Applicant | Income (\u20b9 lakh) | Credit score | Decision |\n| --- | --- | --- | --- |\n| P1 | 6 | 690 | Rejected |\n| P2 | 18 | 710 | Approved |\n| P3 | 17 | 720 | Approved |\n| P4 | 15 | 620 | Approved |\n| P5 | 13 | 740 | Rejected |\n| P6 | 14 | 700 | Rejected |\n\nA new applicant has income $15$ and credit score $680$. Let $d_1$ be the decision predicted from the raw feature values, and $d_2$ the decision predicted after min\u2013max scaling both features, $x' = \\dfrac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$, where $x_{\\min}$ and $x_{\\max}$ are taken over the six labelled applicants (the new applicant is scaled with the same constants).\n\nWhich one of the following is correct?",
+    "stem": "A bank predicts loan decisions with $k$-nearest neighbours ($k = 3$, Euclidean distance, majority vote) using two features: annual income (in ₹ lakh) and credit score. The six labelled applicants are:\n\n| Applicant | Income (₹ lakh) | Credit score | Decision |\n| --- | --- | --- | --- |\n| P1 | 6 | 690 | Rejected |\n| P2 | 18 | 710 | Approved |\n| P3 | 17 | 720 | Approved |\n| P4 | 15 | 620 | Approved |\n| P5 | 13 | 740 | Rejected |\n| P6 | 14 | 700 | Rejected |\n\nA new applicant has income $15$ and credit score $680$. Let $d_1$ be the decision predicted from the raw feature values, and $d_2$ the decision predicted after min–max scaling both features, $x' = \\dfrac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$, where $x_{\\min}$ and $x_{\\max}$ are taken over the six labelled applicants (the new applicant is scaled with the same constants).\n\nWhich one of the following is correct?",
     "options": [
       {
         "label": "A",
@@ -753,7 +945,7 @@
       "correct": "C"
     },
     "solution": {
-      "quick": "On raw values the credit-score gap dominates: the three nearest applicants are P1, P6 (Rejected) and P2 (Approved), so $d_1$ = Rejected.\nAfter min\u2013max scaling (income range $12$, score range $120$) one lakh of income counts as much as $10$ score points, and the three nearest become P6 (Rejected), P2 and P3 (Approved), so $d_2$ = Approved.",
+      "quick": "On raw values the credit-score gap dominates: the three nearest applicants are P1, P6 (Rejected) and P2 (Approved), so $d_1$ = Rejected.\nAfter min–max scaling (income range $12$, score range $120$) one lakh of income counts as much as $10$ score points, and the three nearest become P6 (Rejected), P2 and P3 (Approved), so $d_2$ = Approved.",
       "steps": [
         {
           "title": "Scaling constants",
@@ -764,7 +956,7 @@
           "body": "| Applicant | Income gap | Score gap | Distance | Decision |\n| --- | --- | --- | --- | --- |\n| P1 | 9 | 10 | 13.45 | Rejected |\n| P6 | 1 | 20 | 20.02 | Rejected |\n| P2 | 3 | 30 | 30.15 | Approved |\n| P3 | 2 | 40 | 40.05 | Approved |\n| P4 | 0 | 60 | 60.00 | Approved |\n| P5 | 2 | 60 | 60.03 | Rejected |\n\nThe three nearest are P1, P6, P2: Rejected, Rejected, Approved. So $d_1$ = Rejected."
         },
         {
-          "title": "Distances after min\u2013max scaling",
+          "title": "Distances after min–max scaling",
           "body": "Scaled gaps are (income gap)$/12$ and (score gap)$/120$:\n\n| Applicant | Scaled income gap | Scaled score gap | Distance | Decision |\n| --- | --- | --- | --- | --- |\n| P6 | 0.083 | 0.167 | 0.186 | Rejected |\n| P2 | 0.250 | 0.250 | 0.354 | Approved |\n| P3 | 0.167 | 0.333 | 0.373 | Approved |\n| P4 | 0.000 | 0.500 | 0.500 | Approved |\n| P5 | 0.167 | 0.500 | 0.527 | Rejected |\n| P1 | 0.750 | 0.083 | 0.755 | Rejected |\n\nThe three nearest are P6, P2, P3: Rejected, Approved, Approved. So $d_2$ = Approved."
         },
         {
@@ -795,15 +987,39 @@
           "explanation": "After scaling, the three nearest are P6 (Rejected), P2 and P3 (Approved), so the scaled prediction is Approved, not Rejected."
         }
       ],
-      "commonTrap": "Ignoring the scale of the features. On raw values a gap of $1$ lakh of income is negligible next to a gap of $10$ credit-score points, so the score decides everything; after min\u2013max scaling, $1$ lakh of income is worth $10$ score points, and the neighbour set changes."
+      "commonTrap": "Ignoring the scale of the features. On raw values a gap of $1$ lakh of income is negligible next to a gap of $10$ credit-score points, so the score decides everything; after min–max scaling, $1$ lakh of income is worth $10$ score points, and the neighbour set changes."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "C: raw -> Rejected, scaled -> Approved",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "C (raw -> Rejected, min-max scaled -> Approved)",
       "agreesWithKey": true,
-      "checkCode": "import math\nT = [(6, 690, 'Rejected'), (18, 710, 'Approved'), (17, 720, 'Approved'), (15, 620, 'Approved'), (13, 740, 'Rejected'), (14, 700, 'Rejected')]\nq = (15, 680)\ndef pred(scale):\n    xs = [t[0] for t in T]; ys = [t[1] for t in T]\n    f = (lambda a, b: ((a - min(xs))/(max(xs) - min(xs)), (b - min(ys))/(max(ys) - min(ys)))) if scale else (lambda a, b: (a, b))\n    d = sorted((math.dist(f(t[0], t[1]), f(*q)), t[2]) for t in T)[:3]\n    v = [c for _, c in d]\n    return max(set(v), key=v.count)\nprint(pred(False), pred(True))",
-      "notes": ""
+      "checkCode": "import numpy as np\nP = np.array([[6, 690], [18, 710], [17, 720], [15, 620], [13, 740], [14, 700]], float)\nlab = ['Rejected', 'Approved', 'Approved', 'Approved', 'Rejected', 'Rejected']   # P1..P6\nq = np.array([15, 680], float)\ndef predict(P, q, k=3):\n    d = np.linalg.norm(P - q, axis=1)\n    idx = np.argsort(d)[:k]\n    votes = [lab[i] for i in idx]\n    return ['P%d' % (i + 1) for i in idx], np.round(np.sort(d)[:4], 4), max(set(votes), key=votes.count)\nprint('raw   ', predict(P, q))\nlo, hi = P.min(axis=0), P.max(axis=0)\nprint('scaled', predict((P - lo)/(hi - lo), (q - lo)/(hi - lo)))\n# raw:    P1, P6, P2 -> Rejected ; scaled: P6, P2, P3 -> Approved  => option C",
+      "notes": "No change needed. Raw 3-NN = P1, P6 (Rejected), P2 (Approved) -> Rejected; min-max scaled 3-NN = P6 (Rejected), P2, P3 (Approved) -> Approved. No ties at the k=3 boundary in either case (gaps 30.15 vs 40.05 raw, 0.373 vs 0.500 scaled). All table values re-computed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "91a0ae912a5f5156",
+        "verification": "c133c8545c978dd9"
+      }
     }
   },
   {
@@ -821,12 +1037,12 @@
     "type": "MSQ",
     "marks": 2,
     "difficulty": "EASY",
-    "difficultyRationale": "Platform-estimated: EASY \u2014 one concept (distributive, algebraic and holistic measures under roll-up) with recall-level statements and one small counter-example to check; about 1.5 minutes.",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (distributive, algebraic and holistic measures under roll-up) with recall-level statements and one small counter-example to check; about 1.5 minutes.",
     "estimatedTimeSec": 100,
     "concept": "Computing aggregate measures at a coarser level (roll-up) from partial aggregates: distributive, algebraic and holistic measures",
     "conceptIds": [],
     "formulaIds": [],
-    "stem": "A sales data cube stores, for every (store, month) cell, precomputed aggregates of the individual order values (in \u20b9) placed at that store in that month. A query at the (store, quarter) level must be answered by combining the three monthly cells of the quarter, without going back to the individual orders.\n\nWhich of the following statements is/are correct?",
+    "stem": "A sales data cube stores, for every (store, month) cell, precomputed aggregates of the individual order values (in ₹) placed at that store in that month. A query at the (store, quarter) level must be answered by combining the three monthly cells of the quarter, without going back to the individual orders.\n\nWhich of the following statements is/are correct?",
     "options": [
       {
         "label": "A",
@@ -899,12 +1115,36 @@
       "commonTrap": "Averaging the monthly averages (or the monthly medians) to get the quarterly value. This is valid only when all months have the same number of orders, and it never works for medians; the average needs (COUNT, SUM) pairs and the median needs the data itself."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, C and D",
       "agreesWithKey": true,
-      "checkCode": "import statistics as st\nm = [[100, 200, 900], [300, 400], [500]]\nallv = [v for x in m for v in x]\nprint(sum(sum(x) for x in m) == sum(allv))\nprint(round(st.mean([st.mean(x) for x in m]), 2), st.mean(allv))\ntri = [(len(x), sum(x), sum(v*v for v in x)) for x in m]\nn = sum(t[0] for t in tri); s = sum(t[1] for t in tri); q = sum(t[2] for t in tri)\nprint(abs((q/n - (s/n)**2)**.5 - st.pstdev(allv)) < 1e-9)\nX = [[1, 2, 3], [4, 5, 6]]; Y = [[1, 2, 10], [4, 5, 6]]\nprint([st.median(a) for a in X] == [st.median(b) for b in Y], st.median(sum(X, [])), st.median(sum(Y, [])))",
-      "notes": ""
+      "checkCode": "import statistics as st\nmonths = [[100, 200, 900], [300, 400], [500]]\nallv = [v for m in months for v in m]\n# A: SUM is distributive\nprint('A', sum(sum(m) for m in months) == sum(allv))\n# B: simple mean of monthly means vs true mean\nprint('B', round(st.mean(st.mean(m) for m in months), 2), st.mean(allv))   # 416.67 vs 400 -> False\n# C: std from (n, sum, sum of squares) of each month\nn = sum(len(m) for m in months); S = sum(sum(m) for m in months); Q = sum(v*v for m in months for v in m)\nprint('C', abs((Q/n - (S/n)**2)**0.5 - st.pstdev(allv)) < 1e-9)\n# D: same monthly (count, median) but different combined medians => median not derivable from them\nX = [[1, 2, 3], [4, 5, 6]]; Y = [[1, 2, 10], [4, 5, 6]]\nprint('D', [st.median(m) for m in X] == [st.median(m) for m in Y], st.median(sum(X, [])), st.median(sum(Y, [])))   # True 3.5 4.5",
+      "notes": "No change needed. A true (SUM distributive), B false (416.67 vs 400 counterexample), C true (algebraic from n, sum, sum of squares), D true (median holistic; same monthly medians and counts give combined medians 3.5 vs 4.5). Standard distributive/algebraic/holistic classification; no unstated convention is needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "467b3a7333ae835a",
+        "verification": "7d8fac1719bf5301"
+      }
     }
   }
 ]

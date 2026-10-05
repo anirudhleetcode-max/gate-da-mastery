@@ -84,12 +84,36 @@
       "commonTrap": "Choosing the wrong critical point ($t=4$, the local minimum) as the maximiser, or ignoring the interior critical point and simply taking the larger endpoint value $T(0)=10$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C: 21 (at t = 1)",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nt = sp.symbols('t')\nT = 2*t**3 - 15*t**2 + 24*t + 10\ncrit = [c for c in sp.solve(sp.diff(T, t), t) if 0 <= c <= 5]\nvals = {c: T.subs(t, c) for c in crit + [0, 5]}\nprint(vals, max(vals.values()))",
-      "notes": ""
+      "checkCode": "import numpy as np\nT = lambda t: 2*t**3 - 15*t**2 + 24*t + 10\ncrit = np.roots([6, -30, 24])            # T'(t) = 6t^2 - 30t + 24\ncand = [0, 5] + [r for r in crit if 0 <= r <= 5]\nprint({round(float(c), 6): round(float(T(c)), 6) for c in cand})\nts = np.linspace(0, 5, 500001)\nprint('grid max', round(float(T(ts).max()), 6), 'at t =', round(float(ts[T(ts).argmax()]), 4))",
+      "notes": "Blind solve: T'(t)=6(t-1)(t-4); T(0)=10, T(1)=21, T(4)=-6, T(5)=5, so the maximum is 21 (C). Python (numpy roots + 500k-point grid) agrees. Solution steps, option verdicts, EASY label and topic checked; nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f481aaa2df97f0a8",
+        "verification": "39f0087983427087"
+      }
     }
   },
   {
@@ -180,12 +204,36 @@
       "commonTrap": "Checking only that the values add up to $1$ (option B passes that test but has a negative value), or assuming that any decreasing infinite series such as $3^{-k}$ automatically sums to $1$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A and C",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nfrom fractions import Fraction as F\nk = sp.symbols('k', integer=True, positive=True)\nA = [F(j, 10) for j in range(1, 5)]\nB = [F(j - 2, 2) for j in range(1, 5)]\nC = sp.summation(1/(k*(k + 1)), (k, 1, sp.oo))\nD = sp.summation(sp.Rational(1, 3)**k, (k, 1, sp.oo))\nprint('A', sum(A), all(p >= 0 for p in A), '| B', sum(B), all(p >= 0 for p in B), '| C', C, '| D', D)",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as Fr\ndef is_pmf(vals):\n    return all(v >= 0 for v in vals) and sum(vals) == 1\nA = [Fr(k, 10) for k in range(1, 5)]\nB = [Fr(k - 2, 2) for k in range(1, 5)]\nprint('A', is_pmf(A), '| B', is_pmf(B), 'sum', sum(B), 'min', min(B))\nC = sum(Fr(1, k*(k+1)) for k in range(1, 2001))       # exact partial sum = 1 - 1/2001\nprint('C partial sum (N=2000) =', float(C), ' limit 1; exact N-sum = 1 - 1/(N+1):', C == 1 - Fr(1, 2001))\nD = sum(Fr(1, 3**k) for k in range(1, 60))\nprint('D partial sum ->', float(D), '(limit 1/2)')",
+      "notes": "Blind solve: A sums to 1 with non-negative terms (valid); B has p(1) = -1/2 < 0 although it sums to 1 (invalid); C telescopes to 1 (valid); D sums to 1/2 (invalid). Python with exact fractions agrees. Solution, option verdicts, EASY label and topic checked; nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8828c5808af40121",
+        "verification": "ce217a9a1f856b90"
+      }
     }
   },
   {
@@ -282,12 +330,36 @@
       "commonTrap": "Expanding $(A+B)^2$ as a scalar identity, which silently assumes $AB = BA$, and forgetting that $\\det B = -1$ flips the sign of $\\det(AB)$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B and D",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nA = sp.Matrix([[2, 3], [1, 4]]); B = sp.Matrix([[0, 1], [1, 0]]); I = sp.eye(2)\ns1 = A*B != B*A\ns2 = (A*B).det() == -5\ns3 = (A + B)**2 == A**2 + 2*A*B + B**2\ns4 = A.inv() == (6*I - A)/5\nprint(s1, s2, s3, s4)",
-      "notes": ""
+      "checkCode": "import numpy as np\nA = np.array([[2, 3], [1, 4]]); B = np.array([[0, 1], [1, 0]]); I = np.eye(2)\nstA = not np.array_equal(A @ B, B @ A)\nstB = round(np.linalg.det(A @ B)) == -5\nstC = np.array_equal((A + B) @ (A + B), A @ A + 2 * (A @ B) + B @ B)\nstD = np.allclose(np.linalg.inv(A), (6 * I - A) / 5)\nprint(stA, stB, stC, stD)",
+      "notes": "Blind solve: AB=[[3,2],[4,1]] != BA=[[1,4],[2,3]]; det(AB)=det A * det B = 5*(-1) = -5; C is false because AB != BA; A^-1 = (6I - A)/5 by Cayley-Hamilton. Python (numpy and sympy) agrees. Every matrix in the solution was recomputed; nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8aaf1922053f0f37",
+        "verification": "faecc68aa75914ec"
+      }
     }
   },
   {
@@ -337,12 +409,36 @@
       "commonTrap": "Dropping the condition and reporting $P(X>1.5) = 1 - F(1.5) \\approx 0.16$, or using $F(1.5) - F(1) \\approx 0.34$, which is $P(1 < X \\le 1.5)$ and not a conditional probability."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "5/16 = 0.3125 (0.31)",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "5/16 = 0.3125, i.e. 0.31",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx, c = sp.symbols('x c')\nF = c*(3*x**2 - x**3)\ncv = sp.solve(sp.Eq(F.subs(x, 2), 1), c)[0]\nF = F.subs(c, cv)\nassert sp.diff(F, x).subs(x, sp.Rational(1, 2)) > 0\np = (1 - F.subs(x, sp.Rational(3, 2))) / (1 - F.subs(x, 1))\nprint(cv, p, float(p), round(float(p), 2))",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as Fr\n# F(2) = 1 fixes c:  c*(3*4 - 8) = 1\nc = Fr(1, 3*4 - 8)\nF = lambda x: c * (3*x**2 - x**3)\nassert all(F(Fr(i + 1, 100)) >= F(Fr(i, 100)) for i in range(0, 200))   # non-decreasing on [0, 2]\np = (1 - F(Fr(3, 2))) / (1 - F(Fr(1)))\nprint('c =', c, ' P =', p, '=', float(p), ' rounded:', round(float(p), 2))",
+      "notes": "Blind solve: F(2)=1 gives c=1/4, F(1)=1/2, F(1.5)=27/32, so P(X>1.5 | X>1) = (5/32)/(1/2) = 5/16 = 0.3125, which rounds to 0.31. F is non-decreasing on [0,2], so it is a valid CDF. Python with exact fractions agrees. Stored NAT range 0.30 to 0.32 follows the platform convention of +/-0.01 around the two-decimal answer and contains both 0.31 and 0.3125; rounding is stated in the stem. Nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "428ccd34c2fb8c34",
+        "verification": "d8aeed17b2b8ab7e"
+      }
     }
   },
   {
@@ -436,12 +532,36 @@
       "commonTrap": "Swapping quantifiers freely: $\\exists\\forall \\Rightarrow \\forall\\exists$ holds but $\\forall\\exists \\Rightarrow \\exists\\forall$ does not. In the same way $\\exists$ distributes over $\\vee$ but not over $\\wedge$, and $\\forall x\\,(P \\rightarrow Q)$ is strictly stronger than $\\forall x\\,P \\rightarrow \\forall x\\,Q$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B only",
       "agreesWithKey": true,
-      "checkCode": "import itertools\ndef valid(f, n):\n    D = range(n)\n    for P in itertools.product([0, 1], repeat=n):\n        for Q in itertools.product([0, 1], repeat=n):\n            for Rb in itertools.product([0, 1], repeat=n*n):\n                R = lambda x, y: Rb[x*n + y]\n                if not f(D, P, Q, R):\n                    return False\n    return True\nimp = lambda a, b: (not a) or b\nfA = lambda D, P, Q, R: imp(any(P[x] for x in D) and any(Q[x] for x in D), any(P[x] and Q[x] for x in D))\nfB = lambda D, P, Q, R: imp(any(all(R(x, y) for y in D) for x in D), all(any(R(x, y) for x in D) for y in D))\nfC = lambda D, P, Q, R: imp(imp(all(P[x] for x in D), all(Q[x] for x in D)), all(imp(P[x], Q[x]) for x in D))\nfD = lambda D, P, Q, R: imp(all(any(R(x, y) for y in D) for x in D), any(all(R(x, y) for x in D) for y in D))\nfor name, f in zip('ABCD', [fA, fB, fC, fD]):\n    print(name, [valid(f, n) for n in (1, 2, 3)])",
-      "notes": ""
+      "checkCode": "import itertools\nimp = lambda a, b: (not a) or b\ndef valid(f, n):\n    D = range(n)\n    for P in itertools.product([0, 1], repeat=n):\n        for Q in itertools.product([0, 1], repeat=n):\n            for Rb in itertools.product([0, 1], repeat=n*n):\n                R = lambda x, y: Rb[x*n + y]\n                if not f(D, P, Q, R):\n                    return (False, n, P, Q, Rb)\n    return (True,)\nfA = lambda D, P, Q, R: imp(any(P[x] for x in D) and any(Q[x] for x in D), any(P[x] and Q[x] for x in D))\nfB = lambda D, P, Q, R: imp(any(all(R(x, y) for y in D) for x in D), all(any(R(x, y) for x in D) for y in D))\nfC = lambda D, P, Q, R: imp(imp(all(P[x] for x in D), all(Q[x] for x in D)), all(imp(P[x], Q[x]) for x in D))\nfD = lambda D, P, Q, R: imp(all(any(R(x, y) for y in D) for x in D), any(all(R(x, y) for x in D) for y in D))\nfor name, f in zip('ABCD', (fA, fB, fC, fD)):\n    res = [valid(f, n) for n in (1, 2, 3)]\n    print(name, 'valid on domains 1..3' if all(r[0] for r in res) else 'counter-model: ' + str(next(r for r in res if not r[0])))",
+      "notes": "Blind solve: B is valid (a witness x0 for all y serves every y); A, C and D are each falsified on a two-element domain (A: P only at 1, Q only at 2; C: P only at 1, Q empty; D: R is equality). Exhaustive Python model check over domains of size 1, 2 and 3 agrees and prints the counter-models. Solution, option verdicts and MODERATE label checked; nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f3e986d346540fe0",
+        "verification": "81f8d4b85e790fb1"
+      }
     }
   },
   {
@@ -533,12 +653,36 @@
       "commonTrap": "Reading $\\operatorname{Lo}(S)$ as 'the smaller salaries' or as the maximum itself: it is everything **except** the maximum. Two further slips are peeling from the wrong end with $\\operatorname{Hi}$ (second-lowest instead of second-highest) and being off by one level in the nesting."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "import random\nrandom.seed(7)\nlo = lambda U: {a for a in U for b in U if a < b}\nhi = lambda U: {b for a in U for b in U if a < b}\njoin = lambda emp, X: {(e, s) for (e, s) in emp if s in X}\nopts = {\n    'A': lambda S: S - lo(lo(S)),\n    'B': lambda S: hi(S) - hi(hi(S)),\n    'C': lambda S: lo(S) - lo(lo(lo(S))),\n    'D': lambda S: lo(S) - lo(lo(S)),\n}\nhits = {k: 0 for k in opts}; total = 0\nfor _ in range(3000):\n    emp = {(i, random.choice(range(20, 90, 5))) for i in range(random.randint(4, 10))}\n    S = {s for _, s in emp}\n    if len(S) < 4:\n        continue\n    total += 1\n    spec = {(e, s) for e, s in emp if s == sorted(S)[-2]}\n    for k, f in opts.items():\n        hits[k] += join(emp, f(S)) == spec\nprint(total, hits)",
-      "notes": ""
+      "checkCode": "import random\nrandom.seed(11)\nLo = lambda U: {a for a in U for b in U if a < b}          # pi_{U1.sal}(sigma_{U1<U2}(U1 x U2))\nHi = lambda U: {b for a in U for b in U if a < b}          # pi_{U2.sal}(...)\nopts = {\n    'A': lambda S: S - Lo(Lo(S)),\n    'B': lambda S: Hi(S) - Hi(Hi(S)),\n    'C': lambda S: Lo(S) - Lo(Lo(Lo(S))),\n    'D': lambda S: Lo(S) - Lo(Lo(S)),\n}\nok = {k: True for k in opts}; trials = 0\nfor _ in range(5000):\n    emp = [(i, random.randint(1, 9)) for i in range(random.randint(4, 14))]\n    S = {s for _, s in emp}\n    if len(S) < 4:\n        continue\n    trials += 1\n    target = {e for e in emp if e[1] == sorted(S)[-2]}\n    for k, f in opts.items():\n        got = {e for e in emp if e[1] in f(S)}              # Emp natural-join X on sal\n        ok[k] = ok[k] and got == target\nprint(trials, ok)",
+      "notes": "Blind solve: Lo(U) removes the maximum of U and Hi(U) removes the minimum. With k >= 4 distinct salaries, A gives the top two salaries, B the second-lowest, C the second and third highest, and D exactly the second-highest, so only D is correct. Python simulation of the relational algebra on 4,610 random Emp instances (with salary ties) agrees. Stem is unambiguous (set semantics, k >= 4 stated). Solution table, worked example and option verdicts rechecked; nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "94436e78f422a3c7",
+        "verification": "9da4437700e4b161"
+      }
     }
   },
   {
@@ -626,12 +770,36 @@
       "commonTrap": "Forgetting that observing a **descendant** of a collider (here $D$, below $A$) unblocks the collider just as observing the collider itself does, and so wrongly accepting option C."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "B: T is independent of V given W",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nimport numpy as np\nparents = {'W': [], 'T': ['W'], 'V': ['W'], 'A': ['T', 'V'], 'D': ['A']}\ndef ancestors(nodes):\n    out, stack = set(nodes), list(nodes)\n    while stack:\n        for p in parents[stack.pop()]:\n            if p not in out:\n                out.add(p); stack.append(p)\n    return out\ndef d_sep(x, y, z):\n    keep = ancestors({x, y} | set(z))\n    und = {n: set() for n in keep}\n    for c in keep:\n        ps = [p for p in parents[c] if p in keep]\n        for p in ps:\n            und[c].add(p); und[p].add(c)\n        for p, q in itertools.combinations(ps, 2):\n            und[p].add(q); und[q].add(p)\n    seen, stack = {x}, [x]\n    while stack:\n        for m in und[stack.pop()]:\n            if m not in z and m not in seen:\n                seen.add(m); stack.append(m)\n    return y not in seen\ntests = {'A': ('T', 'V', []), 'B': ('T', 'V', ['W']), 'C': ('T', 'V', ['W', 'D']), 'D': ('W', 'D', ['T'])}\nprint({k: d_sep(*v) for k, v in tests.items()})\nnames = 'WTVAD'; rng = np.random.default_rng(1)\ndef joint():\n    cpt = {v: rng.uniform(0.05, 0.95, size=(2,)*len(parents[v])) for v in names}\n    J = np.zeros((2,)*5)\n    for a in itertools.product([0, 1], repeat=5):\n        s = dict(zip(names, a)); pr = 1.0\n        for v in names:\n            p1 = cpt[v][tuple(s[p] for p in parents[v])]\n            pr *= p1 if s[v] else 1 - p1\n        J[a] = pr\n    return J\ndef cmi(J, x, y, z):\n    ax = {v: i for i, v in enumerate(names)}\n    keep = [ax[x], ax[y]] + [ax[v] for v in z]\n    P = J.sum(axis=tuple(i for i in range(5) if i not in keep))\n    order = sorted(keep); pos = {a: i for i, a in enumerate(order)}\n    P = np.transpose(P, [pos[k] for k in keep])\n    pz = P.sum(axis=(0, 1), keepdims=True); pxz = P.sum(axis=1, keepdims=True); pyz = P.sum(axis=0, keepdims=True)\n    return float((P*np.log(P*pz/(pxz*pyz))).sum())\nbest = {k: 0.0 for k in tests}\nfor _ in range(300):\n    J = joint()\n    for k, v in tests.items():\n        best[k] = max(best[k], abs(cmi(J, *v)))\nprint({k: round(b, 6) for k, b in best.items()})",
-      "notes": ""
+      "checkCode": "import itertools\nedges = [('W', 'T'), ('W', 'V'), ('T', 'A'), ('V', 'A'), ('A', 'D')]\nnodes = 'WTVAD'\npar = {n: [a for a, b in edges if b == n] for n in nodes}\ndef ancestors(S):\n    out = set(S); changed = True\n    while changed:\n        changed = False\n        for n in list(out):\n            for p in par[n]:\n                if p not in out:\n                    out.add(p); changed = True\n    return out\ndef d_separated(x, y, Z):\n    keep = ancestors({x, y} | set(Z))                      # ancestral graph, then moralise\n    adj = {n: set() for n in keep}\n    for n in keep:\n        ps = [p for p in par[n] if p in keep]\n        for p in ps:\n            adj[n].add(p); adj[p].add(n)\n        for p, q in itertools.combinations(ps, 2):\n            adj[p].add(q); adj[q].add(p)\n    seen, stack = {x}, [x]\n    while stack:\n        u = stack.pop()\n        for v in adj[u]:\n            if v not in Z and v not in seen:\n                seen.add(v); stack.append(v)\n    return y not in seen\nprint({'A': d_separated('T', 'V', set()), 'B': d_separated('T', 'V', {'W'}),\n       'C': d_separated('T', 'V', {'W', 'D'}), 'D': d_separated('W', 'D', {'T'})})\n# numeric confirmation with random CPTs: max |P(x,y|z) - P(x|z)P(y|z)| over 200 random networks\nimport numpy as np\nrng = np.random.default_rng(5)\nidx = {n: i for i, n in enumerate(nodes)}\ndef joint():\n    cpt = {n: rng.uniform(0.05, 0.95, size=(2,) * len(par[n])) for n in nodes}\n    J = np.zeros((2,) * 5)\n    for s in itertools.product([0, 1], repeat=5):\n        pr = 1.0\n        for n in nodes:\n            p1 = cpt[n][tuple(s[idx[q]] for q in par[n])] if par[n] else cpt[n]\n            pr *= p1 if s[idx[n]] else 1 - p1\n        J[s] = pr\n    return J\ndef gap(J, x, y, Z):\n    others = tuple(i for i in range(5) if i not in {idx[x], idx[y]} | {idx[z] for z in Z})\n    P = J.sum(axis=others)                                  # over x, y, Z (axes in original order)\n    order = [idx[x], idx[y]] + [idx[z] for z in Z]\n    keep = sorted(order); P = np.transpose(P, [keep.index(o) for o in order])\n    Pz = P.sum(axis=(0, 1)); Px = P.sum(axis=1); Py = P.sum(axis=0)\n    return float(np.abs(P / Pz - (Px / Pz)[:, None] * (Py / Pz)[None, :]).max())\ntests = {'A': ('T', 'V', []), 'B': ('T', 'V', ['W']), 'C': ('T', 'V', ['W', 'D']), 'D': ('W', 'D', ['T'])}\nworst = {k: 0.0 for k in tests}; best = {k: 1.0 for k in tests}\nfor _ in range(200):\n    J = joint()\n    for k, (x, y, Z) in tests.items():\n        g = gap(J, x, y, Z); worst[k] = max(worst[k], g); best[k] = min(best[k], g)\nprint('max gap  ', {k: round(v, 6) for k, v in worst.items()})\nprint('min gap  ', {k: round(v, 6) for k, v in best.items()})",
+      "notes": "Blind solve by d-separation: T and V are joined by the fork T<-W->V and the collider path T->A<-V. Given W the fork is blocked and the collider path stays blocked (neither A nor its descendant D observed), so B holds for every CPT; A has the open fork, C is opened by observing D (descendant of the collider), and D has the open chain W->V->A->D. Python (moralised ancestral graph plus 200 random CPT sets: B gap is exactly 0, A, C and D show non-zero dependence) agrees. Nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "cadddf51d88d6e0a",
+        "verification": "7eef7ea51b0b6384"
+      }
     }
   },
   {
@@ -681,12 +849,36 @@
       "commonTrap": "Reporting the covariance eigenvalue $\\lambda_2 = 2$ itself: the eigenvalues of $\\Sigma$ are variances (already divided by $n-1 = 4$), while the question asks for a **sum** over five points, which is $(n-1)\\lambda_2 = 8$. Another slip is to use the larger eigenvalue ($12$ or $48$) instead of the discarded one."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "8",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX = np.array([[8, 2], [6, 0], [9, 1], [4, 8], [8, 4]], float)\nmu = X.mean(0); C = X - mu\nS = np.cov(X.T)\nw, V = np.linalg.eigh(S)\nv1 = V[:, np.argmax(w)]\nproj = mu + np.outer(C @ v1, v1)\nprint(mu, S.tolist(), w, round(((X - proj)**2).sum(), 6))",
-      "notes": ""
+      "checkCode": "import numpy as np\nX = np.array([[8, 2], [6, 0], [9, 1], [4, 8], [8, 4]], float)\nmu = X.mean(axis=0); Xc = X - mu\nS = Xc.T @ Xc / (len(X) - 1)\nw, V = np.linalg.eigh(S)                                   # ascending eigenvalues\nv1 = V[:, -1]\nXhat = mu + np.outer(Xc @ v1, v1)                          # project on line through mean along PC1\nerr = float(((X - Xhat) ** 2).sum())\nprint('mean', mu, 'S', S.tolist(), 'eig', w, 'error', round(err, 6), '(n-1)*lambda_min =', round(4 * w[0], 6))",
+      "notes": "Blind solve: mean (7,3), centred points (1,-1), (-1,-3), (2,-2), (-3,5), (1,1); sample covariance [[4,-4],[-4,10]] with eigenvalues 12 and 2 (distinct, so PC1 is unique); reconstruction error = (n-1) * lambda_2 = 4*2 = 8. Python (explicit projection onto PC1 through the mean) gives 8.000000. Exact answer, so NAT range 8 to 8 is appropriate; divisor n-1 is stated in the stem. Solution arithmetic, including the direct score check, verified; nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "f7a7b4a0295cbaf3",
+        "verification": "40f328680eb74d3d"
+      }
     }
   },
   {
@@ -736,12 +928,36 @@
       "commonTrap": "Using only the dependencies of $F$ whose attributes all lie inside a relation. That test finds no dependency at all inside $R_1$ (both $A \\to C$ and $C \\to E$ involve $C$), so it calls $R_1$ BCNF and gives $3$. The dependency $A \\to E$ must be recovered from $F^{+}$ by taking closures."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "2 (R2 and R3 are in BCNF; R1 is not)",
       "agreesWithKey": true,
-      "checkCode": "import itertools\nF = [('B', 'A'), ('A', 'C'), ('B', 'D'), ('C', 'E')]\ndef closure(X):\n    X = set(X); ch = True\n    while ch:\n        ch = False\n        for l, r in F:\n            if set(l) <= X and r not in X:\n                X.add(r); ch = True\n    return X\ndef bcnf(Ri):\n    Ri = set(Ri)\n    for n in range(1, len(Ri)):\n        for X in itertools.combinations(sorted(Ri), n):\n            c = closure(X) & Ri\n            if c > set(X) and c != Ri:\n                return False\n    return True\nrels = ['ADE', 'BCD', 'BDE']\nprint([bcnf(r) for r in rels], sum(bcnf(r) for r in rels))",
-      "notes": ""
+      "checkCode": "import itertools\nF = [('B', 'A'), ('A', 'C'), ('B', 'D'), ('C', 'E')]\ndef closure(X):\n    X = set(X); changed = True\n    while changed:\n        changed = False\n        for l, r in F:\n            if set(l) <= X and not set(r) <= X:\n                X |= set(r); changed = True\n    return X\ndef bcnf_violations(R):\n    R = set(R); bad = []\n    for k in range(1, len(R) + 1):\n        for X in itertools.combinations(sorted(R), k):\n            c = closure(X) & R                             # dependencies X -> Y implied by F with X, Y inside R\n            if c > set(X) and c != R:                      # non-trivial and X is not a superkey of R\n                bad.append((''.join(X), ''.join(sorted(c - set(X)))))\n    return bad\nres = {name: bcnf_violations(R) for name, R in [('R1', 'ADE'), ('R2', 'BCD'), ('R3', 'BDE')]}\nprint(res, '-> BCNF count =', sum(1 for v in res.values() if not v))",
+      "notes": "Blind solve: B+ = ABCDE so B is a key; in R1(A,D,E) the implied dependency A->E (through C) has a non-superkey left side, so R1 is not in BCNF; in R2(B,C,D) and R3(B,D,E) every non-trivial implied dependency has the superkey B on the left. Python (closure of every subset, restricted to each relation) agrees: only R1 has a violation, so the count is 2. The stem defines which dependencies hold in R_i, so the question is unambiguous. Nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "1df91ed38ac1fb3b",
+        "verification": "4d764447859a9c44"
+      }
     }
   },
   {
@@ -791,12 +1007,36 @@
       "commonTrap": "Solving $\\det = 0$ and stopping there: both $a = 3$ and $a = -2$ make the coefficient matrix singular, but only one of them keeps the system consistent. The other gives no solution at all."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "3",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\na = sp.symbols('a')\nA = sp.Matrix([[2, a, 2], [a, 2, -2], [-1, 1, 4]]); b = sp.Matrix([8, 1, 7])\nprint(sp.factor(A.det()))\nfor r in sp.solve(A.det(), a):\n    Ar = A.subs(a, r)\n    print(r, Ar.rank(), Ar.row_join(b).rank())",
-      "notes": ""
+      "checkCode": "import sympy as sp\na = sp.symbols('a')\nM = sp.Matrix([[2, a, 2], [a, 2, -2], [-1, 1, 4]]); b = sp.Matrix([8, 1, 7])\nprint('det =', sp.factor(M.det()))\nfor r in sp.solve(M.det(), a):\n    Mr = M.subs(a, r)\n    print('a =', r, ' rank(A) =', Mr.rank(), ' rank([A|b]) =', Mr.row_join(b).rank())\n# a generic value (a = 0) gives a unique solution\nprint('a = 0 solution', (M.subs(a, 0).inv() * b).T)",
+      "notes": "Blind solve: det of the coefficient matrix = -4(a-3)(a+2); a=-2 makes Eq1+Eq2 give 0 = 9 (inconsistent, no solution); a=3 has rank(A)=rank([A|b])=2 < 3 (infinitely many solutions); any other a gives a unique solution. Python (sympy ranks at both roots) agrees, and the parametric solution (2z-2.6, 4.4-2z, z) was checked by hand. Nothing needed fixing."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "91d2dee5761d22e0",
+        "verification": "e473b035f997c45e"
+      }
     }
   }
 ]

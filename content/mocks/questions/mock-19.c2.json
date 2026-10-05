@@ -89,12 +89,36 @@
       "commonTrap": "Stopping after the forward substitution and reporting $\\mathbf{y}$, or back-substituting $\\mathbf{b}$ (instead of $\\mathbf{y}$) into $U$. A second trap is a sign slip with the negative multiplier $l_{31}=-3$, which is the entry that $R_3+3R_1$ removes."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C: x = (1, 2, 1)",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nA=np.array([[2,-2,-1],[4,-3,-5],[-6,7,2]],float); b=np.array([-3,-7,10],float)\nn=3; L=np.eye(n); U=A.copy()\nfor k in range(n-1):                                   # Doolittle elimination, no row swaps\n    for i in range(k+1,n):\n        L[i,k]=U[i,k]/U[k,k]; U[i]-=L[i,k]*U[k]\nassert np.allclose(L@U,A)\ny=np.linalg.solve(L,b); x=np.linalg.solve(U,y)\nprint(L.tolist(),U.tolist(),y,x,np.linalg.solve(U,b))  # last: skipping forward substitution",
-      "notes": ""
+      "checkCode": "import sympy as sp\nA = sp.Matrix([[2,-2,-1],[4,-3,-5],[-6,7,2]]); b = sp.Matrix([-3,-7,10])\nL = sp.eye(3); M = A.copy()\nfor k in range(3):                      # unit-lower Gaussian elimination, no row swaps\n    for i in range(k+1, 3):\n        L[i,k] = M[i,k]/M[k,k]; M[i,:] = M[i,:] - L[i,k]*M[k,:]\nU = M; assert L*U == A\ny = L.inv()*b; x = U.inv()*y\nprint(L.tolist(), U.tolist(), list(y), list(x))\nfor lab, v in {'A':(9,8,5),'B':(-3,-1,2),'C':(1,2,1),'D':(-4,-4,3)}.items():\n    print(lab, A*sp.Matrix(v) == b)",
+      "notes": "Blind solve matched the key; LU factors, y = (-3,-1,2), x = (1,2,1) and every distractor re-derived. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "65fcfca8eeef8435",
+        "verification": "ebc86fa412852b86"
+      }
     }
   },
   {
@@ -149,12 +173,36 @@
       "commonTrap": "Using $\\mathrm{Var}(3X-2)=3\\,\\mathrm{Var}(X)$ (giving $3.34$) or $9\\,\\mathrm{Var}(X)-2$ instead of squaring the multiplier and ignoring the shift. Another slip is treating $c$ as $\\tfrac14$ (uniform) without normalising the $1/k$ weights."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
-      "independentAnswer": "10.02",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
+      "independentAnswer": "10.02 (exact 6264/625 = 10.0224)",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\np={k:F(1,k) for k in range(1,5)}; s=sum(p.values()); p={k:v/s for k,v in p.items()}\nE=lambda f:sum(f(k)*v for k,v in p.items())\nvar=E(lambda k:(3*k-2)**2)-E(lambda k:3*k-2)**2\nprint(float(var))",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\nc = 1/sum(F(1,k) for k in range(1,5))\np = {k: c/k for k in range(1,5)}\nEC  = sum((3*k-2)*p[k] for k in p)\nEC2 = sum((3*k-2)**2*p[k] for k in p)\nv = EC2 - EC**2\nprint(c, v, float(v), round(float(v), 2))",
+      "notes": "Blind solve matched the key (exact 6264/625 = 10.0224, rounds to 10.02); range 10.01 to 10.03 is tight and matches the stated two-decimal rounding. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "d45109ec604a9459",
+        "verification": "69dd15f45cc15c7b"
+      }
     }
   },
   {
@@ -250,12 +298,36 @@
       "commonTrap": "Assuming that $k$-means always reaches the global minimum of the SSE, so that any two runs must agree, and taking the data value nearest to the centroid as the medoid instead of the value with the least total distance."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nX=[10,12,15,30,33,37,41,90]\ndef km(c):\n    c=[float(v) for v in c]; prev=None\n    while True:\n        lab=[int(abs(x-c[1])<abs(x-c[0])) for x in X]\n        assert all(abs(abs(x-c[0])-abs(x-c[1]))>1e-9 for x in X)\n        if lab==prev: break\n        prev=lab; c=[np.mean([x for x,l in zip(X,lab) if l==k]) for k in (0,1)]\n    return lab,c,sum((x-c[l])**2 for x,l in zip(X,lab))\nfor init in [(12,33),(10,90)]: print(init,km(init))\ncl=[30,33,37,41,90]; print({m:sum(abs(m-x) for x in cl) for m in cl})",
-      "notes": ""
+      "checkCode": "import numpy as np\nX = [10,12,15,30,33,37,41,90]\ndef run(c):\n    c = [float(v) for v in c]; prev = None\n    while True:\n        assert all(abs(abs(x-c[0]) - abs(x-c[1])) > 1e-9 for x in X)   # no ties\n        lab = [0 if abs(x-c[0]) < abs(x-c[1]) else 1 for x in X]\n        if lab == prev: break\n        prev = lab\n        c = [np.mean([x for x, l in zip(X, lab) if l == j]) for j in (0, 1)]\n    cl = [[x for x, l in zip(X, lab) if l == j] for j in (0, 1)]\n    return cl, [round(float(v), 2) for v in c], sum((x-c[l])**2 for x, l in zip(X, lab))\nr1, r2 = run((12, 33)), run((10, 90))\nprint(r1); print(r2)\nprint('C (SSE1 < SSE2):', r1[2] < r2[2])\nbig = r1[0][1]\nprint('medoid:', min(big, key=lambda m: sum(abs(x-m) for x in big)))",
+      "notes": "Blind solve matched the key: Run 1 ends at 12.33 and 46.2 (A true), Run 2 at {10..41} and {90} (B true), SSE 2479.47 vs 981.71 (C false), medoid 37 not 41 (D false). No ties occur. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "6afced5a4ce35cdb",
+        "verification": "60a79f76c50629fb"
+      }
     }
   },
   {
@@ -352,12 +424,36 @@
       "commonTrap": "Reporting the retained fraction with the wrong denominator, or treating the diagonal entry $10$ as the variance along a principal direction; the variances along principal directions are the eigenvalues ($16$ and $4$), not the entries of $\\Sigma$."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A, B, D",
       "agreesWithKey": true,
-      "checkCode": "import numpy as np\nS=np.array([[10,6],[6,10]],float)\nw,V=np.linalg.eigh(S); w=w[::-1]; V=V[:,::-1]\nprint(w, V[:,0], w[0]/w.sum(), w.sum(), np.trace(S))",
-      "notes": ""
+      "checkCode": "import numpy as np\nS = np.array([[10,6],[6,10]], float)\nw, V = np.linalg.eigh(S)\nw, V = w[::-1], V[:, ::-1]\nprint(w, V[:,0], w[0]/w.sum(), w.sum(), np.trace(S))   # 16, 4 ; (1,1)/sqrt2 ; 0.8 ; 20 ; 20",
+      "notes": "Blind solve matched the key: eigenvalues 16 and 4, first component (1,1), 80% retained (C false), trace 20. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "57ff900dea4d9af8",
+        "verification": "29adaa8e5004e299"
+      }
     }
   },
   {
@@ -411,12 +507,36 @@
       "commonTrap": "Not rounding the blocking factor down (using $1024/20=51.2$ entries per block), which changes every ceiling, or stopping one level early and counting $2353+47=2400$ blocks instead of including the one-block top level."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "2401",
       "agreesWithKey": true,
-      "checkCode": "import math\nbfr=1024//(12+8); n=120000; tot=0\nwhile True:\n    b=math.ceil(n/bfr); tot+=b; print(b)\n    if b==1: break\n    n=b\nprint(bfr,tot)",
-      "notes": ""
+      "checkCode": "import math\nfan = 1024 // (12 + 8)          # entries per block (no spanning)\nn, levels = 120000, []\nwhile True:\n    n = math.ceil(n / fan); levels.append(n)\n    if n == 1: break\nprint(fan, levels, sum(levels))",
+      "notes": "Blind solve matched the key: 20-byte entries, 51 per block, levels 2353 + 47 + 1 = 2401. The question is unambiguous (floor of blocking factor, no spanning, top level is one block). No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "9e680b27553019aa",
+        "verification": "bb2b1b889786f9c6"
+      }
     }
   },
   {
@@ -504,12 +624,36 @@
       "commonTrap": "Mixing up the smoothing methods: bin means preserve the total ($244$), so a student who remembers that fact may pick it here, whereas bin boundaries change the total. A second slip is putting $41$ with the upper boundary $48$; it is nearer to $35$ (distance $6$) than to $48$ (distance $7$)."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "A: 235",
       "agreesWithKey": true,
-      "checkCode": "d=[6,9,13,16,22,25,29,35,41,48]; k=3; lo,hi=min(d),max(d); w=(hi-lo)/k\nbins=[[] for _ in range(k)]\nfor v in d: bins[min(int((v-lo)//w),k-1)].append(v)\nout=[]\nfor b in bins:\n    l,h=min(b),max(b)\n    for v in b: assert v-l!=h-v or l==h; out.append(l if v-l<h-v else h)\nprint(w,bins,out,sum(out),sum(d))\nimport statistics as st\nprint(sum(st.median(b)*len(b) for b in bins))\ne=[d[:3],d[3:6],d[6:]]; o2=[]\nfor b in e:\n    l,h=min(b),max(b)\n    for v in b: assert v-l!=h-v or l==h; o2.append(l if v-l<h-v else h)\nprint(o2,sum(o2))",
-      "notes": ""
+      "checkCode": "v = [6,9,13,16,22,25,29,35,41,48]\nlo, hi = min(v), max(v); w = (hi-lo)/3\nbins = [[], [], []]\nfor x in v: bins[min(int((x-lo)//w), 2)].append(x)\ntot = 0\nfor b in bins:\n    a, z = min(b), max(b)\n    for x in b:\n        assert abs(x-a) != abs(x-z) or a == z           # no ties\n        tot += a if abs(x-a) < abs(x-z) else z\nprint(w, bins, tot)",
+      "notes": "Blind solve matched the key: width 14, bins {6,9,13,16}, {22,25,29}, {35,41,48}, smoothed sum 235, no distance ties; all distractor sums (242, 244, 245) re-derived. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "4b3d5f6a3399ff42",
+        "verification": "a2a0b37659a157d2"
+      }
     }
   },
   {
@@ -560,7 +704,7 @@
       "steps": [
         {
           "title": "Test the mapping between levels",
-          "body": "| Link | Each lower value has one higher value? | Reason |\n|---|---|---|\n| store $\\to$ city | yes | every store row has a single city |\n| city $\\to$ state | yes | each city sits in one state |\n| city $\\to$ zone | yes | Pune, Mumbai, Surat map to West; Nagpur, Indore, Bhopal, Raipur map to Central |\n| state $\\to$ zone | **no** | Maharashtra is West (Pune, Mumbai) and Central (Nagpur) |\n| zone $\\to$ state | **no** | West holds Maharashtra and Gujarat; Central holds four states |\n| state $\\to$ city | **no** | Maharashtra contains Pune, Nagpur and Mumbai |"
+          "body": "| Link | Each lower value has one higher value? | Reason |\n|---|---|---|\n| store $\\to$ city | yes | every store row has a single city |\n| city $\\to$ state | yes | each city sits in one state |\n| city $\\to$ zone | yes | Pune, Mumbai, Surat map to West; Nagpur, Indore, Bhopal, Raipur map to Central |\n| state $\\to$ zone | **no** | Maharashtra is West (Pune, Mumbai) and Central (Nagpur) |\n| zone $\\to$ state | **no** | West holds Maharashtra and Gujarat; Central holds three states (Maharashtra, Madhya Pradesh and Chhattisgarh) |\n| state $\\to$ city | **no** | Maharashtra contains Pune, Nagpur and Mumbai |"
         },
         {
           "title": "Check each chain",
@@ -581,7 +725,7 @@
         {
           "label": "B",
           "verdict": "incorrect",
-          "explanation": "zone $\\to$ state fails: the zone West contains stores in both Maharashtra and Gujarat, and Central spans four states."
+          "explanation": "zone $\\to$ state fails: the zone West contains stores in both Maharashtra and Gujarat, and Central spans three states (Maharashtra, Madhya Pradesh and Chhattisgarh)."
         },
         {
           "label": "C",
@@ -597,12 +741,36 @@
       "commonTrap": "Judging the hierarchy from general geography (a zone is bigger than a state, so state $<$ zone must be valid) instead of from the data actually stored. Here Maharashtra straddles two zones, so the mapping from state to zone is not many-to-one."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key (corrected during verification)",
       "independentAnswer": "D",
       "agreesWithKey": true,
-      "checkCode": "rows=[(\"S1\",\"Pune\",\"Maharashtra\",\"West\"),(\"S2\",\"Nagpur\",\"Maharashtra\",\"Central\"),(\"S3\",\"Mumbai\",\"Maharashtra\",\"West\"),(\"S4\",\"Surat\",\"Gujarat\",\"West\"),\n(\"S5\",\"Indore\",\"Madhya Pradesh\",\"Central\"),(\"S6\",\"Bhopal\",\"Madhya Pradesh\",\"Central\"),(\"S7\",\"Pune\",\"Maharashtra\",\"West\"),(\"S8\",\"Raipur\",\"Chhattisgarh\",\"Central\")]\nix={'store':0,'city':1,'state':2,'zone':3}\ndef fd(a,b):\n    m={}\n    for r in rows: m.setdefault(r[ix[a]],set()).add(r[ix[b]])\n    return all(len(v)==1 for v in m.values())\nopts={'A':['city','state','zone'],'B':['store','zone','state'],'C':['state','city','store'],'D':['store','city','zone']}\nprint([k for k,c in opts.items() if fd(c[0],c[1]) and fd(c[1],c[2])])",
-      "notes": ""
+      "checkCode": "rows = [(\"S1\",\"Pune\",\"Maharashtra\",\"West\"),(\"S2\",\"Nagpur\",\"Maharashtra\",\"Central\"),(\"S3\",\"Mumbai\",\"Maharashtra\",\"West\"),(\"S4\",\"Surat\",\"Gujarat\",\"West\"),\n        (\"S5\",\"Indore\",\"Madhya Pradesh\",\"Central\"),(\"S6\",\"Bhopal\",\"Madhya Pradesh\",\"Central\"),(\"S7\",\"Pune\",\"Maharashtra\",\"West\"),(\"S8\",\"Raipur\",\"Chhattisgarh\",\"Central\")]\ncol = {\"store\":0, \"city\":1, \"state\":2, \"zone\":3}\ndef many_to_one(a, b):\n    m = {}\n    for r in rows: m.setdefault(r[col[a]], set()).add(r[col[b]])\n    return all(len(s) == 1 for s in m.values())\nopts = {\"A\":(\"city\",\"state\",\"zone\"), \"B\":(\"store\",\"zone\",\"state\"), \"C\":(\"state\",\"city\",\"store\"), \"D\":(\"store\",\"city\",\"zone\")}\nprint({k: (many_to_one(a,b), many_to_one(b,c)) for k,(a,b,c) in opts.items()})\nprint(\"states per zone:\", {z: sorted({r[2] for r in rows if r[3]==z}) for z in (\"West\",\"Central\")})",
+      "notes": "Key D is right and unique (only store<city<zone is many-to-one at both links). Fixed a factual error in the explanations: they said the zone Central holds four states, but the table shows three (Maharashtra, Madhya Pradesh, Chhattisgarh); corrected in the step-1 table row and in the option B analysis. Stem, options and answer unchanged."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": true,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "c8351ab59a2207f4",
+        "verification": "3cf42919c2d7dfe8"
+      }
     }
   },
   {
@@ -692,12 +860,36 @@
       "commonTrap": "Multiplying the CPT entries of sampled variables into the likelihood weight (only the evidence variables contribute), and using a variable's own CPT $P(S\\mid R)$ as the Gibbs conditional, which forgets that the child $P$ is part of its Markov blanket."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "C",
       "agreesWithKey": true,
-      "checkCode": "from fractions import Fraction as F\nimport random\npR=F(3,10); pS={1:F(9,10),0:F(1,5)}; pP={1:F(1,10),0:F(3,5)}\npS1=pR*pS[1]+(1-pR)*pS[0]; pP1=pS1*pP[1]+(1-pS1)*pP[0]\npost=pR*(pS[1]*pP[1]+(1-pS[1])*pP[0])/pP1\ngib=pS[1]*pP[1]/(pS[1]*pP[1]+(1-pS[1])*pP[0])\nprint(float(pS1),float(pP1),float(post),float(gib))\nrandom.seed(0); N=400000; acc=0; unw=0; sw=0; swr=0\nfor _ in range(N):\n    r=random.random()<0.3; s=random.random()<(0.9 if r else 0.2)\n    acc+= random.random()<(0.1 if s else 0.6)   # prior sample agrees with P=1\n    w=0.1 if s else 0.6; unw+=r; sw+=w; swr+=w*r\nprint(acc/N, unw/N, swr/sw)",
-      "notes": ""
+      "checkCode": "from fractions import Fraction as F\npR = F(3,10); pS = {1:F(9,10), 0:F(1,5)}; pP = {1:F(1,10), 0:F(3,5)}   # pS[r]=P(S=1|R=r), pP[s]=P(P=1|S=s)\npS1 = pR*pS[1] + (1-pR)*pS[0]\npP1 = pS1*pP[1] + (1-pS1)*pP[0]                      # P(P=1): retained fraction under rejection sampling\nj = lambda r,s: (pR if r else 1-pR)*(pS[r] if s else 1-pS[r])*pP[s]   # joint with P=1\ngibbs = j(1,1)/(j(1,1)+j(1,0))                       # P(S=1|R=1,P=1)\npost = (j(1,0)+j(1,1))/sum(j(r,s) for r in (0,1) for s in (0,1))\nprint(float(pS1), float(pP1), float(gibbs), float(post))\nprint('LW weight of any sample with S=1 (evidence CPT only):', float(pP[1]))",
+      "notes": "Blind solve matched the key: LW weight is the evidence CPT only (0.1, so A false), LW needs weighted counts (B false), P(P=1) = 0.395 (C true), Gibbs conditional 0.09/0.15 = 0.6 (D false). No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "8b66e40a9916d2f8",
+        "verification": "b0d40fc1e359a6e0"
+      }
     }
   },
   {
@@ -752,12 +944,36 @@
       "commonTrap": "Treating the boundary levels like interior ones. At $m=5$ the line touches the top of the small hump and gives $5$ solutions, and at $m=27$ it touches the top of the large hump and gives $3$ solutions, so neither $m=5$ nor $m=27$ counts; including them gives $23$. Using $g$ instead of $|g|$, or forgetting that the modulus reflects the negative parts of $g$ upward, also changes the counts."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "21",
       "agreesWithKey": true,
-      "checkCode": "import sympy as sp\nx=sp.symbols('x'); g=x**3-3*x**2-9*x\ndef n(m):\n    if m<0: return 0\n    p=sp.expand((g-m)*(g+m))\n    return sp.Poly(sp.sqf_part(p),x).count_roots()   # distinct real roots of |g|=m\nms=[m for m in range(-5,60) if n(m)==4]\nprint(ms[0],ms[-1],len(ms),{m:n(m) for m in (0,1,4,5,6,26,27,28)})",
-      "notes": ""
+      "checkCode": "import sympy as sp\nx = sp.symbols('x')\ng = x**3 - 3*x**2 - 9*x\ndef distinct(c):                                      # distinct real roots of g(x) = c\n    return sp.Poly(sp.sqf_part(g - c), x).count_roots()\ndef n(m):                                             # |g(x)| = m\n    return 0 if m < 0 else (distinct(0) if m == 0 else distinct(m) + distinct(-m))\ngood = [m for m in range(-10, 80) if n(m) == 4]\nprint(good[0], good[-1], len(good), {m: n(m) for m in (0, 4, 5, 6, 26, 27, 28)})",
+      "notes": "Blind solve matched the key: local max g(-1)=5, local min g(3)=-27; exactly four solutions for 5<m<27, i.e. m = 6..26, 21 values; boundary levels m=5 (5 solutions) and m=27 (3 solutions) excluded. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "35f33f9168410347",
+        "verification": "6243031be1adf0d1"
+      }
     }
   },
   {
@@ -807,12 +1023,36 @@
       "commonTrap": "Adding the letter's position counted from $1$ instead of the Python index counted from $0$ (for example scoring the vowels of \"data\" at positions 2 and 4 instead of at indices 1 and 3), or forgetting that consonants subtract $1$ rather than leaving the total unchanged."
     },
     "answerVerification": {
-      "status": "PARTIALLY_VERIFIED",
-      "method": "Author derivation + Python check",
+      "status": "VERIFIED",
+      "method": "Blind independent re-solve + independent Python check agrees with key",
       "independentAnswer": "18",
       "agreesWithKey": true,
-      "checkCode": "def score(word):\n    total = 0\n    for i, ch in enumerate(word):\n        if ch in \"aeiou\":\n            total += i\n        else:\n            total -= 1\n    return total\nwords = [\"data\", \"science\", \"gate\"]\nprint([score(w) for w in words], sum(score(w) for w in words) + max(map(len, words)))",
-      "notes": ""
+      "checkCode": "def score(word):\n    total = 0\n    for i, ch in enumerate(word):\n        total += i if ch in \"aeiou\" else -1\n    return total\nwords = [\"data\", \"science\", \"gate\"]\nprint([score(w) for w in words], sum(map(score, words)) + max(len(w) for w in words))",
+      "notes": "Blind solve matched the key: scores 2, 7, 2 sum to 11, longest word has 7 letters, printed value 18. No correction needed."
+    },
+    "review": {
+      "status": "VERIFIED",
+      "checks": {
+        "selfCheck": true,
+        "independentSolve": true,
+        "metadata": true,
+        "blueprint": true,
+        "estimatedTime": true,
+        "solution": true,
+        "formatting": true,
+        "noPlaceholders": true,
+        "noAnswerLeak": true,
+        "unchangedSinceVerification": true,
+        "noDuplicate": true,
+        "original": true
+      },
+      "fixed": false,
+      "notes": "",
+      "reviewedAt": "2026-10-05",
+      "verifiedHash": {
+        "content": "d406fe9fbf70be27",
+        "verification": "d726a9d7ec8d6816"
+      }
     }
   }
 ]
