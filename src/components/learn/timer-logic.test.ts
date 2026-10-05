@@ -180,7 +180,29 @@ describe("alerts", () => {
   const schedule = alertSchedule(plan, 180 * MIN);
 
   it("schedules checkpoints, time-left alerts and the end in order", () => {
-    expect(schedule.map((a) => a.key)).toEqual(["cp:ga:1200000", "cp:da-1:3900000", "left:30", "cp:da-2:9300000", "left:10", "cp:review:10500000", "left:5", "left:1", "end"]);
+    // The review checkpoint (175 min) falls on "5 minutes left": one merged alert, so neither hides the other.
+    expect(schedule.map((a) => a.key)).toEqual(["cp:ga:1200000", "cp:da-1:3900000", "left:30", "cp:da-2:9300000", "left:10", "cp:review:10500000", "left:1", "end"]);
+    const review = schedule.find((a) => a.key === "cp:review:10500000");
+    expect(review?.kind === "checkpoint" && review.minutesLeft).toBe(5);
+    expect(schedule.find((a) => a.key === "cp:ga:1200000")).toMatchObject({ kind: "checkpoint", minutesLeft: null, checkpoints: [{ id: "ga", targetQuestions: 10 }] });
+  });
+
+  it("merges checkpoints that share a minute, and carries checkpoints at the very end on the time-up alert", () => {
+    const cps = planCheckpoints(
+      [
+        { id: "a", label: "Section A done", atMin: 10, targetQuestions: 5 },
+        { id: "b", label: "Section B started", atMin: 10, targetQuestions: null },
+        { id: "z", label: "Everything answered", atMin: 30, targetQuestions: 20 },
+      ],
+      30,
+      20,
+    );
+    const s = alertSchedule(cps, 30 * MIN);
+    expect(s.map((a) => a.key)).toEqual(["cp:a+b:600000", "left:10", "left:5", "left:1", "end"]);
+    expect(s[0]).toMatchObject({ kind: "checkpoint", checkpoints: [{ id: "a" }, { id: "b" }] });
+    expect(s.at(-1)).toMatchObject({ kind: "time-up", checkpoints: [{ id: "z" }] });
+    expect(new Set(s.map((a) => a.atMs)).size).toBe(s.length);
+    expect(alertSchedule(cps, 0)).toEqual([]);
   });
 
   it("skips time-left alerts that are not shorter than the run", () => {
@@ -194,6 +216,7 @@ describe("alerts", () => {
     expect(latestAlert(schedule, 20 * MIN)?.key).toBe("cp:ga:1200000");
     expect(latestAlert(schedule, 64 * MIN)?.key).toBe("cp:ga:1200000");
     expect(latestAlert(schedule, 151 * MIN)?.key).toBe("left:30");
+    expect(latestAlert(schedule, 175 * MIN)?.key).toBe("cp:review:10500000");
     expect(latestAlert(schedule, 180 * MIN)?.kind).toBe("time-up");
   });
 });

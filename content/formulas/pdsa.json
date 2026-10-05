@@ -31,7 +31,10 @@
     "whenToUse": "Program-tracing questions that ask how many times a statement executes, the final value of a counter or accumulator, or which elements a `range` or slice produces.",
     "commonMistake": "Counting the stop value (off-by-one): `range(1, 10)` has 9 elements, not 10. Using the floor instead of the ceiling: `range(0, 10, 3)` is 0, 3, 6, 9, which is $\\lceil 10/3 \\rceil = 4$ values, not 3. Forgetting that a negative step needs start > stop: `range(0, 5, -1)` is empty.",
     "example": "`range(3, 20, 4)`: $L = \\lceil 17/4 \\rceil = 5$ values and the last is $3 + 4 \\cdot 4 = 19$, so `sum(range(3, 20, 4))` $= 3 + 7 + 11 + 15 + 19 = 55$.\n\nSlices of `s = \"algorithms\"` (length 10): `s[1:-1:3]` uses the indices of `range(1, 9, 3)`, that is 1, 4, 7, giving `\"lrh\"`. `s[::-2]` uses indices 9, 7, 5, 3, 1, giving `\"shiol\"`.\n\nHalving loop with $n = 100$: $n$ takes the values 100, 50, 25, 12, 6, 3, 1 and then becomes 0, so the body runs $\\lfloor \\log_2 100 \\rfloor + 1 = 6 + 1 = 7$ times.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-python-semantics",
+      "c-pdsa-asymptotic-analysis"
+    ]
   },
   {
     "id": "f-pdsa-python-floor-div-mod",
@@ -57,7 +60,9 @@
     "whenToUse": "Tracing code that uses `//`, `%` or `divmod` with negative numbers: digit-extraction loops, hash functions `k % m`, circular-buffer indices and parity tests. When both operands are non-negative, floor and truncation agree and the school rules apply.",
     "commonMistake": "Carrying over the C/Java rule (truncate toward zero; the remainder has the sign of the dividend). In Python `-7 // 2` is `-4`, not `-3`, and `-7 % 2` is `1`, not `-1`. A consequence: `x % 2 == 1` correctly detects negative odd numbers in Python (`-3 % 2` is `1`), but not in C.",
     "example": "$a = -17$, $b = 5$: $-17/5 = -3.4$, so `-17 // 5` $= \\lfloor -3.4 \\rfloor = -4$ and `-17 % 5` $= -17 - 5 \\cdot (-4) = 3$. Check: $5 \\cdot (-4) + 3 = -17$.\n\n$a = 17$, $b = -5$: $17/(-5) = -3.4$, so `17 // -5` $= -4$ and `17 % -5` $= 17 - (-5)(-4) = -3$.\n\nBy contrast, `int(-17 / 5)` $= -3$ (truncation toward zero).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-python-semantics"
+    ]
   },
   {
     "id": "f-pdsa-recursive-call-count",
@@ -87,7 +92,10 @@
     "whenToUse": "“How many times is the function called?”, “what does this recursive function return?” and “what is the complexity of this recursive code?” when each call reduces the argument by a constant. When the argument is divided (e.g. $n/2$), use the master theorem instead.",
     "commonMistake": "Forgetting the top-level call or the base-case calls (the leaves of the recursion tree are calls too), and confusing the **number of calls** (exponential for `fib`) with the **recursion depth** (linear). Another trap is Fibonacci indexing: say which convention ($F_0 = 0$, $F_1 = 1$) you use.",
     "example": "Calls made by `fib(6)`: $C(0) = C(1) = 1$, $C(2) = 1 + 1 + 1 = 3$, $C(3) = 3 + 1 + 1 = 5$, $C(4) = 5 + 3 + 1 = 9$, $C(5) = 9 + 5 + 1 = 15$, $C(6) = 15 + 9 + 1 = 25$. Closed form: $F_7 = 13$, so $2 \\cdot 13 - 1 = 25$ calls, while `fib(6)` returns $8$.\n\nTower of Hanoi with $n = 10$ discs, $T(n) = 2T(n-1) + 1$: $T(10) = 2^{10} - 1 = 1023$ moves.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-recursion",
+      "c-pdsa-asymptotic-analysis"
+    ]
   },
   {
     "id": "f-pdsa-catalan-numbers",
@@ -109,7 +117,11 @@
     "whenToUse": "“How many distinct BSTs (or binary tree shapes) with $n$ nodes?”, “how many output sequences can a stack produce?”, “is this output order possible with one stack?”, and any count that satisfies the split recurrence $\\sum_i C_i C_{n-1-i}$.",
     "commonMistake": "Answering $n!$ for the number of BSTs on $n$ keys: $n!$ counts insertion orders, and different orders can build the same BST (for keys 1, 2, 3, the orders 2, 1, 3 and 2, 3, 1 give the same tree). Also mixing up the unlabelled count $C_n$ with the labelled count $n!\\,C_n$.",
     "example": "$n = 4$: $C_4 = \\frac{1}{5}\\binom{8}{4} = \\frac{70}{5} = 14$, so there are 14 BSTs on the keys $\\{1, 2, 3, 4\\}$ and 14 possible output orders for a stack fed 1, 2, 3, 4. Via the recurrence: $C_4 = C_0C_3 + C_1C_2 + C_2C_1 + C_3C_0 = 5 + 2 + 2 + 5 = 14$.\n\nWith input 1, 2, 3 the output 3, 1, 2 is impossible: after 3 is popped, the stack holds 1 (bottom) and 2 (top), so 2 must be output before 1. Of the $3! = 6$ orders, exactly $C_3 = 5$ are possible.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-stacks-queues",
+      "c-pdsa-binary-trees",
+      "c-pdsa-bst-heaps"
+    ]
   },
   {
     "id": "f-pdsa-circular-queue",
@@ -135,7 +147,9 @@
     "whenToUse": "Questions that give `front` and `rear` and ask for the number of elements, the indices after a sequence of operations, or the full/empty condition; ring buffers; BFS queues implemented on arrays.",
     "commonMistake": "Mixing conventions. Some texts let `rear` point **at** the last element; then a non-empty queue holds $((\\mathit{rear} - \\mathit{front} + n) \\bmod n) + 1$ elements and emptiness needs a separate test. Read the code's convention first. Also dropping the $+n$: in C and Java, `%` of a negative number is negative (in Python, `(rear - front) % n` is already non-negative).",
     "example": "$n = 8$, `front = 6`, `rear = 3`: size $= (3 - 6 + 8) \\bmod 8 = 5$ (the elements at indices 6, 7, 0, 1, 2). It is not full, since $(3 + 1) \\bmod 8 = 4 \\ne 6$.\n\nTwo more enqueues write $Q[3]$ and $Q[4]$ and leave `rear = 5`. Now $(5 + 1) \\bmod 8 = 6 =$ `front`, so the queue is full with $(5 - 6 + 8) \\bmod 8 = 7 = n - 1$ elements. A dequeue then returns $Q[6]$ and sets `front = 7`.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-stacks-queues"
+    ]
   },
   {
     "id": "f-pdsa-linked-list-vs-array",
@@ -157,7 +171,11 @@
     "whenToUse": "Choosing a structure for a given mix of operations, tracing pointer code (insertion, deletion, reversal), and complexity questions such as ‘cost of deleting the last node’ or ‘cost of binary search on a linked list’.",
     "commonMistake": "Assuming a tail pointer makes **every** end operation $\\Theta(1)$ in a singly linked list (deleting the tail is still $\\Theta(n)$). Losing the rest of the list in pointer code: set `new.next = cur.next` **before** `cur.next = new`, and when reversing, save `nxt = cur.next` before overwriting `cur.next`.",
     "example": "A singly linked list of $n = 1000$ nodes (positions 0 to 999) with head and tail pointers:\n\n- Reading position 250 takes 250 hops from the head.\n- Appending a node is $\\Theta(1)$ through the tail pointer.\n- Deleting the last node: we must reach position 998 to set its `next` to `None`, which takes 998 hops, and then move the tail pointer there.\n- Reversing in place redirects each of the 1000 `next` pointers once: $\\Theta(n)$ time and $\\Theta(1)$ extra space.\n\nIn a Python list of the same size, `insert(0, x)` shifts all 1000 existing elements, while `append(x)` is amortized $\\Theta(1)$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-stacks-queues",
+      "c-pdsa-linked-lists",
+      "c-pdsa-searching"
+    ]
   },
   {
     "id": "f-pdsa-binary-tree-height-bounds",
@@ -183,7 +201,10 @@
     "whenToUse": "Minimum or maximum height for $n$ nodes, maximum nodes for a given height, the height of a heap or complete tree, and best/worst cost of BST operations for a given insertion order.",
     "commonMistake": "Mixing height conventions. If a question counts height as the number of **levels** (a single node has height 1), every bound shifts by one: at most $2^h - 1$ nodes and minimum height $\\lceil \\log_2 (n+1) \\rceil$. Check the base case the question uses. Also assuming BST operations are $O(\\log n)$ without a balance guarantee.",
     "example": "$n = 100$ nodes: minimum height $\\lfloor \\log_2 100 \\rfloor = 6$ (height 5 holds at most $2^6 - 1 = 63 < 100$ nodes, height 6 up to $2^7 - 1 = 127$); maximum height $99$.\n\nInserting 1, 2, …, 7 in increasing order into an empty BST gives a right-leaning chain of height 6, and a search for 7 compares with all 7 keys. Inserting the same keys in the order 4, 2, 6, 1, 3, 5, 7 gives a perfect tree of height $\\lfloor \\log_2 7 \\rfloor = 2$, and every successful search needs at most 3 key comparisons.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-binary-trees",
+      "c-pdsa-bst-heaps"
+    ]
   },
   {
     "id": "f-pdsa-tree-leaf-count",
@@ -217,7 +238,9 @@
     "whenToUse": "Questions that give some node-degree counts and ask for the rest (such as the number of leaves given the nodes with two children), and counting nodes of full trees: expression trees, knockout tournaments, Huffman trees and decision trees.",
     "commonMistake": "Applying $L = (k-1)I + 1$ to a tree that is not full (some internal node has fewer than $k$ children); use $n - 1 = \\sum_d d\\,n_d$ instead. Also counting $n$ edges instead of $n - 1$ (the root has no parent edge).",
     "example": "A binary tree has 20 leaves and 10 nodes with exactly one child. Then $n_2 = n_0 - 1 = 19$ and $n = 20 + 10 + 19 = 49$ nodes.\n\nA full ternary tree ($k = 3$) with $I = 10$ internal nodes has $n = 3 \\cdot 10 + 1 = 31$ nodes and $L = 2 \\cdot 10 + 1 = 21$ leaves. A knockout tournament with 64 players is a full binary tree with 64 leaves, so it has $64 - 1 = 63$ matches (internal nodes).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-binary-trees"
+    ]
   },
   {
     "id": "f-pdsa-binary-heap",
@@ -239,7 +262,9 @@
     "whenToUse": "Tracing insert or delete on a heap drawn as an array, finding parent/child/leaf positions, counting swaps, and the cost of priority-queue operations (Dijkstra, heapsort, the $k$ largest elements).",
     "commonMistake": "Using the 1-indexed formulas on a 0-indexed array or vice versa, and claiming that building a heap costs $\\Theta(n \\log n)$: that is the cost of $n$ successive inserts, not of the bottom-up build. Also assuming the heap array is sorted; only parent–child order is guaranteed.",
     "example": "Max-heap (1-indexed) `[50, 30, 40, 10, 20, 35, 25]`; insert 45. It goes to position 8. Its parent is position $\\lfloor 8/2 \\rfloor = 4$ holding $10 < 45$: swap, so 45 is at position 4. The parent, position 2, holds $30 < 45$: swap, so 45 is at position 2. The parent, position 1, holds $50 > 45$: stop. Result: `[50, 45, 40, 30, 20, 35, 25, 10]` after 2 swaps.\n\nA heap with $n = 100$ elements has height $\\lfloor \\log_2 100 \\rfloor = 6$ and $\\lceil 100/2 \\rceil = 50$ leaves (positions 51 to 100), and the parent of position 37 is position $\\lfloor 37/2 \\rfloor = 18$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-bst-heaps"
+    ]
   },
   {
     "id": "f-pdsa-hashing-chaining",
@@ -269,7 +294,9 @@
     "whenToUse": "Expected cost of search/insert/delete in a chained hash table, choosing the table size for a target load factor, and expected numbers of empty slots or collisions.",
     "commonMistake": "Quoting $O(1)$ as the **worst-case** cost: it is an expected cost that assumes uniform hashing and $\\alpha = O(1)$. Also assuming $\\alpha \\le 1$: with chaining the load factor can exceed 1, unlike open addressing.",
     "example": "$n = 2000$ keys in $m = 500$ slots, so $\\alpha = 4$.\n\n- Unsuccessful search: $4$ keys examined on average (plus the hash computation).\n- Successful search: $1 + \\frac{4}{2} - \\frac{4}{2 \\cdot 2000} = 3 - 0.001 = 2.999$ keys on average.\n- Expected empty slots: $500\\,(1 - \\frac{1}{500})^{2000} \\approx 500 \\times 0.01824 \\approx 9.1$.\n- Expected colliding pairs: $\\binom{2000}{2} / 500 = 1999000 / 500 = 3998$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-hash-tables"
+    ]
   },
   {
     "id": "f-pdsa-open-addressing",
@@ -307,7 +334,9 @@
     "whenToUse": "Tracing insertions into a small open-addressed table (the final slot of each key and its number of probes), comparing probing schemes, and estimating the expected number of probes at a given load factor.",
     "commonMistake": "Counting probes from 0 (the first slot examined is probe 1, even if it is free), running past slot $m - 1$ without wrapping around modulo $m$, and deleting by simply emptying a slot, which makes later searches stop early and miss keys.",
     "example": "Linear probing with $m = 11$ and $h'(k) = k \\bmod 11$; insert 15, 26, 37, 5 into an empty table.\n\n- $15 \\bmod 11 = 4$: slot 4 (1 probe).\n- $26 \\bmod 11 = 4$: slot 4 is taken, slot 5 (2 probes).\n- $37 \\bmod 11 = 4$: slots 4 and 5 are taken, slot 6 (3 probes).\n- $5 \\bmod 11 = 5$: slots 5 and 6 are taken, slot 7 (3 probes). Key 5 has a different home slot but still joins the cluster: primary clustering.\n\nAt $\\alpha = 0.75$ under uniform hashing: an unsuccessful search needs at most $\\frac{1}{0.25} = 4$ expected probes and a successful one at most $\\frac{1}{0.75}\\ln 4 \\approx 1.85$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-hash-tables"
+    ]
   },
   {
     "id": "f-pdsa-linear-search",
@@ -337,7 +366,9 @@
     "whenToUse": "Unsorted or linked data, a single search (sorting first would cost $\\Theta(n \\log n)$), and expected-comparison questions with given probabilities.",
     "commonMistake": "Using $\\frac{n+1}{2}$ as the overall average when the key may be absent (each unsuccessful search costs $n$), or using $\\frac{n}{2}$ instead of $\\frac{n+1}{2}$. If positions are not equally likely, weight each one: $\\bar{C} = \\sum_i i \\cdot P(\\text{key at position } i)$ for a successful search.",
     "example": "$n = 99$ elements and the key present with probability $p = 0.6$ (uniform over positions): $\\bar{C} = 0.6 \\cdot \\frac{100}{2} + 0.4 \\cdot 99 = 30 + 39.6 = 69.6$ comparisons.\n\nNon-uniform case: $n = 4$ with $P(\\text{key at } 1, 2, 3, 4) = 0.4, 0.3, 0.2, 0.1$ gives $\\bar{C} = 1(0.4) + 2(0.3) + 3(0.2) + 4(0.1) = 2.0$ comparisons; putting frequently searched keys first pays off.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-searching"
+    ]
   },
   {
     "id": "f-pdsa-binary-search",
@@ -367,7 +398,9 @@
     "whenToUse": "Worst-case probe counts for a given $n$, tracing the values of lo, hi and mid, and any search over a sorted array or a monotone condition (binary search on the answer).",
     "commonMistake": "Mixing units: some texts count a three-way probe (equal, less, greater) as two comparisons, which doubles the count, so state what you are counting. Other traps: writing `lo = mid` instead of `lo = mid + 1` (an infinite loop when $\\mathit{hi} = \\mathit{lo} + 1$), and applying binary search to unsorted data.",
     "example": "$n = 1000$: at most $\\lfloor \\log_2 1000 \\rfloor + 1 = 9 + 1 = 10$ probes, since $2^9 = 512 \\le 1000 < 1024 = 2^{10}$.\n\nTrace on `A = [3, 8, 12, 17, 23, 31, 42, 56, 64, 77]` ($n = 10$, 0-indexed) for key 64: $\\mathit{lo} = 0$, $\\mathit{hi} = 9$, $\\mathit{mid} = 4$ ($23 < 64$, so $\\mathit{lo} = 5$); $\\mathit{mid} = 7$ ($56 < 64$, so $\\mathit{lo} = 8$); $\\mathit{mid} = 8$: found after 3 probes. The worst case for $n = 10$ is $\\lfloor \\log_2 10 \\rfloor + 1 = 4$ probes.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-searching"
+    ]
   },
   {
     "id": "f-pdsa-elementary-sort-counts",
@@ -393,7 +426,9 @@
     "whenToUse": "Counting the swaps, comparisons or shifts for a given input, the array state after $k$ passes, and choosing an algorithm for nearly sorted data or when writes are expensive (selection sort makes $O(n)$ swaps).",
     "commonMistake": "Assuming selection sort is faster on sorted input (it always makes $\\frac{n(n-1)}{2}$ comparisons). Counting insertion sort's **comparisons** as $I$: each insertion that stops at a smaller element costs one extra comparison. Calling selection sort stable: its long-distance swap can reorder equal keys, e.g. `[2a, 2b, 1]` becomes `[1, 2b, 2a]`.",
     "example": "$A = [4, 1, 3, 5, 2]$, $n = 5$. Inversions: $(4,1), (4,3), (4,2), (3,2), (5,2)$, so $I = 5$.\n\n- Bubble sort: exactly 5 swaps (10 comparisons without early exit).\n- Insertion sort: 5 shifts; the insertions of 1, 3, 5, 2 cost 1, 2, 1, 4 comparisons, total $8 = I + (n - 1) - 1$ (key 1 moves to the front, which saves one comparison).\n- Selection sort: $\\binom{5}{2} = 10$ comparisons; in pass 3 the minimum (3) is already in place, so it makes 3 actual swaps.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-elementary-sorts"
+    ]
   },
   {
     "id": "f-pdsa-master-theorem",
@@ -431,7 +466,10 @@
     "whenToUse": "Any divide-and-conquer recurrence of the form $aT(n/b) + f(n)$: mergesort, balanced quicksort, binary search, recursive array algorithms and matrix or integer multiplication.",
     "commonMistake": "Comparing $f(n)$ with $n^{a/b}$ or $n^{\\log_a b}$ instead of $n^{\\log_b a}$. Forcing a case across a non-polynomial gap: $T(n) = 2T(n/2) + n/\\log n$ fits none of the three cases (its solution is $\\Theta(n \\log\\log n)$). Applying the theorem to $T(n) = T(n-1) + \\dots$, which is not of divide-and-conquer form.",
     "example": "$T(n) = 4T(n/2) + n^2$: $p = \\log_2 4 = 2$ and $f(n) = n^2 = \\Theta(n^2 \\log^0 n)$, so case 2 gives $\\Theta(n^2 \\log n)$.\n\n$T(n) = 3T(n/4) + n \\log n$: $p = \\log_4 3 \\approx 0.79$ and $f(n) = n \\log n = \\Omega(n^{0.79 + \\varepsilon})$ (take $\\varepsilon = 0.2$). Regularity: $3 \\cdot \\frac{n}{4} \\log \\frac{n}{4} \\le \\frac{3}{4}\\, n \\log n$. Case 3 gives $\\Theta(n \\log n)$.\n\n$T(n) = 8T(n/2) + n^2$: $p = 3 > 2$, so case 1 gives $\\Theta(n^3)$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-mergesort-quicksort",
+      "c-pdsa-asymptotic-analysis"
+    ]
   },
   {
     "id": "f-pdsa-mergesort",
@@ -457,7 +495,9 @@
     "whenToUse": "Exact comparison counts for mergesort or a single merge, when a guaranteed $\\Theta(n \\log n)$ or a stable sort is needed, and sorting linked lists or data on disk (external sorting).",
     "commonMistake": "Saying that merging two lists of $m$ elements each takes $2m$ comparisons (it is at most $2m - 1$), or that mergesort is asymptotically faster on sorted input (it is $\\Theta(n \\log n)$ either way; only the constant changes). Standard array mergesort is not in place.",
     "example": "$n = 16 = 2^4$: worst case $W = 16 \\cdot 4 - 16 + 1 = 49$ comparisons; best case $B = 8 \\cdot 4 = 32$ comparisons.\n\nMerging $[2, 5, 9]$ with $[3, 4, 10, 12]$: compare 2 with 3 (output 2), 5 with 3 (output 3), 5 with 4 (output 4), 5 with 10 (output 5), 9 with 10 (output 9). The left list is now empty, so 10 and 12 are copied without comparisons. Total: 5 comparisons, within $[\\min(3, 4),\\ 3 + 4 - 1] = [3, 6]$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-mergesort-quicksort"
+    ]
   },
   {
     "id": "f-pdsa-quicksort",
@@ -487,7 +527,9 @@
     "whenToUse": "Comparison counts on sorted, reverse-sorted or all-equal inputs, identifying which pivot rules cause $\\Theta(n^2)$, recurrences with unbalanced splits, and tracing a partition step.",
     "commonMistake": "Believing quicksort's worst case needs ‘random-looking’ input: with a first- or last-element pivot it is **sorted** input. Believing that an unbalanced but constant-**ratio** split such as $1 : 99$ makes it quadratic: it stays $\\Theta(n \\log n)$. Only a split that peels off a constant **number** of elements, such as $n - 1 : 0$, is quadratic.",
     "example": "$n = 10$ sorted keys with the last element as pivot: each partition removes only the pivot, so there are $9 + 8 + \\dots + 1 = 45 = \\frac{10 \\cdot 9}{2}$ comparisons.\n\nAverage for $n = 10$: $H_{10} \\approx 2.928968$, so $C(10) = 2 \\cdot 11 \\cdot 2.928968 - 40 \\approx 64.437 - 40 = 24.44$ comparisons. A check with the recurrence for small $n$: $C(0) = C(1) = 0$, $C(2) = 1$, $C(3) = 2 + \\frac{2}{3}(0 + 0 + 1) = \\frac{8}{3}$, which equals $2 \\cdot 4 \\cdot \\frac{11}{6} - 12 = \\frac{8}{3}$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-mergesort-quicksort"
+    ]
   },
   {
     "id": "f-pdsa-sorting-lower-bound",
@@ -517,7 +559,11 @@
     "whenToUse": "The minimum number of comparisons needed to sort $n$ items, proving an $\\Omega(n \\log n)$ bound, recognising when a linear-time sort is possible, and quick recall of the standard complexity table.",
     "commonMistake": "Applying the $\\Omega(n \\log n)$ bound to counting or radix sort, or using $\\log_2 n$ instead of $\\log_2 n!$. The bound concerns **worst-case** comparisons: a comparison sort can still finish with $n - 1$ comparisons on a lucky input (insertion sort on sorted data).",
     "example": "$n = 5$: $5! = 120$ and $2^6 = 64 < 120 \\le 128 = 2^7$, so every comparison sort needs at least $\\lceil \\log_2 120 \\rceil = 7$ comparisons in the worst case for 5 keys (and 7 are known to suffice).\n\nMaximum and minimum of $n = 100$ numbers: $\\lceil 300/2 \\rceil - 2 = 148$ comparisons. Pair the elements up (50 comparisons), find the maximum of the 50 pair winners (49) and the minimum of the 50 pair losers (49): $50 + 49 + 49 = 148$, against $2(n - 1) = 198$ for two independent scans.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-elementary-sorts",
+      "c-pdsa-mergesort-quicksort",
+      "c-pdsa-asymptotic-analysis"
+    ]
   },
   {
     "id": "f-pdsa-handshaking-edge-counts",
@@ -551,7 +597,10 @@
     "whenToUse": "Checking whether a degree sequence is possible, finding the number of edges from the degrees, counting edges of trees, forests and complete graphs, and the minimum number of edges for connectivity.",
     "commonMistake": "Forgetting to halve (a degree sum of 30 means 15 edges, not 30), using $\\binom{n}{2}$ for a **directed** graph (the maximum is $n(n-1)$), and assuming that a graph with $n - 1$ edges is a tree: it must also be connected (equivalently, acyclic).",
     "example": "The degree sequence $3, 3, 2, 2, 2, 1, 1$ sums to $14$, so a graph with these degrees has $m = 7$ edges; it has four odd-degree vertices, an even number, as required. The sequence $3, 3, 3, 2, 2$ sums to 13, which is odd, so no graph has it.\n\nA forest with $n = 20$ vertices and $m = 16$ edges has $c = 20 - 16 = 4$ trees. $K_{10}$ has $\\binom{10}{2} = 45$ edges, and there are $10^{8}$ labelled trees on 10 vertices.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-graph-basics",
+      "c-pdsa-graph-traversals"
+    ]
   },
   {
     "id": "f-pdsa-bfs-dfs",
@@ -581,7 +630,11 @@
     "whenToUse": "Complexity of traversal-based algorithms, BFS levels and shortest hop counts, DFS discovery/finish-time traces, edge classification, cycle detection, topological sorting and counting connected components.",
     "commonMistake": "Writing $\\Theta(m)$ or $\\Theta(n)$ instead of $\\Theta(n + m)$ (isolated vertices still cost time, and edges can far outnumber vertices), quoting $\\Theta(n + m)$ for an adjacency matrix (it is $\\Theta(n^2)$), and using BFS for shortest paths in a **weighted** graph.",
     "example": "Directed graph with edges $A \\to B$, $A \\to C$, $B \\to D$, $C \\to D$, $D \\to E$; DFS from $A$, taking neighbours in alphabetical order:\n\n$d[A] = 1$, $d[B] = 2$, $d[D] = 3$, $d[E] = 4$, $f[E] = 5$, $f[D] = 6$, $f[B] = 7$, $d[C] = 8$ (the edge $C \\to D$ reaches a finished vertex that is not a descendant of $C$: a cross edge), $f[C] = 9$, $f[A] = 10$.\n\nCheck: $f[A] - d[A] = 9 = 2 \\cdot 5 - 1$, and $f[B] - d[B] = 5 = 2 \\cdot 3 - 1$ (the subtree $B, D, E$). There is no back edge, so the graph is a DAG, and decreasing finish times give the topological order $A, C, B, D, E$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-graph-basics",
+      "c-pdsa-graph-traversals",
+      "c-pdsa-shortest-paths"
+    ]
   },
   {
     "id": "f-pdsa-dijkstra",
@@ -619,7 +672,9 @@
     "whenToUse": "Single-source shortest paths with non-negative weights: tracing the order in which vertices are finalised and the $d$ values after each step, and complexity questions that depend on the priority queue.",
     "commonMistake": "Running Dijkstra with a negative edge. With edges $s \\to a$ (2), $s \\to b$ (3), $b \\to a$ ($-2$), $a \\to c$ (1), Dijkstra finalises $a$ with $d[a] = 2$ and sets $d[c] = 3$ before it processes $b$. Since $a$ is never processed again, it reports $d[c] = 3$, but the path $s \\to b \\to a \\to c$ has weight $3 - 2 + 1 = 2$. Adding a constant to every weight does not fix this either (it penalises paths with more edges); use Bellman–Ford.",
     "example": "Directed graph: $s \\to a$ (4), $s \\to b$ (1), $b \\to a$ (2), $a \\to c$ (1), $b \\to c$ (5), $c \\to t$ (3), $a \\to t$ (6).\n\n1. Extract $s$ (0): $d[a] = 4$, $d[b] = 1$.\n2. Extract $b$ (1): $d[a] = \\min(4, 1 + 2) = 3$, $d[c] = 1 + 5 = 6$.\n3. Extract $a$ (3): $d[c] = \\min(6, 3 + 1) = 4$, $d[t] = 3 + 6 = 9$.\n4. Extract $c$ (4): $d[t] = \\min(9, 4 + 3) = 7$.\n5. Extract $t$ (7).\n\nFinal distances: $s = 0$, $b = 1$, $a = 3$, $c = 4$, $t = 7$; the shortest path to $t$ is $s \\to b \\to a \\to c \\to t$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-shortest-paths"
+    ]
   },
   {
     "id": "f-pdsa-bellman-ford-floyd-warshall",
@@ -649,6 +704,8 @@
     "whenToUse": "Graphs with negative edge weights, negative-cycle detection, all-pairs shortest paths on small dense graphs, and questions asking for matrix entries after the $k$-th Floyd–Warshall iteration.",
     "commonMistake": "Putting the $k$ loop inside the $i, j$ loops in Floyd–Warshall (the results are then wrong), running fewer than $n - 1$ Bellman–Ford rounds, and expecting meaningful distances when a negative cycle is reachable.",
     "example": "Floyd–Warshall on vertices 1, 2, 3 with $w(1,2) = 4$, $w(1,3) = 5$, $w(2,3) = -2$, $w(3,1) = 1$:\n\n- $k = 1$: $d_{32} = d_{31} + d_{12} = 1 + 4 = 5$ (was $\\infty$).\n- $k = 2$: $d_{13} = \\min(5,\\ d_{12} + d_{23}) = \\min(5, 2) = 2$.\n- $k = 3$: $d_{21} = d_{23} + d_{31} = -2 + 1 = -1$ (was $\\infty$).\n\nFinal: $d_{12} = 4$, $d_{13} = 2$, $d_{21} = -1$, $d_{23} = -2$, $d_{31} = 1$, $d_{32} = 5$; every $d_{ii} = 0$, so there is no negative cycle.\n\nBellman–Ford with $n = 6$ and $m = 10$: at most $n - 1 = 5$ rounds of 10 relaxations, that is 50 relaxations, plus one checking round of 10.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-pdsa-shortest-paths"
+    ]
   }
 ]

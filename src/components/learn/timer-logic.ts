@@ -198,23 +198,39 @@ export function clampDone(n: number, total: number | null): number {
 /** Remaining-time alerts in minutes (only those shorter than the run are used). */
 export const TIME_LEFT_ALERTS = [30, 10, 5, 1] as const;
 
+/**
+ * One on-screen alert. Alerts that fall on the same instant are merged into
+ * one, so none of them is hidden by another: checkpoints sharing a minute are
+ * listed together, a time-left alert at a checkpoint's minute is carried by
+ * that checkpoint (`minutesLeft`), and checkpoints set at the very end are
+ * carried by the time-up alert.
+ */
 export type TimerAlert =
-  | { key: string; kind: "checkpoint"; atMs: number; checkpoint: PlannedCheckpoint }
+  | { key: string; kind: "checkpoint"; atMs: number; checkpoints: PlannedCheckpoint[]; minutesLeft: number | null }
   | { key: string; kind: "time-left"; atMs: number; minutesLeft: number }
-  | { key: string; kind: "time-up"; atMs: number };
+  | { key: string; kind: "time-up"; atMs: number; checkpoints: PlannedCheckpoint[] };
 
-/** Every alert the run will raise, in the order they happen. */
+/** Every alert the run will raise, in the order they happen (at most one per instant). */
 export function alertSchedule(cps: PlannedCheckpoint[], durationMs: number): TimerAlert[] {
-  const out: TimerAlert[] = cps.map((c) => ({ key: `cp:${c.id}:${c.atMs}`, kind: "checkpoint", atMs: c.atMs, checkpoint: c }));
-  for (const m of TIME_LEFT_ALERTS) {
-    const at = durationMs - m * 60_000;
-    // Skip thresholds that are not shorter than the run (a 20-minute run does not "alert" 30 minutes left at the start).
-    if (at > 0) out.push({ key: `left:${m}`, kind: "time-left", atMs: at, minutesLeft: m });
+  if (durationMs <= 0) return [];
+  const byTime = new Map<number, PlannedCheckpoint[]>();
+  for (const c of cps) {
+    if (c.atMs <= 0 || c.atMs > durationMs) continue;
+    const list = byTime.get(c.atMs);
+    if (list) list.push(c);
+    else byTime.set(c.atMs, [c]);
   }
-  if (durationMs > 0) out.push({ key: "end", kind: "time-up", atMs: durationMs });
-  // Stable by time; at equal times a checkpoint shows before a time-left alert, and time-up comes last.
-  const rank = { checkpoint: 0, "time-left": 1, "time-up": 2 } as const;
-  return out.map((a, i) => ({ a, i })).sort((x, y) => x.a.atMs - y.a.atMs || rank[x.a.kind] - rank[y.a.kind] || x.i - y.i).map((x) => x.a);
+  // Skip thresholds that are not shorter than the run (a 20-minute run does not "alert" 30 minutes left at the start).
+  const timeLeft = TIME_LEFT_ALERTS.map((m) => ({ minutes: m, atMs: durationMs - m * 60_000 })).filter((t) => t.atMs > 0);
+  const out: TimerAlert[] = [];
+  for (const [atMs, list] of byTime) {
+    if (atMs === durationMs) continue;
+    const left = timeLeft.find((t) => t.atMs === atMs);
+    out.push({ key: `cp:${list.map((c) => c.id).join("+")}:${atMs}`, kind: "checkpoint", atMs, checkpoints: list, minutesLeft: left?.minutes ?? null });
+  }
+  for (const t of timeLeft) if (!byTime.has(t.atMs)) out.push({ key: `left:${t.minutes}`, kind: "time-left", atMs: t.atMs, minutesLeft: t.minutes });
+  out.push({ key: "end", kind: "time-up", atMs: durationMs, checkpoints: byTime.get(durationMs) ?? [] });
+  return out.sort((a, b) => a.atMs - b.atMs);
 }
 
 /** The most recent alert that has happened by `elapsed` (null before the first one). */

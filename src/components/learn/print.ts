@@ -5,9 +5,14 @@
  *  - forces the light palette, so a dark-theme reader still prints dark ink on
  *    white paper (the triple :root beats the theme selectors' specificity);
  *  - removes the shell's side padding and width cap;
- *  - keeps each formula card on one page where it fits, and keeps a topic
- *    heading with its first card;
- *  - lets wide formulas show in full instead of clipping inside a scroller.
+ *  - sets a print-sized type scale (about 9 pt body text; everything is in
+ *    rem, so the root size scales the whole card);
+ *  - keeps each formula card on one page where it fits (a card taller than
+ *    a page breaks between its parts), and keeps a topic heading with its
+ *    first card;
+ *  - lets wide display formulas wrap at their operators (KaTeX splits them
+ *    into unbreakable runs at = + − …) instead of clipping in a scroller or
+ *    widening the page, which would make the browser shrink every page.
  */
 export const FORMULA_PRINT_CSS = `
 @media print {
@@ -20,13 +25,19 @@ export const FORMULA_PRINT_CSS = `
     --shadow: none;
     color-scheme: light;
   }
-  @page { margin: 14mm 12mm; }
+  @page { margin: 12mm 11mm; }
+  html { font-size: 12.5px; }
   html, body { background: #fff !important; }
   div:has(> #main) { padding-left: 0 !important; }
   #main { max-width: none !important; padding: 0 !important; }
-  .formula-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; margin-bottom: 10px; }
+  .formula-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none !important; margin-bottom: 8px; }
   .formula-topic-heading { break-after: avoid; page-break-after: avoid; }
-  .formula-card .math-display, .formula-card [role="group"] { overflow: visible !important; }
+  /* A card taller than a page still breaks, but between its parts, never inside one. */
+  .formula-card > :first-child { break-after: avoid; page-break-after: avoid; }
+  .formula-card .formula-part, .formula-card [role="group"] { break-inside: avoid; page-break-inside: avoid; }
+  .formula-card .math-display, .formula-card [role="group"], .formula-card .table-wrap { overflow: visible !important; }
+  .formula-card .katex-display > .katex { white-space: normal !important; }
+  .formula-card .katex-display { margin: 0.25em 0; }
   .formula-card a { color: inherit; text-decoration: none; }
 }
 `;

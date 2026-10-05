@@ -14,6 +14,7 @@ import { BookmarkButton } from "@/components/userdata/BookmarkButton";
 import { cn } from "@/lib/utils";
 import { FormulaMath, RICH_TABLES } from "./bits";
 import { RevisionButton } from "./RevisionButton";
+import { ScriptText } from "./scripts";
 
 const DETAIL = "group-data-[compact=true]/book:hidden";
 
@@ -21,7 +22,7 @@ function Part({ title, children, className, tone }: { title: string; children: R
   return (
     <div
       className={cn(
-        "min-w-0",
+        "formula-part min-w-0",
         tone === "warning" && "rounded-lg border border-warning/30 bg-warning-soft px-3 py-2.5",
         tone === "muted" && "rounded-lg border border-border bg-surface-2 px-3 py-2.5",
         className,
@@ -91,7 +92,9 @@ export function FormulaCard({ f, concepts }: { f: CompiledFormula; concepts: { i
                         <th scope="row" className="px-3 py-1.5 text-left align-top font-normal">
                           <ServerRichHtml html={v.symbol} className="text-sm" />
                         </th>
-                        <td className="px-3 py-1.5 align-top text-fg-2">{v.meaning}</td>
+                        <td className="px-3 py-1.5 align-top text-fg-2">
+                          <ScriptText text={v.meaning} />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -99,7 +102,7 @@ export function FormulaCard({ f, concepts }: { f: CompiledFormula; concepts: { i
               </div>
             </Part>
           ) : null}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 print:grid-cols-2">
             <Part title="When to use">
               <ServerRichHtml html={f.html.whenToUse} />
             </Part>

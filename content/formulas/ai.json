@@ -35,7 +35,9 @@
     "whenToUse": "Questions that compare the uninformed strategies (which is complete, optimal or memory-efficient), ask for a time or space bound, or ask which frontier data structure (FIFO queue, LIFO stack, priority queue) a strategy uses.",
     "commonMistake": "Confusing $d$ (depth of the shallowest goal) with $m$ (maximum depth): DFS takes $O(b^m)$ time, not $O(b^d)$. Calling BFS optimal for arbitrary step costs: it minimizes the **number of steps**, not the path cost. Forgetting that the UCS bound is in terms of $C^*/\\varepsilon$, not $d$: with equal unit costs it is $b^{d+1}$, one level more than BFS, because UCS tests for the goal only when it pops a node.",
     "example": "Take $b = 10$, the shallowest goal at depth $d = 6$, maximum depth $m = 12$, every step cost $\\ge \\varepsilon = 1$ and optimal cost $C^* = 8$.\n\n- **BFS**: in the worst case it generates $10 + 10^2 + \\dots + 10^6 = 1{,}111{,}110$ nodes and keeps them all, so time and memory are both about $10^6$ nodes.\n- **IDS**: time is still $O(10^6)$, but memory is only on the order of $b \\cdot d = 60$ nodes.\n- **DFS**: memory is on the order of $b \\cdot m = 120$ nodes, but time can reach $b^m = 10^{12}$, and it may return a deeper, costlier goal.\n- **UCS**: the bound is $b^{1 + \\lfloor C^*/\\varepsilon \\rfloor} = 10^{1 + \\lfloor 8/1 \\rfloor} = 10^{9}$. UCS explores by cost, not depth, so its bound depends on $C^*/\\varepsilon$ and here is worse than BFS's $10^6$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-uninformed-search"
+    ]
   },
   {
     "id": "f-ai-bfs-ids-node-counts",
@@ -69,7 +71,9 @@
     "whenToUse": "NAT questions asking how many nodes BFS, DLS or IDS generates (or expands) in a tree with a fixed branching factor, and questions about the overhead of iterative deepening compared with BFS.",
     "commonMistake": "Counting each level only once for IDS: depth $i$ is generated $d + 1 - i$ times. Mixing up conventions: always fix whether the root is counted and whether the goal test happens on generation or on expansion, because the answer changes. Confusing **generated** with **expanded**: expanding $k$ nodes generates $k b$ children.",
     "example": "Uniform tree with $b = 3$ and the goal as the last node at depth $d = 4$:\n\n- $N_{\\text{BFS}} = 3 + 9 + 27 + 81 = 120$, which matches $\\frac{3^5 - 3}{3 - 1} = \\frac{240}{2} = 120$. Counting the root, the tree down to depth 4 has 121 nodes.\n- $N_{\\text{IDS}} = 4 \\cdot 3 + 3 \\cdot 9 + 2 \\cdot 27 + 1 \\cdot 81 = 12 + 27 + 54 + 81 = 174$ (179 if the root is counted in each of the 5 iterations).\n- Overhead: $174/120 = 1.45$, close to the limit $b/(b-1) = 1.5$.\n- If BFS tested for the goal only on expansion, it would also expand the other 80 nodes at depth 4, generating $3 \\times 80 = 240$ nodes at depth 5, for $120 + 240 = 360$ in total.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-uninformed-search"
+    ]
   },
   {
     "id": "f-ai-best-first-evaluation",
@@ -103,7 +107,10 @@
     "whenToUse": "Tracing the expansion order of UCS, greedy best-first or A* on a small graph, identifying which algorithm a given evaluation function defines, and deciding which nodes A* must, may or cannot expand given $C^*$.",
     "commonMistake": "Stopping A\\* (or UCS) when a goal is first **generated** instead of when it is **popped**: in the example the goal is first generated with $f = 11$, yet the optimal cost is 7. Ordering by $h$ alone when the question asks for A\\*, or by $g$ alone when it asks for greedy search.",
     "example": "Graph: S→A (cost 1), S→B (4), A→G (10), B→G (3). Heuristic: $h(S) = 3$, $h(A) = 2$, $h(B) = 3$, $h(G) = 0$; it satisfies $h(n) \\le c(n, n') + h(n')$ on every edge.\n\n- **Greedy** ($f = h$): expand S, giving A ($h = 2$) and B ($h = 3$). Expand A, giving G ($h = 0$). Pop G and return S–A–G with cost $1 + 10 = 11$, which is not optimal.\n- **A\\*** ($f = g + h$): expand S, giving A with $f = 1 + 2 = 3$ and B with $f = 4 + 3 = 7$. Expand A, giving G with $f = 11 + 0 = 11$. The frontier is B (7) and G (11), so expand B: it reaches G with $g = 7$, $f = 7 + 0 = 7$, which replaces the entry with $f = 11$. Pop G with $f = 7$: return S–B–G with cost $C^* = 7$.\n- **UCS** ($f = g$) pops S (0), A (1), B (4), G (7) and returns the same optimal path.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-uninformed-search",
+      "c-ai-a-star-search"
+    ]
   },
   {
     "id": "f-ai-admissible-consistent-heuristics",
@@ -133,7 +140,10 @@
     "whenToUse": "Checking whether a given table of heuristic values is admissible or consistent, deciding whether A* is guaranteed to return an optimal solution, and multiple-select questions of the form 'which of these heuristics is admissible'.",
     "commonMistake": "Checking consistency only along the optimal path: the inequality must hold on **every** edge, in the direction of the edge. Assuming admissible implies consistent. Forgetting that $h$ must be 0 at every goal. Using an admissible but inconsistent $h$ with graph search that never re-opens closed nodes: it can then return a suboptimal path.",
     "example": "Graph: S→A (cost 2), S→B (5), A→B (1), A→G (6), B→G (2). True costs to the goal: $h^*(G) = 0$, $h^*(B) = 2$, $h^*(A) = \\min(6,\\ 1 + 2) = 3$, $h^*(S) = \\min(2 + 3,\\ 5 + 2) = 5$.\n\nHeuristic: $h(S) = 4$, $h(A) = 1$, $h(B) = 2$, $h(G) = 0$.\n\n- Admissible: $4 \\le 5$, $1 \\le 3$, $2 \\le 2$, $0 \\le 0$. Yes.\n- Consistent: edge S→A needs $4 \\le 2 + 1 = 3$, which fails, so $h$ is **not** consistent. The other four edges pass: $4 \\le 5 + 2$, $1 \\le 1 + 2$, $1 \\le 6 + 0$, $2 \\le 2 + 0$.\n- The violation shows up as a drop in $f$: $f(S) = 0 + 4 = 4$ but $f(A) = 2 + 1 = 3$.\n- Consistency needs $h(A) \\ge 4 - 2 = 2$ (edge S→A) and $h(A) \\le 1 + 2 = 3$ (edge A→B), so any $h(A) \\in [2, 3]$ makes $h$ consistent.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-a-star-search",
+      "c-ai-heuristics"
+    ]
   },
   {
     "id": "f-ai-heuristic-dominance",
@@ -163,7 +173,9 @@
     "whenToUse": "Comparing heuristics ('which one makes A* expand fewer nodes'), deciding whether a combination (max, average, sum) of admissible heuristics is admissible, computing 8-puzzle heuristic values, and effective-branching-factor calculations.",
     "commonMistake": "Assuming the sum of two admissible heuristics is admissible; only the max and convex combinations are safe. Counting the blank as a misplaced tile, or summing Manhattan distances for the blank. Claiming a dominating heuristic 'always finds a cheaper solution': both give optimal solutions; the dominating one just expands fewer nodes.",
     "example": "8-puzzle, current state $\\begin{bmatrix} 8 & 1 & 3 \\\\ 4 & \\square & 2 \\\\ 7 & 6 & 5 \\end{bmatrix}$, goal $\\begin{bmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & \\square \\end{bmatrix}$ (□ is the blank).\n\n- Misplaced tiles: 8, 1, 2, 6 and 5, so $h_1 = 5$.\n- Manhattan distances: tile 8 is 2 rows and 1 column away (3), tile 1 is 1 away, tile 2 is 2 away, tile 6 is 2 away, tile 5 is 2 away, and tiles 3, 4 and 7 are in place. So $h_2 = 3 + 1 + 2 + 2 + 2 = 10$.\n- A breadth-first search shows the optimal solution takes $h^* = 14$ moves, so $h_1 = 5 \\le h_2 = 10 \\le 14$: both are admissible and $h_2$ is closer to the truth.\n\nEffective branching factor: A\\* generates $N = 84$ nodes and finds a solution at depth $d = 3$. Solve $1 + b^* + (b^*)^2 + (b^*)^3 = 85$: $b^* = 4$ gives $1 + 4 + 16 + 64 = 85$, so $b^* = 4$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-heuristics"
+    ]
   },
   {
     "id": "f-ai-minimax",
@@ -201,7 +213,9 @@
     "whenToUse": "Computing the value of a game tree and the move MAX should choose, questions with chance nodes, and questions about what happens to the chosen move when leaf values are transformed.",
     "commonMistake": "Taking the max at MIN levels (check whose turn it is at each level; levels alternate). Averaging at MIN nodes, or taking a min or max at chance nodes. Assuming that squaring or otherwise monotonically rescaling the utilities cannot change an expectiminimax decision: only positive linear rescaling is safe.",
     "example": "MAX at the root has three moves leading to MIN nodes with leaves (left to right) $L = (7, 4, 9)$, $M = (5, 11, 6)$ and $R = (3, 8, 10)$.\n\n- MIN values: $\\min(7, 4, 9) = 4$, $\\min(5, 11, 6) = 5$, $\\min(3, 8, 10) = 3$.\n- Root value: $\\max(4, 5, 3) = 5$, so MAX plays the middle move. All $3^2 = 9$ leaves are examined.\n\nExpectiminimax: move $a_1$ leads to a chance node giving 5 with probability 0.8 and 1 with probability 0.2; move $a_2$ gives 7 or 1 with probability 0.5 each.\n\n- $a_1$: $0.8 \\cdot 5 + 0.2 \\cdot 1 = 4.2$; $a_2$: $0.5 \\cdot 7 + 0.5 \\cdot 1 = 4.0$, so MAX picks $a_1$.\n- Squaring the (positive) leaves preserves their order but gives $a_1$: $0.8 \\cdot 25 + 0.2 \\cdot 1 = 20.2$ and $a_2$: $0.5 \\cdot 49 + 0.5 \\cdot 1 = 25$, so the decision flips to $a_2$. The positive linear map $2u + 3$ gives $11.4$ and $11.0$, keeping $a_1$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-adversarial-search"
+    ]
   },
   {
     "id": "f-ai-alpha-beta",
@@ -239,7 +253,9 @@
     "whenToUse": "Questions that ask which leaves or subtrees are pruned when alpha–beta runs left to right, the value computed at the root, the best-case number of leaf evaluations, or how move ordering affects pruning.",
     "commonMistake": "Passing $\\alpha$ and $\\beta$ **up** the tree instead of down, or letting a node's window leak into its siblings' subtrees. Assuming pruning can change the root value or the chosen move (it cannot). Using $b^{m/2}$ as the exact best-case count: for exact leaf counts use $b^{\\lceil m/2 \\rceil} + b^{\\lfloor m/2 \\rfloor} - 1$.",
     "example": "Use the tree from the minimax card: MAX root, MIN children with leaves $L = (7, 4, 9)$, $M = (5, 11, 6)$, $R = (3, 8, 10)$, searched left to right.\n\n- $L$ with window $(-\\infty, +\\infty)$: $v = 7$, then $v = 4$, then 9 changes nothing. $L$ returns 4 and the root sets $\\alpha = 4$.\n- $M$ with $\\alpha = 4$: $v = 5$ (not $\\le 4$, so $\\beta = 5$), then 11 and 6 leave $v = 5$. $M$ returns 5 and the root sets $\\alpha = 5$.\n- $R$ with $\\alpha = 5$: the first leaf gives $v = 3 \\le 5$, so leaves 8 and 10 are **pruned**.\n- Root value $= 5$ (same as minimax), with 7 of the 9 leaves examined.\n\nWith perfect ordering ($M$ first, and the smallest leaf first in $L$ and $R$) only $3^{1} + 3^{1} - 1 = 5$ leaves are examined. For $b = 3$ and $m = 4$ the best case is $3^2 + 3^2 - 1 = 17$ leaves instead of $3^4 = 81$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-adversarial-search"
+    ]
   },
   {
     "id": "f-ai-propositional-equivalences",
@@ -265,7 +281,9 @@
     "whenToUse": "Simplifying a sentence, checking whether two sentences are equivalent, converting to CNF before resolution, and counting the models of a sentence or the number of distinct Boolean functions.",
     "commonMistake": "Treating $\\alpha \\Rightarrow \\beta$ as equivalent to its converse. Applying De Morgan's law without flipping the connective ($\\neg(\\alpha \\land \\beta) \\equiv \\neg\\alpha \\land \\neg\\beta$ is wrong). Regrouping chained implications as if $\\Rightarrow$ were associative.",
     "example": "Compare $X = (p \\Rightarrow q) \\Rightarrow r$ and $Y = p \\Rightarrow (q \\Rightarrow r)$ over the $2^3 = 8$ rows.\n\n- $X \\equiv \\neg(\\neg p \\lor q) \\lor r \\equiv (p \\land \\neg q) \\lor r$: true in the 4 rows with $r$ true plus the row $p = T, q = F, r = F$, so 5 models.\n- $Y \\equiv \\neg p \\lor \\neg q \\lor r$: false only when $p = T, q = T, r = F$, so 7 models.\n- They differ in the 2 rows with $p = F$, $r = F$ ($q$ either value), so $\\Rightarrow$ is not associative.\n\nSimplification: $\\neg(p \\Rightarrow (q \\land \\neg r)) \\equiv p \\land \\neg(q \\land \\neg r) \\equiv p \\land (\\neg q \\lor r)$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-propositional-logic"
+    ]
   },
   {
     "id": "f-ai-entailment-validity",
@@ -295,7 +313,10 @@
     "whenToUse": "Deciding whether a conclusion follows from premises, classifying sentences as valid, satisfiable or unsatisfiable, and spotting invalid argument patterns in multiple-select questions.",
     "commonMistake": "Checking only **some** models of the KB: entailment requires the conclusion to hold in **all** of them, and one counter-model refutes it. Confusing 'satisfiable' with 'valid'. Accepting affirming the consequent as a valid inference.",
     "example": "$KB = (p \\Rightarrow q) \\land (q \\Rightarrow r) \\land (p \\lor r)$. Check the $2^3 = 8$ rows:\n\n- If $p = T$: then $q = T$ and $r = T$, giving one model.\n- If $p = F$: then $p \\lor r$ forces $r = T$, and $q$ can be $T$ or $F$ ($q \\Rightarrow r$ holds either way), giving two models.\n- The KB has 3 models, and $r = T$ in all of them, so $KB \\models r$; equivalently $KB \\land \\neg r$ is unsatisfiable.\n- $KB \\not\\models q$: the model $p = F, q = F, r = T$ is a counter-model. Likewise $KB \\not\\models p$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-propositional-logic",
+      "c-ai-entailment-inference"
+    ]
   },
   {
     "id": "f-ai-resolution",
@@ -329,7 +350,9 @@
     "whenToUse": "Proving that a KB entails a sentence by refutation, finding the resolvent of two clauses, converting sentences to CNF, and questions about Horn clauses or the completeness of resolution.",
     "commonMistake": "Resolving on two complementary pairs at once: $(a \\lor b)$ and $(\\neg a \\lor \\neg b)$ do **not** resolve to $\\square$ (the assignment $a = T$, $b = F$ satisfies both); resolving on $a$ gives the tautology $b \\lor \\neg b$. Forgetting to negate the goal before adding it. Treating 'no empty clause yet' as a proof that the entailment fails before the procedure has saturated.",
     "example": "Show $\\{a \\lor b,\\ \\neg a \\lor c,\\ \\neg b \\lor c\\} \\models c$. Add the negated goal $\\neg c$.\n\n1. Resolve $(a \\lor b)$ with $(\\neg a \\lor c)$ on $a$: $(b \\lor c)$.\n2. Resolve $(b \\lor c)$ with $(\\neg b \\lor c)$ on $b$: $(c \\lor c)$, which factors to $(c)$.\n3. Resolve $(c)$ with $(\\neg c)$: the empty clause $\\square$.\n\nThe contradiction took 3 resolution steps, so the KB entails $c$ (a truth table confirms that $c$ is true in every model of the KB).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-entailment-inference"
+    ]
   },
   {
     "id": "f-ai-quantifier-laws",
@@ -363,7 +386,9 @@
     "whenToUse": "Translating English statements into first-order logic, negating quantified statements, deciding which of several formulas are equivalent or which entail which, and evaluating formulas over a small finite domain.",
     "commonMistake": "Translating 'all $P$ are $Q$' with $\\land$ ($\\forall x\\, (P(x) \\land Q(x))$ says everything is both), or 'some $P$ is $Q$' with $\\Rightarrow$ ($\\exists x\\, (P(x) \\Rightarrow Q(x))$ is already true if anything is not a $P$). Swapping mixed quantifiers. Negating $\\forall x\\, (P(x) \\Rightarrow Q(x))$ as $\\forall x\\, \\neg(\\dots)$ instead of $\\exists x\\, (P(x) \\land \\neg Q(x))$.",
     "example": "Domain $\\{1, 2, 3\\}$ and $R(x, y)$: '$x \\ne y$'.\n\n- $\\forall y\\, \\exists x\\, R(x, y)$ is **true**: for every $y$ some other element differs from it (for $y = 1$ take $x = 2$, and so on).\n- $\\exists x\\, \\forall y\\, R(x, y)$ is **false**: whichever $x$ is chosen, $y = x$ gives $x \\ne x$, which is false. Mixed quantifiers cannot be swapped.\n- Counting over all interpretations: $R$ is a $3 \\times 3$ truth table, so there are $2^{3^2} = 512$ interpretations. $\\forall y\\, \\exists x\\, R(x, y)$ needs every column to contain a true entry: $(2^3 - 1)^3 = 343$ interpretations. $\\exists x\\, \\forall y\\, R(x, y)$ needs at least one all-true row: $512 - 7^3 = 169$ interpretations. Each of the 169 is among the 343, as the entailment $\\exists x\\, \\forall y \\models \\forall y\\, \\exists x$ requires.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-first-order-logic"
+    ]
   },
   {
     "id": "f-ai-bayes-net-factorization",
@@ -393,7 +418,10 @@
     "whenToUse": "Computing the probability of a full assignment from CPTs, counting the independent parameters of a network, and comparing that count with the full joint distribution.",
     "commonMistake": "Counting $k_i$ instead of $k_i - 1$ numbers per CPT row (the last entry of a row is determined). Multiplying by $P(x_i)$ instead of $P(x_i \\mid \\text{parents})$ for a node that has parents. Counting the full joint as $2^n$ instead of $2^n - 1$ free parameters.",
     "example": "Boolean network: $A$ and $B$ have no parents, $C$ has parents $A$ and $B$, and $D$ and $E$ each have parent $C$.\n\n- Parameters: $1 + 1 + 2^2 + 2 + 2 = 10$, versus $2^5 - 1 = 31$ for the full joint.\n- With $P(a) = 0.3$, $P(b) = 0.6$, $P(c \\mid a, \\neg b) = 0.7$, $P(d \\mid c) = 0.9$ and $P(e \\mid c) = 0.2$:\n  $P(a, \\neg b, c, d, \\neg e) = 0.3 \\times 0.4 \\times 0.7 \\times 0.9 \\times 0.8 = 0.06048$.\n- If $C$ had 3 values instead: $C$ needs $(3 - 1) \\cdot 2 \\cdot 2 = 8$ numbers, $D$ and $E$ need $(2 - 1) \\cdot 3 = 3$ each, giving $1 + 1 + 8 + 3 + 3 = 16$, versus $2 \\cdot 2 \\cdot 3 \\cdot 2 \\cdot 2 - 1 = 47$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-bayesian-networks",
+      "c-ai-variable-elimination"
+    ]
   },
   {
     "id": "f-ai-conditional-independence",
@@ -419,7 +447,9 @@
     "whenToUse": "Reading independence statements off a Bayesian network, multiple-select questions of the form 'which of these independences hold', finding a node's Markov blanket, and explaining-away calculations.",
     "commonMistake": "Treating a collider like a chain: observing the common effect $Z$ (or any of its descendants) **opens** the path instead of blocking it. Forgetting the children's other parents (co-parents) in the Markov blanket. Concluding dependence from a d-connected path for specific numbers.",
     "example": "**Explaining away.** $A \\to C \\leftarrow B$ with $P(a) = 0.1$, $P(b) = 0.2$, $A$ and $B$ independent, and $C = A \\lor B$ (deterministic OR).\n\n- $P(c) = 1 - 0.9 \\times 0.8 = 0.28$, so $P(a \\mid c) = P(a, c)/P(c) = 0.1/0.28 \\approx 0.357$.\n- $P(a \\mid c, b) = \\frac{P(a)\\,P(b)}{P(b)} = 0.1$: once $B$ is known to be true, it fully explains $C$.\n- Since $0.357 \\ne 0.1$, $A$ and $B$ are dependent given $C$, although $P(a \\mid b) = P(a) = 0.1$ without evidence on $C$.\n\n**Markov blanket.** In the network with $A \\to C \\leftarrow B$ and $C \\to D$, $C \\to E$: $MB(C) = \\{A, B, D, E\\}$ and $MB(A) = \\{C, B\\}$ ($C$ is $A$'s child and $B$ is its co-parent).",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-bayesian-networks"
+    ]
   },
   {
     "id": "f-ai-variable-elimination",
@@ -449,7 +479,9 @@
     "whenToUse": "Computing a posterior or marginal probability in a small Bayesian network, choosing an elimination order, finding the size of the factors VE creates, and spotting variables that are irrelevant to a query.",
     "commonMistake": "Forgetting to normalize at the end (reporting $P(X, \\mathbf{e})$ as $P(X \\mid \\mathbf{e})$). Summing out a variable before multiplying in **all** the factors that mention it. Summing over the evidence variables instead of fixing them at their observed values.",
     "example": "Boolean chain $A \\to B \\to C$ with $P(a) = 0.4$, $P(b \\mid a) = 0.7$, $P(b \\mid \\neg a) = 0.2$, $P(c \\mid b) = 0.9$, $P(c \\mid \\neg b) = 0.3$. Find $P(a \\mid c)$.\n\n- $P(A, c) = P(A) \\sum_{b} P(b \\mid A)\\, P(c \\mid b)$. Eliminating $B$ gives the factor $f(A)$:\n  - $f(a) = 0.7 \\times 0.9 + 0.3 \\times 0.3 = 0.63 + 0.09 = 0.72$;\n  - $f(\\neg a) = 0.2 \\times 0.9 + 0.8 \\times 0.3 = 0.18 + 0.24 = 0.42$.\n- $P(a, c) = 0.4 \\times 0.72 = 0.288$ and $P(\\neg a, c) = 0.6 \\times 0.42 = 0.252$, so $P(c) = 0.54$.\n- Normalize: $P(a \\mid c) = 0.288/0.54 \\approx 0.533$, up from the prior $0.4$.\n\nIf the network also had an unobserved child $D$ of $C$, it would be irrelevant: $\\sum_{d} P(d \\mid C) = 1$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-variable-elimination"
+    ]
   },
   {
     "id": "f-ai-prior-rejection-sampling",
@@ -479,7 +511,9 @@
     "whenToUse": "Tracing ancestral sampling with given random numbers, computing the probability of generating a particular sample, estimating a conditional probability from a list of samples, and reasoning about how many samples rejection sampling wastes.",
     "commonMistake": "Dividing by the total $N$ instead of the number of **kept** samples $N(\\mathbf{e})$ in rejection sampling. Sampling a child before its parents. Reading 'true iff $u < p$' as 'true iff $u > p$'.",
     "example": "Chain $A \\to B \\to C$ with $P(a) = 0.4$, $P(b \\mid a) = 0.7$, $P(b \\mid \\neg a) = 0.2$, $P(c \\mid b) = 0.9$, $P(c \\mid \\neg b) = 0.3$, and the random numbers $0.35, 0.62, 0.95$:\n\n- $A$: $0.35 < 0.4$, so $a$. $B$ uses $P(b \\mid a) = 0.7$: $0.62 < 0.7$, so $b$. $C$ uses $P(c \\mid b) = 0.9$: $0.95 \\ge 0.9$, so $\\neg c$.\n- The sample is $(a, b, \\neg c)$, which prior sampling produces with probability $0.4 \\times 0.7 \\times 0.1 = 0.028$.\n\nRejection sampling for $P(a \\mid c)$ with $N = 1000$: $P(c) = 0.4 \\times 0.9 + 0.6 \\times 0.3 = 0.54$ (using $P(b) = 0.4 \\times 0.7 + 0.6 \\times 0.2 = 0.4$), so about 540 samples are kept and 460 rejected. If 290 of the kept samples have $A = a$, then $\\hat{P}(a \\mid c) = 290/540 \\approx 0.537$, against the exact $0.533$. The standard error is about $\\sqrt{0.533 \\times 0.467/540} \\approx 0.021$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-sampling-inference"
+    ]
   },
   {
     "id": "f-ai-likelihood-weighting-gibbs",
@@ -517,6 +551,8 @@
     "whenToUse": "Computing the weight of a likelihood-weighted sample, estimating a posterior from weighted samples, and computing the distribution Gibbs sampling uses to resample one variable.",
     "commonMistake": "Including the probabilities of the **sampled** (non-evidence) values in the weight: only evidence variables contribute factors. Taking an unweighted count of LW samples. In Gibbs sampling, conditioning only on the parents of $X_i$ and forgetting the factors from its children.",
     "example": "Chain $A \\to B \\to C$ with $P(a) = 0.4$, $P(b \\mid a) = 0.7$, $P(b \\mid \\neg a) = 0.2$, $P(c \\mid b) = 0.9$, $P(c \\mid \\neg b) = 0.3$.\n\n**LW for $P(a \\mid b)$.** $B = b$ is fixed; $A$ is sampled from $P(A)$, then $C$ from $P(C \\mid b)$. Each sample's weight is $P(b \\mid A)$: 0.7 when $A = a$, 0.2 when $A = \\neg a$. Four samples $(a, b, c)$, $(\\neg a, b, c)$, $(a, b, \\neg c)$, $(\\neg a, b, c)$ have weights $0.7, 0.2, 0.7, 0.2$, so\n$\\hat{P}(a \\mid b) = \\frac{0.7 + 0.7}{0.7 + 0.2 + 0.7 + 0.2} = \\frac{1.4}{1.8} \\approx 0.778$. The exact value is $\\frac{0.4 \\times 0.7}{0.4 \\times 0.7 + 0.6 \\times 0.2} = \\frac{0.28}{0.40} = 0.7$.\n\n**Gibbs step for $B$** with current state $A = a$ and evidence $C = c$: $mb(B) = \\{A, C\\}$, so\n$P(b \\mid a, c) \\propto P(b \\mid a)\\,P(c \\mid b) = 0.7 \\times 0.9 = 0.63$ and $P(\\neg b \\mid a, c) \\propto 0.3 \\times 0.3 = 0.09$. Normalizing, $P(b \\mid a, c) = 0.63/0.72 = 0.875$.",
-    "conceptIds": []
+    "conceptIds": [
+      "c-ai-sampling-inference"
+    ]
   }
 ]

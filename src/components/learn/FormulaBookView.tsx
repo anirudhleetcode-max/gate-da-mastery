@@ -1,20 +1,62 @@
 "use client";
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { Segmented } from "@/components/ui/Segmented";
 import { PrintButton } from "./PrintButton";
 import { usePersistentValue } from "./persist";
 
 const VIEW_KEY = "gate-da-formula-view";
+/** Matches the cards' scroll-margin (scroll-mt-20): the sticky header never covers a card top. */
+const TOP_GAP = 80;
 
 /**
  * Wraps a subject's formula cards with a view switch: full cards, or the
  * formulas alone for quick revision (and a compact printout). The choice is
  * remembered on this device. Cards hide their details through the
  * `group/book` data attribute, so the server-rendered cards stay as they are.
+ *
+ * Switching the view changes the page height a lot, so it keeps the reader's
+ * place: a switch from the control keeps the card at the top of the screen in
+ * place, and when the saved "Formulas only" view replaces the server-rendered
+ * full cards right after loading, a linked card (/formulas/<subject>#<id>) is
+ * scrolled back into view.
  */
 export function FormulaBookView({ children, count }: { children: ReactNode; count: number }) {
   const [raw, set] = usePersistentValue("local", VIEW_KEY);
   const compact = raw === "compact";
+  const keep = useRef<{ id: string; top: number } | null>(null);
+
+  function choose(next: "full" | "compact") {
+    keep.current = null;
+    for (const card of document.querySelectorAll<HTMLElement>(".formula-card")) {
+      const r = card.getBoundingClientRect();
+      if (r.bottom > TOP_GAP) {
+        keep.current = { id: card.id, top: Math.max(r.top, TOP_GAP) };
+        break;
+      }
+    }
+    set(next === "compact" ? "compact" : null);
+  }
+
+  // Scroll-only effect (no state): runs after the view's layout has changed.
+  useLayoutEffect(() => {
+    const k = keep.current;
+    keep.current = null;
+    if (k) {
+      const el = document.getElementById(k.id);
+      if (el) window.scrollBy(0, el.getBoundingClientRect().top - k.top);
+      return;
+    }
+    if (!compact || !window.location.hash) return;
+    let id = "";
+    try {
+      id = decodeURIComponent(window.location.hash.slice(1));
+    } catch {
+      return;
+    }
+    const target = id ? document.getElementById(id) : null;
+    if (target?.closest(".formula-card, [id^='topic-']")) target.scrollIntoView({ block: "start" });
+  }, [compact]);
+
   return (
     <div data-compact={compact ? "true" : "false"} className="group/book">
       <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius)] border border-border bg-surface px-3 py-2">
@@ -25,7 +67,7 @@ export function FormulaBookView({ children, count }: { children: ReactNode; coun
           <Segmented
             label="Formula book view"
             value={compact ? "compact" : "full"}
-            onChange={(v) => set(v === "compact" ? "compact" : null)}
+            onChange={choose}
             options={[
               { value: "full", label: "Full cards" },
               { value: "compact", label: "Formulas only" },
@@ -33,9 +75,7 @@ export function FormulaBookView({ children, count }: { children: ReactNode; coun
           />
         </div>
         <div className="flex items-center gap-3">
-          <p className="hidden text-xs text-fg-3 md:block">
-            {compact ? `Showing ${count} formulas without explanations.` : "Prints the view you choose."}
-          </p>
+          <p className="hidden text-xs text-fg-3 md:block">{compact ? `Showing ${count} formulas without explanations.` : "Prints the view you choose."}</p>
           <PrintButton />
         </div>
       </div>

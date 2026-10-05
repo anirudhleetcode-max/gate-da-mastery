@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowRight, Compass, Timer } from "lucide-react";
 import { getStrategy } from "@/lib/server/repo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
 import { STRATEGY_SECTIONS, sectionArticles } from "@/components/learn/server";
+import { StrategySections } from "@/components/learn/StrategyViews";
 import { plural } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function StrategyPage() {
   const total = getStrategy().length;
-  const sections = STRATEGY_SECTIONS.map((s) => ({ ...s, articles: sectionArticles(s.id) }));
+  const sections = STRATEGY_SECTIONS.map((s) => ({ ...s, articles: sectionArticles(s.id).map((a) => ({ id: a.id, title: a.title, summary: a.summary })) }));
 
   return (
     <>
@@ -36,7 +36,7 @@ export default function StrategyPage() {
               There is no single, universally correct exam strategy
             </h2>
             <p className="mt-1 text-sm text-fg-2">
-              What works depends on your strengths, your speed and how you react under time pressure. Treat these articles as tested starting points, not rules: try any
+              What works depends on your strengths, your speed and how you react under time pressure. Treat these articles as starting points, not rules: try any
               change in a timed mock first, look at what it did to your score and your time, and keep only what works for you.
             </p>
           </div>
@@ -60,36 +60,7 @@ export default function StrategyPage() {
         </p>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {sections.map((s) => (
-          <section key={s.id} id={`section-${s.id}`} aria-labelledby={`section-${s.id}-h`} className="scroll-mt-20 flex min-w-0 flex-col rounded-[var(--radius)] border border-border bg-surface shadow-[var(--shadow)]">
-            <div className="border-b border-border px-4 py-3 sm:px-5">
-              <h2 id={`section-${s.id}-h`} className="flex flex-wrap items-baseline gap-x-2 text-[0.95rem] font-semibold text-fg">
-                {s.title}
-                <span className="tnum text-sm font-normal text-fg-3">{s.articles.length ? plural(s.articles.length, "article") : ""}</span>
-              </h2>
-              <p className="mt-0.5 text-sm text-fg-3">{s.blurb}</p>
-            </div>
-            {s.articles.length ? (
-              <ol className="divide-y divide-border">
-                {s.articles.map((a, i) => (
-                  <li key={a.id}>
-                    <Link href={`/strategy/${a.id}`} className="group flex gap-3 px-4 py-3 hover:bg-surface-2 sm:px-5">
-                      <span className="tnum mt-0.5 w-5 shrink-0 text-sm text-fg-3">{i + 1}.</span>
-                      <span className="min-w-0">
-                        <span className="block font-medium text-fg group-hover:underline">{a.title}</span>
-                        <span className="mt-0.5 block text-sm text-fg-2">{a.summary}</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="px-4 py-4 text-sm text-fg-3 sm:px-5">No articles in this section yet.</p>
-            )}
-          </section>
-        ))}
-      </div>
+      <StrategySections sections={sections} />
     </>
   );
 }

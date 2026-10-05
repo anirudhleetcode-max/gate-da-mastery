@@ -45,6 +45,12 @@ const RUN_KEY = "gate-da-timer-run";
 
 const MODE_LABEL: Record<TimerMode, string> = { full: "Full exam", subject: "Subject practice", custom: "Custom" };
 
+const SETTINGS_ISSUE_ID = "timer-settings-issue";
+
+/** A required number within [min, max] (whole when `int`); an optional one may also be empty. */
+const outOfRange = (v: number | null, r: { min: number; max: number }, int: boolean, optional = false) =>
+  v === null ? !optional : !Number.isFinite(v) || (int && !Number.isInteger(v)) || v < r.min || v > r.max;
+
 const numberOrNull = (s: string): number | null => {
   if (s.trim() === "") return null;
   const n = Number(s);
@@ -356,6 +362,7 @@ export function ExamTimer() {
                       max={LIMITS.subjectQuestions.max}
                       step={1}
                       onChange={(v) => saveCfg({ ...cfg, subject: { ...cfg.subject, questions: v } })}
+                      invalid={outOfRange(cfg.subject.questions, LIMITS.subjectQuestions, true)}
                     />
                     <NumberField
                       id="subject-mpq"
@@ -365,6 +372,7 @@ export function ExamTimer() {
                       max={LIMITS.minutesPerQuestion.max}
                       step={0.5}
                       onChange={(v) => saveCfg({ ...cfg, subject: { ...cfg.subject, minutesPerQuestion: v } })}
+                      invalid={outOfRange(cfg.subject.minutesPerQuestion, LIMITS.minutesPerQuestion, false)}
                     />
                   </div>
                   <p className="text-sm text-fg-2">
@@ -393,6 +401,7 @@ export function ExamTimer() {
                       max={LIMITS.customMinutes.max}
                       step={1}
                       onChange={(v) => saveCfg({ ...cfg, custom: { ...cfg.custom, minutes: v } })}
+                      invalid={outOfRange(cfg.custom.minutes, LIMITS.customMinutes, false)}
                     />
                     <NumberField
                       id="custom-questions"
@@ -403,6 +412,7 @@ export function ExamTimer() {
                       step={1}
                       onChange={(v) => saveCfg({ ...cfg, custom: { ...cfg.custom, questions: v } })}
                       hint="Needed for the pace check."
+                      invalid={outOfRange(cfg.custom.questions, LIMITS.customQuestions, true, true)}
                     />
                   </div>
                   <CheckpointEditor
@@ -414,6 +424,11 @@ export function ExamTimer() {
                   />
                 </>
               )}
+              {issue ? (
+                <p id={SETTINGS_ISSUE_ID} className="text-sm text-danger">
+                  {issue}
+                </p>
+              ) : null}
             </fieldset>
           </section>
 
@@ -445,11 +460,27 @@ export function ExamTimer() {
 
 function announcement(a: TimerAlert, hours: boolean): string {
   if (a.kind === "checkpoint") {
-    const t = a.checkpoint.targetQuestions;
-    return `Checkpoint at ${formatTimer(a.atMs, { hours })}: ${a.checkpoint.label}.${t !== null ? ` Target: ${plural(t, "question")} done.` : ""}`;
+    const items = a.checkpoints.map((c) => `${c.label}.${c.targetQuestions !== null ? ` Target: ${plural(c.targetQuestions, "question")} done.` : ""}`);
+    return `Checkpoint at ${formatTimer(a.atMs, { hours })}: ${items.join(" ")}${a.minutesLeft !== null ? ` ${plural(a.minutesLeft, "minute")} left.` : ""}`;
   }
   if (a.kind === "time-left") return `${plural(a.minutesLeft, "minute")} left.`;
-  return "Time is up.";
+  return `Time is up.${a.checkpoints.length ? ` Final checkpoint: ${a.checkpoints.map((c) => c.label).join("; ")}.` : ""}`;
+}
+
+/** A checkpoint's label with the student's count against its target. */
+function CheckpointLine({ c, done }: { c: PlannedCheckpoint; done: number }) {
+  const t = c.targetQuestions;
+  return (
+    <span className="block">
+      <span className="font-medium text-fg">{c.label}</span>
+      {t !== null ? (
+        <span className="block">
+          Target {plural(t, "question")}; you have done <span className="tnum font-semibold text-fg">{done}</span>
+          {done >= t ? " (on target)." : ` (${t - done} short).`}
+        </span>
+      ) : null}
+    </span>
+  );
 }
 
 function AlertBanner({ alert, done, hours, onDismiss }: { alert: TimerAlert; done: number; hours: boolean; onDismiss: () => void }) {
@@ -459,25 +490,27 @@ function AlertBanner({ alert, done, hours, onDismiss }: { alert: TimerAlert; don
   let title: string;
   let detail: ReactNode = null;
   if (alert.kind === "checkpoint") {
-    const t = alert.checkpoint.targetQuestions;
-    title = `Checkpoint · ${formatTimer(alert.atMs, { hours })}`;
+    title = `Checkpoint · ${formatTimer(alert.atMs, { hours })}${alert.minutesLeft !== null ? ` · ${plural(alert.minutesLeft, "minute")} left` : ""}`;
     detail = (
-      <>
-        <span className="font-medium text-fg">{alert.checkpoint.label}</span>
-        {t !== null ? (
-          <span className="block">
-            Target {plural(t, "question")}; you have done <span className="tnum font-semibold text-fg">{done}</span>
-            {done >= t ? " (on target)." : ` (${t - done} short).`}
-          </span>
-        ) : null}
-      </>
+      <span className="block space-y-1">
+        {alert.checkpoints.map((c) => (
+          <CheckpointLine key={c.id} c={c} done={done} />
+        ))}
+      </span>
     );
   } else if (alert.kind === "time-left") {
     title = `${plural(alert.minutesLeft, "minute")} left`;
     detail = alert.minutesLeft <= 5 ? "Stop starting long questions; make sure every answer you mean to give is entered." : "Check that the questions you have left fit the time.";
   } else {
     title = "Time is up";
-    detail = "In the exam the paper submits itself now. Count the questions you finished and compare with your plan.";
+    detail = (
+      <span className="block space-y-1">
+        <span className="block">In the exam the paper submits itself now. Count the questions you finished and compare with your plan.</span>
+        {alert.checkpoints.map((c) => (
+          <CheckpointLine key={c.id} c={c} done={done} />
+        ))}
+      </span>
+    );
   }
   return (
     <div className={cn("flex items-start gap-3 rounded-lg border-2 px-3 py-2.5", tone)}>
@@ -486,7 +519,7 @@ function AlertBanner({ alert, done, hours, onDismiss }: { alert: TimerAlert; don
         <p className="font-semibold text-fg">{title}</p>
         <div className="mt-0.5">{detail}</div>
       </div>
-      <button type="button" onClick={onDismiss} className="-m-1 grid h-9 w-9 shrink-0 place-items-center rounded-md text-fg-2 hover:bg-surface hover:text-fg" aria-label="Dismiss this alert">
+      <button type="button" onClick={onDismiss} className="-m-1.5 grid h-10 w-10 shrink-0 place-items-center rounded-md text-fg-2 hover:bg-surface hover:text-fg" aria-label="Dismiss this alert">
         <X aria-hidden className="h-4 w-4" />
       </button>
     </div>
@@ -634,6 +667,7 @@ function NumberField({
   step,
   onChange,
   hint,
+  invalid = false,
 }: {
   id: string;
   label: string;
@@ -643,7 +677,10 @@ function NumberField({
   step: number;
   onChange: (v: number | null) => void;
   hint?: string;
+  /** Marks the field invalid and points it at the settings' issue message. */
+  invalid?: boolean;
 }) {
+  const describedBy = [hint ? `${id}-hint` : null, invalid ? SETTINGS_ISSUE_ID : null].filter(Boolean).join(" ");
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <label htmlFor={id} className="text-xs font-medium text-fg-3">
@@ -658,8 +695,9 @@ function NumberField({
         step={step}
         value={value ?? ""}
         onChange={(e) => onChange(numberOrNull(e.target.value))}
-        aria-describedby={hint ? `${id}-hint` : undefined}
-        className="tnum h-10 w-full min-w-0 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg disabled:bg-surface-2"
+        aria-invalid={invalid || undefined}
+        aria-describedby={describedBy || undefined}
+        className="tnum h-10 w-full min-w-0 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg disabled:bg-surface-2 aria-[invalid=true]:border-danger"
       />
       {hint ? (
         <p id={`${id}-hint`} className="text-xs text-fg-3">
@@ -699,6 +737,9 @@ function CheckpointEditor({
         <ol className="space-y-3">
           {list.map((c, i) => {
             const problem = checkpointIssue(c, durationMin, total);
+            // The minute is at fault when the checkpoint is unusable even without a target; otherwise the target is.
+            const minuteBad = problem !== null && checkpointIssue({ ...c, targetQuestions: null }, durationMin, total) !== null;
+            const targetBad = problem !== null && !minuteBad;
             const base = `${idPrefix}-cp-${i}`;
             return (
               <li key={c.id} className="rounded-lg border border-border bg-surface-2/50 p-2.5">
@@ -730,9 +771,9 @@ function CheckpointEditor({
                       step="any"
                       value={c.atMin ?? ""}
                       onChange={(e) => update(i, { atMin: numberOrNull(e.target.value) })}
-                      aria-invalid={problem ? true : undefined}
-                      aria-describedby={problem ? `${base}-issue` : undefined}
-                      className="tnum h-10 w-full min-w-0 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg disabled:bg-surface-2"
+                      aria-invalid={minuteBad || undefined}
+                      aria-describedby={minuteBad ? `${base}-issue` : undefined}
+                      className="tnum h-10 w-full min-w-0 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg disabled:bg-surface-2 aria-[invalid=true]:border-danger"
                     />
                   </div>
                   <div className="flex min-w-0 flex-col gap-1">
@@ -749,7 +790,9 @@ function CheckpointEditor({
                       value={c.targetQuestions ?? ""}
                       placeholder="optional"
                       onChange={(e) => update(i, { targetQuestions: numberOrNull(e.target.value) })}
-                      className="tnum h-10 w-full min-w-0 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg placeholder:text-fg-3 disabled:bg-surface-2"
+                      aria-invalid={targetBad || undefined}
+                      aria-describedby={targetBad ? `${base}-issue` : undefined}
+                      className="tnum h-10 w-full min-w-0 rounded-lg border border-border bg-surface px-2.5 text-sm text-fg placeholder:text-fg-3 disabled:bg-surface-2 aria-[invalid=true]:border-danger"
                     />
                   </div>
                   <Button onClick={() => remove(i)} aria-label={`Remove checkpoint ${i + 1}${c.label ? `: ${c.label}` : ""}`} className="h-10 w-10 px-0" variant="ghost">
