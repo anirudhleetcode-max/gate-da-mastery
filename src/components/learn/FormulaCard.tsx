@@ -2,7 +2,7 @@
  * One formula-book entry (server component; the bookmark and revision
  * buttons are client islands). The card's id is the formula id, so links of
  * the form /formulas/<subjectId>#<formulaId> land on it; scroll-margin keeps
- * it clear of the sticky header. Parts marked `formula-detail` are hidden in
+ * it clear of the sticky header (and, on small screens, the sticky topic bar). Parts marked `formula-detail` are hidden in
  * the "Formulas only" view (see FormulaBookView).
  */
 import Link from "next/link";
@@ -37,7 +37,7 @@ function Part({ title, children, className, tone }: { title: string; children: R
 export function FormulaCard({ f, concepts }: { f: CompiledFormula; concepts: { id: string; title: string }[] }) {
   const headingId = `${f.id}-h`;
   return (
-    <article id={f.id} aria-labelledby={headingId} className={cn("formula-card scroll-mt-20 rounded-[var(--radius)] border border-border bg-surface shadow-[var(--shadow)]", RICH_TABLES)}>
+    <article id={f.id} aria-labelledby={headingId} className={cn("formula-card scroll-mt-32 rounded-[var(--radius)] lg:scroll-mt-20 border border-border bg-surface shadow-[var(--shadow)]", RICH_TABLES)}>
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2 border-b border-border px-4 py-3 sm:px-5">
         <div className="flex min-w-0 flex-1 basis-56 items-start gap-1">
           <h3 id={headingId} className="min-w-0 text-base font-semibold leading-snug text-fg">

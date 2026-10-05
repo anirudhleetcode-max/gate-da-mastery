@@ -35,3 +35,20 @@ export function ThemeToggle() {
 
 /** Inline script (runs before paint) to avoid a theme flash. */
 export const themeInitScript = `(function(){try{var t=localStorage.getItem('${KEY}');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+
+/**
+ * The theme init script as a client component (Next docs: preventing flash
+ * before hydration). On the server it renders an executable script that runs
+ * before first paint; whenever React renders it on the client (hydration,
+ * not-found re-renders) it is inert `text/plain`, so React never warns about
+ * rendering a <script>.
+ */
+export function ThemeInitScript() {
+  return (
+    <script
+      type={typeof window === "undefined" ? "text/javascript" : "text/plain"}
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: themeInitScript }}
+    />
+  );
+}

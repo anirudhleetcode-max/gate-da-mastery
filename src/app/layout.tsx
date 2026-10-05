@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { themeInitScript } from "@/components/layout/ThemeToggle";
+import { ThemeInitScript } from "@/components/layout/ThemeToggle";
 import { UserDataProvider } from "@/lib/userdata/hooks";
 import { MathScrollFocus } from "@/components/layout/MathScrollFocus";
 
@@ -28,13 +28,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
-        {/* Runs before first paint (no theme flash). The type toggle stops React's dev warning about
-            rendering <script> on client re-renders (see Next docs: preventing-flash-before-hydration). */}
-        <script
-          type={typeof window === "undefined" ? "text/javascript" : "text/plain"}
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
+        {/* Runs before first paint, so there is no theme flash. */}
+        <ThemeInitScript />
       </head>
       <body>
         <UserDataProvider>{children}</UserDataProvider>

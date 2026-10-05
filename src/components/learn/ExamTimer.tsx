@@ -169,8 +169,8 @@ export function ExamTimer() {
         <span className="text-sm font-medium text-fg-2" aria-hidden>
           Mode
         </span>
-        <fieldset disabled={Boolean(run)} className="min-w-0 disabled:opacity-60">
-          <legend className="sr-only">Timer mode</legend>
+        {/* The fieldset only disables the mode switch during a run; the radio group carries the name. */}
+        <fieldset disabled={Boolean(run)} className="w-full min-w-0 disabled:opacity-60 sm:w-auto">
           <Segmented<TimerMode>
             label="Timer mode"
             value={cfg.mode}
@@ -180,7 +180,7 @@ export function ExamTimer() {
               { value: "subject", label: "Subject practice" },
               { value: "custom", label: MODE_LABEL.custom },
             ]}
-            className="flex-wrap"
+            className="flex w-full sm:inline-flex sm:w-auto [&>button]:min-h-10 [&>button]:flex-1 [&>button]:px-2 sm:[&>button]:min-h-0 sm:[&>button]:flex-none sm:[&>button]:px-3"
           />
         </fieldset>
         {run ? <p className="text-sm text-fg-3">Reset the timer to change the mode or settings.</p> : null}

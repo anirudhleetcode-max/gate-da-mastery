@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getStrategy, getStrategyArticle } from "@/lib/server/repo";
+import { getStrategyArticle } from "@/lib/server/repo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StrategyArticleBody, StrategyBookmark } from "@/components/learn/StrategyViews";
 import { TableScrollFocus } from "@/components/learn/TableScrollFocus";
 import { RecordView } from "@/components/learn/RecordView";
-import { RESERVED_STRATEGY_IDS, sectionArticles, sectionTitle } from "@/components/learn/server";
+import { RESERVED_STRATEGY_IDS, sectionArticles, sectionTitle, strategyArticles } from "@/components/learn/server";
 
 type Params = { params: Promise<{ id: string }> };
 
 export function generateStaticParams() {
-  return getStrategy()
-    .filter((a) => !RESERVED_STRATEGY_IDS.has(a.id))
-    .map((a) => ({ id: a.id }));
+  return strategyArticles().map((a) => ({ id: a.id }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {

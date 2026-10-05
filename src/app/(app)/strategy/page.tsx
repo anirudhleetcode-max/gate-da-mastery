@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { ArrowRight, Compass, Timer } from "lucide-react";
-import { getStrategy } from "@/lib/server/repo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
-import { STRATEGY_SECTIONS, sectionArticles } from "@/components/learn/server";
+import { STRATEGY_SECTIONS, sectionArticles, strategyArticles } from "@/components/learn/server";
 import { StrategySections } from "@/components/learn/StrategyViews";
 import { plural } from "@/lib/utils";
 
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default function StrategyPage() {
-  const total = getStrategy().length;
+  const total = strategyArticles().length;
   const sections = STRATEGY_SECTIONS.map((s) => ({ ...s, articles: sectionArticles(s.id).map((a) => ({ id: a.id, title: a.title, summary: a.summary })) }));
 
   return (

@@ -12,6 +12,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Select } from "@/components/ui/Select";
 import type { ConceptListItem, LibrarySubject } from "./types";
 import { SUPPORTING_LABEL, libraryQuery, parseLibraryFilters, type LibraryFilters } from "./library";
+import { LinkCount } from "./LinkCount";
 
 function Dot({ id }: { id: SubjectId }) {
   return <span aria-hidden className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: SUBJECT_COLOR[id] }} />;
@@ -138,7 +139,7 @@ export function ConceptLibrary({ subjects, concepts }: { subjects: LibrarySubjec
                 <a href={`#subject-${s.id}`} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-surface px-3 text-sm text-fg-2 hover:bg-surface-2 hover:text-fg sm:min-h-8">
                   <Dot id={s.id} />
                   {s.name}
-                  <span className="tnum text-xs text-fg-3">{countBySubject.get(s.id) ?? 0}</span>
+                  <LinkCount n={countBySubject.get(s.id) ?? 0} />
                 </a>
               </li>
             ))}

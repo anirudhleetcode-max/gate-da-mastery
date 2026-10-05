@@ -223,15 +223,14 @@ export function RoadmapView({ stages }: { stages: RoadmapStageView[] }) {
                     variant={done ? "secondary" : isCurrent ? "primary" : "secondary"}
                     disabled={status !== "ready" || !db}
                     aria-disabled={busy === s.id || undefined}
+                    aria-label={`${done ? "Mark as not complete" : "Mark complete"}: stage ${n}, ${s.title}`}
                     onClick={() => toggle(s, n)}
                   >
                     {done ? (
-                      <>
-                        Mark as not complete<span className="sr-only">: stage {n}, {s.title}</span>
-                      </>
+                      "Mark as not complete"
                     ) : (
                       <>
-                        <CircleCheck aria-hidden className="h-4 w-4" /> Mark complete<span className="sr-only">: stage {n}, {s.title}</span>
+                        <CircleCheck aria-hidden className="h-4 w-4" /> Mark complete
                       </>
                     )}
                   </Button>

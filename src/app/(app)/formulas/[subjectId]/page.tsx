@@ -11,7 +11,9 @@ import { FormulaBookView } from "@/components/learn/FormulaBookView";
 import { OnThisPage } from "@/components/learn/bits";
 import { FORMULA_PRINT_CSS } from "@/components/learn/print";
 import { TableScrollFocus } from "@/components/learn/TableScrollFocus";
+import { TopicJumpBar } from "@/components/learn/TopicJumpBar";
 import { learnSubjects, orderedFormulas } from "@/components/learn/server";
+import { LinkCount } from "@/components/learn/LinkCount";
 import { plural } from "@/lib/utils";
 
 type Params = { params: Promise<{ subjectId: string }> };
@@ -91,7 +93,7 @@ export default async function SubjectFormulasPage({ params }: Params) {
                     <Link href={`/formulas/${o.id}`} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-surface px-3 text-sm text-fg-2 hover:bg-surface-2 hover:text-fg sm:min-h-8">
                       <SubjectDot id={o.id} className="h-2 w-2" />
                       {o.name}
-                      <span className="tnum text-xs text-fg-3">{o.count}</span>
+                      <LinkCount n={o.count} />
                     </Link>
                   </li>
                 ))}
@@ -124,19 +126,14 @@ export default async function SubjectFormulasPage({ params }: Params) {
         </aside>
 
         <div className="min-w-0 lg:col-start-1 lg:row-start-1">
-          <details className="no-print mb-4 rounded-[var(--radius)] border border-border bg-surface lg:hidden">
-            <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-4 text-sm font-medium text-fg">
-              Jump to a topic <span className="tnum text-xs font-normal text-fg-3">({plural(topicItems.length, "topic")})</span>
-            </summary>
-            <nav aria-label="Jump to topic" className="border-t border-border p-2">
-              <OnThisPage items={topicItems} />
-            </nav>
-          </details>
+          {topicItems.length > 1 ? (
+            <TopicJumpBar topics={topicItems.map((t) => ({ id: t.id, title: t.title, count: t.count }))} />
+          ) : null}
 
           <FormulaBookView count={formulas.length}>
             <div className="space-y-8">
               {filled.map(({ topic, items }) => (
-                <section key={topic.id} id={`topic-${topic.id}`} aria-labelledby={`topic-${topic.id}-h`} className="scroll-mt-20 space-y-4">
+                <section key={topic.id} id={`topic-${topic.id}`} aria-labelledby={`topic-${topic.id}-h`} className="scroll-mt-32 space-y-4 lg:scroll-mt-20">
                   <h2 id={`topic-${topic.id}-h`} className="formula-topic-heading flex flex-wrap items-baseline gap-x-2 border-b border-border pb-2 text-lg font-semibold text-fg">
                     {topic.name}
                     <span className="tnum text-sm font-normal text-fg-3">{plural(items.length, "formula")}</span>

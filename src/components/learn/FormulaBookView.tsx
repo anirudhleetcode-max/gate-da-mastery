@@ -5,8 +5,6 @@ import { PrintButton } from "./PrintButton";
 import { usePersistentValue } from "./persist";
 
 const VIEW_KEY = "gate-da-formula-view";
-/** Matches the cards' scroll-margin (scroll-mt-20): the sticky header never covers a card top. */
-const TOP_GAP = 80;
 
 /**
  * Wraps a subject's formula cards with a view switch: full cards, or the
@@ -28,9 +26,11 @@ export function FormulaBookView({ children, count }: { children: ReactNode; coun
   function choose(next: "full" | "compact") {
     keep.current = null;
     for (const card of document.querySelectorAll<HTMLElement>(".formula-card")) {
+      // The card's scroll-margin is the space the sticky header (and topic bar) cover.
+      const gap = parseFloat(getComputedStyle(card).scrollMarginTop) || 0;
       const r = card.getBoundingClientRect();
-      if (r.bottom > TOP_GAP) {
-        keep.current = { id: card.id, top: Math.max(r.top, TOP_GAP) };
+      if (r.bottom > gap) {
+        keep.current = { id: card.id, top: Math.max(r.top, gap) };
         break;
       }
     }

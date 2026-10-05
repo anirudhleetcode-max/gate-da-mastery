@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ServerRichHtml } from "@/components/ui/ServerRichHtml";
 import { cn } from "@/lib/utils";
+import { LinkCount } from "./LinkCount";
 
 /**
  * Keeps whole words in content-table cells (the shared .rich style breaks
@@ -51,11 +52,13 @@ export function LearnSection({
 
 /**
  * A display formula. Wide formulas scroll inside this box (not the inner math
- * block), which is focusable so keyboard users can scroll it too.
+ * block); TableScrollFocus (rendered by every page that uses this) makes the
+ * box a tab stop only while it actually scrolls, so keyboard users can scroll
+ * it without every formula adding a tab stop.
  */
 export function FormulaMath({ html, name, className }: { html: string; name: string; className?: string }) {
   return (
-    <div role="group" aria-label={`Formula: ${name}`} tabIndex={0} className={cn("overflow-x-auto overflow-y-hidden rounded-md [&_.math-display]:overflow-visible!", className)}>
+    <div role="group" aria-label={`Formula: ${name}`} data-scroll-x="" className={cn("overflow-x-auto overflow-y-hidden rounded-md [&_.math-display]:overflow-visible!", className)}>
       <ServerRichHtml html={html} />
     </div>
   );
@@ -69,7 +72,7 @@ export function OnThisPage({ items, className }: { items: { id: string; title: s
         <li key={s.id}>
           <a href={`#${s.id}`} className="flex min-h-9 items-center justify-between gap-2 rounded-md px-2 py-1 text-fg-2 hover:bg-surface-2 hover:text-fg sm:min-h-8">
             <span className="min-w-0">{s.title}</span>
-            {s.count !== undefined ? <span className="tnum text-xs text-fg-3">{s.count}</span> : null}
+            {s.count !== undefined ? <LinkCount n={s.count} /> : null}
           </a>
         </li>
       ))}

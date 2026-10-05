@@ -7,7 +7,7 @@
 import "server-only";
 import type { SubjectId } from "@/lib/content/schema";
 import type { CompiledConcept, CompiledFormula, CompiledStrategy, QuestionMeta } from "@/lib/content/types";
-import { getCatalog, getConcepts, getFormulas, getQuestion, getStrategy, getSubtopicName, getTopic, toMeta } from "@/lib/server/repo";
+import { getCatalog, getConcepts, getFormula, getFormulas, getQuestion, getStrategy, getSubtopicName, getTopic, toMeta } from "@/lib/server/repo";
 import { orderedSubjects } from "@/components/subject/server";
 import { stemPreview } from "@/components/pyq/preview";
 import { SUBJECT_SHORT } from "@/lib/labels";
@@ -79,7 +79,7 @@ export function conceptListItems(): ConceptListItem[] {
       topicId: c.topicId,
       supporting: !c.inOfficialSyllabus,
       pyqCount: conceptPyqIds(c).length,
-      formulaCount: c.formulaIds.length,
+      formulaCount: c.formulaIds.filter((f) => getFormula(f)).length,
       summary: conceptSummary(c),
       haystack: [c.title, topicName, ...c.subtopicIds.map(getSubtopicName), subjectName.get(c.subjectId), SUBJECT_SHORT[c.subjectId], stemPreview(`${c.html.definition} ${c.html.intuition}`, 700)]
         .filter(Boolean)
@@ -137,12 +137,15 @@ export const STRATEGY_SECTIONS: { id: CompiledStrategy["section"]; title: string
 
 export const sectionTitle = (id: CompiledStrategy["section"]) => STRATEGY_SECTIONS.find((s) => s.id === id)?.title ?? id;
 
+/** "timer" is a real route under /strategy, so no article may take that id (such an article is never listed). */
+export const RESERVED_STRATEGY_IDS = new Set(["timer"]);
+
+/** Articles students can open (every article except one with a reserved id). */
+export const strategyArticles = (): CompiledStrategy[] => getStrategy().filter((a) => !RESERVED_STRATEGY_IDS.has(a.id));
+
 /** Articles of a section in their authored order (ties by title). */
 export function sectionArticles(section: CompiledStrategy["section"]): CompiledStrategy[] {
-  return getStrategy()
+  return strategyArticles()
     .filter((a) => a.section === section)
     .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 }
-
-/** "timer" is a real route under /strategy, so no article may take that id. */
-export const RESERVED_STRATEGY_IDS = new Set(["timer"]);

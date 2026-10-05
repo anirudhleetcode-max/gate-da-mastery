@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Callout } from "@/components/ui/Callout";
 import { SubjectDot } from "@/components/subject/bits";
 import { learnSubjects, orderedFormulas } from "@/components/learn/server";
+import { LinkCount } from "@/components/learn/LinkCount";
 import { plural } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -71,7 +72,7 @@ export default function FormulasPage() {
                           className="flex min-h-9 items-center justify-between gap-2 rounded-md px-2 py-1 text-sm text-fg-2 hover:bg-surface-2 hover:text-fg"
                         >
                           <span className="min-w-0">{t.name}</span>
-                          <span className="tnum text-xs text-fg-3">{t.count}</span>
+                          <LinkCount n={t.count} />
                         </Link>
                       ) : (
                         <span className="flex min-h-9 items-center justify-between gap-2 px-2 py-1 text-sm text-fg-3">
