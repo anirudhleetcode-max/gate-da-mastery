@@ -105,6 +105,7 @@ else {
       `  Questions drafted: ${m.drafted}/${m.plannedQuestions}`,
       `  Questions verified: ${m.verified}`,
       `  Self-checked (awaiting independent verification): ${m.selfChecked}`,
+      `  Drafted, not yet through the review gates: ${m.draft}`,
       `  Needs review: ${m.needsReview}`,
       `  Remaining to verify: ${m.remainingToVerify}`,
       "CONTENT",
