@@ -1,0 +1,815 @@
+[
+  {
+    "id": "M22-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 1,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-spatial",
+    "subtopicIds": [
+      "ga-transformations"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (composing coordinate transformations) with four sequential steps, an order-sensitive translation and a routine area computation; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Composition of scaling, translation, rotation and reflection on coordinates: the order of application matters, and area scales with the square of the scale factor.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In the Cartesian plane, triangle $PQR$ has vertices $P(2, 1)$, $Q(5, 1)$ and $R(2, 3)$. The following four transformations are applied one after another, in the order listed:\n\n1. scaling by a factor of $2$ about the origin;\n2. translation by the vector $(-3, +2)$;\n3. rotation by $90^\\circ$ counterclockwise about the origin;\n4. reflection in the $x$-axis.\n\nLet $P'$, $Q'$ and $R'$ be the final images of $P$, $Q$ and $R$ respectively.\n\nWhich one of the following correctly gives the coordinates of $Q'$ and the area of triangle $P'Q'R'$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$Q' = (-6, -4)$ and area $= 12$"
+      },
+      {
+        "label": "B",
+        "text": "$Q' = (4, 7)$ and area $= 12$"
+      },
+      {
+        "label": "C",
+        "text": "$Q' = (-4, -7)$ and area $= 12$"
+      },
+      {
+        "label": "D",
+        "text": "$Q' = (-4, -7)$ and area $= 6$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Follow $Q(5,1)$ through the maps in order: $(10,2) \\to (7,4) \\to (-4,7) \\to (-4,-7)$, so $Q'=(-4,-7)$. Only the scaling changes sizes, and it multiplies area by $2^2=4$, so the area is $4 \\times 3 = 12$.",
+      "steps": [
+        {
+          "title": "Track $Q$ through the four maps",
+          "body": "Scaling by $2$: $(5,1) \\to (10,2)$. Translation by $(-3,2)$: $(10,2) \\to (7,4)$. Rotation by $90^\\circ$ counterclockwise, $(x,y)\\mapsto(-y,x)$: $(7,4) \\to (-4,7)$. Reflection in the $x$-axis, $(x,y)\\mapsto(x,-y)$: $(-4,7) \\to (-4,-7)$. Hence $Q'=(-4,-7)$."
+        },
+        {
+          "title": "Track $P$ and $R$ the same way",
+          "body": "$P(2,1) \\to (4,2) \\to (1,4) \\to (-4,1) \\to (-4,-1)$, so $P'=(-4,-1)$. $R(2,3) \\to (4,6) \\to (1,8) \\to (-8,1) \\to (-8,-1)$, so $R'=(-8,-1)$."
+        },
+        {
+          "title": "Area of the final triangle",
+          "body": "$P'Q'$ is vertical with length $|-1-(-7)|=6$ and $P'R'$ is horizontal with length $|-4-(-8)|=4$, so the right angle is at $P'$ and the area is $\\tfrac12 \\cdot 6 \\cdot 4 = 12$."
+        },
+        {
+          "title": "Cross-check using how each map changes area",
+          "body": "The original triangle has legs $|PQ|=3$ and $|PR|=2$, so its area is $3$. Translation, rotation and reflection are isometries and preserve area; scaling by $2$ multiplies every length by $2$ and the area by $2^2=4$. Therefore the area is $3 \\times 4 = 12$, in agreement."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$(-6,-4)$ comes from translating *before* scaling: $(5,1) \\to (2,3) \\to (4,6) \\to (-6,4) \\to (-6,-4)$. Scaling is about the origin, so it does not commute with a translation; the stated order must be followed."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$(4,7)$ comes from rotating clockwise, $(x,y)\\mapsto(y,-x)$, instead of counterclockwise: $(7,4) \\to (4,-7) \\to (4,7)$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Both parts match: $Q'=(-4,-7)$ and area $=2^2 \\times 3 = 12$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The coordinates are right, but the area $6$ is $2 \\times 3$: the scale factor was applied to the area itself instead of its square. Lengths double, so area quadruples."
+        }
+      ],
+      "shortcut": "For the area, ignore the translation, rotation and reflection (all isometries): the area is $3 \\times 2^2 = 12$. That leaves only the coordinates of $Q'$, which need one pass through the four maps, so the options with area $6$ can be discarded immediately.",
+      "commonTrap": "Doing the translation before the scaling (or treating them as interchangeable), reversing the sense of the $90^\\circ$ rotation, and scaling the area by $2$ instead of $2^2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: Q' = (-4, -7), area = 12 (P'=(-4,-1), R'=(-8,-1))",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\nP = np.array([[2, 1], [5, 1], [2, 3]])\nT = 2 * P + np.array([-3, 2])        # scale about origin, then translate\nT = np.c_[-T[:, 1], T[:, 0]]         # rotate 90 deg counterclockwise\nT = np.c_[T[:, 0], -T[:, 1]]         # reflect in x-axis\n(x1, y1), (x2, y2), (x3, y3) = T\narea = abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)) / 2\nprint(T.tolist(), area)              # [[-4, -1], [-4, -7], [-8, -1]] 12.0"
+    }
+  },
+  {
+    "id": "M22-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 2,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-verbal",
+    "subtopicIds": [
+      "ga-vocabulary"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one skill (vocabulary in context) that needs the precise senses of four formal words and use of the contrast signal 'although' to select among them; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Vocabulary in context: using a contrast connector and supporting clause to select the word whose sense (lavishly enthusiastic) fits the blank.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Select the most appropriate word to fill in the blank.\n\nAlthough the first reviews of the prototype were ______, with several writers predicting that it would reshape the industry, field trials later exposed so many defects that the company quietly shelved the project.",
+    "options": [
+      {
+        "label": "A",
+        "text": "effusive"
+      },
+      {
+        "label": "B",
+        "text": "perfunctory"
+      },
+      {
+        "label": "C",
+        "text": "trenchant"
+      },
+      {
+        "label": "D",
+        "text": "equivocal"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "'Although ... later exposed so many defects' sets up a contrast, and the clause 'predicting that it would reshape the industry' shows the early reviews were enthusiastic. Only 'effusive' (lavishly, unrestrainedly praising) fits.",
+      "steps": [
+        {
+          "title": "Read the logic of the sentence",
+          "body": "The sentence has the shape *Although [early reviews were ...], [later trials were bad]*. The connector 'although' signals that the first part contrasts with the second, and the second part is negative (many defects, project shelved). So the early reviews must have been favourable, which the participial clause ('several writers predicting that it would reshape the industry') confirms."
+        },
+        {
+          "title": "Know the four meanings",
+          "body": "*effusive*: expressing praise or feeling in an unrestrained, gushing way. *perfunctory*: done routinely with minimal effort or interest. *trenchant*: sharp, incisive and forceful in expression (usually of criticism). *equivocal*: open to more than one interpretation; deliberately vague or ambiguous."
+        },
+        {
+          "title": "Test each word in the blank",
+          "body": "Only *effusive* produces a favourable, enthusiastic set of reviews that contrasts with the later failure. *Perfunctory* and *equivocal* describe reviews that were lukewarm or vague, which would not lead writers to predict that the product would reshape the industry; *trenchant* reviews would be incisive and critical, which would not be contrasted with the discovery of defects."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "'Effusive' means gushing and unreserved in praise, matching both the contrast with the later defects and the prediction that the prototype would reshape the industry."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "'Perfunctory' means done with little care or effort. Perfunctory reviews would not come with bold predictions, and nothing in the sentence is about the reviewers' effort."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "'Trenchant' means incisive and sharp, typically of criticism. It sounds forceful, but sharp reviews would not be set against the later discovery of defects with 'although'."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "'Equivocal' means ambiguous or non-committal. Reviewers who 'predict that it would reshape the industry' are not being ambiguous."
+        }
+      ],
+      "shortcut": "A contrast connector ('although', 'yet', 'despite') followed by a clearly negative outcome means the blank is the opposite, positive, sense; this alone isolates 'effusive' from the three words that are neutral or critical.",
+      "commonTrap": "Choosing 'trenchant' because it sounds strong and impressive, without recognising that it usually describes sharp criticism, or ignoring the contrast signalled by 'although'."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation (vocabulary item; no computation involved)",
+      "independentAnswer": "A (effusive)",
+      "agreesWithKey": true,
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 3,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-quant",
+    "subtopicIds": [
+      "ga-numerical"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one ratio concept with a single linear equation in one unknown, plus a direct check; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Ratios: setting up and solving a linear equation from a ratio that changes after a transfer between two groups.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two data centres, DC-1 and DC-2, hold servers in the ratio $5 : 7$. After $11$ servers are migrated from DC-2 to DC-1, the ratio of the number of servers in DC-1 to the number in DC-2 becomes $8 : 9$.\n\nHow many servers did DC-2 hold before the migration?",
+    "options": [
+      {
+        "label": "A",
+        "text": "108"
+      },
+      {
+        "label": "B",
+        "text": "119"
+      },
+      {
+        "label": "C",
+        "text": "85"
+      },
+      {
+        "label": "D",
+        "text": "96"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Let the original counts be $5k$ and $7k$. Then $\\dfrac{5k+11}{7k-11}=\\dfrac89$, so $45k+99=56k-88$ and $k=17$. DC-2 originally held $7 \\times 17 = 119$ servers.",
+      "steps": [
+        {
+          "title": "Represent the original counts",
+          "body": "Because the counts are in the ratio $5:7$, write DC-1 $=5k$ and DC-2 $=7k$ for some positive number $k$."
+        },
+        {
+          "title": "Write the ratio after the migration",
+          "body": "After moving $11$ servers from DC-2 to DC-1, DC-1 has $5k+11$ and DC-2 has $7k-11$, and the ratio is $8:9$, so $\\dfrac{5k+11}{7k-11}=\\dfrac{8}{9}$."
+        },
+        {
+          "title": "Solve for $k$",
+          "body": "Cross-multiplying, $9(5k+11)=8(7k-11)$, i.e. $45k+99=56k-88$. Hence $11k=187$ and $k=17$."
+        },
+        {
+          "title": "Answer the quantity asked and verify",
+          "body": "DC-2 originally held $7k=119$ servers (and DC-1 held $5k=85$). After the migration the counts are $96$ and $108$, and $96:108=8:9$, as required."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$108$ is the number of servers in DC-2 *after* the migration ($119-11$), not before."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$7k = 7 \\times 17 = 119$, and the check $96:108 = 8:9$ holds."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$85$ is the original size of DC-1 ($5k$), not of DC-2."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$96$ is the number of servers in DC-1 *after* the migration ($85+11$)."
+        }
+      ],
+      "shortcut": "The total is unchanged: $12k$ before and $17$ parts after. DC-1's share rises from $\\tfrac{5}{12}$ to $\\tfrac{8}{17}$, an increase of $\\tfrac{96-85}{204}=\\tfrac{11}{204}$ of the total, and that increase equals the $11$ migrated servers. So the total is $204$ and DC-2 held $\\tfrac{7}{12}\\times 204 = 119$.",
+      "commonTrap": "Answering a different quantity (the size of DC-1, or either size after the migration), all of which appear as options, or moving the servers in the wrong direction when forming $\\frac{5k-11}{7k+11}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: 119 servers (DC-1 = 85, k = 17)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "from fractions import Fraction as F\nsol = [(5 * k, 7 * k) for k in range(2, 1000) if F(5 * k + 11, 7 * k - 11) == F(8, 9)]\nprint(sol)                                    # [(85, 119)]\na, b = sol[0]\nprint(a + 11, b - 11, F(a + 11, b - 11))      # 96 108 8/9"
+    }
+  },
+  {
+    "id": "M22-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-cross-validation"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines OLS fitting, leverage and the leave-one-out residual identity (or five separate refits), with several likely traps such as reporting the training error; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Leave-one-out cross-validation for simple linear regression: LOO error of point i equals e_i/(1-h_ii), so the estimate exceeds the training error.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A quality engineer models the number of defective units $y$ in a batch as a linear function of the tool age $x$ (in weeks), using ordinary least squares with an intercept, $\\hat y = \\beta_0 + \\beta_1 x$. Five batches are observed.\n\n| Batch | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| Tool age $x$ | 1 | 2 | 3 | 4 | 5 |\n| Defective units $y$ | 3 | 3 | 8 | 7 | 11 |\n\nThe leave-one-out cross-validation (LOOCV) estimate of the mean squared prediction error is obtained as follows: each batch $i$ is held out in turn, the line is refitted by ordinary least squares on the other four batches, and the squared error $\\big(y_i - \\hat y_{(-i)}(x_i)\\big)^2$ of its prediction for the held-out batch is recorded. The LOOCV estimate is the average of the five squared errors.\n\nThe LOOCV estimate is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$2.25$"
+      },
+      {
+        "label": "B",
+        "text": "$1.44$"
+      },
+      {
+        "label": "C",
+        "text": "$5.50$"
+      },
+      {
+        "label": "D",
+        "text": "$3.30$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Fit once on all five points: $\\hat y = 0.4 + 2x$ with residuals $e=(0.6,-1.4,1.6,-1.4,0.6)$. For OLS with an intercept the leave-one-out error is $e_i/(1-h_{ii})$ with $h_{ii}=0.2+\\tfrac{(x_i-3)^2}{10}=(0.6,0.3,0.2,0.3,0.6)$. This gives errors $(1.5,-2,2,-2,1.5)$, squares summing to $16.5$, and mean $3.30$.",
+      "steps": [
+        {
+          "title": "Fit the line to all five batches",
+          "body": "$\\bar x=3$, $\\bar y=6.4$, $S_{xx}=\\sum(x-3)^2=10$ and $S_{xy}=\\sum (x-3)\\,y=(-2)(3)+(-1)(3)+0+(1)(7)+(2)(11)=20$. So $\\beta_1=2$, $\\beta_0=6.4-2\\cdot 3=0.4$. Fitted values: $2.4,\\,4.4,\\,6.4,\\,8.4,\\,10.4$; residuals $e=(0.6,-1.4,1.6,-1.4,0.6)$, with $\\sum e_i^2=7.2$."
+        },
+        {
+          "title": "Use the leave-one-out identity instead of five refits",
+          "body": "For ordinary least squares with an intercept, the error made on point $i$ when it is left out is $y_i-\\hat y_{(-i)}(x_i)=\\dfrac{e_i}{1-h_{ii}}$, where the leverage is $h_{ii}=\\dfrac1n+\\dfrac{(x_i-\\bar x)^2}{S_{xx}}=0.2+\\dfrac{(x_i-3)^2}{10}$. So $h=(0.6,\\,0.3,\\,0.2,\\,0.3,\\,0.6)$ and $1-h=(0.4,\\,0.7,\\,0.8,\\,0.7,\\,0.4)$."
+        },
+        {
+          "title": "Compute the five leave-one-out errors",
+          "body": "$\\dfrac{0.6}{0.4}=1.5$, $\\dfrac{-1.4}{0.7}=-2$, $\\dfrac{1.6}{0.8}=2$, $\\dfrac{-1.4}{0.7}=-2$, $\\dfrac{0.6}{0.4}=1.5$. Their squares are $2.25,\\,4,\\,4,\\,4,\\,2.25$, with sum $16.5$. The LOOCV estimate is $16.5/5=3.30$."
+        },
+        {
+          "title": "Cross-check one batch by direct refitting",
+          "body": "Hold out batch 1 and fit on $x=2,3,4,5$, $y=3,8,7,11$: $\\bar x=3.5$, $\\bar y=7.25$, $S_{xx}=5$, $S_{xy}=(-1.5)(3)+(-0.5)(8)+(0.5)(7)+(1.5)(11)=11.5$, slope $2.3$. The prediction at $x=1$ is $7.25+2.3(1-3.5)=1.5$, so the error is $3-1.5=1.5$, matching the identity."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$2.25$ comes from dividing every residual by $1-\\tfrac1n=0.8$, i.e. using the *average* leverage for all points: $\\tfrac15\\cdot\\tfrac{7.2}{0.64}=2.25$. Leverage depends on $x_i$ and is largest for the end points, so this understates the error."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$1.44=\\tfrac{7.2}{5}$ is the training (resubstitution) mean squared error. Each point is predicted by a line that has already seen it, so this is optimistic."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$5.50=\\tfrac{16.5}{3}$ divides the total of the squared leave-one-out errors by $n-2$ (as when estimating the residual variance) instead of by the number of folds $n=5$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The mean of the five squared leave-one-out errors is $\\tfrac{16.5}{5}=3.30$."
+        }
+      ],
+      "shortcut": "Fit the line once, then divide each ordinary residual by $1-h_{ii}$, where $h_{ii}=\\tfrac1n+\\tfrac{(x_i-\\bar x)^2}{S_{xx}}$. No refitting is needed, and for $x=1,\\dots,5$ the leverages are $0.2+\\tfrac{(x-3)^2}{10}$.",
+      "commonTrap": "Reporting the training error $7.2/5=1.44$ (or $7.2/3=2.40$) as the cross-validation estimate. The LOOCV error is larger because every point is predicted by a line that never saw it, especially the high-leverage end points $x=1$ and $x=5$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D: LOOCV MSE = 3.30 (LOO errors 1.5, -2, 2, -2, 1.5)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\nx = np.arange(1, 6.0); y = np.array([3, 3, 8, 7, 11.0])\nloo = [y[i] - np.polyval(np.polyfit(np.delete(x, i), np.delete(y, i), 1), x[i]) for i in range(5)]\ne = y - np.polyval(np.polyfit(x, y, 1), x); h = 0.2 + (x - 3) ** 2 / 10\nprint(np.round(loo, 4), np.mean(np.square(loo)))        # [ 1.5 -2.  2. -2.  1.5] 3.3\nprint(np.allclose(loo, e / (1 - h)), np.mean(e ** 2), np.mean((e / 0.8) ** 2), np.sum(np.square(loo)) / 3)  # True 1.44 2.25 5.5"
+    }
+  },
+  {
+    "id": "M22-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-er-model"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (structural constraints of a binary relationship set) needing a bound from each participating entity set for both the maximum and the minimum, plus a feasibility check; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "ER structural constraints (min, max participation): bounding the number of relationship instances by counting from both entity sets.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A food bank's ER model has two entity sets, VOLUNTEER and SHIFT. The database currently holds exactly $15$ VOLUNTEER entities and exactly $6$ SHIFT entities. They are related through a binary relationship set SIGNS_UP with the following structural constraints.\n\n- Every volunteer signs up for at least $1$ and at most $2$ shifts.\n- Every shift is signed up for by at least $4$ and at most $6$ volunteers.\n\nA SIGNS_UP instance is a (volunteer, shift) pair, and the same pair cannot occur more than once. Over all database states that satisfy these constraints, let $M$ be the largest and $m$ the smallest possible number of SIGNS_UP instances.\n\nThe value of $M - m$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 6,
+      "max": 6
+    },
+    "solution": {
+      "quick": "Let $N$ be the number of SIGNS_UP instances. Counting by volunteers gives $15 \\le N \\le 30$; counting by shifts gives $24 \\le N \\le 36$. Both must hold, so $24 \\le N \\le 30$, and both end values can be attained. Hence $M-m=30-24=6$.",
+      "steps": [
+        {
+          "title": "Count the instances from the volunteer side",
+          "body": "Each instance involves exactly one volunteer, so $N$ is the sum of the volunteers' sign-up counts. With between $1$ and $2$ shifts each, $15\\cdot 1 \\le N \\le 15\\cdot 2$, i.e. $15 \\le N \\le 30$."
+        },
+        {
+          "title": "Count the instances from the shift side",
+          "body": "Each instance also involves exactly one shift, so $N$ is the sum of the shifts' volunteer counts. With between $4$ and $6$ volunteers each, $6\\cdot 4 \\le N \\le 6\\cdot 6$, i.e. $24 \\le N \\le 36$."
+        },
+        {
+          "title": "Combine the two sets of bounds",
+          "body": "Both must hold, so $\\max(15,24)\\le N\\le \\min(30,36)$, that is $24 \\le N \\le 30$. The maximum is limited by the volunteers' side and the minimum by the shifts' side."
+        },
+        {
+          "title": "Show that both end values are attainable",
+          "body": "$N=30$: number volunteers $0,\\dots,14$ and shifts $0,\\dots,5$, and let volunteer $i$ sign up for shifts $i \\bmod 6$ and $(i+1) \\bmod 6$. Every volunteer has $2$ distinct shifts, and the shift loads are $5,6,6,5,4,4$, all within $[4,6]$. $N=24$: volunteers $1$ to $6$ each sign up for one shift (volunteer $k$ for shift $k$); volunteers $7$ to $9$ take shifts $1$ and $2$, volunteers $10$ to $12$ take shifts $3$ and $4$, and volunteers $13$ to $15$ take shifts $5$ and $6$. Each shift then has exactly $4$ volunteers, and the sign-up counts are $6\\cdot 1 + 9\\cdot 2 = 24$."
+        },
+        {
+          "title": "Compute the difference",
+          "body": "$M=30$ and $m=24$, so $M-m=6$."
+        }
+      ],
+      "finalAnswer": "**6**",
+      "commonTrap": "Taking each extreme from a single side, for example $15\\cdot 2 = 30$ and $15\\cdot 1 = 15$ (difference $15$), or $36-24=12$ from the shifts only. The true range is the intersection of the bounds from both entity sets, which puts the maximum on the volunteers' side and the minimum on the shifts' side."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "6 (M = 30, m = 24)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\nfrom scipy.optimize import milp, LinearConstraint, Bounds\nnv, ns = 15, 6\nA = np.zeros((nv + ns, nv * ns))\nfor i in range(nv): A[i, i * ns:(i + 1) * ns] = 1       # volunteer i's sign-ups\nfor j in range(ns): A[nv + j, j::ns] = 1                # shift j's volunteers\nlo = [1] * nv + [4] * ns; hi = [2] * nv + [6] * ns\nf = lambda s: round(s * milp(s * np.ones(nv * ns), constraints=LinearConstraint(A, lo, hi),\n                              integrality=np.ones(nv * ns), bounds=Bounds(0, 1)).fun)\nM, m = f(-1), f(1)\nprint(M, m, M - m)                                       # 30 24 6"
+    }
+  },
+  {
+    "id": "M22-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — an MSQ whose four sentences each need an independent entailment proof or a counter-model in first-order logic with equality, with a likely trap about finite cycles; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "First-order logical entailment: using seriality and asymmetry of a relation to prove how many distinct elements must exist, and building counter-models for the rest.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider first-order logic **with equality**. Let $P$ be a unary predicate symbol and $R$ a binary predicate symbol. Let $\\Gamma$ consist of the following three sentences.\n\n$$\n\\begin{aligned}\n(S_1)\\quad & \\forall x\\,\\big(P(x) \\rightarrow \\exists y\\,(R(x,y) \\wedge P(y))\\big)\\\\\n(S_2)\\quad & \\forall x\\,\\forall y\\,\\big(R(x,y) \\rightarrow \\neg R(y,x)\\big)\\\\\n(S_3)\\quad & \\exists x\\,P(x)\n\\end{aligned}\n$$\n\nFor variables $x_1,\\dots,x_k$, $\\mathrm{Dist}(x_1,\\dots,x_k)$ abbreviates the conjunction $\\bigwedge_{i<j}(x_i \\ne x_j)$ of all pairwise inequalities.\n\nWhich of the following sentences is/are logically entailed by $\\Gamma$, that is, true in **every** interpretation (on any non-empty domain, finite or infinite) in which $S_1$, $S_2$ and $S_3$ are all true?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\exists x\\,\\exists y\\,\\big(P(x) \\wedge P(y) \\wedge \\mathrm{Dist}(x,y)\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\exists x\\,\\exists y\\,\\exists z\\,\\big(P(x) \\wedge P(y) \\wedge P(z) \\wedge \\mathrm{Dist}(x,y,z)\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\exists x\\,\\exists y\\,\\exists z\\,\\exists w\\,\\big(P(x) \\wedge P(y) \\wedge P(z) \\wedge P(w) \\wedge \\mathrm{Dist}(x,y,z,w)\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\exists x\\,\\exists y\\,\\exists z\\,\\big(R(x,y) \\wedge R(y,z) \\wedge R(z,x)\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "$S_3$ and $S_1$ give a chain $a \\to b \\to c$ of $P$-elements ($R(a,b)$, $R(b,c)$). $S_2$ makes $R$ irreflexive and asymmetric, so $a,b,c$ are pairwise distinct: at least three distinct $P$-elements exist, so A and B are entailed. A $3$-cycle on three elements refutes C, and a $4$-cycle (which has no $3$-cycle) refutes D.",
+      "steps": [
+        {
+          "title": "Extract what $S_2$ says",
+          "body": "Putting $y=x$ in $S_2$ gives $R(x,x)\\to\\neg R(x,x)$, which forces $\\neg R(x,x)$ for every $x$ ($R$ is irreflexive). Also, whenever $R(x,y)$ holds, $\\neg R(y,x)$ holds (asymmetry)."
+        },
+        {
+          "title": "Build a chain from $S_3$ and $S_1$",
+          "body": "By $S_3$ pick $a$ with $P(a)$. By $S_1$ there is $b$ with $R(a,b)\\wedge P(b)$. Applying $S_1$ to $b$ gives $c$ with $R(b,c)\\wedge P(c)$."
+        },
+        {
+          "title": "Prove the three elements are distinct",
+          "body": "$a\\ne b$, since $R(a,b)$ holds but $R(a,a)$ does not. $b\\ne c$, since $R(b,c)$ holds but $R(b,b)$ does not. $a\\ne c$, since $c=a$ would give $R(b,a)$, contradicting $\\neg R(b,a)$ (asymmetry applied to $R(a,b)$). So every model has three distinct $P$-elements, and A and B are entailed."
+        },
+        {
+          "title": "Counter-model for C",
+          "body": "Domain $\\{1,2,3\\}$, $P$ true of all three, $R=\\{(1,2),(2,3),(3,1)\\}$. $S_1$ holds (each element has a successor that satisfies $P$), $S_2$ holds (no pair appears in both directions and there are no loops) and $S_3$ holds, but the domain has only $3$ elements, so four distinct $P$-elements do not exist. C is not entailed."
+        },
+        {
+          "title": "Counter-model for D",
+          "body": "Domain $\\{1,2,3,4\\}$, $P$ true of all, $R=\\{(1,2),(2,3),(3,4),(4,1)\\}$. $S_1$, $S_2$, $S_3$ hold, but a closed walk $x\\to y\\to z\\to x$ of length $3$ would need $3$ to be a multiple of the cycle length $4$, so there is no such triple. D is not entailed."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The chain $a,b$ with $R(a,b)$, $P(a)$, $P(b)$ exists by $S_3$ and $S_1$, and $a\\ne b$ because $R$ is irreflexive. At least two distinct $P$-elements exist in every model."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The chain $a\\to b\\to c$ exists, and $S_2$ rules out $a=b$, $b=c$ (no loops) and $a=c$ (no $2$-cycle). Three distinct $P$-elements exist in every model."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The $3$-cycle model on $\\{1,2,3\\}$ satisfies $\\Gamma$ but has only three elements, so it has no four distinct $P$-elements."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$S_1$ and $S_2$ force some cycle through the $P$-elements in a finite model, but not a cycle of length $3$: the $4$-cycle model satisfies $\\Gamma$ and contains no triple with $R(x,y)$, $R(y,z)$, $R(z,x)$ (an infinite chain $R(n,n+1)$ on the integers is another counter-model)."
+        }
+      ],
+      "commonTrap": "Believing that a finite model of $S_1$ must contain a directed cycle of length exactly $3$ (or at least four distinct elements). Asymmetry only excludes cycles of length $1$ and $2$, so the shortest forced structure is a chain of three distinct elements, and a longer cycle is just as good a model."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B (proof by chain a->b->c with irreflexive + asymmetric R; counter-models: 3-cycle for C, 4-cycle for D)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "from itertools import product\ndef models(n):\n    for P in product([0, 1], repeat=n):\n        for bits in product([0, 1], repeat=n * n):\n            R = [bits[i * n:(i + 1) * n] for i in range(n)]\n            if any(P[x] and not any(R[x][y] and P[y] for y in range(n)) for x in range(n)): continue  # S1\n            if any(R[x][y] and R[y][x] for x in range(n) for y in range(n)): continue                 # S2\n            if not any(P): continue                                                                   # S3\n            yield P, R\ncyc3 = lambda P, R, n: any(R[x][y] and R[y][z] and R[z][x] for x in range(n) for y in range(n) for z in range(n))\ntests = {'A': lambda P, R, n: sum(P) >= 2, 'B': lambda P, R, n: sum(P) >= 3,\n         'C': lambda P, R, n: sum(P) >= 4, 'D': cyc3}\nfor n in range(1, 5):\n    ms = list(models(n))\n    print(n, len(ms), {k: all(f(P, R, n) for P, R in ms) for k, f in tests.items()})\n# n=3: C fails (3-cycle model); n=4: D fails (4-cycle model); A, B hold in every model found"
+    }
+  },
+  {
+    "id": "M22-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-continuous-named"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (minimum of independent exponentials and the memoryless property) with routine arithmetic; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Exponential distribution: the minimum of independent exponentials is exponential with the sum of the rates, and the memoryless property for a conditional survival probability.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A drone's flight controller stops working as soon as either of its two independent sensor units fails. The lifetime of sensor unit $S_1$ is exponentially distributed with mean $12$ hours, and the lifetime of sensor unit $S_2$ is exponentially distributed with mean $20$ hours. The two lifetimes are independent.\n\nGiven that the controller has already been working for $3$ hours, the probability that it keeps working for at least $5$ more hours is (rounded off to three decimal places)",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.659$"
+      },
+      {
+        "label": "B",
+        "text": "$0.344$"
+      },
+      {
+        "label": "C",
+        "text": "$0.513$"
+      },
+      {
+        "label": "D",
+        "text": "$0.732$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The controller lifetime is $T=\\min(L_1,L_2)$, which is exponential with rate $\\tfrac1{12}+\\tfrac1{20}=\\tfrac2{15}$ per hour. By the memoryless property, $P(T>8\\mid T>3)=P(T>5)=e^{-\\frac{2}{15}\\cdot 5}=e^{-2/3}\\approx 0.513$.",
+      "steps": [
+        {
+          "title": "Set up the controller's lifetime",
+          "body": "The controller works only while both sensors work, so its lifetime is $T=\\min(L_1,L_2)$ with $L_1\\sim\\text{Exp}(\\lambda_1=\\tfrac1{12})$ and $L_2\\sim\\text{Exp}(\\lambda_2=\\tfrac1{20})$ independent."
+        },
+        {
+          "title": "Find the distribution of $T$",
+          "body": "$P(T>t)=P(L_1>t)\\,P(L_2>t)=e^{-\\lambda_1 t}e^{-\\lambda_2 t}=e^{-(\\lambda_1+\\lambda_2)t}$. So $T$ is exponential with rate $\\lambda=\\tfrac1{12}+\\tfrac1{20}=\\tfrac{5+3}{60}=\\tfrac{2}{15}$ per hour (mean $7.5$ hours)."
+        },
+        {
+          "title": "Apply the memoryless property",
+          "body": "$P(T>3+5\\mid T>3)=\\dfrac{P(T>8)}{P(T>3)}=\\dfrac{e^{-16/15}}{e^{-6/15}}=e^{-10/15}=e^{-2/3}$, which equals $P(T>5)$."
+        },
+        {
+          "title": "Evaluate",
+          "body": "$e^{-2/3}\\approx 0.5134$, which is $0.513$ to three decimal places."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$e^{-5/12}\\approx0.659$ uses only $S_1$, the shorter-lived sensor, as if $S_2$ could not fail. Both sensors contribute to the failure rate."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$e^{-16/15}\\approx0.344$ is the unconditional probability $P(T>8)$ of surviving $8$ hours from the start. It ignores that the first $3$ hours have already been survived."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$e^{-(2/15)\\cdot 5}=e^{-2/3}\\approx0.513$: rates add for a series system, and only the additional $5$ hours matter."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$e^{-5/16}\\approx0.732$ treats the controller as exponential with mean $16$, the average of the two means. For a minimum, the *rates* add; the mean of $T$ is $7.5$, not $16$."
+        }
+      ],
+      "shortcut": "For a series system of independent exponentials the rates add, $\\lambda=\\tfrac1{12}+\\tfrac1{20}=\\tfrac2{15}$, and the memoryless property means the $3$ hours already survived are irrelevant. Answer $=e^{-\\lambda\\cdot 5}$.",
+      "commonTrap": "Averaging the two mean lifetimes (or using only one sensor) instead of adding the rates, and computing the unconditional $P(T>8)$ instead of the conditional probability."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C: e^(-2/3) = 0.513",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import math, numpy as np\nl = 1 / 12 + 1 / 20\nprint(math.exp(-l * 8) / math.exp(-l * 3), math.exp(-l * 5))    # 0.5134 0.5134\nprint(math.exp(-l * 8), math.exp(-5 / 12), math.exp(-5 / 16))   # 0.3442 0.6592 0.7316\nr = np.random.default_rng(0); T = np.minimum(r.exponential(12, 4_000_000), r.exponential(20, 4_000_000))\nprint((T[T > 3] > 8).mean())                                     # ~0.513"
+    }
+  },
+  {
+    "id": "M22-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-vector-space"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (dimension of a subspace of matrices) with two simultaneous constraints (commuting with a diagonal matrix and symmetry) and a counting argument; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Dimension of a matrix subspace: matrices commuting with a diagonal matrix are block diagonal along its repeated eigenvalues; adding symmetry counts symmetric blocks.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $D=\\operatorname{diag}(3,\\,3,\\,3,\\,-1,\\,-1,\\,5)$ be the $6\\times 6$ diagonal matrix with these diagonal entries, and let\n\n$$W=\\{\\,X\\in\\mathbb{R}^{6\\times 6} \\;:\\; X=X^{\\top}\\ \\text{and}\\ XD=DX\\,\\}.$$\n\n$W$ is a subspace of the real vector space $\\mathbb{R}^{6\\times 6}$ of all $6\\times 6$ real matrices.\n\nThe dimension of $W$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 10,
+      "max": 10
+    },
+    "solution": {
+      "quick": "Since $(XD-DX)_{ij}=x_{ij}(d_j-d_i)$, commuting with $D$ forces $x_{ij}=0$ whenever $d_i\\ne d_j$, so $X$ is block diagonal with blocks of sizes $3,2,1$. Symmetry makes each block symmetric: $\\tfrac{3\\cdot4}{2}+\\tfrac{2\\cdot3}{2}+\\tfrac{1\\cdot2}{2}=6+3+1=10$.",
+      "steps": [
+        {
+          "title": "Translate $XD=DX$ into conditions on entries",
+          "body": "For $D=\\operatorname{diag}(d_1,\\dots,d_6)$, $(XD)_{ij}=x_{ij}d_j$ and $(DX)_{ij}=d_i x_{ij}$. So $XD=DX$ holds exactly when $x_{ij}(d_j-d_i)=0$ for all $i,j$, that is, $x_{ij}=0$ whenever $d_i\\ne d_j$ and $x_{ij}$ is unconstrained when $d_i=d_j$."
+        },
+        {
+          "title": "Group the indices by diagonal value",
+          "body": "The values are $3$ (indices $1,2,3$), $-1$ (indices $4,5$) and $5$ (index $6$). Entries linking different groups must vanish, so $X$ is block diagonal with a $3\\times3$, a $2\\times2$ and a $1\\times1$ block, each otherwise arbitrary (this alone gives dimension $9+4+1=14$)."
+        },
+        {
+          "title": "Impose symmetry",
+          "body": "$X=X^\\top$ makes every block symmetric (the zero blocks are already symmetric). A symmetric $k\\times k$ block has $\\tfrac{k(k+1)}2$ free entries: $6$ for $k=3$, $3$ for $k=2$ and $1$ for $k=1$."
+        },
+        {
+          "title": "Add up",
+          "body": "$\\dim W=6+3+1=10$. As a check, $W$ sits inside the $21$-dimensional space of symmetric matrices and inside the $14$-dimensional commutant of $D$, so $10$ is less than both."
+        }
+      ],
+      "finalAnswer": "**10**",
+      "commonTrap": "Stopping after one condition: $14$ counts all matrices commuting with $D$ (ignoring symmetry), and $21$ counts all symmetric matrices (ignoring the commuting condition). Each block must also be counted as symmetric, $\\tfrac{k(k+1)}2$ rather than $k^2$ entries."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "10 (blocks of sizes 3, 2, 1 with symmetric entries: 6 + 3 + 1)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import sympy as sp\nn = 6; d = [3, 3, 3, -1, -1, 5]\nS = sp.Matrix(n, n, lambda i, j: sp.Symbol(f'x{min(i, j)}{max(i, j)}'))   # general symmetric matrix\nD = sp.diag(*d); vs = sorted(S.free_symbols, key=str)\nJ = sp.Matrix([[sp.diff(e, v) for v in vs] for e in (S * D - D * S)])     # linear constraints XD = DX\nprint(len(vs), J.rank(), len(vs) - J.rank())                              # 21 11 10"
+    }
+  },
+  {
+    "id": "M22-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-divide-conquer"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — tracing a recursive merge procedure through six merges, with a tie-sensitive comparison that decides what the counter measures; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Mergesort tracing: a counter updated during the merge step counts pairs (left element, right element) that are out of order, and the strict '<' comparison sends ties to the counting branch.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python code.\n\n```python\ndef msort(a):\n    n = len(a)\n    if n <= 1:\n        return a, 0\n    mid = n // 2\n    left, cl = msort(a[:mid])\n    right, cr = msort(a[mid:])\n    out, i, j, c = [], 0, 0, 0\n    while i < len(left) and j < len(right):\n        if left[i] < right[j]:\n            out.append(left[i])\n            i += 1\n        else:\n            out.append(right[j])\n            j += 1\n            c += len(left) - i\n    out += left[i:] + right[j:]\n    return out, cl + cr + c\n\ndata = [6, 2, 6, 3, 1, 2, 5]\nprint(msort(data)[1])\n```\n\nThe value printed by the program is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$12$"
+      },
+      {
+        "label": "B",
+        "text": "$14$"
+      },
+      {
+        "label": "C",
+        "text": "$8$"
+      },
+      {
+        "label": "D",
+        "text": "$10$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "In each merge, $c$ adds $\\text{len(left)}-i$ whenever a right element is output first, i.e. it counts pairs (left element, right element) with left $\\ge$ right (ties go to the right because of the strict $<$). Over the whole recursion, this counts index pairs $p<q$ with $a_p \\ge a_q$. Tracing gives $2+2+10=14$ (the two halves contribute $2$ each, the top merge $10$).",
+      "steps": [
+        {
+          "title": "Split the list",
+          "body": "`msort([6,2,6,3,1,2,5])`: $n=7$, `mid`$=3$, so `left`$=[6,2,6]$ is sorted by a recursive call and `right`$=[3,1,2,5]$ by another."
+        },
+        {
+          "title": "Left half $[6,2,6]$",
+          "body": "It splits into $[6]$ and $[2,6]$. Merging $[2]$ with $[6]$: $2<6$, so $c=0$. Merging $[6]$ with $[2,6]$: $6<2$ is false, so output $2$ and $c \\mathrel{+}= 1-0=1$; $6<6$ is false (strict), so output $6$ from the right and $c \\mathrel{+}= 1$, giving $c=2$; the result is $[2,6,6]$. The count returned by the left half is $2$."
+        },
+        {
+          "title": "Right half $[3,1,2,5]$",
+          "body": "Merging $[3]$ and $[1]$: $3<1$ false, output $1$, $c=1$, result $[1,3]$. Merging $[2]$ and $[5]$: $c=0$, result $[2,5]$. Merging $[1,3]$ and $[2,5]$: $1<2$ outputs $1$; $3<2$ is false, so output $2$ and $c \\mathrel{+}= 2-1=1$; $3<5$ outputs $3$; the rest $[5]$ is appended. So $c=1$ and the right half returns $1+0+1=2$, with result $[1,2,3,5]$."
+        },
+        {
+          "title": "Final merge of $[2,6,6]$ and $[1,2,3,5]$",
+          "body": "$2<1$ false: output $1$, $c \\mathrel{+}= 3$ (total $3$). $2<2$ false (strict): output $2$ from the right, $c \\mathrel{+}= 3$ (total $6$). $2<3$: output $2$ from the left, $i=1$. $6<3$ false: output $3$, $c \\mathrel{+}= 2$ (total $8$). $6<5$ false: output $5$, $c \\mathrel{+}= 2$ (total $10$). The right list is exhausted and $[6,6]$ is appended."
+        },
+        {
+          "title": "Add the three contributions",
+          "body": "Printed value $=cl+cr+c=2+2+10=14$. Cross-check: the number of index pairs $p<q$ with $a_p\\ge a_q$ in $[6,2,6,3,1,2,5]$ is $14$ ($\\binom72=21$ pairs, of which $7$ are strictly ascending)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$12$ is the number of ordinary (strict) inversions, pairs with $a_p>a_q$. The code does not count them, because the strict comparison `left[i] < right[j]` sends equal elements to the `else` branch, so each tied pair is counted as well: $12$ strict inversions plus $2$ tied pairs gives $14$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$2+2+10=14$, which equals the number of index pairs $p<q$ with $a_p\\ge a_q$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$8$ is the number of times the `else` branch executes. Each execution adds `len(left) - i`, which is often more than $1$, so the counter is larger than the number of executions."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$10$ is only the contribution $c$ of the final merge; the counts $cl=2$ and $cr=2$ returned by the two recursive calls must be added."
+        }
+      ],
+      "shortcut": "Read the merge as counting pairs: each time a right element is output before the remaining $\\text{len(left)}-i$ left elements, it forms a pair with each of them. With the strict `<`, that is every pair $p<q$ with $a_p \\ge a_q$. For $[6,2,6,3,1,2,5]$ there are $21$ pairs and only $7$ strictly ascending ones, so $21-7=14$.",
+      "commonTrap": "Recognising the template as 'inversion counting' and answering with the strict inversion count $12$. The strict `<` in the comparison changes the result when values are repeated, so ties are counted as well."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: 14 (= pairs p<q with a[p] >= a[q]; strict inversions would be 12)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "def msort(a):\n    n = len(a)\n    if n <= 1:\n        return a, 0\n    mid = n // 2\n    left, cl = msort(a[:mid])\n    right, cr = msort(a[mid:])\n    out, i, j, c = [], 0, 0, 0\n    while i < len(left) and j < len(right):\n        if left[i] < right[j]:\n            out.append(left[i]); i += 1\n        else:\n            out.append(right[j]); j += 1\n            c += len(left) - i\n    out += left[i:] + right[j:]\n    return out, cl + cr + c\n\ndata = [6, 2, 6, 3, 1, 2, 5]; n = len(data)\nprint(msort(data))                                                              # ([1, 2, 2, 3, 5, 6, 6], 14)\nP = [(p, q) for p in range(n) for q in range(p + 1, n)]\nprint(sum(data[p] > data[q] for p, q in P), sum(data[p] >= data[q] for p, q in P))   # 12 14"
+    }
+  }
+]

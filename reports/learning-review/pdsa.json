@@ -1,0 +1,23 @@
+{
+  "subject": "pdsa",
+  "reviewedAt": "2026-10-05",
+  "formulasChecked": 22,
+  "conceptsChecked": 14,
+  "examplesRecomputed": 109,
+  "fixes": [
+    "c-pdsa-asymptotic-analysis math (growth hierarchy): the constants were given as 'epsilon > 0', but the chain '(log n)^k < n^epsilon < n' is false for epsilon >= 1 (n^1.5 is not o(n)); now '0 < epsilon < 1'.",
+    "f-pdsa-hashing-chaining meaning: the explanation of the successful-search count 1 + a/2 - a/(2n) was wrong ('the key itself plus about half of the keys inserted after it into the same chain') and omitted the assumption that the sought key is uniform over the n stored keys. It now says the search examines the key plus EVERY key inserted after it into its chain; the i-th key has (n-i)/m such keys on average, and averaging over i gives (n-1)/(2m) = a/2 - a/(2n) (checked exactly with fractions).",
+    "c-pdsa-hash-tables math: added the same assumption (sought key uniform over the stored keys, new keys at the head of the list) to the successful-search formula.",
+    "c-pdsa-python-semantics gateRelevance: 'code in official DA papers is written in Python' was false, since 2024 Q.39 (computeS) and 2025 Q.64 (stack loop) give pseudocode. Now 'Most code in the official DA papers (2024-2026) is Python, but some questions use language-neutral pseudocode instead (2024 Q.39, 2025 Q.64)'; 'Questions show' -> 'Official questions have shown'.",
+    "c-pdsa-recursion gateRelevance: replaced the frequency claim 'official DA papers have often used recursive code' with the verifiable 'The official DA papers of 2024, 2025 and 2026 each include at least one question built on recursive Python code' (2024 Q.38/Q.41, 2025 Q.63, 2026 Q.39/Q.58). Replaced the prediction 'Expect MCQs with candidate outputs and NAT questions' with a factual description of those instances, and 'is examined under' with 'falls under'.",
+    "c-pdsa-elementary-sorts gateRelevance: replaced the prediction 'Expect MCQ or MSQ statements and NAT counts' with 'These appeared as one MCQ, two MSQs and one NAT' (2024 Q.45, 2025 Q.29, 2026 Q.49, 2026 Q.58).",
+    "c-pdsa-asymptotic-analysis gateRelevance: 'Typical uses:' -> 'Question forms to prepare for:' (no frequency claim is supported by content/exam/pattern.json).",
+    "f-pdsa-elementary-sort-counts meaning: the bubble-sort count n(n-1)/2 'without early exit' silently assumed that each pass shrinks its scan. The table now says '(pass i scans n - i pairs)', and a new sentence notes that a bubble sort scanning all n - 1 pairs on every pass makes (n-1)^2 comparisons.",
+    "c-pdsa-elementary-sorts definition and math table: made the same assumption explicit (pass i scans only the first n - i + 1 elements; (n-1)^2 comparisons if every pass scans all n - 1 pairs).",
+    "c-pdsa-linked-lists math: the slow/fast-pointer middle position floor(n/2) holds only for 'slow = fast = head; while fast and fast.next'. The loop is now stated, with a note that the test 'fast.next and fast.next.next' stops at ceil(n/2) - 1 (both verified for n = 1..59).",
+    "f-pdsa-binary-search commonMistake: 'which doubles the count' was inexact. Now 'roughly doubles the count (when the code tests equality first: 2p comparisons for an unsuccessful search with p probes, 2p - 1 for a successful one)' (verified for every key position, n <= 199).",
+    "f-pdsa-loop-iteration-counts latex: 'last value = a + (L-1)k' is meaningless for an empty range; added the condition (L >= 1).",
+    "c-pdsa-graph-basics example: the connectivity argument ('a disconnected one has a component with at most 7 vertices, and the most edges it can have is C(7,2) = 21') was loose. It is replaced by the split argument: a disconnected graph splits into groups of sizes k and 8 - k, so it has at most C(k,2) + C(8-k,2) <= C(7,2) = 21 < 22 edges."
+  ],
+  "method": "Independent review with python3 recomputation of every worked example"
+}

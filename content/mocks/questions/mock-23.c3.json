@@ -1,0 +1,620 @@
+[
+  {
+    "id": "M23-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-adversarial"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (minimax with alpha–beta pruning) needing a full left-to-right trace for the leaf count, a re-ordering comparison and a pruning-invariance argument; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Minimax value, alpha–beta leaf count under the cutoff rule alpha >= beta, effect of move ordering, and the fact that pruned leaves cannot affect the root value",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A pricing agent (MAX) must commit to one of three discount plans $A$, $B$ or $C$. The customer's agent (MIN) then replies with one of four counter-offers. The profit to the pricing agent (in thousand rupees) for each reply is listed below, in the left-to-right order of the replies.\n\n| Plan (MIN node) | Profits for replies 1, 2, 3, 4 |\n|---|---|\n| $A$ | 7, 9, 6, 8 |\n| $B$ | 5, 8, 9, 3 |\n| $C$ | 9, 8, 6, 2 |\n\nThe game tree therefore has a MAX root $R$ with MIN children $A$, $B$, $C$ (left to right), and each plan node has four leaves. Alpha–beta pruning starts at $R$ with $\\alpha=-\\infty$ and $\\beta=+\\infty$, examines the children of every node from left to right, and stops examining the remaining children of a node as soon as $\\alpha \\ge \\beta$. A leaf counts as *examined* if its value is read by the search.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The minimax value of $R$ is $6$."
+      },
+      {
+        "label": "B",
+        "text": "With the stated left-to-right order, alpha–beta pruning examines exactly $9$ of the $12$ leaves."
+      },
+      {
+        "label": "C",
+        "text": "If $R$ examined its children in the order $C, B, A$ (leaves under each plan still left to right), alpha–beta pruning would examine fewer leaves than it does in the order $A, B, C$."
+      },
+      {
+        "label": "D",
+        "text": "If the values of all the leaves that the left-to-right search leaves unexamined were replaced by arbitrary other values, the minimax value of $R$ would remain unchanged."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The root value is the largest of the plan minima: $\\max(6,3,2)=6$. A left-to-right trace with the cutoff $\\alpha\\ge\\beta$ reads $4+1+3=8$ leaves. Examining $C,B,A$ instead produces no cutoff at all ($12$ leaves), and pruned leaves can never influence the root value.",
+      "steps": [
+        {
+          "title": "Minimax value of the root",
+          "body": "Each MIN node takes the smallest of its leaves: $A=\\min(7,9,6,8)=6$, $B=\\min(5,8,9,3)=3$, $C=\\min(9,8,6,2)=2$. The MAX root takes the largest: $\\max(6,3,2)=6$."
+        },
+        {
+          "title": "Alpha–beta trace in the order $A, B, C$",
+          "body": "**Node $A$** ($\\alpha=-\\infty$, so no cutoff is possible): leaves $7,9,6,8$ are all read; $\\beta$ becomes $7,7,6,6$, so $A=6$ and $\\alpha$ at $R$ becomes $6$.\n\n**Node $B$**: the first leaf $5$ gives $\\beta=5$, and $\\alpha=6\\ge\\beta=5$, so the remaining leaves $8,9,3$ are pruned (1 leaf read).\n\n**Node $C$**: leaves $9,8,6$ give $\\beta=9,8,6$; now $\\alpha=6\\ge\\beta=6$ (equality counts as a cutoff), so the last leaf $2$ is pruned (3 leaves read).\n\nLeaves examined: $4+1+3=8$, not $9$."
+        },
+        {
+          "title": "Alpha–beta trace in the order $C, B, A$",
+          "body": "**Node $C$** is searched first with $\\alpha=-\\infty$: no cutoff, all four leaves are read, $C=2$ and $\\alpha=2$.\n\n**Node $B$**: $\\beta$ becomes $5,5,5,3$, which never drops to $\\alpha=2$ or below, so all four leaves are read; $B=3$ and $\\alpha=3$.\n\n**Node $A$**: $\\beta$ becomes $7,7,6,6$, always above $\\alpha=3$, so all four leaves are read.\n\nThe total is $4+4+4=12>8$: the bad ordering destroys all pruning."
+        },
+        {
+          "title": "Effect of the unexamined leaves",
+          "body": "In the order $A,B,C$ the unexamined leaves are the values $8,9,3$ under $B$ and the value $2$ under $C$. Whatever numbers replace them, $B=\\min(5,\\cdot,\\cdot,\\cdot)\\le 5$ and $C=\\min(9,8,6,\\cdot)\\le 6$, so the root value stays $\\max(6,\\ B,\\ C)=6$. Alpha–beta only skips leaves that provably cannot change the value at the root."
+        },
+        {
+          "title": "Verdict on the four statements",
+          "body": "(A) true; (B) false, since exactly $8$ leaves are read (a strict test $\\alpha>\\beta$ would give $9$, but the stated rule is $\\alpha\\ge\\beta$); (C) false, since the order $C,B,A$ reads all $12$; (D) true."
+        }
+      ],
+      "finalAnswer": "**(A), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The plan minima are $6, 3, 2$, so the MAX root takes $6$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The search reads $4$ leaves under $A$, $1$ under $B$ and $3$ under $C$, which is $8$. The count $9$ arises only if the cutoff is applied with a strict test $\\alpha>\\beta$, so that the leaf $2$ under $C$ is also read."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Searching $C$ and $B$ first leaves $\\alpha$ too small to cut anything: all $12$ leaves are read, which is more than $8$. Move ordering matters greatly for alpha–beta pruning."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The unexamined leaves lie under $B$ (which is at most $5<6$) and under $C$ (at most $6$), so no replacement can raise the root above $6$ or lower it below $A=6$."
+        }
+      ],
+      "commonTrap": "Treating the cutoff as strict ($\\alpha>\\beta$) and so reading $9$ leaves, and assuming that pruning would still be as effective after reversing the order of the root's children."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, D",
+      "agreesWithKey": true,
+      "checkCode": "L={'A':[7,9,6,8],'B':[5,8,9,3],'C':[9,8,6,2]}\ndef ab(order):\n    al=-1e9;n=0;best=-1e9\n    for k in order:\n        b=1e9;v=1e9\n        for x in L[k]:\n            n+=1;v=min(v,x);b=min(b,v)\n            if al>=b:break\n        best=max(best,v);al=max(al,best)\n    return best,n\nimport random\nok=all(max(min(v) for v in M.values())==6 for M in [{'A':[7,9,6,8],'B':[5]+[random.randint(-50,50) for _ in range(3)],'C':[9,8,6,random.randint(-50,50)]} for _ in range(2000)])\nprint(max(min(v) for v in L.values()),ab('ABC'),ab('CBA'),ok)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M23-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-multidimensional-schema"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (cell counts in the lattice of cuboids of a star-schema cube): a single product formula followed by one subtraction; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Counting the cells of all cuboids of a data cube without concept hierarchies, using the product of (cardinality + 1) over the dimensions",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A streaming company stores its viewing data in a star schema with the fact table `Viewing(month_key, region_key, genre_key, device_key, hours_watched)` and four dimension tables. The number of distinct members in each dimension is:\n\n| Dimension | Number of members |\n|---|---|\n| Month | 12 |\n| Region | 5 |\n| Genre | 20 |\n| Device | 3 |\n\nNone of the dimensions has a concept hierarchy, so the data cube built on these dimensions has $2^4 = 16$ cuboids. In a cuboid, every dimension is either *kept* (any one of its members is a possible value) or *fully aggregated* (it contributes the single value *all*). The number of cells of a cuboid is the number of possible combinations of values of its kept dimensions; the apex cuboid, which keeps no dimension, has $1$ cell. A cell is counted whether or not any fact row falls in it.\n\nThe total number of cells in all the cuboids of this cube **other than the base cuboid** (the cuboid that keeps all four dimensions) is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2952,
+      "max": 2952
+    },
+    "solution": {
+      "quick": "A cuboid has $\\prod_{i\\in S} n_i$ cells, where $S$ is its set of kept dimensions. Summing over all subsets $S$ gives $\\prod_i (n_i+1)=13\\cdot 6\\cdot 21\\cdot 4=6552$ cells in the whole cube. The base cuboid has $12\\cdot5\\cdot20\\cdot3=3600$ cells, so the other cuboids have $6552-3600=2952$.",
+      "steps": [
+        {
+          "title": "Cells of one cuboid",
+          "body": "If a cuboid keeps the dimensions in a set $S$, its cells are the combinations of one member from each kept dimension, so it has $\\prod_{i\\in S} n_i$ cells (an empty product is $1$ for the apex). The base cuboid keeps all dimensions: $12\\times5\\times20\\times3=3600$ cells."
+        },
+        {
+          "title": "Cells in the entire cube",
+          "body": "Adding over all $16$ choices of $S$:\n$$\\sum_{S}\\prod_{i\\in S} n_i=\\prod_{i=1}^{4}(1+n_i),$$\nbecause expanding the product on the right, each factor $(1+n_i)$ contributes either the term $1$ (dimension aggregated to *all*) or one of $n_i$ members. Hence the whole cube has $13\\times6\\times21\\times4$ cells: $13\\times6=78$, $78\\times21=1638$, $1638\\times4=6552$."
+        },
+        {
+          "title": "Remove the base cuboid",
+          "body": "$6552-3600=2952$.\n\nCheck by levels: the four 3-dimensional cuboids have $300+720+180+1200=2400$ cells, the six 2-dimensional ones $60+240+36+100+15+60=511$, the four 1-dimensional ones $12+5+20+3=40$, and the apex has $1$. Their sum is $2400+511+40+1=2952$."
+        }
+      ],
+      "finalAnswer": "**2952**",
+      "shortcut": "For a cube with no hierarchies, the total number of cells over all cuboids is $\\prod_i (n_i+1)$; subtract $\\prod_i n_i$ if the base cuboid is to be left out.",
+      "commonTrap": "Forgetting that every aggregated dimension still contributes one *all* value, i.e. using $\\prod_i n_i=3600$ (the base cuboid alone) or adding only the $n_i$ values without the $+1$ for *all*."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2952",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nfrom math import prod\nn=[12,5,20,3]\ntot=sum(prod(n[i] for i in s) for r in range(5) for s in combinations(range(4),r))\nprint(tot, prod(x+1 for x in n), tot-prod(n))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M23-Q21",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 21,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-cdf"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (CDF of a piecewise-defined continuous random variable) in three steps: fix the constant by continuity, locate the piece containing the median, invert the CDF; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Using continuity of a CDF to determine a constant and then inverting the CDF on the correct piece to find a median",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The lifetime $X$ (in thousands of hours) of an LED panel is a continuous random variable with cumulative distribution function\n\n$$\nF(x) = \\begin{cases} 0, & x < 0, \\\\ k\\,x^{2}, & 0 \\le x < 2, \\\\ 1 - 0.6\\,e^{-(x-2)/3}, & x \\ge 2, \\end{cases}\n$$\n\nwhere $k$ is a constant.\n\nThe median of $X$ (in thousands of hours), rounded off to two decimal places, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2.54,
+      "max": 2.56
+    },
+    "solution": {
+      "quick": "Continuity of $F$ at $x=2$ gives $4k=1-0.6=0.4$, so $k=0.1$ and $F(2)=0.4<0.5$. The median therefore lies in the second piece: $1-0.6e^{-(m-2)/3}=0.5$ gives $m=2+3\\ln(6/5)\\approx 2.547$.",
+      "steps": [
+        {
+          "title": "Fix the constant $k$ by continuity",
+          "body": "A continuous random variable has a continuous CDF, so the two pieces must agree at $x=2$:\n$$k\\cdot 2^2 = 1-0.6\\,e^{0} = 0.4 \\;\\Rightarrow\\; k=0.1.$$\nFor $0\\le x<2$ the CDF is then $F(x)=0.1x^2$, rising from $0$ to $0.4$; for $x\\ge2$ it rises from $0.4$ towards $1$."
+        },
+        {
+          "title": "Decide which piece contains the median",
+          "body": "The median $m$ satisfies $F(m)=0.5$. Since $F(2)=0.4<0.5$, the value $0.5$ is reached only after $x=2$, so $m$ lies in the second piece. (Solving $0.1x^2=0.5$ on the first piece would give $x=\\sqrt5\\approx2.24$, which is outside $[0,2)$ and therefore invalid.)"
+        },
+        {
+          "title": "Invert the CDF on the second piece",
+          "body": "$$1-0.6\\,e^{-(m-2)/3}=0.5 \\;\\Rightarrow\\; e^{-(m-2)/3}=\\tfrac{5}{6} \\;\\Rightarrow\\; \\tfrac{m-2}{3}=\\ln\\tfrac{6}{5}=0.18232.$$\nSo $m=2+3(0.18232)=2.54696$."
+        },
+        {
+          "title": "Round",
+          "body": "$m\\approx 2.5470$, which is $2.55$ to two decimal places."
+        }
+      ],
+      "finalAnswer": "**2.55** (accepted range $2.54$ to $2.56$)",
+      "commonTrap": "Solving $kx^2=0.5$ on the first piece (giving $\\approx 2.24$, outside $0\\le x<2$) without checking that $F(2)=0.4<0.5$, or leaving $k$ undetermined instead of using continuity at $x=2$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2.55 (exact 2 + 3 ln(6/5) = 2.5470)",
+      "agreesWithKey": true,
+      "checkCode": "import math\nk=(1-0.6)/4\nF=lambda x:k*x*x if x<2 else 1-0.6*math.exp(-(x-2)/3)\nlo,hi=0.0,50.0\nfor _ in range(100):\n    m=(lo+hi)/2\n    lo,hi=(m,hi) if F(m)<0.5 else (lo,m)\nprint(k,F(2),round(lo,4),2+3*math.log(1.2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M23-Q22",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 22,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-determinant"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (determinant properties) applied to four statements that share one computed determinant (a hidden block structure) plus the adjugate, additivity and product rules; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Determinant of a matrix that is block diagonal after a simultaneous row and column permutation; det of adjugate, inverse and products; failure of additivity",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let\n\n$$\nA = \\begin{bmatrix} 1 & 0 & 2 & 0 \\\\ 0 & 3 & 0 & 1 \\\\ 2 & 0 & 5 & 0 \\\\ 0 & 1 & 0 & 2 \\end{bmatrix},\n$$\n\nand let $B$ be any $4 \\times 4$ real matrix with $\\det(B) = -3$. Here $\\operatorname{adj}(A)$ denotes the adjugate of $A$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\det(A) = 5$."
+      },
+      {
+        "label": "B",
+        "text": "$\\det\\big(\\operatorname{adj}(A)\\big) = 125$."
+      },
+      {
+        "label": "C",
+        "text": "$\\det(A + B) = 2$ for every such matrix $B$."
+      },
+      {
+        "label": "D",
+        "text": "$\\det\\big(B\\,A^{-1}B^{\\top}\\big) = \\dfrac{9}{5}$ for every such matrix $B$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Reordering rows and columns of $A$ in the same way ($1,3,2,4$) makes it block diagonal with blocks $\\begin{bmatrix}1&2\\\\2&5\\end{bmatrix}$ and $\\begin{bmatrix}3&1\\\\1&2\\end{bmatrix}$, so $\\det A=1\\cdot5=5$. Then $\\det\\operatorname{adj}A=5^3=125$ and $\\det(BA^{-1}B^\\top)=(-3)(1/5)(-3)=9/5$, while $\\det(A+B)$ is not determined by $\\det A$ and $\\det B$.",
+      "steps": [
+        {
+          "title": "Compute $\\det(A)$",
+          "body": "Only the positions $\\{1,3\\}$ and $\\{2,4\\}$ are linked: rows/columns $1,3$ form $\\begin{bmatrix}1&2\\\\2&5\\end{bmatrix}$ and rows/columns $2,4$ form $\\begin{bmatrix}3&1\\\\1&2\\end{bmatrix}$. Applying the *same* permutation to rows and to columns (a similarity $P^{\\top}AP$) does not change the determinant, and gives a block-diagonal matrix, so\n$$\\det A=(1\\cdot5-2\\cdot2)(3\\cdot2-1\\cdot1)=1\\cdot5=5.$$\nCheck by expanding along row 1: $1\\cdot\\det\\begin{bmatrix}3&0&1\\\\0&5&0\\\\1&0&2\\end{bmatrix}+2\\cdot(-1)^{1+3}\\det\\begin{bmatrix}0&3&1\\\\2&0&0\\\\0&1&2\\end{bmatrix}=1\\cdot25+2\\cdot(-10)=5$."
+        },
+        {
+          "title": "Determinant of the adjugate",
+          "body": "For an $n\\times n$ matrix, $\\operatorname{adj}(A)=\\det(A)\\,A^{-1}$, so $\\det(\\operatorname{adj}A)=\\det(A)^{\\,n}\\det(A^{-1})=\\det(A)^{\\,n-1}$. With $n=4$: $5^{3}=125$."
+        },
+        {
+          "title": "Sum of matrices",
+          "body": "The determinant is not additive and $\\det(A+B)$ depends on the actual entries of $B$, not just on $\\det B$. Take $B=\\operatorname{diag}(-3,1,1,1)$, which has $\\det B=-3$. Then $A+B=\\begin{bmatrix}-2&0&2&0\\\\0&4&0&1\\\\2&0&6&0\\\\0&1&0&3\\end{bmatrix}$, whose determinant is $(-12-4)(12-1)=-16\\cdot11=-176\\ne2$. So the claim fails."
+        },
+        {
+          "title": "Product with an inverse and a transpose",
+          "body": "By multiplicativity, $\\det(BA^{-1}B^{\\top})=\\det(B)\\cdot\\dfrac{1}{\\det A}\\cdot\\det(B^{\\top})=(-3)\\cdot\\dfrac15\\cdot(-3)=\\dfrac95$, for every such $B$ (here $\\det B^{\\top}=\\det B$)."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Block structure after the same permutation of rows and columns gives $1\\cdot5=5$; the expansion along row 1 confirms it."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\det(\\operatorname{adj}A)=\\det(A)^{n-1}=5^3=125$ for $n=4$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\det(A+B)\\ne\\det A+\\det B$ in general. With $B=\\operatorname{diag}(-3,1,1,1)$ the value is $-176$, not $2$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$\\det B\\cdot\\det A^{-1}\\cdot\\det B^{\\top}=(-3)(1/5)(-3)=9/5$. The sign is positive because $B$ appears twice."
+        }
+      ],
+      "commonTrap": "Assuming $\\det(A+B)=\\det A+\\det B$, and slipping on $\\det A$: swapping only rows $2$ and $3$ (without the matching column swap) changes the sign and leads to $-5$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nA=sp.Matrix([[1,0,2,0],[0,3,0,1],[2,0,5,0],[0,1,0,2]])\nB=sp.diag(-3,1,1,1)\nprint(A.det(),A.adjugate().det(),(A+B).det(),(B*A.inv()*B.T).det())",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M23-Q23",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 23,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-propositional"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — needs systematic case analysis of the models of a four-rule knowledge base and chained contrapositive reasoning over five candidate sentences, with converse/inverse traps; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Logical entailment from a propositional knowledge base: enumerating models and distinguishing valid contrapositive chains from converse and inverse errors",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A greenhouse controller reasons with five propositions:\n\n- $H$: the heater is on,\n- $V$: the roof vent is open,\n- $F$: the circulation fan is running,\n- $D$: it is daytime,\n- $S$: the shade screen is deployed.\n\nIts knowledge base $KB$ consists of the four sentences\n\n1. $H \\to \\lnot V$\n2. $D \\to (V \\lor S)$\n3. $\\lnot D \\to H$\n4. $F \\leftrightarrow (V \\land \\lnot S)$\n\nConsider the following sentences.\n\n- (i) $F \\to D$\n- (ii) $V \\to D$\n- (iii) $H \\to \\lnot F$\n- (iv) $\\lnot V \\to H$\n- (v) $D \\to \\lnot H$\n\nWhich one of the following lists exactly those sentences among (i)–(v) that are logically entailed by $KB$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "(ii) and (iii) only"
+      },
+      {
+        "label": "B",
+        "text": "(i), (ii), (iii) and (iv) only"
+      },
+      {
+        "label": "C",
+        "text": "(i), (ii) and (iii) only"
+      },
+      {
+        "label": "D",
+        "text": "(i), (ii), (iii) and (v) only"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Split on $D$ to list every model of $KB$: there are exactly six. Sentences (i), (ii) and (iii) hold in all six. Sentence (iv) fails in the model with day, shade deployed, vent closed, heater and fan off, and sentence (v) fails in the model with day, shade deployed, vent closed, heater on, fan off.",
+      "steps": [
+        {
+          "title": "Enumerate the models of $KB$ by cases on $D$",
+          "body": "**Night ($D$ false).** Sentence 3 forces $H$ true, sentence 1 then forces $V$ false, and sentence 4 gives $F$ false (as $V$ is false). $S$ is unconstrained: 2 models.\n\n**Day ($D$ true).** Sentence 2 requires $V\\lor S$.\n\n- If $V$ is true: sentence 1 forces $H$ false, and sentence 4 gives $F\\equiv\\lnot S$: models $(S,F)=(1,0)$ and $(0,1)$.\n- If $V$ is false: then $S$ is true, $F$ is false (sentence 4), and $H$ is free: 2 models.\n\nSo $KB$ has $2+2+2=6$ models."
+        },
+        {
+          "title": "The six models",
+          "body": "| Model | $H$ | $V$ | $F$ | $D$ | $S$ |\n|---|---|---|---|---|---|\n| 1 | 1 | 0 | 0 | 0 | 0 |\n| 2 | 1 | 0 | 0 | 0 | 1 |\n| 3 | 0 | 1 | 0 | 1 | 1 |\n| 4 | 0 | 1 | 1 | 1 | 0 |\n| 5 | 0 | 0 | 0 | 1 | 1 |\n| 6 | 1 | 0 | 0 | 1 | 1 |"
+        },
+        {
+          "title": "Test the entailed sentences (i), (ii), (iii)",
+          "body": "(i) $F\\to D$: $F$ is true only in model 4, where $D$ is true. Entailed. Reasoning chain: $F\\Rightarrow V\\Rightarrow\\lnot H$ (contrapositive of 1) $\\Rightarrow D$ (contrapositive of 3).\n\n(ii) $V\\to D$: $V$ is true in models 3 and 4, both with $D$ true. Entailed (same chain without the first link).\n\n(iii) $H\\to\\lnot F$: $F$ is true only in model 4, where $H$ is false. Entailed: $H\\Rightarrow\\lnot V\\Rightarrow\\lnot F$."
+        },
+        {
+          "title": "Refute (iv) and (v) with counter-models",
+          "body": "(iv) $\\lnot V\\to H$ fails in model 5: $V$ false, $H$ false. It would follow only from the converse-type reading of sentence 1, which $KB$ does not state.\n\n(v) $D\\to\\lnot H$ fails in model 6: $D$ true and $H$ true. Sentence 3 says only that the heater is on at night; it does not forbid it during the day.\n\nHence exactly (i), (ii) and (iii) are entailed."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Omits (i), which is entailed: $F$ holds only in model 4, where $D$ is true (chain $F\\Rightarrow V\\Rightarrow\\lnot H\\Rightarrow D$)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Wrongly includes (iv): model 5 (day, shade deployed, vent closed, heater off, fan off) satisfies $KB$ but has $\\lnot V$ true and $H$ false."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "(i), (ii) and (iii) hold in all six models of $KB$, while (iv) and (v) each have a counter-model."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Wrongly includes (v): model 6 (day, shade deployed, vent closed, heater on, fan off) satisfies $KB$ with $D$ and $H$ both true."
+        }
+      ],
+      "commonTrap": "Reading the one-way rules as biconditionals: taking sentence 3 as 'the heater is on exactly at night' (so $D\\to\\lnot H$) or sentence 1 as 'the vent is open exactly when the heater is off' (so $\\lnot V\\to H$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\nimp=lambda a,b:(not a) or b\nKB=lambda H,V,F,D,S: imp(H,not V) and imp(D,V or S) and imp(not D,H) and F==(V and not S)\nM=[a for a in itertools.product([0,1],repeat=5) if KB(*map(bool,a))]\nc={'i':lambda H,V,F,D,S:imp(F,D),'ii':lambda H,V,F,D,S:imp(V,D),'iii':lambda H,V,F,D,S:imp(H,not F),\n   'iv':lambda H,V,F,D,S:imp(not V,H),'v':lambda H,V,F,D,S:imp(D,not H)}\nprint(len(M),[k for k,f in c.items() if all(f(*map(bool,m)) for m in M)])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M23-Q24",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 24,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-projections",
+      "la-projection-matrix"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines orthogonal projection matrices, the product and sum of non-commuting projections, and eigenvalue versus operator-norm reasoning, with a lengthy matrix computation and several traps; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Product and sum of two non-commuting orthogonal projection matrices: idempotency, symmetry, rank, eigenvalues, and the difference between eigenvalue and norm bound",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In $\\mathbb{R}^3$ with the standard inner product, let\n\n$$\nU = \\{\\,x \\in \\mathbb{R}^3 : x_1 + x_2 + x_3 = 0\\,\\}, \\qquad W = \\operatorname{span}\\left\\{ (1,\\ 1,\\ 0)^{\\top} \\right\\}.\n$$\n\nLet $P_U$ and $P_W$ be the matrices of the orthogonal projections of $\\mathbb{R}^3$ onto $U$ and onto $W$, respectively, and let $M = P_U P_W$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$M$ is an orthogonal projection matrix, that is, $M^{\\top}=M$ and $M^{2}=M$."
+      },
+      {
+        "label": "B",
+        "text": "$M$ has rank $1$, and its only nonzero eigenvalue is $\\dfrac{1}{3}$."
+      },
+      {
+        "label": "C",
+        "text": "$P_U + P_W$ is an orthogonal projection matrix."
+      },
+      {
+        "label": "D",
+        "text": "$\\lVert Mx\\rVert \\le \\dfrac{1}{3}\\lVert x\\rVert$ for every $x \\in \\mathbb{R}^{3}$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "With $n=(1,1,1)^\\top$ and $w=(1,1,0)^\\top$: $P_U=I-\\tfrac13nn^\\top$, $P_W=\\tfrac12ww^\\top$, and $M=\\tfrac12\\,p\\,w^\\top$ with $p=P_Uw=\\tfrac13(1,1,-2)^\\top$. $M$ is a rank-one matrix with eigenvalue $\\tfrac12w^\\top p=\\tfrac13$, but it is neither symmetric nor idempotent ($M^2=\\tfrac13M$), $P_U+P_W$ is not idempotent, and $\\lVert Mw\\rVert/\\lVert w\\rVert=1/\\sqrt3>1/3$.",
+      "steps": [
+        {
+          "title": "Write down the projection matrices and $M$",
+          "body": "$U=n^{\\perp}$ with $n=(1,1,1)^\\top$, so $P_U=I-\\dfrac{nn^\\top}{3}=\\dfrac13\\begin{bmatrix}2&-1&-1\\\\-1&2&-1\\\\-1&-1&2\\end{bmatrix}$. For the line through $w=(1,1,0)^\\top$, $P_W=\\dfrac{ww^\\top}{w^\\top w}=\\dfrac12\\begin{bmatrix}1&1&0\\\\1&1&0\\\\0&0&0\\end{bmatrix}$.\n\nSince $P_W=\\tfrac12ww^\\top$, we get $M=P_UP_W=\\tfrac12(P_Uw)w^\\top$, where $p=P_Uw=w-\\tfrac{n^\\top w}{3}n=(1,1,0)^\\top-\\tfrac23(1,1,1)^\\top=\\tfrac13(1,1,-2)^\\top$. Hence\n$$M=\\frac16\\begin{bmatrix}1&1&0\\\\1&1&0\\\\-2&-2&0\\end{bmatrix}.$$"
+        },
+        {
+          "title": "Statement (A): is $M$ a projection?",
+          "body": "$M$ is not symmetric: $M_{31}=-\\tfrac13$ but $M_{13}=0$. Also $M^2=\\tfrac14\\,p\\,(w^\\top p)\\,w^\\top=\\tfrac{w^\\top p}{2}\\,M=\\tfrac13M\\ne M$, because $w^\\top p=\\tfrac13(1+1)=\\tfrac23$. A product of two orthogonal projections is an orthogonal projection only when the two commute, and $P_UP_W\\ne P_WP_U$ here. Statement (A) is false."
+        },
+        {
+          "title": "Statement (B): rank and eigenvalues",
+          "body": "$M=\\tfrac12\\,p\\,w^\\top$ with $p\\ne0$, so $\\operatorname{rank}M=1$. A rank-one matrix $uv^\\top$ has eigenvalues $v^\\top u,0,0$; here $v^\\top u=\\tfrac12w^\\top p=\\tfrac13$. (Equivalently $\\operatorname{tr}M=\\tfrac16+\\tfrac16+0=\\tfrac13$.) Statement (B) is true."
+        },
+        {
+          "title": "Statement (C): is $P_U+P_W$ a projection?",
+          "body": "$(P_U+P_W)^2=P_U+P_W+(P_UP_W+P_WP_U)$, so idempotency would need $P_UP_W+P_WP_U=0$. But the trace of that matrix is $2\\operatorname{tr}M=\\tfrac23\\ne0$. So $P_U+P_W$ is not idempotent. (Indeed its eigenvalues are $1,\\ 1\\pm\\tfrac1{\\sqrt3}$.) Statement (C) is false."
+        },
+        {
+          "title": "Statement (D): norm bound",
+          "body": "Take $x=w$. Then $Mw=\\tfrac12p\\,(w^\\top w)=p$, so $\\lVert Mw\\rVert=\\sqrt{2/3}\\approx0.816$ while $\\lVert w\\rVert=\\sqrt2\\approx1.414$. The ratio is $1/\\sqrt3\\approx0.577>\\tfrac13$, so the inequality fails. For a non-symmetric matrix, the eigenvalue $\\tfrac13$ does not bound $\\lVert Mx\\rVert/\\lVert x\\rVert$; the largest ratio is the largest singular value $1/\\sqrt3$. Statement (D) is false."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$M$ is not symmetric and $M^2=\\tfrac13M\\ne M$; the two projections do not commute, so their product is not a projection."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$M=\\tfrac12pw^\\top$ has rank $1$ and trace $\\tfrac13$, so its nonzero eigenvalue is $\\tfrac13$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$P_U+P_W$ is a projection only if $P_UP_W+P_WP_U=0$, but this matrix has trace $\\tfrac23$. The eigenvalues $1\\pm1/\\sqrt3$ are not $0$ or $1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "For $x=w=(1,1,0)^\\top$, $\\lVert Mx\\rVert/\\lVert x\\rVert=1/\\sqrt3\\approx0.577>\\tfrac13$. The eigenvalue of a non-symmetric matrix does not bound its norm."
+        }
+      ],
+      "commonTrap": "Treating a product of orthogonal projections as a projection (it is one only when they commute), and equating the eigenvalue $\\tfrac13$ of the non-symmetric matrix $M$ with a bound on $\\lVert Mx\\rVert/\\lVert x\\rVert$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nn=sp.Matrix([1,1,1]); w=sp.Matrix([1,1,0])\nPU=sp.eye(3)-n*n.T/3; PW=w*w.T/2; M=PU*PW; S=PU+PW\nprint(M.T==M, M*M==M, M.rank(), M.eigenvals(), S*S==S, sp.sqrt(max((M.T*M).eigenvals())), M.trace())",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M23-Q25",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-23",
+    "questionNumber": 25,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one Python concept (floor division and modulo with a negative operand) traced over three loop iterations; about 1.5 minutes.",
+    "estimatedTimeSec": 80,
+    "concept": "Python's floor division // and modulo % with a negative dividend, traced through a digit-extraction loop",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\nn = -17\ndigits = []\nfor _ in range(3):\n    digits.append(n % 5)\n    n //= 5\nprint(digits, n)\n```\n\nWhat is printed when the program is executed?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`[3, 2, 0] 0`"
+      },
+      {
+        "label": "B",
+        "text": "`[3, 1, 4] -1`"
+      },
+      {
+        "label": "C",
+        "text": "`[3, 1, 4] 0`"
+      },
+      {
+        "label": "D",
+        "text": "`[-2, -3, 0] 0`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Python's `//` rounds toward $-\\infty$ and `%` takes the sign of the divisor, so for divisor $5$ the remainder is always in $0..4$. The loop gives remainders $3, 1, 4$ and $n$ goes $-17\\to-4\\to-1\\to-1$, so the output is `[3, 1, 4] -1`.",
+      "steps": [
+        {
+          "title": "Rules used",
+          "body": "For integers, Python guarantees $a = 5\\,(a\\,//\\,5) + (a\\,\\%\\,5)$ with $0\\le a\\,\\%\\,5<5$, and $a\\,//\\,5=\\lfloor a/5\\rfloor$ (floor, not truncation)."
+        },
+        {
+          "title": "Iteration 1: $n=-17$",
+          "body": "$\\lfloor -17/5\\rfloor=\\lfloor-3.4\\rfloor=-4$ and $-17\\,\\%\\,5=-17-5(-4)=3$. So `digits = [3]` and `n` becomes $-4$."
+        },
+        {
+          "title": "Iterations 2 and 3",
+          "body": "$n=-4$: $\\lfloor-0.8\\rfloor=-1$ and $-4\\,\\%\\,5=-4-5(-1)=1$, so `digits = [3, 1]` and `n` becomes $-1$.\n\n$n=-1$: $\\lfloor-0.2\\rfloor=-1$ and $-1\\,\\%\\,5=-1-5(-1)=4$, so `digits = [3, 1, 4]` and `n` stays $-1$ (it never reaches $0$ for a negative start)."
+        },
+        {
+          "title": "Output",
+          "body": "After three iterations `print(digits, n)` shows `[3, 1, 4] -1`."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is what one gets by combining Python's `%` with a *truncating* division ($-17\\to-3\\to0$), which is not how `//` works."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Remainders $3,1,4$ and floor quotients $-4,-1,-1$: the final `n` is $-1$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The digits are right but the final `n` is wrong: $-1\\,//\\,5=-1$ (floor of $-0.2$), not $0$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "These are C-style (truncating) remainders $-2,-3,0$. Python's `%` with a positive divisor never returns a negative value."
+        }
+      ],
+      "commonTrap": "Applying C/Java semantics (truncation toward zero, negative remainders) to `//` and `%`, and assuming that repeated `n //= 5` always drives $n$ to $0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "n=-17\nd=[]\nfor _ in range(3):\n    d.append(n%5)\n    n//=5\nprint(d,n)",
+      "notes": ""
+    }
+  }
+]

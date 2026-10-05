@@ -1,0 +1,22 @@
+{
+  "subject": "ml",
+  "reviewedAt": "2026-10-05",
+  "formulasChecked": 33,
+  "conceptsChecked": 17,
+  "examplesRecomputed": 50,
+  "fixes": [
+    "c-ml-svm example step 7: corrected a sign error. The added point (1, 1) with label -1 has f = 4/3 - 5/3 = -1/3, so y*f = +1/3 and slack xi = 2/3 (inside the margin, correctly classified). The text said y*f = -1/3, xi = 4/3, misclassified. A genuinely misclassified case was added: (2, 1) with label -1 gives y*f = -1/3, xi = 4/3. Verified by direct arithmetic and an SLSQP solve of the hard-margin QP (w = (2/3, 2/3), b = -5/3).",
+    "c-ml-svm math: the complementary-slackness condition was stated only in its hard-margin form inside a list that also covers the soft margin. Labelled it 'hard margin' and added the soft-margin form alpha_i[y_i f(x_i) - 1 + xi_i] = 0, with alpha_i = C for every margin violator.",
+    "c-ml-svm intuition: 'moving any other point, without crossing the street, changes nothing' was wrong, because a point can enter the margin without crossing it and that changes the solution. Changed to 'as long as it stays out of the street'.",
+    "c-ml-ridge-regression definition: the unpenalised intercept was given as beta0_hat = y_bar, which holds only in centred coordinates. Changed to beta0_hat = y_bar - sum_j beta_j_hat x_bar_j for predictions on the original scale (reducing to y_bar for centred predictors); verified numerically against an unpenalised-intercept optimisation. Also noted that the closed form needs X^T X invertible at lambda = 0.",
+    "f-ml-ridge-regression variables: the lambda entry said 'lambda >= 0', contradicting the formula's 'lambda > 0' (needed for the uniqueness and invertibility claims). Changed to 'lambda > 0 (lambda = 0 gives OLS)'.",
+    "f-ml-svm-soft-margin meaning: 'C -> infinity recovers the hard margin' now adds 'when the data are linearly separable'; otherwise no hard-margin solution exists.",
+    "c-ml-decision-trees intuition: 'a monotone rescaling of a feature does not change the tree' made precise. A strictly increasing transform only moves the split thresholds; the partition of the training data is unchanged.",
+    "c-ml-mlp-feedforward math: 'training reaches a local minimum' softened to 'gradient descent may stop at a local minimum (or another stationary point)', since a non-convex loss guarantees neither.",
+    "c-ml-regression-vs-classification gateRelevance: removed the unsupported claim that such questions are '1-mark'. Nothing in content/exam/pattern.json supports it, and the related official question DA2026-S8 Q.47 is a 2-mark MSQ.",
+    "c-ml-classification-metrics gateRelevance: replaced the vague 'at least one official DA paper has included a question that needs them' with the verifiable reference 'the official 2026 DA paper ... (Q.47)', checked against content/pyqs/2026/DA2026-S8-Q47.json.",
+    "c-ml-hierarchical-clustering gateRelevance: replaced the unsourced 'Official questions have used single and complete linkage' with specific, verifiable references: 2024 Q.42 (single-linkage dendrogram) and 2025 Q.30 (min/max definitions of single and complete linkage), checked against content/pyqs.",
+    "c-ml-classification-metrics taxonomy: topicId changed from ml-classification to ml-regression. Its only subtopic, ml-problem-types ('regression and classification problems'), belongs to topic ml-regression, and it was the only concept on the platform with none of its subtopics in its primary topic. The related PYQ DA2026-S8-Q47 is also classified under ml-regression; subtopic-based linking is unchanged."
+  ],
+  "method": "Independent review with python3 recomputation of every worked example"
+}

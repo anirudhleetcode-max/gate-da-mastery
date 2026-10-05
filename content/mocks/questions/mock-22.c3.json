@@ -1,0 +1,615 @@
+[
+  {
+    "id": "M22-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-foundations",
+    "subtopicIds": [
+      "ps-counting"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (lattice-path counting with binomial coefficients) applied to two segments and multiplied; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Counting lattice paths through a required intermediate point using the multiplication principle and binomial coefficients",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A warehouse robot moves along the aisles of a rectangular lattice. It starts at the point $(0, 0)$ and must reach the point $(6, 4)$. Every move is exactly one unit long and is either to the **right** (the first coordinate increases by $1$) or **up** (the second coordinate increases by $1$).\n\nThe number of different routes from $(0, 0)$ to $(6, 4)$ that pass through the lattice point $(2, 1)$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 105,
+      "max": 105
+    },
+    "solution": {
+      "quick": "Split every such route at the checkpoint: a route $(0,0)\\to(2,1)$ followed by a route $(2,1)\\to(6,4)$. Each part is counted by choosing which of its moves are *up*, and the two counts multiply.\n$$\\binom{3}{1}\\cdot\\binom{7}{3} = 3 \\cdot 35 = 105.$$",
+      "steps": [
+        {
+          "title": "Decompose the route at the checkpoint",
+          "body": "A route passes through $(2,1)$ exactly when it is a route $(0,0)\\to(2,1)$ followed by a route $(2,1)\\to(6,4)$. The two parts can be chosen independently, so by the multiplication principle the required number is (routes in part 1) $\\times$ (routes in part 2)."
+        },
+        {
+          "title": "Part 1: $(0,0)\\to(2,1)$",
+          "body": "This part needs $2$ right moves and $1$ up move, $3$ moves in all. A route is fixed once we decide which of the $3$ positions holds the up move:\n$$\\binom{3}{1} = 3.$$"
+        },
+        {
+          "title": "Part 2: $(2,1)\\to(6,4)$",
+          "body": "The displacement is $6-2 = 4$ to the right and $4-1 = 3$ upward, so there are $7$ moves, of which $3$ are up:\n$$\\binom{7}{3} = \\frac{7\\cdot 6\\cdot 5}{3\\cdot 2\\cdot 1} = 35.$$"
+        },
+        {
+          "title": "Multiply the two counts",
+          "body": "$$3 \\times 35 = 105.$$\nCheck: the total number of routes from $(0,0)$ to $(6,4)$ is $\\binom{10}{4} = 210$, and routes through one particular interior point must be fewer than that, so $105$ is consistent."
+        }
+      ],
+      "finalAnswer": "**105**",
+      "commonTrap": "Adding the two part-counts ($3 + 35 = 38$) instead of multiplying them, or ignoring the checkpoint and reporting all routes from $(0,0)$ to $(6,4)$, which is $\\binom{10}{4} = 210$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "105",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\nprint(comb(3,1)*comb(7,3), comb(10,4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-limits"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — four independent limits, each needing a series expansion, a logarithm trick or a squeeze argument, with likely traps (cancelled leading terms, an oscillating factor); about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Evaluating limits with Maclaurin expansions, the logarithm technique for exponent forms and the squeeze theorem",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Which of the following limit statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\displaystyle\\lim_{x \\to 0} \\frac{x - \\sin x \\cos x}{x^{3}} = \\frac{2}{3}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\displaystyle\\lim_{x \\to 0^{+}} \\left( \\frac{1}{x} - \\frac{1}{\\sin x} \\right) = -\\frac{1}{6}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\displaystyle\\lim_{x \\to 0} (\\cos x)^{1/x^{2}} = e^{-1/2}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\displaystyle\\lim_{x \\to 0} \\frac{x^{2} \\sin(1/x)}{\\sin x}$ does not exist."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Expand to leading order. (A) $x - \\sin x\\cos x = \\tfrac{2}{3}x^{3} + O(x^{5})$, so the limit is $\\tfrac23$. (B) The expression equals $\\dfrac{\\sin x - x}{x \\sin x} \\approx -\\dfrac{x}{6} \\to 0$, not $-\\tfrac16$. (C) $\\dfrac{\\ln\\cos x}{x^{2}} \\to -\\tfrac12$, so the limit is $e^{-1/2}$. (D) $\\dfrac{x}{\\sin x} \\to 1$ and $|x \\sin(1/x)| \\le |x| \\to 0$, so the limit exists and is $0$.",
+      "steps": [
+        {
+          "title": "(A) Expand sin x cos x",
+          "body": "$\\sin x \\cos x = \\tfrac12 \\sin 2x = \\tfrac12\\left(2x - \\dfrac{(2x)^{3}}{6} + O(x^{5})\\right) = x - \\dfrac{2}{3}x^{3} + O(x^{5})$.\n\nHence $x - \\sin x\\cos x = \\dfrac{2}{3}x^{3} + O(x^{5})$, and dividing by $x^{3}$ gives the limit $\\dfrac{2}{3}$. Statement A is **true**."
+        },
+        {
+          "title": "(B) Combine the fractions",
+          "body": "$$\\frac{1}{x} - \\frac{1}{\\sin x} = \\frac{\\sin x - x}{x \\sin x}.$$\nThe numerator is $-\\dfrac{x^{3}}{6} + O(x^{5})$ and the denominator is $x^{2} + O(x^{4})$, so the quotient is $-\\dfrac{x}{6} + O(x^{3}) \\to 0$. The number $-\\tfrac16$ is only the coefficient of $x^{3}$ in the numerator; the limit is $0$. Statement B is **false**."
+        },
+        {
+          "title": "(C) Take logarithms",
+          "body": "$$\\ln\\left[(\\cos x)^{1/x^{2}}\\right] = \\frac{\\ln \\cos x}{x^{2}}.$$\nSince $\\cos x = 1 - \\dfrac{x^{2}}{2} + O(x^{4})$, we get $\\ln\\cos x = -\\dfrac{x^{2}}{2} + O(x^{4})$, so the logarithm tends to $-\\dfrac12$ and the limit is $e^{-1/2}$. Statement C is **true**."
+        },
+        {
+          "title": "(D) Squeeze the oscillating factor",
+          "body": "For $0 < |x| < \\pi$,\n$$\\frac{x^{2}\\sin(1/x)}{\\sin x} = \\frac{x}{\\sin x}\\cdot x\\sin\\frac{1}{x}.$$\nHere $\\dfrac{x}{\\sin x} \\to 1$ and $\\left|x\\sin\\dfrac1x\\right| \\le |x| \\to 0$, so $x\\sin\\dfrac1x \\to 0$ by the squeeze theorem. The product tends to $1\\cdot 0 = 0$, so the limit exists. Statement D is **false**."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The leading term of $x - \\sin x\\cos x = x - \\tfrac12\\sin 2x$ is $\\tfrac23 x^{3}$, so the limit is $\\tfrac23$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The expression is $\\dfrac{\\sin x - x}{x\\sin x} \\sim -\\dfrac{x}{6}$, which tends to $0$. The value $-\\tfrac16$ comes from dividing the numerator by $x^{3}$ instead of by $x\\sin x \\approx x^{2}$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\ln\\cos x \\sim -\\tfrac{x^{2}}{2}$, so $\\dfrac{\\ln\\cos x}{x^{2}} \\to -\\tfrac12$ and the limit is $e^{-1/2}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The oscillation of $\\sin(1/x)$ is damped by the factor $x$: the expression equals $\\dfrac{x}{\\sin x}\\cdot x\\sin\\dfrac1x \\to 1\\cdot 0 = 0$, so the limit exists."
+        }
+      ],
+      "commonTrap": "In B, reading off the coefficient $-\\tfrac16$ of the first correction term as the limit, although the quotient is of order $x$. In D, seeing $\\sin(1/x)$ oscillate and concluding that the limit cannot exist, without noticing the vanishing factor $x$ that squeezes the expression to $0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x')\nA=sp.limit((x-sp.sin(x)*sp.cos(x))/x**3,x,0)\nB=sp.limit(1/x-1/sp.sin(x),x,0,'+')\nC=sp.limit(sp.cos(x)**(1/x**2),x,0)\nD=sp.limit(x**2*sp.sin(1/x)/sp.sin(x),x,0)\nprint(A,B,C,D)  # 2/3, 0, exp(-1/2), 0  ->  A true, B false, C true, D false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q21",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 21,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-conditional",
+    "subtopicIds": [
+      "ps-marginal-joint"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (conditional probability from a joint table) in 2–3 steps: sum the off-diagonal cells, then restrict to one column; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Conditional probability P(D | M) computed from a two-way table of counts using the joint and marginal counts",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A classifier assigns each image in a test set of $500$ images one of the labels Cat, Dog or Fox. The table gives the number of images for every combination of actual label and predicted label.\n\n| Actual / Predicted | Cat | Dog | Fox |\n|---|---|---|---|\n| Cat | 120 | 18 | 12 |\n| Dog | 14 | 126 | 10 |\n| Fox | 6 | 16 | 178 |\n\nOne image is chosen uniformly at random from the $500$ images. Given that the classifier **misclassified** the chosen image (its predicted label differs from its actual label), the probability that the predicted label is Dog is ________ (rounded off to **three** decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.446,
+      "max": 0.448
+    },
+    "solution": {
+      "quick": "Let $M$ = \"misclassified\" and $D$ = \"predicted Dog\". All images are equally likely, so $P(D \\mid M) = \\dfrac{n(D \\cap M)}{n(M)}$.\n$n(M) = 500 - (120 + 126 + 178) = 76$ and $n(D\\cap M) = 18 + 16 = 34$, so $P(D \\mid M) = \\dfrac{34}{76} \\approx 0.447$.",
+      "steps": [
+        {
+          "title": "Set up the conditional probability",
+          "body": "Let $M$ be the event that the image is misclassified and $D$ the event that its predicted label is Dog. Because the image is drawn uniformly, probabilities are ratios of counts:\n$$P(D \\mid M) = \\frac{P(D\\cap M)}{P(M)} = \\frac{n(D\\cap M)}{n(M)}.$$"
+        },
+        {
+          "title": "Count the misclassified images",
+          "body": "The correctly classified images are the diagonal entries: $120 + 126 + 178 = 424$. Hence\n$$n(M) = 500 - 424 = 76.$$\nCheck by adding the off-diagonal cells: $18 + 12 + 14 + 10 + 6 + 16 = 76$."
+        },
+        {
+          "title": "Count misclassified images predicted as Dog",
+          "body": "Look only at the Dog column and drop its diagonal cell. The cell (actual Cat, predicted Dog) is $18$ and the cell (actual Fox, predicted Dog) is $16$:\n$$n(D \\cap M) = 18 + 16 = 34.$$"
+        },
+        {
+          "title": "Divide and round",
+          "body": "$$P(D \\mid M) = \\frac{34}{76} = \\frac{17}{38} = 0.44736\\ldots \\approx 0.447.$$"
+        }
+      ],
+      "finalAnswer": "**0.447**",
+      "commonTrap": "Reversing the conditioning: $P(M \\mid D) = \\dfrac{34}{160} = 0.2125$ divides by the whole Dog column, which includes the $126$ correct predictions. Using the full Dog column as the numerator ($160/500 = 0.32$) or dividing by $500$ instead of $76$ ($34/500 = 0.068$) are the other usual slips."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.447",
+      "agreesWithKey": true,
+      "checkCode": "M=[[120,18,12],[14,126,10],[6,16,178]]\ntot=sum(map(sum,M)); mis=sum(M[i][j] for i in range(3) for j in range(3) if i!=j)\ndog=sum(M[i][1] for i in range(3) if i!=1)\nprint(tot, mis, dog, round(dog/mis,3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q22",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 22,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — four statements (candidate keys, a modified dependency set and normal forms, a lossless-join chase, dependency preservation through indirect derivation), each needing independent non-trivial checking; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Candidate keys, 2NF/3NF/BCNF classification, lossless-join (chase) and dependency preservation of decompositions",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E, F)$ with the set of functional dependencies\n\n$$\n\\Sigma = \\{\\, F \\to C,\\;\\; AC \\to D,\\;\\; AD \\to BEF \\,\\},\n$$\n\nwhere $AD \\to BEF$ abbreviates the three dependencies $AD \\to B$, $AD \\to E$ and $AD \\to F$. Assume that the only non-trivial functional dependencies that hold on $R$ are those implied by $\\Sigma$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$R$ has exactly three candidate keys."
+      },
+      {
+        "label": "B",
+        "text": "If the dependency $F \\to C$ is deleted from $\\Sigma$ (the other two dependencies are kept), then $R$ is in 2NF but not in 3NF."
+      },
+      {
+        "label": "C",
+        "text": "The decomposition $\\{R_1(C, F),\\; R_2(A, C, D),\\; R_3(A, B, D, E)\\}$ of $R$ is a lossless-join decomposition."
+      },
+      {
+        "label": "D",
+        "text": "The decomposition $\\{R_1(A, C, F),\\; R_2(A, C, D),\\; R_3(A, B, D, E)\\}$ of $R$ is dependency-preserving."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Keys: $AC$, $AD$ and $AF$ each determine every attribute, and no single attribute does, so A is true. Without $F \\to C$ the only key is $AC$ and $AD \\to BEF$ is a transitive dependency on non-prime attributes: 2NF but not 3NF, so B is true. The chase for the first decomposition never produces an all-$a$ row, so C is false. In the second decomposition $AD \\to BEF$ is recovered through $AD \\to C$ (in $R_2$) and $AC \\to F$ (in $R_1$), so D is true.",
+      "steps": [
+        {
+          "title": "(A) Candidate keys",
+          "body": "$A$ occurs on no right-hand side, so $A$ is in every key. Compute closures:\n\n- $(AC)^+$: $AC \\to D$, then $AD \\to BEF$ gives $\\{A,B,C,D,E,F\\}$.\n- $(AD)^+$: $AD \\to BEF$, then $F \\to C$ gives all six attributes.\n- $(AF)^+$: $F \\to C$, then $AC \\to D$, then $AD \\to BEF$ gives all six attributes.\n\nNone of $A^+ = A$, $C^+ = C$, $D^+ = D$, $F^+ = CF$ is everything, and $(AB)^+ = AB$, $(AE)^+ = AE$. So the candidate keys are exactly $AC$, $AD$ and $AF$ (three). Statement A is **true**."
+        },
+        {
+          "title": "(B) Delete F → C",
+          "body": "Now $\\Sigma' = \\{AC \\to D,\\; AD \\to BEF\\}$. The attributes $A$ and $C$ occur on no right-hand side, so both are in every key, and $(AC)^+ = ACD \\to ACDBEF = R$. The only candidate key is $AC$, so the prime attributes are $A, C$ and $B, D, E, F$ are non-prime.\n\n- 2NF: the proper subsets of the key are $A$ and $C$, with $A^+ = A$ and $C^+ = C$, so no non-prime attribute depends on part of the key. $R$ is in 2NF.\n- 3NF: in $AD \\to B$ the left side $AD$ is not a superkey ($(AD)^+ = ABDEF$ lacks $C$) and $B$ is non-prime. So $R$ is not in 3NF.\n\nStatement B is **true**."
+        },
+        {
+          "title": "(C) Chase test for {CF, ACD, ABDE}",
+          "body": "Initial tableau ($a$ = distinguished symbol, $b_i$ = row-specific symbol):\n\n| Row | A | B | C | D | E | F |\n|---|---|---|---|---|---|---|\n| $R_1(C,F)$ | $b_1$ | $b_2$ | $a_C$ | $b_3$ | $b_4$ | $a_F$ |\n| $R_2(A,C,D)$ | $a_A$ | $b_5$ | $a_C$ | $a_D$ | $b_6$ | $b_7$ |\n| $R_3(A,B,D,E)$ | $a_A$ | $a_B$ | $b_8$ | $a_D$ | $a_E$ | $b_9$ |\n\nRows 2 and 3 agree on $A$ and $D$, so $AD \\to BEF$ equates their $B$, $E$, $F$ entries: row 2 gets $a_B, a_E$, and $b_7 = b_9$. Now rows 2 and 3 agree on $F$, so $F \\to C$ gives row 3 the value $a_C$. Rows 2 and 3 are then $a_A\\,a_B\\,a_C\\,a_D\\,a_E\\,b_7$. Row 1 has a unique $A$ value and a unique $F$ value ($a_F$ occurs only there), so no dependency changes it. No dependency applies any further, and no row is all-$a$: rows 2 and 3 lack $a_F$, and row 1 lacks $a_A$, $a_B$, $a_D$ and $a_E$. So the decomposition is **lossy**. Statement C is **false**."
+        },
+        {
+          "title": "(D) Dependency preservation of {ACF, ACD, ABDE}",
+          "body": "Dependencies that hold inside each relation (projections of $\\Sigma^+$):\n\n- $R_1(A,C,F)$: $F \\to C$ and $AC \\to F$ (because $AC$ is a key of $R$).\n- $R_2(A,C,D)$: $AC \\to D$ and $AD \\to C$ (because $AD$ is a key of $R$).\n- $R_3(A,B,D,E)$: $AD \\to B$ and $AD \\to E$.\n\nNow check each original dependency. $F \\to C$ lies in $R_1$ and $AC \\to D$ lies in $R_2$. For $AD \\to BEF$: $AD \\to B, E$ in $R_3$; $AD \\to C$ in $R_2$; then $AC \\to F$ in $R_1$ gives $F$. So all of $AD \\to BEF$ is derived from the projections. Every dependency of $\\Sigma$ is preserved. Statement D is **true**."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$AC$, $AD$ and $AF$ all have closure $R$, and no single attribute does. Every key contains $A$, so these three are all the candidate keys."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Without $F \\to C$ the only key is $AC$. There is no partial dependency ($A^+ = A$, $C^+ = C$), so $R$ is in 2NF, but $AD \\to B$ has a non-superkey left side and a non-prime right side, so it is not in 3NF."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The chase never produces an all-$a$ row. $R_1$ shares only $C$ with the other relations, and $C^+ = C$, so $C$ is not a key of $R_1(C,F)$ (that would be $F$) nor of anything built from $R_2$ and $R_3$; the join cannot recover the $F$-values correctly."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$AD \\to BEF$ does not sit inside one relation, but it follows from $AD \\to C$ (in $R_2$), $AD \\to BE$ (in $R_3$) and $AC \\to F$ (in $R_1$). $F \\to C$ and $AC \\to D$ are inside $R_1$ and $R_2$."
+        }
+      ],
+      "commonTrap": "Testing dependency preservation only by asking whether each dependency of $\\Sigma$ lies entirely inside one relation: $AD \\to BEF$ does not, which wrongly suggests that D is false. The projected dependencies $AD \\to C$ and $AC \\to F$ restore it. In C, a shared attribute ($C$) is not enough; it must be a key of one of the two relations."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations as C\nR=set('ABCDEF'); S=[('F','C'),('AC','D'),('AD','BEF')]\ndef cl(X,F):\n    X=set(X)\n    while any(set(l)<=X and not set(r)<=X for l,r in F):\n        for l,r in F:\n            if set(l)<=X: X|=set(r)\n    return X\ndef keys(F):\n    K=[]\n    for n in range(1,7):\n        for c in C('ABCDEF',n):\n            if not any(k<=set(c) for k in K) and cl(c,F)>=R: K.append(set(c))\n    return K\ndef nf(F):\n    K=keys(F); P=set().union(*K); bc=n3=n2=False\n    for n in range(1,6):\n        for c in C('ABCDEF',n):\n            X=set(c)\n            for a in cl(X,F)-X:\n                if not cl(X,F)>=R:\n                    bc=True\n                    if a not in P:\n                        n3=True\n                        if any(X<k for k in K): n2=True\n    return '1NF' if n2 else '2NF' if n3 else '3NF' if bc else 'BCNF'\ndef dp(D,F):\n    G=[(set(c),cl(c,F)&set(Ri)-set(c)) for Ri in D for n in range(1,len(Ri)) for c in C(Ri,n)]\n    return all(set(r)<=cl(l,G) for l,r in F)\ndef lj(D,F):\n    A='ABCDEF'; T=[['a'+c if c in Ri else 'b%d'%i+c for c in A] for i,Ri in enumerate(D)]; ch=True\n    while ch:\n        ch=False\n        for l,r in F:\n            for i in range(len(D)):\n                for j in range(len(D)):\n                    if i!=j and all(T[i][A.index(c)]==T[j][A.index(c)] for c in l):\n                        for c in r:\n                            u,v=T[i][A.index(c)],T[j][A.index(c)]\n                            if u!=v:\n                                w=u if u[0]=='a' else v\n                                for t in T:\n                                    for k in range(6):\n                                        if t[k] in (u,v): t[k]=w\n                                ch=True\n    return any(all(x[0]=='a' for x in t) for t in T)\nprint(len(keys(S)), nf(S))                       # A: 3 keys\nS2=[S[1],S[2]]; print(keys(S2), nf(S2))          # B: one key AC, 2NF\nprint(lj(['CF','ACD','ABDE'],S))                 # C: False\nprint(dp(['ACF','ACD','ABDE'],S))                # D: True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q23",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 23,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-linked-lists"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — careful pointer tracing of a deletion loop with a skip-after-delete flaw, a stale-reference property and a loop-variant analysis; four statements to check; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Singly linked list deletion by relinking: skipped candidates after a deletion, an unexamined head and stale next references of removed nodes",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The following Python code builds a singly linked list and then runs a loop on it. Here `nodes[i]` is the node created with the value `vals[i]`.\n\n```python\nclass Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nvals = [12, 7, 9, 15, 6, 8, 21, 3, 14]\nnodes = [Node(v) for v in vals]\nfor i in range(len(nodes) - 1):\n    nodes[i].next = nodes[i + 1]\nhead = nodes[0]\n\np = head\nrounds = 0\nwhile p is not None and p.next is not None:\n    if p.next.data % 3 == 0:\n        p.next = p.next.next\n    p = p.next\n    rounds += 1\n```\n\nConsider also **Variant X**, in which the loop body is replaced by the following and all other lines stay the same.\n\n```python\n    if p.next.data % 3 == 0:\n        p.next = p.next.next\n    else:\n        p = p.next\n    rounds += 1\n```\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "In Variant X, after the loop no node reachable from `head` holds a multiple of $3$."
+      },
+      {
+        "label": "B",
+        "text": "After the loop in the original code, `rounds` equals $6$."
+      },
+      {
+        "label": "C",
+        "text": "After the loop in the original code, starting at `nodes[2]` (the node created with value $9$) and following `next` references until `None` visits the data values $9, 15, 8, 3, 14$ in this order."
+      },
+      {
+        "label": "D",
+        "text": "After the loop in the original code, every node other than `head` that holds a multiple of $3$ has been removed from the list reachable from `head`."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "Tracing the original loop: $p$ takes the values $12, 7, 15, 8, 3$ and then $14$, so there are $5$ rounds (not $6$), and the nodes holding $9$, $6$ and $21$ are removed. The final list is $12 \\to 7 \\to 15 \\to 8 \\to 3 \\to 14$. After each deletion $p$ moves onto the node that took the removed node's place, so $15$ and $3$ are never tested; the removed node $9$ still points to $15$. In Variant X the head $12$ is never tested, so it remains.",
+      "steps": [
+        {
+          "title": "Trace the loop as given",
+          "body": "The test is always on `p.next`, and `p` advances after every round, even after a deletion.\n\n| Round | `p` | `p.next` | `p.next.data % 3` | Action | New `p` |\n|---|---|---|---|---|---|\n| 1 | 12 | 7 | 1 | keep | 7 |\n| 2 | 7 | 9 | 0 | remove 9 | 15 |\n| 3 | 15 | 6 | 0 | remove 6 | 8 |\n| 4 | 8 | 21 | 0 | remove 21 | 3 |\n| 5 | 3 | 14 | 2 | keep | 14 |\n\nNow `p.next` is `None`, so the loop ends after $5$ rounds, not $6$. Statement B is **false**. The list from `head` is $12 \\to 7 \\to 15 \\to 8 \\to 3 \\to 14$."
+        },
+        {
+          "title": "Which multiples of 3 survive",
+          "body": "The head $12$ is never tested, because only `p.next` is examined and nothing precedes the head. After removing $9$, the node $15$ becomes `p.next` but `p` moves onto it, so $15$ is never tested; likewise $3$ is skipped after $21$ is removed. So $12$, $15$ and $3$ remain, and only three of the six multiples of $3$ ($9$, $6$, $21$) are removed. Statement D is **false**."
+        },
+        {
+          "title": "Stale references of removed nodes",
+          "body": "Removing a node only changes the `next` of its predecessor; the removed node keeps its own `next`. So `nodes[2]` (value $9$) still points to $15$, and $15$ now points to $8$ (it was relinked in round 3). Following `next` from `nodes[2]` gives\n$$9 \\to 15 \\to 8 \\to 3 \\to 14.$$\nStatement C is **true**."
+        },
+        {
+          "title": "Variant X",
+          "body": "In Variant X, `p = p.next` is only in the `else`, so `p` stays put after a deletion, so the node that moves into `p.next` is tested. Starting from `p = 12`: $7$ is kept ($p \\to 7$); then $9$, $15$ and $6$ are removed one after another; $8$ is kept ($p \\to 8$); $21$ and $3$ are removed; $14$ is kept. The final list is $12 \\to 7 \\to 8 \\to 14$. The head $12$ is still never tested, so a multiple of $3$ remains and statement A is **false**."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Variant X removes $9, 15, 6, 21, 3$, but `head` (value $12$) is never examined, so the final list is $12 \\to 7 \\to 8 \\to 14$ and still contains a multiple of $3$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "`p` takes the values $12, 7, 15, 8, 3$ in the five rounds and then reaches $14$, whose `next` is `None`: there are $5$ rounds, not $6$ ($6$ is the length of the final list)."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The removed node $9$ keeps `next` pointing to $15$, and $15$ was relinked to $8$, so the traversal from `nodes[2]` is $9, 15, 8, 3, 14$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Only $9$, $6$ and $21$ are removed. The nodes $15$ and $3$ are skipped (the pointer `p` moves onto them right after a deletion) and remain in the list."
+        }
+      ],
+      "commonTrap": "Assuming that the loop removes every multiple of $3$ except the head. After `p.next = p.next.next`, the statement `p = p.next` moves `p` onto the node that has just taken the place of the removed one, so that node is never tested: $15$ and $3$ survive. A second trap is to think that a removed node's `next` is cleared."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "class Node:\n    def __init__(s,d): s.data=d; s.next=None\ndef run(fix):\n    nodes=[Node(v) for v in [12,7,9,15,6,8,21,3,14]]\n    for i in range(8): nodes[i].next=nodes[i+1]\n    head=p=nodes[0]; rounds=0\n    while p is not None and p.next is not None:\n        if p.next.data%3==0:\n            p.next=p.next.next\n            if fix: rounds+=1; continue\n        p=p.next; rounds+=1\n    tr=lambda n: [n.data] if n.next is None else [n.data]+tr(n.next)\n    return rounds, tr(head), tr(nodes[2])\nprint(run(False))  # (5, [12,7,15,8,3,14], [9,15,8,3,14])\nprint(run(True))   # else-variant list: [12,7,8,14] still holds 12",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q24",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 24,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-gaussian-elimination"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (Gaussian elimination with partial pivoting) over two stages with fractional multipliers; the pivot choice at stage 2 is the trap; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Gaussian elimination with partial pivoting: row interchanges, multipliers and the final pivot",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Gaussian elimination with **partial pivoting** is applied to the matrix\n\n$$\nA = \\begin{bmatrix} 2 & 1 & 3 \\\\ 4 & 3 & 1 \\\\ -2 & 5 & 4 \\end{bmatrix}.\n$$\n\nAt step $k$ ($k = 1, 2$), the row among rows $k, \\dots, 3$ whose entry in column $k$ has the largest absolute value is interchanged with row $k$ (no interchange is made if that row is row $k$ itself). Then suitable multiples of row $k$ are subtracted from the rows below it so that all entries below the pivot in column $k$ become $0$. Let $U$ be the upper triangular matrix obtained after step $2$.\n\nWhich one of the following correctly states the total number of row interchanges performed and the entry $u_{33}$ of $U$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0$ row interchanges and $u_{33} = 37$"
+      },
+      {
+        "label": "B",
+        "text": "$1$ row interchange and $u_{33} = 37$"
+      },
+      {
+        "label": "C",
+        "text": "$2$ row interchanges and $u_{33} = \\dfrac{28}{13}$"
+      },
+      {
+        "label": "D",
+        "text": "$2$ row interchanges and $u_{33} = \\dfrac{37}{13}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Step 1 swaps rows 1 and 2 (pivot $4$) and leaves $\\begin{bmatrix} -\\tfrac12 & \\tfrac52 \\end{bmatrix}$ and $\\begin{bmatrix} \\tfrac{13}{2} & \\tfrac92 \\end{bmatrix}$ in rows 2 and 3. Step 2 swaps rows 2 and 3 (pivot $\\tfrac{13}{2}$ beats $-\\tfrac12$), and then $u_{33} = \\tfrac52 + \\tfrac1{13}\\cdot\\tfrac92 = \\tfrac{37}{13}$. That is $2$ interchanges.",
+      "steps": [
+        {
+          "title": "Step 1: pivot in column 1",
+          "body": "Column 1 is $(2, 4, -2)$; the largest absolute value is $4$ in row 2, so interchange rows 1 and 2 (interchange 1):\n$$\\begin{bmatrix} 4 & 3 & 1 \\\\ 2 & 1 & 3 \\\\ -2 & 5 & 4 \\end{bmatrix}.$$\nMultipliers: $m_{21} = \\dfrac{2}{4} = \\dfrac12$, $m_{31} = \\dfrac{-2}{4} = -\\dfrac12$.\n\n$R_2 \\leftarrow R_2 - \\tfrac12 R_1 = \\begin{bmatrix} 0 & -\\tfrac12 & \\tfrac52 \\end{bmatrix}$, $\\quad R_3 \\leftarrow R_3 + \\tfrac12 R_1 = \\begin{bmatrix} 0 & \\tfrac{13}{2} & \\tfrac92 \\end{bmatrix}$."
+        },
+        {
+          "title": "Step 2: pivot in column 2",
+          "body": "The candidates are $-\\tfrac12$ (row 2) and $\\tfrac{13}{2}$ (row 3). The larger absolute value is $\\tfrac{13}{2}$, so interchange rows 2 and 3 (interchange 2):\n$$\\begin{bmatrix} 4 & 3 & 1 \\\\ 0 & \\tfrac{13}{2} & \\tfrac92 \\\\ 0 & -\\tfrac12 & \\tfrac52 \\end{bmatrix}.$$"
+        },
+        {
+          "title": "Eliminate below the second pivot",
+          "body": "Multiplier $m_{32} = \\dfrac{-1/2}{13/2} = -\\dfrac{1}{13}$, so $R_3 \\leftarrow R_3 + \\tfrac{1}{13}R_2$:\n$$u_{33} = \\frac52 + \\frac1{13}\\cdot\\frac92 = \\frac{65}{26} + \\frac{9}{26} = \\frac{74}{26} = \\frac{37}{13}.$$\n$$U = \\begin{bmatrix} 4 & 3 & 1 \\\\ 0 & \\tfrac{13}{2} & \\tfrac92 \\\\ 0 & 0 & \\tfrac{37}{13} \\end{bmatrix}, \\qquad \\text{2 row interchanges.}$$"
+        },
+        {
+          "title": "Check with the determinant",
+          "body": "$\\det A = (-1)^{2}\\cdot 4 \\cdot \\tfrac{13}{2} \\cdot \\tfrac{37}{13} = 74$. Direct expansion along row 1: $2(12-5) - 1(16+2) + 3(20+6) = 14 - 18 + 78 = 74$. They agree."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is what plain elimination without any pivoting gives (pivots $2, 1, 37$), but partial pivoting interchanges rows at both steps."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "It stops pivoting after step 1. At step 2 the entry $\\tfrac{13}{2}$ is larger in magnitude than $-\\tfrac12$, so a second interchange is required; skipping it gives the multiplier $-13$ and $u_{33} = 37$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The two interchanges are right, but a sign slip in the multiplier ($-\\tfrac1{13}$ used as $+\\tfrac1{13}$) gives $\\tfrac52 - \\tfrac9{26} = \\tfrac{28}{13}$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Both columns need an interchange, and $u_{33} = \\tfrac52 + \\tfrac1{13}\\cdot\\tfrac92 = \\tfrac{37}{13}$; this agrees with $\\det A = 74$."
+        }
+      ],
+      "shortcut": "Once the first two pivots $4$ and $\\tfrac{13}{2}$ are known, use $\\det A = (-1)^{s}\\,u_{11}u_{22}u_{33}$ with $s$ the number of interchanges. Here $\\det A = 74$ and $s = 2$, so $u_{33} = \\dfrac{74}{4\\cdot 13/2} = \\dfrac{37}{13}$.",
+      "commonTrap": "Forgetting to pivot again at step 2. After step 1 the second-column candidates are $-\\tfrac12$ and $\\tfrac{13}{2}$; keeping $-\\tfrac12$ as the pivot leads to the multiplier $-13$ and $u_{33} = 37$, the same value as with no pivoting at all, which makes options A and B look convincing."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D: 2 interchanges, u33 = 37/13",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as Fr\nA=[[Fr(v) for v in r] for r in [[2,1,3],[4,3,1],[-2,5,4]]]\nsw=0\nfor k in range(2):\n    m=max(range(k,3),key=lambda i:abs(A[i][k]))\n    if m!=k: A[k],A[m]=A[m],A[k]; sw+=1\n    for i in range(k+1,3):\n        f=A[i][k]/A[k][k]; A[i]=[a-f*b for a,b in zip(A[i],A[k])]\nprint(sw, A[2][2], [[str(v) for v in r] for r in A])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q25",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 25,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — three linked ideas (Maclaurin series of e^{-x^2}, term-by-term integration, alternating-series error bound) with six small terms to evaluate and an off-by-one trap; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Term-by-term integration of the Maclaurin series of e^{-x^2} and the alternating-series error bound",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $I = \\displaystyle\\int_0^{1/2} e^{-x^{2}}\\,dx$. Substituting the Maclaurin series of $e^{-x^{2}}$ and integrating term by term gives an alternating series\n\n$$\nI = \\sum_{k=0}^{\\infty} (-1)^{k} a_k, \\qquad a_k > 0,\n$$\n\nin which $a_0 > a_1 > a_2 > \\cdots$ and $a_k \\to 0$. For such a series, if only the first $N$ terms $a_0, a_1, \\dots, a_{N-1}$ are summed, the error has magnitude at most $a_N$, the first omitted term.\n\nThe smallest $N$ for which this bound guarantees an error below $10^{-6}$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$4$"
+      },
+      {
+        "label": "B",
+        "text": "$5$"
+      },
+      {
+        "label": "C",
+        "text": "$6$"
+      },
+      {
+        "label": "D",
+        "text": "$8$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Integrating $e^{-x^{2}} = \\sum (-1)^k x^{2k}/k!$ from $0$ to $\\tfrac12$ gives $a_k = \\dfrac{1}{2^{2k+1}\\,k!\\,(2k+1)}$. Then $a_4 \\approx 9.04\\times10^{-6} > 10^{-6}$ but $a_5 \\approx 3.70\\times 10^{-7} < 10^{-6}$, so the smallest $N$ with $a_N < 10^{-6}$ is $N = 5$.",
+      "steps": [
+        {
+          "title": "Find a_k",
+          "body": "$e^{-t} = \\sum_{k\\ge0} \\dfrac{(-t)^k}{k!}$ with $t = x^{2}$ gives $e^{-x^{2}} = \\sum_{k\\ge 0} \\dfrac{(-1)^k x^{2k}}{k!}$. Integrating from $0$ to $\\tfrac12$,\n$$\\int_0^{1/2} x^{2k}\\,dx = \\frac{(1/2)^{2k+1}}{2k+1}, \\qquad\\text{so}\\qquad a_k = \\frac{1}{2^{2k+1}\\,k!\\,(2k+1)}.$$"
+        },
+        {
+          "title": "Evaluate the terms",
+          "body": "| $k$ | $a_k$ | value |\n|---|---|---|\n| 0 | $\\dfrac{1}{2}$ | $0.5$ |\n| 1 | $\\dfrac{1}{8\\cdot 1\\cdot 3} = \\dfrac{1}{24}$ | $4.167\\times10^{-2}$ |\n| 2 | $\\dfrac{1}{32\\cdot 2\\cdot 5} = \\dfrac{1}{320}$ | $3.125\\times10^{-3}$ |\n| 3 | $\\dfrac{1}{128\\cdot 6\\cdot 7} = \\dfrac{1}{5376}$ | $1.860\\times10^{-4}$ |\n| 4 | $\\dfrac{1}{512\\cdot 24\\cdot 9} = \\dfrac{1}{110592}$ | $9.042\\times10^{-6}$ |\n| 5 | $\\dfrac{1}{2048\\cdot 120\\cdot 11} = \\dfrac{1}{2703360}$ | $3.699\\times10^{-7}$ |\n\nThe terms decrease strictly to $0$, as the problem states."
+        },
+        {
+          "title": "Apply the error bound",
+          "body": "The bound after summing $N$ terms is $a_N$. We need $a_N < 10^{-6}$.\n\n- $N = 4$: $a_4 = 9.04\\times 10^{-6} > 10^{-6}$, not enough.\n- $N = 5$: $a_5 = 3.70\\times 10^{-7} < 10^{-6}$, enough.\n\nThe five terms are $a_0, \\dots, a_4$ (the index of the last term used is $4$, but the number of terms is $5$)."
+        },
+        {
+          "title": "Cross-check",
+          "body": "The partial sum of five terms is $0.5 - 0.0416667 + 0.003125 - 0.000186012 + 0.0000090422 = 0.4612814$, and $I = 0.4612810\\ldots$, so the actual error is about $3.6\\times 10^{-7} < 10^{-6}$. With four terms the sum is $0.4612723$, with an actual error of about $8.7\\times 10^{-6}$, which is too large."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "With $N = 4$ the first omitted term is $a_4 = 9.04\\times10^{-6}$, which exceeds $10^{-6}$ (it would only suffice for a tolerance of $10^{-5}$). $4$ is the index of the last term needed, not the number of terms."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$a_4 = 9.04\\times10^{-6} > 10^{-6}$ while $a_5 = 3.70\\times10^{-7} < 10^{-6}$, so $N = 5$ is the smallest number of terms."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$N = 6$ also works but is not the smallest. It results from forgetting the integration factor $\\tfrac{1}{(2k+1)}\\cdot\\tfrac12$ (using the integrand terms $\\tfrac{1}{4^{k}k!}$), or from requiring the last term used to be below $10^{-6}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$N = 8$ arises from treating $x^2$ as $x$, i.e. using terms $\\tfrac{1}{2^{k}k!}$; this is a different series and overestimates the number of terms needed."
+        }
+      ],
+      "commonTrap": "An off-by-one in counting: the first omitted term must be below $10^{-6}$ ($a_5$), so the terms used are $a_0, \\dots, a_4$, which is $5$ terms, not $4$ or $6$. Another trap is to use the series of the integrand without integrating it, which needs $6$ terms."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B: N = 5",
+      "agreesWithKey": true,
+      "checkCode": "from math import factorial as f\nfrom fractions import Fraction as Fr\na=lambda k: Fr(1,2**(2*k+1)*f(k)*(2*k+1))\nprint(next(N for N in range(1,30) if a(N)<Fr(1,10**6)), [float(a(k)) for k in range(7)])\nb=lambda k: Fr(1,4**k*f(k)); c=lambda k: Fr(1,2**k*f(k))\nprint(next(N for N in range(1,30) if b(N)<Fr(1,10**6)), next(N for N in range(1,30) if c(N)<Fr(1,10**6)))",
+      "notes": ""
+    }
+  }
+]

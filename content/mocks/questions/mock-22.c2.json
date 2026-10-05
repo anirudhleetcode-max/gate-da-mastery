@@ -1,0 +1,728 @@
+[
+  {
+    "id": "M22-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-feedforward"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (forward propagation) through two layers with two different activations, about 12 multiply-adds, with a clipped unit as a mild trap; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Forward pass through a two-hidden-layer feed-forward network with a ReLU layer followed by a clipped-linear layer",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward network takes two inputs, has two hidden layers (3 units, then 2 units) and one linear output unit. For an input $\\mathbf{x}$ it computes\n\n$$\n\\mathbf{h}^{(1)} = \\operatorname{ReLU}\\big(W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)}\\big), \\qquad \\mathbf{h}^{(2)} = g\\big(W^{(2)}\\mathbf{h}^{(1)} + \\mathbf{b}^{(2)}\\big), \\qquad \\hat{y} = \\mathbf{v}^\\top \\mathbf{h}^{(2)} + c,\n$$\n\nwhere $\\operatorname{ReLU}(z) = \\max(0, z)$ and $g(z) = \\min\\big(1, \\max(0, z)\\big)$ are applied element-wise, and\n\n$$\nW^{(1)} = \\begin{bmatrix} 1 & -2 \\\\ 2 & 1 \\\\ -1 & 1 \\end{bmatrix}, \\quad \\mathbf{b}^{(1)} = \\begin{bmatrix} 0 \\\\ -3 \\\\ 1 \\end{bmatrix}, \\quad W^{(2)} = \\begin{bmatrix} 0.5 & 0.25 & 1 \\\\ -1 & 0.5 & 0.5 \\end{bmatrix}, \\quad \\mathbf{b}^{(2)} = \\begin{bmatrix} -1 \\\\ 0.5 \\end{bmatrix}, \\quad \\mathbf{v} = \\begin{bmatrix} 4 \\\\ -1 \\end{bmatrix}, \\quad c = 2.\n$$\n\nFor the input $\\mathbf{x} = (3, 1)^\\top$, the output $\\hat{y}$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "Layer 1: $W^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)} = (1, 4, -1)$, so $\\mathbf{h}^{(1)} = (1, 4, 0)$.\nLayer 2: $W^{(2)}\\mathbf{h}^{(1)} + \\mathbf{b}^{(2)} = (0.5, 1.5)$, and the clip $g$ turns this into $\\mathbf{h}^{(2)} = (0.5, 1)$.\nOutput: $\\hat{y} = 4(0.5) - 1(1) + 2 = 3$.",
+      "steps": [
+        {
+          "title": "First hidden layer (ReLU)",
+          "body": "$$\nW^{(1)}\\mathbf{x} + \\mathbf{b}^{(1)} = \\begin{bmatrix} 1(3) - 2(1) + 0 \\\\ 2(3) + 1(1) - 3 \\\\ -1(3) + 1(1) + 1 \\end{bmatrix} = \\begin{bmatrix} 1 \\\\ 4 \\\\ -1 \\end{bmatrix}\n\\;\\Rightarrow\\; \\mathbf{h}^{(1)} = \\begin{bmatrix} 1 \\\\ 4 \\\\ 0 \\end{bmatrix}.\n$$\nThe third unit is inactive: ReLU sets $-1$ to $0$."
+        },
+        {
+          "title": "Second hidden layer pre-activation",
+          "body": "$$\nW^{(2)}\\mathbf{h}^{(1)} + \\mathbf{b}^{(2)} = \\begin{bmatrix} 0.5(1) + 0.25(4) + 1(0) - 1 \\\\ -1(1) + 0.5(4) + 0.5(0) + 0.5 \\end{bmatrix} = \\begin{bmatrix} 0.5 \\\\ 1.5 \\end{bmatrix}.\n$$"
+        },
+        {
+          "title": "Apply the clipped activation g",
+          "body": "$g(0.5) = \\min(1, \\max(0, 0.5)) = 0.5$, but $g(1.5) = \\min(1, 1.5) = 1$ because the value is clipped at $1$. So $\\mathbf{h}^{(2)} = (0.5, 1)^\\top$."
+        },
+        {
+          "title": "Output unit",
+          "body": "$$\n\\hat{y} = \\mathbf{v}^\\top\\mathbf{h}^{(2)} + c = 4(0.5) + (-1)(1) + 2 = 2 - 1 + 2 = 3.\n$$"
+        }
+      ],
+      "finalAnswer": "**3**",
+      "commonTrap": "Using the plain ReLU in the second layer, so that $1.5$ is not clipped to $1$, gives $4(0.5) - 1.5 + 2 = 2.5$. Skipping the first ReLU and passing $-1$ forward gives $\\mathbf{h}^{(2)} = (0, 1)$ and a result of $1$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx=np.array([3.,1.]);W1=np.array([[1,-2],[2,1],[-1,1.]]);b1=np.array([0,-3,1.])\nW2=np.array([[.5,.25,1],[-1,.5,.5]]);b2=np.array([-1,.5]);v=np.array([4,-1.]);c=2.\nh1=np.maximum(0,W1@x+b1);h2=np.clip(W2@h1+b2,0,1)\nprint(h1,h2,v@h2+c)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-shortest-path"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines a line-by-line trace of a Dijkstra implementation with the insight that a negative leg breaks its greedy finalisation, then requires the true shortest distances to be found separately and compared over several vertices; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Dijkstra's greedy finalisation gives wrong distances when an edge weight is negative; compare the computed labels with true shortest distances",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A delivery drone flies between six stations S, A, B, C, D and T. The table gives the energy used on each one-way leg, in kWh. The leg $C \\to A$ is a long descent, so its energy use is **negative** (the drone recovers energy). The graph contains no cycle.\n\n| Leg | $S \\to A$ | $S \\to B$ | $B \\to C$ | $B \\to D$ | $C \\to A$ | $C \\to T$ | $A \\to D$ | $A \\to T$ | $D \\to T$ |\n|---|---|---|---|---|---|---|---|---|---|\n| Energy (kWh) | 3 | 1 | 3 | 7 | $-4$ | 5 | 3 | 8 | 4 |\n\nA programmer computes distances from S with the following implementation of Dijkstra's algorithm, where `adj[u]` lists the pairs `(v, w)` for the legs $u \\to v$ with energy $w$.\n\n```python\nINF = float('inf')\nV = ['S', 'A', 'B', 'C', 'D', 'T']\n\ndef dijkstra(adj, src):\n    dist = {v: INF for v in V}\n    dist[src] = 0\n    done = set()\n    while len(done) < len(V):\n        u = min((v for v in V if v not in done), key=lambda v: dist[v])\n        done.add(u)\n        for v, w in adj[u]:\n            if v not in done and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    return dist\n```\n\nLet $d[v]$ be the value that `dijkstra(adj, 'S')` returns for station $v$, and let $\\delta(v)$ be the true minimum energy needed to fly from S to $v$. The value of $\\sum_{v} \\big( d[v] - \\delta(v) \\big)$, taken over all six stations, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 8,
+      "max": 8
+    },
+    "solution": {
+      "quick": "The code finalises A at label $3$ before it ever sees the cheaper route $S \\to B \\to C \\to A$ (cost $0$), and it never revisits A, so the labels of A, D and T stay too high.\nReturned $d = (S, A, B, C, D, T) = (0, 3, 1, 4, 6, 9)$ with sum $23$; true $\\delta = (0, 0, 1, 4, 3, 7)$ with sum $15$.\nThe total over-estimate is $23 - 15 = 8$.",
+      "steps": [
+        {
+          "title": "Trace the implementation",
+          "body": "- Finalise S ($0$): $A = 3$, $B = 1$.\n- Finalise B ($1$): $C = 1 + 3 = 4$, $D = 1 + 7 = 8$.\n- Finalise A ($3$, the smallest remaining label): $D = \\min(8, 3 + 3) = 6$, $T = 3 + 8 = 11$.\n- Finalise C ($4$): the leg $C \\to A$ is skipped because A is already done; $T = \\min(11, 4 + 5) = 9$.\n- Finalise D ($6$): $6 + 4 = 10 \\not< 9$, so T stays $9$. Finalise T ($9$).\n\nReturned labels: $d = (S, A, B, C, D, T) = (0, 3, 1, 4, 6, 9)$, sum $= 23$."
+        },
+        {
+          "title": "True shortest distances",
+          "body": "The graph is acyclic, so process the stations in the topological order S, B, C, A, D, T:\n- $\\delta(S) = 0$, $\\delta(B) = 1$, $\\delta(C) = 1 + 3 = 4$.\n- $\\delta(A) = \\min(0 + 3,\\; 4 - 4) = 0$.\n- $\\delta(D) = \\min(\\delta(B) + 7,\\; \\delta(A) + 3) = \\min(8, 3) = 3$.\n- $\\delta(T) = \\min(\\delta(C) + 5,\\; \\delta(A) + 8,\\; \\delta(D) + 4) = \\min(9, 8, 7) = 7$.\n\nSum $= 0 + 0 + 1 + 4 + 3 + 7 = 15$."
+        },
+        {
+          "title": "Compare and add up",
+          "body": "$d[A] - \\delta(A) = 3 - 0 = 3$, $d[D] - \\delta(D) = 6 - 3 = 3$, $d[T] - \\delta(T) = 9 - 7 = 2$, and S, B, C are correct. The total is $3 + 3 + 2 = 8$, which equals $23 - 15$."
+        },
+        {
+          "title": "Why the greedy rule fails",
+          "body": "Dijkstra's algorithm is exact only when every leg is non-negative: then a finalised label can never be improved later. Here A is finalised at $3$, but the later-finalised C offers the cheaper arrival $4 - 4 = 0$ through the negative leg; the code skips that relaxation, and the error spreads to D and T."
+        }
+      ],
+      "finalAnswer": "**8**",
+      "commonTrap": "Assuming Dijkstra is still exact and answering $0$, or checking only the target T (difference $2$). The early wrong label of A also corrupts D, so three stations are over-estimated, not one."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "8",
+      "agreesWithKey": true,
+      "checkCode": "INF=float('inf');V='SABCDT'\nE=[('S','A',3),('S','B',1),('B','C',3),('B','D',7),('C','A',-4),('C','T',5),('A','D',3),('A','T',8),('D','T',4)]\nadj={v:[(b,w) for a,b,w in E if a==v] for v in V}\nd={v:INF for v in V};d['S']=0;done=set()\nwhile len(done)<6:\n    u=min((v for v in V if v not in done),key=lambda v:d[v]);done.add(u)\n    for v,w in adj[u]:\n        if v not in done and d[u]+w<d[v]:d[v]=d[u]+w\nt={v:INF for v in V};t['S']=0\nfor _ in range(6):\n    for a,b,w in E:t[b]=min(t[b],t[a]+w)\nprint(d,t,sum(d.values())-sum(t.values()))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-hierarchical"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — a single idea (cutting a dendrogram at a height) applied to a short merge log; keep the merges at or below the cut and read off the clusters; about 1 minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Reading the flat clustering obtained by cutting a hierarchical clustering (dendrogram) at a given height",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An agglomerative hierarchical clustering of seven sensors $S_1, \\dots, S_7$ recorded the following sequence of merges. Each row gives the two clusters that were merged and the linkage distance (height) at which the merge took place.\n\n| Step | Clusters merged | Height |\n|---|---|---|\n| 1 | $\\{S_2\\}$ and $\\{S_5\\}$ | 0.6 |\n| 2 | $\\{S_3\\}$ and $\\{S_7\\}$ | 0.9 |\n| 3 | $\\{S_1\\}$ and $\\{S_2, S_5\\}$ | 1.7 |\n| 4 | $\\{S_4\\}$ and $\\{S_3, S_7\\}$ | 2.4 |\n| 5 | $\\{S_1, S_2, S_5\\}$ and $\\{S_3, S_4, S_7\\}$ | 5.1 |\n| 6 | $\\{S_1, S_2, S_3, S_4, S_5, S_7\\}$ and $\\{S_6\\}$ | 8.3 |\n\nThe dendrogram is cut by a horizontal line at height $3.0$: every merge at a height of at most $3.0$ is kept, and every merge above $3.0$ is undone. Which one of the following is the resulting partition of the sensors into clusters?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{S_2, S_5\\}$, $\\{S_3, S_7\\}$, $\\{S_1\\}$, $\\{S_4\\}$, $\\{S_6\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\{S_1, S_2, S_5\\}$, $\\{S_3, S_4, S_7\\}$, $\\{S_6\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\{S_1, S_2, S_3, S_4, S_5, S_7\\}$, $\\{S_6\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\{S_1, S_2, S_5\\}$, $\\{S_3, S_7\\}$, $\\{S_4\\}$, $\\{S_6\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Merges with height at most $3.0$ are steps 1 to 4 (heights $0.6, 0.9, 1.7, 2.4$); steps 5 and 6 (heights $5.1$ and $8.3$) are undone.\nApplying steps 1 to 4 to the seven singletons gives $\\{S_1, S_2, S_5\\}$, $\\{S_3, S_4, S_7\\}$ and $\\{S_6\\}$, that is, $7 - 4 = 3$ clusters.",
+      "steps": [
+        {
+          "title": "Decide which merges survive the cut",
+          "body": "A merge is kept when its height is at most $3.0$. Steps 1, 2, 3, 4 have heights $0.6,\\ 0.9,\\ 1.7,\\ 2.4$, all $\\le 3.0$, so they are kept. Steps 5 and 6 have heights $5.1$ and $8.3$, both above $3.0$, so they are undone."
+        },
+        {
+          "title": "Apply the kept merges",
+          "body": "Start from seven singletons.\n- Step 1: $\\{S_2, S_5\\}$.\n- Step 2: $\\{S_3, S_7\\}$.\n- Step 3: $S_1$ joins $\\{S_2, S_5\\}$, giving $\\{S_1, S_2, S_5\\}$.\n- Step 4: $S_4$ joins $\\{S_3, S_7\\}$, giving $\\{S_3, S_4, S_7\\}$.\n\n$S_6$ was never merged with anything below $3.0$, so it stays alone."
+        },
+        {
+          "title": "Check the count and match the option",
+          "body": "Each kept merge reduces the number of clusters by one, so the cut leaves $7 - 4 = 3$ clusters: $\\{S_1, S_2, S_5\\}$, $\\{S_3, S_4, S_7\\}$, $\\{S_6\\}$. This is option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is the state after only steps 1 and 2, i.e. a cut at a height between $0.9$ and $1.7$. The merges at $1.7$ and $2.4$ are both below $3.0$ and must be kept."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Steps 1 to 4 are kept (heights up to $2.4$) and steps 5 and 6 are undone, giving $\\{S_1, S_2, S_5\\}$, $\\{S_3, S_4, S_7\\}$ and $\\{S_6\\}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is the state after step 5, i.e. a cut between $5.1$ and $8.3$. The merge at height $5.1$ lies above the cut at $3.0$, so it is undone."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the state after step 3 only. It misses the merge at height $2.4$, which is below $3.0$, so $S_4$ must be joined with $\\{S_3, S_7\\}$."
+        }
+      ],
+      "shortcut": "The number of clusters after a cut equals $n$ minus the number of merges at or below the cut height: $7 - 4 = 3$. Only option (B) has three clusters.",
+      "commonTrap": "Stopping the merge sequence one step too early or too late, for instance forgetting the merge at height $2.4$ or including the merge at $5.1$. Compare each merge height with the cut height one row at a time."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B",
+      "agreesWithKey": true,
+      "checkCode": "M=[({2},{5},.6),({3},{7},.9),({1},{2,5},1.7),({4},{3,7},2.4),({1,2,5},{3,4,7},5.1),({1,2,3,4,5,7},{6},8.3)]\nC=[{i} for i in range(1,8)]\nfor a,b,h in M:\n    if h<=3.0:C.remove(a);C.remove(b);C.append(a|b)\nprint(sorted(map(sorted,C)))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-clt"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (normal approximation of a binomial count by the CLT) with a short two-to-three step check per statement: moments, an upper tail, a lower tail via symmetry, and a conceptual statement; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Central limit theorem applied to a count of independent Bernoulli events: mean, variance, tail probabilities from the normal approximation, and what the theorem does and does not claim",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A payment gateway flags each transaction independently as suspicious with probability $0.1$. Among the next $n = 400$ transactions, let $S$ be the number flagged. Use the central limit theorem to approximate $S$ by a normal random variable with the same mean and variance, and do **not** apply a continuity correction. You may use $\\Phi(1) = 0.8413$ and $\\Phi(2) = 0.9772$, where $\\Phi$ is the standard normal cumulative distribution function.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$E[S] = 40$ and $\\mathrm{Var}(S) = 36$."
+      },
+      {
+        "label": "B",
+        "text": "$P(S \\ge 52) \\approx 0.0228$."
+      },
+      {
+        "label": "C",
+        "text": "$P(S \\le 34) \\approx 0.8413$."
+      },
+      {
+        "label": "D",
+        "text": "Because $n = 400$ is large, the central limit theorem makes $S$ exactly normally distributed."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "$S$ is a sum of $400$ independent Bernoulli$(0.1)$ variables, so $E[S] = 40$, $\\mathrm{Var}(S) = 400(0.1)(0.9) = 36$ and $\\mathrm{SD}(S) = 6$.\nThen $P(S \\ge 52) \\approx P(Z \\ge 2) = 0.0228$, but $P(S \\le 34) \\approx P(Z \\le -1) = 0.1587$, and $S$ is only approximately normal.\nCorrect statements: A and B.",
+      "steps": [
+        {
+          "title": "Mean and variance of S",
+          "body": "$S = X_1 + \\dots + X_{400}$ with $X_i \\sim \\text{Bernoulli}(0.1)$, so\n$$\nE[S] = np = 400(0.1) = 40, \\qquad \\mathrm{Var}(S) = np(1 - p) = 400(0.1)(0.9) = 36, \\qquad \\mathrm{SD}(S) = 6.\n$$\nStatement A is correct. The CLT approximation is $S \\approx N(40, 36)$."
+        },
+        {
+          "title": "Upper tail (statement B)",
+          "body": "$$\nP(S \\ge 52) \\approx P\\!\\left(Z \\ge \\frac{52 - 40}{6}\\right) = P(Z \\ge 2) = 1 - \\Phi(2) = 1 - 0.9772 = 0.0228.\n$$\nStatement B is correct."
+        },
+        {
+          "title": "Lower tail (statement C)",
+          "body": "$$\nP(S \\le 34) \\approx P\\!\\left(Z \\le \\frac{34 - 40}{6}\\right) = \\Phi(-1) = 1 - \\Phi(1) = 1 - 0.8413 = 0.1587,\n$$\nnot $0.8413$. Statement C is incorrect: $0.8413$ is the probability of lying *above* $34$, roughly $P(S \\ge 34)$."
+        },
+        {
+          "title": "What the CLT claims (statement D)",
+          "body": "The CLT says that the standardised sum $(S - np)/\\sqrt{np(1-p)}$ converges in distribution to $N(0, 1)$ as $n \\to \\infty$. For any finite $n$ the count $S$ is still a discrete binomial variable taking only integer values, so it is never exactly normal. Statement D is incorrect."
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$np = 40$ and $np(1-p) = 400(0.1)(0.9) = 36$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$z = (52 - 40)/6 = 2$, so $P(S \\ge 52) \\approx 1 - \\Phi(2) = 0.0228$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$z = (34 - 40)/6 = -1$, so $P(S \\le 34) \\approx \\Phi(-1) = 1 - 0.8413 = 0.1587$, not $0.8413$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "The CLT is a limit statement. $S$ stays discrete (binomial) for every finite $n$; the normal curve is only an approximation."
+        }
+      ],
+      "commonTrap": "Reading $\\Phi(-1)$ as $\\Phi(1)$: a lower tail one standard deviation below the mean is the small probability $0.1587$. Another slip is using $\\sqrt{np} = \\sqrt{40}$ as the standard deviation by forgetting the factor $1 - p$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B",
+      "agreesWithKey": true,
+      "checkCode": "from math import sqrt,erf\nPhi=lambda z:.5*(1+erf(z/sqrt(2)))\nn,p=400,.1;m=n*p;v=n*p*(1-p);s=sqrt(v)\nprint(m,v,round(1-Phi((52-m)/s),4),round(Phi((34-m)/s),4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (PCA is not invariant to feature scaling) with two small eigenvalue calculations, one of which has a closed form; about 2 minutes.",
+    "estimatedTimeSec": 130,
+    "concept": "PCA on the covariance matrix versus the correlation matrix: the first principal component and its explained-variance share change with feature scaling",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two mean-centred features $x_1$ and $x_2$ have standard deviations $10$ and $1$, respectively, and their correlation coefficient is $0.6$. Principal component analysis (PCA) is carried out twice:\n\n- (i) on the sample covariance matrix of the raw features, and\n- (ii) on the sample covariance matrix of the standardised features (each feature scaled to unit variance), which is the correlation matrix.\n\nWhich one of the following correctly describes the first principal component (PC1) in the two analyses? Directions are given up to sign.",
+    "options": [
+      {
+        "label": "A",
+        "text": "In both analyses PC1 is almost along the $x_1$ axis and explains about $99.4\\%$ of the total variance, because PCA is unaffected by rescaling the features."
+      },
+      {
+        "label": "B",
+        "text": "(i) PC1 is along $(1, 1)/\\sqrt{2}$ and explains $80\\%$ of the total variance; (ii) PC1 is almost along the $x_1$ axis and explains about $99.4\\%$ of the total variance."
+      },
+      {
+        "label": "C",
+        "text": "(i) PC1 is almost along the $x_1$ axis and explains about $99.4\\%$ of the total variance; (ii) PC1 is along $(1, 1)/\\sqrt{2}$ and explains $60\\%$ of the total variance."
+      },
+      {
+        "label": "D",
+        "text": "(i) PC1 is almost along the $x_1$ axis and explains about $99.4\\%$ of the total variance; (ii) PC1 is along $(1, 1)/\\sqrt{2}$ and explains $80\\%$ of the total variance."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Raw covariance: $\\Sigma = \\begin{bmatrix} 100 & 6 \\\\ 6 & 1 \\end{bmatrix}$ has eigenvalues $\\approx 100.36$ and $0.64$, so PC1 is almost the $x_1$ axis and carries $100.36/101 \\approx 99.4\\%$ of the variance.\nCorrelation matrix $\\begin{bmatrix} 1 & 0.6 \\\\ 0.6 & 1 \\end{bmatrix}$ has eigenvalues $1.6$ and $0.4$, so PC1 is $(1, 1)/\\sqrt{2}$ with $1.6/2 = 80\\%$.",
+      "steps": [
+        {
+          "title": "Covariance matrix of the raw features",
+          "body": "The covariance is $\\rho\\,\\sigma_1\\sigma_2 = 0.6 \\cdot 10 \\cdot 1 = 6$, so\n$$\n\\Sigma = \\begin{bmatrix} 100 & 6 \\\\ 6 & 1 \\end{bmatrix}, \\qquad \\operatorname{tr}\\Sigma = 101, \\quad \\det\\Sigma = 100 - 36 = 64.\n$$"
+        },
+        {
+          "title": "PC1 in analysis (i)",
+          "body": "$$\n\\lambda = \\frac{101 \\pm \\sqrt{101^2 - 4 \\cdot 64}}{2} = \\frac{101 \\pm \\sqrt{9945}}{2} \\approx 100.36,\\; 0.64.\n$$\nThe share of variance is $100.36 / 101 \\approx 0.994$. Solving $(100 - 100.36)v_1 + 6 v_2 = 0$ gives $v_2 \\approx 0.06\\, v_1$, so PC1 $\\approx (0.998, 0.060)$, almost exactly the $x_1$ axis. The huge variance of $x_1$ dominates."
+        },
+        {
+          "title": "PC1 in analysis (ii)",
+          "body": "After standardising, the covariance matrix is the correlation matrix $R = \\begin{bmatrix} 1 & 0.6 \\\\ 0.6 & 1 \\end{bmatrix}$. From $(1 - \\lambda)^2 = 0.6^2$ the eigenvalues are $\\lambda = 1 \\pm 0.6 = 1.6,\\ 0.4$, with eigenvectors $(1, 1)/\\sqrt{2}$ and $(1, -1)/\\sqrt{2}$. PC1 is $(1, 1)/\\sqrt{2}$ and explains $1.6 / (1.6 + 0.4) = 80\\%$ of the total variance."
+        },
+        {
+          "title": "Interpretation and match",
+          "body": "PCA is **not** invariant to rescaling the features: on raw data the feature with the largest variance dominates PC1, whereas on standardised data every feature has variance $1$ and PC1 is the equal-weight direction picked out by the positive correlation. This matches option (D)."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "PCA depends on the scale of the features. After standardising to unit variance, the dominance of $x_1$ disappears and PC1 becomes $(1, 1)/\\sqrt{2}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The two analyses are swapped. The raw covariance matrix is dominated by $x_1$ (variance $100$ against $1$); the correlation matrix treats both features equally."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Part (i) is right, but for the correlation matrix the eigenvalues are $1 \\pm 0.6$, so PC1 explains $1.6/2 = 80\\%$, not $60\\%$. The correlation coefficient is not the explained-variance share."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Raw: PC1 $\\approx (0.998, 0.060)$ with $99.4\\%$ of the variance. Standardised: PC1 $= (1, 1)/\\sqrt{2}$ with $80\\%$ of the variance."
+        }
+      ],
+      "shortcut": "For any standardised pair, the correlation matrix has eigenvalues $1 \\pm \\rho$ with eigenvectors $(1, \\pm 1)/\\sqrt{2}$, giving $80\\%$ for $\\rho = 0.6$. For the raw data $\\sigma_1^2 = 100 \\gg \\sigma_2^2 = 1$, so PC1 hugs the $x_1$ axis and takes nearly all the variance.",
+      "commonTrap": "Believing PCA is scale invariant (option A), or equating the explained-variance share with the correlation coefficient (option C). Always decide first whether PCA is run on the covariance matrix or on the correlation matrix."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS=np.array([[100,6],[6,1.]]);R=np.array([[1,.6],[.6,1]])\nfor M in (S,R):\n    w,V=np.linalg.eigh(M);print(np.round(w[::-1]/w.sum(),4),np.round(abs(V[:,-1]),3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-query-languages",
+    "subtopicIds": [
+      "dbw-relational-algebra"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — evaluates a natural join of three relations whose attributes form a cycle (the last join must match on two attributes at once) followed by a set difference with edge cases (a student with no enrolment, a student with no advisor), with distractors from realistic slips; about 3.5 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Cyclic natural join of three relations followed by a projection and set difference in relational algebra",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A university database holds three relations. All queries use set semantics, and $\\bowtie$ denotes the natural join.\n\n**Teaches**\n\n| prof | course |\n|---|---|\n| Rao | DB |\n| Rao | ML |\n| Sen | AI |\n| Sen | ST |\n| Iyer | PS |\n\n**Takes**\n\n| course | student |\n|---|---|\n| DB | Asha |\n| DB | Dev |\n| DB | Ilan |\n| ML | Esha |\n| ML | Farid |\n| AI | Asha |\n| AI | Dev |\n| ST | Gita |\n| PS | Esha |\n\n**Advises**\n\n| student | prof |\n|---|---|\n| Asha | Rao |\n| Dev | Sen |\n| Esha | Iyer |\n| Farid | Sen |\n| Gita | Rao |\n| Hema | Iyer |\n\nConsider the expression\n\n$$\nE = \\pi_{student}(\\text{Advises}) \\; - \\; \\pi_{student}\\big(\\text{Teaches} \\bowtie \\text{Takes} \\bowtie \\text{Advises}\\big).\n$$\n\nWhich one of the following is the set of students returned by $E$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "{Asha, Dev, Esha}"
+      },
+      {
+        "label": "B",
+        "text": "{Hema}"
+      },
+      {
+        "label": "C",
+        "text": "{Farid, Gita, Hema}"
+      },
+      {
+        "label": "D",
+        "text": "{Farid, Gita, Ilan}"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$\\text{Teaches} \\bowtie \\text{Takes}$ gives nine $(prof, course, student)$ rows; joining with Advises keeps only rows whose student is advised by the professor teaching the course: $(\\text{Rao}, \\text{DB}, \\text{Asha})$, $(\\text{Sen}, \\text{AI}, \\text{Dev})$, $(\\text{Iyer}, \\text{PS}, \\text{Esha})$.\nSo the second projection is $\\{\\text{Asha}, \\text{Dev}, \\text{Esha}\\}$, and $E = \\{\\text{Asha}, \\text{Dev}, \\text{Esha}, \\text{Farid}, \\text{Gita}, \\text{Hema}\\} - \\{\\text{Asha}, \\text{Dev}, \\text{Esha}\\} = \\{\\text{Farid}, \\text{Gita}, \\text{Hema}\\}$.",
+      "steps": [
+        {
+          "title": "Join Teaches with Takes on course",
+          "body": "Each Takes row picks up the professor who teaches its course:\n\n| prof | course | student |\n|---|---|---|\n| Rao | DB | Asha |\n| Rao | DB | Dev |\n| Rao | DB | Ilan |\n| Rao | ML | Esha |\n| Rao | ML | Farid |\n| Sen | AI | Asha |\n| Sen | AI | Dev |\n| Sen | ST | Gita |\n| Iyer | PS | Esha |"
+        },
+        {
+          "title": "Join with Advises on student AND prof",
+          "body": "Advises shares **both** attributes $student$ and $prof$ with this result, so a row survives only if the student's advisor is the professor who teaches the course:\n- (Rao, DB, Asha): Asha is advised by Rao. Kept.\n- (Sen, AI, Dev): Dev is advised by Sen. Kept.\n- (Iyer, PS, Esha): Esha is advised by Iyer. Kept.\n- Every other row fails: for example Dev (advised by Sen) in Rao's DB, Esha (advised by Iyer) in Rao's ML, Ilan (no advisor), Gita (advised by Rao) in Sen's ST.\n\nHence $\\pi_{student}(\\text{Teaches} \\bowtie \\text{Takes} \\bowtie \\text{Advises}) = \\{\\text{Asha}, \\text{Dev}, \\text{Esha}\\}$."
+        },
+        {
+          "title": "Set difference",
+          "body": "$\\pi_{student}(\\text{Advises}) = \\{\\text{Asha}, \\text{Dev}, \\text{Esha}, \\text{Farid}, \\text{Gita}, \\text{Hema}\\}$. Removing $\\{\\text{Asha}, \\text{Dev}, \\text{Esha}\\}$ leaves\n$$\nE = \\{\\text{Farid}, \\text{Gita}, \\text{Hema}\\}.\n$$"
+        },
+        {
+          "title": "Interpretation",
+          "body": "$E$ returns the advisees who are enrolled in **no** course taught by their own advisor. Hema qualifies because she has no enrolment at all; Ilan is not returned because he has no advisor and so never appears in Advises."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is only the second projection (advisees who do take a course from their advisor). The expression subtracts it from all advisees."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This results from matching Advises on $student$ alone, i.e. removing every advisee who takes any taught course. The join also matches on $prof$, which removes far fewer students."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Advisees minus $\\{\\text{Asha}, \\text{Dev}, \\text{Esha}\\}$ is $\\{\\text{Farid}, \\text{Gita}, \\text{Hema}\\}$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This would be $\\pi_{student}(\\text{Takes})$ minus the second projection. It wrongly includes Ilan (who has no advisor) and omits Hema (an advisee with no enrolment)."
+        }
+      ],
+      "commonTrap": "Treating the last natural join as matching only on $student$ and forgetting that $prof$ is a common attribute too; the join condition is then far too weak. A second slip is subtracting from $\\pi_{student}(\\text{Takes})$ instead of $\\pi_{student}(\\text{Advises})$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\nc=sqlite3.connect(':memory:')\nc.executescript(\"create table T(prof,course);create table K(course,student);create table A(student,prof);\")\nc.executemany(\"insert into T values(?,?)\",[('Rao','DB'),('Rao','ML'),('Sen','AI'),('Sen','ST'),('Iyer','PS')])\nc.executemany(\"insert into K values(?,?)\",[('DB','Asha'),('DB','Dev'),('DB','Ilan'),('ML','Esha'),('ML','Farid'),('AI','Asha'),('AI','Dev'),('ST','Gita'),('PS','Esha')])\nc.executemany(\"insert into A values(?,?)\",[('Asha','Rao'),('Dev','Sen'),('Esha','Iyer'),('Farid','Sen'),('Gita','Rao'),('Hema','Iyer')])\nprint(sorted(r[0] for r in c.execute(\"select student from A except select student from (select * from T natural join K natural join A)\")))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-idempotent-matrix"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two directly linked concepts (idempotency of a rank-one matrix, and eigenvalues of an idempotent matrix) in 3 short steps with routine arithmetic; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "A rank-one matrix uv^T is idempotent exactly when v^T u = 1; idempotent matrices have eigenvalues 0 and 1, which gives the determinant of a shifted matrix",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $\\mathbf{u} = (2, 1, -1)^\\top$ and $\\mathbf{v} = (a, 3, 1)^\\top$, where $a$ is a real number, and let $A = \\mathbf{u}\\mathbf{v}^\\top$ be the resulting $3 \\times 3$ matrix. It is given that $A^2 = A$.\n\nIf $I$ is the $3 \\times 3$ identity matrix, the value of $\\det(2I + 3A)$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 20,
+      "max": 20
+    },
+    "solution": {
+      "quick": "$A^2 = \\mathbf{u}(\\mathbf{v}^\\top\\mathbf{u})\\mathbf{v}^\\top = (\\mathbf{v}^\\top\\mathbf{u})A$, and $A \\ne 0$, so $A^2 = A$ forces $\\mathbf{v}^\\top\\mathbf{u} = 1$, i.e. $2a + 2 = 1$ and $a = -\\tfrac{1}{2}$.\nThen $A$ is idempotent with rank $1$ and trace $1$, so its eigenvalues are $1, 0, 0$; $2I + 3A$ has eigenvalues $5, 2, 2$ and $\\det = 5 \\cdot 2 \\cdot 2 = 20$.",
+      "steps": [
+        {
+          "title": "Use A squared equals A to find a",
+          "body": "$$\nA^2 = \\mathbf{u}\\mathbf{v}^\\top\\mathbf{u}\\mathbf{v}^\\top = \\mathbf{u}(\\mathbf{v}^\\top\\mathbf{u})\\mathbf{v}^\\top = (\\mathbf{v}^\\top\\mathbf{u})\\,A,\n$$\nbecause $\\mathbf{v}^\\top\\mathbf{u}$ is a scalar. Since $\\mathbf{u}$ and $\\mathbf{v}$ are non-zero, $A \\ne 0$, so $A^2 = A$ means $\\mathbf{v}^\\top\\mathbf{u} = 1$. Here $\\mathbf{v}^\\top\\mathbf{u} = 2a + 3(1) + 1(-1) = 2a + 2$, so $2a + 2 = 1$ and $a = -\\tfrac{1}{2}$."
+        },
+        {
+          "title": "Eigenvalues of A",
+          "body": "An idempotent matrix satisfies $\\lambda^2 = \\lambda$ for each eigenvalue, so every eigenvalue is $0$ or $1$, and it is diagonalisable. $A = \\mathbf{u}\\mathbf{v}^\\top$ has rank $1$, so exactly one eigenvalue is $1$ and the other two are $0$. (Check: $\\operatorname{tr}A = \\mathbf{v}^\\top\\mathbf{u} = 1$.)"
+        },
+        {
+          "title": "Eigenvalues and determinant of 2I + 3A",
+          "body": "If $A\\mathbf{x} = \\lambda\\mathbf{x}$ then $(2I + 3A)\\mathbf{x} = (2 + 3\\lambda)\\mathbf{x}$. The eigenvalues $1, 0, 0$ of $A$ become $5, 2, 2$, so\n$$\n\\det(2I + 3A) = 5 \\cdot 2 \\cdot 2 = 20.\n$$"
+        },
+        {
+          "title": "Cross-check",
+          "body": "By the matrix determinant lemma, $\\det(2I + 3\\mathbf{u}\\mathbf{v}^\\top) = 2^3\\left(1 + \\tfrac{3}{2}\\,\\mathbf{v}^\\top\\mathbf{u}\\right) = 8 \\cdot \\tfrac{5}{2} = 20$, which agrees."
+        }
+      ],
+      "finalAnswer": "**20**",
+      "commonTrap": "Forgetting that two eigenvalues of $A$ are $0$ and mapping all three to $2 + 3(1) = 5$ gives $125$; treating $\\det(2I + 3A)$ as $2^3 + 3^3\\det A$ gives $8$. Also, $a$ is fixed by $A^2 = A$ and cannot be left free."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "20",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\na=sp.symbols('a');u=sp.Matrix([2,1,-1]);v=sp.Matrix([a,3,1]);A=u*v.T\ns=sp.solve(list(A*A-A),a,dict=True)[0];A=A.subs(s)\nprint(s,A*A==A,A.trace(),A.rank(),(2*sp.eye(3)+3*A).det())",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-variable-elimination"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (variable elimination) over four variables: restricting to evidence, tracking the scope of each new factor, and two routine numeric evaluations; the independence trap in one statement adds slight care; about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "Variable elimination on a diamond-shaped Bayesian network: scopes and values of the intermediate factors, the marginal probability of the evidence and the posterior",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A cloud service is modelled by a Bayesian network over four Boolean variables ($1$ = true, $0$ = false): $X$ (a data-centre power event occurs), $Y$ (service A fails), $Z$ (service B fails) and $W$ (the status page shows an outage). The edges are $X \\to Y$, $X \\to Z$, $Y \\to W$ and $Z \\to W$, so the joint distribution is $P(X)\\,P(Y \\mid X)\\,P(Z \\mid X)\\,P(W \\mid Y, Z)$. The parameters are:\n\n| Quantity | Value |\n|---|---|\n| $P(X=1)$ | $0.3$ |\n| $P(Y=1 \\mid X=1)$ | $0.8$ |\n| $P(Y=1 \\mid X=0)$ | $0.2$ |\n| $P(Z=1 \\mid X=1)$ | $0.6$ |\n| $P(Z=1 \\mid X=0)$ | $0.1$ |\n| $P(W=1 \\mid Y=1, Z=1)$ | $0.9$ |\n| $P(W=1 \\mid Y=1, Z=0)$ | $0.6$ |\n| $P(W=1 \\mid Y=0, Z=1)$ | $0.5$ |\n| $P(W=1 \\mid Y=0, Z=0)$ | $0.1$ |\n\nExact inference uses **variable elimination** (VE) with the four conditional probability tables as the initial factors. The evidence $W = 1$ is applied first, by restricting every factor that mentions $W$ to $W = 1$. Each hidden variable is then eliminated by multiplying all current factors that mention it and summing it out, which creates one new factor.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Eliminating $Y$ first creates a new factor over $X$ and $Z$ only, and its entry for $X = 1, Z = 1$ is $0.82$."
+      },
+      {
+        "label": "B",
+        "text": "Eliminating $X$ first creates a new factor over $Y$ and $Z$ that equals $P(Y)\\,P(Z)$ for every value of $(Y, Z)$."
+      },
+      {
+        "label": "C",
+        "text": "$P(W = 1) = 0.3742$."
+      },
+      {
+        "label": "D",
+        "text": "$P(X = 1 \\mid W = 1) \\approx 0.555$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Restricting to $W=1$ gives $\\phi(Y, Z) = P(W=1 \\mid Y, Z)$. Eliminating $Y$ gives $\\tau_1(X, Z) = \\sum_y P(y \\mid X)\\,\\phi(y, Z)$ with $\\tau_1(1, 1) = 0.8(0.9) + 0.2(0.5) = 0.82$; then eliminating $Z$ gives $\\tau_2(0) = 0.238$, $\\tau_2(1) = 0.692$.\nSo $P(X=1, W=1) = 0.2076$, $P(X=0, W=1) = 0.1666$, $P(W=1) = 0.3742$ and $P(X=1 \\mid W=1) = 0.2076/0.3742 \\approx 0.555$.\nEliminating $X$ first yields $P(Y, Z)$, which is not $P(Y)P(Z)$ because $X$ is a common cause. Correct: A, C, D.",
+      "steps": [
+        {
+          "title": "Apply the evidence",
+          "body": "Restricting $P(W \\mid Y, Z)$ to $W = 1$ gives a factor $\\phi(Y, Z)$ with entries $\\phi(1,1) = 0.9$, $\\phi(1,0) = 0.6$, $\\phi(0,1) = 0.5$, $\\phi(0,0) = 0.1$. Only $Y$, $Z$ and $X$ remain as hidden variables."
+        },
+        {
+          "title": "Eliminate Y (statement A)",
+          "body": "The factors mentioning $Y$ are $P(Y \\mid X)$ and $\\phi(Y, Z)$. Their product has scope $\\{X, Y, Z\\}$; summing out $Y$ gives $\\tau_1(X, Z) = \\sum_y P(y \\mid X)\\,\\phi(y, Z)$, a factor over $X$ and $Z$ only:\n- $\\tau_1(1,1) = 0.8(0.9) + 0.2(0.5) = 0.82$\n- $\\tau_1(1,0) = 0.8(0.6) + 0.2(0.1) = 0.50$\n- $\\tau_1(0,1) = 0.2(0.9) + 0.8(0.5) = 0.58$\n- $\\tau_1(0,0) = 0.2(0.6) + 0.8(0.1) = 0.20$\n\nStatement A is true."
+        },
+        {
+          "title": "Eliminate Z and X (statements C and D)",
+          "body": "Multiply $P(Z \\mid X)$ and $\\tau_1(X, Z)$ and sum out $Z$:\n$$\n\\tau_2(1) = 0.6(0.82) + 0.4(0.50) = 0.692, \\qquad \\tau_2(0) = 0.1(0.58) + 0.9(0.20) = 0.238.\n$$\nThen $P(X=1, W=1) = 0.3(0.692) = 0.2076$ and $P(X=0, W=1) = 0.7(0.238) = 0.1666$. Therefore\n$$\nP(W = 1) = 0.2076 + 0.1666 = 0.3742, \\qquad P(X = 1 \\mid W = 1) = \\frac{0.2076}{0.3742} \\approx 0.5548 \\approx 0.555.\n$$\nStatements C and D are true."
+        },
+        {
+          "title": "Eliminate X first (statement B)",
+          "body": "The factors mentioning $X$ are $P(X)$, $P(Y \\mid X)$ and $P(Z \\mid X)$; summing out $X$ gives $\\tau(Y, Z) = \\sum_x P(x)P(Y \\mid x)P(Z \\mid x) = P(Y, Z)$, a joint distribution, not a product of marginals. For instance\n$$\nP(Y{=}1, Z{=}1) = 0.3(0.8)(0.6) + 0.7(0.2)(0.1) = 0.158, \\quad P(Y{=}1)P(Z{=}1) = 0.38 \\times 0.25 = 0.095.\n$$\n$Y$ and $Z$ share the common cause $X$, so they are dependent. Statement B is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "With $W = 1$ already fixed, summing out $Y$ leaves a factor over $\\{X, Z\\}$, and $\\tau_1(1, 1) = 0.8 \\cdot 0.9 + 0.2 \\cdot 0.5 = 0.82$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "The new factor is $P(Y, Z)$, and $P(Y{=}1, Z{=}1) = 0.158 \\ne 0.095 = P(Y{=}1)P(Z{=}1)$. $Y$ and $Z$ are dependent through $X$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$P(W=1) = \\sum_x P(x)\\,\\tau_2(x) = 0.2076 + 0.1666 = 0.3742$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$P(X=1 \\mid W=1) = 0.2076 / 0.3742 \\approx 0.5548$, which rounds to $0.555$."
+        }
+      ],
+      "commonTrap": "Treating $Y$ and $Z$ as independent (they share the cause $X$), and reporting the un-normalised value $0.2076$ as the posterior instead of dividing by $P(W=1) = 0.3742$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import itertools as I\npX={1:.3,0:.7};a={1:.8,0:.2};b={1:.6,0:.1};c={(1,1):.9,(1,0):.6,(0,1):.5,(0,0):.1}\nP=lambda t,p:p if t else 1-p\nJ=lambda x,y,z,w:pX[x]*P(y,a[x])*P(z,b[x])*P(w,c[(y,z)])\ntau=sum(P(y,a[1])*c[(y,1)] for y in(0,1))\nW1=sum(J(x,y,z,1) for x,y,z in I.product((0,1),repeat=3));X1=sum(J(1,y,z,1) for y,z in I.product((0,1),repeat=2))\npyz=sum(pX[x]*a[x]*b[x] for x in(0,1));py=sum(pX[x]*a[x] for x in(0,1));pz=sum(pX[x]*b[x] for x in(0,1))\nprint(round(tau,4),round(W1,4),round(X1/W1,4),round(pyz,4),round(py*pz,4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M22-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-22",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one Python concept (modifying a list while iterating over an alias, versus iterating over the original while editing a copy) traced over two short loops; the skipped-element behaviour is the only subtlety; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Removing items from a list while iterating over it skips elements, whereas editing a copy while iterating the original does not; list aliasing versus slicing",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ntemps = [5, 2, 2, 7, 4, 4, 4, 9, 6, 1]\nclean = temps[:]\nfor t in temps:\n    if t % 2 == 0:\n        clean.remove(t)\ntail = temps\nfor t in temps:\n    if t < 5:\n        tail.remove(t)\nprint(len(clean) * 100 + len(tail) * 10 + sum(tail) - sum(clean))\n```\n\nHere `list.remove(x)` deletes the first element equal to `x`. The value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 471,
+      "max": 471
+    },
+    "solution": {
+      "quick": "The first loop iterates over `temps` but edits the copy `clean`, so it removes every even value: `clean = [5, 7, 9, 1]`.\nThe second loop edits `temps` itself through the alias `tail` while iterating, so elements next to removed ones are skipped: `tail = [5, 2, 7, 4, 9, 6]`.\nThe output is $4 \\cdot 100 + 6 \\cdot 10 + 33 - 22 = 471$.",
+      "steps": [
+        {
+          "title": "First loop: iterate temps, edit the copy",
+          "body": "`clean = temps[:]` is a new list, so `temps` is not changed while it is iterated and no element is skipped. The even values $2, 2, 4, 4, 4, 6$ are each removed once (each call removes the first remaining equal element), so\n`clean = [5, 7, 9, 1]`, with `len(clean) = 4` and `sum(clean) = 22`."
+        },
+        {
+          "title": "Second loop: iterate and edit the same list",
+          "body": "`tail = temps` creates an alias, not a copy, so the loop shortens the list it is iterating over. The list iterator keeps an index $i$ and always moves on to $i + 1$, so after a removal the element that slid into position $i$ is skipped. Trace (list shown after each step):\n- $i=0$: `5`, kept.\n- $i=1$: `2` is below 5, remove it: `[5, 2, 7, 4, 4, 4, 9, 6, 1]`.\n- $i=2$: `7`, kept (the second `2` slid into position 1 and was skipped).\n- $i=3$: `4`, remove first 4: `[5, 2, 7, 4, 4, 9, 6, 1]`.\n- $i=4$: `4`, remove first 4: `[5, 2, 7, 4, 9, 6, 1]`.\n- $i=5$: `6`, kept.\n- $i=6$: `1`, remove it: `[5, 2, 7, 4, 9, 6]`.\n- $i=7$: the list now has $6$ elements, so the loop ends."
+        },
+        {
+          "title": "Final values",
+          "body": "`tail = [5, 2, 7, 4, 9, 6]`, so `len(tail) = 6` and `sum(tail) = 5 + 2 + 7 + 4 + 9 + 6 = 33`."
+        },
+        {
+          "title": "Evaluate the printed expression",
+          "body": "$$\n4 \\cdot 100 + 6 \\cdot 10 + 33 - 22 = 400 + 60 + 11 = 471.\n$$"
+        }
+      ],
+      "finalAnswer": "**471**",
+      "commonTrap": "Assuming the second loop removes every value below 5, which would leave `[5, 7, 9, 6]` and print $400 + 40 + 27 - 22 = 445$. Removing items from a list while iterating over it skips the element that follows each removal, and `tail = temps` does not copy the list."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "471",
+      "agreesWithKey": true,
+      "checkCode": "temps=[5,2,2,7,4,4,4,9,6,1];clean=temps[:]\nfor t in temps:\n    if t%2==0:clean.remove(t)\ntail=temps\nfor t in temps:\n    if t<5:tail.remove(t)\nprint(len(clean)*100+len(tail)*10+sum(tail)-sum(clean))\nL=[5,2,2,7,4,4,4,9,6,1];i=0\nwhile i<len(L):\n    if L[i]<5:L.remove(L[i])\n    i+=1\nprint(L)",
+      "notes": ""
+    }
+  }
+]

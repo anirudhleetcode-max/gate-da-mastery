@@ -254,7 +254,7 @@
     "topicId": "la-matrices",
     "name": "Partitioned (block) matrices: product, determinant, inverse",
     "latex": "\\det\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix} = \\det A \\cdot \\det\\!\\left(D - CA^{-1}B\\right) \\;\\; (A \\text{ invertible}), \\qquad \\det\\begin{bmatrix} A & B \\\\ 0 & D \\end{bmatrix} = \\det A \\cdot \\det D",
-    "meaning": "Partition matrices into blocks of compatible sizes; blocks then multiply like scalar entries, **keeping the order**:\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}\\begin{bmatrix} E & F \\\\ G & H \\end{bmatrix} = \\begin{bmatrix} AE + BG & AF + BH \\\\ CE + DG & CF + DH \\end{bmatrix}\n$$\n\n$S = D - CA^{-1}B$ is the **Schur complement** of $A$. When $A$ and $S$ are invertible, $\\det M = \\det A \\cdot \\det S$ and\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} + A^{-1}BS^{-1}CA^{-1} & -A^{-1}BS^{-1} \\\\ -S^{-1}CA^{-1} & S^{-1} \\end{bmatrix}.\n$$\n\nFor block-triangular matrices ($B = 0$ or $C = 0$), with square diagonal blocks $A$ and $D$:\n- the determinant is $\\det A \\cdot \\det D$;\n- the eigenvalues are those of $A$ together with those of $D$;\n- $\\begin{bmatrix} A & B \\\\ 0 & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} & -A^{-1}BD^{-1} \\\\ 0 & D^{-1} \\end{bmatrix}$.\n\nFor block-diagonal matrices, inverses and powers act block by block: $\\begin{bmatrix} A & 0 \\\\ 0 & D \\end{bmatrix}^{k} = \\begin{bmatrix} A^k & 0 \\\\ 0 & D^k \\end{bmatrix}$.",
+    "meaning": "Partition matrices into blocks of compatible sizes; blocks then multiply like scalar entries, **keeping the order**:\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}\\begin{bmatrix} E & F \\\\ G & H \\end{bmatrix} = \\begin{bmatrix} AE + BG & AF + BH \\\\ CE + DG & CF + DH \\end{bmatrix}\n$$\n\n$S = D - CA^{-1}B$ is the **Schur complement** of $A$. Whenever $A$ is invertible, $\\det M = \\det A \\cdot \\det S$. If $S$ is also invertible, then $M$ is invertible and\n\n$$\n\\begin{bmatrix} A & B \\\\ C & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} + A^{-1}BS^{-1}CA^{-1} & -A^{-1}BS^{-1} \\\\ -S^{-1}CA^{-1} & S^{-1} \\end{bmatrix}.\n$$\n\nFor block-triangular matrices ($B = 0$ or $C = 0$), with square diagonal blocks $A$ and $D$:\n- the determinant is $\\det A \\cdot \\det D$;\n- the eigenvalues are those of $A$ together with those of $D$;\n- $\\begin{bmatrix} A & B \\\\ 0 & D \\end{bmatrix}^{-1} = \\begin{bmatrix} A^{-1} & -A^{-1}BD^{-1} \\\\ 0 & D^{-1} \\end{bmatrix}$.\n\nFor block-diagonal matrices, inverses and powers act block by block: $\\begin{bmatrix} A & 0 \\\\ 0 & D \\end{bmatrix}^{k} = \\begin{bmatrix} A^k & 0 \\\\ 0 & D^k \\end{bmatrix}$.",
     "variables": [
       {
         "symbol": "$A, D$",
@@ -494,7 +494,7 @@
     "topicId": "la-eigen",
     "name": "Sum and product of eigenvalues",
     "latex": "\\sum_{i=1}^{n} \\lambda_i = \\operatorname{tr}(A) = \\sum_{i=1}^{n} a_{ii}, \\qquad \\prod_{i=1}^{n} \\lambda_i = \\det A",
-    "meaning": "The eigenvalues are counted with **algebraic multiplicity**, including complex ones. Consequences:\n- $A$ is singular $\\iff 0$ is an eigenvalue $\\iff \\det A = 0$.\n- $\\operatorname{tr}(A^k) = \\sum_i \\lambda_i^k$ and $\\det(p(A)) = \\prod_i p(\\lambda_i)$ for any polynomial $p$.\n- $\\operatorname{tr}(AB) = \\operatorname{tr}(BA)$, so similar matrices ($B = P^{-1}AP$) share the trace, determinant and eigenvalues.",
+    "meaning": "The eigenvalues are counted with **algebraic multiplicity**, including complex ones. Consequences:\n- $A$ is singular $\\iff 0$ is an eigenvalue $\\iff \\det A = 0$.\n- $\\operatorname{tr}(A^k) = \\sum_i \\lambda_i^k$ and $\\det(p(A)) = \\prod_i p(\\lambda_i)$ for any polynomial $p$.\n- $\\operatorname{tr}(AB) = \\operatorname{tr}(BA)$.\n- Similar matrices ($B = P^{-1}AP$) have the same characteristic polynomial, since $\\det(\\lambda I - P^{-1}AP) = \\det\\big(P^{-1}(\\lambda I - A)P\\big) = \\det(\\lambda I - A)$; hence they share the eigenvalues, the trace and the determinant.",
     "variables": [
       {
         "symbol": "$\\lambda_i$",
@@ -547,7 +547,7 @@
       }
     ],
     "whenToUse": "Eigenvalues, trace or determinant of $A^2 - 3A + 2I$, $A^{-1}$, $A^{10}$, $\\operatorname{adj}A$, $(A + 2I)^{-1}$ and similar, without ever computing the matrix itself.",
-    "commonMistake": "Adding the eigenvalues of $A$ and $B$ to get those of $A + B$ (valid only when they share eigenvectors, e.g. $B = cI$), and likewise multiplying them for $AB$. Also assuming $A^\\top$ has the same eigenvectors as $A$.",
+    "commonMistake": "Adding the eigenvalues of $A$ and $B$ to get those of $A + B$, or multiplying them for $AB$. This fails in general: $\\begin{bmatrix} 0 & 1 \\\\ 0 & 0 \\end{bmatrix}$ and $\\begin{bmatrix} 0 & 0 \\\\ 1 & 0 \\end{bmatrix}$ have only the eigenvalue 0, yet their sum has eigenvalues $\\pm 1$ and their product has eigenvalues $1, 0$. It is safe in special cases, such as $B = cI$, $B$ a polynomial in $A$, or $A$ and $B$ with a common basis of eigenvectors. Also assuming $A^\\top$ has the same eigenvectors as $A$.",
     "example": "$A$ ($3 \\times 3$) has eigenvalues $1, 2, 3$, so $\\det A = 6$.\n\n- $B = A^2 - 3A + 2I$ has eigenvalues $p(\\lambda) = \\lambda^2 - 3\\lambda + 2$: $p(1) = 0,\\ p(2) = 0,\\ p(3) = 2$. So $\\det B = 0$ and $\\operatorname{tr}B = 2$.\n- $A^{-1}$ has eigenvalues $1, \\frac{1}{2}, \\frac{1}{3}$, so $\\operatorname{tr}A^{-1} = \\frac{11}{6} \\approx 1.833$.\n- $\\operatorname{adj}A$ has eigenvalues $\\frac{6}{1}, \\frac{6}{2}, \\frac{6}{3} = 6, 3, 2$, so $\\det(\\operatorname{adj}A) = 36 = (\\det A)^2$.",
     "conceptIds": [
       "c-la-eigenvalues-eigenvectors",
@@ -592,7 +592,7 @@
     "topicId": "la-eigen",
     "name": "Diagonalization and powers of a matrix",
     "latex": "A = PDP^{-1} \\;\\Rightarrow\\; A^k = PD^kP^{-1}; \\qquad A \\text{ diagonalizable} \\iff g(\\lambda) = a(\\lambda) \\text{ for every eigenvalue}, \\quad g(\\lambda) = n - \\operatorname{rank}(A - \\lambda I)",
-    "meaning": "The columns of $P$ are $n$ **linearly independent eigenvectors**, and $D = \\operatorname{diag}(\\lambda_1, \\ldots, \\lambda_n)$ lists the eigenvalues in the same order.\n\n- Geometric multiplicity $g(\\lambda) = \\dim N(A - \\lambda I)$ satisfies $1 \\le g(\\lambda) \\le a(\\lambda)$, the algebraic multiplicity (the multiplicity as a root of the characteristic polynomial).\n- $A$ is diagonalizable iff $g(\\lambda) = a(\\lambda)$ for every eigenvalue, equivalently $\\sum_\\lambda g(\\lambda) = n$.\n- Sufficient conditions: $n$ distinct eigenvalues, or $A$ real symmetric.\n- Eigenvectors belonging to distinct eigenvalues are always linearly independent.",
+    "meaning": "The columns of $P$ are $n$ **linearly independent eigenvectors**, and $D = \\operatorname{diag}(\\lambda_1, \\ldots, \\lambda_n)$ lists the eigenvalues in the same order.\n\n- Geometric multiplicity $g(\\lambda) = \\dim N(A - \\lambda I)$ satisfies $1 \\le g(\\lambda) \\le a(\\lambda)$, the algebraic multiplicity (the multiplicity as a root of the characteristic polynomial).\n- $A$ is diagonalizable iff $g(\\lambda) = a(\\lambda)$ for every eigenvalue, equivalently $\\sum_\\lambda g(\\lambda) = n$. With complex eigenvalues counted, this is diagonalizability over $\\mathbb{C}$; a real $P$ and $D$ additionally need every eigenvalue to be real (a $90^\\circ$ rotation is diagonalizable over $\\mathbb{C}$ but not over $\\mathbb{R}$).\n- Sufficient conditions: $n$ distinct eigenvalues, or $A$ real symmetric.\n- Eigenvectors belonging to distinct eigenvalues are always linearly independent.",
     "variables": [
       {
         "symbol": "$P$",
@@ -727,7 +727,8 @@
     "example": "- **Skew-symmetric:** $S = \\begin{bmatrix} 0 & 2 & -1 \\\\ -2 & 0 & 3 \\\\ 1 & -3 & 0 \\end{bmatrix}$ has $\\operatorname{tr}S = 0$, $\\det S = 0$ (odd order) and $S_2 = 2^2 + (-1)^2 + 3^2 = 14$ (sum of its $2 \\times 2$ principal minors). So $\\lambda^3 + 14\\lambda = 0$, giving $\\lambda = 0,\\ \\pm i\\sqrt{14}$.\n- **Equal row sums:** every row of $A = \\begin{bmatrix} 2 & 1 & 1 \\\\ 0 & 3 & 1 \\\\ 1 & 1 & 2 \\end{bmatrix}$ sums to 4, so $\\lambda_1 = 4$. Then $\\lambda_2 + \\lambda_3 = \\operatorname{tr}A - 4 = 3$ and $\\lambda_2\\lambda_3 = \\det A/4 = 8/4 = 2$, so $\\lambda_2, \\lambda_3 = 1, 2$.\n- **Nilpotent:** $N = \\begin{bmatrix} 0 & 1 & 2 \\\\ 0 & 0 & 3 \\\\ 0 & 0 & 0 \\end{bmatrix}$ is strictly upper triangular, so $N^3 = 0$, all its eigenvalues are 0, and $\\det(I + N) = 1$.",
     "conceptIds": [
       "c-la-orthogonal-matrices",
-      "c-la-eigenvalues-eigenvectors"
+      "c-la-eigenvalues-eigenvectors",
+      "c-la-projections-idempotent"
     ]
   },
   {
@@ -763,7 +764,7 @@
         "meaning": "adjugate of A"
       }
     ],
-    "whenToUse": "Evaluating determinants by hand, and the very common one-line questions: \"$\\det A = 4$ for a $3 \\times 3$ matrix; find $\\det(2A^{-1})$\", or $\\det(A^\\top A)$, $\\det(\\operatorname{adj}A)$.",
+    "whenToUse": "Evaluating determinants by hand, and one-line questions such as \"$\\det A = 4$ for a $3 \\times 3$ matrix; find $\\det(2A^{-1})$\", or $\\det(A^\\top A)$, $\\det(\\operatorname{adj}A)$.",
     "commonMistake": "Writing $\\det(kA) = k\\det A$: every one of the $n$ rows is scaled, so the factor is $k^n$. Also $\\det(A + B) = \\det A + \\det B$ (false), and forgetting the checkerboard signs $(-1)^{i+j}$ in the expansion.",
     "example": "$A$ is $3 \\times 3$ with $\\det A = 4$:\n\n- $\\det(2A) = 2^3 \\cdot 4 = 32$\n- $\\det(A^{-1}) = \\frac{1}{4}$\n- $\\det(3A^{-1}) = \\frac{27}{4} = 6.75$\n- $\\det(A^\\top A) = 4 \\cdot 4 = 16$\n- $\\det(\\operatorname{adj}A) = 4^{3-1} = 16$",
     "conceptIds": [
