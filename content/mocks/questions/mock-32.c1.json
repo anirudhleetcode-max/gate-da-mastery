@@ -1,0 +1,949 @@
+[
+  {
+    "id": "M32-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 1,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-analytical",
+    "subtopicIds": [
+      "ga-numerical-reasoning"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a short residue-by-residue enumeration (or the two-pack formula ab − a − b) settles it, but distractors built from lcm − 1 and from the first always-fillable size catch hurried solvers; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Numerical reasoning with two coprime pack sizes: the largest total that cannot be written as 7a + 9b with non-negative integers a and b.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A stationery supplier ships notebooks only in sealed cartons of $7$ notebooks and sealed cartons of $9$ notebooks. An order for $n$ notebooks can be filled if and only if $n = 7a + 9b$ for some non-negative integers $a$ and $b$ (no carton is ever opened).\n\nWhat is the largest order size $n$ that the supplier **cannot** fill?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$40$"
+      },
+      {
+        "label": "B",
+        "text": "$47$"
+      },
+      {
+        "label": "C",
+        "text": "$48$"
+      },
+      {
+        "label": "D",
+        "text": "$62$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Group order sizes by their remainder modulo $7$. The cheapest way to reach each remainder uses $0, 1, \\dots, 6$ cartons of $9$, i.e. $0, 9, 18, 27, 36, 45, 54$ notebooks. The latest of these is $54$, so $54 - 7 = 47$ is the largest order that cannot be filled; every order from $48$ upward can.",
+      "steps": [
+        {
+          "title": "Set up the condition",
+          "body": "An order $n$ can be filled exactly when, for some $b \\ge 0$ with $9b \\le n$, the remainder $n - 9b$ is a non-negative multiple of $7$. Adding cartons of $7$ never changes $n \\bmod 7$, so only the cartons of $9$ decide which remainder modulo $7$ is reached."
+        },
+        {
+          "title": "Smallest fillable order in each remainder class",
+          "body": "Since $9 \\equiv 2 \\pmod 7$, using $b = 0, 1, \\dots, 6$ cartons of $9$ gives:\n\n| $b$ | $9b$ | $9b \\bmod 7$ |\n|---|---|---|\n| 0 | 0 | 0 |\n| 1 | 9 | 2 |\n| 2 | 18 | 4 |\n| 3 | 27 | 6 |\n| 4 | 36 | 1 |\n| 5 | 45 | 3 |\n| 6 | 54 | 5 |\n\nEach remainder appears exactly once, and $9b$ is the smallest fillable order with that remainder; adding cartons of $7$ then fills every larger order in the same class."
+        },
+        {
+          "title": "Largest unfillable order",
+          "body": "In each class, the value $9b - 7$ just below the smallest fillable order cannot be filled whenever it is positive, because reaching that remainder needs at least $9b$ notebooks. The largest of these values is $54 - 7 = 47$ (remainder $5$)."
+        },
+        {
+          "title": "Verify",
+          "body": "$47 - 9b$ for $b = 0, \\dots, 5$ gives $47, 38, 29, 20, 11, 2$, none a multiple of $7$, so $47$ cannot be filled. Meanwhile $48 = 7 \\cdot 3 + 9 \\cdot 3$, $49 = 7 \\cdot 7$, $50 = 7 \\cdot 2 + 9 \\cdot 4$, $51 = 7 \\cdot 6 + 9$, $52 = 7 + 9 \\cdot 5$, $53 = 7 \\cdot 5 + 9 \\cdot 2$ and $54 = 9 \\cdot 6$: seven consecutive fillable sizes, so every larger order is fillable by adding cartons of $7$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$40$ cannot be filled ($40, 31, 22, 13, 4$ contain no multiple of $7$), but it is not the largest such order, since $47$ cannot be filled either."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$47 - 9b \\in \\{47, 38, 29, 20, 11, 2\\}$ is never a multiple of $7$, and every order from $48$ upward can be filled."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$48 = 7 \\times 3 + 9 \\times 3$ can be filled. $48 = (7 - 1)(9 - 1)$ is the smallest size from which **every** order can be filled, one more than the largest unfillable size."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$62 = 7 \\times 5 + 9 \\times 3$ can be filled. $62 = \\operatorname{lcm}(7, 9) - 1$ plays no role in this problem."
+        }
+      ],
+      "shortcut": "For two pack sizes $a$ and $b$ with no common factor, the largest total that cannot be formed is $ab - a - b$ (Sylvester's formula): $7 \\times 9 - 7 - 9 = 47$.",
+      "commonTrap": "Answering $48 = (7 - 1)(9 - 1)$, which is the first size from which every order can be filled rather than the last size that cannot; or stopping at the first unfillable number found, such as $40$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B) 47",
+      "agreesWithKey": true,
+      "checkCode": "rep={7*a+9*b for a in range(30) for b in range(30)}\nprint(max(n for n in range(1,200) if n not in rep), all(n in rep for n in (48,62)), 40 in rep)  # 47 True False",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 2,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-spatial",
+    "subtopicIds": [
+      "ga-transformations"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — three plane transformations about a point other than the origin must be composed; the solver has to see that reflections in two perpendicular lines make a half-turn and then track the direction of the extra rotation; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Composition of plane transformations: reflections in two perpendicular lines give a 180° rotation about their intersection, which combines with a further rotation about the same point.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A figure in the $xy$-plane is subjected to the following three transformations, one after another, in the order listed:\n\n1. reflection in the line $x = 2$;\n2. reflection in the line $y = 3$;\n3. rotation through $90^\\circ$ anticlockwise about the point $(2, 3)$.\n\nThe combined effect on every figure is the same as that of a single transformation. Which one of the following is that single transformation?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Rotation through $90^\\circ$ anticlockwise about $(2, 3)$"
+      },
+      {
+        "label": "B",
+        "text": "Rotation through $90^\\circ$ clockwise about $(2, 3)$"
+      },
+      {
+        "label": "C",
+        "text": "Rotation through $180^\\circ$ about $(2, 3)$"
+      },
+      {
+        "label": "D",
+        "text": "Reflection in the line $y = x + 1$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "The two reflections together send $(x, y)$ to $(4 - x, 6 - y)$, a half-turn ($180^\\circ$) about $(2, 3)$, where the mirror lines cross. Adding $90^\\circ$ anticlockwise about the same point gives $270^\\circ$ anticlockwise, which is $90^\\circ$ clockwise about $(2, 3)$.",
+      "steps": [
+        {
+          "title": "Write each reflection in coordinates",
+          "body": "Reflection in $x = 2$: $(x, y) \\mapsto (4 - x,\\ y)$. Reflection in $y = 3$: $(x, y) \\mapsto (x,\\ 6 - y)$. The first followed by the second gives $(x, y) \\mapsto (4 - x,\\ 6 - y)$."
+        },
+        {
+          "title": "Recognise the half-turn",
+          "body": "Measure positions from the centre $(2, 3)$: a point with offset $(u, v) = (x - 2,\\ y - 3)$ goes to offset $(4 - x - 2,\\ 6 - y - 3) = (-u, -v)$. That is a rotation through $180^\\circ$ about $(2, 3)$."
+        },
+        {
+          "title": "Add the third transformation",
+          "body": "A $90^\\circ$ anticlockwise turn sends an offset $(p, q)$ to $(-q, p)$, so $(-u, -v) \\mapsto (v, -u)$. The net map $(u, v) \\mapsto (v, -u)$ is exactly a $90^\\circ$ **clockwise** turn about $(2, 3)$. In angles: $180^\\circ + 90^\\circ = 270^\\circ$ anticlockwise $= 90^\\circ$ clockwise."
+        },
+        {
+          "title": "Check with one point",
+          "body": "Take $P = (5, 3)$. Step 1 gives $(-1, 3)$; step 2 leaves it at $(-1, 3)$ (it lies on $y = 3$); step 3 turns the offset $(-3, 0)$ into $(0, -3)$, giving $(2, 0)$. A $90^\\circ$ clockwise turn of $P$ about $(2, 3)$ sends the offset $(3, 0)$ to $(0, -3)$, also giving $(2, 0)$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is what remains if the two reflections are assumed to cancel. Reflecting twice in the **same** line cancels, but reflections in two perpendicular lines produce a half-turn."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The half-turn from the two reflections plus $90^\\circ$ anticlockwise about the same centre is $270^\\circ$ anticlockwise, i.e. $90^\\circ$ clockwise about $(2, 3)$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$180^\\circ$ about $(2, 3)$ is the effect of the two reflections alone; it ignores the third transformation."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Two reflections followed by a rotation preserve orientation (a clockwise labelling of a figure stays clockwise), whereas a single reflection reverses it, so the net effect cannot be a reflection. The line $y = x + 1$ passes through $(2, 3)$, which only makes it look plausible."
+        }
+      ],
+      "shortcut": "Reflections in two lines meeting at an angle $\\theta$ compose to a rotation through $2\\theta$ about their intersection point. Here $\\theta = 90^\\circ$ gives $180^\\circ$, and $180^\\circ + 90^\\circ = 270^\\circ$ anticlockwise $= 90^\\circ$ clockwise.",
+      "commonTrap": "Treating the two reflections as cancelling each other (true only for the same mirror line) and answering a $90^\\circ$ anticlockwise rotation, or forgetting the final rotation and stopping at the half-turn."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B) rotation through 90 degrees clockwise about (2, 3)",
+      "agreesWithKey": true,
+      "checkCode": "import random\nf=lambda x,y:(4-x,6-y)\nr=lambda x,y:(2-(y-3),3+(x-2))  # 90 ccw about (2,3)\ncw=lambda x,y:(2+(y-3),3-(x-2))\nok=all(abs(a-b)<1e-9 for _ in range(200) for p in [(random.uniform(-9,9),random.uniform(-9,9))] for a,b in zip(r(*f(*p)),cw(*p)))\nprint(ok)  # True",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 3,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-verbal",
+    "subtopicIds": [
+      "ga-vocabulary"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "VERY_HARD",
+    "difficultyRationale": "Platform-estimated: VERY_HARD — *sanction* is a contronym (it can mean both 'approve' and 'penalise'); one sentence uses the verb in its punitive sense and another uses it in its approving sense inside a negative-sounding sentence, so all five sentences must be read precisely; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Vocabulary in context: distinguishing the approving and the punitive senses of the contronym 'sanction' in noun and verb forms.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Each of the five sentences below uses the word *sanction*, as a noun or as a verb.\n\n- **P:** The ministry has finally sanctioned funds for the new metro line.\n- **Q:** Trade sanctions have cut the country's oil exports by half.\n- **R:** The league sanctioned the club for fielding an ineligible player and deducted three points from its tally.\n- **S:** Custom alone cannot sanction a practice that the law expressly forbids.\n- **T:** The treaty gives the council no sanction to deploy troops abroad.\n\nIn which of the sentences does *sanction* carry the sense of **a penalty or punitive measure**?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Q only"
+      },
+      {
+        "label": "B",
+        "text": "Q and R only"
+      },
+      {
+        "label": "C",
+        "text": "Q, R and S only"
+      },
+      {
+        "label": "D",
+        "text": "Q, R and T only"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "*Sanction* is a contronym: it can mean official approval or authority, or a penalty imposed to enforce a rule. P (funds sanctioned), S (custom cannot sanction a practice) and T (no sanction to deploy troops) use the approving sense; Q (trade sanctions) and R (the club was sanctioned and lost points) use the punitive sense. So the answer is Q and R only.",
+      "steps": [
+        {
+          "title": "Separate the two senses",
+          "body": "As a noun, *sanction* means either official permission (*with the sanction of the board*) or a penalty used to enforce a rule (*economic sanctions*). As a verb it means either to authorise or approve something, or, especially in sport, finance and regulation, to impose a penalty on someone. The context, not the grammatical form, decides which sense applies."
+        },
+        {
+          "title": "Classify P, Q and R",
+          "body": "**P:** a ministry that sanctions *funds* approves their release, so this is approval. **Q:** *trade sanctions* that cut exports are coercive economic measures, so this is a penalty. **R:** the object is the *club*, the reason is a breach of the rules and the result is a points deduction, so the league penalised the club; this is a penalty."
+        },
+        {
+          "title": "Classify S and T",
+          "body": "**S:** *custom alone cannot sanction a practice that the law forbids* means custom cannot make such a practice legitimate, which is the approving sense despite the negative wording. **T:** *no sanction to deploy troops* means no authority or permission to deploy them, which is again the approving sense."
+        },
+        {
+          "title": "Collect the punitive uses",
+          "body": "Only Q and R use *sanction* in the sense of a penalty or punitive measure, which is option (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This recognises the noun *sanctions* in Q but reads *sanctioned* in R as 'approved'. A league does not approve a club *for fielding an ineligible player* and then deduct its points; R is punitive."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Q (trade sanctions) and R (the club was penalised with a points deduction) are the only punitive uses; P, S and T all mean approval or authority."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "In S, custom cannot *legitimise* a forbidden practice, which is the approving sense. The words *cannot* and *forbids* make the sentence sound negative, but they do not change the meaning of *sanction*."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "In T, *no sanction to deploy troops* means no authority or permission to deploy them; the sentence is not about a penalty."
+        }
+      ],
+      "commonTrap": "Deciding the sense from the grammatical form (noun = penalty, verb = approval) or from the tone of the sentence. R uses the verb in its punitive sense, and S uses it in its approving sense inside a negative sentence."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation (conceptual item; no Python check applicable)",
+      "independentAnswer": "(B) Q and R only",
+      "agreesWithKey": true,
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 4,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-quant",
+    "subtopicIds": [
+      "ga-numerical"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "VERY_HARD",
+    "difficultyRationale": "Platform-estimated: VERY_HARD — needs a shift to remove the lower bound, stars and bars, and two levels of inclusion–exclusion for the upper bound; stopping after the first subtraction, ignoring the upper bound or ignoring the lower bound each lands on a listed distractor; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Bounded distributions of identical objects among distinct recipients: stars and bars with a lower-bound shift and inclusion–exclusion for the upper bound.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hackathon jury has $20$ identical mentoring slots to hand out to $5$ shortlisted teams. Every slot must be given to some team, each team must receive **at least $2$** slots, and no team may receive **more than $6$** slots. The teams are distinguishable; the slots are not.\n\nIn how many different ways can the $20$ slots be distributed?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$371$"
+      },
+      {
+        "label": "B",
+        "text": "$381$"
+      },
+      {
+        "label": "C",
+        "text": "$826$"
+      },
+      {
+        "label": "D",
+        "text": "$1001$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Give every team its $2$ slots first: $y_i = x_i - 2$ satisfies $y_1 + \\dots + y_5 = 10$ with $0 \\le y_i \\le 4$. Inclusion–exclusion over teams with $y_i \\ge 5$ gives $\\binom{14}{4} - \\binom{5}{1}\\binom{9}{4} + \\binom{5}{2}\\binom{4}{4} = 1001 - 630 + 10 = 381$.",
+      "steps": [
+        {
+          "title": "Remove the lower bound",
+          "body": "Let $x_i$ be the number of slots team $i$ receives, so $x_1 + \\dots + x_5 = 20$ with $2 \\le x_i \\le 6$. Put $y_i = x_i - 2$. Then $y_1 + \\dots + y_5 = 20 - 10 = 10$ with $0 \\le y_i \\le 4$."
+        },
+        {
+          "title": "Count without the upper bound",
+          "body": "By stars and bars, the number of non-negative integer solutions of $y_1 + \\dots + y_5 = 10$ is $\\binom{10 + 4}{4} = \\binom{14}{4} = 1001$."
+        },
+        {
+          "title": "Subtract solutions in which one team exceeds the cap",
+          "body": "If $y_1 \\ge 5$, write $y_1 = 5 + z_1$; the remaining total is $5$, giving $\\binom{5 + 4}{4} = \\binom{9}{4} = 126$ solutions. Any of the $5$ teams can be the one over the cap: $5 \\times 126 = 630$."
+        },
+        {
+          "title": "Add back solutions in which two teams exceed the cap",
+          "body": "If $y_i \\ge 5$ and $y_j \\ge 5$, these two teams use up all $10$ extra slots (both get exactly $7$ slots, the other three get $2$): $\\binom{0 + 4}{4} = 1$ solution for each of the $\\binom{5}{2} = 10$ pairs. These $10$ cases were subtracted twice, so add them back once. Three teams over the cap would need $15 > 10$ extra slots, which is impossible."
+        },
+        {
+          "title": "Combine",
+          "body": "$1001 - 630 + 10 = 381$."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$1001 - 630 = 371$ stops after the first inclusion–exclusion step. The $10$ distributions in which two teams both get $7$ slots were subtracted twice and must be added back once."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\binom{14}{4} - 5\\binom{9}{4} + \\binom{5}{2}\\binom{4}{4} = 1001 - 630 + 10 = 381$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$826$ applies the cap of $6$ correctly but drops the minimum of $2$: it counts $x_1 + \\dots + x_5 = 20$ with $0 \\le x_i \\le 6$, which includes distributions in which a team gets $0$ or $1$ slot."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$1001 = \\binom{14}{4}$ enforces the minimum of $2$ per team but ignores the cap of $6$, so it includes distributions in which one team gets as many as $12$ slots."
+        }
+      ],
+      "commonTrap": "Stopping inclusion–exclusion after subtracting the single-team violations ($371$). With $10$ extra slots and a cap of $4$ extra per team, two teams can exceed the cap at the same time, and those cases must be added back."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B) 381",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\nfrom math import comb\nprint(sum(1 for t in product(range(2,7),repeat=5) if sum(t)==20), comb(14,4)-5*comb(9,4)+10*comb(4,4))  # 381 381",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named",
+      "ps-marginal-joint"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "VERY_HARD",
+    "difficultyRationale": "Platform-estimated: VERY_HARD for a 1-mark item — p is never given, and the solver must see that conditioning two independent binomial counts with a common p on their total removes p and leaves a hypergeometric probability; the distractors come from sampling with replacement and from assuming p is needed; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "If X ~ Bin(m, p) and Y ~ Bin(n, p) are independent, then X given X + Y = k is hypergeometric and does not depend on p.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "During a short time window, a ride-hailing platform dispatches $6$ ride requests in Zone A and $4$ ride requests in Zone B. Each of the $10$ requests is cancelled independently of the others with the same probability $p$, where $0 < p < 1$ and the value of $p$ is unknown.\n\nGiven that exactly $3$ of the $10$ requests were cancelled, what is the probability that all $3$ cancelled requests were in Zone A?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{27}{125}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{3}{25}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{1}{6}$"
+      },
+      {
+        "label": "D",
+        "text": "It cannot be determined without knowing $p$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "With $X \\sim \\text{Bin}(6, p)$ cancellations in A and $Y \\sim \\text{Bin}(4, p)$ in B, independent, $X + Y \\sim \\text{Bin}(10, p)$ and\n$$P(X = 3 \\mid X + Y = 3) = \\frac{\\binom{6}{3}p^3(1-p)^3 \\cdot (1-p)^4}{\\binom{10}{3}p^3(1-p)^7} = \\frac{20}{120} = \\frac{1}{6},$$\nfor every $p$.",
+      "steps": [
+        {
+          "title": "Model the counts",
+          "body": "Let $X$ be the number of cancelled requests in Zone A and $Y$ the number in Zone B. Independent Bernoulli($p$) trials give $X \\sim \\text{Bin}(6, p)$ and $Y \\sim \\text{Bin}(4, p)$, independent of each other, and $X + Y \\sim \\text{Bin}(10, p)$ because all $10$ trials share the same $p$."
+        },
+        {
+          "title": "Probability of the event and the condition together",
+          "body": "All $3$ cancellations in Zone A means $X = 3$ and $Y = 0$:\n$$P(X = 3,\\ Y = 0) = \\binom{6}{3}p^3(1-p)^3 \\cdot (1-p)^4 = 20\\,p^3(1-p)^7.$$"
+        },
+        {
+          "title": "Divide by the probability of the condition",
+          "body": "$$P(X + Y = 3) = \\binom{10}{3}p^3(1-p)^7 = 120\\,p^3(1-p)^7,$$\nso\n$$P(X = 3 \\mid X + Y = 3) = \\frac{20\\,p^3(1-p)^7}{120\\,p^3(1-p)^7} = \\frac{1}{6}.$$"
+        },
+        {
+          "title": "Interpret",
+          "body": "Given the total, every set of $3$ cancelled requests out of the $10$ is equally likely, whatever $p$ is. The answer is the hypergeometric probability $\\binom{6}{3}\\binom{4}{0}\\big/\\binom{10}{3} = 20/120 = 1/6$, equivalently $\\frac{6}{10} \\cdot \\frac{5}{9} \\cdot \\frac{4}{8} = \\frac{1}{6}$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$(6/10)^3 = 27/125$ treats each cancelled request as independently landing in Zone A with probability $0.6$, i.e. sampling **with** replacement. The three cancelled requests are three **distinct** requests."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\dfrac{6 \\cdot 5 \\cdot 4}{10^3} = \\dfrac{3}{25}$ accounts for distinct requests in the numerator but not in the denominator; the correct product is $\\dfrac{6}{10} \\cdot \\dfrac{5}{9} \\cdot \\dfrac{4}{8} = \\dfrac{1}{6}$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The factor $p^3(1-p)^7$ is common to the numerator and the denominator, leaving $\\binom{6}{3}\\big/\\binom{10}{3} = 1/6$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Because both zones share the same $p$, every arrangement of $3$ cancellations among the $10$ requests has the same probability $p^3(1-p)^7$, so $p$ cancels out of the conditional probability."
+        }
+      ],
+      "shortcut": "Given the total number of successes in independent trials with a common success probability, the successful trials form a uniformly random subset of that size, so the answer is $\\binom{6}{3}\\big/\\binom{10}{3}$ directly.",
+      "commonTrap": "Assuming the answer must depend on $p$ (or plugging in a guessed value of $p$), or computing $(0.6)^3$ as if the three cancellations were drawn with replacement."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(C) 1/6",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\np=sp.symbols('p',positive=True)\nnum=sp.binomial(6,3)*p**3*(1-p)**3*(1-p)**4\nden=sp.binomial(10,3)*p**3*(1-p)**7\nprint(sp.simplify(num/den))  # 1/6",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-conditional-pdf"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — the marginal of Y needs a gamma-type integral, the conditional pdf of X given Y = 1 must be normalised, and the tail probability needs integration by parts; skipping any one step gives a listed distractor; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Conditional PDF f_{X|Y}(x | y) = f_{X,Y}(x, y) / f_Y(y) and a tail probability computed under it.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a reliability study, $X$ is the (random) failure rate of a component, in failures per year, and $Y$ is the component's lifetime, in years. The joint probability density function of $(X, Y)$ is\n\n$$\nf_{X,Y}(x, y) = \\begin{cases} x\\,e^{-x(y + 1)}, & x > 0,\\ y > 0, \\\\ 0, & \\text{otherwise.} \\end{cases}\n$$\n\nThe conditional probability $P(X > 1 \\mid Y = 1)$ is equal to",
+    "options": [
+      {
+        "label": "A",
+        "text": "$e^{-1}$"
+      },
+      {
+        "label": "B",
+        "text": "$e^{-2}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\tfrac{3}{4}\\,e^{-2}$"
+      },
+      {
+        "label": "D",
+        "text": "$3\\,e^{-2}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "$f_Y(y) = \\int_0^\\infty x e^{-x(y+1)}\\,dx = \\dfrac{1}{(y+1)^2}$, so $f_Y(1) = \\tfrac14$ and $f_{X \\mid Y}(x \\mid 1) = 4x e^{-2x}$ for $x > 0$. Then $P(X > 1 \\mid Y = 1) = \\int_1^\\infty 4x e^{-2x}\\,dx = 3e^{-2} \\approx 0.406$.",
+      "steps": [
+        {
+          "title": "Marginal density of $Y$",
+          "body": "Using $\\int_0^\\infty x e^{-ax}\\,dx = \\dfrac{1}{a^2}$ with $a = y + 1$:\n$$f_Y(y) = \\int_0^\\infty x\\,e^{-x(y+1)}\\,dx = \\frac{1}{(y+1)^2}, \\quad y > 0.$$\nAt $y = 1$: $f_Y(1) = \\tfrac14$."
+        },
+        {
+          "title": "Conditional density of $X$ given $Y = 1$",
+          "body": "$$f_{X \\mid Y}(x \\mid 1) = \\frac{f_{X,Y}(x, 1)}{f_Y(1)} = \\frac{x\\,e^{-2x}}{1/4} = 4x\\,e^{-2x}, \\quad x > 0.$$\nCheck: $\\int_0^\\infty 4x e^{-2x}\\,dx = 4 \\cdot \\tfrac14 = 1$."
+        },
+        {
+          "title": "Tail probability",
+          "body": "Integrating by parts,\n$$\\int_1^\\infty x\\,e^{-2x}\\,dx = \\Big[-\\tfrac{x}{2}e^{-2x}\\Big]_1^\\infty + \\tfrac12\\int_1^\\infty e^{-2x}\\,dx = \\tfrac12 e^{-2} + \\tfrac14 e^{-2} = \\tfrac34 e^{-2}.$$\nMultiplying by $4$: $P(X > 1 \\mid Y = 1) = 3e^{-2} \\approx 3 \\times 0.13534 = 0.406$."
+        },
+        {
+          "title": "Interpret",
+          "body": "Integrating out $y$ gives $f_X(x) = x e^{-x} \\cdot \\tfrac{1}{x} = e^{-x}$, so unconditionally $P(X > 1) = e^{-1} \\approx 0.368$. Observing a fairly short lifetime ($Y = 1$) makes a high failure rate more plausible and raises the probability to about $0.406$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$e^{-1}$ is the **unconditional** probability $P(X > 1)$, since $f_X(x) = e^{-x}$. It ignores the information $Y = 1$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$e^{-2}$ comes from treating $X$ given $Y = 1$ as exponential with rate $2$ (density $2e^{-2x}$), dropping the factor $x$ in the joint density."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac34 e^{-2} = \\int_1^\\infty x e^{-2x}\\,dx$ integrates the joint density along $y = 1$ without dividing by $f_Y(1) = \\tfrac14$, so it is not a conditional probability."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The normalised conditional density is $4x e^{-2x}$, and its probability beyond $x = 1$ is $3e^{-2} \\approx 0.406$."
+        }
+      ],
+      "shortcut": "$4x e^{-2x}$ is the Gamma density with shape $2$ and rate $2$, whose tail is $P(X > t) = e^{-2t}(1 + 2t)$; at $t = 1$ this is $3e^{-2}$.",
+      "commonTrap": "Forgetting to divide by $f_Y(1)$, i.e. integrating the joint density along the line $y = 1$ as if it were already a conditional density, which gives $\\tfrac34 e^{-2}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(D) 3e^{-2} (about 0.406)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx,y=sp.symbols('x y',positive=True)\nf=x*sp.exp(-x*(y+1))\nfy=sp.integrate(f,(x,0,sp.oo))\nc=sp.simplify(f.subs(y,1)/fy.subs(y,1))\nprint(fy, c, sp.simplify(sp.integrate(c,(x,1,sp.oo))))  # (y+1)**-2, 4x e^{-2x}, 3*exp(-2)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-integrity-constraints"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — four routine constraint checks, but two rely on NULL semantics (a NULL passes a CHECK and a nullable foreign key), and one requires knowing that a referenced key cannot be updated when no ON UPDATE action is declared; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Integrity constraints in SQL: CHECK with NULL, nullable foreign keys, ON DELETE SET NULL, and the default NO ACTION on updates of a referenced key.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A clinic-booking database has the following schema. All constraints are enforced, and standard SQL semantics apply.\n\n```sql\nCREATE TABLE Clinic (cid  INT PRIMARY KEY,\n                     city VARCHAR(20) NOT NULL);\nCREATE TABLE Doctor (did     INT PRIMARY KEY,\n                     licence CHAR(6) UNIQUE,\n                     cid     INT REFERENCES Clinic(cid) ON DELETE SET NULL,\n                     fee     INT CHECK (fee BETWEEN 200 AND 2000));\n```\n\nThe current instance is:\n\n**Clinic**\n\n| cid | city |\n|---|---|\n| 1 | Pune |\n| 2 | Agra |\n\n**Doctor**\n\n| did | licence | cid | fee |\n|---|---|---|---|\n| 10 | L-0001 | 1 | 500 |\n| 11 | L-0002 | 2 | 800 |\n\nEach statement below is executed **on its own**, starting from the instance shown. Which of the statements execute successfully, without violating any constraint?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`INSERT INTO Doctor VALUES (12, NULL, 1, NULL);`"
+      },
+      {
+        "label": "B",
+        "text": "`INSERT INTO Doctor VALUES (13, 'L-0003', NULL, 2000);`"
+      },
+      {
+        "label": "C",
+        "text": "`DELETE FROM Clinic WHERE cid = 2;`"
+      },
+      {
+        "label": "D",
+        "text": "`UPDATE Clinic SET cid = 5 WHERE cid = 1;`"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "(A) succeeds: a NULL licence clashes with no existing value, and a CHECK that is UNKNOWN on a NULL fee is not violated. (B) succeeds: a NULL foreign key is allowed and BETWEEN includes $2000$. (C) succeeds: doctor $11$'s `cid` is set to NULL. (D) fails: doctor $10$ still references clinic $1$ and no ON UPDATE action is declared.",
+      "steps": [
+        {
+          "title": "(A) NULL in UNIQUE and CHECK columns",
+          "body": "Key $12$ is new and clinic $1$ exists. The licence is NULL, which equals neither `L-0001` nor `L-0002`, so UNIQUE holds. For the fee, `NULL BETWEEN 200 AND 2000` evaluates to UNKNOWN, and a CHECK constraint is violated only when its condition is FALSE. The insert succeeds."
+        },
+        {
+          "title": "(B) Nullable foreign key and an inclusive range",
+          "body": "Key $13$ and licence `L-0003` are new. A NULL foreign key is not matched against Clinic (the column is not declared NOT NULL). `2000 BETWEEN 200 AND 2000` is TRUE because BETWEEN includes both ends. The insert succeeds."
+        },
+        {
+          "title": "(C) Delete with ON DELETE SET NULL",
+          "body": "Clinic $2$ is referenced by doctor $11$. The declared action sets that doctor's `cid` to NULL, which the column allows, and the clinic row is deleted. The statement succeeds, leaving doctor $11$ as $(11, \\text{L-0002}, \\text{NULL}, 800)$."
+        },
+        {
+          "title": "(D) Update of a referenced key",
+          "body": "Doctor $10$ references clinic $1$. The foreign key declares only an ON DELETE action, so updates follow the default NO ACTION: changing clinic $1$'s key to $5$ would leave doctor $10$ pointing to a clinic that no longer exists, so the update is rejected."
+        },
+        {
+          "title": "Collect",
+          "body": "Statements (A), (B) and (C) succeed; (D) fails."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "A NULL licence matches no existing licence, and a CHECK condition that evaluates to UNKNOWN (as `NULL BETWEEN 200 AND 2000` does) does not reject the row."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The foreign-key column is nullable, so a NULL `cid` is accepted without a matching clinic, and a fee of $2000$ lies within the inclusive BETWEEN range."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "ON DELETE SET NULL changes doctor $11$'s `cid` to NULL instead of blocking the delete."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "With no ON UPDATE CASCADE or ON UPDATE SET NULL clause, the default NO ACTION rejects changing a key value that doctor $10$ still references. The ON DELETE SET NULL action does not apply to updates."
+        }
+      ],
+      "commonTrap": "Assuming that a CHECK constraint rejects NULL or that a foreign key must always match a parent row. In SQL a CHECK fails only when its condition is FALSE, and a NULL foreign key is not checked. A second trap is carrying the ON DELETE action over to updates."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A), (B), (C)",
+      "agreesWithKey": true,
+      "checkCode": "import sqlite3\nddl='''CREATE TABLE Clinic(cid INT PRIMARY KEY,city VARCHAR(20) NOT NULL);\nCREATE TABLE Doctor(did INT PRIMARY KEY,licence CHAR(6) UNIQUE,cid INT REFERENCES Clinic(cid) ON DELETE SET NULL,fee INT CHECK(fee BETWEEN 200 AND 2000));\nINSERT INTO Clinic VALUES(1,'Pune'),(2,'Agra');INSERT INTO Doctor VALUES(10,'L-0001',1,500),(11,'L-0002',2,800);'''\nS={'A':\"INSERT INTO Doctor VALUES (12,NULL,1,NULL)\",'B':\"INSERT INTO Doctor VALUES (13,'L-0003',NULL,2000)\",'C':\"DELETE FROM Clinic WHERE cid=2\",'D':\"UPDATE Clinic SET cid=5 WHERE cid=1\"}\nfor k,s in S.items():\n    c=sqlite3.connect(':memory:');c.execute('PRAGMA foreign_keys=ON');c.executescript(ddl)\n    try: c.execute(s);c.commit();print(k,'ok')\n    except sqlite3.IntegrityError as e: print(k,'fails',e)\n# A ok, B ok, C ok, D fails (FOREIGN KEY constraint failed)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-logistic-regression"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — both probabilities must be converted to log-odds, the linear model recovered from two points and then extrapolated; reasoning on the probability or odds scale instead of the log-odds scale gives a listed distractor; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Logistic regression is linear in the log-odds: equal steps in x multiply the odds by the same factor e^{w_1 Δx}.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A spam filter uses a logistic regression model with a single feature $x$, the number of hyperlinks in an email:\n\n$$P(\\text{spam} \\mid x) = \\sigma(w_0 + w_1 x), \\qquad \\sigma(z) = \\frac{1}{1 + e^{-z}}.$$\n\nAfter training, the model gives $P(\\text{spam} \\mid x = 2) = 0.2$ and $P(\\text{spam} \\mid x = 5) = 0.8$.\n\nThe value of $P(\\text{spam} \\mid x = 8)$ given by this model, rounded off to three decimal places, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.886$"
+      },
+      {
+        "label": "B",
+        "text": "$0.941$"
+      },
+      {
+        "label": "C",
+        "text": "$0.985$"
+      },
+      {
+        "label": "D",
+        "text": "$0.996$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The log-odds $w_0 + w_1 x$ are linear in $x$: $\\ln\\frac{0.2}{0.8} = -\\ln 4$ at $x = 2$ and $\\ln 4$ at $x = 5$, so $w_1 = \\frac{2}{3}\\ln 4$. At $x = 8$ the log-odds are $\\ln 4 + 3w_1 = 3\\ln 4 = \\ln 64$, so the odds are $64$ and $P = \\frac{64}{65} \\approx 0.985$.",
+      "steps": [
+        {
+          "title": "Convert both probabilities to log-odds",
+          "body": "$\\sigma^{-1}(p) = \\ln\\dfrac{p}{1 - p}$. At $x = 2$: $\\ln\\dfrac{0.2}{0.8} = \\ln\\tfrac14 = -\\ln 4$. At $x = 5$: $\\ln\\dfrac{0.8}{0.2} = \\ln 4$."
+        },
+        {
+          "title": "Recover the linear model",
+          "body": "$w_0 + 2w_1 = -\\ln 4$ and $w_0 + 5w_1 = \\ln 4$. Subtracting, $3w_1 = 2\\ln 4$, so $w_1 = \\tfrac23\\ln 4 \\approx 0.924$ and $w_0 = -\\ln 4 - 2w_1 = -\\tfrac73\\ln 4 \\approx -3.235$."
+        },
+        {
+          "title": "Evaluate the log-odds at $x = 8$",
+          "body": "$w_0 + 8w_1 = -\\tfrac73\\ln 4 + \\tfrac{16}{3}\\ln 4 = 3\\ln 4 = \\ln 64 \\approx 4.159$. Equivalently, every $3$ extra links multiply the odds by $e^{3w_1} = 16$: the odds go $\\tfrac14 \\to 4 \\to 64$."
+        },
+        {
+          "title": "Convert back to a probability",
+          "body": "$P(\\text{spam} \\mid x = 8) = \\dfrac{64}{1 + 64} = \\dfrac{64}{65} \\approx 0.98462$, which rounds to $0.985$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.886 \\approx 31/35$ comes from extrapolating the **odds** linearly: they rise from $\\tfrac14$ to $4$ (by $3.75$) over three links, giving $7.75$ at $x = 8$. In logistic regression the odds change multiplicatively, not additively."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.941 \\approx 16/17$ takes the odds at $x = 8$ to be $16$, multiplying the odds at $x = 5$ by $4$ instead of by the true three-link factor $16$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The log-odds are $-\\ln 4$, $\\ln 4$ and $3\\ln 4$ at $x = 2, 5, 8$, so the odds at $x = 8$ are $64$ and the probability is $64/65 \\approx 0.985$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.996 \\approx 256/257$ uses odds of $16^2 = 256$, applying the three-link factor $16$ twice from $x = 2$ but starting from odds $1$ instead of the actual odds $\\tfrac14$ at $x = 2$."
+        }
+      ],
+      "shortcut": "Equal steps in $x$ multiply the odds by a constant factor. From $x = 2$ to $x = 5$ the odds go from $\\tfrac14$ to $4$ (factor $16$), so from $x = 5$ to $x = 8$ they go from $4$ to $64$, and $P = 64/65$.",
+      "commonTrap": "Extrapolating on the probability or the odds scale. Only the log-odds $w_0 + w_1 x$ change linearly with $x$; equal steps in $x$ multiply the odds by the same factor."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(C) 0.985",
+      "agreesWithKey": true,
+      "checkCode": "import math\nlo=lambda p: math.log(p/(1-p))\nw1=(lo(0.8)-lo(0.2))/3; w0=lo(0.2)-2*w1\nprint(round(1/(1+math.exp(-(w0+8*w1))),3))  # 0.985",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-bias-variance"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — reading a learning-curve table for the bias–variance diagnosis is standard, but two distractors misread the rising training error and the role of irreducible error; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Learning-curve diagnosis: a large gap between low training error and much higher validation error that shrinks as data are added signals high variance (overfitting).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A team trains the same classifier, with fixed hyperparameters, on training sets of increasing size drawn from one data distribution, and evaluates each trained model on a separate, fixed validation set. The error rates are:\n\n| Training-set size | Training error | Validation error |\n|---|---|---|\n| 500 | 1% | 31% |\n| 2000 | 2% | 24% |\n| 8000 | 4% | 17% |\n\nWhich one of the following conclusions is best supported by these results?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The model mainly suffers from high bias, so adding more training data will not reduce its validation error any further."
+      },
+      {
+        "label": "B",
+        "text": "The model mainly suffers from high variance, so more training data or stronger regularisation is likely to reduce its validation error further."
+      },
+      {
+        "label": "C",
+        "text": "The irreducible (noise) error of the problem must be at least 17%."
+      },
+      {
+        "label": "D",
+        "text": "Training error rises as data are added, which shows that the model is too simple; a more flexible model should be used."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Training error stays very low ($1$–$4\\%$) while validation error is much higher ($17$–$31\\%$) and still falling as data are added. A large train–validation gap that shrinks with more data is the signature of high variance, so more data or stronger regularisation should help.",
+      "steps": [
+        {
+          "title": "Read the gap",
+          "body": "The generalisation gap (validation error minus training error) is $30$, $22$ and $13$ percentage points at $500$, $2000$ and $8000$ examples. It is large and still shrinking."
+        },
+        {
+          "title": "Diagnose bias versus variance",
+          "body": "High bias shows as **both** errors high and close together, with curves that have flattened out. Here the training error is tiny, so the model can fit the data (low bias), while the large gap means its fit depends heavily on the particular sample it saw (high variance)."
+        },
+        {
+          "title": "Explain the rising training error",
+          "body": "As the training set grows, a fixed model can memorise a smaller share of the examples, so its training error naturally rises while the validation error falls and the two curves approach each other. This is normal behaviour, not a sign of an overly simple model."
+        },
+        {
+          "title": "Decide what will help",
+          "body": "Validation error is still dropping steeply ($31\\% \\to 24\\% \\to 17\\%$), so more data should keep helping, and stronger regularisation (or a less flexible model) would also cut variance. This is conclusion (B)."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "High bias would show a high training error close to the validation error. Here the training error is at most $4\\%$, and the validation error is still falling as data are added, so more data is clearly helping."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Low training error with a large but shrinking gap to the validation error is the classic high-variance pattern, and both more data and stronger regularisation reduce variance."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Irreducible error is a floor below which the expected test error cannot fall, so a validation error of $17\\%$ bounds it from **above** (up to sampling variation), not from below. Nothing in the table forces the noise level to be at least $17\\%$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "A fixed model's training error normally rises as the training set grows, because it can memorise a smaller share of the examples. A too-simple model would show a high training error from the start; a more flexible model would widen the gap here."
+        }
+      ],
+      "commonTrap": "Reading the rising training error as underfitting. With more data a fixed model's training error rises while its validation error falls; what matters is the size of the gap between them, which here is large and still closing."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation (conceptual item; no Python check applicable)",
+      "independentAnswer": "(B)",
+      "agreesWithKey": true,
+      "notes": ""
+    }
+  },
+  {
+    "id": "M32-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-32",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-orthogonal-matrix"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — the solver must recognise that H is symmetric and orthogonal, hence H² = I and H¹¹ = H, and then evaluate the entry sum as 1ᵀH1 without needing to raise the matrix to a power; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "A Householder matrix H = I − 2uuᵀ/(uᵀu) is symmetric and orthogonal, so H² = I and every odd power of H equals H.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $\\mathbf{u} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\end{bmatrix}$ and\n\n$$\nH = I_3 - \\frac{2}{\\mathbf{u}^\\top \\mathbf{u}}\\,\\mathbf{u}\\mathbf{u}^\\top,\n$$\n\nwhere $I_3$ is the $3 \\times 3$ identity matrix.\n\nThe sum of all nine entries of the matrix $H^{11}$ is ________ (rounded off to two decimal places).",
+    "answer": {
+      "kind": "NAT",
+      "min": -2.15,
+      "max": -2.13
+    },
+    "solution": {
+      "quick": "$H$ is symmetric and orthogonal, so $H^2 = H^\\top H = I$ and $H^{11} = H$. The sum of all entries is $\\mathbf{1}^\\top H \\mathbf{1} = 3 - \\dfrac{2(\\mathbf{1}^\\top\\mathbf{u})^2}{\\mathbf{u}^\\top\\mathbf{u}} = 3 - \\dfrac{2 \\cdot 36}{14} = -\\dfrac{15}{7} \\approx -2.14$.",
+      "steps": [
+        {
+          "title": "Show that $H$ is orthogonal with $H^2 = I$",
+          "body": "$H^\\top = H$. With $c = \\mathbf{u}^\\top\\mathbf{u} = 1 + 4 + 9 = 14$:\n$$H^2 = I - \\frac{4}{c}\\mathbf{u}\\mathbf{u}^\\top + \\frac{4}{c^2}\\mathbf{u}(\\mathbf{u}^\\top\\mathbf{u})\\mathbf{u}^\\top = I - \\frac{4}{c}\\mathbf{u}\\mathbf{u}^\\top + \\frac{4}{c}\\mathbf{u}\\mathbf{u}^\\top = I.$$\nSo $H^\\top H = H^2 = I$: $H$ is orthogonal (a reflection) and is its own inverse."
+        },
+        {
+          "title": "Reduce the power",
+          "body": "$H^{11} = (H^2)^5\\,H = H$."
+        },
+        {
+          "title": "Write the entry sum as $\\mathbf{1}^\top H \\mathbf{1}$",
+          "body": "With $\\mathbf{1} = (1, 1, 1)^\\top$, the sum of all entries of a matrix $M$ is $\\mathbf{1}^\\top M \\mathbf{1}$. Here $\\mathbf{1}^\\top\\mathbf{1} = 3$ and $\\mathbf{1}^\\top\\mathbf{u} = 1 + 2 + 3 = 6$, so\n$$\\mathbf{1}^\\top H \\mathbf{1} = 3 - \\frac{2 \\cdot 6^2}{14} = 3 - \\frac{72}{14} = -\\frac{15}{7}.$$"
+        },
+        {
+          "title": "Check with the explicit matrix and round",
+          "body": "$$H = \\frac{1}{7}\\begin{bmatrix} 6 & -2 & -3 \\\\ -2 & 3 & -6 \\\\ -3 & -6 & -2 \\end{bmatrix},$$\nwhose row sums are $\\tfrac17$, $-\\tfrac57$ and $-\\tfrac{11}{7}$, adding to $-\\tfrac{15}{7} \\approx -2.142857$. Rounded to two decimal places: $-2.14$."
+        }
+      ],
+      "finalAnswer": "**-2.14**",
+      "commonTrap": "Assuming $H^{11} = I$ (entry sum $3$) by treating the odd power like an even one, or raising the entry sum of $H$ to the $11$th power, $(-15/7)^{11}$; entry sums are not multiplicative. Since $H^2 = I$, odd powers of $H$ equal $H$ and even powers equal $I$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-2.14 (exactly -15/7)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nu=np.array([1,2,3.]);H=np.eye(3)-2*np.outer(u,u)/(u@u)\nprint(np.allclose(H.T@H,np.eye(3)), round(np.linalg.matrix_power(H,11).sum(),6))  # True -2.142857",
+      "notes": ""
+    }
+  }
+]

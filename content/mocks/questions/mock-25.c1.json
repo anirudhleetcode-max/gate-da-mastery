@@ -1,0 +1,801 @@
+[
+  {
+    "id": "M25-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 1,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-verbal",
+    "subtopicIds": [
+      "ga-narrative"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one skill (narrative sequencing) that needs three linked cohesion cues: indefinite-to-definite reference, a \"however\" that contrasts with an earlier assumption, and \"the poet's\" presupposing an earlier mention; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Narrative sequencing using reference (a/the, she/they), contrast markers and cause-before-consequence order.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Four sentences, labelled P, Q, R and S, are given below. They are jumbled; arrange them in the most logical order to form a coherent paragraph.\n\n- **P.** Within a year, the library had commissioned a catalogue of its entire archive, and the poet's letters had been published to wide acclaim.\n- **Q.** On reading the first page, however, she realised that the letters had been written by a poet whose work was thought to be lost.\n- **R.** In 1998, a librarian in a small coastal town found a bundle of letters behind a loose panel in the library's reading room.\n- **S.** She assumed that they were routine correspondence about repairs to the building.\n\nWhich one of the following is the most logical order of the sentences?",
+    "options": [
+      {
+        "label": "A",
+        "text": "RQSP"
+      },
+      {
+        "label": "B",
+        "text": "RSQP"
+      },
+      {
+        "label": "C",
+        "text": "SRQP"
+      },
+      {
+        "label": "D",
+        "text": "RSPQ"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "R is the only sentence that introduces the librarian and the letters (\"a librarian\", \"a bundle of letters\"), so it opens the paragraph. S (\"She\", \"they\") gives her first assumption, Q (\"however\") overturns it, and P (\"the poet's letters\") reports the outcome of that realisation. The order is R, S, Q, P.",
+      "steps": [
+        {
+          "title": "Find the opening sentence",
+          "body": "R introduces its subjects with indefinite articles (\"a librarian\", \"a bundle of letters\") and sets the time and place. S uses the pronouns \"She\" and \"they\", Q uses \"she\" and \"the letters\", and P uses \"the library\" and \"the poet's letters\"; none of these can start the paragraph because their referents have not yet been introduced. So R is first."
+        },
+        {
+          "title": "Place the assumption before the contrast",
+          "body": "S states what the librarian first assumed about the letters. Q begins \"On reading the first page, however, ...\"; the word \"however\" needs an earlier statement to contrast with, and the only such statement is S's assumption that the letters were routine. So S comes before Q, giving R, S, Q."
+        },
+        {
+          "title": "Place the outcome last",
+          "body": "Q is where \"a poet\" is first mentioned. P speaks of \"the poet's letters\" and describes what happened afterwards (a catalogue and a publication \"within a year\"), so it presupposes Q and is a consequence of it. P must therefore be last."
+        },
+        {
+          "title": "Check the full paragraph",
+          "body": "R → S → Q → P reads: a librarian finds letters; she assumes they are routine; she then realises they are by a lost poet; within a year the library catalogues its archive and publishes the letters. Every pronoun and article now has an antecedent and the time order is consistent."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "RQSP puts Q's \"however\" straight after R, with nothing to contrast with, and then has S report an assumption that the letters are routine after she has already realised they are by a lost poet. The logic runs backwards."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "RSQP introduces the subjects, gives the initial assumption, overturns it with \"however\", and ends with the consequence that mentions \"the poet's letters\"."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "SRQP starts with \"She\" and \"they\", which have no antecedent yet; the librarian and the letters are only introduced in R."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "RSPQ moves the consequence (P) ahead of the realisation (Q) that causes it. P mentions \"the poet's letters\" before any poet has been introduced, so it cannot come before Q."
+        }
+      ],
+      "commonTrap": "Reading P as a general follow-up to the finding of the letters and sliding it into second place, or the reverse: ignoring that \"the poet's\" can only be used after \"a poet\" has been introduced in Q. Pronouns and definite articles are the quickest way to order such sentences."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "RSQP (option B)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "from itertools import permutations\n# Precedence constraints read off the cohesion cues:\n#   R introduces the librarian and the letters (indefinite articles) -> first\n#   S (\"She\", \"they\") precedes Q (\"however\" contrasts with S's assumption)\n#   Q introduces \"a poet\"; P refers to \"the poet's letters\" -> Q before P\ncons = [(\"R\",\"S\"), (\"S\",\"Q\"), (\"Q\",\"P\")]\nok = [''.join(p) for p in permutations(\"PQRS\")\n      if p[0]==\"R\" and all(p.index(a) < p.index(b) for a, b in cons)]\nprint(ok)\nassert ok == [\"RSQP\"]\n"
+    }
+  },
+  {
+    "id": "M25-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 2,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-quant",
+    "subtopicIds": [
+      "ga-stats-prob"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — pooling two groups needs a non-routine insight (total variance = average within-group variance + variance of the group means), with several likely traps among the plausible distractors; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Variance of a pooled data set: within-group variance plus between-group variance of the means.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A supplier delivers steel rods in two batches. Batch 1 contains $8$ rods with mean length $62$ cm and standard deviation $3$ cm. Batch 2 contains $12$ rods with mean length $72$ cm and standard deviation $4$ cm. Each standard deviation is computed over the rods of its own batch, dividing by the number of rods in that batch.\n\nThe variance of the lengths (in cm$^2$) of all $20$ rods taken together, computed by dividing by $20$, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$13.2$"
+      },
+      {
+        "label": "B",
+        "text": "$24.0$"
+      },
+      {
+        "label": "C",
+        "text": "$37.2$"
+      },
+      {
+        "label": "D",
+        "text": "$37.5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The pooled variance is the average of the batch variances plus the variance of the batch means about the overall mean. The overall mean is $68$, the within-batch part is $(8\\cdot 9+12\\cdot 16)/20=13.2$ and the between-batch part is $(8\\cdot 6^2+12\\cdot 4^2)/20=24$, so the variance is $37.2$.",
+      "steps": [
+        {
+          "title": "Overall mean",
+          "body": "$\\bar{x}=\\dfrac{8\\cdot 62+12\\cdot 72}{20}=\\dfrac{496+864}{20}=\\dfrac{1360}{20}=68$ cm."
+        },
+        {
+          "title": "Within-batch part",
+          "body": "The batch variances are $3^2=9$ and $4^2=16$. Their weighted average is $\\dfrac{8\\cdot 9+12\\cdot 16}{20}=\\dfrac{72+192}{20}=13.2$."
+        },
+        {
+          "title": "Between-batch part",
+          "body": "The batch means lie $62-68=-6$ and $72-68=4$ from the overall mean, so the weighted variance of the means is $\\dfrac{8\\cdot 6^2+12\\cdot 4^2}{20}=\\dfrac{288+192}{20}=24$."
+        },
+        {
+          "title": "Add the two parts and check",
+          "body": "Pooled variance $=13.2+24=37.2$. Check with second moments: $\\dfrac{8(9+62^2)+12(16+72^2)}{20}-68^2=\\dfrac{30824+62400}{20}-4624=4661.2-4624=37.2$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$13.2$ is only the weighted average of the two batch variances. It ignores the extra spread that comes from the two batches being centred at different lengths ($62$ and $72$)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$24.0$ is only the between-batch part, the variance of the batch means about $68$. It leaves out the variation of the rods inside each batch."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$37.2=13.2+24.0$: the within-batch part plus the between-batch part."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$37.5$ treats the two batches as if they had equal size: the mean would then be $67$ and $\\tfrac{9+16}{2}+5^2=37.5$. The batches have $8$ and $12$ rods, so the weights must be $0.4$ and $0.6$."
+        }
+      ],
+      "shortcut": "For two groups with proportions $p$ and $1-p$, the between-group part is $p(1-p)(\\Delta\\mu)^2=0.4\\cdot0.6\\cdot10^2=24$; add the weighted variances $13.2$ to get $37.2$.",
+      "commonTrap": "Stopping at the weighted average of the variances ($13.2$). Pooling two groups with different means always adds the spread of the means, so the pooled variance is larger than that average."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "37.2 (option C)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "n1, m1, v1 = 8, 62, 3**2\nn2, m2, v2 = 12, 72, 4**2\nN = n1 + n2\nm = (n1*m1 + n2*m2) / N\nwithin = (n1*v1 + n2*v2) / N\nbetween = (n1*(m1-m)**2 + n2*(m2-m)**2) / N\ntotal = within + between\n# direct check from raw second moments\ndirect = (n1*(v1+m1**2) + n2*(v2+m2**2)) / N - m**2\nprint(m, within, between, total, direct)\nassert abs(total-37.2) < 1e-9 and abs(direct-37.2) < 1e-9\n# distractors\nequal_w = (v1+v2)/2 + ((m1-m2)/2)**2\nprint(equal_w)   # 37.5\n"
+    }
+  },
+  {
+    "id": "M25-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 3,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-analytical",
+    "subtopicIds": [
+      "ga-logic"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (deduction from conditional rules) taking three chained eliminations and a short case split; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Deductive reasoning with conditional and exclusion rules in a selection puzzle.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A selection committee must choose exactly three of six analysts, P, Q, R, S, T and U, to form a project team. The following rules apply.\n\n1. If P is chosen, then Q must also be chosen.\n2. R and S cannot both be chosen.\n3. T can be chosen only if R is also chosen.\n4. At least one of S and U must be chosen (possibly both).\n\nIf S is chosen for the team, which one of the following must be true?",
+    "options": [
+      {
+        "label": "A",
+        "text": "P is also chosen."
+      },
+      {
+        "label": "B",
+        "text": "Exactly one of P and T is also chosen."
+      },
+      {
+        "label": "C",
+        "text": "U is also chosen."
+      },
+      {
+        "label": "D",
+        "text": "Q is also chosen."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "With S chosen, rule 2 rules out R and rule 3 then rules out T, so the other two members come from P, Q and U. Rule 1 forbids P without Q, which leaves only the teams {P, Q, S} and {Q, S, U}. Q belongs to both.",
+      "steps": [
+        {
+          "title": "Use rules 2 and 3",
+          "body": "S is chosen, and rule 2 says R and S cannot both be chosen, so R is not chosen. Rule 3 says T can be chosen only if R is chosen, so T is not chosen either."
+        },
+        {
+          "title": "List the possible companions",
+          "body": "Rule 4 is already satisfied because S is chosen. The two remaining places must be filled from $\\{P, Q, U\\}$, giving the pairs $\\{P,Q\\}$, $\\{P,U\\}$ and $\\{Q,U\\}$."
+        },
+        {
+          "title": "Apply rule 1",
+          "body": "The pair $\\{P,U\\}$ contains P but not Q, which breaks rule 1. The valid teams are therefore $\\{P,Q,S\\}$ and $\\{Q,S,U\\}$."
+        },
+        {
+          "title": "Test the statements",
+          "body": "Q is in both valid teams, so it must be chosen. P is absent from $\\{Q,S,U\\}$, U is absent from $\\{P,Q,S\\}$, and since T is never chosen, \"exactly one of P and T\" would mean \"P is chosen\", which fails for $\\{Q,S,U\\}$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "P is chosen in $\\{P,Q,S\\}$ but not in $\\{Q,S,U\\}$, which is also a valid team."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "T can never be chosen when S is chosen, so this statement reduces to \"P is chosen\", which is false for the valid team $\\{Q,S,U\\}$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "U is chosen in $\\{Q,S,U\\}$ but not in $\\{P,Q,S\\}$. Rule 4 is already met by S, so it does not force U."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Both valid teams, $\\{P,Q,S\\}$ and $\\{Q,S,U\\}$, contain Q."
+        }
+      ],
+      "commonTrap": "Believing rule 4 forces U into the team. It only demands that S or U is chosen, and S already satisfies it. Another slip is to keep R or T available and so allow teams that rules 2 and 3 forbid."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "Q is also chosen (option D)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "from itertools import combinations\ndef ok(t):\n    return (('P' not in t) or ('Q' in t)) and not ('R' in t and 'S' in t) \\\n        and (('T' not in t) or ('R' in t)) and (('S' in t) or ('U' in t))\nteams = [set(t) for t in combinations(\"PQRSTU\", 3) if ok(set(t))]\nwithS = [t for t in teams if 'S' in t]\nprint([''.join(sorted(t)) for t in withS])\nstm = {\n 'A': lambda t: 'P' in t,\n 'B': lambda t: 'Q' in t,\n 'C': lambda t: 'U' in t,\n 'D': lambda t: ('P' in t) != ('T' in t),\n}\nres = {k: all(f(t) for t in withS) for k, f in stm.items()}\nprint(res)\nassert [k for k, v in res.items() if v] == ['B']\n"
+    }
+  },
+  {
+    "id": "M25-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (tracing a counting loop with a strict comparison and operator precedence) over nine short iterations; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Tracing a loop that counts descents, then evaluating an arithmetic expression with max and min.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef count_runs(nums):\n    runs = 1\n    for i in range(1, len(nums)):\n        if nums[i] < nums[i - 1]:\n            runs += 1\n    return runs\n\ndata = [3, 5, 8, 2, 4, 4, 9, 1, 6]\nprint(count_runs(data) * 10 + max(data) - min(data))\n```\n\nThe value printed by the program is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 38,
+      "max": 38
+    },
+    "solution": {
+      "quick": "`runs` starts at $1$ and is incremented every time an element is strictly smaller than its predecessor. In `data` this happens only at $8\\to2$ and $9\\to1$, so `count_runs(data)` is $3$. The program prints $3\\cdot10+9-1=38$.",
+      "steps": [
+        {
+          "title": "Understand the function",
+          "body": "`count_runs` starts with `runs = 1` and adds $1$ for every index `i` with `nums[i] < nums[i-1]` (a strict descent). The comparison is strict, so equal neighbours do not count."
+        },
+        {
+          "title": "Trace the loop",
+          "body": "For `data = [3, 5, 8, 2, 4, 4, 9, 1, 6]`: $i=1$: $5<3$ false; $i=2$: $8<5$ false; $i=3$: $2<8$ true, so `runs = 2`; $i=4$: $4<2$ false; $i=5$: $4<4$ false; $i=6$: $9<4$ false; $i=7$: $1<9$ true, so `runs = 3`; $i=8$: $6<1$ false. The function returns $3$."
+        },
+        {
+          "title": "Evaluate the expression",
+          "body": "Multiplication binds tighter than addition and subtraction, which are then applied left to right: $(3\\cdot10)+\\max(\\text{data})-\\min(\\text{data})=30+9-1=38$."
+        }
+      ],
+      "finalAnswer": "**38**",
+      "commonTrap": "Treating the repeated $4,4$ as a descent. That gives $4$ runs and a printed value of $48$; the test is a strict $<$, so equal neighbours are not counted."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "38",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "def count_runs(nums):\n    runs = 1\n    for i in range(1, len(nums)):\n        if nums[i] < nums[i - 1]:\n            runs += 1\n    return runs\n\ndata = [3, 5, 8, 2, 4, 4, 9, 1, 6]\nprint(count_runs(data) * 10 + max(data) - min(data))\n"
+    }
+  },
+  {
+    "id": "M25-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-limits-continuity",
+    "subtopicIds": [
+      "co-functions"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (inverse of a strictly increasing function) with two to three steps: recognise the completed cube, solve for $x$, and avoid sign and offset slips; about 1.5 minutes.",
+    "estimatedTimeSec": 90,
+    "concept": "Inverse of a cubic function found by recognising a shifted cube, $f(x)=(x+3)^3-7$.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $f(x)=x^3+9x^2+27x+20$ for real $x$. The function $f:\\mathbb{R}\\to\\mathbb{R}$ has an inverse function $f^{-1}:\\mathbb{R}\\to\\mathbb{R}$.\n\nThe value of $f^{-1}(1)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$-2$"
+      },
+      {
+        "label": "B",
+        "text": "$1$"
+      },
+      {
+        "label": "C",
+        "text": "$-1$"
+      },
+      {
+        "label": "D",
+        "text": "$5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "Since $(x+3)^3=x^3+9x^2+27x+27$, we have $f(x)=(x+3)^3-7$. Solving $f(x)=1$ gives $(x+3)^3=8$, so $x+3=2$ and $x=-1$. Hence $f^{-1}(1)=-1$.",
+      "steps": [
+        {
+          "title": "Recognise the structure",
+          "body": "Expanding $(x+3)^3$ gives $x^3+9x^2+27x+27$. Therefore $f(x)=(x+3)^3-27+20=(x+3)^3-7$."
+        },
+        {
+          "title": "Check that the inverse exists",
+          "body": "$f'(x)=3(x+3)^2\\ge0$, with equality only at $x=-3$, so $f$ is strictly increasing. It takes every real value, so it is a bijection of $\\mathbb{R}$ and $f^{-1}$ exists."
+        },
+        {
+          "title": "Solve f(x) = 1",
+          "body": "$f^{-1}(1)$ is the number $x$ with $f(x)=1$. So $(x+3)^3-7=1$, i.e. $(x+3)^3=8$. The real cube root of $8$ is $2$, so $x+3=2$ and $x=-1$."
+        },
+        {
+          "title": "Verify",
+          "body": "$f(-1)=-1+9-27+20=1$, as required. So $f^{-1}(1)=-1$."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$-2$ comes from forgetting the offset $-7$ and solving $(x+3)^3=1$. Indeed $f(-2)=-6\\ne1$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$1$ comes from a sign slip in the shift, solving $x-3=-2$ instead of $x+3=2$. Indeed $f(1)=57\\ne1$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$f(-1)=1$, and $f$ is one-one, so $f^{-1}(1)=-1$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$5$ comes from solving $x-3=2$ instead of $x+3=2$. Indeed $f(5)=505\\ne1$."
+        }
+      ],
+      "shortcut": "In an MCQ it is enough to evaluate $f$ at the four candidates: only $f(-1)=1$, and a one-one $f$ has exactly one preimage of $1$.",
+      "commonTrap": "Confusing $f^{-1}(1)$ with the reciprocal $1/f(1)$, or forgetting that the inverse asks for the input $x$ at which $f(x)=1$. A second slip is to drop the constant $-7$ after completing the cube."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-1 (option C)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import sympy as sp\nx = sp.symbols('x', real=True)\nf = x**3 + 9*x**2 + 27*x + 20\nprint(sp.expand((x+3)**3 - 7 - f))\nsol = sp.solve(sp.Eq(f, 1), x)\nprint(sol)\nassert sol == [-1] and f.subs(x, -1) == 1\n# distractors\nprint([(c, f.subs(x, c)) for c in (-2, 1, 5)])\n"
+    }
+  },
+  {
+    "id": "M25-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-hash-tables"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (open addressing with double hashing) linking two hash functions, a collision with a different step size and a wrap-around over six insertions; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Double hashing in an open-addressing table: probe sequence $(h_1(k)+i\\,h_2(k)) \\bmod m$ with a key-dependent step.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hash table has $11$ slots, numbered $0$ to $10$, and uses open addressing with **double hashing**. For a key $k$, the $i$-th probe examines slot\n\n$$\n(h_1(k)+i\\cdot h_2(k)) \\bmod 11, \\qquad i=0,1,2,\\ldots,\n$$\n\nwhere $h_1(k)=k \\bmod 11$ and $h_2(k)=7-(k \\bmod 7)$. A key is stored in the first empty slot found.\n\nStarting from an empty table, the keys\n\n$$\n32,\\; 40,\\; 43,\\; 22,\\; 24,\\; 79\n$$\n\nare inserted in this order (no deletions are made). The index of the slot that finally contains the key $79$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$1$"
+      },
+      {
+        "label": "B",
+        "text": "$3$"
+      },
+      {
+        "label": "C",
+        "text": "$4$"
+      },
+      {
+        "label": "D",
+        "text": "$5$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "The first five keys land in slots $10, 7, 5, 0, 2$ (key $43$ needs one extra probe with step $6$). Key $79$ has $h_1=2$ (occupied by $24$) and step $h_2=7-2=5$; the probes visit $2$, $7$ (occupied by $40$) and then $12 \\bmod 11=1$, which is empty. The slot is $1$.",
+      "steps": [
+        {
+          "title": "Insert 32, 40, 43",
+          "body": "$32$: $h_1=32 \\bmod 11=10$, empty, so slot $10$. $40$: $h_1=7$, so slot $7$. $43$: $h_1=43 \\bmod 11=10$ is occupied by $32$. Its step is $h_2=7-(43 \\bmod 7)=7-1=6$, so probe $i=1$ is $(10+6) \\bmod 11=5$, which is empty: slot $5$."
+        },
+        {
+          "title": "Insert 22 and 24",
+          "body": "$22$: $h_1=22 \\bmod 11=0$, empty, so slot $0$. $24$: $h_1=24 \\bmod 11=2$, empty, so slot $2$. The table is now: slot $0$: $22$; slot $2$: $24$; slot $5$: $43$; slot $7$: $40$; slot $10$: $32$."
+        },
+        {
+          "title": "Insert 79",
+          "body": "$h_1(79)=79 \\bmod 11=2$ and $h_2(79)=7-(79 \\bmod 7)=7-2=5$. Probe $i=0$: slot $2$ is occupied (by $24$). Probe $i=1$: $(2+5) \\bmod 11=7$ is occupied (by $40$). Probe $i=2$: $(2+10) \\bmod 11=12 \\bmod 11=1$, which is empty."
+        },
+        {
+          "title": "Result",
+          "body": "Key $79$ is stored in slot $1$. Final table: slot $0$: $22$; slot $1$: $79$; slot $2$: $24$; slot $5$: $43$; slot $7$: $40$; slot $10$: $32$; the others are empty."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The probes for $79$ visit slots $2$, $7$ and $1$, and slot $1$ is the first empty one."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$3$ is what linear probing (step $1$ for every key) gives: the whole insertion sequence is then different, and $79$ moves from the occupied slot $2$ to slot $3$. The problem specifies double hashing."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$4$ results from taking the step as $k \\bmod 7$ (dropping the $7-$ part): $79$ would then step by $2$ from slot $2$ to slot $4$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$5$ results from using the step $1+(k \\bmod 7)$ for every key, so that $79$ steps by $3$ from slot $2$ to slot $5$. The given second hash is $7-(k \\bmod 7)$."
+        }
+      ],
+      "commonTrap": "Using the wrong step, or forgetting that the probe index is multiplied by the step ($i\\cdot h_2$) and that the result is reduced modulo $11$ so that slot $12$ wraps around to slot $1$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1 (option A)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "def build(keys, step, m=11):\n    T = [None] * m\n    for k in keys:\n        h1, h2 = k % m, step(k)\n        i = 0\n        while T[(h1 + i * h2) % m] is not None:\n            i += 1\n        T[(h1 + i * h2) % m] = k\n    return T\n\nkeys = [32, 40, 43, 22, 24, 79]\nT = build(keys, lambda k: 7 - (k % 7))\nprint(T, T.index(79))\nassert T.index(79) == 1\n# distractor rules\nprint(build(keys, lambda k: 1).index(79),            # linear probing -> 3\n      build(keys, lambda k: (k % 7) or 1).index(79), # step k mod 7 -> 4\n      build(keys, lambda k: 1 + k % 7).index(79))    # step 1 + k mod 7 -> 5\n"
+    }
+  },
+  {
+    "id": "M25-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-model-selection",
+    "subtopicIds": [
+      "ml-cross-validation",
+      "ml-knn"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — leave-one-out cross-validation of a 2-nearest-neighbour regressor needs eight separate neighbour searches, predictions and squared errors with a rounded final mean, so the computation is lengthy and error-prone; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Leave-one-out cross-validation estimate of mean squared error for 2-nearest-neighbour regression.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A horticulture lab records the crop yield $y$ (quintals per plot) obtained with eight different fertiliser doses $x$ (kg per plot).\n\n| Plot | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|---|---|---|---|---|---|---|---|---|\n| Dose $x$ | 1 | 3 | 4 | 8 | 10 | 13 | 17 | 22 |\n| Yield $y$ | 9 | 12 | 15 | 17 | 25 | 22 | 33 | 31 |\n\nA $2$-nearest-neighbour regressor predicts the yield at a given dose as the average of the yields of the two plots whose doses are nearest to it, where the distance between two plots is the absolute difference of their doses. The regressor is evaluated by leave-one-out cross-validation: each plot in turn is held out, its yield is predicted from the other seven plots, and the squared prediction error is recorded. For every held-out plot, its two nearest neighbours among the other seven plots are uniquely determined.\n\nThe leave-one-out estimate of the mean squared error (the average of the eight squared errors) is ________. (Round off to two decimal places.)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 22.9,
+      "max": 22.92
+    },
+    "solution": {
+      "quick": "For each plot, find its two nearest doses among the other seven plots, average their yields, and square the error. The squared errors are $20.25,\\ 0,\\ 20.25,\\ 9,\\ 30.25,\\ 49,\\ 42.25,\\ 12.25$, whose sum is $183.25$. The LOOCV mean squared error is $183.25/8=22.90625\\approx22.91$.",
+      "steps": [
+        {
+          "title": "Set up the procedure",
+          "body": "For each held-out plot $i$, search the other seven doses for the two closest to $x_i$, predict $\\hat y_i$ as the mean of their yields, and record $(y_i-\\hat y_i)^2$. The estimate is the average of these eight values."
+        },
+        {
+          "title": "Plots 1 to 4",
+          "body": "Plot 1 ($x=1$, $y=9$): neighbours $x=3$ and $x=4$ (yields $12, 15$), prediction $13.5$, error $(9-13.5)^2=20.25$. Plot 2 ($x=3$, $y=12$): neighbours $x=4$ and $x=1$ (yields $15, 9$), prediction $12$, error $0$. Plot 3 ($x=4$, $y=15$): neighbours $x=3$ (distance $1$) and $x=1$ (distance $3$; the next is $x=8$ at distance $4$), yields $12, 9$, prediction $10.5$, error $4.5^2=20.25$. Plot 4 ($x=8$, $y=17$): neighbours $x=10$ (distance $2$) and $x=4$ (distance $4$; the next are at distance $5$), yields $25, 15$, prediction $20$, error $9$."
+        },
+        {
+          "title": "Plots 5 to 8",
+          "body": "Plot 5 ($x=10$, $y=25$): neighbours $x=8$ and $x=13$ (yields $17, 22$), prediction $19.5$, error $5.5^2=30.25$. Plot 6 ($x=13$, $y=22$): neighbours $x=10$ and $x=17$ (yields $25, 33$), prediction $29$, error $49$. Plot 7 ($x=17$, $y=33$): neighbours $x=13$ and $x=22$ (yields $22, 31$), prediction $26.5$, error $6.5^2=42.25$. Plot 8 ($x=22$, $y=31$): neighbours $x=17$ and $x=13$ (yields $33, 22$), prediction $27.5$, error $3.5^2=12.25$."
+        },
+        {
+          "title": "Average the squared errors",
+          "body": "Sum $=20.25+0+20.25+9+30.25+49+42.25+12.25=183.25$. LOOCV mean squared error $=183.25/8=22.90625$, which rounds to $22.91$."
+        }
+      ],
+      "finalAnswer": "**22.91**",
+      "commonTrap": "Letting the held-out plot count as one of its own neighbours (distance $0$), which makes its prediction contain its own yield and shrinks the error, or stopping at the total $183.25$ without dividing by $8$. A held-out plot must be predicted only from the other seven."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "22.91 (183.25/8 = 22.90625)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "xs = [1, 3, 4, 8, 10, 13, 17, 22]\nys = [9, 12, 15, 17, 25, 22, 33, 31]\nn = len(xs)\nerrs = []\nfor i in range(n):\n    d = sorted((abs(xs[j] - xs[i]), j) for j in range(n) if j != i)\n    assert d[1][0] < d[2][0]            # the two nearest neighbours are unambiguous\n    pred = (ys[d[0][1]] + ys[d[1][1]]) / 2\n    errs.append((ys[i] - pred) ** 2)\nmse = sum(errs) / n\nprint(errs, mse, round(mse, 2))\nassert round(mse, 2) == 22.91\n"
+    }
+  },
+  {
+    "id": "M25-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-neural-networks",
+    "subtopicIds": [
+      "ml-feedforward"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (softmax output of a feed-forward classifier) with logits chosen so that the exponentials are small integers; about 1 minute.",
+    "estimatedTimeSec": 60,
+    "concept": "Softmax output layer: class probabilities as normalised exponentials of the logits.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A feed-forward network classifies a loan application into one of three risk grades, using a softmax output layer with one unit per grade. For a particular application, the pre-activation values (logits) of the three output units are\n\n$$\nz_1=\\ln 6, \\qquad z_2=\\ln 3, \\qquad z_3=0,\n$$\n\nwhere $\\ln$ is the natural logarithm. The probability that the network assigns to grade $1$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$0.67$"
+      },
+      {
+        "label": "B",
+        "text": "$0.33$"
+      },
+      {
+        "label": "C",
+        "text": "$0.62$"
+      },
+      {
+        "label": "D",
+        "text": "$0.60$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Softmax gives $p_i=e^{z_i}/\\sum_j e^{z_j}$. Here $e^{z_1}=6$, $e^{z_2}=3$ and $e^{z_3}=e^0=1$, so the denominator is $10$ and $p_1=6/10=0.60$.",
+      "steps": [
+        {
+          "title": "State the softmax rule",
+          "body": "A softmax layer turns logits into probabilities by exponentiating each logit and normalising: $p_i=\\dfrac{e^{z_i}}{e^{z_1}+e^{z_2}+e^{z_3}}$."
+        },
+        {
+          "title": "Exponentiate the logits",
+          "body": "$e^{\\ln 6}=6$, $e^{\\ln 3}=3$ and $e^{0}=1$."
+        },
+        {
+          "title": "Normalise",
+          "body": "The denominator is $6+3+1=10$, so $p_1=6/10=0.60$ (and $p_2=0.30$, $p_3=0.10$, which sum to $1$)."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$0.67\\approx 6/9$ comes from treating $e^0$ as $0$ and so leaving the third unit out of the denominator. In fact $e^0=1$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$0.33$ is the uniform probability $1/3$; it ignores the logits altogether, whereas the larger logit $\\ln 6$ must give grade $1$ the largest probability."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.62\\approx \\ln 6/(\\ln 6+\\ln 3+0)=1.792/2.890$ normalises the raw logits instead of their exponentials. That is not softmax, and the values need not even be positive."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$p_1=6/(6+3+1)=0.60$."
+        }
+      ],
+      "commonTrap": "Normalising the logits themselves instead of their exponentials, or using $e^0=0$. Softmax always exponentiates first, and $e^0=1$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.60 (option D)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\nz = np.log([6, 3, 1])          # logits (ln 6, ln 3, 0)\np = np.exp(z) / np.exp(z).sum()\nprint(p)\nassert abs(p[0] - 0.6) < 1e-12\nprint(z[0] / z.sum(), 6/(6+3))  # distractors 0.62, 0.67\n"
+    }
+  },
+  {
+    "id": "M25-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (law of total expectation and variance) with two linked computations and statements that test the standard swaps between the within-group and between-group parts; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Law of total expectation and law of total variance for a two-regime mixture.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An office worker's morning commute time $T$ (in minutes) depends on the weather $W$. The weather is rainy with probability $0.25$ and dry with probability $0.75$. Given rain, $T$ has mean $48$ and standard deviation $6$; given dry weather, $T$ has mean $36$ and standard deviation $4$.\n\nHere $\\operatorname{Var}(T\\mid W)$ denotes the random variable that equals the conditional variance $\\operatorname{Var}(T\\mid W=w)$ when $W=w$.\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$E[T]=39$"
+      },
+      {
+        "label": "B",
+        "text": "$E\\big[\\operatorname{Var}(T\\mid W)\\big]=27$"
+      },
+      {
+        "label": "C",
+        "text": "$\\operatorname{Var}(T)=48$"
+      },
+      {
+        "label": "D",
+        "text": "$\\operatorname{Var}(T)<\\operatorname{Var}(T\\mid W=\\text{rain})$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "By the law of total expectation $E[T]=0.25\\cdot48+0.75\\cdot36=39$. By the law of total variance, $\\operatorname{Var}(T)=E[\\operatorname{Var}(T\\mid W)]+\\operatorname{Var}(E[T\\mid W])=21+27=48$. So (A) and (C) are true; (B) swaps the two parts (the expected conditional variance is $21$), and (D) is false because $48>36$.",
+      "steps": [
+        {
+          "title": "Tools",
+          "body": "Law of total expectation: $E[T]=E\\big[E[T\\mid W]\\big]$. Law of total variance: $\\operatorname{Var}(T)=E\\big[\\operatorname{Var}(T\\mid W)\\big]+\\operatorname{Var}\\big(E[T\\mid W]\\big)$."
+        },
+        {
+          "title": "Mean",
+          "body": "$E[T]=0.25\\cdot48+0.75\\cdot36=12+27=39$."
+        },
+        {
+          "title": "Expected conditional variance",
+          "body": "The conditional variances are $6^2=36$ (rain) and $4^2=16$ (dry), so $E[\\operatorname{Var}(T\\mid W)]=0.25\\cdot36+0.75\\cdot16=9+12=21$."
+        },
+        {
+          "title": "Variance of the conditional mean",
+          "body": "$E[T\\mid W]$ equals $48$ with probability $0.25$ and $36$ with probability $0.75$, so $\\operatorname{Var}(E[T\\mid W])=0.25(48-39)^2+0.75(36-39)^2=0.25\\cdot81+0.75\\cdot9=20.25+6.75=27$."
+        },
+        {
+          "title": "Total variance and comparison",
+          "body": "$\\operatorname{Var}(T)=21+27=48$. This exceeds $\\operatorname{Var}(T\\mid W=\\text{rain})=36$ (and $\\operatorname{Var}(T\\mid W=\\text{dry})=16$), so (D) is false."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$E[T]=0.25\\cdot48+0.75\\cdot36=39$ (a weighted, not a simple, average of $48$ and $36$)."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$E[\\operatorname{Var}(T\\mid W)]=0.25\\cdot36+0.75\\cdot16=21$. The value $27$ is the other part, $\\operatorname{Var}(E[T\\mid W])$, so the two components have been swapped."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "$\\operatorname{Var}(T)=21+27=48$ by the law of total variance."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Conditioning reduces variance only on average, not for every value of $W$. Here $\\operatorname{Var}(T)=48$ is larger than $\\operatorname{Var}(T\\mid W=\\text{rain})=36$ because the mean also shifts between the two weather types."
+        }
+      ],
+      "commonTrap": "Stopping at the average conditional variance ($21$) and calling it $\\operatorname{Var}(T)$, or assuming that every conditional variance is no larger than the unconditional one. The spread of the conditional means ($27$) must be added."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A and C: E[T]=39, Var(T)=48 (E[Var(T|W)]=21, Var(E[T|W])=27)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "pw = {'rain': 0.25, 'dry': 0.75}\nmu = {'rain': 48, 'dry': 36}\nsd = {'rain': 6, 'dry': 4}\nET = sum(pw[w]*mu[w] for w in pw)\nEVar = sum(pw[w]*sd[w]**2 for w in pw)\nVarE = sum(pw[w]*(mu[w]-ET)**2 for w in pw)\nVarT = EVar + VarE\nprint(ET, EVar, VarE, VarT)\nassert abs(ET-39) < 1e-9 and abs(VarE-27) < 1e-9 and abs(VarT-48) < 1e-9 and abs(EVar-21) < 1e-9\n# Monte Carlo sanity check\nimport numpy as np\nrng = np.random.default_rng(1)\nW = rng.random(2_000_000) < 0.25\nT = np.where(W, rng.normal(48, 6, W.size), rng.normal(36, 4, W.size))\nprint(T.mean(), T.var())\n"
+    }
+  }
+]

@@ -1,0 +1,813 @@
+[
+  {
+    "id": "M24-Q01",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 1,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-quant",
+    "subtopicIds": [
+      "ga-mensuration"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (conservation of volume with displacement) carried out through three routine volume computations; about 1.5–2 minutes for a prepared student.",
+    "estimatedTimeSec": 110,
+    "concept": "Mensuration: volume conservation when water from a cone is poured into a cylinder and a submerged sphere displaces its own volume.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A conical vessel with base radius $18$ cm and height $16$ cm is completely full of water. All of this water is poured into an empty upright cylindrical jar of base radius $12$ cm and height $30$ cm. A solid metal sphere of radius $6$ cm is then lowered into the jar until it rests on the bottom, completely under water. No water spills over.\n\nThe height of the water surface above the base of the jar, after the sphere has been lowered in, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$12$ cm"
+      },
+      {
+        "label": "B",
+        "text": "$13$ cm"
+      },
+      {
+        "label": "C",
+        "text": "$14$ cm"
+      },
+      {
+        "label": "D",
+        "text": "$18$ cm"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The cone holds $\\tfrac13\\pi(18^2)(16)=1728\\pi\\ \\text{cm}^3$, which fills the jar (base area $144\\pi$) to $12$ cm. The sphere has volume $\\tfrac43\\pi(6^3)=288\\pi$ and raises the level by $288\\pi/144\\pi=2$ cm, so the final height is $14$ cm.",
+      "steps": [
+        {
+          "title": "Volume of water in the cone",
+          "body": "$V_{\\text{cone}}=\\tfrac13\\pi r^2h=\\tfrac13\\pi(18^2)(16)=\\tfrac13\\pi\\cdot 324\\cdot 16=1728\\pi\\ \\text{cm}^3$."
+        },
+        {
+          "title": "Level in the jar before the sphere",
+          "body": "The jar has base area $\\pi(12^2)=144\\pi\\ \\text{cm}^2$, so the water column has height $h_1=\\dfrac{1728\\pi}{144\\pi}=12$ cm."
+        },
+        {
+          "title": "Rise caused by the sphere",
+          "body": "The sphere displaces its own volume: $V_{\\text{sphere}}=\\tfrac43\\pi r^3=\\tfrac43\\pi(6^3)=288\\pi\\ \\text{cm}^3$. The level therefore rises by $\\dfrac{288\\pi}{144\\pi}=2$ cm."
+        },
+        {
+          "title": "Check the physical conditions and conclude",
+          "body": "The new level is $12+2=14$ cm. The sphere's top is at $2\\times 6=12$ cm, below $14$ cm, so it is fully submerged; $14<30$ cm, so nothing spills; and the sphere's diameter ($12$ cm) is less than the jar's ($24$ cm), so it fits. The final height is $14$ cm."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$12$ cm is the level *before* the sphere is lowered in. It ignores the water displaced by the sphere."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This replaces the sphere's volume by its surface area $4\\pi r^2=144\\pi$, giving a rise of only $1$ cm. The water is displaced by the sphere's *volume*."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The sphere raises the level by $\\dfrac{288\\pi}{144\\pi}=2$ cm on top of the initial $12$ cm, giving $14$ cm."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This drops the factor $\\tfrac13$ from the sphere's volume ($4\\pi r^3=864\\pi$ instead of $\\tfrac43\\pi r^3=288\\pi$), giving a rise of $6$ cm instead of $2$ cm."
+        }
+      ],
+      "shortcut": "Every volume carries a factor $\\pi$, so cancel it and treat the sphere as extra water filling the same jar: $h=\\dfrac{\\tfrac13\\cdot18^2\\cdot16+\\tfrac43\\cdot6^3}{12^2}=\\dfrac{1728+288}{144}=14$ cm.",
+      "commonTrap": "Quoting the sphere's volume or the cone's volume with a wrong numerical factor (for example $4\\pi r^2$ or $4\\pi r^3$ for the sphere, or $\\pi r^2h$ without $\\tfrac13$ for the cone), or stopping at $12$ cm and forgetting the displaced water."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "14 cm (12 cm before the sphere + 2 cm displacement)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "from fractions import Fraction as F\n# work in units of pi: every volume and the jar's base area carry the same factor pi\ncone = F(1, 3) * 18**2 * 16\njar_base = F(12**2)\nsphere = F(4, 3) * 6**3\nh1 = cone / jar_base\nh = (cone + sphere) / jar_base\nprint(h1, h)\nassert h1 == 12 and h == 14\nassert 2 * 6 <= h < 30 and 2 * 6 < 2 * 12   # sphere fully submerged, no spill, sphere fits in the jar\n"
+    }
+  },
+  {
+    "id": "M24-Q02",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 2,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-analytical",
+    "subtopicIds": [
+      "ga-numerical-reasoning"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — needs the net rate per cycle, the insight that the reservoir fills part-way through a cycle before the drain hour, and a careful partial-hour calculation, with several tempting whole-cycle answers; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Numerical reasoning: periodic filling and draining at fixed rates and locating the moment of first overflow inside a cycle.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A reservoir has two inlet valves $P$ and $Q$ and one outlet valve $R$. Valve $P$ alone would fill the empty reservoir in $12$ hours, valve $Q$ alone would fill it in $15$ hours, and valve $R$ alone would empty a full reservoir in $20$ hours.\n\nThe reservoir is initially empty. Starting at 6:00 AM on Monday, the valves are opened one at a time in the repeating order $P, Q, R, P, Q, R, \\dots$. Each valve stays open for exactly one hour while the other two are closed.\n\nThe reservoir becomes full for the first time at",
+    "options": [
+      {
+        "label": "A",
+        "text": "4:00 PM on Monday"
+      },
+      {
+        "label": "B",
+        "text": "10:15 AM on Tuesday"
+      },
+      {
+        "label": "C",
+        "text": "11:00 AM on Tuesday"
+      },
+      {
+        "label": "D",
+        "text": "12:00 noon on Tuesday"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "One $P,Q,R$ cycle adds $\\tfrac1{12}+\\tfrac1{15}-\\tfrac1{20}=\\tfrac1{10}$ of the reservoir, but the level peaks after the $Q$ hour of each cycle. After $9$ full cycles ($27$ h) it is $\\tfrac9{10}$ full; the next $P$ hour brings it to $\\tfrac{59}{60}$ and $Q$ needs only $15$ more minutes. Total $28$ h $15$ min after 6:00 AM Monday, i.e. 10:15 AM on Tuesday.",
+      "steps": [
+        {
+          "title": "Rates and the net gain per cycle",
+          "body": "In fractions of the reservoir per hour: $P=+\\tfrac1{12}=\\tfrac5{60}$, $Q=+\\tfrac1{15}=\\tfrac4{60}$, $R=-\\tfrac1{20}=-\\tfrac3{60}$. One three-hour cycle gives $\\tfrac{5+4-3}{60}=\\tfrac1{10}$."
+        },
+        {
+          "title": "When can the reservoir fill?",
+          "body": "At the start of cycle $k$ the level is $\\tfrac{k-1}{10}$. During the cycle it is highest at the end of the $Q$ hour: $\\tfrac{k-1}{10}+\\tfrac{9}{60}=\\tfrac{k-1}{10}+0.15$ (the $R$ hour only lowers it). This reaches $1$ when $k-1\\ge 8.5$, so the first cycle in which it can fill is $k=10$. In cycle $9$ the peak is only $0.8+0.15=0.95$. The level never falls below $0$, because $P$ and $Q$ add $\\tfrac9{60}$ in each cycle before $R$ removes $\\tfrac3{60}$."
+        },
+        {
+          "title": "The tenth cycle",
+          "body": "Cycle $10$ starts at $9\\times3=27$ h with level $\\tfrac9{10}$. After the $P$ hour the level is $\\tfrac9{10}+\\tfrac1{12}=\\tfrac{59}{60}<1$. The remaining $\\tfrac1{60}$ is supplied by $Q$ at $\\tfrac1{15}$ per hour, which takes $\\tfrac{1/60}{1/15}=\\tfrac14$ h $=15$ min."
+        },
+        {
+          "title": "Convert to clock time",
+          "body": "Elapsed time $=27+1+\\tfrac14=28\\tfrac14$ h $=28$ h $15$ min. Starting at 6:00 AM Monday, $24$ h later is 6:00 AM Tuesday and a further $4$ h $15$ min gives 10:15 AM on Tuesday."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This treats all three valves as open together: net rate $\\tfrac1{12}+\\tfrac1{15}-\\tfrac1{20}=\\tfrac1{10}$ per hour gives $10$ h. But the valves open one at a time, so the net gain is $\\tfrac1{10}$ per *three-hour cycle*."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The reservoir fills $28$ h $15$ min after the start, which is 10:15 AM on Tuesday: $27$ h for nine cycles, $1$ h of $P$ and $15$ min of $Q$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This notices that the reservoir fills during the $Q$ hour of the tenth cycle but counts the whole hour ($29$ h). Only $15$ minutes of $Q$ are needed."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This counts ten complete cycles ($30$ h) and includes the draining hour of the tenth cycle. The reservoir is already full during the $Q$ hour, before $R$ ever opens in that cycle."
+        }
+      ],
+      "commonTrap": "Dividing $1$ by the net gain per cycle ($\\tfrac1{10}$) and reporting ten whole cycles. Because the outlet $R$ comes last in each cycle, the reservoir actually fills earlier, during the $Q$ hour of the tenth cycle."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "10:15 AM on Tuesday (28 h 15 min after 6:00 AM Monday)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "from fractions import Fraction as F\nrate = {0: F(1, 12), 1: F(1, 15), 2: F(-1, 20)}   # per hour, valves P, Q, R in turn\nlevel, t = F(0), 0                                # t = minutes since 6:00 AM Monday\nwhile level < 1:\n    level += rate[(t // 60) % 3] / 60\n    t += 1\n    assert level >= 0\nh, m = divmod(6 * 60 + t, 60)\nprint(t, divmod(t, 60), (h // 24, h % 24, m))\nassert t == 28 * 60 + 15 and (h // 24, h % 24, m) == (1, 10, 15)   # Tuesday 10:15 AM\n"
+    }
+  },
+  {
+    "id": "M24-Q03",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 3,
+    "section": "GA",
+    "subjectId": "ga",
+    "topicId": "ga-spatial",
+    "subtopicIds": [
+      "ga-transformations"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — four chained rotations and reflections on a 4×4 pattern where one slip of direction or axis gives a plausible wrong grid; about 3–4 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Spatial transformations: composing rotations and reflections of a grid pattern in a stated order.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A $4\\times 4$ square grid has every cell either filled (`#`) or empty (`.`). The pattern below is written row by row, from the top row to the bottom row.\n\n```text\n#...\n##..\n#.#.\n...#\n```\n\nThe pattern is subjected to the following four transformations, one after another, in the order listed. Each transformation acts on the grid as it stands after the previous one.\n\n1. Rotate the grid by $90^\\circ$ clockwise about its centre.\n2. Reflect the grid in its vertical axis (the left and right columns are interchanged).\n3. Rotate the grid by $90^\\circ$ clockwise about its centre.\n4. Reflect the grid in its main diagonal (the line from the top-left corner to the bottom-right corner).\n\nIn the options, each pattern is written as its four rows from top to bottom, separated by `/`.\n\nWhich one of the following is the resulting pattern?",
+    "options": [
+      {
+        "label": "A",
+        "text": "`...# / ..#. / .#.. / ###.`"
+      },
+      {
+        "label": "B",
+        "text": "`.### / ..#. / .#.. / #...`"
+      },
+      {
+        "label": "C",
+        "text": "`...# / ..## / .#.# / #...`"
+      },
+      {
+        "label": "D",
+        "text": "`#... / .#.. / ..#. / .###`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "Track the filled cells $(r,c)$ (row, column, both from $1$): rotation $90^\\circ$ clockwise is $(r,c)\\to(c,5-r)$, the vertical-axis reflection is $(r,c)\\to(r,5-c)$ and the main-diagonal reflection is $(r,c)\\to(c,r)$. The grid becomes `.### / ..#. / .#.. / #...`, then `###. / .#.. / ..#. / ...#`, then `...# / ..## / .#.# / #...`, and finally `...# / ..#. / .#.. / ###.`.",
+      "steps": [
+        {
+          "title": "Coordinate rules",
+          "body": "Number rows $r$ and columns $c$ from $1$ to $4$, starting at the top-left. Rotation by $90^\\circ$ clockwise: $(r,c)\\to(c,\\,5-r)$. Reflection in the vertical axis: $(r,c)\\to(r,\\,5-c)$. Reflection in the main diagonal: $(r,c)\\to(c,\\,r)$. The filled cells of the original are $(1,1),(2,1),(2,2),(3,1),(3,3),(4,4)$."
+        },
+        {
+          "title": "After steps 1 and 2",
+          "body": "Step 1 gives $(1,4),(1,3),(2,3),(1,2),(3,2),(4,1)$, i.e. the grid `.### / ..#. / .#.. / #...`. Step 2 (left $\\leftrightarrow$ right) gives $(1,1),(1,2),(2,2),(1,3),(3,3),(4,4)$, i.e. `###. / .#.. / ..#. / ...#`."
+        },
+        {
+          "title": "After steps 3 and 4",
+          "body": "Step 3 (rotate clockwise again) gives $(1,4),(2,4),(3,4),(2,3),(3,2),(4,1)$, i.e. `...# / ..## / .#.# / #...`. Step 4 (transpose) gives $(4,1),(4,2),(4,3),(3,2),(2,3),(1,4)$, i.e. `...# / ..#. / .#.. / ###.`."
+        },
+        {
+          "title": "Cross-check with the combined map",
+          "body": "Composing the four maps: $(r,c)\\to(c,5-r)\\to(c,r)\\to(r,5-c)\\to(5-c,r)$. The net map $(r,c)\\to(5-c,r)$ is a rotation by $90^\\circ$ **counterclockwise**, so the result is the original rotated counterclockwise: column $4$ of the original, read top to bottom, `...#`, becomes the top row, and so on, giving `...# / ..#. / .#.. / ###.` again."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The grid obtained after all four transformations is `...# / ..#. / .#.. / ###.`."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the original rotated $90^\\circ$ *clockwise*, which is also the grid after step 1 alone. It results from taking the net rotation in the wrong sense (for instance, reflecting in the other diagonal in step 4)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is the grid after step 3. It stops before the final reflection in the main diagonal."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This is the original reflected in its anti-diagonal. It results from leaving out the reflection in the vertical axis (step 2)."
+        }
+      ],
+      "shortcut": "Two reflections and two quarter-turns always combine into a single rotation, never a mirror image. Follow one isolated cell: the bottom-right cell $(4,4)$ goes to $(4,1)\\to(4,4)\\to(4,1)\\to(1,4)$, i.e. to the top-right corner. That is what a $90^\\circ$ counterclockwise turn does to the bottom-right corner, so just rotate the original counterclockwise.",
+      "commonTrap": "Reflecting the original grid rather than the current one, mixing up clockwise with counterclockwise, or leaving out one of the four steps. Each of these gives a different, equally plausible-looking grid."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (the original pattern rotated 90 degrees counterclockwise)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\ng = lambda rows: np.array([[c == '#' for c in r] for r in rows])\ns = lambda a: ' / '.join(''.join('#' if v else '.' for v in r) for r in a)\nrot_cw = lambda a: np.rot90(a, -1)\nvflip = lambda a: a[:, ::-1]          # reflect in the vertical axis\ndiag = lambda a: a.T                  # reflect in the main diagonal\nP = g(['#...', '##..', '#.#.', '...#'])\ncur = P\nfor f in (rot_cw, vflip, rot_cw, diag):\n    cur = f(cur)\nopts = {'A': '...# / ..#. / .#.. / ###.', 'B': '.### / ..#. / .#.. / #...',\n        'C': '...# / ..## / .#.# / #...', 'D': '#... / .#.. / ..#. / .###'}\nprint(s(cur), [k for k, v in opts.items() if v == s(cur)])\nassert [k for k, v in opts.items() if v == s(cur)] == ['A']\nassert s(cur) == s(np.rot90(P, 1))    # net effect = 90-degree counterclockwise rotation\n"
+    }
+  },
+  {
+    "id": "M24-Q04",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 4,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-trees"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — two linked concepts (BST insertion and deletion of a two-child node through its inorder successor) with a careful twelve-key construction and a level-sum; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Binary search tree: insertion, deletion of a node with two children via its inorder successor, and a sum over the keys at a given depth.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The following distinct integer keys are inserted, in the order given, into an initially empty binary search tree (a key smaller than the key at a node goes to its left subtree, and a larger key goes to its right subtree):\n\n$$52,\\ 30,\\ 71,\\ 18,\\ 41,\\ 65,\\ 90,\\ 36,\\ 47,\\ 60,\\ 68,\\ 38$$\n\nThe keys $52$ and $30$ are then deleted, in this order, using the following rules.\n\n- A node with no child is simply removed.\n- A node with exactly one child is replaced by that child (together with the child's subtree).\n- A node with two children takes the key of its **inorder successor** (the smallest key in its right subtree), and the node that held that successor is then deleted by the rules above.\n\nThe root has depth $0$. The sum of the keys stored at depth $3$ of the final tree is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 153,
+      "max": 153
+    },
+    "solution": {
+      "quick": "After the insertions the root $52$ has left subtree rooted at $30$ and right subtree rooted at $71$. Deleting $52$ moves its successor $60$ to the root; deleting $30$ moves its successor $36$ up (its old node is replaced by its child $38$). Depth $3$ then holds $38$, $47$ and $68$, with sum $153$.",
+      "steps": [
+        {
+          "title": "Build the tree",
+          "body": "Inserting the keys in order gives: root $52$; $30$ is its left child with children $18$ and $41$; $41$ has children $36$ (whose right child is $38$) and $47$; $71$ is the right child of $52$ with children $65$ and $90$; $65$ has children $60$ and $68$."
+        },
+        {
+          "title": "Delete 52",
+          "body": "The root has two children. Its inorder successor is the leftmost node of its right subtree: $71\\to65\\to60$, so the successor is $60$ (a leaf). The root takes the key $60$ and the leaf $60$ is removed, leaving $65$ with only the right child $68$."
+        },
+        {
+          "title": "Delete 30",
+          "body": "Node $30$ has two children ($18$ and $41$). Its successor is the leftmost node of the subtree at $41$: $41\\to36$, and $36$ has no left child. Node $30$ takes the key $36$, and the old node $36$, which has one child ($38$), is replaced by $38$. Node $41$ now has children $38$ and $47$."
+        },
+        {
+          "title": "Read the levels",
+          "body": "Final tree: depth $0$: $60$; depth $1$: $36,\\ 71$; depth $2$: $18,\\ 41,\\ 65,\\ 90$; depth $3$: $38,\\ 47,\\ 68$. The sum at depth $3$ is $38+47+68=153$."
+        }
+      ],
+      "finalAnswer": "**153**",
+      "commonTrap": "Using the inorder predecessor instead of the successor (which gives a different tree), or counting the root as depth $1$, in which case the depth-$3$ keys would be the four nodes $18,\\ 41,\\ 65,\\ 90$ of true depth $2$, with sum $214$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "153 (depth-3 keys 38, 47, 68)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "class N:\n    def __init__(s, k): s.k, s.l, s.r = k, None, None\ndef ins(t, k):\n    if t is None: return N(k)\n    if k < t.k: t.l = ins(t.l, k)\n    else: t.r = ins(t.r, k)\n    return t\ndef dele(t, k):\n    if t is None: return None\n    if k < t.k: t.l = dele(t.l, k)\n    elif k > t.k: t.r = dele(t.r, k)\n    elif t.l is None: return t.r          # leaf or only a right child\n    elif t.r is None: return t.l          # only a left child\n    else:\n        s = t.r\n        while s.l: s = s.l                # inorder successor\n        t.k = s.k\n        t.r = dele(t.r, s.k)\n    return t\ndef level(t, d):\n    return [] if t is None else ([t.k] if d == 0 else level(t.l, d - 1) + level(t.r, d - 1))\nroot = None\nfor k in [52, 30, 71, 18, 41, 65, 90, 36, 47, 60, 68, 38]: root = ins(root, k)\nfor k in (52, 30): root = dele(root, k)\nprint([level(root, d) for d in range(5)])\nassert level(root, 3) == [38, 47, 68] and sum(level(root, 3)) == 153\nassert sum(level(root, 2)) == 214          # the 'root at depth 1' slip\n"
+    }
+  },
+  {
+    "id": "M24-Q05",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 5,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-subspaces"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — four independent subspace checks: two need a linear-condition argument (a commutant and a set defined by an eigenvector condition with a free eigenvalue) and two need explicit closure counterexamples; an MSQ with independently non-trivial statements; about 3.5 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Subspace test (zero vector, closure under addition and scalar multiplication) applied to matrix sets defined by commutation, nilpotency, an eigenvector condition and symmetry conditions.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $V=\\mathbb{R}^{3\\times 3}$ be the real vector space of all $3\\times 3$ real matrices under the usual matrix addition and multiplication by real scalars. Let $O$ be the $3\\times 3$ zero matrix, $B=\\operatorname{diag}(1,1,2)$ and $\\mathbf{e}=(1,1,1)^{\\top}$.\n\nWhich of the following subsets of $V$ is/are subspaces of $V$?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{X\\in V : XB=BX\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\{X\\in V : X^{2}=O\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\{X\\in V : X\\mathbf{e}=\\lambda\\mathbf{e}\\ \\text{for some real number }\\lambda\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\{X\\in V : X^{\\top}=X\\ \\text{or}\\ X^{\\top}=-X\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C"
+      ]
+    },
+    "solution": {
+      "quick": "A subset is a subspace iff it contains $O$ and is closed under addition and scalar multiples. (A) and (C) are cut out by homogeneous linear conditions on the entries, so they are subspaces. (B) fails closure under addition ($E_{12}+E_{21}$ squares to a non-zero matrix, where $E_{ij}$ has a single $1$ in position $(i,j)$) and (D), a union of two subspaces, fails it too ($2E_{12}$ is the sum of a symmetric and a skew-symmetric matrix).",
+      "steps": [
+        {
+          "title": "(A) Commutant of B",
+          "body": "If $XB=BX$ and $YB=BY$ then $(X+Y)B=B(X+Y)$ and $(cX)B=B(cX)$; also $OB=BO$. Entrywise, $XB=BX$ means $x_{ij}b_j=b_ix_{ij}$, i.e. $x_{ij}(b_j-b_i)=0$, so $x_{13}=x_{23}=x_{31}=x_{32}=0$ (where $b_i\\ne b_j$). This is a subspace of dimension $5$."
+        },
+        {
+          "title": "(B) Square-zero matrices",
+          "body": "$O^2=O$ and $(cX)^2=c^2X^2=O$, so $O$ and scalar multiples are fine. But with $X=E_{12}$ and $Y=E_{21}$ (matrix units) we get $X^2=Y^2=O$, while $(X+Y)^2=E_{11}+E_{22}\\ne O$. Not closed under addition, so not a subspace."
+        },
+        {
+          "title": "(C) Matrices with e as an eigenvector",
+          "body": "Here $\\lambda$ may depend on the matrix. If $X\\mathbf{e}=\\lambda\\mathbf{e}$ and $Y\\mathbf{e}=\\mu\\mathbf{e}$, then $(X+Y)\\mathbf{e}=(\\lambda+\\mu)\\mathbf{e}$ and $(cX)\\mathbf{e}=(c\\lambda)\\mathbf{e}$; and $O\\mathbf{e}=0\\cdot\\mathbf{e}$. So the set is closed, and it is a subspace (it is exactly the set of matrices whose three row sums are equal, two homogeneous linear conditions, dimension $7$)."
+        },
+        {
+          "title": "(D) Symmetric or skew-symmetric",
+          "body": "This is the union of the symmetric matrices and the skew-symmetric matrices. Take $S=E_{12}+E_{21}$ (symmetric) and $K=E_{12}-E_{21}$ (skew-symmetric). Then $S+K=2E_{12}$, whose transpose $2E_{21}$ is neither $2E_{12}$ nor $-2E_{12}$, so $S+K$ is neither symmetric nor skew-symmetric. Not closed under addition, so not a subspace. Hence (A) and (C) are the subspaces."
+        }
+      ],
+      "finalAnswer": "**(A), (C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. The condition $XB=BX$ is linear in $X$ (it forces $x_{13}=x_{23}=x_{31}=x_{32}=0$), so the set is a subspace."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. It contains $O$ and is closed under scalar multiples, but not under addition: $E_{12}^2=E_{21}^2=O$ while $(E_{12}+E_{21})^2=E_{11}+E_{22}\\ne O$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. Although $\\lambda$ varies from matrix to matrix, sums and scalar multiples of such matrices again have $\\mathbf{e}$ as an eigenvector (or give $O\\mathbf{e}=\\mathbf{0}$), so the set is closed; it is the set of matrices with all row sums equal."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "Incorrect. A union of two subspaces is a subspace only if one contains the other. Here $S=E_{12}+E_{21}$ is symmetric and $K=E_{12}-E_{21}$ is skew-symmetric, but $S+K=2E_{12}$ is neither."
+        }
+      ],
+      "commonTrap": "Believing that a set of eigenvectors cannot be a subspace because $\\lambda$ varies (it is a subspace here), and accepting (B) or (D) because they contain $O$ and are closed under scalar multiples; closure under addition must be checked as well."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A and C",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\nB = np.diag([1., 1., 2.]); e = np.ones(3)\ndef unit(i, j):\n    m = np.zeros((3, 3)); m[i, j] = 1; return m\ndef kernel(f):                          # basis of {X : f(X) = 0} for a linear map f on 3x3 matrices\n    cols = np.array([np.ravel(f(unit(i, j))) for i in range(3) for j in range(3)]).T\n    u, s, vt = np.linalg.svd(cols); return vt[(s > 1e-9).sum():]\ninA = lambda X: np.allclose(X @ B, B @ X)\ninB = lambda X: np.allclose(X @ X, 0)\ninC = lambda X: np.allclose(np.cross(X @ e, e), 0)       # X e parallel to e\ninD = lambda X: np.allclose(X.T, X) or np.allclose(X.T, -X)\nkA = kernel(lambda X: X @ B - B @ X)    # (A) and (C) are kernels of linear maps, hence subspaces\nkC = kernel(lambda X: np.cross(X @ e, e))\nrng = np.random.default_rng(0)\nsample = lambda k: (rng.normal(size=len(k)) @ k).reshape(3, 3)\nfor k, f in ((kA, inA), (kC, inC)):\n    for _ in range(50):\n        X, Y, c = sample(k), sample(k), rng.normal()\n        assert f(X) and f(X + Y) and f(c * X)\nS, K = unit(0, 1) + unit(1, 0), unit(0, 1) - unit(1, 0)\nassert inB(unit(0, 1)) and inB(unit(1, 0)) and not inB(unit(0, 1) + unit(1, 0))   # (B) not closed\nassert inD(S) and inD(K) and not inD(S + K)                                         # (D) not closed\nprint(len(kA), len(kC))                 # dimensions 5 and 7\nassert (len(kA), len(kC)) == (5, 7)\n"
+    }
+  },
+  {
+    "id": "M24-Q06",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 6,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-matrices",
+    "subtopicIds": [
+      "la-partition-matrix",
+      "la-rank"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one structural idea (M = I + N with N² = O) feeding four short block-matrix checks (power, inverse, rank, diagonalizability); about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Partitioned matrices: a block upper-unitriangular matrix M = I + N with N² = O, and its powers, inverse, rank of M − I and diagonalizability.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $I$ be the $2\\times 2$ identity matrix, $O$ the $2\\times 2$ zero matrix, $I_4$ the $4\\times4$ identity matrix, and\n\n$$X=\\begin{bmatrix}1&2\\\\0&3\\end{bmatrix},\\qquad M=\\begin{bmatrix} I & X\\\\ O & I\\end{bmatrix}.$$\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$M^{n}=\\begin{bmatrix} I & nX\\\\ O & I\\end{bmatrix}$ for every positive integer $n$."
+      },
+      {
+        "label": "B",
+        "text": "$M^{-1}=\\begin{bmatrix} I & X\\\\ O & I\\end{bmatrix}$."
+      },
+      {
+        "label": "C",
+        "text": "$\\operatorname{rank}(M-I_4)=2$."
+      },
+      {
+        "label": "D",
+        "text": "$M$ is not diagonalizable."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Write $M=I_4+N$ with $N=\\begin{bmatrix}O&X\\\\O&O\\end{bmatrix}$ and $N^2=O$. Then $M^n=I_4+nN$ (A is true), $M^{-1}=I_4-N$ with top-right block $-X$ (B is false), $\\operatorname{rank}(M-I_4)=\\operatorname{rank}N=\\operatorname{rank}X=2$ (C is true), and the only eigenvalue $1$ has geometric multiplicity $4-2=2<4$, so $M$ is not diagonalizable (D is true).",
+      "steps": [
+        {
+          "title": "Split M",
+          "body": "$M=I_4+N$ where $N=\\begin{bmatrix}O&X\\\\O&O\\end{bmatrix}$. Block multiplication gives $N^2=\\begin{bmatrix}O\\cdot O+X\\cdot O & O\\cdot X+X\\cdot O\\\\ O&O\\end{bmatrix}=O$."
+        },
+        {
+          "title": "Powers (A)",
+          "body": "Since $I_4$ commutes with $N$, the binomial theorem gives $M^n=(I_4+N)^n=I_4+nN$, because all terms with $N^2$ or higher vanish. In blocks, $M^n=\\begin{bmatrix}I&nX\\\\O&I\\end{bmatrix}$, so (A) is true."
+        },
+        {
+          "title": "Inverse (B)",
+          "body": "$(I_4+N)(I_4-N)=I_4-N^2=I_4$, so $M^{-1}=I_4-N=\\begin{bmatrix}I&-X\\\\O&I\\end{bmatrix}$. The proposed matrix with $+X$ is $M$ itself, and $M\\cdot M=\\begin{bmatrix}I&2X\\\\O&I\\end{bmatrix}\\ne I_4$, so (B) is false."
+        },
+        {
+          "title": "Rank and diagonalizability (C, D)",
+          "body": "$M-I_4=N$ has rank equal to $\\operatorname{rank}X$, and $\\det X=3\\ne0$, so the rank is $2$: (C) is true. $M$ is upper triangular with all diagonal entries $1$, so its only eigenvalue is $1$ with algebraic multiplicity $4$. Its geometric multiplicity is $\\dim\\ker(M-I_4)=4-2=2<4$, so $M$ is not diagonalizable: (D) is true."
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "True. With $N^2=O$ the binomial expansion stops after two terms: $M^n=I_4+nN$, which is the stated block matrix."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "False. $M^{-1}=I_4-N$ has top-right block $-X$, not $+X$. The matrix given is $M$ itself, and $M^2\\ne I_4$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "True. $M-I_4=N$ and $\\operatorname{rank}N=\\operatorname{rank}X=2$ because $\\det X=3\\ne 0$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "True. The only eigenvalue is $1$ (algebraic multiplicity $4$) but its eigenspace $\\ker N$ has dimension $4-2=2$, so there is no basis of eigenvectors."
+        }
+      ],
+      "commonTrap": "Forgetting the sign in the inverse (writing $+X$ for the corner block), and assuming that a matrix whose only eigenvalue is $1$ must be diagonalizable. The rank of $M-I_4$ gives the eigenspace dimension, which here is smaller than $4$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, C and D",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import sympy as sp\nI2, O = sp.eye(2), sp.zeros(2)\nX = sp.Matrix([[1, 2], [0, 3]])\nblk = lambda a, b, c, d: sp.Matrix(sp.BlockMatrix([[a, b], [c, d]]))\nM = blk(I2, X, O, I2)\nA = all(M**n == blk(I2, n * X, O, I2) for n in range(1, 8))\nB = M.inv() == blk(I2, X, O, I2)\nC = (M - sp.eye(4)).rank() == 2\nD = not M.is_diagonalizable()\nprint(A, B, C, D, M.eigenvals(), len((M - sp.eye(4)).nullspace()))\nassert (A, B, C, D) == (True, False, True, True)\n"
+    }
+  },
+  {
+    "id": "M24-Q07",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 7,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-er-relational",
+    "subtopicIds": [
+      "dbw-relational-model"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — four statements about what a single instance can and cannot establish about candidate keys, each needing a short uniqueness check; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Relational model: what a single relation instance proves about candidate keys (sets that are certainly not keys versus sets that may be keys).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A relation schema $R(A,B,C,D)$ has the following instance $r$, which is a valid instance of $R$. All attribute values are atomic and non-null.\n\n| A | B | C | D |\n|---|---|---|---|\n| $a_1$ | $b_1$ | $c_1$ | $d_1$ |\n| $a_1$ | $b_2$ | $c_1$ | $d_2$ |\n| $a_2$ | $b_1$ | $c_2$ | $d_2$ |\n| $a_3$ | $b_2$ | $c_2$ | $d_1$ |\n| $a_3$ | $b_1$ | $c_1$ | $d_3$ |\n\nNothing else is known about the keys of $R$ except that $r$ is a valid instance of it. A statement is *necessarily true* if it holds for every possible choice of the keys of $R$ that is consistent with $r$ being a valid instance.\n\nWhich of the following statements is/are necessarily true?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{B, D\\}$ is a candidate key of $R$."
+      },
+      {
+        "label": "B",
+        "text": "$\\{A, C\\}$ is not a candidate key of $R$."
+      },
+      {
+        "label": "C",
+        "text": "$\\{A, D\\}$ cannot be a candidate key of $R$, because neither $A$ nor $D$ is a candidate key by itself."
+      },
+      {
+        "label": "D",
+        "text": "Every candidate key of $R$ has at least two attributes."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Any superkey must have no repeated values in a valid instance. In $r$ each single attribute has a repeated value, and $\\{A,C\\}$ repeats $(a_1,c_1)$, so these cannot be keys: (B) and (D) are necessarily true. $\\{B,D\\}$ and $\\{A,D\\}$ are unique in $r$, so they *may* be candidate keys but nothing forces it: (A) is not necessarily true and (C) is false.",
+      "steps": [
+        {
+          "title": "What an instance can tell us",
+          "body": "A superkey of $R$ must have distinct values in every pair of different tuples of every valid instance. So if some attribute set has two tuples that agree on it, it is certainly not a superkey (hence not a candidate key). If it is unique in $r$, it *may* be a key, but one instance can never prove that it is."
+        },
+        {
+          "title": "Single attributes",
+          "body": "$A$: $a_1$ appears twice. $B$: $b_1$ appears three times. $C$: $c_1$ appears three times. $D$: $d_1$ and $d_2$ each appear twice. No single attribute is unique in $r$, so none can be a superkey or candidate key: (D) is necessarily true."
+        },
+        {
+          "title": "Pairs",
+          "body": "$\\{A,C\\}$: tuples 1 and 2 both have $(a_1,c_1)$, so $\\{A,C\\}$ is certainly not a candidate key: (B) is necessarily true. $\\{B,D\\}$ takes the values $(b_1,d_1),(b_2,d_2),(b_1,d_2),(b_2,d_1),(b_1,d_3)$, all different, so $r$ does not rule it out; but the instance does not force $\\{B,D\\}$ to be a key (the schema might allow another tuple repeating a $(B,D)$ pair), so (A) is not necessarily true."
+        },
+        {
+          "title": "The reasoning in (C)",
+          "body": "$\\{A,D\\}$ is unique in $r$ (its values are $(a_1,d_1),(a_1,d_2),(a_2,d_2),(a_3,d_1),(a_3,d_3)$). Since neither $A$ nor $D$ alone is even a superkey, $\\{A,D\\}$ would be minimal if it were a superkey. A candidate key is a minimal superkey, and its attributes need not be keys on their own, so $\\{A,D\\}$ *can* be a candidate key and (C) is false. The necessarily true statements are (B) and (D)."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Not necessarily true. $\\{B,D\\}$ has no repeated pair in $r$, so it is consistent with being a candidate key, but a single instance cannot establish a key constraint."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Necessarily true. The tuples $(a_1,b_1,c_1,d_1)$ and $(a_1,b_2,c_1,d_2)$ agree on $\\{A,C\\}$ but are different tuples, so $\\{A,C\\}$ cannot be a superkey, hence cannot be a candidate key."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "False. A candidate key is a *minimal* superkey, which does not require its attributes to be keys on their own. $\\{A,D\\}$ is unique in $r$, and neither $A$ nor $D$ alone is a superkey, so $\\{A,D\\}$ can perfectly well be a candidate key."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Necessarily true. Every single attribute repeats a value in $r$, so no one-attribute set can be a superkey of $R$. Every candidate key therefore needs at least two attributes."
+        }
+      ],
+      "commonTrap": "Treating a set that is unique in the instance as *proved* to be a key, or insisting that the parts of a composite candidate key must themselves be keys. An instance can only rule candidate keys out; it can never confirm them."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B and D",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "R = [(\"a1\", \"b1\", \"c1\", \"d1\"), (\"a1\", \"b2\", \"c1\", \"d2\"), (\"a2\", \"b1\", \"c2\", \"d2\"),\n     (\"a3\", \"b2\", \"c2\", \"d1\"), (\"a3\", \"b1\", \"c1\", \"d3\")]\nattrs = \"ABCD\"\ndef unique(S):\n    proj = [tuple(t[attrs.index(a)] for a in S) for t in R]\n    return len(set(proj)) == len(proj)\n# X can be a candidate key of some schema consistent with r  <=>  X is unique in r (take X as the only key);\n# no X (other than the full attribute set) is forced to be a key, so 'X is a candidate key' is never necessarily true.\ncan_be_key = unique\nstmtA = False\nstmtB = not can_be_key(\"AC\")\nstmtC = not can_be_key(\"AD\")\nstmtD = not any(unique(a) for a in attrs)\nprint(unique(\"BD\"), unique(\"AC\"), unique(\"AD\"), [unique(a) for a in attrs])\nassert unique(\"BD\") and unique(\"AD\") and not unique(\"AC\")\nassert (stmtA, stmtB, stmtC, stmtD) == (False, True, False, True)\n"
+    }
+  },
+  {
+    "id": "M24-Q08",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 8,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-confidence-interval"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — requires recovering σ from a given interval, switching the confidence level, solving for n and rounding up, with several likely traps (z not changed, no squaring, rounding down); about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Confidence interval for a mean with known σ: recovering σ from a given interval and finding the sample size for a narrower interval at a higher confidence level.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The fill mass of bottles from a filling line is normally distributed with an unknown mean $\\mu$ and a known standard deviation $\\sigma$ (its value is not stated here, and it does not change). A random sample of $n=36$ bottles gives the $95\\%$ confidence interval $(497.6,\\ 501.2)$ grams for $\\mu$, computed using the known $\\sigma$.\n\nThe engineer now plans a fresh random sample of $n'$ bottles from the same line and wants the resulting $99\\%$ confidence interval for $\\mu$ to have total width at most $3.0$ grams. Use $z_{0.025}=1.96$ and $z_{0.005}=2.576$, where $P(Z>z_{\\alpha})=\\alpha$ for a standard normal variable $Z$.\n\nThe smallest sample size $n'$ that achieves this is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$52$"
+      },
+      {
+        "label": "B",
+        "text": "$57$"
+      },
+      {
+        "label": "C",
+        "text": "$89$"
+      },
+      {
+        "label": "D",
+        "text": "$90$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "The $95\\%$ interval has half-width $1.8=1.96\\sigma/\\sqrt{36}$, so $\\sigma\\approx5.510$. The $99\\%$ interval has width $2(2.576)\\sigma/\\sqrt{n'}\\le3.0$, so $\\sqrt{n'}\\ge9.4629$ and $n'\\ge89.55$. Round up: $n'=90$.",
+      "steps": [
+        {
+          "title": "Recover σ from the first interval",
+          "body": "The interval is $\\bar x\\pm z_{0.025}\\sigma/\\sqrt n$ with centre $499.4$ and half-width $\\dfrac{501.2-497.6}{2}=1.8$. So $1.8=\\dfrac{1.96\\,\\sigma}{\\sqrt{36}}=\\dfrac{1.96\\,\\sigma}{6}$, which gives $\\sigma=\\dfrac{1.8\\times6}{1.96}\\approx5.5102$ g."
+        },
+        {
+          "title": "Width condition for the 99% interval",
+          "body": "The total width is $2z_{0.005}\\dfrac{\\sigma}{\\sqrt{n'}}\\le 3.0$, so $\\sqrt{n'}\\ge\\dfrac{2(2.576)(5.5102)}{3.0}=\\dfrac{28.3886}{3.0}\\approx9.4629$."
+        },
+        {
+          "title": "Solve for n′ and round up",
+          "body": "$n'\\ge9.4629^2\\approx89.55$. The sample size must be an integer and the width must not exceed $3.0$, so we round **up**: $n'=90$."
+        },
+        {
+          "title": "Check the neighbours",
+          "body": "For $n'=89$ the width is $\\dfrac{28.3886}{\\sqrt{89}}\\approx3.009>3.0$, which fails; for $n'=90$ it is $\\dfrac{28.3886}{\\sqrt{90}}\\approx2.992\\le3.0$, which works. So the smallest sample size is $90$."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This keeps $z=1.96$ for the new interval: $36\\left(\\tfrac{1.8}{1.5}\\right)^2=51.84\\to52$. Moving from $95\\%$ to $99\\%$ confidence replaces $z_{0.025}$ by the larger $z_{0.005}$, which needs more observations."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This scales linearly instead of quadratically: $36\\cdot\\tfrac{2.576}{1.96}\\cdot\\tfrac{1.8}{1.5}\\approx56.8\\to57$. The sample size varies as $(z/\\text{half-width})^2$, so both ratios must be squared."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$89.55$ has been rounded down. With $n'=89$ the width is about $3.009$ g, which exceeds $3.0$ g, so $89$ bottles are not enough."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$n'\\ge36\\left(\\tfrac{2.576}{1.96}\\right)^2\\left(\\tfrac{1.8}{1.5}\\right)^2\\approx89.55$, so the smallest integer that works is $90$."
+        }
+      ],
+      "shortcut": "$\\sigma$ never needs to be computed: for fixed $\\sigma$, $n\\propto\\left(z/h\\right)^2$ with $h$ the half-width. So $n'=36\\left(\\dfrac{2.576}{1.96}\\right)^2\\left(\\dfrac{1.8}{1.5}\\right)^2\\approx89.55\\to90$.",
+      "commonTrap": "Forgetting that $z$ changes with the confidence level, forgetting to square, using the total width $3.0$ as the half-width, or rounding $89.55$ down to $89$. The sample size must always be rounded up."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "90 (n' >= 89.55)",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import math\nn0, lo, hi = 36, 497.6, 501.2\nz95, z99, W = 1.96, 2.576, 3.0\nH = (hi - lo) / 2                          # half-width of the first interval\nsigma = H * math.sqrt(n0) / z95\nn = 1\nwhile 2 * z99 * sigma / math.sqrt(n) > W:\n    n += 1\nprint(sigma, n, 2 * z99 * sigma / math.sqrt(89), 2 * z99 * sigma / math.sqrt(90))\nassert n == 90 and 2 * z99 * sigma / math.sqrt(89) > W\nassert math.ceil(n0 * (H / 1.5) ** 2) == 52 and math.ceil(n0 * (z99 / z95) * (H / 1.5)) == 57   # distractors\n"
+    }
+  },
+  {
+    "id": "M24-Q09",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 9,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-linear-systems",
+    "subtopicIds": [
+      "la-systems"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (solving a 3×3 linear system by elimination with a unique integer solution); about 1 minute.",
+    "estimatedTimeSec": 80,
+    "concept": "Solving a 3×3 linear system with a unique solution by elimination.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A canteen plans a meal made only from three foods $F_1$, $F_2$ and $F_3$, using $x$, $y$ and $z$ servings of them respectively. The nutrient content per serving is given below.\n\n| Food | Protein per serving (g) | Fibre per serving (g) |\n|---|---|---|\n| $F_1$ | 3 | 2 |\n| $F_2$ | 2 | 1 |\n| $F_3$ | 1 | 3 |\n\nThe meal must supply exactly $20$ g of protein and exactly $17$ g of fibre, and must consist of exactly $9$ servings in total.\n\nThe number of servings $z$ of $F_3$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2,
+      "max": 2
+    },
+    "solution": {
+      "quick": "The conditions are $3x+2y+z=20$, $2x+y+3z=17$ and $x+y+z=9$. Subtracting the third from the first gives $2x+y=11$, and subtracting three times the third from the second gives $x+2y=10$. Hence $x=4$, $y=3$ and $z=9-4-3=2$.",
+      "steps": [
+        {
+          "title": "Write the system",
+          "body": "Protein: $3x+2y+z=20$ (1). Fibre: $2x+y+3z=17$ (2). Total servings: $x+y+z=9$ (3)."
+        },
+        {
+          "title": "Eliminate z",
+          "body": "(1) $-$ (3): $2x+y=11$ (4). (2) $-\\,3\\times$(3): $-x-2y=17-27=-10$, i.e. $x+2y=10$ (5)."
+        },
+        {
+          "title": "Solve for x and y",
+          "body": "From (4), $y=11-2x$. Substitute into (5): $x+22-4x=10$, so $-3x=-12$ and $x=4$. Then $y=11-8=3$."
+        },
+        {
+          "title": "Find z and check",
+          "body": "From (3), $z=9-4-3=2$. Check: $3(4)+2(3)+2=20$, $2(4)+3+3(2)=17$ and $4+3+2=9$. The coefficient matrix has determinant $-3\\ne0$, so the solution is unique. The meal uses $2$ servings of $F_3$."
+        }
+      ],
+      "finalAnswer": "**2**",
+      "commonTrap": "Mixing up which column belongs to which food when forming the equations (so that the protein and fibre rows get interchanged coefficients), or reporting $x$ or $y$ instead of $z$. Substituting back into all three conditions catches this."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2",
+      "agreesWithKey": true,
+      "notes": "",
+      "checkCode": "import numpy as np\nA = np.array([[3, 2, 1], [2, 1, 3], [1, 1, 1]], float)    # protein, fibre, total servings (columns F1, F2, F3)\nb = np.array([20, 17, 9], float)\nx = np.linalg.solve(A, b)\nprint(x, np.linalg.det(A))\nassert abs(np.linalg.det(A)) > 1e-9 and np.allclose(x, [4, 3, 2])   # servings of F3 is x[2] = 2\n"
+    }
+  }
+]

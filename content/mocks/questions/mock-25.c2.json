@@ -1,0 +1,809 @@
+[
+  {
+    "id": "M25-Q10",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 10,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-storage",
+    "subtopicIds": [
+      "dbw-file-organization"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (block-count arithmetic for an unspanned heap file with a block header) followed by the expected cost of a sequential scan for two query types and a 50:50 mix; routine computation, about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Blocking factor and block count of an unspanned heap file, then expected block accesses for a successful sequential search and a full scan under a mixed workload",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hospital laboratory stores $36{,}000$ fixed-length test-result records of $150$ bytes each in a **heap (unordered) file**. The disk block size is $4096$ bytes and every block begins with a $96$-byte header; the rest of the block holds whole records only (the organisation is **unspanned**). Blocks are filled completely in sequence, so only the last block can be partly empty.\n\nThe workload consists of two kinds of queries, each making up half of all queries:\n\n- *Key lookup:* fetch the record with a given key value that is known to be in the file. Blocks are read one after another starting from the first block, and the search stops as soon as the record is found. The record is equally likely to lie in any block of the file.\n- *Non-key selection:* retrieve every record having a given value of a non-key attribute, which requires reading every block of the file.\n\nThe expected number of block accesses per query, averaged over this workload, is ________ (Answer in integer).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 1039,
+      "max": 1039
+    },
+    "solution": {
+      "quick": "Usable space per block is $4096-96=4000$ bytes, so $\\lfloor 4000/150\\rfloor = 26$ records fit and the file needs $b=\\lceil 36000/26\\rceil = 1385$ blocks.\nA successful key lookup averages $(b+1)/2 = 693$ accesses and a non-key selection reads all $b = 1385$ blocks.\nAveraging the two query types equally gives $\\tfrac12(693)+\\tfrac12(1385) = 1039$.",
+      "steps": [
+        {
+          "title": "Records per block (unspanned)",
+          "body": "Usable bytes per block $= 4096 - 96 = 4000$. Because records may not span blocks, the blocking factor is\n\n$$bf = \\left\\lfloor \\frac{4000}{150} \\right\\rfloor = \\lfloor 26.67 \\rfloor = 26.$$\n\n(Each block wastes $4000 - 26\\cdot 150 = 100$ bytes.)"
+        },
+        {
+          "title": "Number of blocks in the file",
+          "body": "$$b = \\left\\lceil \\frac{36000}{26} \\right\\rceil = \\lceil 1384.6\\ldots \\rceil = 1385.$$\n\nCheck: $26 \\times 1384 = 35984$ records fill $1384$ blocks, so the remaining $16$ records need one more, partly filled, block."
+        },
+        {
+          "title": "Expected cost of each query type",
+          "body": "*Key lookup.* If the record lies in block $i$, the scan reads $i$ blocks. With $i$ equally likely over $1,\\dots,b$:\n\n$$E = \\frac{1+2+\\cdots+b}{b} = \\frac{b+1}{2} = \\frac{1386}{2} = 693.$$\n\n*Non-key selection.* Every block must be read, so the cost is $b = 1385$."
+        },
+        {
+          "title": "Average over the workload",
+          "body": "$$E[\\text{accesses}] = 0.5 \\times 693 + 0.5 \\times 1385 = 346.5 + 692.5 = 1039.$$"
+        }
+      ],
+      "finalAnswer": "**1039**",
+      "shortcut": "For a 50:50 mix the average is $\\tfrac12\\cdot\\tfrac{b+1}{2}+\\tfrac12\\cdot b = \\dfrac{3b+1}{4}$. With $b = 1385$ this is $\\dfrac{4156}{4} = 1039$.",
+      "commonTrap": "Ignoring the $96$-byte header (taking $\\lfloor 4096/150\\rfloor = 27$ records per block gives $b = 1334$ and $1000.75$), or rounding the block count down instead of up ($b = 1384$ gives $1038.25$), or using $b/2$ instead of $(b+1)/2$ for the successful lookup ($1038.75$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1039",
+      "agreesWithKey": true,
+      "checkCode": "import math\nN,rec,B,H=36000,150,4096,96\nbf=(B-H)//rec; b=math.ceil(N/bf)\nprint(bf, b, 0.5*(b+1)/2 + 0.5*b)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q11",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 11,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-discrete",
+    "subtopicIds": [
+      "ps-discrete-named",
+      "ps-marginal-joint"
+    ],
+    "type": "NAT",
+    "marks": 1,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines independence, the sum of two binomials and conditioning, and needs the non-routine insight that the conditional law is hypergeometric (the success probability cancels), with a tempting binomial-with-$5/12$ trap; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Conditional distribution of one binomial count given the total of two independent binomial counts with a common success probability (hypergeometric)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two independent test benches inspect chips from the same production line. Bench 1 tests $5$ chips and bench 2 tests $7$ chips. Every chip tested, on either bench, fails independently with the same probability $0.3$. Let $X$ and $Y$ be the numbers of failing chips on bench 1 and bench 2 respectively.\n\nIt is known that exactly $4$ chips failed in total, that is, $X + Y = 4$.\n\nThe probability that at least $2$ of these $4$ failures occurred on bench 1 is ________ (rounded off to three decimal places).",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.575,
+      "max": 0.577
+    },
+    "solution": {
+      "quick": "Given $X+Y=4$, the $4$ failures are a random sample of $4$ of the $12$ tested chips, so $X$ is hypergeometric: $P(X=j\\mid X+Y=4)=\\dfrac{\\binom{5}{j}\\binom{7}{4-j}}{\\binom{12}{4}}$, with the failure probability $0.3$ cancelling out.\nHence $P(X\\ge 2\\mid X+Y=4)=\\dfrac{210+70+5}{495}=\\dfrac{19}{33}\\approx 0.576$.",
+      "steps": [
+        {
+          "title": "Set up the model",
+          "body": "$X\\sim\\text{Binomial}(5,\\,p)$ and $Y\\sim\\text{Binomial}(7,\\,p)$ are independent with $p=0.3$, so $X+Y\\sim\\text{Binomial}(12,\\,p)$. We need $P(X\\ge 2 \\mid X+Y=4)$."
+        },
+        {
+          "title": "Conditional pmf of $X$ given the total",
+          "body": "For $j=0,\\dots,4$,\n\n$$P(X=j\\mid X+Y=4)=\\frac{P(X=j)\\,P(Y=4-j)}{P(X+Y=4)}=\\frac{\\binom{5}{j}\\binom{7}{4-j}\\,p^{4}q^{8}}{\\binom{12}{4}\\,p^{4}q^{8}}=\\frac{\\binom{5}{j}\\binom{7}{4-j}}{\\binom{12}{4}},\\qquad q=1-p.$$\n\nThe factor $p^4q^8$ is the same in numerator and denominator, so $p=0.3$ plays no role: the $4$ failures behave like $4$ chips drawn without replacement from the $12$ tested chips, $5$ of which are on bench 1."
+        },
+        {
+          "title": "Evaluate the counts",
+          "body": "$\\binom{12}{4}=495$.\n\n| $j$ | $\\binom{5}{j}\\binom{7}{4-j}$ |\n| --- | --- |\n| 0 | $1\\cdot 35 = 35$ |\n| 1 | $5\\cdot 35 = 175$ |\n| 2 | $10\\cdot 21 = 210$ |\n| 3 | $10\\cdot 7 = 70$ |\n| 4 | $5\\cdot 1 = 5$ |\n\nThe counts add up to $35+175+210+70+5=495$, as they must."
+        },
+        {
+          "title": "Add the cases $j\\ge 2$",
+          "body": "$$P(X\\ge 2\\mid X+Y=4)=\\frac{210+70+5}{495}=\\frac{285}{495}=\\frac{19}{33}\\approx 0.5758\\approx 0.576.$$"
+        }
+      ],
+      "finalAnswer": "**0.576**",
+      "shortcut": "Whenever independent binomials share the same $p$, conditioning on their total gives a hypergeometric law, so no powers of $p$ or $q$ need to be computed at all.",
+      "commonTrap": "Treating each of the $4$ failures as independently falling on bench 1 with probability $5/12$ (a binomial with replacement) gives $0.553$, and ignoring the condition and using $P(X\\ge 2)$ for $X\\sim\\text{Binomial}(5,0.3)$ gives $0.472$. Neither matches the without-replacement structure of the conditional law."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.576 (19/33 = 0.5758)",
+      "agreesWithKey": true,
+      "checkCode": "from math import comb\nfrom fractions import Fraction\np=Fraction(3,10)\nb=lambda n,k: comb(n,k)*p**k*(1-p)**(n-k)\nnum=sum(b(5,j)*b(7,4-j) for j in range(2,5)); den=sum(b(5,j)*b(7,4-j) for j in range(5))\nprint(num/den, float(num/den), den==b(12,4))\nprint(sum(comb(5,j)*comb(7,4-j) for j in range(2,5)), comb(12,4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q12",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 12,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-logic",
+    "subtopicIds": [
+      "ai-predicate"
+    ],
+    "type": "MSQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (translating a nested-quantifier statement) with four equivalent or look-alike formulas that must each be checked through De Morgan, quantifier-order and implication-guard reasoning; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Translating 'every faulty sensor has a non-faulty backup' into first-order logic and recognising equivalent forms and a quantifier-order error",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let the domain be all devices in a plant (a non-empty set). Define the predicates\n\n- $\\text{Sensor}(x)$: $x$ is a sensor,\n- $\\text{Faulty}(x)$: $x$ is faulty,\n- $\\text{Backup}(y, x)$: $y$ is a backup of $x$.\n\nWhich of the following first-order formulas correctly express the statement below?\n\n> Every faulty sensor has a backup that is not faulty.",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\exists y\\,\\forall x\\,\\big((\\text{Sensor}(x)\\wedge\\text{Faulty}(x)) \\rightarrow (\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y))\\big)$"
+      },
+      {
+        "label": "B",
+        "text": "$\\forall x\\,\\big((\\text{Sensor}(x)\\wedge\\text{Faulty}(x)) \\rightarrow \\exists y\\,(\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y))\\big)$"
+      },
+      {
+        "label": "C",
+        "text": "$\\forall x\\,\\neg\\big(\\text{Sensor}(x)\\wedge\\text{Faulty}(x)\\wedge\\forall y\\,(\\text{Backup}(y,x)\\rightarrow\\text{Faulty}(y))\\big)$"
+      },
+      {
+        "label": "D",
+        "text": "$\\forall x\\,\\exists y\\,\\big((\\text{Sensor}(x)\\wedge\\text{Faulty}(x)) \\rightarrow (\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y))\\big)$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The natural translation is $\\forall x\\,\\big((\\text{Sensor}(x)\\wedge\\text{Faulty}(x))\\rightarrow\\exists y\\,(\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y))\\big)$, which is the second formula.\nThe third is its De Morgan form and the fourth is equivalent because $\\exists y$ can be moved across an implication whose antecedent does not mention $y$. The first swaps the quantifiers and demands one common non-faulty backup for all faulty sensors.",
+      "steps": [
+        {
+          "title": "Write the direct translation",
+          "body": "'Every faulty sensor has ...' is a universal statement guarded by an implication: for every device $x$, **if** $x$ is a faulty sensor **then** some $y$ is a backup of $x$ and is not faulty.\n\n$$\\Phi \\;=\\; \\forall x\\,\\big((\\text{Sensor}(x)\\wedge\\text{Faulty}(x)) \\rightarrow \\exists y\\,(\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y))\\big).$$\n\nThis is the second formula."
+        },
+        {
+          "title": "The third formula is the De Morgan form of $\\Phi$",
+          "body": "Write $P(x)=\\text{Sensor}(x)\\wedge\\text{Faulty}(x)$. Then\n\n$$\\neg\\big(P(x)\\wedge\\forall y\\,(\\text{Backup}(y,x)\\rightarrow\\text{Faulty}(y))\\big)\\equiv \\neg P(x)\\vee\\exists y\\,\\neg(\\neg\\text{Backup}(y,x)\\vee\\text{Faulty}(y))\\equiv P(x)\\rightarrow\\exists y\\,(\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y)).$$\n\nIt says that no faulty sensor has all of its backups faulty (a faulty sensor with no backup at all is also excluded, because then 'all backups are faulty' holds vacuously)."
+        },
+        {
+          "title": "The fourth formula is equivalent because $y$ is not free in the antecedent",
+          "body": "For a fixed $x$, $\\exists y\\,(P(x)\\rightarrow Q(x,y))\\equiv P(x)\\rightarrow\\exists y\\,Q(x,y)$ in a non-empty domain: if $P(x)$ is false, any $y$ makes the implication true; if $P(x)$ is true, we need some $y$ with $Q(x,y)$. With $Q(x,y)=\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y)$ this is exactly $\\Phi$."
+        },
+        {
+          "title": "The first formula is strictly stronger",
+          "body": "$\\exists y\\,\\forall x\\,(\\dots)$ asserts a **single** non-faulty device $y$ that is a backup of every faulty sensor. Counter-model: devices $s_1, s_2$ (faulty sensors), $b_1, b_2$ (non-faulty), with $b_1$ the only backup of $s_1$ and $b_2$ the only backup of $s_2$. Then $\\Phi$ holds, but no single $y$ works for both $s_1$ and $s_2$, so the first formula is false. Hence it does not express the statement."
+        }
+      ],
+      "finalAnswer": "**(B), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Quantifier order is swapped: it needs one non-faulty device that backs up every faulty sensor. In the model with faulty sensors $s_1,s_2$ and distinct non-faulty backups $b_1,b_2$, the statement is true but this formula is false."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. This is the direct translation: every device that is a faulty sensor has some backup that is not faulty."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. It forbids a faulty sensor all of whose backups are faulty (or that has none); by De Morgan this is $\\neg(\\text{Sensor}\\wedge\\text{Faulty})\\vee\\exists y\\,(\\text{Backup}(y,x)\\wedge\\neg\\text{Faulty}(y))$, the same as the second formula."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. Because the antecedent does not contain $y$, $\\exists y\\,(P\\rightarrow Q(y))\\equiv P\\rightarrow\\exists y\\,Q(y)$ over a non-empty domain, so this equals the second formula."
+        }
+      ],
+      "shortcut": "Test each option on the tiny model $\\{s_1,s_2,b_1,b_2\\}$ with different backups for the two faulty sensors: only the formula that fixes one $y$ for all $x$ fails. The other three keep $y$ inside the scope of each $x$, so they agree with the statement.",
+      "commonTrap": "Rejecting the fourth formula because an implication sits directly under $\\exists y$ (the rule $\\exists y\\,(P\\rightarrow Q)$ with $y$ absent from $P$ is safe), and accepting the first formula because $\\exists y\\,\\forall x$ and $\\forall x\\,\\exists y$ look interchangeable."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import itertools\ndef sat(n,S,F,B):\n    D=range(n); b=lambda y,x:B[y*n+x]; P=lambda x:S[x] and F[x]\n    st=all((not P(x)) or any(b(y,x) and not F[y] for y in D) for x in D)\n    o={'A':any(all((not P(x)) or (b(y,x) and not F[y]) for x in D) for y in D),\n       'B':st,\n       'C':all(not(P(x) and all((not b(y,x)) or F[y] for y in D)) for x in D),\n       'D':all(any((not P(x)) or (b(y,x) and not F[y]) for y in D) for x in D)}\n    return st,o\neq={k:True for k in 'BCD'}\nfor n in (1,2,3):\n    for S in itertools.product([0,1],repeat=n):\n        for F in itertools.product([0,1],repeat=n):\n            for B in itertools.product([0,1],repeat=n*n):\n                st,o=sat(n,S,F,B)\n                for k in eq: eq[k]&=(o[k]==st)\nprint('B,C,D agree with the statement on every model with <=3 elements:',eq)\n# 4 devices: 0=s1, 1=s2 (faulty sensors), 2=b1, 3=b2 (non-faulty); Backup(b1,s1), Backup(b2,s2)\nS=(1,1,0,0); F=(1,1,0,0); B=[0]*16; B[2*4+0]=1; B[3*4+1]=1\nst,o=sat(4,S,F,B)\nprint('counter-model for A: statement',st,'| A',o['A'])",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q13",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 13,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-clustering",
+    "subtopicIds": [
+      "ml-kmeans"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept ($k$-means with Lloyd's iterations) that needs three assignment steps on six two-dimensional points and a sum of squared distances at convergence; routine but lengthy arithmetic, about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Running Lloyd's $k$-means to convergence and computing the final within-cluster sum of squared distances",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Six soil samples are described by a nitrogen index $x$ and a moisture index $y$.\n\n| Sample | $S_1$ | $S_2$ | $S_3$ | $S_4$ | $S_5$ | $S_6$ |\n| --- | --- | --- | --- | --- | --- | --- |\n| $(x, y)$ | $(0, 7)$ | $(4, 1)$ | $(4, 7)$ | $(6, 1)$ | $(6, 5)$ | $(6, 7)$ |\n\nThe samples are clustered by Lloyd's $k$-means algorithm with $k = 2$ and Euclidean distance. The initial centroids are the points of $S_3$ and $S_6$. In each iteration every sample is first assigned to its nearest centroid, and then each centroid is replaced by the mean of the samples assigned to it. The algorithm stops when an assignment step leaves every centroid unchanged.\n\nAt termination, the within-cluster sum of squared Euclidean distances from each sample to the centroid of its cluster is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$14.58$"
+      },
+      {
+        "label": "B",
+        "text": "$38.00$"
+      },
+      {
+        "label": "C",
+        "text": "$50.67$"
+      },
+      {
+        "label": "D",
+        "text": "$53.33$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Iteration 1 gives clusters $\\{S_1,S_2,S_3\\}$ and $\\{S_4,S_5,S_6\\}$; iteration 2 moves $S_2$ to the second cluster, giving $\\{S_1,S_3\\}$ with centroid $(2,7)$ and $\\{S_2,S_4,S_5,S_6\\}$ with centroid $(5.5,3.5)$; iteration 3 changes nothing.\nThe final sum of squared distances is $8 + 30 = 38$.",
+      "steps": [
+        {
+          "title": "Iteration 1: assign to $c_1=(4,7)$, $c_2=(6,7)$ and update",
+          "body": "Squared distances $(d_1^2, d_2^2)$:\n\n| Sample | $d_1^2$ | $d_2^2$ | Cluster |\n| --- | --- | --- | --- |\n| $S_1(0,7)$ | $16$ | $36$ | 1 |\n| $S_2(4,1)$ | $36$ | $40$ | 1 |\n| $S_3(4,7)$ | $0$ | $4$ | 1 |\n| $S_4(6,1)$ | $40$ | $36$ | 2 |\n| $S_5(6,5)$ | $8$ | $4$ | 2 |\n| $S_6(6,7)$ | $4$ | $0$ | 2 |\n\nNew centroids: $c_1=\\left(\\tfrac{0+4+4}{3},\\tfrac{7+1+7}{3}\\right)=\\left(\\tfrac83,5\\right)$ and $c_2=\\left(6,\\tfrac{1+5+7}{3}\\right)=\\left(6,\\tfrac{13}{3}\\right)$."
+        },
+        {
+          "title": "Iteration 2: reassign and update",
+          "body": "Only $S_2$ is borderline: $d_1^2=\\left(\\tfrac43\\right)^2+16=\\tfrac{160}{9}\\approx 17.8$ and $d_2^2=2^2+\\left(\\tfrac{10}{3}\\right)^2=\\tfrac{136}{9}\\approx 15.1$, so $S_2$ moves to cluster 2. $S_1$ and $S_3$ stay in cluster 1 (for $S_3$: $\\approx 5.8$ against $\\approx 11.1$), and $S_4,S_5,S_6$ stay in cluster 2.\n\nClusters: $\\{S_1,S_3\\}$ and $\\{S_2,S_4,S_5,S_6\\}$. New centroids: $c_1=(2,7)$ and $c_2=\\left(\\tfrac{4+6+6+6}{4},\\tfrac{1+1+5+7}{4}\\right)=(5.5,\\,3.5)$."
+        },
+        {
+          "title": "Iteration 3: confirm convergence",
+          "body": "With $c_1=(2,7)$ and $c_2=(5.5,3.5)$: $S_2$ has $d_1^2=40$, $d_2^2=8.5$ (cluster 2); $S_3$ has $d_1^2=4$, $d_2^2=14.5$ (cluster 1); $S_1$ is clearly closer to $c_1$; $S_4,S_5,S_6$ are clearly closer to $c_2$. No assignment changes, so the centroids stay put and the algorithm stops."
+        },
+        {
+          "title": "Final within-cluster sum of squares",
+          "body": "Cluster 1, centroid $(2,7)$: $S_1:\\ 4$, $S_3:\\ 4$, total $8$.\n\nCluster 2, centroid $(5.5,3.5)$: $S_2:\\ 2.25+6.25=8.5$, $S_4:\\ 0.25+6.25=6.5$, $S_5:\\ 0.25+2.25=2.5$, $S_6:\\ 0.25+12.25=12.5$, total $30$.\n\n$$\\text{WCSS}=8+30=38.$$"
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$14.58$ is the sum of plain (unsquared) Euclidean distances at the final centroids, $4+10.58$. The $k$-means objective uses squared distances."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. At convergence the clusters are $\\{S_1,S_3\\}$ and $\\{S_2,S_4,S_5,S_6\\}$ with centroids $(2,7)$ and $(5.5,3.5)$, giving $8+30=38$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$50.67 = 152/3$ is the sum of squared distances for the second assignment measured from the centroids of iteration 1, before they are recomputed from the new clusters."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$53.33 = 160/3$ is the objective after only one assign-and-update step, with $S_2$ still in the first cluster. The algorithm has not yet converged at that point."
+        }
+      ],
+      "commonTrap": "Stopping after the first update (clusters $\\{S_1,S_2,S_3\\}$, $\\{S_4,S_5,S_6\\}$), which gives $53.33$, or forgetting to square the distances. The assignment of $S_2$ flips in the second iteration because its nearest centroid changes once the centroids move."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (38)",
+      "agreesWithKey": true,
+      "checkCode": "from fractions import Fraction as Fr\nP=[(0,7),(4,1),(4,7),(6,1),(6,5),(6,7)]\nC=[(4,7),(6,7)]\nd=lambda p,c:(p[0]-c[0])**2+(p[1]-c[1])**2\nhist=[]\nwhile True:\n    lab=[min(range(2),key=lambda j:d(p,C[j])) for p in P]\n    N=[tuple(Fr(sum(p[i] for p,l in zip(P,lab) if l==j),lab.count(j)) for i in (0,1)) for j in range(2)]\n    hist.append(round(float(sum(d(p,N[l]) for p,l in zip(P,lab))),2))\n    if N==C: break\n    C=N\nprint(lab, [tuple(map(str,c)) for c in C], hist, float(sum(d(p,C[l]) for p,l in zip(P,lab))))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q14",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 14,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-eigen",
+    "subtopicIds": [
+      "la-eigen"
+    ],
+    "type": "MCQ",
+    "marks": 1,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (eigenvalues from trace, power-trace and a singularity condition) needing a short system for the remaining eigenvalues and a product over shifted eigenvalues; about 1.5 to 2 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "Recovering all eigenvalues from trace(A), trace(A^2) and one known eigenvalue, then evaluating det(A + I) as a product over eigenvalues",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $A$ be a real $3 \\times 3$ matrix and let $I$ be the $3 \\times 3$ identity matrix. It is given that\n\n$$\\operatorname{trace}(A) = 9,\\qquad \\operatorname{trace}(A^{2}) = 29,\\qquad \\det(A - 2I) = 0.$$\n\nThe value of $\\det(A + I)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$20$"
+      },
+      {
+        "label": "B",
+        "text": "$25$"
+      },
+      {
+        "label": "C",
+        "text": "$60$"
+      },
+      {
+        "label": "D",
+        "text": "$96$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "$\\det(A-2I)=0$ means $2$ is an eigenvalue. The other two satisfy $\\lambda_2+\\lambda_3=7$ and $\\lambda_2^2+\\lambda_3^2=25$, so $\\lambda_2\\lambda_3=12$ and $\\{\\lambda_2,\\lambda_3\\}=\\{3,4\\}$.\nTherefore $\\det(A+I)=(2+1)(3+1)(4+1)=60$.",
+      "steps": [
+        {
+          "title": "Use the eigenvalue facts",
+          "body": "Counting algebraic multiplicity, $\\operatorname{trace}(A)=\\sum\\lambda_i$, $\\operatorname{trace}(A^2)=\\sum\\lambda_i^2$ and $\\det(A+I)=\\prod(\\lambda_i+1)$. Since $\\det(A-2I)=0$, one eigenvalue is $\\lambda_1=2$."
+        },
+        {
+          "title": "Eliminate the known eigenvalue",
+          "body": "$$\\lambda_2+\\lambda_3 = 9-2 = 7,\\qquad \\lambda_2^2+\\lambda_3^2 = 29-4 = 25.$$"
+        },
+        {
+          "title": "Find the other two eigenvalues",
+          "body": "$$\\lambda_2\\lambda_3=\\frac{(\\lambda_2+\\lambda_3)^2-(\\lambda_2^2+\\lambda_3^2)}{2}=\\frac{49-25}{2}=12.$$\n\nSo $\\lambda_2,\\lambda_3$ are the roots of $x^2-7x+12=(x-3)(x-4)$, that is $3$ and $4$. The eigenvalues of $A$ are $2,3,4$ (check: sum $9$, sum of squares $4+9+16=29$)."
+        },
+        {
+          "title": "Evaluate the determinant",
+          "body": "The eigenvalues of $A+I$ are $\\lambda_i+1=3,4,5$, so\n\n$$\\det(A+I)=3\\cdot 4\\cdot 5=60.$$"
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$20=4\\cdot5$ drops the factor $2+1=3$ contributed by the known eigenvalue $2$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$25=\\det(A)+1$ uses $\\det A=24$ and wrongly assumes $\\det(A+I)=\\det(A)+\\det(I)$; determinants are not additive."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Correct. The eigenvalues are $2,3,4$, so $\\det(A+I)=3\\cdot4\\cdot5=60$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$96$ comes from forgetting the division by $2$ when finding $\\lambda_2\\lambda_3$ (using $24$ instead of $12$): $3\\,(24+7+1)=96$."
+        }
+      ],
+      "shortcut": "From $e_1=9$ and $e_2=\\dfrac{9^2-29}{2}=26$, the characteristic polynomial is $p(x)=x^3-9x^2+26x-e_3$. Since $p(2)=0$, $8-36+52-e_3=0$ gives $e_3=24$, so $p(x)=(x-2)(x-3)(x-4)$ and $\\det(A+I)=-p(-1)=60$.",
+      "commonTrap": "Forgetting that $\\operatorname{trace}(A^2)=\\sum\\lambda_i^2$ gives $\\lambda_2\\lambda_3$ only after halving $(\\sum\\lambda)^2-\\sum\\lambda^2$; omitting the $/2$ leads to the tempting value $96$. Another trap is to treat $\\det(A+I)$ as $\\det(A)+1$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (60)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x')\ns=9-2; sq=29-4\nrest=sp.solve(x**2-s*x+(s*s-sq)//2, x)\nev=[2]+rest\nprint(ev, sum(ev), sum(e**2 for e in ev), sp.prod([e+1 for e in ev]))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q15",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 15,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-continuous",
+    "subtopicIds": [
+      "ps-conditional-pdf"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several steps (marginal over a triangular support, conditional density, two conditional moments and the variance) with a likely trap of treating the conditional density as flat or reporting a raw moment; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Conditional variance of X given Y = y from a joint pdf on a triangular support",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The joint probability density function of two continuous random variables $X$ and $Y$, the normalised capacity of a storage buffer and its normalised occupancy, is\n\n$$\nf_{X,Y}(x, y) = \\begin{cases} 3x, & 0 < y < x < 1, \\\\ 0, & \\text{otherwise.} \\end{cases}\n$$\n\nThe conditional variance $\\operatorname{Var}\\!\\left(X \\mid Y = \\tfrac{1}{2}\\right)$ is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\dfrac{13}{648}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\dfrac{1}{48}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\dfrac{3}{80}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\dfrac{5}{8}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$f_Y(y)=\\tfrac32(1-y^2)$, so $f_{X\\mid Y}(x\\mid \\tfrac12)=\\tfrac{8x}{3}$ on $\\tfrac12<x<1$.\nThen $E[X\\mid Y=\\tfrac12]=\\tfrac79$ and $E[X^2\\mid Y=\\tfrac12]=\\tfrac58$, so the variance is $\\tfrac58-\\tfrac{49}{81}=\\tfrac{13}{648}$.",
+      "steps": [
+        {
+          "title": "Marginal density of $Y$",
+          "body": "For fixed $y$, $x$ runs from $y$ to $1$:\n\n$$f_Y(y)=\\int_{y}^{1}3x\\,dx=\\frac{3}{2}\\,(1-y^{2}),\\qquad 0<y<1.$$\n\n(The joint density is already normalised: $\\int_0^1\\!\\int_0^x 3x\\,dy\\,dx=\\int_0^1 3x^2\\,dx=1$.)"
+        },
+        {
+          "title": "Conditional density of $X$ given $Y=y$",
+          "body": "$$f_{X\\mid Y}(x\\mid y)=\\frac{3x}{\\tfrac32(1-y^2)}=\\frac{2x}{1-y^{2}},\\qquad y<x<1.$$\n\nAt $y=\\tfrac12$: $f_{X\\mid Y}(x\\mid\\tfrac12)=\\dfrac{2x}{3/4}=\\dfrac{8x}{3}$ for $\\tfrac12<x<1$. Check: $\\int_{1/2}^{1}\\tfrac{8x}{3}\\,dx=\\tfrac43\\left(1-\\tfrac14\\right)=1$."
+        },
+        {
+          "title": "Conditional moments",
+          "body": "$$E\\!\\left[X\\mid Y=\\tfrac12\\right]=\\int_{1/2}^{1}x\\cdot\\frac{8x}{3}\\,dx=\\frac{8}{9}\\left(1-\\frac18\\right)=\\frac79,$$\n\n$$E\\!\\left[X^{2}\\mid Y=\\tfrac12\\right]=\\int_{1/2}^{1}x^{2}\\cdot\\frac{8x}{3}\\,dx=\\frac{2}{3}\\left(1-\\frac1{16}\\right)=\\frac58.$$"
+        },
+        {
+          "title": "Variance",
+          "body": "$$\\operatorname{Var}\\!\\left(X\\mid Y=\\tfrac12\\right)=\\frac58-\\left(\\frac79\\right)^{2}=\\frac58-\\frac{49}{81}=\\frac{405-392}{648}=\\frac{13}{648}\\approx 0.0201.$$"
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "Correct. $E[X^2\\mid Y=\\tfrac12]-\\left(E[X\\mid Y=\\tfrac12]\\right)^2=\\tfrac58-\\tfrac{49}{81}=\\tfrac{13}{648}$."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac1{48}$ is the variance of a uniform distribution on $\\left(\\tfrac12,1\\right)$, i.e. $\\tfrac{(1/2)^2}{12}$. The conditional density $\\tfrac{8x}{3}$ is not flat; it favours larger $x$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac{3}{80}$ is the unconditional $\\operatorname{Var}(X)$ for $f_X(x)=3x^2$ (since $E[X]=\\tfrac34$, $E[X^2]=\\tfrac35$), which ignores the condition $Y=\\tfrac12$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$\\tfrac58$ is the conditional second moment $E[X^2\\mid Y=\\tfrac12]$; the squared conditional mean has not been subtracted."
+        }
+      ],
+      "commonTrap": "Assuming that because the density $3x$ has no $y$ in it, $X$ is simply uniform on $(y,1)$ (giving $\\tfrac1{48}$), or stopping at $E[X^2\\mid Y=\\tfrac12]=\\tfrac58$ without subtracting the squared mean. The lower limit of the support, $x>y$, is what makes the conditional density $\\tfrac{2x}{1-y^2}$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (13/648 = 0.020062)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx,y=sp.symbols('x y',positive=True)\nf=3*x                                    # support 0<y<x<1\nassert sp.integrate(sp.integrate(f,(y,0,x)),(x,0,1))==1\nfy=sp.integrate(f,(x,y,1)); c=f/fy        # f(x|y) on y<x<1\nh=sp.Rational(1,2)\nm1=sp.integrate(x*c,(x,y,1)).subs(y,h); m2=sp.integrate(x**2*c,(x,y,1)).subs(y,h)\nprint(sp.simplify(c.subs(y,h)), sp.simplify(m1), sp.simplify(m2), sp.simplify(m2-m1**2), float(m2-m1**2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q16",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 16,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-linear-search"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (linear search) and a direct trace of four short searches on an eight-element list, counting comparisons; about 2 minutes.",
+    "estimatedTimeSec": 120,
+    "concept": "Tracing a backward linear search that returns the position and the number of comparisons, for successful and unsuccessful queries",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ndef scan_back(a, key):\n    steps = 0\n    i = len(a) - 1\n    while i >= 0:\n        steps += 1\n        if a[i] == key:\n            return i, steps\n        i -= 1\n    return -1, steps\n\ndata = [6, 2, 9, 2, 5, 6, 1, 8]\ntotal = 0\nmisses = 0\nfor k in [2, 6, 7, 8]:\n    pos, steps = scan_back(data, k)\n    total += steps\n    if pos == -1:\n        misses += 1\nprint(total, misses)\n```\n\nThe output of the program is",
+    "options": [
+      {
+        "label": "A",
+        "text": "`14 1`"
+      },
+      {
+        "label": "B",
+        "text": "`19 1`"
+      },
+      {
+        "label": "C",
+        "text": "`16 1`"
+      },
+      {
+        "label": "D",
+        "text": "`17 1`"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "`scan_back` examines the list from the right end and stops at the first match, so it finds the **last** occurrence. The numbers of comparisons are $5$ (key 2), $3$ (key 6), $8$ (key 7, not found) and $1$ (key 8).\nSo `total` $=5+3+8+1=17$ and `misses` $=1$; the program prints `17 1`.",
+      "steps": [
+        {
+          "title": "Understand the search",
+          "body": "The loop starts at index $7$ and moves left, adding one to `steps` for every element it compares with `key`. It returns as soon as `a[i] == key` (the last occurrence of the key) and reaches `return -1, steps` only after comparing all $8$ elements. The list holds $6, 2, 9, 2, 5, 6, 1, 8$ at indices $0$ to $7$."
+        },
+        {
+          "title": "Trace each query",
+          "body": "| key | elements compared (from the right) | `pos` | `steps` |\n| --- | --- | --- | --- |\n| 2 | $8, 1, 6, 5, 2$ | $3$ | $5$ |\n| 6 | $8, 1, 6$ | $5$ | $3$ |\n| 7 | $8, 1, 6, 5, 2, 9, 2, 6$ (no match) | $-1$ | $8$ |\n| 8 | $8$ | $7$ | $1$ |"
+        },
+        {
+          "title": "Accumulate the counters",
+          "body": "`total` $=5+3+8+1=17$. Only the query for key $7$ returns `pos == -1`, so `misses` $=1$. The program prints `17 1`."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "`14 1` counts the distance of the matching index from the right end (zero-based: $4+2+8+0$) instead of the number of comparisons, which is one more for each successful search."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "`19 1` is the total for a left-to-right scan ($2+1+8+8$), which would find the first occurrence of each key. This program scans from the right."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "`16 1` counts only $7$ comparisons for the unsuccessful search, as if index $0$ were never examined; the loop condition `i >= 0` does examine it, giving $8$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. The comparison counts are $5, 3, 8, 1$, which sum to $17$, and there is exactly one miss."
+        }
+      ],
+      "commonTrap": "Reading the loop as a forward search (it starts at `len(a) - 1` and goes left) or miscounting the unsuccessful search for key $7$, which must examine all $8$ elements, including index $0$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (17 1)",
+      "agreesWithKey": true,
+      "checkCode": "def scan_back(a, key):\n    steps = 0\n    i = len(a) - 1\n    while i >= 0:\n        steps += 1\n        if a[i] == key:\n            return i, steps\n        i -= 1\n    return -1, steps\ndata = [6, 2, 9, 2, 5, 6, 1, 8]\ntotal = 0\nmisses = 0\nfor k in [2, 6, 7, 8]:\n    pos, steps = scan_back(data, k)\n    total += steps\n    if pos == -1:\n        misses += 1\nprint(total, misses)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q17",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 17,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-rank-determinant",
+    "subtopicIds": [
+      "la-rank",
+      "la-nullity"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (rank of a parametric matrix) whose four statements each need a separate check (rank, nullity, consistency and the rank of $A^\\top A$); about 3.5 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Rank, nullity and consistency of a matrix with a parameter that makes the rows dependent for one value, and the rank of A^T A",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "For a real parameter $k$, let\n\n$$A(k)=\\begin{bmatrix}1&2&0&1\\\\2&4&1&3\\\\3&6&1&k\\end{bmatrix}.$$\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The $4\\times4$ matrix $A(k)^{\\top}A(k)$ is invertible for every real $k\\neq4$."
+      },
+      {
+        "label": "B",
+        "text": "$\\operatorname{rank}\\big(A(k)\\big)=3$ for every real $k\\neq4$."
+      },
+      {
+        "label": "C",
+        "text": "For $\\mathbf b=\\begin{bmatrix}1\\\\3\\\\5\\end{bmatrix}$, the system $A(k)\\mathbf x=\\mathbf b$ is consistent for every real $k$."
+      },
+      {
+        "label": "D",
+        "text": "When $k=4$, the null space of $A(k)$ has dimension $2$."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Row reduction gives the echelon form with rows $(1,2,0,1)$, $(0,0,1,1)$, $(0,0,0,k-4)$, so $\\operatorname{rank}A(k)=3$ for $k\\neq4$ and $2$ for $k=4$.\nHence the nullity at $k=4$ is $4-2=2$. The system with $\\mathbf b=(1,3,5)^\\top$ is inconsistent at $k=4$, and $A^\\top A$ ($4\\times4$ with rank $\\le3$) is never invertible.",
+      "steps": [
+        {
+          "title": "Row-reduce $A(k)$",
+          "body": "$R_2\\leftarrow R_2-2R_1=(0,0,1,1)$ and $R_3\\leftarrow R_3-3R_1=(0,0,1,k-3)$. Then $R_3\\leftarrow R_3-R_2=(0,0,0,k-4)$. The echelon form is\n\n$$\\begin{bmatrix}1&2&0&1\\\\0&0&1&1\\\\0&0&0&k-4\\end{bmatrix}.$$"
+        },
+        {
+          "title": "Rank and nullity",
+          "body": "For $k\\neq4$ there are three pivots (columns $1,3,4$), so $\\operatorname{rank}A(k)=3$. For $k=4$ the last row vanishes, so $\\operatorname{rank}A(4)=2$ (indeed row $3$ = row $1$ + row $2$). By the rank-nullity theorem the null space of the $3\\times4$ matrix has dimension $4-\\operatorname{rank}$, which is $1$ for $k\\neq4$ and $2$ for $k=4$."
+        },
+        {
+          "title": "Consistency for $\\mathbf b=(1,3,5)^\\top$",
+          "body": "Apply the same row operations to $\\mathbf b$: $b_2'=3-2\\cdot1=1$, $b_3'=5-3\\cdot1=2$, then $b_3''=2-1=1$. The last row of the augmented system reads $0\\cdot x_1+0\\cdot x_2+0\\cdot x_3+(k-4)x_4=1$. For $k\\neq4$ it is solvable, but for $k=4$ it becomes $0=1$, so the system is **inconsistent** at $k=4$. (Equivalently, at $k=4$ consistency needs $b_3=b_1+b_2$, and $5\\neq 4$.)"
+        },
+        {
+          "title": "The matrix $A^\\top A$",
+          "body": "$\\operatorname{rank}(A^\\top A)=\\operatorname{rank}(A)\\le3<4$ for every $k$, so the $4\\times4$ matrix $A^\\top A$ is singular for **every** real $k$, including $k\\neq4$."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$\\operatorname{rank}(A^\\top A)=\\operatorname{rank}(A)\\le3$, but $A^\\top A$ is $4\\times4$, so $\\det(A^\\top A)=0$ for every $k$. Four columns in $\\mathbb R^3$ can never be independent."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. The three pivots appear exactly when the last entry $k-4$ is non-zero."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "At $k=4$ the rank drops to $2$ and the third row equals the sum of the first two, so $A\\mathbf x=\\mathbf b$ is solvable only if $b_3=b_1+b_2$. For $\\mathbf b=(1,3,5)^\\top$ this fails ($5\\neq4$), so the system is inconsistent at $k=4$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Correct. At $k=4$ the rank is $2$, so the nullity is $4-2=2$."
+        }
+      ],
+      "commonTrap": "Assuming that full row rank (rank $3$ for $k\\neq4$) makes the system solvable for every $k$, forgetting the exceptional value $k=4$ where a row dependency appears, and mixing up $A^\\top A$ ($4\\times4$, always singular here) with $AA^\\top$ ($3\\times3$, invertible exactly when $k\\neq4$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, D",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nk=sp.symbols('k')\nA=sp.Matrix([[1,2,0,1],[2,4,1,3],[3,6,1,k]])\nb=sp.Matrix([1,3,5])\nfor kv in [4,5,0,-2,10]:\n    M=A.subs(k,kv)\n    print('k=%d rank=%d nullity=%d consistent=%s det(A^T A)=%s'%(kv,M.rank(),len(M.nullspace()),M.row_join(b).rank()==M.rank(),(M.T*M).det()))\nprint('det of pivot-column block:', sp.factor(A[:,[0,2,3]].det()))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q18",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 18,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-projections-decompositions",
+    "subtopicIds": [
+      "la-lu"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (existence of an LU decomposition without row exchanges) needing elimination with a parameter and the distinction between a zero pivot and a singular matrix; about 3 minutes.",
+    "estimatedTimeSec": 200,
+    "concept": "Existence of an LU decomposition without row interchanges for a parametric matrix: zero pivot versus singularity",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "For a real parameter $t$, let\n\n$$A(t)=\\begin{bmatrix}1&2&1\\\\3&t&4\\\\2&5&3\\end{bmatrix}.$$\n\nSay that $A(t)$ has an LU decomposition if $A(t)=LU$ for some lower triangular matrix $L$ with every diagonal entry equal to $1$ and some upper triangular matrix $U$ (no row interchanges are allowed).\n\nLet $S$ be the set of real values of $t$ for which $A(t)$ is nonsingular but has **no** LU decomposition. Then",
+    "options": [
+      {
+        "label": "A",
+        "text": "$S=\\varnothing$"
+      },
+      {
+        "label": "B",
+        "text": "$S=\\{6\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$S=\\{7\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$S=\\{6,\\,7\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "Eliminating below the first pivot gives rows $(0,\\,t-6,\\,1)$ and $(0,\\,1,\\,1)$, so the second pivot is $t-6$ and $\\det A(t)=t-7$.\nFor $t=6$ the second pivot is $0$ although the entry below it is $1\\neq0$ and $\\det A=-1\\neq0$: no LU exists. For $t=7$ the matrix is singular, but only the last pivot vanishes, and an LU decomposition still exists. So $S=\\{6\\}$.",
+      "steps": [
+        {
+          "title": "Eliminate below the first pivot",
+          "body": "With $l_{21}=3$ and $l_{31}=2$:\n\n$$R_2-3R_1=(0,\\;t-6,\\;1),\\qquad R_3-2R_1=(0,\\;1,\\;1).$$\n\nThe second pivot is $u_{22}=t-6$."
+        },
+        {
+          "title": "Case $t\\neq6$: the decomposition exists",
+          "body": "Then $l_{32}=\\dfrac{1}{t-6}$ and $u_{33}=1-\\dfrac{1}{t-6}=\\dfrac{t-7}{t-6}$, so an LU decomposition exists. Multiplying the pivots, $\\det A(t)=1\\cdot(t-6)\\cdot\\dfrac{t-7}{t-6}=t-7$. In particular for $t=7$ the matrix is singular ($u_{33}=0$), but $L=\\begin{bmatrix}1&0&0\\\\3&1&0\\\\2&1&1\\end{bmatrix}$ and $U=\\begin{bmatrix}1&2&1\\\\0&1&1\\\\0&0&0\\end{bmatrix}$ satisfy $LU=A(7)$."
+        },
+        {
+          "title": "Case $t=6$: no decomposition although $A$ is nonsingular",
+          "body": "Here $\\det A(6)=6-7=-1\\neq0$. In $A=LU$ with unit $L$, $u_{22}=a_{22}-l_{21}u_{12}=6-3\\cdot2=0$, while the $(3,2)$ entry requires $a_{32}=l_{31}u_{12}+l_{32}u_{22}$, i.e. $5=2\\cdot2+l_{32}\\cdot0=4$, a contradiction. Without a row exchange no LU decomposition exists."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The values of $t$ for which $A(t)$ is nonsingular ($t\\neq7$) and has no LU decomposition (only $t=6$) intersect in $S=\\{6\\}$. The value $t=7$ is singular but does have an LU decomposition."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Not empty: at $t=6$ the matrix is nonsingular ($\\det=-1$) yet the second pivot is zero while the entry below it is non-zero, so no LU decomposition exists without a row exchange."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Correct. $t=6$ makes the leading $2\\times2$ minor $t-6$ vanish while $\\det A(6)=-1\\neq0$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$t=7$ is where $\\det A(t)=t-7$ vanishes, so $A(7)$ is singular and not in $S$. Only the last pivot $u_{33}$ is zero, which does not prevent the factorisation $A(7)=LU$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "It wrongly includes $t=7$: $A(7)$ is singular, so it fails the 'nonsingular' requirement, and it still has an LU decomposition."
+        }
+      ],
+      "shortcut": "A nonsingular matrix has an LU decomposition without row exchanges exactly when its leading principal minors of orders $1,\\dots,n-1$ are all non-zero. Here those minors are $1$ and $\\det\\begin{bmatrix}1&2\\\\3&t\\end{bmatrix}=t-6$, so only $t=6$ fails, and $\\det A(t)=t-7$ shows that $t=6$ is nonsingular.",
+      "commonTrap": "Confusing 'singular' with 'has no LU decomposition' and picking $\\{7\\}$ (the root of $\\det A(t)$), or believing every nonsingular matrix has an LU decomposition without row exchanges and picking $\\varnothing$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (S = {6})",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nt=sp.symbols('t')\ndef has_lu(M):\n    l21,l31,l32,u11,u12,u13,u22,u23,u33=v=sp.symbols('l21 l31 l32 u11 u12 u13 u22 u23 u33')\n    L=sp.Matrix([[1,0,0],[l21,1,0],[l31,l32,1]]); U=sp.Matrix([[u11,u12,u13],[0,u22,u23],[0,0,u33]])\n    return bool(sp.solve(list(L*U-M),list(v),dict=True))\nS=[]\nfor tv in range(-4,13):\n    M=sp.Matrix([[1,2,1],[3,tv,4],[2,5,3]])\n    if M.det()!=0 and not has_lu(M): S.append(tv)\nprint('S =',S,'| det A(t) =',sp.Matrix([[1,2,1],[3,t,4],[2,5,3]]).det(),'| LU exists at t=7:',has_lu(sp.Matrix([[1,2,1],[3,7,4],[2,5,3]])))",
+      "notes": ""
+    }
+  }
+]

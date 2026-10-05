@@ -1,0 +1,820 @@
+[
+  {
+    "id": "M31-Q21",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 21,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-python",
+    "subtopicIds": [
+      "pdsa-python"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a short straight-line program, but three aliasing effects (list multiplication sharing one row, a slice that copies only the outer list, and rebinding an element versus mutating it) must all be tracked; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Python list aliasing: `[[0] * 3] * 3` repeats one inner list, a slice copies only the outer list, and rebinding an element differs from mutating it.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python program.\n\n```python\ngrid = [[0] * 3] * 3\ngrid[0][1] = 4\nsnap = grid[:]\ndeep = [r[:] for r in grid]\ndeep[1][2] = 7\ngrid[2] = [1, 1, 1]\ngrid[1][0] += 2\na = sum(map(sum, grid))\nb = sum(map(sum, snap))\nc = sum(map(sum, deep))\nprint(100 * a + 10 * b + c)\n```\n\nThe value printed by the program is ________. (Answer in integer)",
+    "answer": {
+      "kind": "NAT",
+      "min": 1699,
+      "max": 1699
+    },
+    "solution": {
+      "quick": "`[[0] * 3] * 3` holds three references to **one** inner list `r`. `snap = grid[:]` copies only the outer list, so it also holds `r` three times, while `deep` copies each row. At the end `r = [2, 4, 0]`, `grid = [r, r, [1, 1, 1]]`, `snap = [r, r, r]` and `deep = [[0, 4, 0], [0, 4, 7], [0, 4, 0]]`. So $a = 15$, $b = 18$, $c = 19$, and the program prints $1500 + 180 + 19 = 1699$.",
+      "steps": [
+        {
+          "title": "Build the grid",
+          "body": "`[0] * 3` creates one list `r = [0, 0, 0]`. Multiplying the outer list `[r]` by $3$ repeats the **reference**, so `grid = [r, r, r]`, with all three rows the same object.\n\n`grid[0][1] = 4` mutates `r`, so every row of `grid` now reads `[0, 4, 0]`."
+        },
+        {
+          "title": "Make the two copies",
+          "body": "- `snap = grid[:]` is a new outer list whose three elements are the same object `r`: `snap = [r, r, r]`.\n- `deep = [r[:] for r in grid]` copies each row, giving three independent lists `[0, 4, 0]`.\n- `deep[1][2] = 7` changes only the middle row of `deep`: `deep = [[0, 4, 0], [0, 4, 7], [0, 4, 0]]`."
+        },
+        {
+          "title": "Apply the last two updates to `grid`",
+          "body": "- `grid[2] = [1, 1, 1]` **rebinds** position $2$ of `grid`'s outer list to a new list. It does not touch `r`, and `snap` (a different outer list) still holds `r` at position $2$.\n- `grid[1][0] += 2`: `grid[1]` is still `r`, so this mutates `r` to `[2, 4, 0]`.\n\nNow `grid = [[2, 4, 0], [2, 4, 0], [1, 1, 1]]` and `snap = [[2, 4, 0], [2, 4, 0], [2, 4, 0]]`."
+        },
+        {
+          "title": "Compute the output",
+          "body": "$$\na = 6 + 6 + 3 = 15, \\qquad b = 6 + 6 + 6 = 18, \\qquad c = 4 + 11 + 4 = 19.\n$$\n\nThe program prints $100 \\cdot 15 + 10 \\cdot 18 + 19 = 1500 + 180 + 19 = 1699$."
+        }
+      ],
+      "finalAnswer": "**1699**",
+      "commonTrap": "Treating `[[0] * 3] * 3` as three independent rows. Then $a = 9$, $b = 6$, $c = 11$ and the output would be $971$. A second slip is assuming that `snap = grid[:]` copies the rows as well: that gives $b = 12$ and the output $1639$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "1699",
+      "agreesWithKey": true,
+      "checkCode": "grid = [[0] * 3] * 3\ngrid[0][1] = 4\nsnap = grid[:]\ndeep = [r[:] for r in grid]\ndeep[1][2] = 7\ngrid[2] = [1, 1, 1]\ngrid[1][0] += 2\na, b, c = (sum(map(sum, t)) for t in (grid, snap, deep))\nprint(100 * a + 10 * b + c)  # 1699",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q22",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 22,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-data-structures",
+    "subtopicIds": [
+      "pdsa-hash-tables"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — ten operations under double hashing, with a deleted slot that the next insertion must reuse and that later searches must pass over rather than stop at; many modular steps where one slip changes the count; about 5 minutes.",
+    "estimatedTimeSec": 300,
+    "concept": "Open addressing with double hashing and lazy deletion: insertions reuse deleted slots, while searches stop only at empty slots.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An open-addressing hash table has $13$ slots, numbered $0$ to $12$, and resolves collisions by **double hashing**. For a key $k$, the probe with index $i = 0, 1, 2, \\ldots$ examines slot\n\n$$\nh(k, i) = \\big(h_1(k) + i \\cdot h_2(k)\\big) \\bmod 13, \\qquad \\text{where } h_1(k) = k \\bmod 13 \\text{ and } h_2(k) = 7 - (k \\bmod 7).\n$$\n\nEvery slot is *empty*, *occupied* or *deleted*, and the operations work as follows.\n\n- **Insert** $k$: examine slots in probe order and store $k$ in the first slot that is empty **or** deleted.\n- **Search** $k$: examine slots in probe order; stop with success at the slot that holds $k$, and stop with failure at the first **empty** slot. A deleted slot does not stop the search.\n- **Delete** $k$: search for $k$ and mark its slot as deleted.\n\nStarting from an empty table, these operations are performed in order:\n\n1. Insert $70, 57, 65, 42, 49, 23, 47$, in this order.\n2. Delete $49$.\n3. Insert $16$.\n4. Search for $37$.\n\nThe number of slots examined by the search for $37$ in step 4, including the slot at which the search stops, is ________. (Answer in integer)",
+    "answer": {
+      "kind": "NAT",
+      "min": 8,
+      "max": 8
+    },
+    "solution": {
+      "quick": "After step 1 the table holds $65 \\to 0$, $23 \\to 2$, $42 \\to 3$, $70 \\to 5$, $47 \\to 8$, $49 \\to 10$, $57 \\to 11$. Deleting $49$ marks slot $10$ deleted, and $16$ (probing $3, 8, 0, 5, 10$) reuses slot $10$. For $37$, $h_1 = 11$ and $h_2 = 5$, so the search probes $11, 3, 8, 0, 5, 10, 2, 7$ and stops at the empty slot $7$: **8** slots.",
+      "steps": [
+        {
+          "title": "Insert the first seven keys",
+          "body": "| Key | $h_1(k)$ | $h_2(k)$ | Slots probed | Stored in |\n|---|---|---|---|---|\n| 70 | 5 | $7 - 0 = 7$ | 5 | 5 |\n| 57 | 5 | $7 - 1 = 6$ | 5, 11 | 11 |\n| 65 | 0 | $7 - 2 = 5$ | 0 | 0 |\n| 42 | 3 | $7 - 0 = 7$ | 3 | 3 |\n| 49 | 10 | $7 - 0 = 7$ | 10 | 10 |\n| 23 | 10 | $7 - 2 = 5$ | 10, $(10 + 5) \\bmod 13 = 2$ | 2 |\n| 47 | 8 | $7 - 5 = 2$ | 8 | 8 |\n\nOccupied slots: $0{:}\\,65$, $2{:}\\,23$, $3{:}\\,42$, $5{:}\\,70$, $8{:}\\,47$, $10{:}\\,49$, $11{:}\\,57$."
+        },
+        {
+          "title": "Delete 49",
+          "body": "The search for $49$ finds it at its first probe, slot $10$, and slot $10$ is marked **deleted**. The other keys stay where they are."
+        },
+        {
+          "title": "Insert 16",
+          "body": "$h_1(16) = 16 \\bmod 13 = 3$ and $h_2(16) = 7 - (16 \\bmod 7) = 7 - 2 = 5$. The probe sequence is\n\n$$\n3 \\to 8 \\to 13 \\bmod 13 = 0 \\to 5 \\to 10.\n$$\n\nSlots $3, 8, 0, 5$ are occupied (by $42, 47, 65, 70$). Slot $10$ is deleted, so $16$ is stored in slot $10$."
+        },
+        {
+          "title": "Search for 37",
+          "body": "$h_1(37) = 37 \\bmod 13 = 11$ and $h_2(37) = 7 - (37 \\bmod 7) = 7 - 2 = 5$. The probes are\n\n| Probe $i$ | Slot $(11 + 5i) \\bmod 13$ | Contents |\n|---|---|---|\n| 0 | 11 | 57 |\n| 1 | 3 | 42 |\n| 2 | 8 | 47 |\n| 3 | 0 | 65 |\n| 4 | 5 | 70 |\n| 5 | 10 | 16 |\n| 6 | 2 | 23 |\n| 7 | 7 | empty: stop |\n\nThe unsuccessful search examines **8** slots."
+        }
+      ],
+      "finalAnswer": "**8**",
+      "commonTrap": "Letting the insertion of $16$ skip the deleted slot. Then $16$ lands in slot $7$ (after probing $3, 8, 0, 5, 10, 2$), and the search for $37$ passes the deleted slot $10$ and slot $7$ before stopping at slot $12$, giving $9$. Note that the search for $37$ must also pass over deleted slots rather than stop at them."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "8",
+      "agreesWithKey": true,
+      "checkCode": "T=[None]*13\npr=lambda k:[(k%13+i*(7-k%7))%13 for i in range(13)]\ndef ins(k): s=next(s for s in pr(k) if T[s] in (None,'D')); T[s]=k\ndef srch(k):\n    for n,s in enumerate(pr(k),1):\n        if T[s] is None or T[s]==k: return s,n\nfor k in [70,57,65,42,49,23,47]: ins(k)\nT[srch(49)[0]]='D'; ins(16)\nprint(T, srch(37))  # search ends at slot 7 after 8 probes",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q23",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 23,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-concept-hierarchies",
+      "dbw-measures"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — the roll-up needs two hierarchy mappings read from the stem (non-contiguous wards and an April–March fiscal year) and the recognition that an average must be re-weighted by counts; the arithmetic is light; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Roll-up along concept hierarchies (ward → wing, month → fiscal quarter) with an algebraic measure (average = total / count).",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A hospital's data warehouse holds an *admissions* cube. Its **Location** dimension has the concept hierarchy ward $<$ wing $<$ hospital, and its **Time** dimension has the concept hierarchy month $<$ fiscal quarter $<$ fiscal year. The fiscal year runs from April to March, so the fiscal quarters are FQ1 = April–June, FQ2 = July–September, FQ3 = October–December and FQ4 = January–March. The wards belong to the wings as follows.\n\n| Ward | W1 | W2 | W3 | W4 |\n|---|---|---|---|---|\n| Wing | East | West | East | West |\n\nFor one fiscal year, the base cuboid (ward, month) has the following non-empty cells. *ALOS* is the average length of stay, in days, of the patients admitted in that cell.\n\n| Ward | Month | Admissions | ALOS (days) |\n|---|---|---|---|\n| W1 | April | 40 | 5.0 |\n| W3 | May | 20 | 8.0 |\n| W2 | April | 50 | 3.0 |\n| W1 | June | 30 | 4.0 |\n| W3 | June | 10 | 9.0 |\n| W1 | March | 25 | 6.0 |\n| W4 | May | 15 | 7.0 |\n| W3 | January | 20 | 2.0 |\n\nThe cube is rolled up from ward to wing on Location and from month to fiscal quarter on Time. In the resulting (wing, fiscal quarter) cuboid, the ALOS of the cell (East, FQ1), correct to two decimal places, is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$6.50$ days"
+      },
+      {
+        "label": "B",
+        "text": "$3.92$ days"
+      },
+      {
+        "label": "C",
+        "text": "$5.70$ days"
+      },
+      {
+        "label": "D",
+        "text": "$4.22$ days"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The cell (East, FQ1) collects wards W1 and W3 in April–June: $(40, 5.0)$, $(20, 8.0)$, $(30, 4.0)$ and $(10, 9.0)$. An average is algebraic, so roll up its parts: total patient-days $200 + 160 + 120 + 90 = 570$ over $100$ admissions gives $5.70$ days.",
+      "steps": [
+        {
+          "title": "Map each base cell through the two hierarchies",
+          "body": "East $= \\{\\text{W1}, \\text{W3}\\}$ and FQ1 $= \\{\\text{April}, \\text{May}, \\text{June}\\}$. The base cells that roll up into (East, FQ1) are\n\n- W1 April $(40, 5.0)$, W3 May $(20, 8.0)$, W1 June $(30, 4.0)$ and W3 June $(10, 9.0)$.\n\nLeft out: W2 April and W4 May (West wing), and W1 March and W3 January (FQ4)."
+        },
+        {
+          "title": "Turn ALOS into distributive parts",
+          "body": "ALOS $=$ (total patient-days) $/$ (admissions). Both the numerator and the denominator are sums, so each can be rolled up. The patient-days of each cell are admissions $\\times$ ALOS:\n\n$$\n40 \\times 5.0 = 200, \\quad 20 \\times 8.0 = 160, \\quad 30 \\times 4.0 = 120, \\quad 10 \\times 9.0 = 90.\n$$"
+        },
+        {
+          "title": "Aggregate and divide",
+          "body": "$$\n\\text{patient-days} = 200 + 160 + 120 + 90 = 570, \\qquad \\text{admissions} = 40 + 20 + 30 + 10 = 100,\n$$\n\n$$\n\\text{ALOS(East, FQ1)} = \\frac{570}{100} = 5.70 \\text{ days}.\n$$"
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$6.50 = (5.0 + 8.0 + 4.0 + 9.0)/4$ is the plain mean of the four cell averages. It gives the cell with $10$ admissions the same weight as the cell with $40$, but an average must be weighted by the admissions."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$3.92$ comes from taking W1 and W2 as the East wing (reading the ward numbers instead of the mapping table): $(200 + 150 + 120)/(40 + 50 + 30) = 470/120 \\approx 3.92$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The correct wards (W1, W3) and months (April–June) give $570$ patient-days over $100$ admissions, an ALOS of $5.70$ days."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$4.22$ uses the calendar quarter January–March instead of FQ1: W1 March and W3 January give $(150 + 40)/(25 + 20) = 190/45 \\approx 4.22$."
+        }
+      ],
+      "commonTrap": "Averaging the cell averages ($6.50$). ALOS is an algebraic measure: roll up the patient-days and the admissions separately, then divide. The two hierarchy mappings (W3, not W2, is in East; FQ1 is April–June) are the other places to slip."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(C) 5.70 days",
+      "agreesWithKey": true,
+      "checkCode": "rows=[('W1','Apr',40,5.0),('W3','May',20,8.0),('W2','Apr',50,3.0),('W1','Jun',30,4.0),('W3','Jun',10,9.0),('W1','Mar',25,6.0),('W4','May',15,7.0),('W3','Jan',20,2.0)]\nwing={'W1':'E','W2':'W','W3':'E','W4':'W'}; fq={'Apr':1,'May':1,'Jun':1,'Jan':4,'Feb':4,'Mar':4}\nsel=[(n,a) for w,m,n,a in rows if wing[w]=='E' and fq[m]==1]\nprint(round(sum(n*a for n,a in sel)/sum(n for n,a in sel),2))  # 5.7",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q24",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 24,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-variable-elimination"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a five-node network with one natural elimination order; each statement needs a short sum, and the traps are the barren node, dropping the D = 0 path and reversing the conditional; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Variable elimination with evidence: pruning a barren node, forming intermediate factors and normalising to a posterior.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A commuter-rail operator models a morning trip with a Bayesian network over five Boolean variables ($1$ = true, $0$ = false): $W$ (heavy rain), $S$ (a signal fault), $D$ (the train is delayed), $C$ (a passenger misses a connecting bus) and $R$ (a refund is claimed). The edges are $W \\to D$, $S \\to D$, $D \\to C$ and $D \\to R$, with $P(W = 1) = 0.3$, $P(S = 1) = 0.1$ and\n\n| $W$ | $S$ | $P(D = 1 \\mid W, S)$ |\n|---|---|---|\n| 1 | 1 | 0.95 |\n| 1 | 0 | 0.60 |\n| 0 | 1 | 0.80 |\n| 0 | 0 | 0.05 |\n\n$$\nP(C = 1 \\mid D = 1) = 0.9, \\quad P(C = 1 \\mid D = 0) = 0.1, \\quad P(R = 1 \\mid D = 1) = 0.7, \\quad P(R = 1 \\mid D = 0) = 0.02.\n$$\n\nThe query $P(W = 1 \\mid C = 1)$ is answered by variable elimination, with the evidence $C = 1$ fixed in the factor $P(C = 1 \\mid D)$.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The factor $P(R \\mid D)$ can be left out of the computation without changing the answer."
+      },
+      {
+        "label": "B",
+        "text": "If $S$ is eliminated first, the new factor $\\tau(W, D) = \\sum_{s} P(S = s)\\,P(D \\mid W, S = s)$ has $\\tau(W = 1, D = 1) = 0.635$."
+      },
+      {
+        "label": "C",
+        "text": "$P(C = 1) = 0.2502$"
+      },
+      {
+        "label": "D",
+        "text": "$P(W = 1 \\mid C = 1) = 0.608$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "quick": "$R$ is a barren node ($\\sum_r P(r \\mid D) = 1$), so (A) holds. Eliminating $S$ gives $\\tau(1, 1) = 0.1(0.95) + 0.9(0.6) = 0.635$, so (B) holds. Eliminating $D$ gives $P(C = 1 \\mid W = 1) = 0.608$ and $P(C = 1 \\mid W = 0) = 0.2$, so $P(C = 1) = 0.3(0.608) + 0.7(0.2) = 0.3224$ and $P(W = 1 \\mid C = 1) = 0.1824/0.3224 \\approx 0.566$. (C) and (D) are false.",
+      "steps": [
+        {
+          "title": "Prune the barren variable $R$",
+          "body": "$R$ is neither the query nor evidence, and it has no children. Summing it out first gives $\\sum_{r} P(R = r \\mid D)$, which is $0.7 + 0.3 = 1$ for $D = 1$ and $0.02 + 0.98 = 1$ for $D = 0$: a factor of all ones. Dropping $P(R \\mid D)$ therefore changes nothing. **(A) is correct.**"
+        },
+        {
+          "title": "Eliminate $S$",
+          "body": "$\\tau(W, D) = \\sum_s P(S = s)\\,P(D \\mid W, s)$:\n\n$$\n\\tau(1, 1) = 0.1(0.95) + 0.9(0.60) = 0.095 + 0.540 = 0.635, \\qquad \\tau(0, 1) = 0.1(0.80) + 0.9(0.05) = 0.080 + 0.045 = 0.125,\n$$\n\nand $\\tau(1, 0) = 0.365$, $\\tau(0, 0) = 0.875$. Note that $\\tau(w, d) = P(D = d \\mid W = w)$. **(B) is correct.**"
+        },
+        {
+          "title": "Eliminate $D$ with the evidence $C = 1$",
+          "body": "$\\varphi(W) = \\sum_d \\tau(W, d)\\,P(C = 1 \\mid d)$:\n\n$$\n\\varphi(1) = 0.635(0.9) + 0.365(0.1) = 0.5715 + 0.0365 = 0.608, \\qquad \\varphi(0) = 0.125(0.9) + 0.875(0.1) = 0.1125 + 0.0875 = 0.2.\n$$\n\nSo $\\varphi(w) = P(C = 1 \\mid W = w)$."
+        },
+        {
+          "title": "Multiply by $P(W)$ and normalise",
+          "body": "$$\nP(W = 1, C = 1) = 0.3(0.608) = 0.1824, \\qquad P(W = 0, C = 1) = 0.7(0.2) = 0.14,\n$$\n\n$$\nP(C = 1) = 0.1824 + 0.14 = 0.3224 \\ne 0.2502, \\qquad P(W = 1 \\mid C = 1) = \\frac{0.1824}{0.3224} \\approx 0.566 \\ne 0.608.\n$$\n\n**(C) and (D) are incorrect.**"
+        }
+      ],
+      "finalAnswer": "**(A), (B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$R$ is a leaf that is neither queried nor observed. Its CPT sums to $1$ over $R$ for each value of $D$, so eliminating it contributes a constant factor of $1$."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$\\tau(1, 1) = P(S = 1)P(D = 1 \\mid 1, 1) + P(S = 0)P(D = 1 \\mid 1, 0) = 0.095 + 0.54 = 0.635$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$0.2502 = P(D = 1) \\times 0.9 = 0.278 \\times 0.9$ keeps only the path through a delay. The term $P(D = 0) \\times P(C = 1 \\mid D = 0) = 0.722 \\times 0.1 = 0.0722$ must be added, giving $P(C = 1) = 0.3224$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$0.608$ is $P(C = 1 \\mid W = 1)$, the conditional in the wrong direction. Bayes' rule gives $P(W = 1 \\mid C = 1) = 0.3 \\times 0.608 / 0.3224 \\approx 0.566$."
+        }
+      ],
+      "commonTrap": "Reporting the intermediate factor $\\varphi(1) = P(C = 1 \\mid W = 1) = 0.608$ as the answer. Variable elimination still has to multiply by the prior $P(W)$ and normalise over both values of $W$ to reach $P(W = 1 \\mid C = 1) \\approx 0.566$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A), (B)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import product\npD={(1,1):.95,(1,0):.6,(0,1):.8,(0,0):.05}; pC={1:.9,0:.1}; pR={1:.7,0:.02}\nb=lambda p,v: p if v else 1-p\nJ=lambda w,s,d,c,r: b(.3,w)*b(.1,s)*b(pD[w,s],d)*b(pC[d],c)*b(pR[d],r)\ntau11=sum(b(.1,s)*pD[1,s] for s in (0,1))\npc=sum(J(w,s,d,1,r) for w,s,d,r in product((0,1),repeat=4))\npwc=sum(J(1,s,d,1,r) for s,d,r in product((0,1),repeat=3))\nprint(round(tau11,4), round(pc,4), round(pwc/pc,4))  # 0.635 0.3224 0.5658 -> A,B true; C,D false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q25",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 25,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-random-variables",
+    "subtopicIds": [
+      "ps-conditional-expectation"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "VERY_HARD",
+    "difficultyRationale": "Platform-estimated: VERY_HARD — a three-level hierarchy (uniform, then uniform given the first, then Poisson given the second) that needs the law of total variance at two levels together with exact uniform and Poisson moments; about 5 minutes.",
+    "estimatedTimeSec": 300,
+    "concept": "Law of total variance applied twice in a three-level hierarchical model.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "At sunrise, the fraction $X$ of a remote sensor node's battery that is charged is uniformly distributed on $(0, 1)$. Given $X = x$, the number of hours $Y$ for which the node transmits that day is uniformly distributed on $(0, 2x)$. Given $Y = y$, the number $Z$ of data packets lost that day has a Poisson distribution with mean $5y$.\n\nThe variance of $Z$, $\\operatorname{Var}(Z)$, is ________ (rounded off to **two** decimal places).",
+    "answer": {
+      "kind": "NAT",
+      "min": 7.35,
+      "max": 7.37
+    },
+    "solution": {
+      "quick": "Use the law of total variance twice. Given $X$: $E[Y \\mid X] = X$ and $\\operatorname{Var}(Y \\mid X) = (2X)^2/12 = X^2/3$, so $E[Y] = \\tfrac{1}{2}$ and $\\operatorname{Var}(Y) = \\tfrac{1}{9} + \\tfrac{1}{12} = \\tfrac{7}{36}$. Given $Y$: $E[Z \\mid Y] = \\operatorname{Var}(Z \\mid Y) = 5Y$, so $\\operatorname{Var}(Z) = 5 \\cdot \\tfrac{1}{2} + 25 \\cdot \\tfrac{7}{36} = \\tfrac{265}{36} \\approx 7.36$.",
+      "steps": [
+        {
+          "title": "Law of total variance at the last stage",
+          "body": "$$\n\\operatorname{Var}(Z) = E\\big[\\operatorname{Var}(Z \\mid Y)\\big] + \\operatorname{Var}\\big(E[Z \\mid Y]\\big).\n$$\n\nA Poisson variable has equal mean and variance, so $E[Z \\mid Y] = \\operatorname{Var}(Z \\mid Y) = 5Y$, and\n\n$$\n\\operatorname{Var}(Z) = 5\\,E[Y] + 25\\operatorname{Var}(Y).\n$$"
+        },
+        {
+          "title": "Moments of $Y$ given $X$",
+          "body": "For $Y \\mid X = x \\sim U(0, 2x)$: $E[Y \\mid X] = X$ and $\\operatorname{Var}(Y \\mid X) = \\dfrac{(2X)^2}{12} = \\dfrac{X^2}{3}$.\n\nFor $X \\sim U(0, 1)$: $E[X] = \\tfrac{1}{2}$, $E[X^2] = \\tfrac{1}{3}$ and $\\operatorname{Var}(X) = \\tfrac{1}{12}$."
+        },
+        {
+          "title": "Mean and variance of $Y$",
+          "body": "$$\nE[Y] = E\\big[E[Y \\mid X]\\big] = E[X] = \\tfrac{1}{2},\n$$\n\n$$\n\\operatorname{Var}(Y) = E\\Big[\\frac{X^2}{3}\\Big] + \\operatorname{Var}(X) = \\frac{1}{9} + \\frac{1}{12} = \\frac{4}{36} + \\frac{3}{36} = \\frac{7}{36} \\approx 0.1944.\n$$"
+        },
+        {
+          "title": "Combine",
+          "body": "$$\n\\operatorname{Var}(Z) = 5 \\cdot \\frac{1}{2} + 25 \\cdot \\frac{7}{36} = \\frac{90}{36} + \\frac{175}{36} = \\frac{265}{36} \\approx 7.3611.\n$$\n\nRounded to two decimal places, $\\operatorname{Var}(Z) = 7.36$."
+        }
+      ],
+      "finalAnswer": "**7.36** (accepted range 7.35 to 7.37)",
+      "commonTrap": "Dropping one term of the law of total variance at either level. Leaving out $\\operatorname{Var}(E[Y \\mid X]) = \\operatorname{Var}(X) = \\tfrac{1}{12}$ gives $\\operatorname{Var}(Y) = \\tfrac{1}{9}$ and $\\operatorname{Var}(Z) \\approx 5.28$; leaving out the Poisson noise $E[\\operatorname{Var}(Z \\mid Y)] = 2.5$ gives $\\tfrac{175}{36} \\approx 4.86$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "265/36 ≈ 7.36",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx=sp.symbols('x')\nEY=sp.integrate(x,(x,0,1)); VY=sp.integrate((2*x)**2/12+x**2,(x,0,1))-EY**2\nVZ=5*EY+25*VY\nprint(VY, VZ, round(float(VZ),2))  # 7/36 265/36 7.36\nimport numpy as np; r=np.random.default_rng(0); X=r.random(10**6); Z=r.poisson(5*r.random(10**6)*2*X); print(Z.var())  # ~7.36",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q26",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 26,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-searching",
+    "subtopicIds": [
+      "pdsa-binary-search"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — the defect (a two-element range that never shrinks when the midpoint is rounded down and lo = mid) must be found, then the search tree must be traced by ranges of x rather than for one value; about 4.5 minutes.",
+    "estimatedTimeSec": 270,
+    "concept": "Binary-search progress: with the update lo = mid the midpoint must be rounded up, or a two-element range can stop shrinking.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The function below is meant to return the index of the last element that is less than or equal to `x` in a list `a` of distinct integers sorted in increasing order.\n\n```python\ndef last_at_most(a, x):\n    lo, hi = 0, len(a) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if a[mid] <= x:\n            lo = mid\n        else:\n            hi = mid - 1\n    return lo\n```\n\nLet `a = [3, 8, 12, 15, 21, 26, 30, 34]`. For how many integers `x` with $0 \\le x \\le 39$ does the call `last_at_most(a, x)` terminate?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$8$"
+      },
+      {
+        "label": "B",
+        "text": "$12$"
+      },
+      {
+        "label": "C",
+        "text": "$30$"
+      },
+      {
+        "label": "D",
+        "text": "$40$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "When the range is two indices `lo, lo + 1`, the midpoint is `lo`. If `a[lo] <= x`, the update `lo = mid` changes nothing and the loop never ends. Tracing the search by ranges of `x` shows that the call terminates only for $0 \\le x \\le 7$ and $26 \\le x \\le 29$, which is $8 + 4 = 12$ values.",
+      "steps": [
+        {
+          "title": "When does an iteration fail to make progress?",
+          "body": "If `hi - lo >= 2`, then `lo < mid < hi`, so either `lo = mid` raises `lo` or `hi = mid - 1` lowers `hi`. If `hi = lo + 1`, then `mid = lo`:\n\n- if `a[lo] <= x`, the update `lo = mid` leaves `(lo, hi)` unchanged, so the loop runs forever;\n- otherwise `hi = lo - 1 < lo` and the loop ends.\n\nSo the call fails to terminate exactly when it reaches a two-element range whose left element is `<= x`."
+        },
+        {
+          "title": "Trace the left half ($x < 15$)",
+          "body": "First iteration: `lo = 0`, `hi = 7`, `mid = 3`, `a[3] = 15`. For $x < 15$, `hi = 2`.\n\nRange $[0, 2]$: `mid = 1`, `a[1] = 8`.\n\n- $x \\le 7$: `hi = 0`, the loop ends and returns $0$. These $8$ values ($0$ to $7$) terminate.\n- $8 \\le x \\le 14$: `lo = 1`, giving the two-element range $[1, 2]$ with `a[1] = 8 <= x`, so the loop never ends."
+        },
+        {
+          "title": "Trace the right half ($x \\ge 15$)",
+          "body": "For $x \\ge 15$, `lo = 3`. Range $[3, 7]$: `mid = 5`, `a[5] = 26`.\n\n- $15 \\le x \\le 25$: `hi = 4`, giving the range $[3, 4]$ with `a[3] = 15 <= x`, so the loop never ends.\n- $x \\ge 26$: `lo = 5`. Range $[5, 7]$: `mid = 6`, `a[6] = 30`.\n  - $26 \\le x \\le 29$: `hi = 5`, the loop ends and returns $5$. These are $4$ values.\n  - $30 \\le x \\le 39$: `lo = 6`, giving the range $[6, 7]$ with `a[6] = 30 <= x`, so the loop never ends."
+        },
+        {
+          "title": "Count",
+          "body": "The call terminates for $x \\in \\{0, \\dots, 7\\} \\cup \\{26, \\dots, 29\\}$, which is $8 + 4 = 12$ values. (For $0 \\le x \\le 2$ it even returns a wrong index, $0$, but it does terminate.) Rounding the midpoint up, `mid = (lo + hi + 1) // 2`, removes the stall."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$8$ counts only $0 \\le x \\le 7$ and misses the values $26 \\le x \\le 29$, for which the right half resolves through `hi = 5`."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "Exactly $12$ values ($0$ to $7$ and $26$ to $29$) avoid a stalled two-element range."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$30$ assumes that the stall happens only at the right end of the list ($x \\ge 30$). It also happens inside the list, in the ranges $[1, 2]$ and $[3, 4]$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$40$ assumes that every iteration shrinks the range. When `hi = lo + 1`, the floor division gives `mid = lo`, and `lo = mid` makes no progress."
+        }
+      ],
+      "commonTrap": "Believing that `lo = mid` always shrinks the range. Floor division makes `mid` equal to `lo` on a two-element range, so the update must pair `lo = mid` with an upper midpoint (`(lo + hi + 1) // 2`)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B) 12",
+      "agreesWithKey": true,
+      "checkCode": "def f(a,x,cap=100):\n    lo,hi=0,len(a)-1\n    while lo<hi:\n        cap-=1\n        if cap<0: return None\n        mid=(lo+hi)//2\n        if a[mid]<=x: lo=mid\n        else: hi=mid-1\n    return lo\na=[3,8,12,15,21,26,30,34]\nok=[x for x in range(40) if f(a,x) is not None]\nprint(len(ok), ok)  # 12 [0..7, 26..29]",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q27",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 27,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-adversarial"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — a small expectiminimax tree with three MAX moves; the work is six MIN values and three weighted averages, and the traps are treating chance nodes as MIN nodes or ignoring the probabilities; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Expectiminimax: MIN nodes take the minimum, chance nodes the probability-weighted average, and MAX the maximum.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "In a two-player zero-sum game, MAX moves first and chooses one of three moves $a_1, a_2, a_3$. A chance event with two outcomes $e_1, e_2$ then occurs, whose probabilities depend on MAX's move. After the chance event, MIN chooses one of two replies and the game ends. The table gives the probability of each outcome and the payoffs to MAX of MIN's two replies.\n\n| MAX move | Chance outcome | Probability | Payoffs to MAX of MIN's two replies |\n|---|---|---|---|\n| $a_1$ | $e_1$ | $0.5$ | $4,\\ 7$ |\n| $a_1$ | $e_2$ | $0.5$ | $6,\\ 9$ |\n| $a_2$ | $e_1$ | $0.9$ | $5,\\ 8$ |\n| $a_2$ | $e_2$ | $0.1$ | $0,\\ 12$ |\n| $a_3$ | $e_1$ | $0.3$ | $2,\\ 15$ |\n| $a_3$ | $e_2$ | $0.7$ | $7,\\ 8$ |\n\nMIN minimises MAX's payoff, and MAX maximises its expected payoff (expectiminimax). Which one of the following gives MAX's best move and the expectiminimax value of the root?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$a_1$, with value $5.0$"
+      },
+      {
+        "label": "B",
+        "text": "$a_3$, with value $5.5$"
+      },
+      {
+        "label": "C",
+        "text": "$a_1$, with value $4.0$"
+      },
+      {
+        "label": "D",
+        "text": "$a_3$, with value $10.1$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "MIN nodes take the smaller payoff, chance nodes the probability-weighted average and MAX the largest value. $a_1$: $0.5(4) + 0.5(6) = 5.0$; $a_2$: $0.9(5) + 0.1(0) = 4.5$; $a_3$: $0.3(2) + 0.7(7) = 5.5$. MAX plays $a_3$, and the root value is $5.5$.",
+      "steps": [
+        {
+          "title": "Back up the MIN nodes",
+          "body": "Each MIN node takes the smaller of its two payoffs:\n\n| Move | MIN value after $e_1$ | MIN value after $e_2$ |\n|---|---|---|\n| $a_1$ | $\\min(4, 7) = 4$ | $\\min(6, 9) = 6$ |\n| $a_2$ | $\\min(5, 8) = 5$ | $\\min(0, 12) = 0$ |\n| $a_3$ | $\\min(2, 15) = 2$ | $\\min(7, 8) = 7$ |"
+        },
+        {
+          "title": "Back up the chance nodes",
+          "body": "Each chance node takes the expected value of its children:\n\n$$\na_1: 0.5(4) + 0.5(6) = 5.0, \\qquad a_2: 0.9(5) + 0.1(0) = 4.5, \\qquad a_3: 0.3(2) + 0.7(7) = 0.6 + 4.9 = 5.5.\n$$"
+        },
+        {
+          "title": "Choose at the MAX root",
+          "body": "$\\max(5.0, 4.5, 5.5) = 5.5$, reached by $a_3$. Move $a_3$ risks a low payoff ($2$ after $e_1$), but its more likely outcome $e_2$ gives $7$, so its expected value is the highest."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Averaging the two outcomes equally, ignoring the given probabilities, gives $a_1: 5.0$, $a_2: 2.5$, $a_3: 4.5$, and so picks $a_1$. The value $5.0$ is the true value of $a_1$, but $a_3$ is worth more."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "With the correct weights, $a_3$ is worth $0.3(2) + 0.7(7) = 5.5$, more than $a_1$ ($5.0$) and $a_2$ ($4.5$)."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "Treating each chance node as a MIN node (worst case) gives $a_1: 4$, $a_2: 0$, $a_3: 2$. That is plain minimax, not expectiminimax."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$10.1 = 0.3(15) + 0.7(8)$ takes the **larger** payoff at the MIN nodes, as if MIN were helping MAX."
+        }
+      ],
+      "commonTrap": "Treating the chance event as an adversary (worst case), which picks $a_1$ with value $4$. In expectiminimax a chance node averages over its outcomes with their probabilities."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(B) a3, 5.5",
+      "agreesWithKey": true,
+      "checkCode": "T={'a1':[(.5,[4,7]),(.5,[6,9])],'a2':[(.9,[5,8]),(.1,[0,12])],'a3':[(.3,[2,15]),(.7,[7,8])]}\nv={m:round(sum(p*min(l) for p,l in ch),4) for m,ch in T.items()}\nprint(v, max(v,key=v.get), max(v.values()))  # a3 5.5",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q28",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 28,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — the 3 × 3 covariance must be built from raw (uncentred) data, candidate directions checked as eigenvectors, the zero-variance direction told apart from the second component, and a projection and reconstruction carried out; about 5.5 minutes.",
+    "estimatedTimeSec": 330,
+    "concept": "PCA by eigen-decomposition of the sample covariance matrix: principal directions, explained variance, and projection and reconstruction of a point.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Four observations of three features are recorded:\n\n| Observation | $x_1$ | $x_2$ | $x_3$ |\n|---|---|---|---|\n| 1 | $6$ | $6$ | $5$ |\n| 2 | $-2$ | $2$ | $-3$ |\n| 3 | $2$ | $1$ | $7$ |\n| 4 | $-2$ | $-1$ | $3$ |\n\nPrincipal component analysis (PCA) is carried out using the eigenvectors of the sample covariance matrix of these data (the data are mean-centred first).\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The unit vector $\\tfrac{1}{3}(2, 1, 2)^\\top$ lies along the first principal component."
+      },
+      {
+        "label": "B",
+        "text": "The unit vector $\\tfrac{1}{3}(2, -2, -1)^\\top$ lies along the second principal component."
+      },
+      {
+        "label": "C",
+        "text": "If observation 1 is projected onto the first principal component alone and then reconstructed (by adding back the mean), the result is $(5, 4, 7)$."
+      },
+      {
+        "label": "D",
+        "text": "The first principal component accounts for exactly $\\tfrac{5}{7}$ of the total variance."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The mean is $(1, 2, 3)$. The scatter matrix $X_c^\\top X_c$ has eigenvectors $(2, 1, 2)$, $(1, 2, -2)$ and $(2, -2, -1)$ with eigenvalues $90$, $36$ and $0$, so PC1 $= \\tfrac{1}{3}(2, 1, 2)$ and PC2 $= \\tfrac{1}{3}(1, 2, -2)$, while $\\tfrac{1}{3}(2, -2, -1)$ carries no variance. Observation 1 has PC1 score $6$ and reconstructs to $(1, 2, 3) + (4, 2, 4) = (5, 4, 7)$. PC1 explains $90/126 = 5/7$. So (A), (C), (D).",
+      "steps": [
+        {
+          "title": "Centre the data",
+          "body": "Mean $= \\big(\\tfrac{6 - 2 + 2 - 2}{4}, \\tfrac{6 + 2 + 1 - 1}{4}, \\tfrac{5 - 3 + 7 + 3}{4}\\big) = (1, 2, 3)$. The centred observations are\n\n$$\n(5, 4, 2), \\quad (-3, 0, -6), \\quad (1, -1, 4), \\quad (-3, -3, 0).\n$$"
+        },
+        {
+          "title": "Form the scatter matrix",
+          "body": "$$\nX_c^\\top X_c = \\begin{bmatrix} 44 & 28 & 32 \\\\ 28 & 26 & 4 \\\\ 32 & 4 & 56 \\end{bmatrix}, \\qquad S = \\frac{1}{n - 1} X_c^\\top X_c = \\frac{1}{3} X_c^\\top X_c.\n$$\n\nThe divisor scales every eigenvalue equally, so it changes neither the directions nor the explained-variance ratios. The trace is $44 + 26 + 56 = 126$."
+        },
+        {
+          "title": "Find the eigenvectors and eigenvalues",
+          "body": "- $X_c^\\top X_c\\,(2, 1, 2)^\\top = (88 + 28 + 64,\\ 56 + 26 + 8,\\ 64 + 4 + 112) = (180, 90, 180) = 90\\,(2, 1, 2)^\\top$.\n- $X_c^\\top X_c\\,(1, 2, -2)^\\top = (44 + 56 - 64,\\ 28 + 52 - 8,\\ 32 + 8 - 112) = (36, 72, -72) = 36\\,(1, 2, -2)^\\top$.\n- $X_c^\\top X_c\\,(2, -2, -1)^\\top = (88 - 56 - 32,\\ 56 - 52 - 4,\\ 64 - 8 - 56) = (0, 0, 0)$. Every centred observation is orthogonal to $(2, -2, -1)$, so the data lie in a plane.\n\nThe eigenvalues are $90 > 36 > 0$ (sum $126$, matching the trace). So PC1 $= \\tfrac{1}{3}(2, 1, 2)$ and PC2 $= \\tfrac{1}{3}(1, 2, -2)$, and $\\tfrac{1}{3}(2, -2, -1)$ is the third, zero-variance direction. **(A) is correct and (B) is incorrect.**"
+        },
+        {
+          "title": "Project and reconstruct observation 1",
+          "body": "The centred observation 1 is $(5, 4, 2)$. Its PC1 score is $\\tfrac{1}{3}(2 \\cdot 5 + 1 \\cdot 4 + 2 \\cdot 2) = \\tfrac{18}{3} = 6$. The reconstruction is\n\n$$\n(1, 2, 3) + 6 \\cdot \\tfrac{1}{3}(2, 1, 2) = (1, 2, 3) + (4, 2, 4) = (5, 4, 7).\n$$\n\nThe error $(6, 6, 5) - (5, 4, 7) = (1, 2, -2)$ lies along PC2, as it should. **(C) is correct.**"
+        },
+        {
+          "title": "Explained variance",
+          "body": "$$\n\\frac{\\lambda_1}{\\lambda_1 + \\lambda_2 + \\lambda_3} = \\frac{90}{90 + 36 + 0} = \\frac{90}{126} = \\frac{5}{7} \\approx 0.714.\n$$\n\n**(D) is correct.**"
+        }
+      ],
+      "finalAnswer": "**(A), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "$X_c^\\top X_c\\,(2, 1, 2)^\\top = 90\\,(2, 1, 2)^\\top$, and $90$ is the largest eigenvalue."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$(2, -2, -1)$ is orthogonal to PC1, but it is orthogonal to every centred observation too, so its eigenvalue is $0$: it is the third component. The second component is $\\tfrac{1}{3}(1, 2, -2)$, with eigenvalue $36$."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The PC1 score of observation 1 is $6$, and $(1, 2, 3) + 6 \\cdot \\tfrac{1}{3}(2, 1, 2) = (5, 4, 7)$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "The explained fraction is $90 / 126 = 5/7$, whatever divisor is used for the covariance."
+        }
+      ],
+      "commonTrap": "Taking any unit vector orthogonal to the first principal direction as the second component. In $\\mathbb{R}^3$ there is a whole plane of such vectors. Here $\\tfrac{1}{3}(2, -2, -1)$ is orthogonal to the first direction but has zero variance; the second component is the eigenvector with the next-largest eigenvalue, $\\tfrac{1}{3}(1, 2, -2)$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(A), (C), (D)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nX=np.array([[6,6,5],[-2,2,-3],[2,1,7],[-2,-1,3]],float); mu=X.mean(0); Xc=X-mu\nw,V=np.linalg.eigh(np.cov(Xc.T)); w,V=w[::-1],V[:,::-1]\nv1=np.array([2,1,2])/3; v2=np.array([2,-2,-1])/3\nprint(abs(V[:,0]@v1), abs(V[:,1]@v2), mu+(Xc[0]@v1)*v1, w[0]/w.sum())  # 1.0 0.0 [5 4 7] 0.7142857 -> A,C,D true; B false",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q29",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 29,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-multiple-linear-regression"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — the 2 × 2 normal equations must be built from centred sums of squares and cross-products and solved by hand, and the tempting simple-regression slope gives a very different number; about 5 minutes.",
+    "estimatedTimeSec": 300,
+    "concept": "Multiple linear regression by the normal equations on centred data; a partial slope differs from the simple-regression slope when the predictors are correlated.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A courier company records, for five deliveries, the distance $x_1$ (in km), the number of intermediate stops $x_2$, and the delivery time $y$ (in minutes).\n\n| Delivery | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| $x_1$ | 1 | 2 | 3 | 4 | 5 |\n| $x_2$ | 2 | 4 | 3 | 7 | 4 |\n| $y$ | 11 | 16 | 20 | 25 | 27 |\n\nThe model $y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + \\varepsilon$ is fitted by ordinary least squares. The least-squares estimate $\\hat{\\beta}_2$ is ________ (rounded off to **two** decimal places).",
+    "answer": {
+      "kind": "NAT",
+      "min": 0.46,
+      "max": 0.48
+    },
+    "solution": {
+      "quick": "Centre the variables ($\\bar{x}_1 = 3$, $\\bar{x}_2 = 4$, $\\bar{y} = 19.8$). Then $S_{11} = 10$, $S_{22} = 14$, $S_{12} = 7$, $S_{1y} = 41$ and $S_{2y} = 33$. The normal equations $10\\beta_1 + 7\\beta_2 = 41$ and $7\\beta_1 + 14\\beta_2 = 33$ give $\\hat{\\beta}_2 = \\dfrac{10 \\cdot 33 - 7 \\cdot 41}{10 \\cdot 14 - 7^2} = \\dfrac{43}{91} \\approx 0.47$.",
+      "steps": [
+        {
+          "title": "Centre the variables",
+          "body": "$\\bar{x}_1 = 15/5 = 3$, $\\bar{x}_2 = 20/5 = 4$ and $\\bar{y} = 99/5 = 19.8$. The deviations are\n\n| Delivery | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| $x_1 - \\bar{x}_1$ | $-2$ | $-1$ | $0$ | $1$ | $2$ |\n| $x_2 - \\bar{x}_2$ | $-2$ | $0$ | $-1$ | $3$ | $0$ |\n| $y - \\bar{y}$ | $-8.8$ | $-3.8$ | $0.2$ | $5.2$ | $7.2$ |"
+        },
+        {
+          "title": "Sums of squares and cross-products",
+          "body": "$$\nS_{11} = 4 + 1 + 0 + 1 + 4 = 10, \\qquad S_{22} = 4 + 0 + 1 + 9 + 0 = 14, \\qquad S_{12} = 4 + 0 + 0 + 3 + 0 = 7,\n$$\n\n$$\nS_{1y} = 17.6 + 3.8 + 0 + 5.2 + 14.4 = 41, \\qquad S_{2y} = 17.6 + 0 - 0.2 + 15.6 + 0 = 33.\n$$"
+        },
+        {
+          "title": "Normal equations for the slopes",
+          "body": "Centring removes the intercept, and the slopes satisfy\n\n$$\n\\begin{bmatrix} 10 & 7 \\\\ 7 & 14 \\end{bmatrix} \\begin{bmatrix} \\beta_1 \\\\ \\beta_2 \\end{bmatrix} = \\begin{bmatrix} 41 \\\\ 33 \\end{bmatrix}, \\qquad \\det = 10 \\cdot 14 - 7^2 = 91.\n$$"
+        },
+        {
+          "title": "Solve",
+          "body": "By Cramer's rule,\n\n$$\n\\hat{\\beta}_2 = \\frac{10 \\cdot 33 - 7 \\cdot 41}{91} = \\frac{330 - 287}{91} = \\frac{43}{91} \\approx 0.4725,\n$$\n\n$$\n\\hat{\\beta}_1 = \\frac{14 \\cdot 41 - 7 \\cdot 33}{91} = \\frac{343}{91} \\approx 3.769, \\qquad \\hat{\\beta}_0 = 19.8 - 3\\hat{\\beta}_1 - 4\\hat{\\beta}_2 \\approx 6.602.\n$$\n\nRounded to two decimal places, $\\hat{\\beta}_2 = 0.47$."
+        }
+      ],
+      "finalAnswer": "**0.47** (accepted range 0.46 to 0.48)",
+      "commonTrap": "Using the simple-regression slope of $y$ on $x_2$ alone, $S_{2y}/S_{22} = 33/14 \\approx 2.36$. The number of stops is correlated with distance ($S_{12} = 7$), so most of that marginal slope is really the effect of distance. The multiple-regression coefficient holds $x_1$ fixed and is only $43/91 \\approx 0.47$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "43/91 ≈ 0.47",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nx1=[1,2,3,4,5]; x2=[2,4,3,7,4]; y=[11,16,20,25,27]\nX=np.column_stack([np.ones(5),x1,x2])\nb=np.linalg.lstsq(X,np.array(y,float),rcond=None)[0]\nprint(b, round(b[2],2), 43/91)  # beta2 = 0.4725 -> 0.47",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M31-Q30",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-31",
+    "questionNumber": 30,
+    "section": "DA",
+    "subjectId": "la",
+    "topicId": "la-vector-spaces",
+    "subtopicIds": [
+      "la-independence"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — none of the three dependent sets contains an obvious multiple; spotting them needs the Cayley–Hamilton theorem, a dimension count for symmetric matrices and a hidden arithmetic-progression relation, and the independent set must be confirmed by solving a 4 × 4 system; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Linear independence in the space of 2 × 2 matrices: Cayley–Hamilton relations, dimension bounds of subspaces, and coordinate checks.",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $M_2(\\mathbb{R})$ denote the vector space of all $2 \\times 2$ real matrices, let $I$ be the $2 \\times 2$ identity matrix, and let\n\n$$\nA = \\begin{bmatrix} 2 & 1 \\\\ -1 & 3 \\end{bmatrix}.\n$$\n\nWhich one of the following subsets of $M_2(\\mathbb{R})$ is linearly independent?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$\\{\\, I,\\ A,\\ A^2 \\,\\}$"
+      },
+      {
+        "label": "B",
+        "text": "$\\left\\{ \\begin{bmatrix} 1 & 2 \\\\ 2 & 0 \\end{bmatrix},\\ \\begin{bmatrix} 0 & 1 \\\\ 1 & 3 \\end{bmatrix},\\ \\begin{bmatrix} 2 & 0 \\\\ 0 & 1 \\end{bmatrix},\\ \\begin{bmatrix} 1 & 1 \\\\ 1 & 1 \\end{bmatrix} \\right\\}$"
+      },
+      {
+        "label": "C",
+        "text": "$\\left\\{ \\begin{bmatrix} 1 & 3 \\\\ 2 & 5 \\end{bmatrix},\\ \\begin{bmatrix} 2 & 4 \\\\ 4 & 6 \\end{bmatrix},\\ \\begin{bmatrix} 3 & 5 \\\\ 6 & 7 \\end{bmatrix},\\ \\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix} \\right\\}$"
+      },
+      {
+        "label": "D",
+        "text": "$\\left\\{ \\begin{bmatrix} 1 & 1 \\\\ 0 & 0 \\end{bmatrix},\\ \\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix},\\ \\begin{bmatrix} 0 & 0 \\\\ 1 & 1 \\end{bmatrix},\\ \\begin{bmatrix} 1 & 0 \\\\ 0 & -1 \\end{bmatrix} \\right\\}$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "(A) By Cayley–Hamilton, $A^2 = 5A - 7I$, so the set is dependent. (B) All four matrices are symmetric, and the symmetric $2 \\times 2$ matrices form a 3-dimensional subspace, so four of them are dependent. (C) The first three form an arithmetic progression: $M_1 - 2M_2 + M_3 = 0$. (D) Only the zero combination gives the zero matrix, so (D) is independent.",
+      "steps": [
+        {
+          "title": "Option (A): Cayley–Hamilton",
+          "body": "$\\operatorname{tr} A = 5$ and $\\det A = 6 - (1)(-1) = 7$, so the characteristic polynomial is $\\lambda^2 - 5\\lambda + 7$. By the Cayley–Hamilton theorem $A^2 - 5A + 7I = 0$. Check:\n\n$$\nA^2 = \\begin{bmatrix} 3 & 5 \\\\ -5 & 8 \\end{bmatrix} = 5A - 7I = \\begin{bmatrix} 10 - 7 & 5 \\\\ -5 & 15 - 7 \\end{bmatrix}.\n$$\n\nThis is a non-trivial combination of $I, A, A^2$ equal to zero, so the set is **dependent**. (For every $2 \\times 2$ matrix, $\\{I, A, A^2\\}$ is dependent.)"
+        },
+        {
+          "title": "Option (B): dimension count",
+          "body": "A symmetric matrix $\\begin{bmatrix} p & q \\\\ q & r \\end{bmatrix}$ is fixed by $(p, q, r)$, so the symmetric matrices form a subspace of dimension $3$. Four vectors in a 3-dimensional space are always dependent. Explicitly, with coordinates $(1, 2, 0)$, $(0, 1, 3)$, $(2, 0, 1)$ and $(1, 1, 1)$:\n\n$$\n5(1, 2, 0) + 3(0, 1, 3) + 4(2, 0, 1) = (13, 13, 13) = 13(1, 1, 1).\n$$"
+        },
+        {
+          "title": "Option (C): a hidden relation",
+          "body": "Call the matrices $M_1, M_2, M_3, M_4$. Then\n\n$$\nM_2 - M_1 = \\begin{bmatrix} 1 & 1 \\\\ 2 & 1 \\end{bmatrix} = M_3 - M_2,\n$$\n\nso $M_1 - 2M_2 + M_3 = 0$ and the set is **dependent**, whatever $M_4$ is."
+        },
+        {
+          "title": "Option (D): solve for the coefficients",
+          "body": "Suppose $\\alpha M_1 + \\beta M_2 + \\gamma M_3 + \\delta M_4 = 0$. Comparing the four entries:\n\n$$\n(1,1):\\ \\alpha + \\delta = 0, \\qquad (1,2):\\ \\alpha + \\beta = 0, \\qquad (2,1):\\ \\beta + \\gamma = 0, \\qquad (2,2):\\ \\gamma - \\delta = 0.\n$$\n\nThen $\\beta = -\\alpha$, $\\gamma = -\\beta = \\alpha$ and $\\delta = \\gamma = \\alpha$, so the first equation becomes $2\\alpha = 0$. Hence $\\alpha = \\beta = \\gamma = \\delta = 0$, and the set is **linearly independent**. (Equivalently, the $4 \\times 4$ coordinate determinant is $-2 \\ne 0$.)"
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "By Cayley–Hamilton, $A^2 = 5A - 7I$, so $A^2 - 5A + 7I = 0$ is a non-trivial dependence. Three matrices in a 4-dimensional space can be independent, but here they are not."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "All four matrices are symmetric, and the symmetric $2 \\times 2$ matrices form a 3-dimensional subspace, so any four of them are dependent: $5B_1 + 3B_2 + 4B_3 - 13B_4 = 0$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The first three matrices are in arithmetic progression (common difference $\\begin{bmatrix} 1 & 1 \\\\ 2 & 1 \\end{bmatrix}$), so $M_1 - 2M_2 + M_3 = 0$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Comparing entries forces $\\alpha = \\beta = \\gamma = \\delta = 0$; the coordinate determinant is $-2 \\ne 0$."
+        }
+      ],
+      "commonTrap": "Looking only for one matrix that is a multiple of another. All three dependent sets look generic: the dependence comes from the Cayley–Hamilton theorem in (A), a dimension bound in (B) and a three-term relation in (C)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "(D)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nA=np.array([[2,1],[-1,3]]); m=lambda *r: np.array(r).reshape(2,2)\nS={'A':[np.eye(2),A,A@A],\n   'B':[m(1,2,2,0),m(0,1,1,3),m(2,0,0,1),m(1,1,1,1)],\n   'C':[m(1,3,2,5),m(2,4,4,6),m(3,5,6,7),m(0,1,1,0)],\n   'D':[m(1,1,0,0),m(0,1,1,0),m(0,0,1,1),m(1,0,0,-1)]}\nprint({k:np.linalg.matrix_rank(np.array([x.ravel() for x in v]))==len(v) for k,v in S.items()})  # only D independent",
+      "notes": ""
+    }
+  }
+]

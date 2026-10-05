@@ -1,0 +1,538 @@
+[
+  {
+    "id": "M25-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-data-transformation",
+    "subtopicIds": [
+      "dbw-data-types"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — three linked similarity measures for binary data (simple matching, Jaccard, cosine): the first two must be inverted to recover the 2×2 contingency counts before the third can be computed, and the 0–0 matches are a likely trap; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "Recovering the 2×2 contingency counts of two binary vectors from their simple matching and Jaccard coefficients, then computing their cosine similarity",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Two shoppers, $X$ and $Y$, are described by the same $20$ binary indicators (1 = the shopper bought from that product category last month, 0 = did not). Treat $X$ and $Y$ as $0/1$ vectors. The following are known.\n\n- The *simple matching coefficient* of $X$ and $Y$ (the fraction of the $20$ indicators on which the two shoppers have the same value) is $0.85$.\n- The *Jaccard coefficient* of $X$ and $Y$ (the number of indicators on which both are $1$, divided by the number of indicators on which at least one is $1$) is $0.50$.\n- Shopper $X$ bought from exactly $5$ categories.\n\nThe cosine similarity between $X$ and $Y$, treated as $0/1$ vectors, is ________. (rounded off to three decimal places)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 0.67,
+      "max": 0.672
+    },
+    "solution": {
+      "quick": "Let $a,b,c,d$ count the indicators with $(X,Y)=(1,1),(1,0),(0,1),(0,0)$. The simple matching coefficient gives $a+d=17$, so $b+c=3$, and the Jaccard coefficient $a/(a+3)=0.5$ gives $a=3$ and $d=14$. Since $X$ has $5$ ones, $b=2$ and $c=1$, so $Y$ has $4$ ones and the cosine similarity is $3/\\sqrt{5\\cdot 4}\\approx 0.671$.",
+      "steps": [
+        {
+          "title": "Set up the contingency counts",
+          "body": "Let $a$ = number of indicators where both are $1$, $b$ = where only $X$ is $1$, $c$ = where only $Y$ is $1$, and $d$ = where both are $0$, so that $a+b+c+d=20$.\n\nSimple matching coefficient: $\\dfrac{a+d}{20}=0.85 \\Rightarrow a+d=17$, hence the number of mismatches is $b+c=20-17=3$."
+        },
+        {
+          "title": "Use the Jaccard coefficient",
+          "body": "The Jaccard coefficient ignores the $0$–$0$ matches:\n$$\\frac{a}{a+b+c}=\\frac{a}{a+3}=0.50 \\;\\Rightarrow\\; a=3.$$\nThen $d=17-a=14$."
+        },
+        {
+          "title": "Use the count of ones in $X$",
+          "body": "$X$ has $a+b=5$ ones, so $b=5-3=2$ and therefore $c=3-b=1$. Shopper $Y$ has $a+c=3+1=4$ ones.\n\nCheck: $a+b+c+d=3+2+1+14=20$."
+        },
+        {
+          "title": "Cosine similarity",
+          "body": "For $0/1$ vectors, the dot product $X\\cdot Y$ is the number of positions where both are $1$, which is $a=3$. The norms are $\\|X\\|=\\sqrt{5}$ and $\\|Y\\|=\\sqrt{4}=2$.\n$$\\cos(X,Y)=\\frac{3}{\\sqrt{5}\\cdot 2}=\\frac{3}{\\sqrt{20}}\\approx 0.6708\\approx 0.671.$$"
+        }
+      ],
+      "finalAnswer": "**0.671**",
+      "shortcut": "A Jaccard coefficient of $\\tfrac12$ means $a=b+c$. The simple matching coefficient gives $b+c=20\\,(1-0.85)=3$, so $a=3$ immediately; then $b=5-3$, $c=3-b$.",
+      "commonTrap": "Using the $14$ joint absences (or the simple matching value) when forming the overlap, or assuming $Y$ also has $5$ ones. The mismatches are split unevenly ($b=2$, $c=1$), so $|Y|=4$, not $5$; using $5$ would give $0.6$ instead of $0.671$."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "0.6708 (3/sqrt(20))",
+      "agreesWithKey": true,
+      "checkCode": "import itertools, math\np = 20\nsol = [(a, b, c, d) for a, b, c, d in itertools.product(range(p + 1), repeat=4)\n       if a + b + c + d == p and (a + d) * 100 == 85 * p and 2 * a == a + b + c and a + b == 5]\na, b, c, d = sol[0]\nprint(sol, round(a / math.sqrt((a + b) * (a + c)), 3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "ps",
+    "topicId": "ps-inference",
+    "subtopicIds": [
+      "ps-hypothesis-tests"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the pooled-variance two-sample t statistic) with three routine steps: summarising the raw sample, pooling the two variances and forming the standard error; about 2 minutes.",
+    "estimatedTimeSec": 130,
+    "concept": "Pooled-variance two-sample t statistic for independent normal samples with equal variances",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "An agronomist compares two irrigation methods, P and Q, on separate plots of wheat. The yields (in quintals per plot) of the six plots under method P are\n\n$$29,\\ 31,\\ 32,\\ 33,\\ 35,\\ 32.$$\n\nUnder method Q, nine plots gave a sample mean of $35.0$ and a sample standard deviation of $2.2$ (computed with divisor $n-1$). Assume that the yields under each method are normally distributed with a common variance and that the two samples are independent.\n\nThe two-sample $t$ statistic for testing $H_0:\\mu_Q=\\mu_P$ that uses the pooled variance estimate, with $\\bar{x}_Q-\\bar{x}_P$ in the numerator, equals ________. (rounded off to two decimal places)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 2.67,
+      "max": 2.69
+    },
+    "solution": {
+      "quick": "Method P: $\\bar{x}_P=32$ and the sum of squared deviations is $20$. Method Q: $s_Q^2=4.84$, so its sum of squares is $8\\times4.84=38.72$. The pooled variance is $(20+38.72)/13=4.517$, the standard error is $\\sqrt{4.517\\,(1/6+1/9)}=1.120$, and $t=(35-32)/1.120\\approx 2.68$.",
+      "steps": [
+        {
+          "title": "Summarise the raw sample (method P)",
+          "body": "$\\bar{x}_P=\\dfrac{29+31+32+33+35+32}{6}=\\dfrac{192}{6}=32$. The deviations from $32$ are $-3,-1,0,1,3,0$, so\n$$SS_P=\\sum (x-\\bar{x}_P)^2=9+1+0+1+9+0=20,\\qquad s_P^2=\\frac{20}{5}=4.$$"
+        },
+        {
+          "title": "Summarise method Q",
+          "body": "$s_Q^2=2.2^2=4.84$, so $SS_Q=(n_Q-1)\\,s_Q^2=8\\times 4.84=38.72$."
+        },
+        {
+          "title": "Pooled variance",
+          "body": "With equal variances assumed, the degrees of freedom are $n_P+n_Q-2=6+9-2=13$ and\n$$s_p^2=\\frac{SS_P+SS_Q}{13}=\\frac{20+38.72}{13}=\\frac{58.72}{13}\\approx 4.5169,\\qquad s_p\\approx 2.1253.$$"
+        },
+        {
+          "title": "Test statistic",
+          "body": "$$\\text{SE}=s_p\\sqrt{\\frac{1}{6}+\\frac{1}{9}}=2.1253\\times\\sqrt{0.27778}=2.1253\\times 0.52705\\approx 1.1201,$$\n$$t=\\frac{\\bar{x}_Q-\\bar{x}_P}{\\text{SE}}=\\frac{35.0-32}{1.1201}\\approx 2.678\\approx 2.68\\quad(13\\ \\text{degrees of freedom}).$$"
+        }
+      ],
+      "finalAnswer": "**2.68**",
+      "commonTrap": "Using the unpooled (Welch) standard error $\\sqrt{s_P^2/6+s_Q^2/9}$, which gives about $2.73$, or dividing the pooled sum of squares by $n_P+n_Q=15$ instead of $n_P+n_Q-2=13$, which gives about $2.88$. Both fall outside the accepted range."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "2.68 (t = 2.678, df = 13)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nP = np.array([29, 31, 32, 33, 35, 32]); nP = len(P)\nnQ, mQ, sQ = 9, 35.0, 2.2\nsp2 = (((P - P.mean()) ** 2).sum() + (nQ - 1) * sQ ** 2) / (nP + nQ - 2)\nt = (mQ - P.mean()) / np.sqrt(sp2 * (1 / nP + 1 / nQ))\nprint(round(P.mean(), 2), round(sp2, 4), round(t, 4), round(t, 2))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q21",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 21,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-warehousing",
+    "subtopicIds": [
+      "dbw-concept-hierarchies"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — requires counting distinct values for five attributes, ordering them, and then checking four many-to-one links against twelve rows, with a likely trap (assuming that a count-based heuristic always yields a valid hierarchy); about 4 minutes.",
+    "estimatedTimeSec": 210,
+    "concept": "Count-based automatic generation of a concept hierarchy, and checking whether each link of the generated chain is a many-to-one roll-up",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "The `Employee` dimension table of a company's data warehouse currently holds the following $12$ rows.\n\n| emp | dept | region | site | team |\n|---|---|---|---|---|\n| E01 | Engineering | West | Pune | Platform |\n| E02 | Engineering | West | Pune | Platform |\n| E03 | Engineering | South | Bengaluru | Mobile |\n| E04 | Engineering | South | Bengaluru | Mobile |\n| E05 | Engineering | West | Pune | Data |\n| E06 | Sales | West | Mumbai | Inside Sales |\n| E07 | Sales | West | Mumbai | Inside Sales |\n| E08 | Sales | South | Chennai | Field Sales |\n| E09 | Support | South | Chennai | Helpdesk |\n| E10 | Support | South | Chennai | Helpdesk |\n| E11 | Support | West | Mumbai | Escalations |\n| E12 | Support | West | Mumbai | Escalations |\n\nA concept hierarchy is generated automatically by the following heuristic: count the distinct values of each of the five attributes, and arrange the attributes in a chain $L_1 < L_2 < L_3 < L_4 < L_5$ in decreasing order of that count, so that the attribute with the most distinct values is the lowest level $L_1$. A link $L_i < L_{i+1}$ of the chain is a *valid roll-up* if, in the table, every value of $L_i$ occurs with exactly one value of $L_{i+1}$.\n\nWhich one of the following statements about the generated chain is correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The chain is emp $<$ team $<$ dept $<$ site $<$ region, and exactly three of its four links are valid roll-ups."
+      },
+      {
+        "label": "B",
+        "text": "The chain is emp $<$ team $<$ site $<$ dept $<$ region, and exactly two of its four links are valid roll-ups."
+      },
+      {
+        "label": "C",
+        "text": "The chain is emp $<$ team $<$ site $<$ dept $<$ region, and all four of its links are valid roll-ups."
+      },
+      {
+        "label": "D",
+        "text": "The chain is emp $<$ team $<$ site $<$ dept $<$ region, and exactly three of its four links are valid roll-ups."
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "The distinct counts are emp $12$, team $7$, site $4$, dept $3$, region $2$, so the chain is emp $<$ team $<$ site $<$ dept $<$ region. Only emp $\\to$ team and team $\\to$ site are many-to-one in the table; Mumbai and Chennai each host two departments, and every department occurs in both regions. Exactly two links are valid.",
+      "steps": [
+        {
+          "title": "Count distinct values",
+          "body": "emp: $12$ (E01–E12); team: $7$ (Platform, Mobile, Data, Inside Sales, Field Sales, Helpdesk, Escalations); site: $4$ (Pune, Bengaluru, Mumbai, Chennai); dept: $3$ (Engineering, Sales, Support); region: $2$ (West, South)."
+        },
+        {
+          "title": "Build the chain",
+          "body": "Decreasing counts $12>7>4>3>2$ give\n$$\\text{emp}<\\text{team}<\\text{site}<\\text{dept}<\\text{region}.$$\nNote that site ($4$) is placed *below* dept ($3$)."
+        },
+        {
+          "title": "Check each link against the table",
+          "body": "- **emp $\\to$ team:** each employee is in exactly one team. Valid.\n- **team $\\to$ site:** Platform and Data $\\to$ Pune; Mobile $\\to$ Bengaluru; Inside Sales and Escalations $\\to$ Mumbai; Field Sales and Helpdesk $\\to$ Chennai. Every team has one site. Valid.\n- **site $\\to$ dept:** Mumbai occurs with Sales (E06, E07) and Support (E11, E12); Chennai occurs with Sales (E08) and Support (E09, E10). Not valid.\n- **dept $\\to$ region:** Engineering occurs with West (Pune) and South (Bengaluru); Sales with West (Mumbai) and South (Chennai); Support with South (Chennai) and West (Mumbai). Not valid."
+        },
+        {
+          "title": "Interpretation",
+          "body": "Exactly $2$ of the $4$ links are valid roll-ups. The heuristic only compares counts: if $A\\to B$ holds then $B$ has no more distinct values than $A$, but the converse is false. Here dept and site are not nested in one another (both are roll-ups of team), so forcing them into one chain breaks it."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The chain is wrong: site has $4$ distinct values and dept only $3$, so the heuristic places site below dept. (Three valid links is what this mistaken ordering would give, but it is not the chain the heuristic generates.)"
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The chain emp $<$ team $<$ site $<$ dept $<$ region follows from the counts $12>7>4>3>2$, and only emp $\\to$ team and team $\\to$ site are many-to-one."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The chain is right, but the heuristic does not guarantee valid links: Mumbai and Chennai each occur with two departments, and every department occurs in both regions."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "This notices that site $\\to$ dept fails but misses that dept $\\to$ region fails too (every department has employees in both West and South), so only two links are valid, not three."
+        }
+      ],
+      "commonTrap": "Assuming that a heuristic based only on distinct-value counts must produce a valid hierarchy. An attribute with fewer distinct values is not automatically a roll-up of one with more; here dept and site are separate branches above team."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (2 valid links)",
+      "agreesWithKey": true,
+      "checkCode": "import collections\nH = \"emp dept region site team\".split()\nR = [(\"E01\", \"Engineering\", \"West\", \"Pune\", \"Platform\"), (\"E02\", \"Engineering\", \"West\", \"Pune\", \"Platform\"),\n     (\"E03\", \"Engineering\", \"South\", \"Bengaluru\", \"Mobile\"), (\"E04\", \"Engineering\", \"South\", \"Bengaluru\", \"Mobile\"),\n     (\"E05\", \"Engineering\", \"West\", \"Pune\", \"Data\"), (\"E06\", \"Sales\", \"West\", \"Mumbai\", \"Inside Sales\"),\n     (\"E07\", \"Sales\", \"West\", \"Mumbai\", \"Inside Sales\"), (\"E08\", \"Sales\", \"South\", \"Chennai\", \"Field Sales\"),\n     (\"E09\", \"Support\", \"South\", \"Chennai\", \"Helpdesk\"), (\"E10\", \"Support\", \"South\", \"Chennai\", \"Helpdesk\"),\n     (\"E11\", \"Support\", \"West\", \"Mumbai\", \"Escalations\"), (\"E12\", \"Support\", \"West\", \"Mumbai\", \"Escalations\")]\ncol = lambda c: [r[H.index(c)] for r in R]\ncnt = {c: len(set(col(c))) for c in H}\norder = sorted(H, key=lambda c: -cnt[c])\ndef ok(a, b):\n    m = collections.defaultdict(set)\n    for x, y in zip(col(a), col(b)): m[x].add(y)\n    return all(len(v) == 1 for v in m.values())\nv = [ok(a, b) for a, b in zip(order, order[1:])]\nprint(cnt, order, v, sum(v))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q22",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 22,
+    "section": "DA",
+    "subjectId": "co",
+    "topicId": "co-taylor",
+    "subtopicIds": [
+      "co-taylor-series"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — combines the Maclaurin expansion of $e^x$, the series expansion of a rational function and coefficient matching to fix two unknown constants before the limit can be read off; a sign or missing-condition trap is likely; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Matching Maclaurin coefficients so that a limit with unknown parameters is finite, then evaluating the limit",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Let $a$ and $b$ be real constants such that the limit\n\n$$L=\\lim_{x\\to 0}\\frac{e^{x}-\\dfrac{1+ax}{1+bx}}{x^{3}}$$\n\nexists and is finite. The value of $L$ is ________. (rounded off to three decimal places)",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": -0.084,
+      "max": -0.082
+    },
+    "solution": {
+      "quick": "Because the denominator is $x^3$, the numerator must be $O(x^3)$, so its coefficients of $x$ and $x^2$ must vanish. That forces $a=\\tfrac12$, $b=-\\tfrac12$, and then $L$ is the coefficient of $x^3$ in the numerator: $\\tfrac16-\\tfrac14=-\\tfrac1{12}\\approx-0.083$.",
+      "steps": [
+        {
+          "title": "Expand both terms",
+          "body": "$e^{x}=1+x+\\dfrac{x^2}{2}+\\dfrac{x^3}{6}+O(x^4)$. For the rational part use $\\dfrac{1}{1+bx}=1-bx+b^2x^2-b^3x^3+\\cdots$:\n$$\\frac{1+ax}{1+bx}=1+(a-b)\\,x-b(a-b)\\,x^{2}+b^{2}(a-b)\\,x^{3}+O(x^4).$$"
+        },
+        {
+          "title": "Coefficients of the numerator",
+          "body": "$$e^{x}-\\frac{1+ax}{1+bx}=\\big[1-(a-b)\\big]x+\\Big[\\tfrac12+b(a-b)\\Big]x^{2}+\\Big[\\tfrac16-b^{2}(a-b)\\Big]x^{3}+O(x^4).$$\nThe constant terms cancel."
+        },
+        {
+          "title": "Force the limit to be finite",
+          "body": "Dividing by $x^3$, a finite limit needs the $x$ and $x^2$ coefficients to vanish:\n$$a-b=1,\\qquad \\tfrac12+b(a-b)=\\tfrac12+b=0 \\;\\Rightarrow\\; b=-\\tfrac12,\\quad a=\\tfrac12.$$\n(This is the unique solution, since $a-b=1$ fixes $b$ through the second equation.)"
+        },
+        {
+          "title": "Read off the limit",
+          "body": "$$L=\\tfrac16-b^{2}(a-b)=\\tfrac16-\\tfrac14\\cdot 1=-\\tfrac1{12}\\approx-0.0833.$$\nNumerical check: at $x=0.01$, $\\dfrac{e^{x}-(2+x)/(2-x)}{x^{3}}\\approx-0.084$, consistent with the limit $-0.083$."
+        }
+      ],
+      "finalAnswer": "**−0.083**",
+      "commonTrap": "Imposing only the first condition ($a-b=1$) and forgetting that the $x^2$ term must also vanish, or mixing up the sign: the $x^3$ coefficient of $e^x$ ($\\tfrac16$) is smaller than that of $\\tfrac{2+x}{2-x}$ ($\\tfrac14$), so $L$ is negative."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "-0.083 (L = -1/12)",
+      "agreesWithKey": true,
+      "checkCode": "import sympy as sp\nx, a, b = sp.symbols('x a b')\ns = sp.series(sp.exp(x) - (1 + a * x) / (1 + b * x), x, 0, 4).removeO()\nc = [sp.expand(s.coeff(x, k)) for k in range(4)]\nsol = sp.solve([c[1], c[2]], [a, b], dict=True)[0]\nL = c[3].subs(sol)\nprint(sol, L, round(float(L), 3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q23",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 23,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-basic-sorts"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — needs a careful seven-iteration trace of selection sort on records with duplicate keys followed by counting order reversals among equal keys; the likely trap is assuming selection sort is stable; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Selection sort swaps non-adjacent elements, so it is not stable: equal keys can end up in reverse of their original order",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A help desk stores each ticket as a pair `(priority, id)` and sorts its queue with the function below. Only the priority is compared; the id is merely a label, and the ids `A`, `B`, ... follow the order in which the tickets arrived.\n\n```python\ndef selection_sort(rec):\n    n = len(rec)\n    for i in range(n - 1):\n        m = i\n        for j in range(i + 1, n):\n            if rec[j][0] < rec[m][0]:\n                m = j\n        rec[i], rec[m] = rec[m], rec[i]\n\nqueue = [(2, 'A'), (2, 'B'), (1, 'C'), (3, 'D'),\n         (1, 'E'), (2, 'F'), (3, 'G'), (1, 'H')]\nselection_sort(queue)\n```\n\nTwo tickets form a *tie pair* if they have the same priority. After the call, the number of tie pairs whose two tickets appear in `queue` in the reverse of their arrival order is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 3,
+      "max": 3
+    },
+    "solution": {
+      "quick": "Tracing the seven iterations gives the final queue C, E, H (priority 1), B, F, A (priority 2), G, D (priority 3). Priority 1 keeps its arrival order, priority 2 changes from A, B, F to B, F, A (two reversed pairs), and priority 3 changes from D, G to G, D (one reversed pair). The total is $3$.",
+      "steps": [
+        {
+          "title": "Understand the algorithm",
+          "body": "In iteration `i` the loop finds the index `m` of the *first* smallest priority in positions `i..7` (the strict `<` keeps the earliest tie), then swaps `rec[i]` with `rec[m]`. The swap sends the old `rec[i]` to position `m`, which may be behind tickets of equal priority. Arrival order: A(2) B(2) C(1) D(3) E(1) F(2) G(3) H(1)."
+        },
+        {
+          "title": "Trace (priority-id)",
+          "body": "| i | m | queue after the swap |\n|---|---|---|\n| 0 | 2 | 1C 2B 2A 3D 1E 2F 3G 1H |\n| 1 | 4 | 1C 1E 2A 3D 2B 2F 3G 1H |\n| 2 | 7 | 1C 1E 1H 3D 2B 2F 3G 2A |\n| 3 | 4 | 1C 1E 1H 2B 3D 2F 3G 2A |\n| 4 | 5 | 1C 1E 1H 2B 2F 3D 3G 2A |\n| 5 | 7 | 1C 1E 1H 2B 2F 2A 3G 3D |\n| 6 | 6 | 1C 1E 1H 2B 2F 2A 3G 3D |\n\nThe final queue is C, E, H, B, F, A, G, D."
+        },
+        {
+          "title": "Count reversed tie pairs",
+          "body": "- Priority 1: arrival C, E, H and output C, E, H, so $0$ reversed pairs.\n- Priority 2: arrival A, B, F and output B, F, A. The pairs (A, B) and (A, F) are reversed; (B, F) keeps its order. That gives $2$.\n- Priority 3: arrival D, G and output G, D. The pair (D, G) is reversed, giving $1$.\n\nTotal $=0+2+1=3$."
+        },
+        {
+          "title": "Why it happens",
+          "body": "At $i=0$ the ticket A jumps from position 0 to position 2, behind its equal-priority neighbour B. At $i=2$ it jumps again to the end, behind F. At $i=5$ the ticket D, which had drifted to position 5, is sent behind G. Each jump moves a ticket across an equal-priority ticket, so selection sort is not stable."
+        }
+      ],
+      "finalAnswer": "**3**",
+      "commonTrap": "Assuming that selection sort (with the strict `<` that keeps the first minimum) is stable and answering $0$. The long-distance swap can carry an element past equal keys, so ties can be reversed even though each iteration picks the earliest minimum."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "3",
+      "agreesWithKey": true,
+      "checkCode": "def selection_sort(rec):\n    n = len(rec)\n    for i in range(n - 1):\n        m = i\n        for j in range(i + 1, n):\n            if rec[j][0] < rec[m][0]:\n                m = j\n        rec[i], rec[m] = rec[m], rec[i]\n\nqueue = [(2, 'A'), (2, 'B'), (1, 'C'), (3, 'D'), (1, 'E'), (2, 'F'), (3, 'G'), (1, 'H')]\norig = list(queue)\nselection_sort(queue)\npos = {t: i for i, (_, t) in enumerate(queue)}\nrev = sum(1 for i in range(8) for j in range(i + 1, 8)\n          if orig[i][0] == orig[j][0] and pos[orig[i][1]] > pos[orig[j][1]])\nprint(queue, rev)",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q24",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 24,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-pca"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the eigen-structure of a covariance matrix that has a repeated eigenvalue) tested through four short statements, each needing a quick check; about 2 minutes.",
+    "estimatedTimeSec": 140,
+    "concept": "PCA of a covariance matrix with a repeated eigenvalue: non-unique components, variance explained and the effect of standardisation",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Three mean-centred features $x_1, x_2, x_3$ measured on a set of machines have the sample covariance matrix\n\n$$\\Sigma=\\begin{bmatrix} 4 & 1 & 1 \\\\ 1 & 4 & 1 \\\\ 1 & 1 & 4 \\end{bmatrix}.$$\n\nPrincipal component analysis (PCA) is performed by an eigen-decomposition of $\\Sigma$, with no rescaling of the features, and the principal components are ordered by decreasing eigenvalue.\n\nWhich of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The direction of the second principal component is uniquely determined, up to sign."
+      },
+      {
+        "label": "B",
+        "text": "The first principal component direction is $\\pm\\frac{1}{\\sqrt{3}}(1,1,1)^{\\top}$, and the variance of the data along it is $6$."
+      },
+      {
+        "label": "C",
+        "text": "If every feature is first standardised to unit variance and PCA is then applied to the resulting correlation matrix, the direction of the first principal component changes."
+      },
+      {
+        "label": "D",
+        "text": "The first two principal components together account for $75\\%$ of the total variance."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "Write $\\Sigma=3I+\\mathbf{1}\\mathbf{1}^{\\top}$: the eigenvalues are $6$ (eigenvector $(1,1,1)$) and $3$ twice (the plane $x_1+x_2+x_3=0$). Hence the first PC is $\\pm(1,1,1)/\\sqrt3$ with variance $6$ (B true), PC2 is not unique because the eigenvalue $3$ is repeated (A false), the top two PCs carry $(6+3)/12=75\\%$ (D true), and standardising does not change anything because all variances are equal (C false).",
+      "steps": [
+        {
+          "title": "Eigen-structure of $\\Sigma$",
+          "body": "$\\Sigma=3I+J$ where $J=\\mathbf{1}\\mathbf{1}^{\\top}$ is the all-ones matrix. $J$ has eigenvalue $3$ along $\\mathbf{1}=(1,1,1)^{\\top}$ and eigenvalue $0$ on the plane $x_1+x_2+x_3=0$. Adding $3I$ shifts every eigenvalue by $3$, so\n$$\\lambda_1=6\\ \\ (\\text{direction }\\mathbf{1}),\\qquad \\lambda_2=\\lambda_3=3\\ \\ (\\text{the plane } x_1+x_2+x_3=0).$$\nThe total variance is $\\operatorname{tr}\\Sigma=12=6+3+3$."
+        },
+        {
+          "title": "First principal component (B)",
+          "body": "The largest eigenvalue is $6$ with unit eigenvector $\\pm\\frac{1}{\\sqrt3}(1,1,1)^{\\top}$, and the variance of the data along a principal direction equals its eigenvalue, so it is $6$ (that is, $50\\%$ of $12$). Statement B is true."
+        },
+        {
+          "title": "Second component and variance retained (A, D)",
+          "body": "The eigenvalue $3$ has multiplicity $2$, so its eigenspace is a plane. Any orthonormal pair in this plane is a valid choice for (PC2, PC3); for example $(1,-1,0)/\\sqrt2$ and a rotated direction $\\cos\\theta\\,(1,-1,0)/\\sqrt2+\\sin\\theta\\,(1,1,-2)/\\sqrt6$ both have variance $3$. So PC2 is not unique (A false). However, the variance retained by the first two components is always $6+3=9$, which is $9/12=75\\%$ (D true)."
+        },
+        {
+          "title": "Standardising the features (C)",
+          "body": "All three features have variance $4$, so the correlation matrix is $R=\\Sigma/4$ (ones on the diagonal and $\\tfrac14$ off the diagonal). It has the same eigenvectors as $\\Sigma$, with eigenvalues $1.5,\\,0.75,\\,0.75$. The first PC direction is still $\\pm(1,1,1)/\\sqrt3$ and still explains $50\\%$. Statement C is false."
+        }
+      ],
+      "finalAnswer": "**(B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "The eigenvalue $3$ is repeated, so its eigenspace is a $2$-dimensional plane and any orthonormal basis of it gives valid second and third components. PC2 is not unique."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The top eigenvalue is $6$ with eigenvector $(1,1,1)/\\sqrt3$, and the variance along a principal direction is its eigenvalue."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "All features have the same variance ($4$), so $R=\\Sigma/4$ has the same eigenvectors as $\\Sigma$. Standardising leaves the first PC direction unchanged."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "$(6+3)/12=0.75$. This holds whichever orthonormal pair is chosen from the eigenvalue-$3$ plane, because both choices have variance $3$."
+        }
+      ],
+      "shortcut": "Write $\\Sigma=3I+\\mathbf{1}\\mathbf{1}^{\\top}$. Adding a multiple of $I$ only shifts eigenvalues and keeps eigenvectors, and $\\mathbf{1}\\mathbf{1}^{\\top}$ has eigenvalue $3$ along $\\mathbf{1}$ and $0$ elsewhere, which gives $6,3,3$ immediately.",
+      "commonTrap": "Treating PC2 as unique even though two eigenvalues are equal, and assuming that standardising the features always changes the principal directions. It does so only when the feature variances differ."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, D",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nS = np.array([[4, 1, 1], [1, 4, 1], [1, 1, 4]], float)\nw, V = np.linalg.eigh(S); i = np.argsort(-w); w, V = w[i], V[:, i]\nd = np.diag(1 / np.sqrt(np.diag(S))); R = d @ S @ d\nwr, Vr = np.linalg.eigh(R); j = np.argsort(-wr); wr, Vr = wr[j], Vr[:, j]\nu = np.array([1, -1, 0]) / 2 ** .5; v = np.array([1, 1, -2]) / 6 ** .5; q = np.cos(.7) * u + np.sin(.7) * v\nprint(np.round(w, 4), np.round(np.cumsum(w) / w.sum(), 4), np.round(abs(V[:, 0]) * 3 ** .5, 4),\n      np.round(abs(Vr[:, 0]) * 3 ** .5, 4), np.allclose(S @ u, 3 * u), np.allclose(S @ q, 3 * q), round(u @ q, 3))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M25-Q25",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-25",
+    "questionNumber": 25,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-uncertainty",
+    "subtopicIds": [
+      "ai-conditional-independence"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (d-separation) applied to four statements in a six-node network, including a collider with an observed descendant and a collider with an unrelated observed node; about 2.5 minutes.",
+    "estimatedTimeSec": 160,
+    "concept": "d-separation: colliders, observed descendants of a collider, and the local Markov property",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A building-services team models the following Boolean variables with a Bayesian network.\n\n| Variable | Meaning |\n|---|---|\n| $R$ | a heavy storm hits the area |\n| $M$ | water enters the basement |\n| $T$ | the switchgear is ageing |\n| $F$ | a short circuit occurs in the power room |\n| $Y$ | a lift outage is reported |\n| $A$ | the annual inspection flags the switchgear |\n\nThe network has exactly five directed edges: $R \\to M$, $M \\to F$, $T \\to F$, $F \\to Y$ and $T \\to A$.\n\nWrite $X \\perp Y \\mid Z$ for \"$X$ and $Y$ are d-separated by $Z$ in this graph\", so that the independence holds in every distribution that factorises according to the network, and write $X \\perp Y$ when $Z$ is empty. Which of the following statements is/are correct?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$R \\perp A \\mid Y$"
+      },
+      {
+        "label": "B",
+        "text": "$R \\perp A$"
+      },
+      {
+        "label": "C",
+        "text": "$M \\perp T \\mid A$"
+      },
+      {
+        "label": "D",
+        "text": "$A \\perp \\{R, M, F, Y\\} \\mid T$"
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "The only collider is $F$ (parents $M$ and $T$); its only descendant is $Y$. A path through $F$ is open only if $F$ or $Y$ is observed. So $R\\perp A$ holds (B), $M\\perp T\\mid A$ holds because $A$ is not a descendant of $F$ (C), and $A$ is cut off from everything else once its parent $T$ is observed (D). Observing $Y$ opens the collider, so $R\\perp A\\mid Y$ fails (A).",
+      "steps": [
+        {
+          "title": "Read the structure",
+          "body": "The graph is the chain $R\\to M\\to F\\to Y$, with a second parent $T$ of $F$ and a second child $A$ of $T$. So $F$ is a collider on $M\\to F\\leftarrow T$, and $T$ is a fork on $F\\leftarrow T\\to A$. A path is active only if no non-collider on it is observed and every collider on it is observed or has an observed descendant. Here $F$'s only descendant is $Y$."
+        },
+        {
+          "title": "Statements B and A (the path $R\\to M\\to F\\leftarrow T\\to A$)",
+          "body": "The only path between $R$ and $A$ is $R\\to M\\to F\\leftarrow T\\to A$.\n\n- **B ($Z=\\emptyset$):** the collider $F$ is unobserved and so is its descendant $Y$, so the path is blocked. $R\\perp A$ holds.\n- **A ($Z=\\{Y\\}$):** $Y$ is a descendant of $F$, so conditioning on it opens the collider; $M$ (a chain node) and $T$ (a fork node) are unobserved and pass the path along. The path is active, so $R\\perp A\\mid Y$ fails."
+        },
+        {
+          "title": "Statement C ($M \\perp T\\mid A$)",
+          "body": "The only path between $M$ and $T$ is $M\\to F\\leftarrow T$. Its collider $F$ is unobserved and its only descendant $Y$ is unobserved. The observed node $A$ is a child of $T$, not a descendant of $F$, so it does not open the collider. The path is blocked and $M\\perp T\\mid A$ holds."
+        },
+        {
+          "title": "Statement D ($A\\perp\\{R,M,F,Y\\}\\mid T$)",
+          "body": "$A$ has the single neighbour $T$, so every path from $A$ begins $A\\leftarrow T$. With $T$ observed, $T$ is a non-collider on every such path, so all paths are blocked. This is the local Markov property: given its parent $T$, $A$ is independent of its non-descendants $R,M,F,Y$. Statement D holds."
+        }
+      ],
+      "finalAnswer": "**(B), (C), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "Conditioning on $Y$, a descendant of the collider $F$, opens the path $R\\to M\\to F\\leftarrow T\\to A$, so $R$ and $A$ become dependent."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "The only path between $R$ and $A$ runs through the unobserved collider $F$ (with its descendant $Y$ also unobserved), so it is blocked."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "The path $M\\to F\\leftarrow T$ is blocked at the unobserved collider $F$. $A$ is a descendant of $T$, not of $F$, so observing it does not activate the collider."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Observing the parent $T$ blocks every path out of $A$ (local Markov property), so $A$ is independent of all of $R,M,F,Y$ given $T$."
+        }
+      ],
+      "commonTrap": "Treating any observed node near a collider as opening it. Only the collider itself or one of its descendants ($Y$) does; the observed $A$ in statement C hangs off $T$ and has no effect. The opposite slip is to ignore that observing $Y$ in statement A activates the collider."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B, C, D",
+      "agreesWithKey": true,
+      "checkCode": "import networkx as nx\nG = nx.DiGraph([('R', 'M'), ('M', 'F'), ('T', 'F'), ('F', 'Y'), ('T', 'A')])\nds = lambda X, Y, Z: nx.is_d_separator(G, set(X), set(Y), set(Z))\nprint('A', ds('R', 'A', 'Y'), 'B', ds('R', 'A', ''), 'C', ds('M', 'T', 'A'), 'D', ds('A', 'RMFY', 'T'))",
+      "notes": ""
+    }
+  }
+]

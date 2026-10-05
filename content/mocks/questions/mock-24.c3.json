@@ -1,0 +1,614 @@
+[
+  {
+    "id": "M24-Q19",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 19,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-dimensionality-reduction",
+    "subtopicIds": [
+      "ml-dim-reduction",
+      "ml-pca"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (the rank of a mean-centred data matrix, hence the number of non-zero PCA eigenvalues) needing three linked bounds (sources, features and the loss of one degree of freedom from centring); about 1.5 minutes.",
+    "estimatedTimeSec": 100,
+    "concept": "When there are fewer observations than features, a mean-centred data set of n points has at most n − 1 non-zero PCA eigenvalues",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A thermal-imaging rig records $n = 9$ snapshots. Each snapshot is a vector of $d = 30$ channel readings, and every channel is an exact (noise-free) linear combination of $14$ independent source signals. The columns of the $9 \\times 30$ data matrix are mean-centred, and principal component analysis (PCA) is carried out by an eigen-decomposition of the $30 \\times 30$ sample covariance matrix.\n\nWhat is the largest number of principal components that can have strictly positive variance (that is, the largest possible number of non-zero eigenvalues of this covariance matrix)?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$9$"
+      },
+      {
+        "label": "B",
+        "text": "$14$"
+      },
+      {
+        "label": "C",
+        "text": "$8$"
+      },
+      {
+        "label": "D",
+        "text": "$30$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "C"
+    },
+    "solution": {
+      "quick": "The number of principal components with positive variance equals the rank of the centred data matrix $X_c$. Centring makes the nine rows of $X_c$ sum to the zero vector, so they are linearly dependent and $\\operatorname{rank}(X_c)\\le n-1=8$. The bounds from the $14$ sources and the $30$ channels are weaker, and rank $8$ is attainable for generic data, so the answer is $8$.",
+      "steps": [
+        {
+          "title": "Number of useful components = rank of the centred data",
+          "body": "Let $X_c$ be the centred $9 \\times 30$ data matrix. The sample covariance matrix is $S = \\frac{1}{n-1} X_c^{\\top} X_c$, and $\\operatorname{rank}(S) = \\operatorname{rank}(X_c)$. The number of principal components with strictly positive variance is the number of non-zero eigenvalues of $S$, which is $\\operatorname{rank}(X_c)$."
+        },
+        {
+          "title": "Bounds on the rank",
+          "body": "The number of columns gives $\\operatorname{rank}(X_c) \\le 30$, and the fact that every channel is a mixture of $14$ sources gives $\\operatorname{rank}(X_c) \\le 14$. A sharper bound comes from centring: every column of $X_c$ sums to zero, so the nine rows of $X_c$ add up to the zero vector. They are therefore linearly dependent, and\n$$\\operatorname{rank}(X_c) \\le n - 1 = 8.$$"
+        },
+        {
+          "title": "Can the bound be reached?",
+          "body": "Nine snapshots in general position have eight linearly independent centred rows, and $8 \\le 14$ and $8 \\le 30$, so no other constraint prevents rank $8$. The Python check (random data of exactly this form) returns $8$ non-zero eigenvalues, while the raw (uncentred) matrix has rank $9$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "The largest possible number is $\\min(n-1,\\,14,\\,30) = 8$. Of the $30$ eigenvalues of $S$, at least $22$ are exactly zero, so eight components already reproduce the centred data exactly."
+        }
+      ],
+      "finalAnswer": "**(C)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$9$ is the number of snapshots, which bounds the rank of the uncentred matrix. After mean-centring, the nine rows sum to zero, so only $8$ of them can be independent."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$14$ is the number of sources, an upper bound on the dimension of the space spanned by the channels. With only nine snapshots the centred rank cannot exceed $8$, so this bound is never reached."
+        },
+        {
+          "label": "C",
+          "verdict": "correct",
+          "explanation": "Centring forces the rows to sum to zero, giving $\\operatorname{rank}\\le n-1=8$, and generic data attain it."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$30$ is only the size of the covariance matrix, not its rank. With $n<d$ the matrix is highly rank-deficient."
+        }
+      ],
+      "shortcut": "When $n < d$, a centred data set has at most $n-1$ non-zero PCA eigenvalues; compare $n-1$ with any other structural bound and take the smallest.",
+      "commonTrap": "Using $\\min(n, d)=9$ (or the number of sources, or the number of features) and forgetting that mean-centring removes one degree of freedom, so that $n$ centred points span at most $n-1$ dimensions."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "C (8)",
+      "agreesWithKey": true,
+      "checkCode": "import numpy as np\nrng=np.random.default_rng(1)\nn,d,s=9,30,14\nX=rng.normal(size=(n,s))@rng.normal(size=(s,d))\nXc=X-X.mean(0)\nev=np.linalg.eigvalsh(Xc.T@Xc/(n-1))\nprint(min(n-1,s,d),int((ev>1e-9).sum()),np.linalg.matrix_rank(X))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M24-Q20",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 20,
+    "section": "DA",
+    "subjectId": "ai",
+    "topicId": "ai-search",
+    "subtopicIds": [
+      "ai-uninformed"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (iterative deepening search) needing four depth-limited traces on an irregular tree, with repeated visits counted and an early stop at the goal; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "Iterative deepening search: total node visits over all iterations, including repeated work and the early stop in the last iteration",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A documentation site is organised as a tree of pages in which no page appears twice. The table lists the child pages of each page in the left-to-right order in which the links appear; a page that is not listed has no children. The root page is $S$ (depth $0$) and the page being searched for is $O$.\n\n| Page | Child pages |\n|---|---|\n| $S$ | $A, B, C$ |\n| $A$ | $D, E$ |\n| $B$ | $F, G, H$ |\n| $C$ | $I$ |\n| $D$ | $J, K$ |\n| $F$ | $L$ |\n| $H$ | $M, N$ |\n| $I$ | $O, P$ |\n\nA crawler runs iterative deepening search with depth limits $0, 1, 2, \\ldots$ in turn. Each iteration is a depth-limited depth-first search from $S$. When a page is visited it is tested against the goal at once. If it is not the goal and its depth is less than the current limit, its children are then visited from left to right; the children of a page that is at the current limit are not visited. The whole search stops the moment $O$ is visited. Every visit counts, including repeated visits to the same page in different iterations.\n\nThe total number of page visits made by the crawler is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$31$"
+      },
+      {
+        "label": "B",
+        "text": "$32$"
+      },
+      {
+        "label": "C",
+        "text": "$16$"
+      },
+      {
+        "label": "D",
+        "text": "$30$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "A"
+    },
+    "solution": {
+      "quick": "$O$ lies at depth $3$, so the search stops during the iteration with limit $3$. Complete iterations visit every page of depth at most $L$: $1$ visit for $L=0$, $4$ for $L=1$ and $10$ for $L=2$. In the last iteration the left-to-right order is $S, A, D, J, K, E, B, F, L, G, H, M, N, C, I, O$, which is $16$ visits (the page $P$ is never reached). Total $1+4+10+16=31$.",
+      "steps": [
+        {
+          "title": "Depth of the goal",
+          "body": "The path to $O$ is $S \\to C \\to I \\to O$, so $O$ is at depth $3$. Iterations with limits $0,1,2$ fail, and the search stops inside the iteration with limit $3$."
+        },
+        {
+          "title": "Limits 0, 1 and 2",
+          "body": "Limit $0$: only $S$ is visited, giving $1$ visit.\n\nLimit $1$: $S, A, B, C$, giving $4$ visits.\n\nLimit $2$: $S, A, D, E, B, F, G, H, C, I$, giving $10$ visits. (The pages $D, E, F, G, H, I$ are at depth $2$, so they are tested but their children are not visited.)"
+        },
+        {
+          "title": "Limit 3, stopping at O",
+          "body": "Left-to-right depth-first order: $S, A, D, J, K, E, B, F, L, G, H, M, N, C, I, O$. The goal test succeeds at $O$ and the search stops at once, so $P$ is never visited. This iteration makes $16$ visits."
+        },
+        {
+          "title": "Total",
+          "body": "$1 + 4 + 10 + 16 = 31$ visits. For comparison, a complete limit-$3$ iteration would have made $17$ visits (adding $P$), giving $32$, which is not what the stopping rule produces."
+        }
+      ],
+      "finalAnswer": "**(A)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The four iterations visit $1+4+10+16=31$ pages."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "$32=1+4+10+17$ treats the last iteration as complete, i.e. it also counts the visit to $P$. The search stops as soon as $O$ is visited, so $P$ is never visited."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$16$ is the cost of the final iteration alone (it equals the number of visits of a single breadth-first or depth-first pass up to $O$). It ignores the repeated work of iterations $0$, $1$ and $2$."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$30=4+10+16$ omits the iteration with depth limit $0$, in which the root $S$ is visited once on its own."
+        }
+      ],
+      "shortcut": "Every complete iteration $L$ visits all pages of depth at most $L$ (the page counts by depth are $1, 3, 6$), so only the last, partial iteration needs a trace.",
+      "commonTrap": "Counting the last iteration as complete (32) or counting only the last iteration (16); the repeated visits of earlier iterations and the early stop both matter."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A (31)",
+      "agreesWithKey": true,
+      "checkCode": "T={'S':'ABC','A':'DE','B':'FGH','C':'I','D':'JK','F':'L','H':'MN','I':'OP'}\ndef run(goal='O'):\n    tot=0\n    for L in range(10):\n        n=0\n        def dls(u,d):\n            nonlocal n\n            n+=1\n            if u==goal: return True\n            return d<L and any(dls(c,d+1) for c in T.get(u,''))\n        f=dls('S',0); tot+=n\n        if f: return tot,L\nprint(run())",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M24-Q21",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 21,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-sorting",
+    "subtopicIds": [
+      "pdsa-divide-conquer"
+    ],
+    "type": "MSQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (first-pivot quicksort with an in-place swapping partition) checked through a short partition trace, an equal-keys comparison count, a recursive comparison count and a stability counterexample; about 3 minutes.",
+    "estimatedTimeSec": 180,
+    "concept": "First-element-pivot quicksort with a swapping partition: partition trace, comparison counts (equal keys and a median-first array) and instability",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the following Python code for quicksort, which uses the first element of the current subarray as the pivot.\n\n```python\ndef partition(a, lo, hi):\n    pivot = a[lo]\n    i = lo\n    for j in range(lo + 1, hi + 1):\n        if a[j] < pivot:\n            i += 1\n            a[i], a[j] = a[j], a[i]\n    a[lo], a[i] = a[i], a[lo]\n    return i\n\ndef quicksort(a, lo, hi):\n    if lo < hi:\n        p = partition(a, lo, hi)\n        quicksort(a, lo, p - 1)\n        quicksort(a, p + 1, hi)\n```\n\nWhich of the following statements is/are TRUE?",
+    "options": [
+      {
+        "label": "A",
+        "text": "For `a = [7, 5, 9, 3, 2, 8]`, the call `partition(a, 0, 5)` returns `3` and leaves `a` equal to `[2, 5, 3, 7, 9, 8]`."
+      },
+      {
+        "label": "B",
+        "text": "When `quicksort(b, 0, 5)` is run on `b = [4, 4, 4, 4, 4, 4]`, the comparison `a[j] < pivot` is executed exactly $15$ times in total, over all calls to `partition`."
+      },
+      {
+        "label": "C",
+        "text": "When `quicksort(c, 0, 6)` is run on `c = [4, 2, 6, 1, 3, 5, 7]`, the comparison `a[j] < pivot` is executed exactly $10$ times in total, over all calls to `partition`."
+      },
+      {
+        "label": "D",
+        "text": "If records are sorted by their keys using this code (only the keys are compared), two records with equal keys can end up in a different relative order from the one they had in the input."
+      }
+    ],
+    "answer": {
+      "kind": "MSQ",
+      "correct": [
+        "A",
+        "B",
+        "D"
+      ]
+    },
+    "solution": {
+      "quick": "A partition call on $m$ elements makes $m-1$ comparisons. Tracing gives (A) true. For all-equal keys no element is smaller than the pivot, so the subarray shrinks by one each time: $5+4+3+2+1=15$ (B true). For `[4, 2, 6, 1, 3, 5, 7]` the first partition produces `[3, 2, 1, 4, 6, 5, 7]`, whose sub-arrays are not median-first, so the total is $6+3+2=11$, not $10$ (C false). The records $(4,a),(7,a),(7,b),(2,a)$ come out with $7_b$ before $7_a$ (D true).",
+      "steps": [
+        {
+          "title": "How the partition works",
+          "body": "The pivot `a[lo]` stays in place while every element smaller than it is swapped into positions $lo+1, \\ldots, i$; at the end the pivot is swapped into position $i$. A call on $m$ elements executes the comparison `a[j] < pivot` exactly $m-1$ times."
+        },
+        {
+          "title": "Statement A: trace",
+          "body": "Start with `[7, 5, 9, 3, 2, 8]`, pivot $7$. $j=1$: $5<7$, $i=1$ (self-swap). $j=2$: $9$ no. $j=3$: $3<7$, $i=2$, swap `a[2]`, `a[3]` giving `[7, 5, 3, 9, 2, 8]`. $j=4$: $2<7$, $i=3$, swap `a[3]`, `a[4]` giving `[7, 5, 3, 2, 9, 8]`. $j=5$: $8$ no. Final swap of `a[0]` and `a[3]` gives `[2, 5, 3, 7, 9, 8]`, and the call returns $3$. **A is true.**"
+        },
+        {
+          "title": "Statements B and C: comparison counts",
+          "body": "**B.** With all keys equal, `a[j] < pivot` is never true, so $i$ stays at $lo$, the pivot stays at the front, and the next call works on the remaining $n-1$ elements: $5+4+3+2+1=15$ comparisons. **B is true.**\n\n**C.** On `[4, 2, 6, 1, 3, 5, 7]` the first call makes $6$ comparisons and produces `[3, 2, 1, 4, 6, 5, 7]` (pivot position $3$). The left part `[3, 2, 1]` has first element $3$, its maximum, so its partition makes $2$ comparisons and gives `[1, 2, 3]`, leaving `[1, 2]` to cost $1$ more: $3$ in all. The right part `[6, 5, 7]` costs $2$ and gives `[5, 6, 7]`. Total $6+3+2=11$. **C is false.**"
+        },
+        {
+          "title": "Statement D: stability",
+          "body": "Take the records $(4,a), (7,a), (7,b), (2,a)$ and compare keys only. Pivot $4$: the only smaller key is $2$ at index $3$, which is swapped with index $1$, giving $(4,a),(2,a),(7,b),(7,a)$; the final pivot swap gives $(2,a),(4,a),(7,b),(7,a)$. The two records with key $7$ have swapped places, so the sort is not stable. **D is true.**"
+        },
+        {
+          "title": "Verdict",
+          "body": "True statements: A, B and D."
+        }
+      ],
+      "finalAnswer": "**(A), (B), (D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "correct",
+          "explanation": "The trace gives `[2, 5, 3, 7, 9, 8]` with return value $3$; the order of the smaller elements is not preserved because they are swapped in, not copied."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "No element is strictly smaller than the pivot, so each call peels off one element: $5+4+3+2+1=15$ comparisons."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "The count is $11$, not $10$. Although $4$ is the median of the whole array, the partitioned left part `[3, 2, 1]` starts with its maximum, which causes an extra partition of size $2$."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "Swapping elements across long distances can reverse equal keys, as in $(4,a),(7,a),(7,b),(2,a)$, which ends as $(2,a),(4,a),(7,b),(7,a)$."
+        }
+      ],
+      "shortcut": "Each partition call on $m$ elements costs $m-1$ comparisons, so the total is the sum of $(\\text{size}-1)$ over all calls; for $n$ equal keys with `<` this is $n(n-1)/2$.",
+      "commonTrap": "Assuming that a first element which is the median of the whole array keeps giving perfectly balanced splits at every level (10 comparisons), forgetting that the partition rearranges the sub-arrays, and assuming that equal keys split evenly."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "A, B, D",
+      "agreesWithKey": true,
+      "checkCode": "cnt=0\ndef partition(a,lo,hi,key=lambda r:r):\n    global cnt\n    pv=key(a[lo]);i=lo\n    for j in range(lo+1,hi+1):\n        cnt+=1\n        if key(a[j])<pv:\n            i+=1;a[i],a[j]=a[j],a[i]\n    a[lo],a[i]=a[i],a[lo];return i\ndef qsort(a,lo,hi,key=lambda r:r):\n    if lo<hi:\n        p=partition(a,lo,hi,key);qsort(a,lo,p-1,key);qsort(a,p+1,hi,key)\ndef total(a,key=lambda r:r):\n    global cnt;cnt=0;a=list(a);qsort(a,0,len(a)-1,key);return cnt\na=[7,5,9,3,2,8];r=partition(a,0,5)\ns=[(4,'a'),(7,'a'),(7,'b'),(2,'a')];qsort(s,0,3,key=lambda t:t[0])\nA=(r,a)==(3,[2,5,3,7,9,8]);B=total([4]*6)==15;C=total([4,2,6,1,3,5,7])==10;D=[t for t in s if t[0]==7]==[(7,'b'),(7,'a')]\nprint(A,B,C,D,total([4,2,6,1,3,5,7]))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M24-Q22",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 22,
+    "section": "DA",
+    "subjectId": "pdsa",
+    "topicId": "pdsa-graphs",
+    "subtopicIds": [
+      "pdsa-traversals"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (DFS finishing times on a directed acyclic graph used for a topological order) in a routine trace of eight vertices, with several valid-looking but wrong orders as distractors; about 2.5 minutes.",
+    "estimatedTimeSec": 150,
+    "concept": "DFS finishing times on a DAG: listing vertices in decreasing finishing time gives a topological order",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A build system has eight modules $A, B, \\ldots, H$. A directed edge $X \\to Y$ means that module $X$ must be built before module $Y$. The edges are given as out-neighbour lists.\n\n| Module | Must be built before |\n|---|---|\n| $A$ | $C, D$ |\n| $B$ | $D, E$ |\n| $C$ | $F$ |\n| $D$ | $F, G$ |\n| $E$ | $G$ |\n| $F$ | $H$ |\n| $G$ | $H$ |\n| $H$ | (none) |\n\nA recursive depth-first search (DFS) is run on this graph. The outer loop takes the modules in the order $A, B, \\ldots, H$ and starts a new search from every module that has not yet been visited; inside a search, the out-neighbours of a module are scanned in the order listed in the table. A build order is then produced by writing the modules in **decreasing order of DFS finishing time**.\n\nWhich one of the following is the build order produced?",
+    "options": [
+      {
+        "label": "A",
+        "text": "$A, B, C, D, E, F, G, H$"
+      },
+      {
+        "label": "B",
+        "text": "$H, F, C, G, D, A, E, B$"
+      },
+      {
+        "label": "C",
+        "text": "$B, E, A, C, D, F, G, H$"
+      },
+      {
+        "label": "D",
+        "text": "$B, E, A, D, G, C, F, H$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "D"
+    },
+    "solution": {
+      "quick": "Run the DFS and record finishing times: $H=5,\\ F=6,\\ C=7,\\ G=10,\\ D=11,\\ A=12,\\ E=15,\\ B=16$. Writing the modules from the latest to the earliest finishing time gives $B, E, A, D, G, C, F, H$.",
+      "steps": [
+        {
+          "title": "Search from A",
+          "body": "Clock starts at $0$. Visit $A$ ($d=1$) $\\to$ $C$ ($d=2$) $\\to$ $F$ ($d=3$) $\\to$ $H$ ($d=4$). $H$ has no out-neighbours: $f[H]=5$. Back at $F$: $f[F]=6$. Back at $C$: $f[C]=7$.\n\nBack at $A$, the next neighbour is $D$ ($d=8$). Its neighbour $F$ is already visited; $G$ is new ($d=9$), and $G$'s neighbour $H$ is already visited, so $f[G]=10$. Then $f[D]=11$ and $f[A]=12$."
+        },
+        {
+          "title": "Search from B",
+          "body": "The outer loop skips $A$ and next finds $B$ unvisited: $d[B]=13$. Its neighbour $D$ is visited; $E$ is new ($d[E]=14$), and $E$'s neighbour $G$ is visited, so $f[E]=15$ and $f[B]=16$. Every other module is already visited."
+        },
+        {
+          "title": "Finishing times",
+          "body": "| Module | $H$ | $F$ | $C$ | $G$ | $D$ | $A$ | $E$ | $B$ |\n|---|---|---|---|---|---|---|---|---|\n| Finishing time $f$ | 5 | 6 | 7 | 10 | 11 | 12 | 15 | 16 |"
+        },
+        {
+          "title": "Decreasing finishing time",
+          "body": "Writing the modules from the largest $f$ to the smallest gives $B, E, A, D, G, C, F, H$. Every edge $X \\to Y$ has $f[X] > f[Y]$ in a DAG, so this is a valid build order, and it is the one the stated procedure produces."
+        }
+      ],
+      "finalAnswer": "**(D)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "This is a valid topological order (alphabetical, smallest available module first), but it is not the order produced by decreasing DFS finishing time; for instance $B$ has the largest finishing time and so comes first."
+        },
+        {
+          "label": "B",
+          "verdict": "incorrect",
+          "explanation": "This is the order of increasing finishing time. It is the reverse of a build order: $H$ would be built before its prerequisites $F$ and $G$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "This is also a valid topological order, but it is what the same procedure gives when the out-neighbour lists are scanned from right to left. It places $C$ before $D$, which would need $f[C] > f[D]$; with the stated left-to-right scanning, $A$ enters $C$ first and $C$ finishes (time $7$) long before $D$ does (time $11$)."
+        },
+        {
+          "label": "D",
+          "verdict": "correct",
+          "explanation": "It lists the modules in decreasing order of the finishing times $16, 15, 12, 11, 10, 7, 6, 5$."
+        }
+      ],
+      "commonTrap": "Forgetting to reverse the finishing order (option B), or choosing any valid topological order (options A or C) instead of the one produced by the stated scanning order."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "D (B, E, A, D, G, C, F, H)",
+      "agreesWithKey": true,
+      "checkCode": "adj={'A':'CD','B':'DE','C':'F','D':'FG','E':'G','F':'H','G':'H','H':''}\nseen=[];fin=[]\ndef dfs(u):\n    seen.append(u)\n    for v in adj[u]:\n        if v not in seen: dfs(v)\n    fin.append(u)\nfor u in 'ABCDEFGH':\n    if u not in seen: dfs(u)\norder=fin[::-1]\npos={u:i for i,u in enumerate(order)}\nprint(''.join(order),all(pos[u]<pos[v] for u in adj for v in adj[u]))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M24-Q23",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 23,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-regression",
+    "subtopicIds": [
+      "ml-simple-linear-regression"
+    ],
+    "type": "MCQ",
+    "marks": 2,
+    "difficulty": "EASY",
+    "difficultyRationale": "Platform-estimated: EASY — one concept (the least-squares line written from summary statistics) and a single-step computation of slope followed by a prediction; about 1 minute.",
+    "estimatedTimeSec": 70,
+    "concept": "Least-squares line from summary statistics: slope = r·s_y/s_x passes through the point of means",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A courier company fits an ordinary least-squares regression line of delivery time $y$ (in minutes) on delivery distance $x$ (in km) using its past deliveries. The summary statistics are\n\n| | Mean | Standard deviation |\n|---|---|---|\n| Distance $x$ | $40$ | $5$ |\n| Time $y$ | $60$ | $10$ |\n\nand the sample correlation coefficient between $x$ and $y$ is $r = 0.8$.\n\nAccording to the fitted line, the predicted delivery time (in minutes) for a delivery of $45$ km is",
+    "options": [
+      {
+        "label": "A",
+        "text": "$64$"
+      },
+      {
+        "label": "B",
+        "text": "$68$"
+      },
+      {
+        "label": "C",
+        "text": "$70$"
+      },
+      {
+        "label": "D",
+        "text": "$62$"
+      }
+    ],
+    "answer": {
+      "kind": "MCQ",
+      "correct": "B"
+    },
+    "solution": {
+      "quick": "The least-squares line passes through $(\\bar{x}, \\bar{y}) = (40, 60)$ and has slope $b_1 = r\\,s_y/s_x = 0.8 \\times 10/5 = 1.6$. At $x = 45$: $\\hat{y} = 60 + 1.6 \\times (45 - 40) = 68$ minutes.",
+      "steps": [
+        {
+          "title": "Slope",
+          "body": "For regression of $y$ on $x$, $b_1 = r\\,\\dfrac{s_y}{s_x} = 0.8 \\times \\dfrac{10}{5} = 1.6$ minutes per km."
+        },
+        {
+          "title": "Intercept",
+          "body": "The fitted line passes through the point of means, so $b_0 = \\bar{y} - b_1 \\bar{x} = 60 - 1.6 \\times 40 = -4$. The line is $\\hat{y} = -4 + 1.6\\,x$."
+        },
+        {
+          "title": "Prediction",
+          "body": "$\\hat{y}(45) = -4 + 1.6 \\times 45 = -4 + 72 = 68$ minutes."
+        }
+      ],
+      "finalAnswer": "**(B)**",
+      "optionAnalysis": [
+        {
+          "label": "A",
+          "verdict": "incorrect",
+          "explanation": "$64 = 60 + 0.8 \\times 5$ uses the correlation $r$ itself as the slope. The slope must be rescaled by $s_y/s_x$ because $x$ and $y$ have different spreads."
+        },
+        {
+          "label": "B",
+          "verdict": "correct",
+          "explanation": "$60 + 1.6 \\times 5 = 68$, using the slope $r\\,s_y/s_x = 1.6$."
+        },
+        {
+          "label": "C",
+          "verdict": "incorrect",
+          "explanation": "$70 = 60 + 2 \\times 5$ uses the slope $s_y/s_x = 2$ and ignores $r$; that slope would only be right for a perfect correlation ($r = 1$)."
+        },
+        {
+          "label": "D",
+          "verdict": "incorrect",
+          "explanation": "$62 = 60 + 0.4 \\times 5$ uses the inverted ratio $r\\,s_x/s_y = 0.4$ (which is the slope of the regression of $x$ on $y$, not of $y$ on $x$) instead of $r\\,s_y/s_x$."
+        }
+      ],
+      "shortcut": "A distance of $45$ km is $1$ standard deviation above the mean, so the prediction is $r = 0.8$ standard deviations of $y$ above the mean: $60 + 0.8 \\times 10 = 68$.",
+      "commonTrap": "Using $r$ alone, $s_y/s_x$ without $r$, or the inverted ratio $s_x/s_y$ as the slope."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "B (68)",
+      "agreesWithKey": true,
+      "checkCode": "r,sx,sy,mx,my=0.8,5,10,40,60\nb1=r*sy/sx;b0=my-b1*mx\nprint(round(b1,6),round(b0,6),round(b0+b1*45,6))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M24-Q24",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 24,
+    "section": "DA",
+    "subjectId": "ml",
+    "topicId": "ml-classification",
+    "subtopicIds": [
+      "ml-knn"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "MODERATE",
+    "difficultyRationale": "Platform-estimated: MODERATE — one concept (distance-weighted k-nearest-neighbour regression) with 2–3 routine steps: squared distances to find the three neighbours, inverse-square weights and a weighted mean; about 3 minutes.",
+    "estimatedTimeSec": 170,
+    "concept": "Distance-weighted k-NN regression with inverse-squared-distance weights",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "A weather service estimates the temperature at an unmonitored site from nearby stations. Each station has map coordinates $(x, y)$ in km and a recorded temperature:\n\n| Station | $x$ | $y$ | Temperature ($^\\circ$C) |\n|---|---|---|---|\n| $S_1$ | 5 | 6 | 28 |\n| $S_2$ | 4 | 4 | 31 |\n| $S_3$ | 7 | 5 | 35 |\n| $S_4$ | 3 | 4 | 26 |\n| $S_5$ | 9 | 7 | 38 |\n| $S_6$ | 2 | 8 | 24 |\n| $S_7$ | 6 | 9 | 33 |\n\nThe temperature at the site $(5, 5)$ is predicted by distance-weighted $k$-nearest-neighbour regression with $k = 3$. The three stations nearest to the site in Euclidean distance are selected, and the prediction is\n\n$$\\hat{T} = \\frac{\\sum_{i} w_i T_i}{\\sum_{i} w_i}, \\qquad w_i = \\frac{1}{d_i^{2}},$$\n\nwhere $d_i$ is the Euclidean distance from the site to selected station $i$ and $T_i$ is its temperature; both sums run over the three selected stations.\n\nThe predicted temperature (in $^\\circ$C), rounded off to two decimal places, is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 29.85,
+      "max": 29.87
+    },
+    "solution": {
+      "quick": "The squared distances from $(5,5)$ are $1, 2, 4, 5, 20, 18, 17$ for $S_1, \\ldots, S_7$, so the three nearest stations are $S_1, S_2, S_3$ with $d^2 = 1, 2, 4$. The weights $1, \\tfrac12, \\tfrac14$ give $\\hat{T} = (28 + 15.5 + 8.75)/1.75 = 52.25/1.75 \\approx 29.86$.",
+      "steps": [
+        {
+          "title": "Squared distances to the site (5, 5)",
+          "body": "$d^2 = (x-5)^2 + (y-5)^2$: $S_1$: $0+1=1$; $S_2$: $1+1=2$; $S_3$: $4+0=4$; $S_4$: $4+1=5$; $S_5$: $16+4=20$; $S_6$: $9+9=18$; $S_7$: $1+16=17$."
+        },
+        {
+          "title": "Select k = 3 neighbours",
+          "body": "The three smallest are $d^2 = 1, 2, 4$, i.e. $S_1$ ($28^\\circ$C), $S_2$ ($31^\\circ$C) and $S_3$ ($35^\\circ$C). The next one, $S_4$ with $d^2=5$, is excluded."
+        },
+        {
+          "title": "Weights",
+          "body": "$w = 1/d^2$, so $w_1 = 1$, $w_2 = \\tfrac{1}{2}$, $w_3 = \\tfrac{1}{4}$ and $\\sum w_i = 1.75$."
+        },
+        {
+          "title": "Weighted mean",
+          "body": "$\\sum w_i T_i = 1 \\times 28 + 0.5 \\times 31 + 0.25 \\times 35 = 28 + 15.5 + 8.75 = 52.25$, so\n$$\\hat{T} = \\frac{52.25}{1.75} = \\frac{209}{7} \\approx 29.857 \\approx 29.86.$$"
+        }
+      ],
+      "finalAnswer": "**29.86**",
+      "commonTrap": "Taking the plain average of the three neighbours ($31.33$), using weights $1/d$ instead of $1/d^2$ (about $30.55$), or pulling in a fourth station."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "29.86 (209/7)",
+      "agreesWithKey": true,
+      "checkCode": "S=[(5,6,28),(4,4,31),(7,5,35),(3,4,26),(9,7,38),(2,8,24),(6,9,33)]\nq=(5,5)\nd2=sorted(((x-q[0])**2+(y-q[1])**2,t) for x,y,t in S)\nnn=d2[:3]\nw=[1/d for d,_ in nn]\nprint(d2[:4],round(sum(wi*t for wi,(_,t) in zip(w,nn))/sum(w),4))",
+      "notes": ""
+    }
+  },
+  {
+    "id": "M24-Q25",
+    "origin": "MOCK_TEST",
+    "sourceType": "PLATFORM_CREATED",
+    "testId": "mock-24",
+    "questionNumber": 25,
+    "section": "DA",
+    "subjectId": "dbw",
+    "topicId": "dbw-normalization",
+    "subtopicIds": [
+      "dbw-normal-forms"
+    ],
+    "type": "NAT",
+    "marks": 2,
+    "difficulty": "HARD",
+    "difficultyRationale": "Platform-estimated: HARD — several linked concepts (attributes that must be in every key, closure-based candidate-key search, and counting the supersets of overlapping keys) with a likely counting trap and a key-free attribute; about 4 minutes.",
+    "estimatedTimeSec": 240,
+    "concept": "Counting the superkeys of a relation schema from its candidate keys (inclusion–exclusion over overlapping keys)",
+    "conceptIds": [],
+    "formulaIds": [],
+    "stem": "Consider the relation schema $R(A, B, C, D, E, F)$ with the set of functional dependencies\n\n$$F = \\{\\, DE \\to C,\\;\\; BC \\to F,\\;\\; CE \\to B,\\;\\; BF \\to D,\\;\\; B \\to A \\,\\}.$$\n\nAssume that the only functional dependencies that hold on $R$ are those implied by $F$. A *superkey* of $R$ is any set of attributes $X \\subseteq R$ whose closure $X^{+}$ under $F$ is the whole of $R$ (the set $R$ itself is a superkey).\n\nThe number of superkeys of $R$ is ________.",
+    "options": [],
+    "answer": {
+      "kind": "NAT",
+      "min": 26,
+      "max": 26
+    },
+    "solution": {
+      "quick": "$E$ never occurs on a right-hand side, so every key contains $E$. The candidate keys are $CE$, $DE$ and $BEF$. A set is a superkey iff it contains $E$ and ($C$ or $D$ or both $B$ and $F$). Of the $2^5 = 32$ choices of the other attributes, $6$ fail, so there are $32 - 6 = 26$ superkeys.",
+      "steps": [
+        {
+          "title": "Attributes forced into every key",
+          "body": "The right-hand sides are $C, F, B, D, A$; the attribute $E$ never appears on a right-hand side, so nothing determines it and $E$ belongs to every key. Sets without $E$ are never superkeys."
+        },
+        {
+          "title": "Candidate keys",
+          "body": "Every key contains $E$, and $E^{+} = E$. Adding $C$: $(CE)^{+}$: $CE \\to B$, $B \\to A$, $BC \\to F$, $BF \\to D$, so all of $R$; $CE$ is a key (neither $C$ nor $E$ alone is). Adding $D$: $(DE)^{+}$: $DE \\to C$, and then as before all of $R$; $DE$ is a key. A key that contains neither $C$ nor $D$ lies inside $\\{A, B, E, F\\}$: $(AE)^{+} = AE$, $(BE)^{+} = \\{A, B, E\\}$ and $(EF)^{+} = EF$ are not keys, but $(BEF)^{+}$: $BF \\to D$, $DE \\to C$, so all of $R$; $BEF$ is a key, and it is minimal because $BE$, $EF$ and $BF$ (which lacks $E$) are not superkeys. The candidate keys are $CE$, $DE$ and $BEF$."
+        },
+        {
+          "title": "Characterise the superkeys",
+          "body": "A set is a superkey iff it contains a candidate key, that is, iff it contains $E$ and at least one of: $C$; $D$; both $B$ and $F$. The attribute $A$ appears in no key and can be added freely."
+        },
+        {
+          "title": "Count",
+          "body": "Fix $E$ and choose any subset $T$ of the other five attributes $\\{A,B,C,D,F\\}$: $2^5 = 32$ sets. The failures are the subsets with neither $C$ nor $D$ that do not contain both $B$ and $F$: subsets of $\\{A,B,F\\}$ number $8$, of which $2$ contain both $B$ and $F$, leaving $6$ failures. Superkeys: $32 - 6 = 26$.\n\nCross-check by inclusion–exclusion over the supersets of the three keys: $CE$ has $2^4 = 16$ supersets, $DE$ has $16$ and $BEF$ has $2^3 = 8$; the overlaps are $CDE$ ($2^3 = 8$ supersets), $BCEF$ ($2^2 = 4$) and $BDEF$ ($4$); all three keys together give $BCDEF$ ($2$). Total: $(16+16+8) - (8+4+4) + 2 = 26$."
+        }
+      ],
+      "finalAnswer": "**26**",
+      "commonTrap": "Adding the supersets of each key without removing the overlaps ($16+16+8=40$), counting only the candidate keys ($3$), or forgetting that the attribute $A$, which lies in no key, can be added freely to every superkey (counting only $13$)."
+    },
+    "answerVerification": {
+      "status": "PARTIALLY_VERIFIED",
+      "method": "Author derivation + Python check",
+      "independentAnswer": "26 (candidate keys CE, DE, BEF)",
+      "agreesWithKey": true,
+      "checkCode": "from itertools import combinations\nF=[('DE','C'),('BC','F'),('CE','B'),('BF','D'),('B','A')]\ndef cl(X):\n    X=set(X)\n    while True:\n        n=len(X)\n        for l,r in F:\n            if set(l)<=X: X|=set(r)\n        if len(X)==n: return X\nsup=[X for k in range(7) for X in combinations('ABCDEF',k) if cl(X)==set('ABCDEF')]\nkeys=[''.join(X) for X in sup if not any(set(Y)<set(X) for Y in sup)]\nprint(len(sup),keys)",
+      "notes": ""
+    }
+  }
+]
